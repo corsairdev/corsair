@@ -2824,6 +2824,14 @@
                 ]
               },
               {
+                "group": "Modelry",
+                "pages": [
+                  "plugins/modelry/overview",
+                  "plugins/modelry/api",
+                  "plugins/modelry/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",

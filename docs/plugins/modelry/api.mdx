@@ -1,0 +1,3206 @@
+---
+title: "Modelry API reference"
+sidebarTitle: "API"
+description: "API reference for the Modelry plugin in Corsair: every `modelry.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Embeds
+
+### delete
+
+`embeds.delete`
+
+Delete embeds
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modelry.api.embeds.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`embeds.get`
+
+Get embeds
+
+**Risk:** `read`
+
+```ts
+await corsair.modelry.api.embeds.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`embeds.list`
+
+List embeds
+
+**Risk:** `read`
+
+```ts
+await corsair.modelry.api.embeds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`embeds.publish`
+
+Publish embeds
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.embeds.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Modeling Requests
+
+### approve
+
+`modelingRequests.approve`
+
+Approve modeling requests
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.modelingRequests.approve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id_or_sku` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### assets
+
+`modelingRequests.assets`
+
+List modeling request assets
+
+**Risk:** `read`
+
+```ts
+await corsair.modelry.api.modelingRequests.assets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modeling_request_id_or_sku` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`modelingRequests.create`
+
+Create modeling requests
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.modelingRequests.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modeling_request` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="modeling_request full type">
+
+```ts
+{
+  title: string,
+  sku: string,
+  product_id?: number,
+  dimensions?: string,
+  pipeline: high_poly | low_poly,
+  specific_requirements?: string,
+  external_url?: string,
+  reference_file_blob_ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`modelingRequests.get`
+
+Get modeling requests
+
+**Risk:** `read`
+
+```ts
+await corsair.modelry.api.modelingRequests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id_or_sku` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`modelingRequests.list`
+
+List modeling requests
+
+**Risk:** `read`
+
+```ts
+await corsair.modelry.api.modelingRequests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `workspace_id` | `number` | No | — |
+| `sort_by` | `string[]` | No | — |
+| `keywords` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `batch_uid` | `string` | No | — |
+| `title` | `string` | No | — |
+| `status` | `in_quoting \| in_progress \| ready_for_review \| adjustments_in_progress \| dispute_review \| preparing_for_delivery \| finished` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reject
+
+`modelingRequests.reject`
+
+Reject modeling requests
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.modelingRequests.reject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id_or_sku` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Assets
+
+### create
+
+`productAssets.create`
+
+Create product assets
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.productAssets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string \| number` | Yes | — |
+| `blob_id` | `string` | Yes | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`productAssets.delete`
+
+Delete product assets
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modelry.api.productAssets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create products
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.products.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  title?: string,
+  sku?: string,
+  description?: string | null,
+  batch_id?: string | null,
+  tags?: string[],
+  dimensions?: string | null,
+  external_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete products
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modelry.api.products.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`products.get`
+
+Get products
+
+**Risk:** `read`
+
+```ts
+await corsair.modelry.api.products.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List products
+
+**Risk:** `read`
+
+```ts
+await corsair.modelry.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort_by` | `string[]` | No | — |
+| `keywords` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `batch_id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `source_label` | `string[]` | No | — |
+| `content_labels` | `string[]` | No | — |
+| `tool_kinds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update products
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.products.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  title?: string,
+  sku?: string,
+  description?: string | null,
+  batch_id?: string | null,
+  tags?: string[],
+  dimensions?: string | null,
+  external_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reviews
+
+### create
+
+`reviews.create`
+
+Create reviews
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.reviews.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modeling_request_id_or_sku` | `string \| number` | Yes | — |
+| `review_issues` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="review_issues full type">
+
+```ts
+{
+  filename: string,
+  category: string,
+  comment: string,
+  severity?: number | string,
+  order?: number | string,
+  data?: Record<string, any>,
+  annotation?: Record<string, any>,
+  reviewed?: boolean,
+  issue_image?: string,
+  x?: string,
+  y?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+} | {
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Uploads
+
+### blob
+
+`uploads.blob`
+
+Create a direct upload blob
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.uploads.blob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `blob` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="blob full type">
+
+```ts
+{
+  filename: string,
+  byte_size: number,
+  checksum: string,
+  content_type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signed_id` | `string` | Yes | — |
+| `service_url` | `string` | Yes | — |
+| `headers` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+### file
+
+`uploads.file`
+
+Upload a base64 file
+
+**Risk:** `write`
+
+```ts
+await corsair.modelry.api.uploads.file({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `base64_file` | `string` | Yes | — |
+| `content_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `blob_id` | `number` | Yes | — |
+| `signed_blob_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+## Workspaces
+
+### list
+
+`workspaces.list`
+
+List workspaces
+
+**Risk:** `read`
+
+```ts
+await corsair.modelry.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+    uid?: string | null,
+    sku?: string | null,
+    title?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    batchID?: string | null,
+    batchId?: string | null,
+    batchUid?: string | null,
+    deliveredAt?: string | null,
+    status?: string | null,
+    pipeline?: string | null,
+    price?: string | null,
+    previewImageUrl?: string | null,
+    dimensions?: string | null,
+    productUrl?: string | null,
+    productId?: number | null,
+    requestType?: string | null,
+    inCustomerQa?: boolean | null,
+    customerQaUrl?: string | null,
+    currentRoundNumber?: number | null,
+    currentRoundSaved?: boolean | null,
+    referenceFileUrls?: string[] | null,
+    reviewCategories?: {
+      id: string,
+      title: string
+    }[] | null,
+    description?: string | null,
+    tags?: string[] | null,
+    sourceLabel?: string | null,
+    toolKinds?: string[] | null,
+    contentLabels?: string[] | null,
+    byteSize?: number | string | null,
+    labels?: string[] | null,
+    url?: string | null,
+    fileName?: string | null,
+    kinds?: string[] | null,
+    published?: boolean | null,
+    loaderScriptConfiguration?: Record<string, any>[] | null,
+    adminIssueId?: string | null,
+    annotation?: Record<string, any> | null,
+    authorId?: string | null,
+    authorRole?: string | null,
+    authorUsername?: string | null,
+    category?: string | null,
+    comment?: string | null,
+    data?: Record<string, any> | null,
+    deletedAt?: string | null,
+    destroyed?: boolean | null,
+    displayAuthorUsername?: boolean | null,
+    displayIssueChanges?: boolean | null,
+    displaySeverity?: boolean | null,
+    disputeComment?: string | null,
+    disputeReason?: string | null,
+    disputeRejectionReason?: string | null,
+    disputeStatus?: string | null,
+    draft?: boolean | null,
+    editorUsername?: string | null,
+    isReviewed?: boolean | null,
+    issueLogs?: string[] | null,
+    order?: number | null,
+    origin?: string | null,
+    reviewableAttachmentId?: string | null,
+    reviewed?: boolean | null,
+    severity?: number | null,
+    solved?: boolean | null,
+    state?: string | null,
+    updatedAt?: string | null,
+    x?: string | null,
+    y?: string | null
+  },
+  relationships?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  total_pages?: number | null,
+  total_records?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
