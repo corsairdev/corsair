@@ -12,7 +12,7 @@ pnpm add @corsair-dev/neverbounce
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `single.check` | `neverbounce.api.single.check` | `destructive` | Verify an email address; verification may consume credits |
+| `single.check` | `neverbounce.api.single.check` | `read` | Verify an email address (valid, invalid, disposable, catchall or unknown); uses one verification credit |
 
 ## Auth
 
