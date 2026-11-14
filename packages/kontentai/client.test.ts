@@ -198,6 +198,28 @@ describe('makeKontentRequest', () => {
 		});
 	});
 
+	it('keeps filter values out of an HTTP error', async () => {
+		respond({ message: 'Unauthorized', request_id: 'r1', error_code: 0 }, 401);
+
+		const error = await makeKontentRequest(ENVIRONMENT_ID, {
+			method: 'GET',
+			path: '/items',
+			query: { 'elements.email': 'alice@example.com', limit: 5 },
+			// unknown: a rejection value has no static type; checked below.
+		}).catch((caught: unknown) => caught);
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
+		const serialized = JSON.stringify(error);
+		expect(serialized).not.toContain('alice');
+		expect(error.request).toEqual({
+			method: 'GET',
+			url: `/${ENVIRONMENT_ID}/items`,
+		});
+		expect(error.url).toBe(
+			`https://deliver.kontent.ai/${ENVIRONMENT_ID}/items`,
+		);
+		expect(error.status).toBe(401);
+	});
+
 	it('keeps a Retry-After header as milliseconds', async () => {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify({ message: 'Slow down' }), {

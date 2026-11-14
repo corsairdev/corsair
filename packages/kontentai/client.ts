@@ -211,12 +211,13 @@ export async function makeKontentRequest(
 	} catch (error) {
 		if (error instanceof ApiError) {
 			// The same error, with Kontent's message, code and request ID in front
-			// of core's generic one. Every call is a GET with no body, so nothing
-			// the caller sent rides along.
+			// of core's generic one. Every call is a GET with no body; the query
+			// is dropped from the request and the URL because filters such as
+			// `in_filter` can carry customer data (an email, a name).
 			throw new ApiError(
-				error.request,
+				{ method: 'GET', url: requestOptions.url },
 				{
-					url: error.url,
+					url: `${config.BASE}${requestOptions.url}`,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
