@@ -18,14 +18,17 @@ function endpoint<I extends Schema, O extends Schema>(
 		return output.parse(await makeModelryRequest(ctx.key, build(parsed)));
 	};
 }
-const arrayQuery = (query: Record<string, unknown>): Record<string, unknown> =>
+type ListQueryValue = string | number | string[] | undefined;
+const arrayQuery = (
+	query: Record<string, ListQueryValue>,
+): Record<string, ListQueryValue> =>
 	Object.fromEntries(
 		Object.entries(query).map(([key, value]) => [
 			Array.isArray(value) ? `${key}[]` : key,
 			value,
 		]),
 	);
-const body = (value: unknown) =>
+const body = <T extends object>(value: T) =>
 	({ body: value, mediaType: 'application/json' }) as const;
 export const products_list = endpoint(t.products_listInput, t.list, (a) => ({
 	method: 'GET',

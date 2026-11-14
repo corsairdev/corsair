@@ -12,6 +12,8 @@ const s = z.string().nullish();
 const n = z.number().nullish();
 const b = z.boolean().nullish();
 const strings = z.array(z.string()).nullish();
+// Modelry's reference does not specify the nested shapes of relationship,
+// annotation, review data, or loader-configuration objects; retain their values.
 const object = z.record(z.string(), z.unknown());
 const attributes = z
 	.object({

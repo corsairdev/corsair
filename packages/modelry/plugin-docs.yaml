@@ -3,6 +3,8 @@ description: Manage 3D modeling requests, products, assets, and embeds with Mode
 domain: modelry.ai
 overviewNote: |
   The provider documents 23 operations; this plugin exposes 21. Asset ZIP download is deferred because the shared transport decodes non-JSON responses as text. Embed creation is deferred because the documented route and curl example disagree. No inbound webhooks are documented.
+
+  Configure a stored API key for each tenant. The plugin does not read `MODELRY_API_KEY` implicitly; single-tenant applications may explicitly pass `modelry({ key: process.env.MODELRY_API_KEY })`. A `key` passed in plugin options is shared across all tenants, so use it only when every tenant should access the same Modelry account.
 examples:
   read:
     path: products.get

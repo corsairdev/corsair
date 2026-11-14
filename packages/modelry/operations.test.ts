@@ -1,4 +1,5 @@
-import { createCorsair } from 'corsair/core';
+import { AuthMissingError, createCorsair } from 'corsair/core';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import {
 	ModelryEndpointInputSchemas,
 	ModelryEndpointOutputSchemas,
@@ -19,10 +20,13 @@ const many = {
 };
 type Case = {
 	name: keyof typeof modelryEndpointSchemas;
+	// Cases cover heterogeneous operations and their independently typed results.
 	call: () => Promise<unknown>;
 	method: string;
 	path: string;
+	// Fixtures have different provider-defined shapes, including a void response.
 	response: unknown;
+	// Write bodies vary by operation; each fixture is checked against the wire JSON.
 	body?: unknown;
 	status?: number;
 };
@@ -309,4 +313,97 @@ it('forwards array filters with the documented bracket names', async () => {
 	const url = new URL(mock.mock.calls[0][0]);
 	expect(url.searchParams.getAll('tags[]')).toEqual(['a', 'b']);
 	expect(url.searchParams.getAll('sort_by[]')).toEqual(['title', 'desc']);
+});
+
+describe('tenant credentials', () => {
+	const originalEnvKey = process.env.MODELRY_API_KEY;
+
+	afterEach(() => {
+		if (originalEnvKey === undefined)
+			Reflect.deleteProperty(process.env, 'MODELRY_API_KEY');
+		else process.env.MODELRY_API_KEY = originalEnvKey;
+	});
+
+	it.each(['acme', 'default'])(
+		'rejects an unconnected tenant %s rather than using the server key',
+		async (tenantId) => {
+			process.env.MODELRY_API_KEY = 'server-key';
+			const testDb = createTestDatabase();
+			try {
+				await createIntegrationAndAccount(testDb.db, 'modelry', tenantId);
+				const corsair = createCorsair({
+					plugins: [modelry()],
+					database: testDb.db,
+					kek: '0123456789abcdef0123456789abcdef',
+					multiTenancy: true,
+				});
+				const tenant = corsair.withTenant(tenantId);
+				await tenant.modelry.keys.issue_new_dek();
+				mock.mockResolvedValueOnce(
+					new Response(JSON.stringify(many), {
+						headers: { 'Content-Type': 'application/json' },
+					}),
+				);
+				await expect(
+					tenant.modelry.api.products.list({}),
+				).rejects.toBeInstanceOf(AuthMissingError);
+				expect(mock).not.toHaveBeenCalled();
+			} finally {
+				testDb.cleanup();
+			}
+		},
+	);
+
+	it('sends the stored tenant key instead of the environment key', async () => {
+		process.env.MODELRY_API_KEY = 'server-key';
+		const testDb = createTestDatabase();
+		try {
+			await createIntegrationAndAccount(testDb.db, 'modelry', 'acme');
+			const corsair = createCorsair({
+				plugins: [modelry()],
+				database: testDb.db,
+				kek: '0123456789abcdef0123456789abcdef',
+				multiTenancy: true,
+			});
+			const tenant = corsair.withTenant('acme');
+			await tenant.modelry.keys.issue_new_dek();
+			await tenant.modelry.keys.set_api_key('tenant-key');
+			mock.mockResolvedValueOnce(
+				new Response(JSON.stringify(many), {
+					headers: { 'Content-Type': 'application/json' },
+				}),
+			);
+			await tenant.modelry.api.products.list({});
+			expect(
+				new Headers(mock.mock.calls[0][1].headers).get('Authorization'),
+			).toBe('tenant-key');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('accepts an explicitly configured single-tenant key', async () => {
+		process.env.MODELRY_API_KEY = 'server-key';
+		const single = createCorsair({
+			plugins: [modelry({ key: 'explicit-key' })],
+		});
+		mock.mockResolvedValueOnce(
+			new Response(JSON.stringify(many), {
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await single.modelry.api.products.list({});
+		expect(
+			new Headers(mock.mock.calls[0][1].headers).get('Authorization'),
+		).toBe('explicit-key');
+	});
+
+	it('does not implicitly use the environment key in single-tenant mode', async () => {
+		process.env.MODELRY_API_KEY = 'server-key';
+		const single = createCorsair({ plugins: [modelry()] });
+		await expect(single.modelry.api.products.list({})).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		expect(mock).not.toHaveBeenCalled();
+	});
 });

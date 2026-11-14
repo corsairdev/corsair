@@ -203,8 +203,8 @@ export function modelry<const T extends ModelryPluginOptions>(
 				const key = await ctx.keys.get_api_key();
 				if (key?.trim()) return key;
 			}
-			const key = process.env.MODELRY_API_KEY;
-			if (key?.trim()) return key;
+			// The runtime does not expose single- vs multi-tenant mode here, so an
+			// environment fallback could authenticate an unconnected tenant.
 			throw new AuthMissingError('modelry', 'api_key');
 		},
 	} satisfies InternalModelryPlugin;

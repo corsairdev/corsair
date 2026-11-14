@@ -2,6 +2,8 @@ import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
+// Response bodies differ per operation and are untrusted until the endpoint's
+// Zod schema parses them, so the shared transport cannot return a stricter type.
 export async function makeModelryRequest(
 	key: string,
 	options: ApiRequestOptions,
@@ -15,6 +17,7 @@ export async function makeModelryRequest(
 		ENCODE_PATH: encodeURIComponent,
 		HEADERS: { Authorization: key },
 	};
+	// The request helper must not claim a response type before schema validation.
 	return request<unknown>(config, options, {
 		rateLimitConfig: {
 			enabled: true,
