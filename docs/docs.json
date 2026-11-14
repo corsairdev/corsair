@@ -1805,6 +1805,14 @@
                 ]
               },
               {
+                "group": "Documenso",
+                "pages": [
+                  "plugins/documenso/overview",
+                  "plugins/documenso/api",
+                  "plugins/documenso/database"
+                ]
+              },
+              {
                 "group": "DocuPost",
                 "pages": [
                   "plugins/docupost/overview",
