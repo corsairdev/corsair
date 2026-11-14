@@ -374,9 +374,17 @@ describe('makeFinmeiBinaryRequest', () => {
 	});
 
 	it('leaves the sent invoice body and query off the ApiError', async () => {
-		mockRequest.mockImplementation(async (_config, options) => {
-			throw new ApiError(
-				options,
+		const sentBody = {
+			buyer: { name: 'Jane Customer', email: 'jane@example.com' },
+		};
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/invoices',
+					body: sentBody,
+					query: { search: 'Jane' },
+				},
 				{
 					url: `${FINMEI_API_BASE}/invoices?search=Jane`,
 					ok: false,
@@ -385,13 +393,13 @@ describe('makeFinmeiBinaryRequest', () => {
 					body: { message: 'The products.0.units field is required.' },
 				},
 				'Unprocessable Content',
-			);
-		});
+			),
+		);
 
 		// `unknown` because rejection from makeFinmeiRequest has no static type.
 		const caught: unknown = await makeFinmeiRequest('/invoices', 'key-1', {
 			method: 'POST',
-			body: { buyer: { name: 'Jane Customer', email: 'jane@example.com' } },
+			body: sentBody,
 			query: { search: 'Jane' },
 		}).catch((err: unknown) => err);
 
