@@ -2,6 +2,10 @@ import { makeDocumensoRequest } from './client';
 import { DocumensoEndpointOutputSchemas } from './endpoints/types';
 
 const apiKey = process.env.DOCUMENSO_API_KEY;
+if (!apiKey)
+	console.warn(
+		'Skipping Documenso live test: DOCUMENSO_API_KEY is not set, so no live request runs.',
+	);
 
 (apiKey ? it : it.skip)(
 	'reads one envelope page from the configured Documenso v2 API',
