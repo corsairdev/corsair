@@ -12,6 +12,6 @@ describe('Documenso risk levels', () => {
 		'envelopes.use.post',
 		'templates.use.post',
 	] as const)('marks %s destructive', (path) => {
-		expect(meta[path].riskLevel).toBe('destructive');
+		expect(meta?.[path]?.riskLevel).toBe('destructive');
 	});
 });
