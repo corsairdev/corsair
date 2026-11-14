@@ -1,0 +1,134 @@
+---
+title: "Formdesk plugin"
+sidebarTitle: "Overview"
+description: "Connect to Formdesk REST v1 to manage forms, submissions, users, visitors, and uploaded files with validated requests and responses."
+---
+
+Use **Formdesk** through Corsair: one client, typed API calls.
+
+Formdesk Connect returns the account host; pass that host and the account domain to subsequent operations. API keys use the Authorization Bearer scheme. Credential-based Connect returns an API key, so treat its output as a secret.
+
+**What you get:**
+
+- 39 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/formdesk better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/formdesk better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/formdesk better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/formdesk better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { formdesk } from '@corsair-dev/formdesk';
+
+export const corsair = createCorsair({
+	plugins: [
+		formdesk(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Formdesk API key before the first call: `pnpm corsair setup --plugin=formdesk --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+formdesk()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'formdesk',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List forms**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.formdesk.api.forms.list({ host: 'fd7.formdesk.com', domain: 'apitest' });
+```
+
+
+**Create a prefill ticket**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.formdesk.api.forms.park({
+	host: 'fd7.formdesk.com',
+	domain: 'apitest',
+	data: { name: 'Ada' },
+	expires: 3600,
+});
+```
+
+
+See the full list on the [API](/plugins/formdesk/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/formdesk/api">
+    Every `formdesk.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -252,6 +252,7 @@ export const BaseProviders = [
 	'fluxguard',
 	'followupboss',
 	'formbricks',
+	'formdesk',
 	'foursquare',
 	'fundable',
 	'gemini',
@@ -787,6 +788,7 @@ export const ProviderDisplayNames = {
 	fluxguard: 'Fluxguard',
 	followupboss: 'Follow Up Boss',
 	formbricks: 'Formbricks',
+	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
@@ -1329,6 +1331,7 @@ export type AllProviders =
 	| 'fluxguard'
 	| 'followupboss'
 	| 'formbricks'
+	| 'formdesk'
 	| 'foursquare'
 	| 'fundable'
 	| 'gemini'

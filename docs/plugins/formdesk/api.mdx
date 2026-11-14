@@ -1,0 +1,2236 @@
+---
+title: "Formdesk API reference"
+sidebarTitle: "API"
+description: "API reference for the Formdesk plugin in Corsair: every `formdesk.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Connect
+
+### apiKey
+
+`connect.apiKey`
+
+Resolve the tenant host using the stored API key (Connect is free)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.connect.apiKey({ domain: 'apitest' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apikey` | `string` | Yes | — |
+| `host` | `string` | Yes | — |
+
+
+
+---
+
+### credentials
+
+`connect.credentials`
+
+Resolve the tenant host and API key from Formdesk credentials (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.connect.credentials({ domain: 'apitest', username: 'automation-user', password: 'not-a-real-password' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+
+This call sends Formdesk username/password credentials and returns an API key; treat its output as a secret. Connect is exempt from the API credit charge.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apikey` | `string` | Yes | — |
+| `host` | `string` | Yes | — |
+
+
+
+---
+
+## Files
+
+### content
+
+`files.content`
+
+Download file content (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.files.content({ host: 'fd7.formdesk.com', domain: 'apitest', fileId: 8702600 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `fileId` | `number \| string` | Yes | — |
+
+Returns binary data as `{ kind: 'binary', contentType, base64, filename?, byteLength }`. Responses over 25 MiB are rejected by this plugin.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+| `byteLength` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Retrieve file metadata (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.files.get({ host: 'fd7.formdesk.com', domain: 'apitest', fileId: 8702600 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `fileId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `_links` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `id_formresult` | `number` | No | — |
+| `name` | `string` | No | — |
+| `filename` | `string` | No | — |
+| `orgfilename` | `string` | No | — |
+| `filesize` | `number` | No | — |
+| `contenttype` | `string` | No | — |
+| `public` | `boolean` | No | — |
+| `version` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href: string
+  },
+  content?: {
+    href: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List account and result files (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.files.list({ host: 'fd7.formdesk.com', domain: 'apitest', type: 'all' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `type` | `all` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  _links?: {
+    self?: {
+      href: string
+    },
+    content?: {
+      href: string
+    }
+  },
+  id: number,
+  id_formresult?: number,
+  name?: string,
+  filename?: string,
+  orgfilename?: string,
+  filesize?: number,
+  contenttype?: string,
+  public?: boolean,
+  version?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`files.remove`
+
+Permanently remove a file (1 API credit per call)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formdesk.api.files.remove({ host: 'fd7.formdesk.com', domain: 'apitest', fileId: 8702600 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `fileId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+## Forms
+
+### filters
+
+`forms.filters`
+
+List saved filter names (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.forms.filters({ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `form` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  id: number,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### items
+
+`forms.items`
+
+List input items on a form (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.forms.items({ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `form` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  id: number,
+  id_itemtype?: number,
+  itemtype: string,
+  identifier: string,
+  label?: string,
+  datatype?: string,
+  options?: JsonValue[] | null,
+  defaultvalue?: JsonValue,
+  position?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`forms.list`
+
+List forms (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.forms.list({ host: 'fd7.formdesk.com', domain: 'apitest' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  id: number,
+  name: string,
+  title?: string,
+  user_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### park
+
+`forms.park`
+
+Create a prefill parking ticket (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.forms.park({ host: 'fd7.formdesk.com', domain: 'apitest', data: { name: 'Ada' }, expires: 3600 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `data` | `Record<string, JsonValue>` | Yes | — |
+| `expires` | `number` | Yes | — |
+| `reuse` | `boolean` | No | — |
+| `preventchange` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `ticket` | `string` | Yes | — |
+| `expires` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Results
+
+### add
+
+`results.add`
+
+Add up to 10 form results (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.results.add({ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people', data: { name: 'Ada' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `form` | `string` | Yes | — |
+| `data` | `Record<string, JsonValue> \| Record<string, JsonValue>[]` | Yes | — |
+| `process_messages` | `boolean` | No | — |
+
+A single entry or an array of up to 10 entries may be sent. Form fields are account-defined, so their identifiers are preserved as JSON keys.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `errors` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _fd_id: number,
+  _fd_status?: string,
+  _fd_syncstatus?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  code?: string,
+  description?: string,
+  reason?: string,
+  data?: JsonValue
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  _links?: {
+    self?: {
+      href: string
+    },
+    content?: {
+      href: string
+    }
+  },
+  id: number,
+  id_formresult?: number,
+  name?: string,
+  filename?: string,
+  orgfilename?: string,
+  filesize?: number,
+  contenttype?: string,
+  public?: boolean,
+  version?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### allFiles
+
+`results.allFiles`
+
+List files attached to a form’s results (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.results.allFiles({ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `form` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  _links?: {
+    self?: {
+      href: string
+    },
+    content?: {
+      href: string
+    }
+  },
+  id: number,
+  id_formresult?: number,
+  name?: string,
+  filename?: string,
+  orgfilename?: string,
+  filesize?: number,
+  contenttype?: string,
+  public?: boolean,
+  version?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteAllFiles
+
+`results.deleteAllFiles`
+
+Delete all files attached to a form’s results (1 API credit per call)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formdesk.api.results.deleteAllFiles({ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `form` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### deleteFiles
+
+`results.deleteFiles`
+
+Delete files attached to a result (1 API credit per call)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formdesk.api.results.deleteFiles({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### export
+
+`results.export`
+
+Export form results; credits equal completed forms downloaded
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.results.export({ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people', format: 'csv' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `form` | `string` | Yes | — |
+| `format` | `excel \| excel-plain \| excel2007 \| xml \| text \| csv \| csv-comma` | Yes | — |
+| `query` | `object` | No | — |
+
+Credits equal the number of completed forms downloaded. The published format list and request sample conflict: the list has `excel`, while the sample uses `excel2007`; both spellings are accepted.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  view?: string,
+  search?: string,
+  id_from?: number,
+  id_to?: number,
+  created_from?: string,
+  created_to?: string,
+  status?: string,
+  changed_from?: string,
+  changed_to?: string,
+  completed?: boolean,
+  completed_from?: string,
+  completed_to?: string,
+  id_visitor?: number,
+  name?: string,
+  email?: string,
+  confirmed?: boolean,
+  verified?: boolean,
+  verified_from?: string,
+  verified_to?: string,
+  sync_status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  name: string,
+  contenttype: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### files
+
+`results.files`
+
+List files attached to a result (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.results.files({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  _links?: {
+    self?: {
+      href: string
+    },
+    content?: {
+      href: string
+    }
+  },
+  id: number,
+  id_formresult?: number,
+  name?: string,
+  filename?: string,
+  orgfilename?: string,
+  filesize?: number,
+  contenttype?: string,
+  public?: boolean,
+  version?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`results.get`
+
+Retrieve a form result (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.results.get({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `result` | `object` | Yes | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  _fd_id: number,
+  _fd_status?: string,
+  _fd_syncstatus?: string
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  _links?: {
+    self?: {
+      href: string
+    },
+    content?: {
+      href: string
+    }
+  },
+  id: number,
+  id_formresult?: number,
+  name?: string,
+  filename?: string,
+  orgfilename?: string,
+  filesize?: number,
+  contenttype?: string,
+  public?: boolean,
+  version?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### increment
+
+`results.increment`
+
+Atomically increment a numeric field (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.results.increment({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850, identifier: 'counter', count: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `count` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`results.list`
+
+List form result IDs (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.results.list({ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people', query: { status: 'DONE', sync_status: 'N,C' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `form` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+Filter parameters are supported, but the collection documents no page or cursor pagination. The response is the full matching collection.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  view?: string,
+  search?: string,
+  id_from?: number,
+  id_to?: number,
+  created_from?: string,
+  created_to?: string,
+  status?: string,
+  changed_from?: string,
+  changed_to?: string,
+  completed?: boolean,
+  completed_from?: string,
+  completed_to?: string,
+  id_visitor?: number,
+  name?: string,
+  email?: string,
+  confirmed?: boolean,
+  verified?: boolean,
+  verified_from?: string,
+  verified_to?: string,
+  sync_status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  id: number,
+  status?: string,
+  sync_status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markProcessed
+
+`results.markProcessed`
+
+Mark a result processed for synchronization (no credit charge)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.results.markProcessed({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+
+Marking a result processed is explicitly documented as free and is used by Formdesk's synchronization workflow.
+
+
+
+**Output:** `null`
+
+
+---
+
+### pdf
+
+`results.pdf`
+
+Generate a completed-form PDF (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.results.pdf({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850, settings: { papersize: 'A4' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+| `settings` | `object` | No | — |
+
+Returns binary data as `{ kind: 'binary', contentType, base64, filename?, byteLength }`. Responses over 25 MiB are rejected by this plugin.
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  hideunanswered?: boolean,
+  showhidden?: boolean,
+  ignoredependencies?: boolean,
+  noworkflow?: boolean,
+  papersize?: A3 | A4 | A5 | Letter | Executive | Auto | string,
+  orientation?: 1 | 2,
+  scaletype?: 0 | 1 | 2,
+  scaling?: number,
+  marginLeft?: number,
+  marginRight?: number,
+  marginTop?: number,
+  marginBottom?: number,
+  editprotect?: boolean,
+  copyprotect?: boolean,
+  userpassword?: string,
+  ownerpassword?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+| `byteLength` | `number` | Yes | — |
+
+
+
+---
+
+### remove
+
+`results.remove`
+
+Remove a form result; deleted entries may remain retrievable for 30 days (1 API credit per call)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formdesk.api.results.remove({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### update
+
+`results.update`
+
+Update a form result (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.results.update({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850, data: { name: 'Ada' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+| `data` | `Record<string, JsonValue>` | Yes | — |
+| `process_messages` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `errors` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _fd_id: number,
+  _fd_status?: string,
+  _fd_syncstatus?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  code?: string,
+  description?: string,
+  reason?: string,
+  data?: JsonValue
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  _links?: {
+    self?: {
+      href: string
+    },
+    content?: {
+      href: string
+    }
+  },
+  id: number,
+  id_formresult?: number,
+  name?: string,
+  filename?: string,
+  orgfilename?: string,
+  filesize?: number,
+  contenttype?: string,
+  public?: boolean,
+  version?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### workflows
+
+`results.workflows`
+
+List result workflows (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.results.workflows({ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `entryId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  id: number,
+  id_message?: number,
+  description?: string,
+  datetime?: string,
+  code?: string,
+  signing_status?: string,
+  payment?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### add
+
+`users.add`
+
+Create a Formdesk user (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.users.add({ host: 'fd7.formdesk.com', domain: 'apitest', user: { name: 'Ada', email: 'ada@formdesk.invalid', username: 'ada', password: 'not-a-real-password' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  type?: internal | external | API,
+  active?: boolean,
+  firstname?: string,
+  name?: string,
+  email?: string,
+  username?: string,
+  password?: string,
+  cellphone_country?: string,
+  cellphone?: string,
+  newsletter?: boolean,
+  notwofactor?: boolean,
+  allow_createform?: boolean,
+  allow_editprofile?: boolean,
+  allow_managelabels?: boolean,
+  template?: number,
+  external_userid?: string,
+  external_provider?: string,
+  external_force?: boolean,
+  apikey?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `active` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `username` | `string` | No | — |
+| `cellphone_country` | `string` | No | — |
+| `cellphone` | `string` | No | — |
+| `allow_createform` | `boolean` | No | — |
+| `allow_editprofile` | `boolean` | No | — |
+| `allow_managelabels` | `boolean` | No | — |
+| `newsletter` | `boolean` | No | — |
+| `template` | `number` | No | — |
+| `apikey` | `string` | No | — |
+| `notwofactor` | `boolean` | No | — |
+| `external_userid` | `string` | No | — |
+| `external_force` | `boolean` | No | — |
+| `external_provider` | `string` | No | — |
+| `lastlogin` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`users.get`
+
+Retrieve a user by ID (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.users.get({ host: 'fd7.formdesk.com', domain: 'apitest', userId: 71262 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `userId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `active` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `username` | `string` | No | — |
+| `cellphone_country` | `string` | No | — |
+| `cellphone` | `string` | No | — |
+| `allow_createform` | `boolean` | No | — |
+| `allow_editprofile` | `boolean` | No | — |
+| `allow_managelabels` | `boolean` | No | — |
+| `newsletter` | `boolean` | No | — |
+| `template` | `number` | No | — |
+| `apikey` | `string` | No | — |
+| `notwofactor` | `boolean` | No | — |
+| `external_userid` | `string` | No | — |
+| `external_force` | `boolean` | No | — |
+| `external_provider` | `string` | No | — |
+| `lastlogin` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getExternal
+
+`users.getExternal`
+
+Retrieve an external user by provider ID (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.users.getExternal({ host: 'fd7.formdesk.com', domain: 'apitest', externalUserId: 'external-user-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `externalUserId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `active` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `username` | `string` | No | — |
+| `cellphone_country` | `string` | No | — |
+| `cellphone` | `string` | No | — |
+| `allow_createform` | `boolean` | No | — |
+| `allow_editprofile` | `boolean` | No | — |
+| `allow_managelabels` | `boolean` | No | — |
+| `newsletter` | `boolean` | No | — |
+| `template` | `number` | No | — |
+| `apikey` | `string` | No | — |
+| `notwofactor` | `boolean` | No | — |
+| `external_userid` | `string` | No | — |
+| `external_force` | `boolean` | No | — |
+| `external_provider` | `string` | No | — |
+| `lastlogin` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List Formdesk users (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.users.list({ host: 'fd7.formdesk.com', domain: 'apitest' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  id: number,
+  active?: boolean,
+  type?: string,
+  firstname?: string,
+  name?: string,
+  email?: string,
+  username?: string,
+  cellphone_country?: string,
+  cellphone?: string,
+  allow_createform?: boolean,
+  allow_editprofile?: boolean,
+  allow_managelabels?: boolean,
+  newsletter?: boolean,
+  template?: number,
+  apikey?: string,
+  notwofactor?: boolean,
+  external_userid?: string,
+  external_force?: boolean,
+  external_provider?: string,
+  lastlogin?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`users.remove`
+
+Permanently remove a Formdesk user (1 API credit per call)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formdesk.api.users.remove({ host: 'fd7.formdesk.com', domain: 'apitest', userId: 71262 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `userId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### signOn
+
+`users.signOn`
+
+Create a user single sign-on link (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.users.signOn({ host: 'fd7.formdesk.com', domain: 'apitest', credentials: { username: 'ada' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `credentials` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  id?: number | string,
+  email?: string,
+  username?: string,
+  password?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update a Formdesk user (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.users.update({ host: 'fd7.formdesk.com', domain: 'apitest', userId: 71262, user: { name: 'Ada Lovelace' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `userId` | `number \| string` | Yes | — |
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  type?: internal | external | API,
+  active?: boolean,
+  firstname?: string,
+  name?: string,
+  email?: string,
+  username?: string,
+  password?: string,
+  cellphone_country?: string,
+  cellphone?: string,
+  newsletter?: boolean,
+  notwofactor?: boolean,
+  allow_createform?: boolean,
+  allow_editprofile?: boolean,
+  allow_managelabels?: boolean,
+  template?: number,
+  external_userid?: string,
+  external_provider?: string,
+  external_force?: boolean,
+  apikey?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `active` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `username` | `string` | No | — |
+| `cellphone_country` | `string` | No | — |
+| `cellphone` | `string` | No | — |
+| `allow_createform` | `boolean` | No | — |
+| `allow_editprofile` | `boolean` | No | — |
+| `allow_managelabels` | `boolean` | No | — |
+| `newsletter` | `boolean` | No | — |
+| `template` | `number` | No | — |
+| `apikey` | `string` | No | — |
+| `notwofactor` | `boolean` | No | — |
+| `external_userid` | `string` | No | — |
+| `external_force` | `boolean` | No | — |
+| `external_provider` | `string` | No | — |
+| `lastlogin` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Visitors
+
+### add
+
+`visitors.add`
+
+Create a form visitor (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.visitors.add({ host: 'fd7.formdesk.com', domain: 'apitest', visitor: { name: 'Ada', email: 'ada@formdesk.invalid', username: 'ada' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `visitor` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="visitor full type">
+
+```ts
+{
+  type?: internal | external,
+  active?: boolean,
+  name?: string,
+  email?: string,
+  username?: string,
+  password?: string,
+  password_from_visitor?: boolean,
+  cellphone_country?: string,
+  cellphone?: string,
+  external_userid?: string,
+  external_provider?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `external_userid` | `string` | No | — |
+| `external_provider` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `cellphone_country` | `string` | No | — |
+| `cellphone` | `string` | No | — |
+| `username` | `string` | No | — |
+| `password` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`visitors.get`
+
+Retrieve a visitor by ID (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.visitors.get({ host: 'fd7.formdesk.com', domain: 'apitest', visitorId: 3732966 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `visitorId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `external_userid` | `string` | No | — |
+| `external_provider` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `cellphone_country` | `string` | No | — |
+| `cellphone` | `string` | No | — |
+| `username` | `string` | No | — |
+| `password` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getExternal
+
+`visitors.getExternal`
+
+Retrieve an external visitor by provider ID (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.visitors.getExternal({ host: 'fd7.formdesk.com', domain: 'apitest', externalUserId: 'external-visitor-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `externalUserId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `external_userid` | `string` | No | — |
+| `external_provider` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `cellphone_country` | `string` | No | — |
+| `cellphone` | `string` | No | — |
+| `username` | `string` | No | — |
+| `password` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`visitors.list`
+
+List form visitors (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.visitors.list({ host: 'fd7.formdesk.com', domain: 'apitest' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  id: number,
+  type?: string,
+  external_userid?: string,
+  external_provider?: string,
+  active?: boolean,
+  name?: string,
+  email?: string,
+  cellphone_country?: string,
+  cellphone?: string,
+  username?: string,
+  password?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`visitors.remove`
+
+Permanently remove a form visitor (1 API credit per call)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formdesk.api.visitors.remove({ host: 'fd7.formdesk.com', domain: 'apitest', visitorId: 3732966 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `visitorId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### results
+
+`visitors.results`
+
+List a visitor’s form result IDs (1 API credit per call)
+
+**Risk:** `read`
+
+```ts
+await corsair.formdesk.api.visitors.results({ host: 'fd7.formdesk.com', domain: 'apitest', visitorId: 3732966 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `visitorId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  meta?: {
+    resourceType?: string,
+    created?: string | null,
+    lastModified?: string | null,
+    location?: string
+  },
+  id: number,
+  name: string,
+  title?: string,
+  results: {
+    meta?: {
+      resourceType?: string,
+      created?: string | null,
+      lastModified?: string | null,
+      location?: string
+    },
+    id: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### signOn
+
+`visitors.signOn`
+
+Create a visitor single sign-on link (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.visitors.signOn({ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people', credentials: { username: 'ada' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `form` | `string` | Yes | — |
+| `credentials` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  id?: number | string,
+  email?: string,
+  username?: string,
+  password?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`visitors.update`
+
+Update a form visitor (1 API credit per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.formdesk.api.visitors.update({ host: 'fd7.formdesk.com', domain: 'apitest', visitorId: 3732966, visitor: { name: 'Ada Lovelace' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `visitorId` | `number \| string` | Yes | — |
+| `visitor` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="visitor full type">
+
+```ts
+{
+  type?: internal | external,
+  active?: boolean,
+  name?: string,
+  email?: string,
+  username?: string,
+  password?: string,
+  password_from_visitor?: boolean,
+  cellphone_country?: string,
+  cellphone?: string,
+  external_userid?: string,
+  external_provider?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `external_userid` | `string` | No | — |
+| `external_provider` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `cellphone_country` | `string` | No | — |
+| `cellphone` | `string` | No | — |
+| `username` | `string` | No | — |
+| `password` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  resourceType?: string,
+  created?: string | null,
+  lastModified?: string | null,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
