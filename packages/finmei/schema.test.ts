@@ -13,6 +13,7 @@ import {
 	FinmeiListInvoicesOutputSchema,
 	FinmeiProfileOutputSchema,
 	FinmeiUpdateExpenseFileInputSchema,
+	FinmeiUpdateInvoiceInputSchema,
 } from './endpoints/types';
 import { FinmeiSchema } from './schema';
 
@@ -92,6 +93,16 @@ describe('Finmei invoice schemas', () => {
 		// Unknown field rejected due to strict
 		expect(
 			FinmeiCreateInvoiceInputSchema.safeParse({ ...valid, extraField: 'fail' })
+				.success,
+		).toBe(false);
+		// Finmei documents products.*.units as required, on create and update
+		const { units: _units, ...productWithoutUnits } = valid.products[0]!;
+		const withoutUnits = { ...valid, products: [productWithoutUnits] };
+		expect(FinmeiCreateInvoiceInputSchema.safeParse(withoutUnits).success).toBe(
+			false,
+		);
+		expect(
+			FinmeiUpdateInvoiceInputSchema.safeParse({ ...withoutUnits, id: 'inv_1' })
 				.success,
 		).toBe(false);
 	});

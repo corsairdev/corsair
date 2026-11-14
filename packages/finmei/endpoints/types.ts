@@ -279,7 +279,7 @@ export const FinmeiCreateInvoiceInputSchema = z
 					name: z.string(),
 					price: z.number(),
 					quantity: z.number(),
-					units: z.string().optional(),
+					units: z.string(),
 					vat_percentage: z.number().optional(),
 				}),
 			)
