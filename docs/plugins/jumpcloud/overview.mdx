@@ -6,6 +6,20 @@ description: "Manage JumpCloud directory resources — system users, systems, gr
 
 Use **JumpCloud** through Corsair: one client, typed API calls.
 
+JumpCloud needs an administrator's API key: in the admin console open the profile menu, then **My API Key**. If it says you don't have permission, turn on **Enable API access** for that administrator under Settings → Administrators first.
+
+Two optional settings are stored with the connected account next to the key, or passed to the factory:
+
+```ts
+jumpcloud({ key: process.env.JUMPCLOUD_API_KEY, region: 'eu', orgId: '5f0c1b2a3d4e5f6a7b8c9d0e' })
+```
+
+- **Region** (`region` account field). `us` (console.jumpcloud.com, the default), `eu` (console.eu.jumpcloud.com) or `in` (console.in.jumpcloud.com). A key only works in its organization's region; a pasted console host is read as its region, and any other value is rejected.
+- **Organization** (`org_id` account field). Multi-tenant (MSP) administrators set the 24-character organization ID each call acts on; it is sent as the `x-org-id` header. Leave it empty for a single-organization key.
+- **Calls that email or lock out people.** `users.create` emails the new user a welcome or activation link unless `state` is `STAGED`, and `users.update` does the same when it activates a staged user. `users.setPassword`, `expirePassword`, `resetMfa` and `enforceMfa` change how a person signs in. These are marked destructive, except `users.update`.
+- **Commands.** `commands.create` needs `user` (the system user to run as) for linux and mac commands; `000000000000000000000000` runs as root. `commands.run` runs the command on every bound system right away.
+- **No local data.** Every call returns live data from JumpCloud.
+
 **What you get:**
 
 - 48 typed API operations
