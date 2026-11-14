@@ -131,7 +131,7 @@ export function moonclerk<const T extends MoonClerkPluginOptions>(
 			}
 			throw new AuthMissingError('moonclerk', 'api_key');
 		},
-	} as BaseMoonClerkPlugin<T>;
+	} satisfies BaseMoonClerkPlugin<T>;
 }
 export type {
 	MoonClerkEndpointInputs,
