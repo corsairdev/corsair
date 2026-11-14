@@ -67,13 +67,14 @@ describe('geoapify plugin definition', () => {
 		]);
 	});
 
-	it('gives every endpoint a description and a read risk level', () => {
+	it('gives every endpoint a description and marks every credit-spending call destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const entry of Object.values(meta)) {
 			expect(entry.description?.length).toBeGreaterThan(20);
-			// Every Geoapify call computes an answer and changes nothing.
-			expect(entry.riskLevel).toBe('read');
+			// Every Geoapify request spends credits (a matrix up to 1,000), and
+			// the plugin rules (R8) mark credit-spending calls destructive.
+			expect(entry.riskLevel).toBe('destructive');
 		}
 	});
 

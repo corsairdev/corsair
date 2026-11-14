@@ -182,72 +182,72 @@ const defaultAuthType = 'api_key' as const;
 
 const geoapifyEndpointMeta = {
 	'geocode.forward': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Turn an address or place name into coordinates, a formatted address and its components, with a confidence for the match',
 	},
 	'geocode.reverse': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Turn a latitude and longitude into the address at that point, with its full set of components',
 	},
 	'geocode.autocomplete': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Suggest addresses from a partial one as a user types, which is what a search box needs',
 	},
 	'places.search': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Find places by category within an area, such as restaurants inside a circle, with the details each place carries',
 	},
 	'places.details': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Read one place by its ID, with its address, categories, contact details and opening hours',
 	},
 	'routing.route': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Calculate a route between waypoints, with distance, time and optional turn-by-turn steps and geometry',
 	},
 	'routing.isoline': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Calculate the area reachable from a point within a time or distance, one polygon per range. A slow calculation returns only an id to read it with later',
 	},
 	'routing.matrix': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Calculate the time and distance between every source and target, one row per source. A pair with no route has null distance and time',
 	},
 	'geo.ip': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Locate an IP address, or the caller when none is given, returning its country, city and coordinates',
 	},
 	'geo.timezone': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Read the time zone at a point, including whether daylight saving applies at a given moment',
 	},
 	'geo.postcodeSearch': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Look up a postcode, returning its coordinates and the places it covers',
 	},
 	'geo.postcodeList': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Search postcodes by a prefix or a spatial filter, which is what a postcode autocomplete needs',
 	},
 	'geo.boundaries': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Read the administrative boundaries a place belongs to, such as its city, county and country',
 	},
 	'geo.elevation': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Sample the terrain elevation at one or more points, in metres or feet',
 	},
@@ -312,7 +312,7 @@ export function geoapify<const T extends GeoapifyPluginOptions>(
 	} satisfies InternalGeoapifyPlugin;
 }
 
-export { GeoapifyAPIError } from './client';
+export { GeoapifyAPIError, geoapifyErrorInfo } from './client';
 
 export type {
 	GeoapifyAddress,
