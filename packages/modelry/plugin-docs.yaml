@@ -1,0 +1,18 @@
+displayName: Modelry
+description: Manage 3D modeling requests, products, assets, and embeds with Modelry.
+domain: modelry.ai
+overviewNote: |
+  The provider documents 23 operations; this plugin exposes 21. Asset ZIP download is deferred because the shared transport decodes non-JSON responses as text. Embed creation is deferred because the documented route and curl example disagree. No inbound webhooks are documented.
+examples:
+  read:
+    path: products.get
+    title: Get a product
+    args:
+      id: 123
+  write:
+    path: products.create
+    title: Create a product
+    args:
+      product:
+        title: Chair
+        sku: CHAIR-001
