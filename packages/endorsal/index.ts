@@ -272,9 +272,9 @@ const endorsalEndpointMeta = {
 		description: 'List contacts for the configured property',
 	},
 	'contacts.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create a contact; with campaignID, enroll it in an AutoRequest campaign that emails the contact',
+			'Create a contact; with campaignID, enroll it in an AutoRequest campaign that emails the contact. Destructive because that enrollment sends email',
 	},
 	'contacts.byId.get': {
 		riskLevel: 'read',

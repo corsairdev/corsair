@@ -261,9 +261,9 @@ await corsair.endorsal.api.contacts.get({});
 
 `contacts.post`
 
-Create a contact; with campaignID, enroll it in an AutoRequest campaign that emails the contact
+Create a contact; with campaignID, enroll it in an AutoRequest campaign that emails the contact. Destructive because that enrollment sends email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.endorsal.api.contacts.post({ contact: { email: 'jane.doe@example.com' }, campaignID: 'campaign_123' });
