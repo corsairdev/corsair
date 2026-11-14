@@ -97,3 +97,35 @@ describe('Gorgias response schemas', () => {
 		expect(result.success).toBe(false);
 	});
 });
+
+// Real responses from a Gorgias trial account (live run, 11-15), trimmed. Sub-resource
+// lists come back as { data: [...] } without object/uri/meta, and custom field values
+// are the stored scalar (a string here), not an object.
+const liveResponses: Record<string, unknown> = JSON.parse(
+	readFileSync(join(__dirname, 'live-responses.json'), 'utf8'),
+);
+
+describe('Gorgias live responses', () => {
+	it.each(Object.entries(liveResponses))(
+		'%s parses the response the live API returned',
+		(key, response) => {
+			if (!isOperationKey(key)) throw new Error(`Unknown operation ${key}`);
+			const result = gorgiasEndpointSchemas[key].output.safeParse(response);
+			expect(result.error?.issues ?? []).toEqual([]);
+		},
+	);
+
+	it('accepts scalar values when setting customer custom fields in bulk', () => {
+		const result = gorgiasEndpointSchemas[
+			'customers.updateCustomerCustomFieldValues'
+		].input.safeParse({
+			path: { customer_id: 1 },
+			body: [
+				{ id: 1, value: 'gold' },
+				{ id: 2, value: 3 },
+				{ id: 3, value: true },
+			],
+		});
+		expect(result.error?.issues ?? []).toEqual([]);
+	});
+});

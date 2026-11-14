@@ -3472,7 +3472,7 @@ const TicketCustomFieldValueSchema = z
 		field: TicketCustomFieldSchema.nullish(),
 		id: z.number().int().nullish(),
 		prediction: z.record(z.string(), z.json()).nullish(),
-		value: z.record(z.string(), z.json()).nullish(),
+		value: z.json().nullish(),
 	})
 	.passthrough();
 const TicketCustomerChannelCustomerSchema = z
@@ -7615,7 +7615,7 @@ const CustomerCustomFieldSchema = z
 const CustomerCustomFieldWithValueSchema = z
 	.object({
 		field: CustomerCustomFieldSchema.nullish(),
-		value: z.record(z.string(), z.json()).nullish(),
+		value: z.json().nullish(),
 	})
 	.passthrough();
 const TicketTeamSchema = z
@@ -7778,7 +7778,7 @@ const UpdateCustomFieldListSchema = z.array(UpdateCustomFieldItemSchema);
 const CustomerCustomFieldValueSchema = z
 	.object({
 		id: z.number().int(),
-		value: z.record(z.string(), z.json()),
+		value: z.union([z.string(), z.boolean(), z.number()]),
 	})
 	.strict();
 const UpdateTicketCustomFieldValueSchema = z
@@ -11943,7 +11943,7 @@ export const GorgiasEndpointInputSchemas = {
 		.object({
 			body: z
 				.object({
-					deactivated_datetime: z.string().nullable().optional(),
+					deactivated_datetime: z.string().optional(),
 					description: z.string().nullable().nullable().optional(),
 					http: z
 						.object({
@@ -12057,7 +12057,7 @@ export const GorgiasEndpointInputSchemas = {
 				.strict(),
 			body: z
 				.object({
-					deactivated_datetime: z.string().nullable().optional(),
+					deactivated_datetime: z.string().optional(),
 					description: z.string().nullable().nullable().optional(),
 					http: z
 						.object({
@@ -12428,7 +12428,7 @@ export const GorgiasEndpointInputSchemas = {
 				.object({
 					code: z.string(),
 					code_ast: z.record(z.string(), z.json()).optional(),
-					deactivated_datetime: z.string().nullable().optional(),
+					deactivated_datetime: z.string().optional(),
 					description: z.string().nullable().optional(),
 					event_types: z
 						.enum([
@@ -12490,7 +12490,7 @@ export const GorgiasEndpointInputSchemas = {
 				.object({
 					code: z.string().optional(),
 					code_ast: z.record(z.string(), z.json()).optional(),
-					deactivated_datetime: z.string().nullable().optional(),
+					deactivated_datetime: z.string().optional(),
 					description: z.string().nullable().optional(),
 					event_types: z
 						.enum([
@@ -14896,7 +14896,7 @@ export const GorgiasEndpointInputSchemas = {
 			body: z
 				.object({
 					context: z.enum(['ticket', 'customer', 'user']).optional(),
-					deactivated_datetime: z.string().nullable().optional(),
+					deactivated_datetime: z.string().optional(),
 					integration_id: z.number().int().min(0).nullable().optional(),
 					app_id: z.string().nullable().optional(),
 					order: z.number().int().min(0).optional(),
@@ -14969,7 +14969,7 @@ export const GorgiasEndpointInputSchemas = {
 			body: z
 				.object({
 					context: z.enum(['ticket', 'customer', 'user']).optional(),
-					deactivated_datetime: z.string().nullable().optional(),
+					deactivated_datetime: z.string().optional(),
 					integration_id: z.number().int().min(0).nullable().optional(),
 					app_id: z.string().nullable().optional(),
 					order: z.number().int().min(0).optional(),
@@ -15074,7 +15074,7 @@ export const GorgiasEndpointOutputSchemas = {
 	'customers.deleteCustomerCustomFieldValue': z.void(),
 	'customers.deleteCustomers': z.void(),
 	'customers.getCustomer': CustomerResponseSchema,
-	'customers.listCustomerCustomFieldsValues': z.array(
+	'customers.listCustomerCustomFieldsValues': gorgiasListSchema(
 		CustomerCustomFieldWithValueSchema,
 	),
 	'customers.listCustomers': gorgiasListSchema(
@@ -15887,7 +15887,7 @@ export const GorgiasEndpointOutputSchemas = {
 	'customers.updateCustomer': CustomerSchema,
 	'customers.updateCustomerCustomFieldValue':
 		CustomerCustomFieldWithValueSchema,
-	'customers.updateCustomerCustomFieldValues': z.array(
+	'customers.updateCustomerCustomFieldValues': gorgiasListSchema(
 		CustomerCustomFieldWithValueSchema,
 	),
 	'customers.updateCustomerData': z.void(),
@@ -15955,8 +15955,10 @@ export const GorgiasEndpointOutputSchemas = {
 	'tickets.deleteTicketCustomField': z.void(),
 	'tickets.deleteTicketTags': z.void(),
 	'tickets.getTicket': TicketSchema,
-	'tickets.listTicketCustomFields': z.array(TicketCustomFieldValueSchema),
-	'tickets.listTicketTags': z.array(
+	'tickets.listTicketCustomFields': gorgiasListSchema(
+		TicketCustomFieldValueSchema,
+	),
+	'tickets.listTicketTags': gorgiasListSchema(
 		z
 			.object({
 				id: z.number().int().nullish(),
@@ -15978,7 +15980,9 @@ export const GorgiasEndpointOutputSchemas = {
 	'tickets.listTickets': gorgiasListSchema(TicketCompactSchema),
 	'tickets.updateTicket': TicketSchema,
 	'tickets.updateTicketCustomField': TicketCustomFieldValueSchema,
-	'tickets.updateTicketCustomFields': z.array(TicketCustomFieldValueSchema),
+	'tickets.updateTicketCustomFields': gorgiasListSchema(
+		TicketCustomFieldValueSchema,
+	),
 	'tickets.updateTicketTags': z.void(),
 	'users.createUser': UserSchema,
 	'users.deleteUser': z.void(),

@@ -198,7 +198,7 @@ const fixtures: Record<string, OperationFixture> = {
 	},
 	'customers.listCustomerCustomFieldsValues': {
 		input: { path: { customer_id: 1 } },
-		output: [],
+		output: { data: [] },
 	},
 	'customers.listCustomers': {
 		input: {},
@@ -292,7 +292,7 @@ const fixtures: Record<string, OperationFixture> = {
 	},
 	'customers.updateCustomerCustomFieldValues': {
 		input: { path: { customer_id: 1 }, body: [] },
-		output: [],
+		output: { data: [] },
 	},
 	'customers.updateCustomerData': {
 		input: { path: { customer_id: 1 }, body: { data: {} } },
@@ -1281,9 +1281,12 @@ const fixtures: Record<string, OperationFixture> = {
 	},
 	'tickets.listTicketCustomFields': {
 		input: { path: { ticket_id: 1 } },
-		output: [],
+		output: { data: [] },
 	},
-	'tickets.listTicketTags': { input: { path: { ticket_id: 1 } }, output: [] },
+	'tickets.listTicketTags': {
+		input: { path: { ticket_id: 1 } },
+		output: { data: [] },
+	},
 	'tickets.listTickets': {
 		input: {},
 		output: {
@@ -1391,7 +1394,7 @@ const fixtures: Record<string, OperationFixture> = {
 	},
 	'tickets.updateTicketCustomFields': {
 		input: { path: { ticket_id: 1 }, body: [] },
-		output: [],
+		output: { data: [] },
 	},
 	'tickets.updateTicketTags': {
 		input: { path: { ticket_id: 1 }, body: { names: [], ids: [] } },
