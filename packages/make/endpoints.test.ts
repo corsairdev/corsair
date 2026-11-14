@@ -380,14 +380,18 @@ describe('Make scenario public endpoints', () => {
 		// A key-builder auth error is the one core turns into a connect link, so
 		// a token without a zone must fail there, not later in the endpoint.
 		const keyBuilder = make().keyBuilder!;
-		const keyCtx = (storedZone: string | null) =>
-			({
-				authType: 'api_key',
-				keys: {
-					get_api_key: async () => 'stored-token',
-					get_zone: async () => storedZone,
-				},
-			}) as unknown as MakeKeyBuilderContext;
+		const keyCtx = (storedZone: string | null): MakeKeyBuilderContext => ({
+			authType: 'api_key',
+			options: {},
+			tenantId: 'default',
+			// The account key manager also has setters and key-rotation methods
+			// the key builder never calls, so only the two getters it reads are
+			// stubbed and the cast is limited to `keys`.
+			keys: {
+				get_api_key: async () => 'stored-token',
+				get_zone: async () => storedZone,
+			} as unknown as MakeKeyBuilderContext['keys'],
+		});
 		await expect(keyBuilder(keyCtx(null), 'endpoint')).rejects.toBeInstanceOf(
 			AuthMissingError,
 		);
