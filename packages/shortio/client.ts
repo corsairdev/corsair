@@ -19,9 +19,10 @@ export class ShortioAPIError extends Error {
 	}
 }
 
+// Core retries a 429 up to three times and honours Retry-After.
 const rateLimitConfig: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'Retry-After' },

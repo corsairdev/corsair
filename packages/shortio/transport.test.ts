@@ -50,23 +50,27 @@ describe('Short.io HTTP transport', () => {
 			'application/json',
 		);
 	});
-	it('preserves numeric Retry-After on a 429 without replaying a write', async () => {
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response(JSON.stringify({ error: 'rate limit' }), {
-				status: 429,
-				headers: { 'Content-Type': 'application/json', 'Retry-After': '3' },
-			}),
-		);
+	it('lets core retry a 429 after Retry-After and returns the retried result', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ error: 'rate limit' }), {
+					status: 429,
+					headers: { 'Content-Type': 'application/json', 'Retry-After': '1' },
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ ...link, success: true }), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+			);
 		await expect(
 			linksCreate(ctx, {
 				domain: 'short.example',
 				originalURL: 'https://example.com',
 			}),
-		).rejects.toMatchObject({
-			status: 429,
-			retryAfter: 3000,
-			body: { error: 'rate limit' },
-		});
-		expect(fetchMock).toHaveBeenCalledTimes(1);
+		).resolves.toMatchObject({ idString: 'lnk_1', success: true });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 });
