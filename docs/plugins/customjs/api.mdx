@@ -349,7 +349,7 @@ await corsair.customjs.api.pdf.fromMarkdown({ markdown: '# Report\n\nTotal: 100'
 
 Give an AI agent a plain-language goal and let it drive a browser for up to maxSteps actions; it bills model tokens and can submit forms on the site it visits
 
-**Risk:** `write` · **Irreversible**
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.customjs.api.scrape.agent({ goal: 'Go to shop.example.com and list every product name and price', maxSteps: 8 });

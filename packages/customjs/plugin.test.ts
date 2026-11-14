@@ -75,7 +75,7 @@ describe('customjs plugin definition', () => {
 			'pages.update': 'write',
 			'pdf.fromHtml': 'read',
 			'pdf.fromMarkdown': 'read',
-			'scrape.agent': 'write',
+			'scrape.agent': 'destructive',
 			'scrape.page': 'write',
 			'screenshot.capture': 'write',
 		});

@@ -196,7 +196,7 @@ const customjsEndpointMeta = {
 			'Drive a browser through exact steps (navigate, click, type, evaluate and extract) and return the extracted values, with no model tokens spent per step',
 	},
 	'scrape.agent': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Give an AI agent a plain-language goal and let it drive a browser for up to maxSteps actions; it bills model tokens and can submit forms on the site it visits',
 		irreversible: true,
