@@ -324,6 +324,71 @@ describe('Stack Exchange HTTP client', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(3);
 	});
 
+	it('counts /users/{id} routes and their /me twins as one method', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(
+				async () =>
+					new Response(
+						JSON.stringify({ items: [], has_more: false, backoff: 60 }),
+						{ status: 200, headers: { 'Content-Type': 'application/json' } },
+					),
+			);
+		await makeStackExchangeRequest(
+			'siteRead',
+			'privileges-on-users',
+			undefined,
+			'api_key',
+			{ site: 'stackoverflow', pathParams: { id: 1 } },
+		);
+		await expect(
+			makeStackExchangeRequest(
+				'siteRead',
+				'me-privileges',
+				'oauth-token',
+				'oauth_2',
+				{ site: 'stackoverflow' },
+			),
+		).rejects.toThrow('rate limit');
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	// Two calls in flight answer with different backoffs; `first` answers right
+	// away and `second` 100 ms later.
+	function mockTwoBackoffs(first: number, second: number) {
+		let calls = 0;
+		return jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+			const call = calls++;
+			const backoff = call === 0 ? first : call === 1 ? second : undefined;
+			if (call === 1) await new Promise((resolve) => setTimeout(resolve, 100));
+			return new Response(
+				JSON.stringify({ items: [], has_more: false, backoff }),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } },
+			);
+		});
+	}
+	const sites = () =>
+		makeStackExchangeRequest('networkRead', 'sites', undefined, 'api_key', {});
+
+	it('keeps the longer backoff when a later response asks for a shorter one', async () => {
+		const fetchMock = mockTwoBackoffs(60, 1);
+		await Promise.all([sites(), sites()]);
+		await expect(sites()).rejects.toThrow('rate limit');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('re-reads the deadline after waiting, in case another response extended it', async () => {
+		const fetchMock = mockTwoBackoffs(1, 60);
+		const first = sites();
+		const second = sites();
+		await first;
+		// Starts waiting on the 1 s backoff; the 60 s one lands while it sleeps.
+		const waiting = sites();
+		await second;
+		await expect(waiting).rejects.toThrow('rate limit');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
 	it('waits out a short backoff before calling the method again', async () => {
 		let calls = 0;
 		const fetchMock = jest

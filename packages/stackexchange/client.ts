@@ -53,26 +53,34 @@ function serializeParameters(
 }
 
 // The docs require waiting `backoff` seconds before calling the same method
-// again, and count /me routes as their /users/{ids} equivalent.
+// again, and count /me routes as their /users/{ids} equivalent. The /me routes
+// also mirror singular /users/{id} routes, so both share one key.
 const backoffUntil = new Map<string, number>();
 export const MAX_BACKOFF_WAIT_MS = 30_000;
 
 function backoffKey(path: string, site: string | undefined): string {
-	const method = path.replace(/^me(?=\/|$)/, 'users/{ids}');
+	const method = path.replace(/^(?:me|users\/\{id\})(?=\/|$)/, 'users/{ids}');
 	return `${site ?? ''} ${method}`;
 }
 
+// Another response can extend the deadline while this call sleeps, so the
+// deadline is read again after every wait.
 async function waitForBackoff(key: string): Promise<void> {
-	const until = backoffUntil.get(key);
-	if (until === undefined) return;
-	const waitMs = until - Date.now();
-	if (waitMs > MAX_BACKOFF_WAIT_MS) {
-		throw new Error(
-			`Stack Exchange rate limit: backoff requested, retry this method in ${Math.ceil(waitMs / 1000)}s`,
-		);
+	for (;;) {
+		const until = backoffUntil.get(key);
+		if (until === undefined) return;
+		const waitMs = until - Date.now();
+		if (waitMs <= 0) {
+			backoffUntil.delete(key);
+			return;
+		}
+		if (waitMs > MAX_BACKOFF_WAIT_MS) {
+			throw new Error(
+				`Stack Exchange rate limit: backoff requested, retry this method in ${Math.ceil(waitMs / 1000)}s`,
+			);
+		}
+		await new Promise((resolve) => setTimeout(resolve, waitMs));
 	}
-	if (waitMs > 0) await new Promise((resolve) => setTimeout(resolve, waitMs));
-	backoffUntil.delete(key);
 }
 
 // The wrapper is untrusted JSON; only a positive numeric backoff is recorded.
@@ -85,7 +93,9 @@ function recordBackoff(key: string, response: unknown): void {
 		return;
 	const { backoff } = response;
 	if (typeof backoff === 'number' && backoff > 0) {
-		backoffUntil.set(key, Date.now() + backoff * 1000);
+		// Keep the later deadline: a shorter backoff must not cut a longer one short.
+		const until = Date.now() + backoff * 1000;
+		backoffUntil.set(key, Math.max(until, backoffUntil.get(key) ?? 0));
 	}
 }
 
