@@ -32,16 +32,35 @@ function redactMessage(message: string, secrets: string[]): string {
 	return redacted.replace(EMAIL_PATTERN, '[REDACTED]');
 }
 
+// unknown: an error body is untyped (JSON from NeverBounce or text from a proxy).
+function redactBody(body: unknown, secrets: string[]): unknown {
+	if (typeof body === 'string') return redactMessage(body, secrets);
+	if (Array.isArray(body)) return body.map((item) => redactBody(item, secrets));
+	if (typeof body === 'object' && body !== null) {
+		return Object.fromEntries(
+			Object.entries(body).map(([name, value]) => [
+				name,
+				redactBody(value, secrets),
+			]),
+		);
+	}
+	return body;
+}
+
 function redactEmailInUrl(url: string): string {
 	return url.replace(/([?&]email=)[^&#]*/g, '$1[REDACTED]');
 }
 
 /**
- * Core's `ApiError` already redacts `key`, but keeps the checked address in
- * the URL and query. It is rebuilt with the same status and rate-limit fields
+ * Core's `ApiError` already redacts `key` in the URL and query, but keeps the
+ * checked address there, and keeps both in the message and body. It is rebuilt with the same status and rate-limit fields
  * so the error handlers still match it, minus the address.
  */
-function sanitizeApiError(error: ApiError, email: string): ApiError {
+function sanitizeApiError(
+	error: ApiError,
+	apiKey: string,
+	email: string,
+): ApiError {
 	const query = error.request.query
 		? Object.fromEntries(
 				Object.entries(error.request.query).map(([name, value]) => [
@@ -50,11 +69,8 @@ function sanitizeApiError(error: ApiError, email: string): ApiError {
 				]),
 			)
 		: undefined;
-	// unknown: an error body is untyped (JSON from NeverBounce or text from a proxy).
-	const body: unknown =
-		typeof error.body === 'string'
-			? redactMessage(error.body, [email])
-			: error.body;
+	// The key and the address can come back in any field of an error body.
+	const body = redactBody(error.body, [apiKey, email]);
 	return new ApiError(
 		{
 			...error.request,
@@ -68,7 +84,7 @@ function sanitizeApiError(error: ApiError, email: string): ApiError {
 			statusText: error.statusText,
 			body,
 		},
-		redactMessage(error.message, [email]),
+		redactMessage(error.message, [apiKey, email]),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -107,7 +123,9 @@ export async function makeNeverBounceRequest(
 			{ method: 'GET', url: '/single/check', query: { ...query, key: apiKey } },
 		);
 	} catch (error) {
-		if (error instanceof ApiError) throw sanitizeApiError(error, query.email);
+		if (error instanceof ApiError) {
+			throw sanitizeApiError(error, apiKey, query.email);
+		}
 		throw error;
 	}
 	// NeverBounce reports its own failures (bad key, throttling, bad input) as

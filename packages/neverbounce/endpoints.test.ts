@@ -130,6 +130,32 @@ describe('NeverBounce single.check', () => {
 		});
 	});
 
+	it('cuts the key and the address out of a non-2xx error message and body', async () => {
+		global.fetch = jest.fn().mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					message: "Invalid API key 'test-key' for user@example.com",
+					detail: { request: { key: 'test-key', email: 'user@example.com' } },
+				}),
+				{ status: 418, headers: { 'content-type': 'application/json' } },
+			),
+		);
+		const plugin = neverbounce();
+		let caught: unknown;
+		try {
+			await plugin.endpoints!.single.check(ctx, { email: 'user@example.com' });
+		} catch (error) {
+			caught = error;
+		}
+		expect(caught).toBeInstanceOf(ApiError);
+		if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(caught.status).toBe(418);
+		const serialized = caught.message + JSON.stringify(caught.body);
+		expect(serialized).not.toContain('test-key');
+		expect(serialized).not.toContain('user@example.com');
+		expect(serialized).toContain('Invalid API key');
+	});
+
 	it('rejects malformed provider data', async () => {
 		global.fetch = jest.fn().mockResolvedValue(
 			new Response(JSON.stringify({ status: 'success', flags: 'wrong' }), {
