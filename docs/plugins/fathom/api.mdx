@@ -1,0 +1,914 @@
+---
+title: "Fathom API reference"
+sidebarTitle: "API"
+description: "API reference for the Fathom plugin in Corsair: every `fathom.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Retrieve information about the account that owns the API key
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `object` | `account` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+---
+
+### getToken
+
+`account.getToken`
+
+Retrieve metadata about the API token used to make the request
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.account.getToken({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `version` | `number` | Yes | — |
+| `abilities` | `string[]` | Yes | — |
+| `last_used_at` | `string \| null` | Yes | — |
+| `expires_at` | `string \| null` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Create an event (deprecated: returns 410 Gone; track directly on site)
+
+**Risk:** `write`
+
+```ts
+await corsair.fathom.api.events.create({ site_id: 'CDBUGS', name: 'Purchase early access' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `currency` | `dollar \| pound \| euro \| yuan \| peso \| shekel \| yen \| won \| hryvnia \| franc \| rupee \| integer \| none` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `name` | `string` | No | — |
+| `currency` | `string \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`events.delete`
+
+Delete an event by ID (deprecated: returns 410 Gone)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fathom.api.events.delete({ site_id: 'CDBUGS', event_id: 'IJKLMNOP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `event_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `name` | `string` | No | — |
+| `currency` | `string \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### deleteByName
+
+`events.deleteByName`
+
+Remove an event's currency setting by name (the event and its completions stay; set it again with events.setCurrency)
+
+**Risk:** `write`
+
+```ts
+await corsair.fathom.api.events.deleteByName({ site_id: 'CDBUGS', name: 'Purchase early access' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `event` | Yes | — |
+| `name` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`events.get`
+
+Retrieve a single event by ID (deprecated: returns 410 Gone)
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.events.get({ site_id: 'CDBUGS', event_id: 'IJKLMNOP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `event_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `name` | `string` | No | — |
+| `currency` | `string \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`events.list`
+
+List all events tracked by a site with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.events.list({ site_id: 'CDBUGS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `url` | `string` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  name: string,
+  currency?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setCurrency
+
+`events.setCurrency`
+
+Set or update the currency for an event by name
+
+**Risk:** `write`
+
+```ts
+await corsair.fathom.api.events.setCurrency({ site_id: 'CDBUGS', name: 'Purchase early access', currency: 'pound' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `currency` | `dollar \| pound \| euro \| yuan \| peso \| shekel \| yen \| won \| hryvnia \| franc \| rupee \| integer \| none` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `event` | Yes | — |
+| `name` | `string` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`events.update`
+
+Update an event by ID (deprecated: returns 410 Gone)
+
+**Risk:** `write`
+
+```ts
+await corsair.fathom.api.events.update({ site_id: 'CDBUGS', event_id: 'IJKLMNOP', name: 'Updated Event' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `currency` | `dollar \| pound \| euro \| yuan \| peso \| shekel \| yen \| won \| hryvnia \| franc \| rupee \| integer \| none` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `name` | `string` | No | — |
+| `currency` | `string \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### wipe
+
+`events.wipe`
+
+Wipe event completion data (deprecated: returns 410 Gone)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fathom.api.events.wipe({ site_id: 'CDBUGS', event_id: 'IJKLMNOP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `event_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `name` | `string` | No | — |
+| `currency` | `string \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+## Milestones
+
+### create
+
+`milestones.create`
+
+Create a new milestone for a site
+
+**Risk:** `write`
+
+```ts
+await corsair.fathom.api.milestones.create({ site_id: 'CDBUGS', name: 'Website Redesign Launch', milestone_date: '2024-01-15' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `milestone_date` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `milestone` | Yes | — |
+| `name` | `string` | Yes | — |
+| `milestone_date` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`milestones.delete`
+
+Permanently delete a milestone from a site
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fathom.api.milestones.delete({ site_id: 'CDBUGS', milestone_id: 'ddc9cdff-ab83-41fa-96c6-dfb276a862e7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `milestone_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `milestone` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`milestones.get`
+
+Retrieve a single milestone by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.milestones.get({ site_id: 'CDBUGS', milestone_id: 'ddc9cdff-ab83-41fa-96c6-dfb276a862e7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `milestone_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `milestone` | Yes | — |
+| `name` | `string` | Yes | — |
+| `milestone_date` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`milestones.list`
+
+List all milestones for a site with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.milestones.list({ site_id: 'CDBUGS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `url` | `string` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: milestone,
+  name: string,
+  milestone_date: string,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`milestones.update`
+
+Update a milestone name or date by its ID
+
+**Risk:** `write`
+
+```ts
+await corsair.fathom.api.milestones.update({ site_id: 'CDBUGS', milestone_id: 'ddc9cdff-ab83-41fa-96c6-dfb276a862e7', name: 'Website Redesign Launch v2', milestone_date: '2024-01-20' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `milestone_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `milestone_date` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `milestone` | Yes | — |
+| `name` | `string` | Yes | — |
+| `milestone_date` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+## Reports
+
+### aggregation
+
+`reports.aggregation`
+
+Generate custom aggregation reports across pageviews or events
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.reports.aggregation({ entity: 'pageview', entity_id: 'CDBUGS', aggregates: 'pageviews,visits,uniques' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `pageview \| event` | Yes | — |
+| `entity_id` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `entity_name` | `string` | No | — |
+| `aggregates` | `string` | Yes | — |
+| `date_grouping` | `hour \| day \| month \| year` | No | — |
+| `field_grouping` | `string` | No | — |
+| `sort_by` | `string` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filters` | `string \| object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+string | {
+  property: string,
+  operator: is | is not | is like | is not like | matching | not matching,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, string \| number \| null>[]`
+
+
+---
+
+### currentVisitors
+
+`reports.currentVisitors`
+
+Get real-time current visitor count and optional page/referrer breakdown
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.reports.currentVisitors({ site_id: 'CDBUGS', detailed: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `detailed` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  total: number,
+  content?: {
+    hostname: string,
+    pathname: string,
+    total: number
+  }[],
+  referrers?: {
+    referrer_hostname: string,
+    referrer_pathname: string,
+    total: number
+  }[]
+} | {
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sites
+
+### create
+
+`sites.create`
+
+Create a new site entity in Fathom Analytics
+
+**Risk:** `write`
+
+```ts
+await corsair.fathom.api.sites.create({ name: 'My Website', sharing: 'none' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `sharing` | `none \| private \| public` | No | — |
+| `share_password` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `multi_domain` | `boolean` | No | — |
+| `multi_domain_option` | `combined \| separate` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `site` | Yes | — |
+| `name` | `string` | Yes | — |
+| `sharing` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `timezone` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`sites.delete`
+
+Permanently delete a site and all associated analytics data
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fathom.api.sites.delete({ site_id: 'CDBUGS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `site` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`sites.get`
+
+Retrieve details of a single site by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.sites.get({ site_id: 'CDBUGS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `site` | Yes | — |
+| `name` | `string` | Yes | — |
+| `sharing` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `timezone` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`sites.list`
+
+List all sites owned by the account with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.fathom.api.sites.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `url` | `string` | Yes | — |
+| `has_more` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: site,
+  name: string,
+  sharing: string,
+  created_at: string,
+  timezone: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sites.update`
+
+Update site settings such as name, sharing, or timezone
+
+**Risk:** `write`
+
+```ts
+await corsair.fathom.api.sites.update({ site_id: 'CDBUGS', name: 'Updated Portfolio' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `sharing` | `none \| private \| public` | No | — |
+| `share_password` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `multi_domain` | `boolean` | No | — |
+| `multi_domain_option` | `combined \| separate` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `site` | Yes | — |
+| `name` | `string` | Yes | — |
+| `sharing` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `timezone` | `string` | Yes | — |
+
+
+
+---
+
+### wipe
+
+`sites.wipe`
+
+Wipe all data from a site (deprecated: returns 410 Gone)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fathom.api.sites.wipe({ site_id: 'CDBUGS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+

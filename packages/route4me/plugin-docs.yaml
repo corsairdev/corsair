@@ -1,0 +1,73 @@
+displayName: Route4Me
+description: Route planning and last-mile delivery with Route4Me - read routes, orders, vehicles, address book contacts, team members and optimization problems, create orders, vehicles and contacts, and submit addresses for optimization.
+domain: route4me.com
+recommendedAuth: api_key
+overviewNote: |
+  Copy the key from the Route4Me web app under **Settings → Organization Settings → API Key**. One key serves both API generations this plugin wraps, and it travels as the `api_key` query parameter. Things to know before you call:
+
+  - **Two hosts, two generations.** Optimizations use the v4 API on `api.route4me.com/api.v4`; routes, orders, vehicles, the address book, customers and team users use the v5 API on `wh.route4me.com/modules`. Both are wrapped here, so a caller does not have to know which generation a resource lives on.
+  - **The v5 host needs `Accept: application/json`.** `wh.route4me.com` also serves the web app, and a request that does not ask for JSON is redirected to the login page — even with a valid key. The plugin always sends that header. If you call this host yourself, send it too, or a rejected key looks like an HTML login page rather than a 401.
+  - **The error envelopes differ.** v4 answers `{ errors: [...], error_code }`; v5 answers `{ status: false, error, code, messages: [...] }`. `Route4MeAPIError.errors` holds every message in both cases.
+  - **v5 validates with 406.** A rejected field or filter comes back as `406`, not `400`, and the plugin treats it as a validation failure rather than a request that might succeed on a retry.
+  - **Two kinds of paging.** The v5 collections page by `page`/`per_page` and return a `meta` block; `next_page` is derived from `meta.current_page` and `meta.last_page`. The address book pages by `limit`/`offset` and the plugin returns `next_offset`, which is null on a short page. v4 optimizations page by `limit`/`offset` with `totalRecords`.
+  - **`optimizations.list` accepts one or many.** Passing `optimization_problem_id` makes v4 answer a single object instead of a collection; the plugin normalises both into the same `optimizations` array and reports `total_records: 1`. `optimizations.get` is the clearer call when you already have the id.
+  - **Creating an optimization is asynchronous.** The solver queues the problem and returns an id with `state: 0`. Poll `optimizations.get` until `state` reaches 4 (Optimized); 5 is an error and 6 means directions are still being computed.
+  - **Coordinates are required for an address book contact.** `addresses.create` needs `cached_lat` and `cached_lng` alongside the street address, because Route4Me will not geocode on write. An optimization stop, by contrast, takes either an address or a coordinate pair.
+  - **Choosing a stop type.** `address_stop_type` takes one of `DELIVERY`, `PICKUP`, `BREAK`, `MEETUP`, `SERVICE` or `VISIT`; leaving it out lets Route4Me use the account default.
+  - **Order contact fields are renamed on the wire.** `orders.create` sends `first_name`, `last_name`, `email` and `phone` as `EXT_FIELD_first_name` and so on, which is what the v5 API reads.
+  - **Retries.** Route4Me documents no throughput window and no `Retry-After`, so a 429 is retried three times with exponential backoff. A 5xx is retried only for calls declared read-only: v5's list routes are POSTs, so the HTTP method alone would misclassify them.
+examples:
+  read:
+    path: routes.list
+    title: List routes with page paging
+    args:
+      page: 1
+      per_page: 50
+      order_by:
+        field: route_created_unix
+        direction: desc
+  write:
+    path: orders.create
+    title: Create a delivery order
+    args:
+      address_1: Prinsengracht 100
+      address_city: Amsterdam
+      address_zip: 1015 EA
+      address_alias: Canal stop
+      first_name: Jordan
+      last_name: Lee
+apiExamples:
+  routes.list:
+    call: "{ page: 1, per_page: 100, timezone: 'Europe/Amsterdam' }"
+  routes.get:
+    call: "{ route_id: '9F86D081884C7D659A2FEAA0C55AD015' }"
+  orders.list:
+    call: "{ page: 0, per_page: 50, search_query: 'canal' }"
+  orders.create:
+    call: "{ address_1: 'Prinsengracht 100', address_city: 'Amsterdam', first_name: 'Jordan', email: 'jordan@example.com' }"
+  vehicles.list:
+    call: "{ is_operational: true }"
+  vehicles.create:
+    call: "{ vehicle_alias: 'Van 1', vehicle_license_plate: 'AB-123-CD', vehicle_make: 'Ford' }"
+  addresses.list:
+    call: "{ display: 'unrouted', limit: 100, offset: 0 }"
+  addresses.create:
+    call: "{ address_1: 'Prinsengracht 100', address_city: 'Amsterdam', cached_lat: 52.373066, cached_lng: 4.886445 }"
+  team.me: {}
+  team.list:
+    call: "{ drivers_only: true }"
+  optimizations.list:
+    call: "{ state: 4, limit: 10, offset: 0 }"
+  optimizations.get:
+    call: "{ optimization_problem_id: 'B0C1D2E3F4A5B6C7D8E9F0A1B2C3D4E5' }"
+  optimizations.create:
+    call: "{ addresses: [{ lat: 52.373066, lng: 4.856445 }, { address: 'Damrak 1, Amsterdam' }], route_max_duration: 1800, algorithm_type: 'TSP' }"
+apiNotes:
+  'routes.list': 'A POST with no side effect; the plugin marks it replayable so a 5xx is retried.'
+  'routes.get': 'The route id is exactly 32 characters and validated before the request.'
+  'orders.create': 'Contact fields go out as EXT_FIELD_first_name and so on, which is what the v5 API reads.'
+  'vehicles.list': 'This host answers a bare JSON array rather than a page envelope.'
+  'addresses.list': 'Pages by limit/offset; next_offset is null on a short page.'
+  'addresses.create': 'Coordinates are required; Route4Me will not geocode on write.'
+  'optimizations.list': 'Passing optimization_problem_id makes v4 answer one object; both forms are normalised into optimizations.'
+  'optimizations.create': 'Asynchronous: poll optimizations.get until state is 4 (Optimized).'

@@ -1,0 +1,56 @@
+displayName: Roboflow
+description: Read workspaces, projects, versions and trained models, create projects, upload images, and run model inference on the serverless host with Roboflow.
+domain: roboflow.com
+recommendedAuth: api_key
+overviewNote: |
+  Find your key under **Account, Roboflow Keys**, or in the workspace settings. It goes in `Authorization: Bearer`, which the docs call the recommended transport; the `api_key` query parameter still works but puts the key in URLs and logs, so the plugin never uses it.
+
+  **Two hosts, two contracts:**
+
+  - **`api.roboflow.com`** for management: workspaces, projects, versions, models and image upload.
+  - **`serverless.roboflow.com`** for inference. It is the Inference server's interface, not the Platform API's, with image URLs in the `image` query parameter and base64 images in the raw form body. Other options are query parameters.
+
+  Things to know before you rely on a response:
+
+  - **`account.get` returns `200` whether or not your key works.** With no key it still answers a welcome message and instructions, so a successful status proves nothing. Only `workspace` appears for a valid key, and that is what the plugin's `authenticated` field reports. Reading the `200` as a success is the easiest mistake to make here.
+  - **An inference model ID is `project/version`.** Take it from `models.list`'s `url`, which is exactly what `infer` expects. A model not tied to a version is `workspace/model` and splits the same way; the plugin rejects an ID with no separator rather than sending a request that cannot resolve.
+  - **`infer` is billed per image.** It is marked `write` for that reason and is never retried. The prediction payload is the Inference server's and differs by task: a detection model returns boxes in `predictions`, single-label classification returns class scores in an array, multi-label classification returns a class-keyed object, and semantic segmentation returns a mask object. Instance segmentation adds `points` to each prediction.
+  - **A duplicate image upload is a success.** `images.upload` answers `duplicate: true` with the existing image's `id` and adds nothing. That is not a failure, and treating it as one would drop a valid image ID.
+  - **`images.upload` accepts a project slug or a workspace/project ID.** Both use `/dataset/{project}/upload` with the project slug. The API key selects the workspace.
+  - **`annotation` is a shared label group.** Projects in the same group share classes, so reusing one is how a second project starts from an existing label set. `anomaly-detection` additionally needs the feature turned on and a group no other project type uses.
+  - **`license` is required on a public plan.** `Private` is what keeps a project private; any other value publishes it on Universe, and a public plan cannot create a private project at all.
+  - **`versions` come back newest first**, and `version.generating` tells you whether the version is still being built — a `progress` under 1 means the image count is not final.
+examples:
+  read:
+    path: models.list
+    title: List a project's trained models
+    args:
+      workspace: roboflow
+      project: chess-sample-4ckfl
+  write:
+    path: infer
+    title: Run a model on an image
+    args:
+      modelId: chess-sample-4ckfl/3
+      image: https://example.com/board.jpg
+      confidence: 0.5
+apiExamples:
+  account.get: {}
+  workspace.get:
+    call: "{ workspace: 'roboflow' }"
+  project.get:
+    call: "{ workspace: 'roboflow', project: 'chess-sample-4ckfl' }"
+  project.create:
+    call: "{ workspace: 'roboflow', name: 'Sharks Dataset', type: 'object-detection', annotation: 'sharks', license: 'Private' }"
+  project.delete:
+    call: "{ workspace: 'roboflow', project: 'chess-sample-4ckfl' }"
+  version.get:
+    call: "{ workspace: 'roboflow', project: 'chess-sample-4ckfl', version: 3 }"
+  version.delete:
+    call: "{ workspace: 'roboflow', project: 'chess-sample-4ckfl', version: 3 }"
+  models.list:
+    call: "{ workspace: 'roboflow', project: 'chess-sample-4ckfl' }"
+  images.upload:
+    call: "{ project: 'roboflow/chess-sample-4ckfl', image: 'https://example.com/board.jpg', batch: 'may-import', tag: ['chess'] }"
+  infer:
+    call: "{ modelId: 'chess-sample-4ckfl/3', image: 'https://example.com/board.jpg', confidence: 0.5, overlap: 0.3 }"

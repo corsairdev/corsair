@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
 	buildEscalationComment,
+	buildResolvedComment,
 	buildRoundOneComment,
 	currentRound,
 	decide,
+	reviewSupersededByCleanSummary,
 } from './loop.ts';
 import type { Finding } from './parse-greptile.ts';
 
@@ -66,4 +68,95 @@ test('escalation comment has round=3 marker', () => {
 			'<!-- corsair-review-bot round=3 -->',
 		),
 	);
+});
+
+const summaryBody = (sha: string, badges = '') =>
+	`<h3>Greptile Summary</h3>${badges}\nConfidence Score: 5/5\nReviews (5) · Last reviewed commit: ["fix(ramp): time out a token response bod..."](https://github.com/corsairdev/corsair/commit/${sha}) · [Reviewed by Greptile](https://www.greptile.com/)`;
+const summary = (sha: string, updatedAt: string, badges = '') => ({
+	body: summaryBody(sha, badges),
+	updatedAt,
+});
+const review = (commitId: string, submittedAt: string) => ({
+	commitId,
+	submittedAt,
+});
+const OLD = 'f8411cb362779897ed7000c25a20e3e566871a9f';
+const NEW = 'dbbfc849d8bb4914a4b2d1ddb50328027aea3669';
+
+test('a later clean summary supersedes an older review (corsair#2184, 11-12)', () => {
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			summary(NEW, '2026-11-12T19:05:00Z'),
+			review(OLD, '2026-11-12T18:16:10Z'),
+		),
+		true,
+	);
+});
+
+test('a review newer than the summary keeps its findings', () => {
+	// Review B lands with findings while the summary still names clean commit A.
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			summary(OLD, '2026-11-12T18:16:10Z'),
+			review(NEW, '2026-11-12T19:05:00Z'),
+		),
+		false,
+	);
+});
+
+test('the review is current when the summary names its commit', () => {
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			summary(OLD, '2026-11-12T19:05:00Z'),
+			review(OLD, '2026-11-12T18:16:10Z'),
+		),
+		false,
+	);
+});
+
+test('a later summary that still shows a P0 or P1 does not clear the review', () => {
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			summary(NEW, '2026-11-12T19:05:00Z', '<img alt="P1" src="x">'),
+			review(OLD, '2026-11-12T18:16:10Z'),
+		),
+		false,
+	);
+});
+
+test('missing pieces keep the review', () => {
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			undefined,
+			review(OLD, '2026-11-12T18:16:10Z'),
+		),
+		false,
+	);
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			summary(NEW, '2026-11-12T19:05:00Z'),
+			undefined,
+		),
+		false,
+	);
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			{ body: 'no commit line here', updatedAt: '2026-11-12T19:05:00Z' },
+			review(OLD, '2026-11-12T18:16:10Z'),
+		),
+		false,
+	);
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			summary(NEW, ''),
+			review(OLD, '2026-11-12T18:16:10Z'),
+		),
+		false,
+	);
+});
+
+test('the resolved comment keeps the round=3 marker so it replaces the escalation', () => {
+	const body = buildResolvedComment();
+	assert.ok(body.startsWith('<!-- corsair-review-bot round=3 -->'));
+	assert.match(body, /no longer needed/);
 });

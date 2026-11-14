@@ -81,6 +81,10 @@
   "cloudinary": {
     "from": "https://svgl.app/library/cloudinary.svg"
   },
+  "cloudlayer": {
+    "from": "https://media.brand.dev/0aec83fa-756c-47a9-af40-1117d5ff7dc6.svg",
+    "note": "found with the context.dev Brand API for cloudlayer.io"
+  },
   "coda": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/coda.svg"
   },
@@ -105,6 +109,10 @@
     "from": "https://svgl.app/library/cursor_light.svg",
     "note": "stylesheet (one fill rule) inlined"
   },
+  "databox": {
+    "from": "https://media.brand.dev/637dcc37-8b39-462e-9981-097c284ad89f.svg",
+    "note": "found with the context.dev Brand API for databox.com"
+  },
   "datadog": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/datadog.svg"
   },
@@ -118,11 +126,19 @@
   "diffbot": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/diffbot.svg"
   },
+  "digicert": {
+    "from": "https://media.brand.dev/2db544b7-0afe-447b-bb5e-7659ce9ec0a5.svg",
+    "note": "found with the context.dev Brand API for digicert.com"
+  },
   "digitalocean": {
     "from": "https://svgl.app/library/digitalocean.svg"
   },
   "discord": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/discord.svg"
+  },
+  "documenso": {
+    "from": "https://media.brand.dev/9521d660-0c58-4ab5-98c7-111a3ed5617a.svg",
+    "note": "found with the context.dev Brand API for documenso.com"
   },
   "docusign": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/docusign.svg"
@@ -150,12 +166,28 @@
   "facebook": {
     "from": "https://svgl.app/library/facebook-icon.svg"
   },
+  "fathom": {
+    "from": "https://media.brand.dev/fdd2c9af-5eb8-4c6d-9b50-e8c871e91a0d.svg",
+    "note": "found with the context.dev Brand API for usefathom.com"
+  },
+  "felt": {
+    "from": "https://media.brand.dev/b3ca0f88-2992-4373-ac2c-b0934756b1f5.svg",
+    "note": "found with the context.dev Brand API for felt.com"
+  },
+  "fibery": {
+    "from": "https://media.brand.dev/908fdf09-ccf7-4c31-8db4-c0c81b8be58c.svg",
+    "note": "found with the context.dev Brand API for fibery.com"
+  },
   "fidel": {
     "from": "https://media.brand.dev/7726e0cb-145b-4940-a8fc-53aaec99ca4a.svg",
     "note": "found with the context.dev Brand API for fidelapi.com"
   },
   "figma": {
     "from": "https://svgl.app/library/figma.svg"
+  },
+  "finmei": {
+    "from": "https://media.brand.dev/9039fb92-aadd-459e-b88c-de120c2cfefd.svg",
+    "note": "found with the context.dev Brand API for finmei.com"
   },
   "firecrawl": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/firecrawl.svg"
@@ -166,8 +198,28 @@
   "flutterwave": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/flutterwave.svg"
   },
+  "folk": {
+    "from": "https://media.brand.dev/512ec990-d8b3-4c40-87de-80260917f007.svg",
+    "note": "found with the context.dev Brand API for folk.app"
+  },
+  "fomo": {
+    "from": "https://media.brand.dev/10b216dc-d872-403e-b956-fcc037256898.svg",
+    "note": "found with the context.dev Brand API for usefomo.com"
+  },
+  "gamma": {
+    "from": "https://media.brand.dev/a557eb51-bb9f-4d73-b7fc-9a74f7127a78.svg",
+    "note": "found with the context.dev Brand API for gamma.app"
+  },
   "gemini": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/gemini.svg"
+  },
+  "genderapiio": {
+    "from": "https://media.brand.dev/20610f1d-0d1f-4407-9b8d-c885b8d2f15c.svg",
+    "note": "found with the context.dev Brand API for genderapi.io"
+  },
+  "geoapify": {
+    "from": "https://media.brand.dev/3a625850-b311-4774-af07-fdc97f5c6b96.svg",
+    "note": "found with the context.dev Brand API for geoapify.com"
   },
   "github": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/github.svg"
@@ -180,6 +232,10 @@
   },
   "gmail": {
     "from": "https://svgl.app/library/gmail.svg"
+  },
+  "gong": {
+    "from": "https://media.brand.dev/1eded259-b947-4ae6-95ad-1498fd75e2fb.svg",
+    "note": "found with the context.dev Brand API for gong.io"
   },
   "googleaddressvalidation": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_address_validation.svg"
@@ -218,6 +274,10 @@
   "hackernews": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/hackernews.svg"
   },
+  "happyscribe": {
+    "from": "https://media.brand.dev/1ff45b54-45f6-4bbd-ad8d-a456dc06b9a8.svg",
+    "note": "found with the context.dev Brand API for happyscribe.com"
+  },
   "hashnode": {
     "from": "https://svgl.app/library/hashnode.svg"
   },
@@ -229,6 +289,18 @@
   },
   "intercom": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/intercom.svg"
+  },
+  "keyword": {
+    "from": "https://media.brand.dev/ca427665-f4ca-4a40-a7f6-a24bf4c040df.svg",
+    "note": "found with the context.dev Brand API for keyword.com"
+  },
+  "kontentai": {
+    "from": "https://media.brand.dev/c13dd12c-bd7e-4520-93bb-7c9e223130b6.svg",
+    "note": "found with the context.dev Brand API for kontent.ai"
+  },
+  "krakenio": {
+    "from": "https://media.brand.dev/3d940d50-60b4-4db3-abee-2665d088bcac.svg",
+    "note": "found with the context.dev Brand API for kraken.io"
   },
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
@@ -270,6 +342,10 @@
   "onedrive": {
     "from": "https://svgl.app/library/microsoft-onedrive.svg"
   },
+  "opengraph": {
+    "from": "https://media.brand.dev/50603ee1-07ce-4b63-bdf9-db93b9861bbb.svg",
+    "note": "found with the context.dev Brand API for opengraph.io"
+  },
   "opensea": {
     "from": "https://media.brand.dev/82aa8325-542b-44b6-b392-6f8e52afdf0e.svg",
     "note": "found with the context.dev Brand API for opensea.io"
@@ -299,8 +375,16 @@
   "reddit": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/reddit.svg"
   },
+  "refiner": {
+    "from": "https://media.brand.dev/1c3764f7-b943-430c-81d3-5e28c7f0061c.svg",
+    "note": "found with the context.dev Brand API for refiner.io"
+  },
   "render": {
     "from": "https://svgl.app/library/render_black.svg"
+  },
+  "renderform": {
+    "from": "https://media.brand.dev/1f978cb1-46be-4de0-a036-7eaf780c9059.svg",
+    "note": "found with the context.dev Brand API for renderform.io"
   },
   "replicate": {
     "from": "https://svgl.app/library/replicate_light.svg"
@@ -311,8 +395,24 @@
   "retailed": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/retailed.svg"
   },
+  "revolt": {
+    "from": "https://media.brand.dev/54cd1cae-247a-4d88-9c23-267f3e14ae63.svg",
+    "note": "found with the context.dev Brand API for revolt.chat"
+  },
+  "roboflow": {
+    "from": "https://media.brand.dev/f82d814b-2e8a-45aa-9b59-08e5a0d71bbf.svg",
+    "note": "found with the context.dev Brand API for roboflow.com"
+  },
+  "rocketreach": {
+    "from": "https://media.brand.dev/2e0fe777-b9e5-45fd-8eb3-9b23cc9d8e54.svg",
+    "note": "found with the context.dev Brand API for rocketreach.co"
+  },
   "rootly": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/rootly.svg"
+  },
+  "rudderstacktransform": {
+    "from": "https://media.brand.dev/6f177cac-a1fc-47c0-8b8f-0f115604d31b.svg",
+    "note": "found with the context.dev Brand API for rudderstack.com"
   },
   "salesforce": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/salesforce.svg"
@@ -324,6 +424,14 @@
   "sapsuccessfactors": {
     "from": "https://commons.wikimedia.org/wiki/File:SAP_2011_logo.svg",
     "note": "stylesheet inlined"
+  },
+  "satismeter": {
+    "from": "https://satismeter.com/favicon.svg",
+    "note": "satismeter.com <link rel=icon> favicon.svg (current triangle mark)"
+  },
+  "scrapedo": {
+    "from": "https://media.brand.dev/2308b1d5-5c3d-41d7-9766-96edf92f8cb2.svg",
+    "note": "found with the context.dev Brand API for scrape.do"
   },
   "semanticscholar": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/semanticscholar.svg"
@@ -396,6 +504,10 @@
   "twitter": {
     "from": "https://svgl.app/library/x.svg"
   },
+  "userlist": {
+    "from": "/tmp/claude-1000/-home-pranayasus-Corsair/519fcfce-bcca-4c8e-800d-d20fb6759bba/scratchpad/icons/real/userlist-inline.svg",
+    "note": "userlist.com <link rel=icon> /images/favicon.svg (linked loops); light-mode fill inlined from its prefers-color-scheme stylesheet"
+  },
   "vercel": {
     "from": "https://svgl.app/library/vercel.svg"
   },
@@ -405,12 +517,20 @@
   "webflow": {
     "from": "https://svgl.app/library/webflow.svg"
   },
+  "webscraperio": {
+    "from": "https://media.brand.dev/5cd468f4-0600-435f-a226-db456719fa54.svg",
+    "note": "found with the context.dev Brand API for webscraper.io"
+  },
   "webvizio": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/webvizio.svg",
     "note": "wordmark under the mark removed"
   },
   "whatsapp": {
     "from": "https://svgl.app/library/whatsapp-icon.svg"
+  },
+  "yandex": {
+    "from": "https://media.brand.dev/6e87f40f-176f-41d7-8197-9b5aac3563cd.svg",
+    "note": "found with the context.dev Brand API for yandex.cloud"
   },
   "youcom": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/yousearch.svg"
