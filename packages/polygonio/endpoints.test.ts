@@ -127,12 +127,41 @@ describe('response parsing', () => {
 			to: '2020-01-02',
 		});
 
-		expect(result.results[0]?.otc).toBe(true);
-		expect(result.results[1]?.otc).toBeUndefined();
+		expect(result.results?.[0]?.otc).toBe(true);
+		expect(result.results?.[1]?.otc).toBeUndefined();
 	});
 });
 
 describe('input validation before the request', () => {
+	it('accepts nextUrl alone, since a next page needs no first-page filters', async () => {
+		mockedRequest.mockResolvedValue({ status: 'OK', results: [] });
+
+		await Aggregates.bars(ctx, {
+			nextUrl:
+				'https://api.massive.com/v2/aggs/ticker/AAPL/range/1/day/1/2?cursor=abc',
+		});
+		await Aggregates.marketSummary(ctx, {
+			nextUrl:
+				'https://api.massive.com/v2/aggs/grouped/locale/us/market/stocks/2023-07-05?cursor=abc',
+		});
+
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+	});
+
+	it('rejects bars with neither nextUrl nor the first-page filters', async () => {
+		await expect(Aggregates.bars(ctx, { ticker: 'AAPL' })).rejects.toThrow(
+			/Supply nextUrl, or all of/,
+		);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects marketSummary with neither nextUrl nor a date', async () => {
+		await expect(Aggregates.marketSummary(ctx, {})).rejects.toThrow(
+			/Supply nextUrl or date/,
+		);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
 	it('rejects a multiplier that is not a positive integer', async () => {
 		await expect(
 			Aggregates.bars(ctx, {

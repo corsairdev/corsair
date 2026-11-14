@@ -1,5 +1,6 @@
 import type { PolygonioEndpoints } from '..';
-import { call, nextPageRequest } from './call';
+import { nextPageRequest } from '../client';
+import { call } from './call';
 import {
 	PolygonioEndpointInputSchemas as Inputs,
 	PolygonioEndpointOutputSchemas as Outputs,
@@ -48,7 +49,7 @@ export const exchanges: PolygonioEndpoints['exchanges'] = (ctx, input) =>
 		},
 		input,
 		({ asset_class, locale, nextUrl }) =>
-			nextPageRequest(nextUrl) ?? {
+			(nextUrl === undefined ? undefined : nextPageRequest(nextUrl)) ?? {
 				method: 'GET',
 				path: '/v3/reference/exchanges',
 				query: { asset_class, locale },

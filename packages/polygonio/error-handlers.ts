@@ -1,17 +1,31 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PolygonioAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isCredentialRejection,
+	PolygonioAPIError,
+	readEnvelopeError,
+} from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PolygonioAPIError ? error.status : undefined;
+	if (error instanceof PolygonioAPIError) return error.status;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function isRejectedKey(error: Error): boolean {
+	if (error instanceof PolygonioAPIError) return error.credentialsRejected;
+	if (!(error instanceof ApiError)) return false;
+	if (isCredentialRejection(error.status, error.body)) return true;
+	// A 200 that reports ERROR in the body carries no HTTP failure.
+	return error.status === 200 && readEnvelopeError(error.body) !== undefined;
 }
 
 // Every route is a read: this API serves market data and nothing else, so the
 // handlers never have to reason about replaying a write.
 export const errorHandlers = {
-	// A missing or unrecognised key. The client sets the flag when the body names
+	// A missing or unrecognised key, which the API reports either as a 401 naming
+	// the key or as a 200 whose body says ERROR.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof PolygonioAPIError && error.credentialsRejected,
+		match: (error: Error) => isRejectedKey(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Any other 401: the key exists but the API still refused the request, which
@@ -20,25 +34,12 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// The free tier allows a small number of calls a minute. The API documents
-	// no Retry-After, so the fallback delay is the documented window.
+	// A 429 is core's to retry: `request()` already makes three attempts and
+	// honours Retry-After, so this handler must not add retries of its own. A
+	// second retry stack would multiply the requests against a per-minute budget.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
-			const text = error.message.toLowerCase();
-			return (
-				text.includes('too many requests') ||
-				text.includes('maximum requests per minute')
-			);
-		},
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof PolygonioAPIError ? error.retryAfter : undefined,
-			// The provider names a per-minute budget, so a fixed second is the
-			// floor rather than an escalating delay that could still land inside it.
-			retryStrategy: 'linear_2s' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A key that exists but whose plan does not include this dataset, or a
 	// per-ticker entitlement the account lacks.
@@ -72,8 +73,7 @@ export const errorHandlers = {
 	},
 	// A 5xx is the provider's own failure and the request was a read.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof PolygonioAPIError && (error.status ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

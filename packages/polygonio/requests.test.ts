@@ -67,7 +67,7 @@ describe('aggregates endpoints', () => {
 			query: { adjusted: false, sort: 'desc', limit: 100 },
 		});
 		expect(result.results).toHaveLength(1);
-		expect(result.results[0]?.c).toBe(75.08);
+		expect(result.results?.[0]?.c).toBe(75.08);
 		expect(mockedLog).toHaveBeenCalledWith(
 			ctx,
 			'polygonio.bars',
@@ -89,15 +89,19 @@ describe('aggregates endpoints', () => {
 				'https://api.massive.com/v2/aggs/ticker/AAPL/range/1/day/1578114000000/2020-01-10?cursor=bGltaXQ9MiZzb3J0PWFzYw',
 		});
 
-		// The provider's URL already carries the cursor and the original filters,
-		// and its host is replaced so the key is added by the client.
+		// The provider's URL already carries the cursor and the original filters.
+		// Its path and query are split, because the client adds `apiKey` as a query
+		// parameter: keeping the `?` in the path would fold the key into the cursor.
 		const request = sentRequest();
 		expect(request?.method).toBe('GET');
 		expect(request?.path).toBe(
-			'/v2/aggs/ticker/AAPL/range/1/day/1578114000000/2020-01-10?cursor=bGltaXQ9MiZzb3J0PWFzYw',
+			'/v2/aggs/ticker/AAPL/range/1/day/1578114000000/2020-01-10',
 		);
+		expect(request?.path).not.toContain('?');
 		// No filters are rebuilt for a next page: its URL already carries them.
-		expect(request?.query).toBeUndefined();
+		expect(request?.query).toEqual({
+			cursor: 'bGltaXQ9MiZzb3J0PWFzYw',
+		});
 	});
 
 	it('previousDay reads the prev path', async () => {
@@ -152,7 +156,7 @@ describe('aggregates endpoints', () => {
 			path: '/v2/aggs/grouped/locale/us/market/stocks/2023-07-05',
 			query: { adjusted: undefined, sort: undefined, limit: 10 },
 		});
-		expect(result.results[0]?.T).toBe('AAPL');
+		expect(result.results?.[0]?.T).toBe('AAPL');
 	});
 });
 
@@ -250,8 +254,8 @@ describe('tickers endpoints', () => {
 		});
 
 		const request = sentRequest();
-		expect(request?.path).toBe('/v3/reference/tickers?cursor=abc');
-		expect(request?.query).toBeUndefined();
+		expect(request?.path).toBe('/v3/reference/tickers');
+		expect(request?.query).toEqual({ cursor: 'abc' });
 	});
 
 	it('tickers.overview reads one ticker, passing the as-of date', async () => {
@@ -363,7 +367,7 @@ describe('market endpoints', () => {
 			nextUrl: 'https://api.massive.com/v3/reference/exchanges?cursor=next',
 		});
 		const nextRequest = sentRequest();
-		expect(nextRequest?.path).toBe('/v3/reference/exchanges?cursor=next');
-		expect(nextRequest?.query).toBeUndefined();
+		expect(nextRequest?.path).toBe('/v3/reference/exchanges');
+		expect(nextRequest?.query).toEqual({ cursor: 'next' });
 	});
 });

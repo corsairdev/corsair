@@ -4,9 +4,10 @@ import {
 	describePolygonioError,
 	isCredentialRejection,
 	makePolygonioRequest,
-	nextPagePath,
+	nextPageRequest,
 	POLYGONIO_API_BASE,
 	PolygonioAPIError,
+	readEnvelopeError,
 } from './client';
 import { captureError } from './test-helpers';
 
@@ -75,26 +76,31 @@ describe('Polygon.io error body', () => {
 	});
 });
 
-describe('nextPagePath', () => {
+describe('nextPageRequest', () => {
 	it('keeps only the path and query, so the request stays on the base', () => {
 		// The live API prints its own host, and an older payload may print another.
 		expect(
-			nextPagePath(
+			nextPageRequest(
 				'https://api.massive.com/v2/aggs/ticker/AAPL/range/1/day/1578114000000/2020-01-10?cursor=bGltaXQ9MiZzb3J0PWFzYw',
 			),
-		).toBe(
-			'/v2/aggs/ticker/AAPL/range/1/day/1578114000000/2020-01-10?cursor=bGltaXQ9MiZzb3J0PWFzYw',
-		);
+		).toEqual({
+			method: 'GET',
+			path: '/v2/aggs/ticker/AAPL/range/1/day/1578114000000/2020-01-10',
+			query: { cursor: 'bGltaXQ9MiZzb3J0PWFzYw' },
+		});
 	});
 
-	it('drops any key in the next_url, so the client supplies its own', () => {
-		const path = nextPagePath(
+	it('splits the cursor out of the path, so the client can add its own key', () => {
+		const request = nextPageRequest(
 			'https://api.massive.com/v3/reference/tickers?cursor=abc&apiKey=leaked',
 		);
 
-		// Keeping it would send two apiKey values, and none of them should come
-		// from the provider's URL.
-		expect(path).toBe('/v3/reference/tickers?cursor=abc');
+		// The path must carry no query of its own: the client appends `?apiKey=`,
+		// and a second `?` would fold the key into the cursor.
+		expect(request.path).toBe('/v3/reference/tickers');
+		expect(request.path).not.toContain('?');
+		// Keeping the provider's key would send two apiKey values.
+		expect(request.query).toEqual({ cursor: 'abc' });
 	});
 });
 
@@ -133,7 +139,7 @@ describe('makePolygonioRequest', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('reports an unrecognised key as a credential failure', async () => {
+	it('passes an unrecognised key through as a core ApiError keeping the key out', async () => {
 		mockRequest.mockRejectedValue(
 			apiError(401, { status: 'ERROR', error: 'Unknown API Key' }),
 		);
@@ -142,16 +148,17 @@ describe('makePolygonioRequest', () => {
 			makePolygonioRequest('bad-key', { method: 'GET', path: '/x' }),
 		);
 
-		expect(error).toBeInstanceOf(PolygonioAPIError);
-		if (!(error instanceof PolygonioAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.credentialsRejected).toBe(true);
-		expect(error.method).toBe('GET');
+		// The body names the key, so the handler still sees a credential failure.
+		expect(readEnvelopeError(error.body)).toBe('Unknown API Key');
+		expect(error.request.method).toBe('GET');
 		// The key rides in the query string, so no error may echo it.
 		expect(JSON.stringify(error)).not.toContain('bad-key');
 	});
 
-	it('keeps status and Retry-After on a rate limit', async () => {
+	it('keeps status on a rate limit, which core retries', async () => {
 		mockRequest.mockRejectedValue(
 			apiError(429, { status: 'ERROR', error: 'Too many requests' }),
 		);
@@ -160,10 +167,31 @@ describe('makePolygonioRequest', () => {
 			makePolygonioRequest('key', { method: 'GET', path: '/x' }),
 		);
 
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.status).toBe(429);
+	});
+
+	it('rejects a 200 whose body reports an error, rather than parsing it as data', async () => {
+		// The API answers this way for a rejected filter, and every price field is
+		// optional, so without the check an output schema would accept it.
+		mockRequest.mockResolvedValue({
+			status: 'ERROR',
+			error: 'Unknown API Key',
+			request_id: 'abc',
+		});
+
+		const error = await captureError(
+			makePolygonioRequest('key', {
+				method: 'GET',
+				path: '/v1/open-close/X/2024-01-02',
+			}),
+		);
+
 		expect(error).toBeInstanceOf(PolygonioAPIError);
 		if (!(error instanceof PolygonioAPIError)) return;
-		expect(error.status).toBe(429);
-		expect(error.credentialsRejected).toBe(false);
+		expect(error.message).toContain('Unknown API Key');
+		expect(error.code).toBe('ERROR');
 	});
 
 	it('flags a dropped connection as a transport failure', async () => {

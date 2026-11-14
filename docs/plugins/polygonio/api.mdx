@@ -26,12 +26,12 @@ await corsair.polygonio.api.aggregates.bars({ ticker: 'AAPL', multiplier: 1, tim
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched. |
-| `ticker` | `string` | Yes | A case-sensitive ticker, such as AAPL. |
-| `multiplier` | `number` | Yes | The size of each window, such as 5 for a 5-minute bar. |
-| `timespan` | `minute \| hour \| day \| week \| month \| quarter \| year` | Yes | The unit of the window. |
-| `from` | `string` | Yes | Start of the range, as YYYY-MM-DD or a millisecond timestamp. |
-| `to` | `string` | Yes | End of the range, inclusive, as YYYY-MM-DD or a millisecond timestamp. |
+| `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so none of them is required. |
+| `ticker` | `string` | No | A case-sensitive ticker, such as AAPL. |
+| `multiplier` | `number` | No | The size of each window, such as 5 for a 5-minute bar. |
+| `timespan` | `minute \| hour \| day \| week \| month \| quarter \| year` | No | The unit of the window. |
+| `from` | `string` | No | Start of the range, as YYYY-MM-DD or a millisecond timestamp. |
+| `to` | `string` | No | End of the range, inclusive, as YYYY-MM-DD or a millisecond timestamp. |
 | `adjusted` | `boolean` | No | Whether prices are adjusted for splits. The API adjusts by default. |
 | `sort` | `asc \| desc` | No | Order by timestamp. The API defaults to ascending. |
 | `limit` | `number` | No | How many base aggregates to read. Defaults to 5000, and the maximum is 50000. |
@@ -50,7 +50,7 @@ await corsair.polygonio.api.aggregates.bars({ ticker: 'AAPL', multiplier: 1, tim
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
 | `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
-| `results` | `object[]` | Yes | — |
+| `results` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -67,7 +67,7 @@ await corsair.polygonio.api.aggregates.bars({ ticker: 'AAPL', multiplier: 1, tim
   t?: number | null,
   T?: string | null,
   otc?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -134,8 +134,8 @@ await corsair.polygonio.api.aggregates.marketSummary({ date: '2026-01-09', limit
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched. |
-| `date` | `string` | Yes | The trading date, as YYYY-MM-DD. A non-trading date returns no rows. |
+| `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so `date` is not required. |
+| `date` | `string` | No | The trading date, as YYYY-MM-DD. A non-trading date returns no rows. |
 | `adjusted` | `boolean` | No | Whether prices are adjusted for splits. The API adjusts by default. |
 | `sort` | `asc \| desc` | No | Order by timestamp. The API defaults to ascending. |
 | `limit` | `number` | No | How many base aggregates to read. Defaults to 5000, and the maximum is 50000. |
@@ -154,7 +154,7 @@ await corsair.polygonio.api.aggregates.marketSummary({ date: '2026-01-09', limit
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
 | `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
-| `results` | `object[]` | Yes | — |
+| `results` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -171,7 +171,7 @@ await corsair.polygonio.api.aggregates.marketSummary({ date: '2026-01-09', limit
   t?: number | null,
   T?: string | null,
   otc?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -213,7 +213,7 @@ await corsair.polygonio.api.aggregates.previousDay({ ticker: 'AAPL', adjusted: t
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
 | `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
-| `results` | `object[]` | Yes | — |
+| `results` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -230,7 +230,7 @@ await corsair.polygonio.api.aggregates.previousDay({ ticker: 'AAPL', adjusted: t
   t?: number | null,
   T?: string | null,
   otc?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>

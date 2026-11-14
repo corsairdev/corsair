@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { PolygonioAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { polygonio } from './index';
@@ -14,15 +15,27 @@ const CONTEXT = {
 // arguments they use. Typing it as the core map is what the runtime sees.
 const HANDLERS: CorsairErrorHandler = errorHandlers;
 
+/**
+ * A core ApiError carrying the API's own body, which is the shape `request()`
+ * raises and the client now passes through unchanged.
+ */
 function apiError(
 	status: number,
-	options: { transport?: boolean; retryAfter?: number } = {},
+	options: { error?: string; statusText?: string } = {},
 ) {
-	return new PolygonioAPIError(`Polygon.io ${status}`, {
-		status,
-		method: 'GET',
-		...options,
-	});
+	const body: Record<string, unknown> = { status: 'ERROR' };
+	if (options.error !== undefined) body.error = options.error;
+	return new ApiError(
+		{ method: 'GET', url: '/v1/marketstatus/now' },
+		{
+			url: 'https://api.polygon.io/v1/marketstatus/now',
+			ok: false,
+			status,
+			statusText: options.statusText ?? `Polygon.io ${status}`,
+			body,
+		},
+		`Polygon.io ${status}`,
+	);
 }
 
 function route(error: Error): string {
@@ -35,11 +48,7 @@ function route(error: Error): string {
 
 describe('Polygon.io errorHandlers', () => {
 	it('routes a rejected key to AUTH_ERROR without a retry', async () => {
-		const error = new PolygonioAPIError('Polygon.io 401: Unknown API Key', {
-			status: 401,
-			credentialsRejected: true,
-			method: 'GET',
-		});
+		const error = apiError(401, { error: 'Unknown API Key' });
 
 		expect(route(error)).toBe('AUTH_ERROR');
 		await expect(HANDLERS.AUTH_ERROR?.handler(error, CONTEXT)).resolves.toEqual(
@@ -55,35 +64,30 @@ describe('Polygon.io errorHandlers', () => {
 		const error = apiError(401);
 		expect(route(error)).toBe('UNAUTHORIZED_ERROR');
 		// A 401 that does name the key is the more specific AUTH_ERROR.
-		expect(
-			route(
-				new PolygonioAPIError('Polygon.io 401: Unknown API Key', {
-					status: 401,
-					credentialsRejected: true,
-					method: 'GET',
-				}),
-			),
-		).toBe('AUTH_ERROR');
+		expect(route(apiError(401, { error: 'Unknown API Key' }))).toBe(
+			'AUTH_ERROR',
+		);
 	});
 
-	it('routes a 429 to RATE_LIMIT_ERROR with a per-minute delay', async () => {
-		const error = apiError(429, { retryAfter: 30_000 });
+	it('routes a 429 to RATE_LIMIT_ERROR without adding retries', async () => {
+		const error = apiError(429);
 
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
+		// Core's `request()` already retries a 429 three times and honours
+		// Retry-After, so a second retry stack here would multiply the requests
+		// against a per-minute budget.
 		await expect(
 			HANDLERS.RATE_LIMIT_ERROR?.handler(error, CONTEXT),
-		).resolves.toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 30_000,
-			retryStrategy: 'linear_2s',
-		});
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('recognises a rate limit expressed only in the message', () => {
+	it('routes a message-only rate limit by its status, not its wording', () => {
+		// Only a real 429 is matched: the API states its limit in prose on other
+		// statuses too, and retrying those would not help.
+		expect(route(apiError(429))).toBe('RATE_LIMIT_ERROR');
 		expect(route(new Error('Maximum requests per minute reached'))).toBe(
-			'RATE_LIMIT_ERROR',
+			'DEFAULT',
 		);
-		expect(route(new Error('Too Many Requests'))).toBe('RATE_LIMIT_ERROR');
 	});
 
 	it('routes a 403 entitlement failure to PERMISSION_ERROR', async () => {

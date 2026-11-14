@@ -13,8 +13,8 @@ What to know before you query:
 - **Plans gate the data, not the routes.** A free key reaches market status, ticker reference and end-of-day bars, while real-time snapshots need a paid plan. When a plan does not include a dataset the API answers 403 rather than an empty result, and the plugin reports that as a permission error instead of retrying.
 - **`status` is not always `OK`.** A plan with delayed data answers `DELAYED`, so the field stays a string rather than an enum a future value could break.
 - **Paging.** The list routes return `next_url` while another page exists. It already carries the cursor and your filters, so pass it to the same operation as `nextUrl` and the other arguments are ignored. Any `apiKey` the URL echoes is dropped, because the plugin adds the caller's own.
-- **A missing bar is not an error.** `aggregates.bars` returns an empty `results` when no qualifying trades happened in a window, so an empty page means the market was closed rather than a failed call.
-- **Rates.** The free tier allows a small number of calls a minute. A 429 is retried three times with a two-second floor, which matches the documented window.
+- **A missing bar is not an error.** `aggregates.bars` omits `results` when no qualifying trades happened in the window, so the plugin reads that as an empty page rather than a failed call. It does not mean the market was closed: an open session with no trades produces the same answer. Use `market.status` when you need the current market state.
+- **Rates.** The free tier allows a small number of calls a minute. A 429 is retried by the transport three times, honouring any `Retry-After` the API sends; the plugin adds no retries of its own, so the budget is not multiplied.
 - **Webhooks.** The API sends none, so the plugin receives none.
 
 **What you get:**

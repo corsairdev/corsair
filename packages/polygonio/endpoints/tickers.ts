@@ -1,6 +1,6 @@
 import type { PolygonioEndpoints } from '..';
-import { segment } from '../client';
-import { call, nextPageRequest } from './call';
+import { nextPageRequest, segment } from '../client';
+import { call } from './call';
 import {
 	PolygonioEndpointInputSchemas as Inputs,
 	PolygonioEndpointOutputSchemas as Outputs,
@@ -35,7 +35,7 @@ export const list: PolygonioEndpoints['tickersList'] = (ctx, input) =>
 			limit,
 			nextUrl,
 		}) =>
-			nextPageRequest(nextUrl) ?? {
+			(nextUrl === undefined ? undefined : nextPageRequest(nextUrl)) ?? {
 				method: 'GET',
 				path: '/v3/reference/tickers',
 				query: {

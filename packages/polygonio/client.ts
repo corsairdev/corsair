@@ -19,12 +19,13 @@ export const POLYGONIO_API_BASE = 'https://api.polygon.io';
 export const POLYGONIO_KEY_PARAM = 'apiKey';
 
 /**
- * The API documents a free tier of 5 calls a minute and sends no Retry-After,
- * so handlers own the retries and the fallback delay is the documented window.
+ * The API documents a free tier of a few calls a minute and sends no Retry-After.
+ * Core's `request()` owns the retry: three attempts, honouring `Retry-After` when
+ * one arrives, so the plugin's 429 handler adds none of its own.
  */
 const POLYGONIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -152,17 +153,27 @@ export function segment(value: string | number): string {
 
 /**
  * Reads an absolute `next_url` the API returned, keeping only its path and
- * query so the request stays on the configured base.
+ * query so the request stays on the configured base, and splitting the two
+ * apart again: `request()` appends its own query string with a leading `?`, so a
+ * path that still carried `?cursor=...` would produce `?cursor=...?apiKey=...`
+ * and swallow the key into the cursor.
  *
  * The URL already carries the caller's `cursor` and the original filters, so
  * nothing is rebuilt here: it is the API's own next page. Any `apiKey` the
  * provider echoed is dropped, because the client appends the caller's own.
  */
-export function nextPagePath(nextUrl: string): string {
+export function nextPageRequest(nextUrl: string): PolygonioRequest {
 	const url = new URL(nextUrl);
 	url.searchParams.delete(POLYGONIO_KEY_PARAM);
-	const search = url.searchParams.toString();
-	return search ? `${url.pathname}?${search}` : url.pathname;
+	const query: PolygonioQuery = {};
+	for (const [key, value] of url.searchParams) {
+		query[key] = value;
+	}
+	return {
+		method: 'GET',
+		path: url.pathname,
+		query: Object.keys(query).length > 0 ? query : undefined,
+	};
 }
 
 // The body is returned untyped because the caller's output schema is the only
@@ -193,22 +204,31 @@ export async function makePolygonioRequest(
 	};
 
 	try {
-		return await request<Untyped>(config, requestOptions, {
+		// The body is untyped until an output schema parses it.
+		const body = await request<Untyped>(config, requestOptions, {
 			rateLimitConfig: POLYGONIO_RATE_LIMIT_CONFIG,
 		});
-	} catch (error) {
-		if (error instanceof ApiError) {
+		// A 200 can still report a rejected request: the API answers `status:
+		// "ERROR"` with an `error` message and no `results`, and every price field
+		// is optional, so an output schema would accept that body as a success.
+		const rejection = readEnvelopeError(body);
+		if (rejection !== undefined) {
 			throw new PolygonioAPIError(
-				describePolygonioError(error.status, error.body, error.statusText),
+				describePolygonioError(200, body, rejection),
 				{
-					status: error.status,
-					code: readEnvelopeError(error.body) ?? readEnvelopeStatus(error.body),
-					retryAfter: error.retryAfter,
+					status: 200,
+					code: readEnvelopeStatus(body) ?? rejection,
 					method,
-					credentialsRejected: isCredentialRejection(error.status, error.body),
 				},
 			);
 		}
+		return body;
+	} catch (error) {
+		// A real HTTP failure keeps core's ApiError: its status and Retry-After
+		// are what the handlers match and what core reads.
+		if (error instanceof ApiError) throw error;
+		// The envelope rejection above is already the right error.
+		if (error instanceof PolygonioAPIError) throw error;
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new PolygonioAPIError(error.message, {

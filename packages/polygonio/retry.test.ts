@@ -1,6 +1,7 @@
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { POLYGONIO_API_BASE, PolygonioAPIError } from './client';
+import { POLYGONIO_API_BASE, readEnvelopeError } from './client';
 import { polygonio } from './index';
 import { captureError } from './test-helpers';
 
@@ -105,8 +106,12 @@ describe('Polygon.io plugin through createCorsair', () => {
 
 			const error = await captureError(corsair.polygonio.api.market.status({}));
 
-			expect(error).toBeInstanceOf(PolygonioAPIError);
-			expect(error).toMatchObject({ status: 401, credentialsRejected: true });
+			// Core's ApiError passes through, and the body still names the key.
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).toMatchObject({ status: 401 });
+			expect(readEnvelopeError((error as ApiError).body)).toBe(
+				'Unknown API Key',
+			);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			// The key rode in the query string, so no error may echo it.
 			expect(JSON.stringify(error)).not.toContain('bad-key');
@@ -146,7 +151,7 @@ describe('Polygon.io plugin through createCorsair', () => {
 			await jest.advanceTimersByTimeAsync(30_000);
 			const error = await pending;
 
-			expect(error).toBeInstanceOf(PolygonioAPIError);
+			expect(error).toBeInstanceOf(ApiError);
 			expect(error).toMatchObject({ status: 429 });
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {

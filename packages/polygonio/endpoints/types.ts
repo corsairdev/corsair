@@ -90,33 +90,72 @@ const aggregatesInputFields = {
 		),
 };
 
-export const BarsInputSchema = z.object({
-	nextUrl: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			"The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched.",
-		),
-	ticker: z.string().min(1).describe('A case-sensitive ticker, such as AAPL.'),
-	multiplier: z
-		.number()
-		.int()
-		.positive()
-		.describe('The size of each window, such as 5 for a 5-minute bar.'),
-	timespan: z.enum(POLYGONIO_TIMESPANS).describe('The unit of the window.'),
-	from: z
-		.string()
-		.min(1)
-		.describe('Start of the range, as YYYY-MM-DD or a millisecond timestamp.'),
-	to: z
-		.string()
-		.min(1)
-		.describe(
-			'End of the range, inclusive, as YYYY-MM-DD or a millisecond timestamp.',
-		),
-	...aggregatesInputFields,
-});
+/**
+ * The five filters a first bars page needs. They are optional because a
+ * `nextUrl` page needs none of them: the URL already carries the range and the
+ * cursor. The refinement below requires one form or the other, so a call that
+ * names neither is still rejected before anything is sent.
+ */
+const BARS_FILTER_KEYS = [
+	'ticker',
+	'multiplier',
+	'timespan',
+	'from',
+	'to',
+] as const;
+
+export const BarsInputSchema = z
+	.object({
+		nextUrl: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				"The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so none of them is required.",
+			),
+		ticker: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('A case-sensitive ticker, such as AAPL.'),
+		multiplier: z
+			.number()
+			.int()
+			.positive()
+			.optional()
+			.describe('The size of each window, such as 5 for a 5-minute bar.'),
+		timespan: z
+			.enum(POLYGONIO_TIMESPANS)
+			.optional()
+			.describe('The unit of the window.'),
+		from: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'Start of the range, as YYYY-MM-DD or a millisecond timestamp.',
+			),
+		to: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'End of the range, inclusive, as YYYY-MM-DD or a millisecond timestamp.',
+			),
+		...aggregatesInputFields,
+	})
+	.superRefine((value, ctx) => {
+		if (value.nextUrl !== undefined) return;
+		for (const key of BARS_FILTER_KEYS) {
+			if (value[key] === undefined) {
+				ctx.addIssue({
+					code: 'custom',
+					message: `Supply nextUrl, or all of ${BARS_FILTER_KEYS.join(', ')}. ${key} is missing.`,
+					path: [key],
+				});
+			}
+		}
+	});
 
 export type BarsInput = z.infer<typeof BarsInputSchema>;
 
@@ -127,7 +166,10 @@ const BarsOutputSchema = z
 		queryCount: z.number().nullish(),
 		resultsCount: z.number().nullish(),
 		...listEnvelopeFields,
-		results: z.array(AggregateBarSchema),
+		// The provider marks `results` optional: a custom-bars or grouped-summary
+		// window with no qualifying trades comes back without it, and that is a
+		// valid empty result rather than a malformed response.
+		results: z.array(AggregateBarSchema).nullish(),
 	})
 	.loose();
 
@@ -176,22 +218,33 @@ const DailySummaryOutputSchema = z
 
 export type DailySummaryOutput = z.infer<typeof DailySummaryOutputSchema>;
 
-const MarketSummaryInputSchema = z.object({
-	nextUrl: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			"The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched.",
-		),
-	date: z
-		.string()
-		.min(1)
-		.describe(
-			'The trading date, as YYYY-MM-DD. A non-trading date returns no rows.',
-		),
-	...aggregatesInputFields,
-});
+const MarketSummaryInputSchema = z
+	.object({
+		nextUrl: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				"The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so `date` is not required.",
+			),
+		date: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'The trading date, as YYYY-MM-DD. A non-trading date returns no rows.',
+			),
+		...aggregatesInputFields,
+	})
+	.superRefine((value, ctx) => {
+		if (value.nextUrl === undefined && value.date === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Supply nextUrl or date.',
+				path: ['date'],
+			});
+		}
+	});
 
 export type MarketSummaryInput = z.infer<typeof MarketSummaryInputSchema>;
 

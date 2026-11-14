@@ -1,6 +1,6 @@
 import type { PolygonioEndpoints } from '..';
-import { segment } from '../client';
-import { call, nextPageRequest } from './call';
+import { nextPageRequest, segment } from '../client';
+import { call } from './call';
 import {
 	PolygonioEndpointInputSchemas as Inputs,
 	PolygonioEndpointOutputSchemas as Outputs,
@@ -11,13 +11,27 @@ export const bars: PolygonioEndpoints['bars'] = (ctx, input) =>
 		ctx,
 		{ event: 'bars', input: Inputs.bars, output: Outputs.bars },
 		input,
-		({ ticker, multiplier, timespan, from, to, nextUrl, ...query }) =>
-			nextPageRequest(nextUrl) ?? {
+		(parsed) => {
+			if (parsed.nextUrl !== undefined) return nextPageRequest(parsed.nextUrl);
+			const { ticker, multiplier, timespan, from, to, ...query } = parsed;
+			// The refinement rejects a call that omits any of these, so reaching the
+			// path with one unset would mean the schema and this handler disagreed.
+			if (
+				ticker === undefined ||
+				multiplier === undefined ||
+				timespan === undefined ||
+				from === undefined ||
+				to === undefined
+			) {
+				throw new Error('bars was parsed without its first-page filters');
+			}
+			return {
 				method: 'GET',
 				path: `/v2/aggs/ticker/${segment(ticker)}/range/${segment(multiplier)}/${segment(timespan)}/${segment(from)}/${segment(to)}`,
 				query,
-			},
-		{ log: (_, result) => ({ count: result.results.length }) },
+			};
+		},
+		{ log: (_, result) => ({ count: result.results?.length ?? 0 }) },
 	);
 
 export const previousDay: PolygonioEndpoints['previousDay'] = (ctx, input) =>
@@ -34,7 +48,7 @@ export const previousDay: PolygonioEndpoints['previousDay'] = (ctx, input) =>
 			path: `/v2/aggs/ticker/${segment(ticker)}/prev`,
 			query: { adjusted },
 		}),
-		{ log: (_, result) => ({ count: result.results.length }) },
+		{ log: (_, result) => ({ count: result.results?.length ?? 0 }) },
 	);
 
 export const dailySummary: PolygonioEndpoints['dailySummary'] = (ctx, input) =>
@@ -66,11 +80,17 @@ export const marketSummary: PolygonioEndpoints['marketSummary'] = (
 			output: Outputs.marketSummary,
 		},
 		input,
-		({ date, nextUrl, ...query }) =>
-			nextPageRequest(nextUrl) ?? {
+		(parsed) => {
+			if (parsed.nextUrl !== undefined) return nextPageRequest(parsed.nextUrl);
+			const { date, ...query } = parsed;
+			if (date === undefined) {
+				throw new Error('marketSummary was parsed without a date');
+			}
+			return {
 				method: 'GET',
 				path: `/v2/aggs/grouped/locale/us/market/stocks/${segment(date)}`,
 				query,
-			},
-		{ log: (_, result) => ({ count: result.results.length }) },
+			};
+		},
+		{ log: (_, result) => ({ count: result.results?.length ?? 0 }) },
 	);

@@ -118,11 +118,15 @@ describeLive('Polygon.io live API', () => {
 		if (raw instanceof PolygonioAPIError) throw raw;
 
 		const parsed = PolygonioEndpointOutputSchemas.bars.parse(raw);
-		expect(Array.isArray(parsed.results)).toBe(true);
-		if (parsed.results.length > 0) {
+		// `results` is optional: a window with no qualifying trades omits it.
+		expect(parsed.results === undefined || Array.isArray(parsed.results)).toBe(
+			true,
+		);
+		const bars = parsed.results ?? [];
+		if (bars.length > 0) {
 			// The bar keys are the API's single letters, so a typo would fail here.
-			expect(typeof parsed.results[0]?.c).toBe('number');
-			expect(typeof parsed.results[0]?.t).toBe('number');
+			expect(typeof bars[0]?.c).toBe('number');
+			expect(typeof bars[0]?.t).toBe('number');
 		}
 	});
 
