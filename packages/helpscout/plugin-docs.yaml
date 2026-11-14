@@ -1,4 +1,119 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "HelpScout"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Help Scout
+description: Manage mailboxes, conversations, customer profiles, threads, tags, saved replies, and reports with Help Scout Mailbox API 2.0.
+recommendedAuth: api_key
+overviewNote: |
+  **Authentication.** Help Scout Mailbox API 2.0 authenticates via OAuth 2 Bearer tokens. Pass your token as `key` in plugin options or configure it via Corsair tenant credentials. All requests send the `Authorization: Bearer <token>` header.
+
+  **Rate Limiting.** The Mailbox API enforces rate limits per tenant. The underlying HTTP transport automatically retries 429 responses with exponential backoff honoring the `Retry-After` header.
+
+  **Resource Identification.** Help Scout numeric IDs are integers or digit strings. Path parameters accept both numbers and numeric strings.
+examples:
+  read:
+    path: mailboxes.list
+    title: List mailboxes
+  write:
+    path: conversations.delete
+    title: Delete a conversation
+    args:
+      conversationId: 1000
+apiExamples:
+  mailboxes.get:
+    call: "{ mailboxId: 100 }"
+  folders.list:
+    call: "{ mailboxId: 100 }"
+  customFields.list:
+    call: "{ mailboxId: 100 }"
+  conversations.get:
+    call: "{ conversationId: 1000 }"
+  conversations.create:
+    call: "{ subject: 'Support request', type: 'email', mailboxId: 100, customer: { email: 'customer@example.com' }, threads: [{ type: 'customer', text: 'Need assistance' }] }"
+  conversations.update:
+    call: "{ conversationId: 1000, op: 'replace', path: '/status', value: 'closed' }"
+  conversations.delete:
+    call: "{ conversationId: 1000 }"
+  conversations.updateFields:
+    call: "{ conversationId: 1000, fields: [{ id: 1, value: 'VIP' }] }"
+  conversations.updateTags:
+    call: "{ conversationId: 1000, tags: ['urgent'] }"
+  threads.list:
+    call: "{ conversationId: 1000 }"
+  threads.createReply:
+    call: "{ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Thank you for reaching out.' }"
+  threads.createNote:
+    call: "{ conversationId: 1000, text: 'Internal team note' }"
+  threads.createChat:
+    call: "{ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Chat conversation transcript' }"
+  threads.createPhone:
+    call: "{ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Phone conversation summary' }"
+  threads.createCustomer:
+    call: "{ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Follow-up message' }"
+  threads.update:
+    call: "{ conversationId: 1000, threadId: 50, op: 'replace', path: '/text', value: 'Updated thread content' }"
+  threads.getOriginalSource:
+    call: "{ conversationId: 1000, threadId: 50 }"
+  customers.get:
+    call: "{ customerId: 200 }"
+  customers.update:
+    call: "{ customerId: 200, firstName: 'Alice' }"
+  customers.patch:
+    call: "{ customerId: 200, op: 'replace', path: '/firstName', value: 'Alice' }"
+  customers.delete:
+    call: "{ customerId: 200 }"
+  customers.createAddress:
+    call: "{ customerId: 200, city: 'Boston', state: 'MA' }"
+  customers.updateAddress:
+    call: "{ customerId: 200, city: 'Cambridge', state: 'MA' }"
+  customers.deleteAddress:
+    call: "{ customerId: 200 }"
+  customers.createEmail:
+    call: "{ customerId: 200, value: 'alice@example.com', type: 'work' }"
+  customers.updateEmail:
+    call: "{ customerId: 200, emailId: 10, value: 'alice.smith@example.com', type: 'work' }"
+  customers.deleteEmail:
+    call: "{ customerId: 200, emailId: 10 }"
+  customers.createPhone:
+    call: "{ customerId: 200, value: '555-0123', type: 'work' }"
+  customers.updatePhone:
+    call: "{ customerId: 200, phoneId: 20, value: '555-0199', type: 'mobile' }"
+  customers.deletePhone:
+    call: "{ customerId: 200, phoneId: 20 }"
+  customers.createChat:
+    call: "{ customerId: 200, value: 'alice_chat', type: 'slack' }"
+  customers.updateChat:
+    call: "{ customerId: 200, chatId: 30, value: 'alice_new_chat', type: 'slack' }"
+  customers.deleteChat:
+    call: "{ customerId: 200, chatId: 30 }"
+  customers.createSocialProfile:
+    call: "{ customerId: 200, value: 'https://twitter.com/alice', type: 'twitter' }"
+  customers.updateSocialProfile:
+    call: "{ customerId: 200, profileId: 40, value: 'https://x.com/alice', type: 'twitter' }"
+  customers.deleteSocialProfile:
+    call: "{ customerId: 200, profileId: 40 }"
+  customers.createWebsite:
+    call: "{ customerId: 200, value: 'https://example.com' }"
+  customers.updateWebsite:
+    call: "{ customerId: 200, websiteId: 50, value: 'https://blog.example.com' }"
+  customers.deleteWebsite:
+    call: "{ customerId: 200, websiteId: 50 }"
+  tags.get:
+    call: "{ tagId: 5 }"
+  savedReplies.list:
+    call: "{ mailboxId: 100 }"
+  savedReplies.get:
+    call: "{ mailboxId: 100, savedReplyId: 300 }"
+  savedReplies.create:
+    call: "{ mailboxId: 100, name: 'Default Greeting', text: 'Hello! How can we assist you today?' }"
+  savedReplies.update:
+    call: "{ mailboxId: 100, savedReplyId: 300, name: 'Updated Greeting' }"
+  savedReplies.delete:
+    call: "{ mailboxId: 100, savedReplyId: 300 }"
+  reports.getConversations:
+    call: "{ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' }"
+  reports.getCompany:
+    call: "{ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' }"
+  reports.getEmail:
+    call: "{ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' }"
+  reports.getChat:
+    call: "{ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' }"
+  reports.getDocs:
+    call: "{ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' }"
