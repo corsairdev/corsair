@@ -144,7 +144,9 @@ export function stackexchange<const T extends StackExchangePluginOptions>(
 			providerName: 'Stack Exchange',
 			authUrl: 'https://stackoverflow.com/oauth',
 			tokenUrl: 'https://stackoverflow.com/oauth/access_token/json',
-			scopes: ['read_inbox', 'write_access', 'private_info'],
+			// Stack Exchange issues no refresh token and reports expiry as `expires`
+			// (core reads `expires_in`), so a day-long token would fail silently.
+			scopes: ['read_inbox', 'write_access', 'private_info', 'no_expiry'],
 			requiresRegisteredRedirect: true,
 		},
 		schema: StackExchangeSchema,

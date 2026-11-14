@@ -24,8 +24,9 @@ overviewNote: >-
   Select a documented method with the route field. Per-site methods require a site
   parameter; network methods do not. OAuth connection requests the documented
   `read_inbox`, `write_access`, and `private_info` scopes together so every
-  user-context method can be called. Stack Exchange requires a registered
-  redirect URI; expiring tokens have no refresh token and must be reconnected.
+  user-context method can be called, plus `no_expiry`, because Stack Exchange
+  issues no refresh token. Stack Exchange requires a registered redirect URI.
+  Anonymous and app-key requests can read pages 1 to 25 only.
 apiExamples:
   site.read:
     args:
@@ -59,6 +60,8 @@ apiNotes:
   network.read: >-
     Network methods omit the `site` parameter. OAuth methods specify whether
     `read_inbox`, `private_info`, or user authentication is needed in the route
-    catalog. Pagination is exposed as `page` and `pagesize`; callers must honor
-    `has_more` and `backoff` in the common response wrapper. `filters/create`
+    catalog. Pagination is exposed as `page` and `pagesize`; callers follow
+    `has_more`. When a response sets `backoff`, the plugin waits that long
+    before calling the same method again, or raises a rate-limit error when
+    the wait is over 30 seconds. `filters/create`
     defaults to GET and accepts POST when the include/exclude list is too large.

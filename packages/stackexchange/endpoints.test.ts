@@ -2,6 +2,7 @@ import { makeStackExchangeRequest, STACKEXCHANGE_API_BASE } from './client';
 import { networkRead, siteRead, siteWrite } from './endpoints';
 import { ROUTE_GROUPS } from './endpoints/routes';
 import type { StackExchangeContext } from './index';
+import { stackexchange } from './index';
 
 const response = () =>
 	new Response(
@@ -166,5 +167,13 @@ describe('documented route inventory dispatch', () => {
 			}),
 		).rejects.toThrow();
 		expect(fetchMock).toHaveBeenCalledTimes(successfulCalls);
+	});
+});
+
+describe('Stack Exchange OAuth connection', () => {
+	it('asks for a token that does not expire, since there is no refresh token', () => {
+		expect(stackexchange().oauthConfig?.scopes).toEqual(
+			expect.arrayContaining(['no_expiry']),
+		);
 	});
 });
