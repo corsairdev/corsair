@@ -127,11 +127,11 @@ describe('users family (mocked JumpCloud transport)', () => {
 			),
 		);
 
-		let caught: unknown;
+		let caught: JumpCloudAPIError | undefined;
 		try {
 			await usersList(mockCtx, {});
 		} catch (error) {
-			caught = error;
+			caught = error as JumpCloudAPIError;
 		}
 
 		expect(caught).toBeInstanceOf(JumpCloudAPIError);

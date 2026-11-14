@@ -142,11 +142,11 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 			),
 		);
 
-		let caught: unknown;
+		let caught: JumpCloudAPIError | undefined;
 		try {
 			await makeJumpCloudRequest('jc-key', 1, 'GET', '/systemusers');
 		} catch (error) {
-			caught = error;
+			caught = error as JumpCloudAPIError;
 		}
 
 		expect(caught).toBeInstanceOf(JumpCloudAPIError);
@@ -160,11 +160,11 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 			Promise.resolve(new Response('boom', { status: 500 })),
 		);
 
-		let caught: unknown;
+		let caught: JumpCloudAPIError | undefined;
 		try {
 			await makeJumpCloudRequest('jc-key', 1, 'GET', '/systemusers');
 		} catch (error) {
-			caught = error;
+			caught = error as JumpCloudAPIError;
 		}
 
 		expect(caught).toBeInstanceOf(JumpCloudAPIError);
@@ -188,13 +188,13 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 			),
 		);
 
-		let caught: unknown;
+		let caught: JumpCloudAPIError | undefined;
 		try {
 			await makeJumpCloudRequest('jc-key', 1, 'POST', '/systemusers', {
 				body: { username: 'alice', email: 'alice@example.com' },
 			});
 		} catch (error) {
-			caught = error;
+			caught = error as JumpCloudAPIError;
 		}
 
 		expect(caught).toBeInstanceOf(JumpCloudAPIError);

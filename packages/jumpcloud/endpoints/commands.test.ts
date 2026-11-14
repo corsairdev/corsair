@@ -148,6 +148,22 @@ describe('commands family (mocked JumpCloud transport)', () => {
 		});
 	});
 
+	it('commands.get forwards the fields selector and parses the requested subset', async () => {
+		// fields=name asks JumpCloud to omit command/commandType from the
+		// response; the output schema must accept the requested subset.
+		fetchMock.mockImplementationOnce(() =>
+			Promise.resolve(jsonResponse({ name: 'deploy' })),
+		);
+
+		const result = await commandsGet(mockCtx, { id: 'cmd-1', fields: 'name' });
+
+		const [url] = fetchMock.mock.calls[0]!;
+		expect(String(url)).toBe(
+			'https://console.jumpcloud.com/api/commands/cmd-1?fields=name',
+		);
+		expect(result).toEqual({ name: 'deploy' });
+	});
+
 	it('commands.run calls API v1 POST /runCommand with the body JSON', async () => {
 		fetchMock.mockImplementationOnce(() =>
 			Promise.resolve(

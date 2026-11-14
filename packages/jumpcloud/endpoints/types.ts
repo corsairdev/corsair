@@ -1951,8 +1951,14 @@ export const CommandsGetInputSchema = z
 export type CommandsGetInput = z.infer<typeof CommandsGetInputSchema>;
 
 export const CommandsGetOutputSchema = z
+	// commands.get forwards the documented `fields` selector, so JumpCloud
+	// may omit any field from a successful response (e.g. fields=name).
+	// Every documented field is optional and missing fields parse as absent.
 	.object({
-		command: z.string().describe('The command to execute on the server.'),
+		command: z
+			.string()
+			.describe('The command to execute on the server.')
+			.optional(),
 		commandRunners: z
 			.array(z.string())
 			.describe(
@@ -1971,14 +1977,14 @@ export const CommandsGetOutputSchema = z
 				'Child organization ID for a local command when `commandTarget` is\n`organization` in Enterprise / View All context. Ignored for Enterprise\ncreate and when sharing is disabled.\n',
 			)
 			.optional(),
-		commandType: z.string().describe('The Command OS'),
+		commandType: z.string().describe('The Command OS').optional(),
 		files: z
 			.array(z.string())
 			.describe('An array of file IDs to include with the command.')
 			.optional(),
 		launchType: z.string().describe('How the command will execute.').optional(),
 		listensTo: z.string().optional(),
-		name: z.string(),
+		name: z.string().optional(),
 		organization: z.string().describe('The ID of the organization.').optional(),
 		schedule: z
 			.string()
