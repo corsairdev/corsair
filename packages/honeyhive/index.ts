@@ -382,7 +382,7 @@ export const honeyHiveEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const honeyHiveEndpointMeta = {
+export const honeyHiveEndpointMeta = {
 	'sessions.create': {
 		riskLevel: 'write',
 		description: 'Start a new session',

@@ -625,11 +625,14 @@ describe('5. Metrics endpoints', () => {
 		);
 
 		mockedRequest.mockResolvedValue({ version_id: 'v-1' });
-		await Metrics.createVersion(ctx, { metric_id: 'm-1' });
+		await Metrics.createVersion(ctx, {
+			metric_id: 'm-1',
+			message: 'test version',
+		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/metrics/m-1/versions',
 			'hh-api-key-test',
-			{ method: 'POST', body: {} },
+			{ method: 'POST', body: { message: 'test version' } },
 		);
 
 		mockedRequest.mockResolvedValue({ deployed: true });

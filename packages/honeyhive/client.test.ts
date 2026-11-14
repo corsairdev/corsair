@@ -212,7 +212,7 @@ describe('Credential and secret redaction', () => {
 	it('redacts ApiError when request or body is undefined', () => {
 		const error = new ApiError(
 			{ method: 'GET', url: '/test' },
-			{ url: '/test', ok: false, status: 500, statusText: 'Error' },
+			{ url: '/test', ok: false, status: 500, statusText: 'Error', body: {} },
 			'Error with secret-key-xyz',
 		);
 

@@ -1,6 +1,15 @@
+import type { ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
 import { honeyhive } from './index';
+
+// `unknown` because mock error context input can contain arbitrary JSON records.
+const mockErrorContext: ErrorContext = {
+	pluginId: 'honeyhive',
+	operation: 'test.operation',
+	input: {},
+	originalError: new Error('mock-error'),
+};
 
 function makeApiError(status: number, message: string, retryAfter?: number) {
 	return new ApiError(
@@ -50,8 +59,10 @@ describe('HoneyHive errorHandlers', () => {
 		expect(routeError(err401)).toBe('AUTH_ERROR');
 		expect(routeError(err403)).toBe('AUTH_ERROR');
 
-		const result = await errorHandlers.AUTH_ERROR.handler();
-		expect(result).toEqual({ maxRetries: 0 });
+		const result401 = await errorHandlers.AUTH_ERROR.handler();
+		expect(result401).toEqual({ maxRetries: 0 });
+		const result403 = await errorHandlers.AUTH_ERROR.handler();
+		expect(result403).toEqual({ maxRetries: 0 });
 	});
 
 	it('routes text auth error messages to AUTH_ERROR', () => {
@@ -133,6 +144,8 @@ describe('HoneyHive errorHandlers', () => {
 		});
 
 		const handlers = plugin.errorHandlers;
+		expect(handlers).toBeDefined();
+		if (!handlers) throw new Error('handlers undefined');
 		const handlerKeys = Object.keys(handlers);
 
 		expect(handlerKeys[0]).toBe('CUSTOM_ERROR');
@@ -140,17 +153,20 @@ describe('HoneyHive errorHandlers', () => {
 
 		const customError = new Error('this has a custom_flag');
 		const customEntry = Object.entries(handlers).find(([, entry]) =>
-			entry.match(customError),
+			entry?.match(customError, mockErrorContext),
 		);
 		expect(customEntry?.[0]).toBe('CUSTOM_ERROR');
 
 		const fallbackError = new Error('completely unmatched');
 		const defaultEntry = Object.entries(handlers).find(([, entry]) =>
-			entry.match(fallbackError),
+			entry?.match(fallbackError, mockErrorContext),
 		);
 		expect(defaultEntry?.[0]).toBe('DEFAULT');
-		if (defaultEntry) {
-			const res = await defaultEntry[1].handler(fallbackError);
+		if (defaultEntry?.[1]) {
+			const res = await defaultEntry[1].handler(
+				fallbackError,
+				mockErrorContext,
+			);
 			expect(res).toEqual({ maxRetries: 2 });
 		}
 	});

@@ -41,7 +41,7 @@ import {
 	SessionCreateInputSchema,
 	SessionCreateResponseSchema,
 } from './endpoints/types';
-import { honeyhive } from './index';
+import { honeyHiveEndpointMeta, honeyhive } from './index';
 import { HoneyHiveSchema } from './schema';
 
 describe('HoneyHive schema definition', () => {
@@ -62,14 +62,14 @@ describe('HoneyHive metadata and endpoint sync', () => {
 
 	it('keeps endpoint registry, schemas, and metadata in complete sync', () => {
 		const endpointKeys: string[] = [];
-		for (const [groupName, group] of Object.entries(plugin.endpoints)) {
+		for (const [groupName, group] of Object.entries(plugin.endpoints ?? {})) {
 			for (const actionName of Object.keys(group)) {
 				endpointKeys.push(`${groupName}.${actionName}`);
 			}
 		}
 
-		const schemaKeys = Object.keys(plugin.endpointSchemas);
-		const metaKeys = Object.keys(plugin.endpointMeta);
+		const schemaKeys = Object.keys(plugin.endpointSchemas ?? {});
+		const metaKeys = Object.keys(honeyHiveEndpointMeta);
 
 		expect(endpointKeys.sort()).toEqual(schemaKeys.sort());
 		expect(endpointKeys.sort()).toEqual(metaKeys.sort());
@@ -99,7 +99,8 @@ describe('HoneyHive metadata and endpoint sync', () => {
 		];
 
 		for (const op of destructiveOperations) {
-			const meta = plugin.endpointMeta[op as keyof typeof plugin.endpointMeta];
+			const meta =
+				honeyHiveEndpointMeta[op as keyof typeof honeyHiveEndpointMeta];
 			expect(meta).toBeDefined();
 			expect(meta.riskLevel).toBe('destructive');
 		}
@@ -130,7 +131,8 @@ describe('HoneyHive metadata and endpoint sync', () => {
 		];
 
 		for (const op of readOperations) {
-			const meta = plugin.endpointMeta[op as keyof typeof plugin.endpointMeta];
+			const meta =
+				honeyHiveEndpointMeta[op as keyof typeof honeyHiveEndpointMeta];
 			expect(meta).toBeDefined();
 			expect(meta.riskLevel).toBe('read');
 		}
