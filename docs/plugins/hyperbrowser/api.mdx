@@ -16,7 +16,7 @@ description: "API reference for the Hyperbrowser plugin in Corsair: every `hyper
 
 Start an asynchronous multi-page crawl job (consumes compute credits)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hyperbrowser.api.crawl.create({ url: 'https://example.com' });
@@ -122,7 +122,7 @@ await corsair.hyperbrowser.api.crawl.create({ url: 'https://example.com' });
 
 Start an asynchronous web crawl job using the Web API engine (consumes compute credits)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hyperbrowser.api.crawl.createWeb({ url: 'https://example.com' });
@@ -134,9 +134,83 @@ await corsair.hyperbrowser.api.crawl.createWeb({ url: 'https://example.com' });
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `stealth` | `none \| auto \| ultra` | No | — |
+| `outputs` | `object` | No | — |
+| `browser` | `object` | No | — |
+| `navigation` | `object` | No | — |
+| `cache` | `object` | No | — |
 | `crawlOptions` | `object` | No | — |
 
 <AccordionGroup>
+<Accordion title="outputs full type">
+
+```ts
+{
+  formats?: (markdown | html | links | screenshot | branding | {
+    type: markdown
+  } | {
+    type: html
+  } | {
+    type: links
+  } | {
+    type: branding
+  } | {
+    type: screenshot,
+    fullPage?: boolean,
+    format?: jpeg | png | webp,
+    cropToContent?: boolean,
+    cropToContentMaxHeight?: number,
+    cropToContentMinHeight?: number
+  } | {
+    type: json,
+    schema?: Record<string, any>,
+    prompt?: string
+  })[],
+  sanitize?: none | basic | advanced,
+  includeSelectors?: string[],
+  excludeSelectors?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="browser full type">
+
+```ts
+{
+  profileId?: string,
+  solveCaptchas?: string,
+  screen?: {
+    width: number,
+    height: number
+  },
+  location?: {
+    country?: string,
+    state?: string,
+    city?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="navigation full type">
+
+```ts
+{
+  waitUntil?: load | domcontentloaded | networkidle,
+  timeoutMs?: number,
+  waitFor?: number
+}
+```
+</Accordion>
+
+<Accordion title="cache full type">
+
+```ts
+{
+  maxAgeSeconds?: number
+}
+```
+</Accordion>
+
 <Accordion title="crawlOptions full type">
 
 ```ts
@@ -190,7 +264,7 @@ await corsair.hyperbrowser.api.crawl.get({ id: 'crawl_example_123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | — |
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 | `error` | `string \| null` | No | — |
 | `totalCrawledPages` | `number` | No | — |
 | `totalPageBatches` | `number` | No | — |
@@ -204,7 +278,7 @@ await corsair.hyperbrowser.api.crawl.get({ id: 'crawl_example_123' });
 ```ts
 {
   url: string,
-  status: completed | failed,
+  status: completed | failed | string,
   error?: string | null,
   markdown?: string,
   html?: string,
@@ -244,7 +318,7 @@ await corsair.hyperbrowser.api.crawl.getStatus({ id: 'crawl_example_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 
 
 
@@ -277,7 +351,7 @@ await corsair.hyperbrowser.api.crawl.getWeb({ id: 'crawl_example_123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | — |
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 | `error` | `string \| null` | No | — |
 | `totalPages` | `number` | No | — |
 | `totalPageBatches` | `number` | No | — |
@@ -291,13 +365,14 @@ await corsair.hyperbrowser.api.crawl.getWeb({ id: 'crawl_example_123' });
 ```ts
 {
   url: string,
-  status: completed | failed | pending | running,
+  status: completed | failed | pending | running | string,
   error?: string | null,
   markdown?: string,
   html?: string,
   links?: string[],
   screenshot?: string,
   json?: Record<string, any>,
+  branding?: Record<string, any>,
   metadata?: Record<string, string | string[]>
 }[]
 ```
@@ -332,7 +407,7 @@ await corsair.hyperbrowser.api.crawl.getWebStatus({ id: 'crawl_example_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 
 
 
@@ -346,7 +421,7 @@ await corsair.hyperbrowser.api.crawl.getWebStatus({ id: 'crawl_example_123' });
 
 Start an AI structured data extraction job across URLs (consumes compute credits)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hyperbrowser.api.extract.create({ urls: ['https://example.com'] });
@@ -455,7 +530,7 @@ await corsair.hyperbrowser.api.extract.get({ id: 'extract_example_123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | — |
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 | `data` | `Record<string, any>` | No | — |
 | `error` | `string` | No | — |
 
@@ -487,7 +562,7 @@ await corsair.hyperbrowser.api.extract.getStatus({ id: 'extract_example_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 
 
 
@@ -501,7 +576,7 @@ await corsair.hyperbrowser.api.extract.getStatus({ id: 'extract_example_123' });
 
 Create a new persistent browser profile
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.hyperbrowser.api.profiles.create({});
@@ -562,7 +637,7 @@ await corsair.hyperbrowser.api.profiles.delete({ id: 'prof_example_123' });
 
 Fork an existing persistent browser profile
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.hyperbrowser.api.profiles.fork({ id: 'prof_example_123', name: 'Forked Profile' });
@@ -680,7 +755,7 @@ await corsair.hyperbrowser.api.profiles.list({});
 
 Start an asynchronous web scrape job (consumes compute credits)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hyperbrowser.api.scrape.create({ url: 'https://example.com' });
@@ -781,7 +856,7 @@ await corsair.hyperbrowser.api.scrape.create({ url: 'https://example.com' });
 
 Start an asynchronous batch scrape job across multiple URLs (consumes compute credits)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hyperbrowser.api.scrape.createBatch({ urls: ['https://example.com'] });
@@ -901,7 +976,7 @@ await corsair.hyperbrowser.api.scrape.get({ id: 'job_example_123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | — |
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 | `data` | `object` | No | — |
 | `error` | `string` | No | — |
 
@@ -951,7 +1026,7 @@ await corsair.hyperbrowser.api.scrape.getBatch({ id: 'batch_example_123', page: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobId` | `string` | No | — |
-| `status` | `pending \| running \| completed \| failed \| stopped` | No | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | No | — |
 | `data` | `object[]` | No | — |
 | `error` | `string` | No | — |
 | `totalScrapedPages` | `number` | No | — |
@@ -965,7 +1040,7 @@ await corsair.hyperbrowser.api.scrape.getBatch({ id: 'batch_example_123', page: 
 ```ts
 {
   url: string,
-  status: pending | running | completed | failed | stopped,
+  status: pending | running | completed | failed | stopped | string,
   error?: string | null,
   markdown?: string,
   html?: string,
@@ -1005,7 +1080,7 @@ await corsair.hyperbrowser.api.scrape.getBatchStatus({ id: 'batch_example_123' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 
 
 
@@ -1035,7 +1110,7 @@ await corsair.hyperbrowser.api.scrape.getStatus({ id: 'job_example_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | — |
 
 
 
@@ -1128,9 +1203,9 @@ await corsair.hyperbrowser.api.sessions.create({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `teamId` | `string` | No | — |
-| `status` | `active \| closed \| error \| close-error` | No | — |
-| `startTime` | `string \| null` | No | — |
-| `endTime` | `string \| null` | No | — |
+| `status` | `active \| closed \| error \| close-error \| string` | No | — |
+| `startTime` | `string \| number \| null` | No | — |
+| `endTime` | `string \| number \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `creditsUsed` | `number \| null` | No | — |
@@ -1214,9 +1289,9 @@ await corsair.hyperbrowser.api.sessions.get({ id: 'sess_example_123' });
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `teamId` | `string` | No | — |
-| `status` | `active \| closed \| error \| close-error` | No | — |
-| `startTime` | `string \| null` | No | — |
-| `endTime` | `string \| null` | No | — |
+| `status` | `active \| closed \| error \| close-error \| string` | No | — |
+| `startTime` | `string \| number \| null` | No | — |
+| `endTime` | `string \| number \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `creditsUsed` | `number \| null` | No | — |
@@ -1255,7 +1330,7 @@ await corsair.hyperbrowser.api.sessions.getDownloadsUrl({ id: 'sess_example_123'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `not_enabled \| pending \| in_progress \| completed \| failed` | Yes | — |
+| `status` | `not_enabled \| pending \| in_progress \| completed \| failed \| string` | Yes | — |
 | `downloadsUrl` | `string \| null` | No | — |
 | `error` | `string \| null` | No | — |
 
@@ -1287,7 +1362,7 @@ await corsair.hyperbrowser.api.sessions.getRecordingUrl({ id: 'sess_example_123'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `not_enabled \| pending \| in_progress \| completed \| failed` | Yes | — |
+| `status` | `not_enabled \| pending \| in_progress \| completed \| failed \| string` | Yes | — |
 | `recordingUrl` | `string \| null` | No | — |
 | `error` | `string \| null` | No | — |
 
@@ -1319,7 +1394,7 @@ await corsair.hyperbrowser.api.sessions.getVideoRecordingUrl({ id: 'sess_example
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `not_enabled \| pending \| in_progress \| completed \| failed` | Yes | — |
+| `status` | `not_enabled \| pending \| in_progress \| completed \| failed \| string` | Yes | — |
 | `recordingUrl` | `string \| null` | No | — |
 | `error` | `string \| null` | No | — |
 
@@ -1364,9 +1439,9 @@ await corsair.hyperbrowser.api.sessions.list({});
 {
   id?: string,
   teamId?: string,
-  status?: active | closed | error | close-error,
-  startTime?: string | null,
-  endTime?: string | null,
+  status?: active | closed | error | close-error | string,
+  startTime?: string | number | null,
+  endTime?: string | number | null,
   createdAt?: string,
   updatedAt?: string,
   creditsUsed?: number | null,
@@ -1391,7 +1466,7 @@ await corsair.hyperbrowser.api.sessions.list({});
 
 Stop an active cloud browser session
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.hyperbrowser.api.sessions.stop({ id: 'sess_example_123' });
@@ -1421,20 +1496,55 @@ await corsair.hyperbrowser.api.sessions.stop({ id: 'sess_example_123' });
 
 Update live configuration of a running browser session
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
-await corsair.hyperbrowser.api.sessions.update({ id: 'sess_example_123', type: 'solveCaptchas', params: { solveCaptchas: true } });
+await corsair.hyperbrowser.api.sessions.update({ id: 'sess_example_123', type: 'solveCaptchas', params: { enabled: true } });
 ```
 
-**Input**
+**Input:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `type` | `profile \| proxy \| screen \| solveCaptchas` | Yes | — |
-| `params` | `Record<string, any>` | Yes | — |
+<AccordionGroup>
+<Accordion title="Input full type">
 
+```ts
+{
+  id: string,
+  type: profile,
+  params: {
+    persistChanges?: boolean,
+    persistNetworkCache?: boolean
+  }
+} | {
+  id: string,
+  type: proxy,
+  params: {
+    enabled: boolean,
+    staticIpId?: string,
+    location?: {
+      country?: string,
+      state?: string,
+      city?: string
+    }
+  }
+} | {
+  id: string,
+  type: screen,
+  params: {
+    width: number,
+    height: number
+  }
+} | {
+  id: string,
+  type: solveCaptchas,
+  params: {
+    enabled: boolean,
+    solverType?: visual
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 **Output**
@@ -1458,7 +1568,7 @@ await corsair.hyperbrowser.api.sessions.update({ id: 'sess_example_123', type: '
 
 Fetch web page content in multiple formats using cloud browser (consumes compute credits)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hyperbrowser.api.web.fetch({ url: 'https://example.com' });
@@ -1480,8 +1590,27 @@ await corsair.hyperbrowser.api.web.fetch({ url: 'https://example.com' });
 
 ```ts
 {
-  formats?: string[],
-  sanitize?: string,
+  formats?: (markdown | html | links | screenshot | branding | {
+    type: markdown
+  } | {
+    type: html
+  } | {
+    type: links
+  } | {
+    type: branding
+  } | {
+    type: screenshot,
+    fullPage?: boolean,
+    format?: jpeg | png | webp,
+    cropToContent?: boolean,
+    cropToContentMaxHeight?: number,
+    cropToContentMinHeight?: number
+  } | {
+    type: json,
+    schema?: Record<string, any>,
+    prompt?: string
+  })[],
+  sanitize?: none | basic | advanced,
   includeSelectors?: string[],
   excludeSelectors?: string[]
 }
@@ -1493,7 +1622,16 @@ await corsair.hyperbrowser.api.web.fetch({ url: 'https://example.com' });
 ```ts
 {
   profileId?: string,
-  solveCaptchas?: string
+  solveCaptchas?: string,
+  screen?: {
+    width: number,
+    height: number
+  },
+  location?: {
+    country?: string,
+    state?: string,
+    city?: string
+  }
 }
 ```
 </Accordion>
@@ -1502,7 +1640,7 @@ await corsair.hyperbrowser.api.web.fetch({ url: 'https://example.com' });
 
 ```ts
 {
-  waitUntil?: string,
+  waitUntil?: load | domcontentloaded | networkidle,
   timeoutMs?: number,
   waitFor?: number
 }
@@ -1526,7 +1664,7 @@ await corsair.hyperbrowser.api.web.fetch({ url: 'https://example.com' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | — |
-| `status` | `completed \| failed \| pending \| running` | Yes | — |
+| `status` | `completed \| failed \| pending \| running \| string` | Yes | — |
 | `error` | `string \| null` | No | — |
 | `data` | `object` | No | — |
 
@@ -1540,6 +1678,7 @@ await corsair.hyperbrowser.api.web.fetch({ url: 'https://example.com' });
   links?: string[],
   screenshot?: string,
   json?: Record<string, any>,
+  branding?: Record<string, any>,
   metadata?: Record<string, string | string[]>
 }
 ```
@@ -1556,7 +1695,7 @@ await corsair.hyperbrowser.api.web.fetch({ url: 'https://example.com' });
 
 Search the web with clean structured results (consumes compute credits)
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.hyperbrowser.api.web.search({ query: 'Hyperbrowser cloud browser' });
@@ -1577,7 +1716,7 @@ await corsair.hyperbrowser.api.web.search({ query: 'Hyperbrowser cloud browser' 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | — |
-| `status` | `completed \| failed \| pending \| running \| stopped` | Yes | — |
+| `status` | `completed \| failed \| pending \| running \| stopped \| string` | Yes | — |
 | `error` | `string \| null` | No | — |
 | `data` | `object` | No | — |
 
@@ -1590,7 +1729,7 @@ await corsair.hyperbrowser.api.web.search({ query: 'Hyperbrowser cloud browser' 
   results: {
     title: string,
     url: string,
-    description: string
+    description?: string
   }[]
 }
 ```
