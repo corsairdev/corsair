@@ -237,7 +237,9 @@ export const GOOGLE_CLASSROOM_ROUTES = {
 		description:
 			'Creates course work. The resulting course work (and corresponding student submissions) are associated with the Developer Console project of the [OAuth client ID](https://support.google.com/cloud/answer/6158849) used to make the request. Classroom API requests to modify course work and student submissions must be made with an OAuth client ID from the associated Developer Console project. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to access the requested course, create course work in the requested course, share a Drive attachment, or for access errors. * `INVALID_ARGUMENT` if the request is malformed. * `NOT_FOUND` if the requested course does not exist. * `FAILED_PRECONDITION` for the following request error: * AttachmentNotVisible',
 		scopes: ['https://www.googleapis.com/auth/classroom.coursework.students'],
-		riskLevel: 'write',
+		// Published coursework notifies the course's students (email and app), the same as
+		// courses.announcements.create.
+		riskLevel: 'destructive',
 	},
 	'courses.courseWork.delete': {
 		method: 'DELETE',
@@ -478,7 +480,8 @@ export const GOOGLE_CLASSROOM_ROUTES = {
 		description:
 			'Creates a course work material. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to access the requested course, create course work material in the requested course, share a Drive attachment, or for access errors. * `INVALID_ARGUMENT` if the request is malformed or if more than 20 * materials are provided. * `NOT_FOUND` if the requested course does not exist. * `FAILED_PRECONDITION` for the following request error: * AttachmentNotVisible',
 		scopes: ['https://www.googleapis.com/auth/classroom.courseworkmaterials'],
-		riskLevel: 'write',
+		// Published materials notify the course's students, the same as announcements.
+		riskLevel: 'destructive',
 	},
 	'courses.courseWorkMaterials.delete': {
 		method: 'DELETE',
@@ -874,7 +877,9 @@ export const GOOGLE_CLASSROOM_ROUTES = {
 		description:
 			'Updates a course. Note: Unlike other fields, `levels` is not cleared if omitted from the request. The `UpdateCourse` method only modifies `levels` if it is explicitly provided; otherwise, the existing value is preserved. Use the `PatchCourse` method to clear the `levels` field. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to modify the requested course or for access errors. * `NOT_FOUND` if no course exists with the requested ID. * `FAILED_PRECONDITION` for the following request errors: * CourseNotModifiable * CourseTitleCannotContainUrl',
 		scopes: ['https://www.googleapis.com/auth/classroom.courses'],
-		riskLevel: 'write',
+		// PUT replaces every writable course field (omitted ones are cleared) and can change
+		// courseState or ownerId, so it gets the same approval as courses.patch.
+		riskLevel: 'destructive',
 	},
 	'courses.updateGradingPeriodSettings': {
 		method: 'PATCH',
@@ -999,7 +1004,8 @@ export const GOOGLE_CLASSROOM_ROUTES = {
 		scopes: [
 			'https://www.googleapis.com/auth/classroom.guardianlinks.students',
 		],
-		riskLevel: 'write',
+		// The only allowed change is state COMPLETE, which cancels the invitation for good.
+		riskLevel: 'destructive',
 	},
 	'userProfiles.guardians.delete': {
 		method: 'DELETE',

@@ -2915,3 +2915,49 @@ describe('Google Classroom endpoint schemas', () => {
 		).toBe(false);
 	});
 });
+
+describe('Google Classroom risk levels and response tolerance', () => {
+	it('asks for approval on writes that notify students, replace a course, or cancel an invitation', () => {
+		for (const operationId of [
+			'courses.update',
+			'courses.courseWork.create',
+			'courses.courseWorkMaterials.create',
+			'courses.announcements.create',
+			'userProfiles.guardianInvitations.patch',
+		] as const) {
+			expect(GOOGLE_CLASSROOM_ROUTES[operationId].riskLevel).toBe(
+				'destructive',
+			);
+		}
+	});
+
+	it('parses responses with fields and enum values Google adds later', () => {
+		const course = GoogleClassroomEndpointOutputSchemas['courses.get'].parse({
+			id: 'course-1',
+			name: 'corsair-plugin-test',
+			courseState: 'SOME_FUTURE_STATE',
+			gradebookSettings: { calculationType: 'NEW_TYPE', newSetting: true },
+			someNewField: 'x',
+		});
+		expect(course.courseState).toBe('SOME_FUTURE_STATE');
+		const work = GoogleClassroomEndpointOutputSchemas[
+			'courses.courseWork.get'
+		].parse({
+			id: 'work-1',
+			state: 'PUBLISHED',
+			workType: 'NEW_WORK_TYPE',
+			assignment: { studentWorkFolder: { id: 'f', newField: 1 } },
+		});
+		expect(work.workType).toBe('NEW_WORK_TYPE');
+	});
+
+	it('keeps request bodies strict', () => {
+		expect(() =>
+			GoogleClassroomEndpointInputSchemas['courses.create'].parse({
+				pathParams: {},
+				query: {},
+				body: { name: 'x', ownerId: 'me', notAField: true },
+			}),
+		).toThrow();
+	});
+});
