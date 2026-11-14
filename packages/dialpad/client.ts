@@ -428,10 +428,9 @@ export async function makeDialpadRequest(
 				...(options.apiKey ? [options.apiKey] : []),
 			];
 			const sanitizedBody = sanitizeErrorBody(error.body, secrets);
-			const sanitizedRequest = {
-				...error.request,
-				body: sanitizeSensitiveFields(error.request.body),
-			};
+			// The request body can hold customer data (emails, names, phone
+			// numbers, message text), so the propagated error leaves it out.
+			const sanitizedRequest = { ...error.request, body: undefined };
 			const sanitizedError = new ApiError(
 				sanitizedRequest,
 				{

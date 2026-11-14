@@ -476,7 +476,37 @@ describe('Dialpad HTTP request behavior', () => {
 			message: 'Rejected [REDACTED]',
 			details: ['Provider echoed [REDACTED]'],
 		});
-		expect(error.request.body).toEqual({ password: '[REDACTED]' });
+		expect(error.request.body).toBeUndefined();
 		expect(error.message).not.toContain('abc');
+	});
+
+	// A failed users.create carries the new user's email and name in its body, so
+	// the propagated error leaves the request body out.
+	it('keeps the request body of a failed users.create out of the error', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(JSON.stringify({ error: { message: 'Bad request' } }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+
+		const error = await makeDialpadRequest(
+			DialpadOperationDefinitions['users.create'],
+			{
+				body: {
+					email: 'jane.customer@example.com',
+					first_name: 'Jane',
+					last_name: 'Customer',
+				},
+			},
+			{ apiKey: 'safe-test-token' },
+		).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) {
+			throw new Error('Expected a Dialpad ApiError');
+		}
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('jane.customer@example.com');
+		expect(String(error.stack)).not.toContain('jane.customer@example.com');
 	});
 });
