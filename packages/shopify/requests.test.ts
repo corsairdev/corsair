@@ -1,5 +1,6 @@
 import { Shopify } from './endpoints';
 import type { ShopifyEndpointInputs } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import {
 	collection,
 	customer,
@@ -535,6 +536,34 @@ describe('orders', () => {
 		expect(second.query).not.toContain('orderCancel(');
 		expect(second.variables.id).toBe('gid://shopify/Order/1001');
 		expect(result.order.cancelledAt).toBe('2026-01-02T00:00:00Z');
+	});
+
+	// Core re-invokes the whole endpoint when a handler allows a retry, so an
+	// HTTP 429 on the read-back must not reach RATE_LIMIT_ERROR: that would send
+	// the cancel mutation a second time.
+	it('orders.cancel does not hand a failed read-back to a retrying handler', async () => {
+		const ctx = createContext();
+		harness.respond({
+			data: {
+				orderCancel: {
+					job: { id: 'gid://shopify/Job/1', done: false },
+					jobResult: { done: false, status: 'STARTED', errors: [], order },
+					orderCancelUserErrors: [],
+				},
+			},
+		});
+		harness.respond({ errors: 'Too many requests' }, 429);
+
+		const error = await harness.expectRejection<Error>(
+			Shopify.orders.cancel(ctx, { id: 'gid://shopify/Order/1001' }),
+		);
+
+		expect(error.message).toContain('orders.cancel was accepted');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.TRANSPORT_ERROR.match(error)).toBe(false);
+		// The mutation and one read; nothing re-sent the cancel.
+		expect(harness.fetchMock).toHaveBeenCalledTimes(2);
 	});
 
 	it('orders.cancel fails when the job reports an error', async () => {

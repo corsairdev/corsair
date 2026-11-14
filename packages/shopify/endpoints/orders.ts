@@ -406,15 +406,30 @@ export const cancel = (
 						{ message: detail },
 					]);
 				}
-				return awaitCancellation(
-					{
-						order: payload.orderCancel?.jobResult?.order,
-						done: payload.orderCancel?.jobResult?.done,
-						status: payload.orderCancel?.jobResult?.status,
-					},
-					parsed.id,
-					run,
-				);
+				try {
+					return await awaitCancellation(
+						{
+							order: payload.orderCancel?.jobResult?.order,
+							done: payload.orderCancel?.jobResult?.done,
+							status: payload.orderCancel?.jobResult?.status,
+						},
+						parsed.id,
+						run,
+					);
+				} catch (error) {
+					if (error instanceof ShopifyUserError) throw error;
+					// The cancel mutation has already been accepted. Core retries
+					// by re-invoking the whole endpoint, so a throttled or failed
+					// read-back left as-is would send the cancel again and turn a
+					// cancellation into "already cancelled". This error carries no
+					// status or code any retrying handler matches.
+					throw new ShopifyAPIError(
+						`orders.cancel was accepted, but reading the order back failed: ${
+							error instanceof Error ? error.message : 'unknown error'
+						}. Read the order before cancelling again.`,
+						{ status: 200, code: 'CANCEL_STATE_UNKNOWN' },
+					);
+				}
 			},
 			log: (_, result) => ({
 				orderId: (result.order as { id?: string }).id ?? 'unknown',
