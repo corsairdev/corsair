@@ -30,6 +30,17 @@ export type ImgixRequest = {
 };
 
 /**
+ * Keeps the resource and its id (`assets/<source_id>`, `sources/<id>`) and
+ * replaces the rest of the path, which can be a customer's file path.
+ */
+function redactedPath(path: string): string {
+	const segments = path.split('?')[0]?.split('/').filter(Boolean) ?? [];
+	return segments.length > 2
+		? `${segments.slice(0, 2).join('/')}/[REDACTED]`
+		: segments.join('/');
+}
+
+/**
  * Sends a request to the Imgix Management API.
  *
  * Auth is `Authorization: Bearer <API key>`, documented at
@@ -89,14 +100,22 @@ export async function makeImgixRequest(
 		}
 		return response;
 	} catch (error) {
-		// Drop the request body from errors: it can hold source credentials or
-		// customer data (custom fields, alt text). Status and rate-limit fields stay
-		// so the error handlers and core retries still work.
-		if (error instanceof ApiError && error.request.body !== undefined) {
+		// Rebuild every ApiError without the request body, query and full path:
+		// bodies can hold source credentials or customer data (custom fields,
+		// alt text), asset paths can name people, and generations put image URLs
+		// in the query. Status and rate-limit fields stay so the error handlers
+		// and core retries still work.
+		if (error instanceof ApiError) {
+			const safePath = redactedPath(path);
 			const sanitizedError = new ApiError(
-				{ ...error.request, body: undefined },
 				{
-					url: error.url,
+					...error.request,
+					url: safePath,
+					body: undefined,
+					query: undefined,
+				},
+				{
+					url: `${IMGIX_API_BASE}/${safePath}`,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,

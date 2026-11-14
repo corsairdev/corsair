@@ -115,7 +115,11 @@ describe('makeImgixRequest', () => {
 			path: 'sources',
 		}).catch((e: unknown) => e);
 
-		expect(caught).toBe(error);
+		expect(caught).toBeInstanceOf(ApiError);
+		if (caught instanceof ApiError) {
+			expect(caught.status).toBe(429);
+			expect(caught.retryAfter).toBe(2500);
+		}
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
@@ -179,6 +183,41 @@ describe('makeImgixRequest', () => {
 			expect(propagated.request.body).toBeUndefined();
 			expect(JSON.stringify(propagated)).not.toContain('customer@example.com');
 			expect(JSON.stringify(propagated)).not.toContain('top-secret-s3-key');
+		}
+	});
+
+	it('drops the asset path and query (customer paths, image URLs) from a bodyless ApiError', async () => {
+		const error = new ApiError(
+			{
+				method: 'GET',
+				url: 'assets/src_1/customers/alice@example.com/photo.jpg',
+				query: { url: 'https://cdn.example.com/alice@example.com.jpg' },
+			},
+			{
+				url: 'https://api.imgix.com/api/v1/assets/src_1/customers/alice@example.com/photo.jpg?url=https%3A%2F%2Fcdn.example.com%2Falice%40example.com.jpg',
+				ok: false,
+				status: 404,
+				statusText: 'Not Found',
+				body: { errors: [{ title: 'Not Found' }] },
+			},
+			'Not Found',
+		);
+		mockedRequest.mockRejectedValue(error);
+
+		// `unknown` because a rejected value is only narrowed by assertions below
+		const caught: unknown = await makeImgixRequest('fixture-key', {
+			method: 'GET',
+			path: 'assets/src_1/customers/alice@example.com/photo.jpg',
+			query: { url: 'https://cdn.example.com/alice@example.com.jpg' },
+		}).catch((e: unknown) => e);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		if (caught instanceof ApiError) {
+			expect(caught.status).toBe(404);
+			expect(caught.url).toBe(`${IMGIX_API_BASE}/assets/src_1/[REDACTED]`);
+			expect(caught.request.query).toBeUndefined();
+			expect(JSON.stringify(caught)).not.toContain('alice');
+			expect(String(caught.stack)).not.toContain('alice');
 		}
 	});
 
