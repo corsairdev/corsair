@@ -15,9 +15,14 @@ export const list: ImgixEndpoints['assets.list'] = async (ctx, input) => {
 	const parsedInput = ImgixEndpointInputSchemas['assets.list'].parse(input);
 
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (parsedInput.filter !== undefined) query.filter = parsedInput.filter;
+	// imgix takes indexed filters (filter[origin_path]=..., filter[colors]=...);
+	// a bare `filter` string gets a 400.
+	for (const [field, value] of Object.entries(parsedInput.filter ?? {})) {
+		query[`filter[${field}]`] = value;
+	}
 	if (parsedInput.sort !== undefined) query.sort = parsedInput.sort;
-	if (parsedInput.fields !== undefined) query.fields = parsedInput.fields;
+	if (parsedInput.fields !== undefined)
+		query['fields[assets]'] = parsedInput.fields;
 	if (parsedInput.page_cursor !== undefined)
 		query['page[cursor]'] = parsedInput.page_cursor;
 	if (parsedInput.page_size !== undefined)
@@ -45,7 +50,8 @@ export const get: ImgixEndpoints['assets.get'] = async (ctx, input) => {
 	const parsedInput = ImgixEndpointInputSchemas['assets.get'].parse(input);
 
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (parsedInput.fields !== undefined) query.fields = parsedInput.fields;
+	if (parsedInput.fields !== undefined)
+		query['fields[assets]'] = parsedInput.fields;
 
 	const response = await makeImgixRequest(ctx.key, {
 		method: 'GET',

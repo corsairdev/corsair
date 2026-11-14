@@ -9,6 +9,7 @@ import {
 	UploadSessions,
 } from './endpoints';
 import type { ImgixContext } from './index';
+import { imgixEndpointMeta } from './index';
 
 jest.mock('./client', () => ({
 	...jest.requireActual('./client'),
@@ -150,6 +151,58 @@ describe('Imgix endpoints', () => {
 
 			expect(result.data[0]?.attributes.deployment?.type).toBe('imgix_storage');
 			expect(result.data[0]?.attributes.deployment?.default_params).toEqual({});
+		});
+
+		it('sources.get parses null s3_prefix and gcs_prefix', async () => {
+			mockedRequest.mockResolvedValue({
+				data: {
+					id: 'src_s3',
+					type: 'sources',
+					attributes: {
+						name: 'S3',
+						deployment: {
+							type: 's3',
+							s3_bucket: 'bucket',
+							s3_prefix: null,
+							gcs_prefix: null,
+						},
+					},
+				},
+			});
+			const result = await Sources.get(mockCtx, { source_id: 'src_s3' });
+			expect(result.data.attributes.deployment?.s3_prefix).toBeNull();
+			expect(result.data.attributes.deployment?.gcs_prefix).toBeNull();
+		});
+
+		it('sources.create accepts an S3-compatible endpoint host without a scheme', async () => {
+			mockedRequest.mockResolvedValue({
+				data: { id: 'src_new', type: 'sources', attributes: {} },
+			});
+			await Sources.create(mockCtx, {
+				name: 'Spaces',
+				deployment_type: 's3_compatible',
+				imgix_subdomains: ['spaces-sub'],
+				access_key_id: 'AKIA-FIXTURE',
+				secret_key: 'fixture-secret',
+				bucket_name: 'bucket',
+				endpoint_url: 'sfo3.digitaloceanspaces.com',
+				region: 'sfo3',
+				storage_provider: 'DigitalOcean',
+			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'test-imgix-api-key',
+				expect.objectContaining({
+					body: expect.objectContaining({
+						data: expect.objectContaining({
+							attributes: expect.objectContaining({
+								deployment: expect.objectContaining({
+									endpoint_url: 'sfo3.digitaloceanspaces.com',
+								}),
+							}),
+						}),
+					}),
+				}),
+			);
 		});
 
 		it('sources.create maps documented gcs, azure and s3_compatible fields', async () => {
@@ -375,6 +428,38 @@ describe('Imgix endpoints', () => {
 						'page[cursor]': 'cursor_xyz',
 					},
 				}),
+			);
+		});
+
+		it('assets.list and assets.get send indexed filters and fields[assets] (live: bare filter 400, bare fields 500)', async () => {
+			mockedRequest.mockResolvedValue({ data: [] });
+			await Assets.list(mockCtx, {
+				source_id: 'src_123',
+				filter: { origin_path: 'photos/', colors: '8ca091' },
+				fields: 'origin_path,file_size',
+			});
+			expect(mockedRequest).toHaveBeenLastCalledWith(
+				'test-imgix-api-key',
+				expect.objectContaining({
+					query: {
+						'filter[origin_path]': 'photos/',
+						'filter[colors]': '8ca091',
+						'fields[assets]': 'origin_path,file_size',
+					},
+				}),
+			);
+
+			mockedRequest.mockResolvedValue({
+				data: { id: 'src_123/a.png', type: 'assets', attributes: {} },
+			});
+			await Assets.get(mockCtx, {
+				source_id: 'src_123',
+				origin_path: 'a.png',
+				fields: 'origin_path',
+			});
+			expect(mockedRequest).toHaveBeenLastCalledWith(
+				'test-imgix-api-key',
+				expect.objectContaining({ query: { 'fields[assets]': 'origin_path' } }),
 			);
 		});
 
@@ -956,5 +1041,15 @@ describe('Imgix endpoints', () => {
 				alt_text: { en: 'Official brand beach background', fr: null },
 			});
 		});
+	});
+});
+
+describe('Imgix risk levels', () => {
+	it('marks overwriting uploads, deletes, purges and billed generations destructive', () => {
+		const destructive = Object.entries(imgixEndpointMeta)
+			.filter(([, meta]) => meta.riskLevel === 'destructive')
+			.map(([op]) => op)
+			.sort();
+		expect(destructive).toContain('assets.upload');
 	});
 });

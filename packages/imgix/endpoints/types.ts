@@ -170,7 +170,13 @@ export const SourcesCreateInputSchema = z
 		// s3_compatible
 		access_key_id: z.string().optional(),
 		bucket_name: z.string().optional(),
-		endpoint_url: z.string().url().optional(),
+		endpoint_url: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'S3-compatible endpoint host, e.g. sfo3.digitaloceanspaces.com (imgix documents it without a scheme)',
+			),
 		region: z.string().optional(),
 		secret_key: z.string().optional(),
 		storage_provider: z
@@ -270,9 +276,19 @@ export const AssetResourceSchema = z
 export const AssetsListInputSchema = z
 	.object({
 		source_id: z.string().min(1),
-		filter: z.string().optional(),
+		filter: z
+			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+			.optional()
+			.describe(
+				'Asset field filters, sent as filter[<field>]=<value> and ANDed, e.g. { origin_path: "photos/", file_type: "image", colors: "8ca091" }',
+			),
 		sort: z.string().optional(),
-		fields: z.string().optional(),
+		fields: z
+			.string()
+			.optional()
+			.describe(
+				'Comma-separated asset fields to return, sent as fields[assets]',
+			),
 		page_cursor: z.string().optional(),
 		// Sent as page[limit]; imgix caps a page at 1000 assets
 		page_size: z.number().int().min(1).max(1000).optional(),
@@ -292,7 +308,12 @@ export const AssetsGetInputSchema = z
 	.object({
 		source_id: z.string().min(1),
 		origin_path: z.string().min(1),
-		fields: z.string().optional(),
+		fields: z
+			.string()
+			.optional()
+			.describe(
+				'Comma-separated asset fields to return, sent as fields[assets]',
+			),
 	})
 	.strict();
 
