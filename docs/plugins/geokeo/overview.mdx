@@ -1,0 +1,137 @@
+---
+title: "Geokeo plugin"
+sidebarTitle: "Overview"
+description: "Geocode both ways with Geokeo - turn an address or place name into coordinates and components, and turn coordinates back into the places nearest them, from OpenStreetMap data."
+---
+
+Use **Geokeo** through Corsair: one client, typed API calls.
+
+Copy the API key from your Geokeo dashboard's API tab. The key travels as the `api` **query parameter**, which is where the API expects it — not `api_key`.
+
+Things to know before you call:
+
+- **Every answer is HTTP 200, including a refusal.** A live probe with a bad key answered **200** with `{"status":"ACCESS_DENIED"}`, and a request with no key answered `{"status":"INVALID_REQUEST"}`. The status line says nothing, so the plugin reads `status` and throws unless it is `ok` or `ZERO_RESULTS`.
+- **`ZERO_RESULTS` is not an error.** It means the query was valid but matched nothing, and the docs say that request **is not charged**. The plugin returns it as an empty `results` list so a caller can tell it apart from a refusal.
+- **`ACCESS_DENIED` covers more than a bad key.** The docs say it also covers an IP or HTTP referrer restriction set on the account, so a key that works elsewhere can still be refused here.
+- **The coordinates are strings.** Geokeo sends `"lat": "40.74843124430164"`, not a number. The raw fields are kept as documented, and `lat`, `lng` and `distance_km` are added beside them already parsed, so nothing has to convert them again.
+- **The distance has its unit glued on.** A reverse result carries `"distance": "0.0010302984507433km"` as one string. That is kept as-is, and `distance_km` holds the number.
+- **The query is capped at 50 characters.** The plugin rejects a longer `q` before the request rather than letting Geokeo answer `INVALID_REQUEST`.
+- **There is a class and a type, not a category tree.** Each result carries an OpenStreetMap `class` (such as `tourism`) and a `type` within it (such as `attraction`), which is a coarser signal than a full category path.
+- **There are two endpoints, and that is the whole API.** Geokeo offers forward and reverse geocoding only; there is no batch route, no autocomplete and no place details.
+
+**What you get:**
+
+- 2 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/geokeo better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/geokeo better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/geokeo better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/geokeo better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { geokeo } from '@corsair-dev/geokeo';
+
+export const corsair = createCorsair({
+	plugins: [
+		geokeo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+geokeo()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'geokeo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Turn a place name into coordinates**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.geokeo.api.geocode.forward({ q: 'empire state building', country: 'us' });
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/geokeo/api) reference._
+
+
+See the full list on the [API](/plugins/geokeo/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/geokeo/api">
+    Every `geokeo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
