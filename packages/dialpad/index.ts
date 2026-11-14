@@ -2133,7 +2133,7 @@ const dialpadEndpointMetaValue = {
 			'Department -- List. Gets all the departments for an office. Rate limit: 1200 per minute.',
 	},
 	'numbers.office_unassign_number.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Unassign. Un-assigns a phone number from a office mainline. The number will be returned to the company's reserved pool if there is one. Otherwise the number will be released. Rate limit: 1200 per minute.",
 	},
@@ -2223,7 +2223,7 @@ const dialpadEndpointMetaValue = {
 			"Dialpad Number -- Assign. Assigns a number to a room. The number will automatically be taken from the company's reserved block if there are reserved numbers, otherwise a number will be auto-assigned from the provided area code. Rate limit: 1200 per minute.",
 	},
 	'numbers.room_unassign_number.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Unassign. Un-assigns a phone number from a room. The number will be returned to the company's reserved pool if there is one. Otherwise the number will be released. Rate limit: 1200 per minute.",
 	},
@@ -2407,7 +2407,7 @@ const dialpadEndpointMetaValue = {
 			'Do Not Disturb -- Toggle. Toggle DND status on or off for the given user. Rate limit: 1200 per minute.',
 	},
 	'users.unassign_number': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Unassign. Un-assigns a phone number from a user. The number will be returned to the company's reserved block if there is one. Otherwise the number will be released. Rate limit: 1200 per minute.",
 	},

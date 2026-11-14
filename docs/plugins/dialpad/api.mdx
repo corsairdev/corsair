@@ -9967,7 +9967,7 @@ await corsair.dialpad.api.numbers.list({ query: {} });
 
 Dialpad Number -- Unassign. Un-assigns a phone number from a office mainline. The number will be returned to the company's reserved pool if there is one. Otherwise the number will be released. Rate limit: 1200 per minute.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dialpad.api.numbers.office_unassign_number.post({ path: {"id":1}, body: {"number":"sample-value"} });
@@ -10026,7 +10026,7 @@ await corsair.dialpad.api.numbers.office_unassign_number.post({ path: {"id":1}, 
 
 Dialpad Number -- Unassign. Un-assigns a phone number from a room. The number will be returned to the company's reserved pool if there is one. Otherwise the number will be released. Rate limit: 1200 per minute.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dialpad.api.numbers.room_unassign_number.post({ path: {"id":1}, body: {"number":"sample-value"} });
@@ -25938,7 +25938,7 @@ await corsair.dialpad.api.users.toggle_dnd({ path: {"id":"sample-value"}, body: 
 
 Dialpad Number -- Unassign. Un-assigns a phone number from a user. The number will be returned to the company's reserved block if there is one. Otherwise the number will be released. Rate limit: 1200 per minute.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dialpad.api.users.unassign_number({ path: {"id":1}, body: {"number":"sample-value"} });

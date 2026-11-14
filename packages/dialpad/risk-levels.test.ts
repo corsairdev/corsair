@@ -37,8 +37,14 @@ const DESTRUCTIVE = {
 		'numbers.assign_room_number.post',
 		'faxline.assign',
 	],
-	// The old number is released.
-	irreversible: ['numbers.swap'],
+	// The old number is released, or is released when the company has no
+	// reserved pool.
+	irreversible: [
+		'numbers.swap',
+		'numbers.office_unassign_number.post',
+		'numbers.room_unassign_number.post',
+		'users.unassign_number',
+	],
 } as const;
 
 describe('Dialpad risk levels', () => {
