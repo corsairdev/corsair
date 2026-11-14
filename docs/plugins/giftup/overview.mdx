@@ -1,0 +1,137 @@
+---
+title: "Gift Up! plugin"
+sidebarTitle: "Overview"
+description: "Digital and physical gift card management, issuance, redemption, orders, and balances."
+---
+
+Use **Gift Up!** through Corsair: one client, typed API calls.
+
+Gift Up! is a digital and physical gift card platform. The REST API operates under `https://api.giftup.app`.
+
+Authentication requires an API key passed via the `Authorization: Bearer <api_key>` header. API keys are generated in the Gift Up! dashboard under Settings > Integrations > API.
+
+Key concepts:
+- **Orders and Gift Card Issuance:** Gift cards are created by placing an order via `orders.create`.
+- **Redemptions:** Full or partial redemptions are performed on the gift card resource via `giftCards.redeem` or `giftCards.redeemInFull`. Redemptions can be reversed/refunded using `giftCards.undoRedemption`.
+- **JSON Patch:** Updates to gift cards, orders, items, groups, users, and settings use RFC 6902 JSON Patch operations.
+- **Test Mode:** Test mode can be enabled by setting `testMode: true` on plugin options or via the `x-giftup-testmode: true` request header.
+
+**What you get:**
+
+- 51 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/giftup better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/giftup better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/giftup better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/giftup better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { giftup } from '@corsair-dev/giftup';
+
+export const corsair = createCorsair({
+	plugins: [
+		giftup(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Gift Up! API key before the first call: `pnpm corsair setup --plugin=giftup --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+giftup()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'giftup',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`company.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.giftup.api.company.get({});
+```
+
+
+**`giftCards.reactivate`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.giftup.api.giftCards.reactivate({});
+```
+
+
+See the full list on the [API](/plugins/giftup/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/giftup/api">
+    Every `giftup.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

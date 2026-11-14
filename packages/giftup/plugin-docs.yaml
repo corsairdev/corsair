@@ -1,0 +1,122 @@
+displayName: Gift Up!
+description: Digital and physical gift card management, issuance, redemption, orders, and balances.
+domain: giftup.app
+recommendedAuth: api_key
+overviewNote: |
+  Gift Up! is a digital and physical gift card platform. The REST API operates under `https://api.giftup.app`.
+
+  Authentication requires an API key passed via the `Authorization: Bearer <api_key>` header. API keys are generated in the Gift Up! dashboard under Settings > Integrations > API.
+
+  Key concepts:
+  - **Orders and Gift Card Issuance:** Gift cards are created by placing an order via `orders.create`.
+  - **Redemptions:** Full or partial redemptions are performed on the gift card resource via `giftCards.redeem` or `giftCards.redeemInFull`. Redemptions can be reversed/refunded using `giftCards.undoRedemption`.
+  - **JSON Patch:** Updates to gift cards, orders, items, groups, users, and settings use RFC 6902 JSON Patch operations.
+  - **Test Mode:** Test mode can be enabled by setting `testMode: true` on plugin options or via the `x-giftup-testmode: true` request header.
+references:
+  - title: Gift Up! Developer Documentation
+    url: https://developer.giftup.com/api
+  - title: Gift Up! Developer Guides
+    url: https://help.giftup.com/
+apiExamples:
+  ping.get:
+    call: "{}"
+  ping.post:
+    call: "{ payload: { message: 'hello' } }"
+  company.get:
+    call: "{}"
+  giftCards.list:
+    call: "{ limit: 10, offset: 0 }"
+  giftCards.get:
+    call: "{ code: 'GU-DEMO-12345' }"
+  giftCards.update:
+    call: "{ code: 'GU-DEMO-12345', patch: [{ op: 'replace', path: '/title', value: 'Updated Gift Card' }] }"
+  giftCards.reactivate:
+    call: "{ code: 'GU-DEMO-12345', reason: 'Customer requested reactivate' }"
+  giftCards.void:
+    call: "{ code: 'GU-DEMO-12345', reason: 'Cancelled by customer' }"
+  giftCards.topUp:
+    call: "{ code: 'GU-DEMO-12345', amount: 25 }"
+  giftCards.redeem:
+    call: "{ code: 'GU-DEMO-12345', amount: 15 }"
+  giftCards.redeemInFull:
+    call: "{ code: 'GU-DEMO-12345', reason: 'Complete redemption' }"
+  giftCards.undoRedemption:
+    call: "{ code: 'GU-DEMO-12345', transactionId: 'd9d587ae-fada-431c-e7af-08d885934bd4' }"
+  giftCards.transferBalances:
+    call: "{ sourceGiftCards: ['GU-DEMO-11111', 'GU-DEMO-22222'], destinationGiftCard: 'GU-DEMO-33333' }"
+  orders.list:
+    call: "{ limit: 10, offset: 0 }"
+  orders.get:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }"
+  orders.create:
+    call: "{ purchaserEmail: 'customer@example.com', purchaserName: 'Jane Smith', revenue: 50, itemDetails: [{ quantity: 1, name: 'Gift Card', price: 50, value: 50 }] }"
+  orders.update:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', patch: [{ op: 'replace', path: '/referrer', value: 'Partner' }] }"
+  orders.addNote:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', content: 'Follow-up order note' }"
+  orders.markAsPosted:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', codes: [{ oldCode: 'OLD123', newCode: 'NEW123' }] }"
+  items.list:
+    call: "{}"
+  items.get:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }"
+  items.create:
+    call: "{ name: 'Dining Voucher', price: 50, value: 50 }"
+  items.update:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', patch: [{ op: 'replace', path: '/name', value: 'Special Dining' }] }"
+  items.delete:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }"
+  groups.list:
+    call: "{}"
+  groups.get:
+    call: "{ id: '18a7318d-fbfd-4473-be84-fb13d33d52aa' }"
+  groups.create:
+    call: "{ name: 'Fixed value gift cards', description: 'Cards with set values' }"
+  groups.update:
+    call: "{ id: '18a7318d-fbfd-4473-be84-fb13d33d52aa', patch: [{ op: 'replace', path: '/name', value: 'Holiday cards' }] }"
+  groups.delete:
+    call: "{ id: '18a7318d-fbfd-4473-be84-fb13d33d52aa' }"
+  locations.list:
+    call: "{}"
+  promotions.list:
+    call: "{}"
+  reports.listTransactions:
+    call: "{ limit: 10, offset: 0 }"
+  reports.getTransaction:
+    call: "{ id: '9bb226d3-f286-4347-8ff9-6503586626c5' }"
+  settings.getCheckout:
+    call: "{}"
+  settings.updateCheckout:
+    call: "{ patch: [{ op: 'replace', path: '/themeColor', value: '#111827' }] }"
+  settings.getEmail:
+    call: "{}"
+  settings.updateEmail:
+    call: "{ patch: [{ op: 'replace', path: '/fromName', value: 'My Brand' }] }"
+  settings.getGiftCard:
+    call: "{}"
+  settings.updateGiftCard:
+    call: "{ patch: [{ op: 'replace', path: '/showBalance', value: true }] }"
+  settings.listArtwork:
+    call: "{}"
+  settings.uploadArtwork:
+    call: "{ url: 'https://cdn.example.com/artwork.png' }"
+  settings.deleteArtwork:
+    call: "{ id: '78770b6f-15c5-41f4-b8a9-f0a88b81593e' }"
+  settings.getShipping:
+    call: "{}"
+  users.list:
+    call: "{}"
+  users.get:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }"
+  users.invite:
+    call: "{ email: 'staff@example.com', name: 'Staff User' }"
+  users.update:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', patch: [{ op: 'replace', path: '/name', value: 'Updated Staff' }] }"
+  users.delete:
+    call: "{ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' }"
+  integrations.getStripeConnection:
+    call: "{}"
+  integrations.updateStripeConnection:
+    call: "{ enableIdeal: true }"
+  partners.createAccount:
+    call: "{ email: 'merchant@example.com', name: 'Merchant Admin', companyName: 'Merchant LLC', currency: 'USD', countryCode: 'USA' }"

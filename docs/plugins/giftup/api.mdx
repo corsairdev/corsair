@@ -1,0 +1,3107 @@
+---
+title: "Gift Up! API reference"
+sidebarTitle: "API"
+description: "API reference for the Gift Up! plugin in Corsair: every `giftup.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Company
+
+### get
+
+`company.get`
+
+Retrieve current company account profile and settings
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.company.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `onboardingCompleted` | `boolean` | Yes | — |
+| `canShowCheckout` | `boolean` | Yes | — |
+| `isCheckoutLive` | `boolean` | Yes | — |
+
+
+
+---
+
+## Gift Cards
+
+### get
+
+`giftCards.get`
+
+Retrieve details and remaining balance of a gift card by code
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.giftCards.get({ code: 'GU-DEMO-12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canBeRedeemed` | `boolean` | Yes | — |
+| `hasExpired` | `boolean` | Yes | — |
+| `notYetValid` | `boolean` | Yes | — |
+| `isVoided` | `boolean` | Yes | — |
+| `code` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `subTitle` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `fulfilledOn` | `string \| null` | No | — |
+| `recipientName` | `string \| null` | No | — |
+| `recipientEmail` | `string \| null` | No | — |
+| `backingType` | `string` | Yes | — |
+| `remainingValue` | `number \| null` | Yes | — |
+| `remainingUnits` | `number \| null` | Yes | — |
+| `initialValue` | `number \| null` | Yes | — |
+| `initialUnits` | `number \| null` | Yes | — |
+| `equivalentValuePerUnit` | `number \| null` | No | — |
+| `terms` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+| `expiresOn` | `string \| null` | No | — |
+| `validFrom` | `string \| null` | No | — |
+| `voidedOn` | `string \| null` | No | — |
+| `fulfilledBy` | `string \| null` | No | — |
+| `postalFulfilment` | `object \| null` | No | — |
+| `emailFulfilment` | `object \| null` | No | — |
+| `downloadLinks` | `object \| null` | No | — |
+| `ledger` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="postalFulfilment full type">
+
+```ts
+{
+  address?: {
+    countryCode?: string,
+    address1?: string,
+    address2?: string | null,
+    city?: string,
+    state?: string | null,
+    postalCode?: string,
+    name?: string
+  },
+  shippingOptionName?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="emailFulfilment full type">
+
+```ts
+{
+  emailAddress?: string,
+  scheduledFor?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="downloadLinks full type">
+
+```ts
+{
+  artworkUrl?: string | null,
+  imageUrl?: string | null,
+  pdfUrl?: string | null,
+  appleWalletUrl?: string | null,
+  googleWalletUrl?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ledger full type">
+
+```ts
+{
+  id: string,
+  eventType: string,
+  eventOccuredOn: string,
+  eventOccuredAtLocationId?: string | null,
+  units?: number | null,
+  value?: number | null,
+  whoEmail?: string | null,
+  whoName?: string | null,
+  reason?: string | null,
+  metadata?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`giftCards.list`
+
+List gift cards with optional date filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.giftCards.list({ limit: 10, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdOnOrAfter` | `string` | No | — |
+| `createdOnOrBefore` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `status` | `string` | No | — |
+| `promotionId` | `string` | No | — |
+| `orderId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  canBeRedeemed: boolean,
+  hasExpired: boolean,
+  notYetValid: boolean,
+  isVoided: boolean,
+  code: string,
+  title: string,
+  subTitle?: string | null,
+  message?: string | null,
+  fulfilledOn?: string | null,
+  recipientName?: string | null,
+  recipientEmail?: string | null,
+  backingType: string,
+  remainingValue: number | null,
+  remainingUnits: number | null,
+  initialValue: number | null,
+  initialUnits: number | null,
+  equivalentValuePerUnit?: number | null,
+  terms?: string | null,
+  sku?: string | null,
+  expiresOn?: string | null,
+  validFrom?: string | null,
+  voidedOn?: string | null,
+  fulfilledBy?: string | null,
+  postalFulfilment?: {
+    address?: {
+      countryCode?: string,
+      address1?: string,
+      address2?: string | null,
+      city?: string,
+      state?: string | null,
+      postalCode?: string,
+      name?: string
+    },
+    shippingOptionName?: string | null
+  } | null,
+  emailFulfilment?: {
+    emailAddress?: string,
+    scheduledFor?: string | null
+  } | null,
+  downloadLinks?: {
+    artworkUrl?: string | null,
+    imageUrl?: string | null,
+    pdfUrl?: string | null,
+    appleWalletUrl?: string | null,
+    googleWalletUrl?: string | null
+  } | null,
+  ledger?: {
+    id: string,
+    eventType: string,
+    eventOccuredOn: string,
+    eventOccuredAtLocationId?: string | null,
+    units?: number | null,
+    value?: number | null,
+    whoEmail?: string | null,
+    whoName?: string | null,
+    reason?: string | null,
+    metadata?: Record<string, string>
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reactivate
+
+`giftCards.reactivate`
+
+Reactivate a previously voided gift card
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.giftCards.reactivate({ code: 'GU-DEMO-12345', reason: 'Customer requested reactivate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `reason` | `string` | No | — |
+| `locationId` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isRedeemed` | `boolean` | Yes | — |
+| `isAlreadyActive` | `boolean` | Yes | — |
+
+
+
+---
+
+### redeem
+
+`giftCards.redeem`
+
+Redeem an amount or units against a gift card balance
+
+**Risk:** `destructive`
+
+```ts
+await corsair.giftup.api.giftCards.redeem({ code: 'GU-DEMO-12345', amount: 15 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `amount` | `number \| null` | No | — |
+| `units` | `number \| null` | No | — |
+| `reason` | `string \| null` | No | — |
+| `locationId` | `string \| null` | No | — |
+| `redeemedOn` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | — |
+| `redeemedAmount` | `number` | Yes | — |
+| `remainingCredit` | `number` | Yes | — |
+| `redeemedUnits` | `number \| null` | Yes | — |
+| `remainingUnits` | `number \| null` | Yes | — |
+
+
+
+---
+
+### redeemInFull
+
+`giftCards.redeemInFull`
+
+Redeem the entire remaining balance of a gift card
+
+**Risk:** `destructive`
+
+```ts
+await corsair.giftup.api.giftCards.redeemInFull({ code: 'GU-DEMO-12345', reason: 'Complete redemption' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `reason` | `string \| null` | No | — |
+| `locationId` | `string \| null` | No | — |
+| `redeemedOn` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | — |
+| `redeemedAmount` | `number` | Yes | — |
+| `remainingCredit` | `number` | Yes | — |
+| `redeemedUnits` | `number \| null` | Yes | — |
+| `remainingUnits` | `number \| null` | Yes | — |
+
+
+
+---
+
+### topUp
+
+`giftCards.topUp`
+
+Top up remaining credit or units on a gift card
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.giftCards.topUp({ code: 'GU-DEMO-12345', amount: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `amount` | `number \| null` | No | — |
+| `units` | `number \| null` | No | — |
+| `reason` | `string \| null` | No | — |
+| `locationId` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | — |
+| `remainingCredit` | `number` | Yes | — |
+| `remainingUnits` | `number \| null` | Yes | — |
+
+
+
+---
+
+### transferBalances
+
+`giftCards.transferBalances`
+
+Transfer remaining balances from source gift cards to a destination gift card
+
+**Risk:** `destructive`
+
+```ts
+await corsair.giftup.api.giftCards.transferBalances({ sourceGiftCards: ['GU-DEMO-11111', 'GU-DEMO-22222'], destinationGiftCard: 'GU-DEMO-33333' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceGiftCards` | `string[]` | Yes | — |
+| `destinationGiftCard` | `string` | Yes | — |
+| `reason` | `string \| null` | No | — |
+| `locationId` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transferredCredit` | `number` | Yes | — |
+| `transferredUnits` | `number \| null` | Yes | — |
+
+
+
+---
+
+### undoRedemption
+
+`giftCards.undoRedemption`
+
+Refund or reverse a previously executed gift card redemption
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.giftCards.undoRedemption({ code: 'GU-DEMO-12345', transactionId: 'd9d587ae-fada-431c-e7af-08d885934bd4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `transactionId` | `string` | Yes | — |
+| `reason` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | — |
+| `amountReversed` | `number` | Yes | — |
+| `unitsReversed` | `number` | Yes | — |
+| `alreadyReversed` | `boolean` | Yes | — |
+| `remainingCredit` | `number` | Yes | — |
+| `remainingUnits` | `number \| null` | Yes | — |
+
+
+
+---
+
+### update
+
+`giftCards.update`
+
+Update gift card properties using JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.giftCards.update({ code: 'GU-DEMO-12345', patch: [{ op: 'replace', path: '/title', value: 'Updated Gift Card' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canBeRedeemed` | `boolean` | Yes | — |
+| `hasExpired` | `boolean` | Yes | — |
+| `notYetValid` | `boolean` | Yes | — |
+| `isVoided` | `boolean` | Yes | — |
+| `code` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `subTitle` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `fulfilledOn` | `string \| null` | No | — |
+| `recipientName` | `string \| null` | No | — |
+| `recipientEmail` | `string \| null` | No | — |
+| `backingType` | `string` | Yes | — |
+| `remainingValue` | `number \| null` | Yes | — |
+| `remainingUnits` | `number \| null` | Yes | — |
+| `initialValue` | `number \| null` | Yes | — |
+| `initialUnits` | `number \| null` | Yes | — |
+| `equivalentValuePerUnit` | `number \| null` | No | — |
+| `terms` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+| `expiresOn` | `string \| null` | No | — |
+| `validFrom` | `string \| null` | No | — |
+| `voidedOn` | `string \| null` | No | — |
+| `fulfilledBy` | `string \| null` | No | — |
+| `postalFulfilment` | `object \| null` | No | — |
+| `emailFulfilment` | `object \| null` | No | — |
+| `downloadLinks` | `object \| null` | No | — |
+| `ledger` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="postalFulfilment full type">
+
+```ts
+{
+  address?: {
+    countryCode?: string,
+    address1?: string,
+    address2?: string | null,
+    city?: string,
+    state?: string | null,
+    postalCode?: string,
+    name?: string
+  },
+  shippingOptionName?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="emailFulfilment full type">
+
+```ts
+{
+  emailAddress?: string,
+  scheduledFor?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="downloadLinks full type">
+
+```ts
+{
+  artworkUrl?: string | null,
+  imageUrl?: string | null,
+  pdfUrl?: string | null,
+  appleWalletUrl?: string | null,
+  googleWalletUrl?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ledger full type">
+
+```ts
+{
+  id: string,
+  eventType: string,
+  eventOccuredOn: string,
+  eventOccuredAtLocationId?: string | null,
+  units?: number | null,
+  value?: number | null,
+  whoEmail?: string | null,
+  whoName?: string | null,
+  reason?: string | null,
+  metadata?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### void
+
+`giftCards.void`
+
+Void a gift card to prevent further redemptions
+
+**Risk:** `destructive`
+
+```ts
+await corsair.giftup.api.giftCards.void({ code: 'GU-DEMO-12345', reason: 'Cancelled by customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `reason` | `string` | No | — |
+| `locationId` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isRedeemed` | `boolean` | Yes | — |
+| `isAlreadyVoided` | `boolean` | Yes | — |
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a new item group
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.groups.create({ name: 'Fixed value gift cards', description: 'Cards with set values' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `autoExpand` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `sortOrder` | `number` | No | — |
+| `autoExpand` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete an item group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.giftup.api.groups.delete({ id: '18a7318d-fbfd-4473-be84-fb13d33d52aa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Retrieve details of an item group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.groups.get({ id: '18a7318d-fbfd-4473-be84-fb13d33d52aa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `sortOrder` | `number` | No | — |
+| `autoExpand` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List all item groups
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.groups.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  sortOrder?: number,
+  autoExpand?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`groups.update`
+
+Update an item group using JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.groups.update({ id: '18a7318d-fbfd-4473-be84-fb13d33d52aa', patch: [{ op: 'replace', path: '/name', value: 'Holiday cards' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `sortOrder` | `number` | No | — |
+| `autoExpand` | `boolean` | No | — |
+
+
+
+---
+
+## Integrations
+
+### getStripeConnection
+
+`integrations.getStripeConnection`
+
+Get Stripe integration connection status and enabled payment methods
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.integrations.getStripeConnection({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enableIdeal` | `boolean` | No | — |
+| `enableBancontact` | `boolean` | No | — |
+| `enableGiropay` | `boolean` | No | — |
+| `enableEps` | `boolean` | No | — |
+| `enableMultibanco` | `boolean` | No | — |
+| `enablePrzelewy24` | `boolean` | No | — |
+| `enableWeChat` | `boolean` | No | — |
+| `enableAlipay` | `boolean` | No | — |
+| `stripeAccountId` | `string \| null` | No | — |
+| `connected` | `boolean` | No | — |
+
+
+
+---
+
+### updateStripeConnection
+
+`integrations.updateStripeConnection`
+
+Update Stripe payment method settings
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.integrations.updateStripeConnection({ enableIdeal: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enableIdeal` | `boolean` | No | — |
+| `enableBancontact` | `boolean` | No | — |
+| `enableGiropay` | `boolean` | No | — |
+| `enableEps` | `boolean` | No | — |
+| `enableMultibanco` | `boolean` | No | — |
+| `enablePrzelewy24` | `boolean` | No | — |
+| `enableWeChat` | `boolean` | No | — |
+| `enableAlipay` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enableIdeal` | `boolean` | No | — |
+| `enableBancontact` | `boolean` | No | — |
+| `enableGiropay` | `boolean` | No | — |
+| `enableEps` | `boolean` | No | — |
+| `enableMultibanco` | `boolean` | No | — |
+| `enablePrzelewy24` | `boolean` | No | — |
+| `enableWeChat` | `boolean` | No | — |
+| `enableAlipay` | `boolean` | No | — |
+| `stripeAccountId` | `string \| null` | No | — |
+| `connected` | `boolean` | No | — |
+
+
+
+---
+
+## Items
+
+### create
+
+`items.create`
+
+Create a new gift card item product
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.items.create({ name: 'Dining Voucher', price: 50, value: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `backingType` | `Currency \| Units` | No | Defaults to "Currency". |
+| `priceType` | `Specified \| Variable \| Donation` | No | Defaults to "Specified". |
+| `price` | `number` | No | — |
+| `value` | `number` | No | — |
+| `units` | `number \| null` | No | — |
+| `equivalentValuePerUnit` | `number \| null` | No | — |
+| `minimumPrice` | `number \| null` | No | — |
+| `maximumPrice` | `number \| null` | No | — |
+| `availableFrom` | `string \| null` | No | — |
+| `availableUntil` | `string \| null` | No | — |
+| `validFromInDays` | `number \| null` | No | — |
+| `expiryInMonths` | `number \| null` | No | — |
+| `expiryInDays` | `number \| null` | No | — |
+| `sortOrder` | `number` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `artworkId` | `string \| null` | No | — |
+| `terms` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `backingType` | `string` | Yes | — |
+| `priceType` | `string` | Yes | — |
+| `price` | `number \| null` | No | — |
+| `value` | `number \| null` | No | — |
+| `units` | `number \| null` | No | — |
+| `equivalentValuePerUnit` | `number \| null` | No | — |
+| `minimumPrice` | `number \| null` | No | — |
+| `maximumPrice` | `number \| null` | No | — |
+| `availableFrom` | `string \| null` | No | — |
+| `availableUntil` | `string \| null` | No | — |
+| `overrideValidFrom` | `boolean` | No | — |
+| `validFrom` | `string \| null` | No | — |
+| `validFromInDays` | `number \| null` | No | — |
+| `overrideExpiry` | `boolean` | No | — |
+| `expiresOn` | `string \| null` | No | — |
+| `expiryInMonths` | `number \| null` | No | — |
+| `expiryInDays` | `number \| null` | No | — |
+| `sortOrder` | `number` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `artworkId` | `string \| null` | No | — |
+| `isPromoted` | `boolean` | No | — |
+| `terms` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`items.delete`
+
+Delete a gift card item product
+
+**Risk:** `destructive`
+
+```ts
+await corsair.giftup.api.items.delete({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`items.get`
+
+Retrieve details of an item by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.items.get({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `backingType` | `string` | Yes | — |
+| `priceType` | `string` | Yes | — |
+| `price` | `number \| null` | No | — |
+| `value` | `number \| null` | No | — |
+| `units` | `number \| null` | No | — |
+| `equivalentValuePerUnit` | `number \| null` | No | — |
+| `minimumPrice` | `number \| null` | No | — |
+| `maximumPrice` | `number \| null` | No | — |
+| `availableFrom` | `string \| null` | No | — |
+| `availableUntil` | `string \| null` | No | — |
+| `overrideValidFrom` | `boolean` | No | — |
+| `validFrom` | `string \| null` | No | — |
+| `validFromInDays` | `number \| null` | No | — |
+| `overrideExpiry` | `boolean` | No | — |
+| `expiresOn` | `string \| null` | No | — |
+| `expiryInMonths` | `number \| null` | No | — |
+| `expiryInDays` | `number \| null` | No | — |
+| `sortOrder` | `number` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `artworkId` | `string \| null` | No | — |
+| `isPromoted` | `boolean` | No | — |
+| `terms` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`items.list`
+
+List gift card items with optional group filter
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  backingType: string,
+  priceType: string,
+  price?: number | null,
+  value?: number | null,
+  units?: number | null,
+  equivalentValuePerUnit?: number | null,
+  minimumPrice?: number | null,
+  maximumPrice?: number | null,
+  availableFrom?: string | null,
+  availableUntil?: string | null,
+  overrideValidFrom?: boolean,
+  validFrom?: string | null,
+  validFromInDays?: number | null,
+  overrideExpiry?: boolean,
+  expiresOn?: string | null,
+  expiryInMonths?: number | null,
+  expiryInDays?: number | null,
+  sortOrder?: number,
+  groupId?: string | null,
+  artworkId?: string | null,
+  isPromoted?: boolean,
+  terms?: string | null,
+  sku?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`items.update`
+
+Update item properties using JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.items.update({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', patch: [{ op: 'replace', path: '/name', value: 'Special Dining' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `backingType` | `string` | Yes | — |
+| `priceType` | `string` | Yes | — |
+| `price` | `number \| null` | No | — |
+| `value` | `number \| null` | No | — |
+| `units` | `number \| null` | No | — |
+| `equivalentValuePerUnit` | `number \| null` | No | — |
+| `minimumPrice` | `number \| null` | No | — |
+| `maximumPrice` | `number \| null` | No | — |
+| `availableFrom` | `string \| null` | No | — |
+| `availableUntil` | `string \| null` | No | — |
+| `overrideValidFrom` | `boolean` | No | — |
+| `validFrom` | `string \| null` | No | — |
+| `validFromInDays` | `number \| null` | No | — |
+| `overrideExpiry` | `boolean` | No | — |
+| `expiresOn` | `string \| null` | No | — |
+| `expiryInMonths` | `number \| null` | No | — |
+| `expiryInDays` | `number \| null` | No | — |
+| `sortOrder` | `number` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `artworkId` | `string \| null` | No | — |
+| `isPromoted` | `boolean` | No | — |
+| `terms` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+
+
+
+---
+
+## Locations
+
+### list
+
+`locations.list`
+
+List all company store locations
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.locations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Orders
+
+### addNote
+
+`orders.addNote`
+
+Add an internal note to an order
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.orders.addNote({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', content: 'Follow-up order note' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### create
+
+`orders.create`
+
+Create an order and issue associated gift cards
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.orders.create({ purchaserEmail: 'customer@example.com', purchaserName: 'Jane Smith', revenue: 50, itemDetails: [{ quantity: 1, name: 'Gift Card', price: 50, value: 50 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderDate` | `string` | No | — |
+| `disableAllEmails` | `boolean` | No | — |
+| `purchaserEmail` | `string` | Yes | — |
+| `purchaserName` | `string` | Yes | — |
+| `tip` | `number` | No | — |
+| `serviceFee` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `referrer` | `string` | No | — |
+| `revenue` | `number` | No | — |
+| `itemDetails` | `object[]` | Yes | — |
+| `customFields` | `object[]` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+<AccordionGroup>
+<Accordion title="itemDetails full type">
+
+```ts
+{
+  quantity: number,
+  name?: string,
+  description?: string,
+  code?: string,
+  backingType?: Currency | Units,
+  price?: number,
+  value?: number,
+  units?: number | null,
+  equivalentValuePerUnit?: number | null,
+  itemId?: string,
+  artworkId?: string,
+  terms?: string,
+  sku?: string,
+  message?: string,
+  recipientName?: string,
+  recipientEmail?: string,
+  expiresOn?: string,
+  validFrom?: string,
+  isPostalFulfilled?: boolean,
+  isDigitalFulfilled?: boolean,
+  scheduledDeliveryDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  label: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orderNumber` | `string` | Yes | — |
+| `createdOn` | `string` | Yes | — |
+| `selectedRecipient` | `string` | No | — |
+| `purchaserEmail` | `string` | No | — |
+| `purchaserName` | `string` | No | — |
+| `currency` | `string` | Yes | — |
+| `revenue` | `number` | Yes | — |
+| `tip` | `number` | No | — |
+| `serviceFee` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `shippingFee` | `number` | No | — |
+| `referrer` | `string \| null` | No | — |
+| `source` | `string` | No | — |
+| `promotions` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+| `salesTaxes` | `object[]` | No | — |
+| `notes` | `object[]` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `downloadLinks` | `object \| null` | No | — |
+| `payment` | `object \| null` | No | — |
+| `giftCards` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="promotions full type">
+
+```ts
+{
+  promotionId?: string,
+  name?: string,
+  code?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  label: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="salesTaxes full type">
+
+```ts
+{
+  label: string,
+  amount: number,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  id: string,
+  content: string,
+  createdOn: string,
+  username: string
+}[]
+```
+</Accordion>
+
+<Accordion title="downloadLinks full type">
+
+```ts
+{
+  single?: {
+    imageUrl?: string,
+    pdfUrl?: string
+  },
+  zip?: {
+    imageUrl?: string,
+    pdfUrl?: string
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="payment full type">
+
+```ts
+{
+  provider?: string,
+  transactionId?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="giftCards full type">
+
+```ts
+{
+  canBeRedeemed: boolean,
+  hasExpired: boolean,
+  notYetValid: boolean,
+  isVoided: boolean,
+  code: string,
+  title: string,
+  subTitle?: string | null,
+  message?: string | null,
+  fulfilledOn?: string | null,
+  recipientName?: string | null,
+  recipientEmail?: string | null,
+  backingType: string,
+  remainingValue: number | null,
+  remainingUnits: number | null,
+  initialValue: number | null,
+  initialUnits: number | null,
+  equivalentValuePerUnit?: number | null,
+  terms?: string | null,
+  sku?: string | null,
+  expiresOn?: string | null,
+  validFrom?: string | null,
+  voidedOn?: string | null,
+  fulfilledBy?: string | null,
+  postalFulfilment?: {
+    address?: {
+      countryCode?: string,
+      address1?: string,
+      address2?: string | null,
+      city?: string,
+      state?: string | null,
+      postalCode?: string,
+      name?: string
+    },
+    shippingOptionName?: string | null
+  } | null,
+  emailFulfilment?: {
+    emailAddress?: string,
+    scheduledFor?: string | null
+  } | null,
+  downloadLinks?: {
+    artworkUrl?: string | null,
+    imageUrl?: string | null,
+    pdfUrl?: string | null,
+    appleWalletUrl?: string | null,
+    googleWalletUrl?: string | null
+  } | null,
+  ledger?: {
+    id: string,
+    eventType: string,
+    eventOccuredOn: string,
+    eventOccuredAtLocationId?: string | null,
+    units?: number | null,
+    value?: number | null,
+    whoEmail?: string | null,
+    whoName?: string | null,
+    reason?: string | null,
+    metadata?: Record<string, string>
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`orders.get`
+
+Retrieve details of a specific order by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.orders.get({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orderNumber` | `string` | Yes | — |
+| `createdOn` | `string` | Yes | — |
+| `selectedRecipient` | `string` | No | — |
+| `purchaserEmail` | `string` | No | — |
+| `purchaserName` | `string` | No | — |
+| `currency` | `string` | Yes | — |
+| `revenue` | `number` | Yes | — |
+| `tip` | `number` | No | — |
+| `serviceFee` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `shippingFee` | `number` | No | — |
+| `referrer` | `string \| null` | No | — |
+| `source` | `string` | No | — |
+| `promotions` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+| `salesTaxes` | `object[]` | No | — |
+| `notes` | `object[]` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `downloadLinks` | `object \| null` | No | — |
+| `payment` | `object \| null` | No | — |
+| `giftCards` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="promotions full type">
+
+```ts
+{
+  promotionId?: string,
+  name?: string,
+  code?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  label: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="salesTaxes full type">
+
+```ts
+{
+  label: string,
+  amount: number,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  id: string,
+  content: string,
+  createdOn: string,
+  username: string
+}[]
+```
+</Accordion>
+
+<Accordion title="downloadLinks full type">
+
+```ts
+{
+  single?: {
+    imageUrl?: string,
+    pdfUrl?: string
+  },
+  zip?: {
+    imageUrl?: string,
+    pdfUrl?: string
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="payment full type">
+
+```ts
+{
+  provider?: string,
+  transactionId?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="giftCards full type">
+
+```ts
+{
+  canBeRedeemed: boolean,
+  hasExpired: boolean,
+  notYetValid: boolean,
+  isVoided: boolean,
+  code: string,
+  title: string,
+  subTitle?: string | null,
+  message?: string | null,
+  fulfilledOn?: string | null,
+  recipientName?: string | null,
+  recipientEmail?: string | null,
+  backingType: string,
+  remainingValue: number | null,
+  remainingUnits: number | null,
+  initialValue: number | null,
+  initialUnits: number | null,
+  equivalentValuePerUnit?: number | null,
+  terms?: string | null,
+  sku?: string | null,
+  expiresOn?: string | null,
+  validFrom?: string | null,
+  voidedOn?: string | null,
+  fulfilledBy?: string | null,
+  postalFulfilment?: {
+    address?: {
+      countryCode?: string,
+      address1?: string,
+      address2?: string | null,
+      city?: string,
+      state?: string | null,
+      postalCode?: string,
+      name?: string
+    },
+    shippingOptionName?: string | null
+  } | null,
+  emailFulfilment?: {
+    emailAddress?: string,
+    scheduledFor?: string | null
+  } | null,
+  downloadLinks?: {
+    artworkUrl?: string | null,
+    imageUrl?: string | null,
+    pdfUrl?: string | null,
+    appleWalletUrl?: string | null,
+    googleWalletUrl?: string | null
+  } | null,
+  ledger?: {
+    id: string,
+    eventType: string,
+    eventOccuredOn: string,
+    eventOccuredAtLocationId?: string | null,
+    units?: number | null,
+    value?: number | null,
+    whoEmail?: string | null,
+    whoName?: string | null,
+    reason?: string | null,
+    metadata?: Record<string, string>
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+List orders with optional date filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.orders.list({ limit: 10, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdOnOrAfter` | `string` | No | — |
+| `createdOnOrBefore` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orderNumber: string,
+  createdOn: string,
+  selectedRecipient?: string,
+  purchaserEmail?: string,
+  purchaserName?: string,
+  currency: string,
+  revenue: number,
+  tip?: number,
+  serviceFee?: number,
+  discount?: number,
+  shippingFee?: number,
+  referrer?: string | null,
+  source?: string,
+  promotions?: {
+    promotionId?: string,
+    name?: string,
+    code?: string
+  }[],
+  customFields?: {
+    label: string,
+    value: string
+  }[],
+  salesTaxes?: {
+    label: string,
+    amount: number,
+    type: string
+  }[],
+  notes?: {
+    id: string,
+    content: string,
+    createdOn: string,
+    username: string
+  }[],
+  metadata?: Record<string, string>,
+  downloadLinks?: {
+    single?: {
+      imageUrl?: string,
+      pdfUrl?: string
+    },
+    zip?: {
+      imageUrl?: string,
+      pdfUrl?: string
+    }
+  } | null,
+  payment?: {
+    provider?: string,
+    transactionId?: string
+  } | null,
+  giftCards?: {
+    canBeRedeemed: boolean,
+    hasExpired: boolean,
+    notYetValid: boolean,
+    isVoided: boolean,
+    code: string,
+    title: string,
+    subTitle?: string | null,
+    message?: string | null,
+    fulfilledOn?: string | null,
+    recipientName?: string | null,
+    recipientEmail?: string | null,
+    backingType: string,
+    remainingValue: number | null,
+    remainingUnits: number | null,
+    initialValue: number | null,
+    initialUnits: number | null,
+    equivalentValuePerUnit?: number | null,
+    terms?: string | null,
+    sku?: string | null,
+    expiresOn?: string | null,
+    validFrom?: string | null,
+    voidedOn?: string | null,
+    fulfilledBy?: string | null,
+    postalFulfilment?: {
+      address?: {
+        countryCode?: string,
+        address1?: string,
+        address2?: string | null,
+        city?: string,
+        state?: string | null,
+        postalCode?: string,
+        name?: string
+      },
+      shippingOptionName?: string | null
+    } | null,
+    emailFulfilment?: {
+      emailAddress?: string,
+      scheduledFor?: string | null
+    } | null,
+    downloadLinks?: {
+      artworkUrl?: string | null,
+      imageUrl?: string | null,
+      pdfUrl?: string | null,
+      appleWalletUrl?: string | null,
+      googleWalletUrl?: string | null
+    } | null,
+    ledger?: {
+      id: string,
+      eventType: string,
+      eventOccuredOn: string,
+      eventOccuredAtLocationId?: string | null,
+      units?: number | null,
+      value?: number | null,
+      whoEmail?: string | null,
+      whoName?: string | null,
+      reason?: string | null,
+      metadata?: Record<string, string>
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markAsPosted
+
+`orders.markAsPosted`
+
+Mark a postal order as posted and update gift card codes
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.orders.markAsPosted({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', codes: [{ oldCode: 'OLD123', newCode: 'NEW123' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `codes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="codes full type">
+
+```ts
+{
+  oldCode: string,
+  newCode: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### update
+
+`orders.update`
+
+Update order properties using JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.orders.update({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', patch: [{ op: 'replace', path: '/referrer', value: 'Partner' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orderNumber` | `string` | Yes | — |
+| `createdOn` | `string` | Yes | — |
+| `selectedRecipient` | `string` | No | — |
+| `purchaserEmail` | `string` | No | — |
+| `purchaserName` | `string` | No | — |
+| `currency` | `string` | Yes | — |
+| `revenue` | `number` | Yes | — |
+| `tip` | `number` | No | — |
+| `serviceFee` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `shippingFee` | `number` | No | — |
+| `referrer` | `string \| null` | No | — |
+| `source` | `string` | No | — |
+| `promotions` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+| `salesTaxes` | `object[]` | No | — |
+| `notes` | `object[]` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `downloadLinks` | `object \| null` | No | — |
+| `payment` | `object \| null` | No | — |
+| `giftCards` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="promotions full type">
+
+```ts
+{
+  promotionId?: string,
+  name?: string,
+  code?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  label: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="salesTaxes full type">
+
+```ts
+{
+  label: string,
+  amount: number,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="notes full type">
+
+```ts
+{
+  id: string,
+  content: string,
+  createdOn: string,
+  username: string
+}[]
+```
+</Accordion>
+
+<Accordion title="downloadLinks full type">
+
+```ts
+{
+  single?: {
+    imageUrl?: string,
+    pdfUrl?: string
+  },
+  zip?: {
+    imageUrl?: string,
+    pdfUrl?: string
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="payment full type">
+
+```ts
+{
+  provider?: string,
+  transactionId?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="giftCards full type">
+
+```ts
+{
+  canBeRedeemed: boolean,
+  hasExpired: boolean,
+  notYetValid: boolean,
+  isVoided: boolean,
+  code: string,
+  title: string,
+  subTitle?: string | null,
+  message?: string | null,
+  fulfilledOn?: string | null,
+  recipientName?: string | null,
+  recipientEmail?: string | null,
+  backingType: string,
+  remainingValue: number | null,
+  remainingUnits: number | null,
+  initialValue: number | null,
+  initialUnits: number | null,
+  equivalentValuePerUnit?: number | null,
+  terms?: string | null,
+  sku?: string | null,
+  expiresOn?: string | null,
+  validFrom?: string | null,
+  voidedOn?: string | null,
+  fulfilledBy?: string | null,
+  postalFulfilment?: {
+    address?: {
+      countryCode?: string,
+      address1?: string,
+      address2?: string | null,
+      city?: string,
+      state?: string | null,
+      postalCode?: string,
+      name?: string
+    },
+    shippingOptionName?: string | null
+  } | null,
+  emailFulfilment?: {
+    emailAddress?: string,
+    scheduledFor?: string | null
+  } | null,
+  downloadLinks?: {
+    artworkUrl?: string | null,
+    imageUrl?: string | null,
+    pdfUrl?: string | null,
+    appleWalletUrl?: string | null,
+    googleWalletUrl?: string | null
+  } | null,
+  ledger?: {
+    id: string,
+    eventType: string,
+    eventOccuredOn: string,
+    eventOccuredAtLocationId?: string | null,
+    units?: number | null,
+    value?: number | null,
+    whoEmail?: string | null,
+    whoName?: string | null,
+    reason?: string | null,
+    metadata?: Record<string, string>
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Partners
+
+### createAccount
+
+`partners.createAccount`
+
+Provision a new Gift Up! merchant account via Partner API
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.partners.createAccount({ email: 'merchant@example.com', name: 'Merchant Admin', companyName: 'Merchant LLC', currency: 'USD', countryCode: 'USA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `companyName` | `string` | Yes | — |
+| `address` | `string` | No | — |
+| `currency` | `string` | Yes | — |
+| `countryCode` | `string` | Yes | — |
+| `websiteUrl` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | No | — |
+| `apiKey` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `company` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  currency: string,
+  onboardingCompleted: boolean,
+  canShowCheckout: boolean,
+  isCheckoutLive: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ping
+
+### get
+
+`ping.get`
+
+Test connectivity and authorization with the Gift Up! API
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.ping.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### post
+
+`ping.post`
+
+Echo test with the Gift Up! API returning the posted payload
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.ping.post({ payload: { message: 'hello' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payload` | `any` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Promotions
+
+### list
+
+`promotions.list`
+
+List all active and scheduled checkout promotions
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.promotions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  noBenefit?: boolean,
+  publishedOn?: string,
+  stoppedOn?: string | null,
+  benefits?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reports
+
+### getTransaction
+
+`reports.getTransaction`
+
+Retrieve a specific ledger report transaction by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.reports.getTransaction({ id: '9bb226d3-f286-4347-8ff9-6503586626c5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `eventOccuredOn` | `string` | Yes | — |
+| `eventOccuredAtLocationId` | `string \| null` | No | — |
+| `eventType` | `string` | Yes | — |
+| `reason` | `string \| null` | No | — |
+| `referrer` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `orderId` | `string \| null` | No | — |
+| `currency` | `string` | No | — |
+| `giftUpFee` | `number` | No | — |
+| `whoName` | `string \| null` | No | — |
+| `whoEmail` | `string \| null` | No | — |
+| `orderDetails` | `Record<string, string> \| null` | No | — |
+| `giftCard` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="giftCard full type">
+
+```ts
+{
+  id?: string,
+  code?: string,
+  valueChange?: number,
+  unitChange?: number,
+  title?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTransactions
+
+`reports.listTransactions`
+
+List ledger report transactions with optional date range and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.reports.listTransactions({ limit: 10, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventOccurredOnOrAfter` | `string` | No | — |
+| `eventOccurredOnOrBefore` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  eventOccuredOn: string,
+  eventOccuredAtLocationId?: string | null,
+  eventType: string,
+  reason?: string | null,
+  referrer?: string | null,
+  metadata?: Record<string, string>,
+  orderId?: string | null,
+  currency?: string,
+  giftUpFee?: number,
+  whoName?: string | null,
+  whoEmail?: string | null,
+  orderDetails?: Record<string, string> | null,
+  giftCard?: {
+    id?: string,
+    code?: string,
+    valueChange?: number,
+    unitChange?: number,
+    title?: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Settings
+
+### deleteArtwork
+
+`settings.deleteArtwork`
+
+Delete uploaded gift card design artwork by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.giftup.api.settings.deleteArtwork({ id: '78770b6f-15c5-41f4-b8a9-f0a88b81593e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### getCheckout
+
+`settings.getCheckout`
+
+Get company checkout styling, tips, and service fee settings
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.settings.getCheckout({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logoUrl` | `string \| null` | No | — |
+| `introductionText` | `string \| null` | No | — |
+| `fontFamily` | `string` | No | — |
+| `fontSize` | `string` | No | — |
+| `themeColor` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `hostedBackgroundColor` | `string` | No | — |
+| `hostedTextColor` | `string` | No | — |
+| `continueLinkText` | `string \| null` | No | — |
+| `continueLinkUrl` | `string \| null` | No | — |
+| `redirectUrl` | `string \| null` | No | — |
+| `additionalCustomHtml` | `string \| null` | No | — |
+| `showBalanceChecker` | `boolean` | No | — |
+| `defaultFor` | `string` | No | — |
+| `serviceFeeCharged` | `boolean` | No | — |
+| `serviceFeeFixed` | `number` | No | — |
+| `serviceFeePercentage` | `number` | No | — |
+| `tipsEnabled` | `boolean` | No | — |
+| `allowCustomTipValues` | `boolean` | No | — |
+| `overrideTipValues` | `string[]` | No | — |
+
+
+
+---
+
+### getEmail
+
+`settings.getEmail`
+
+Get email branding, sender, and template settings
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.settings.getEmail({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logoUrl` | `string \| null` | No | — |
+| `logoAlignment` | `string` | No | — |
+| `logoWidth` | `number` | No | — |
+| `fromEmail` | `string` | No | — |
+| `fromName` | `string` | No | — |
+| `giftCardEmail` | `object` | No | — |
+| `receiptEmail` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="giftCardEmail full type">
+
+```ts
+{
+  subjectLine?: string,
+  title?: string,
+  introText?: string,
+  footerText?: string,
+  buttonLabel?: string,
+  buttonUrl?: string,
+  buttonColour?: string,
+  buttonAlignment?: string
+}
+```
+</Accordion>
+
+<Accordion title="receiptEmail full type">
+
+```ts
+{
+  subjectLine?: string,
+  title?: string,
+  introText?: string,
+  footerText?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGiftCard
+
+`settings.getGiftCard`
+
+Get gift card barcode, expiry, and terms defaults
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.settings.getGiftCard({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `defaultDescription` | `string \| null` | No | — |
+| `barcodeFormat` | `string` | No | — |
+| `expiryInMonths` | `number \| null` | No | — |
+| `expiryInDays` | `number \| null` | No | — |
+| `validFromInDays` | `number \| null` | No | — |
+| `showIssuedOnDate` | `boolean` | No | — |
+| `showBalance` | `boolean` | No | — |
+| `showBarcode` | `boolean` | No | — |
+| `generalTerms` | `string \| null` | No | — |
+| `codeFormat` | `string` | No | — |
+
+
+
+---
+
+### getShipping
+
+`settings.getShipping`
+
+Get physical shipping and postal delivery options
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.settings.getShipping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enableDigitalFulfilment` | `boolean` | Yes | — |
+| `enableSelfFulfilledPostal` | `boolean` | Yes | — |
+| `enablePostalMessage` | `boolean` | No | — |
+| `postalShippingOptions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="postalShippingOptions full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  price: number,
+  sortOrder?: number,
+  type: string,
+  countries?: {
+    name: string,
+    IsoCode?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listArtwork
+
+`settings.listArtwork`
+
+List uploaded gift card design artwork
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.settings.listArtwork({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  sortOrder?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateCheckout
+
+`settings.updateCheckout`
+
+Update checkout settings using JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.settings.updateCheckout({ patch: [{ op: 'replace', path: '/themeColor', value: '#111827' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logoUrl` | `string \| null` | No | — |
+| `introductionText` | `string \| null` | No | — |
+| `fontFamily` | `string` | No | — |
+| `fontSize` | `string` | No | — |
+| `themeColor` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `hostedBackgroundColor` | `string` | No | — |
+| `hostedTextColor` | `string` | No | — |
+| `continueLinkText` | `string \| null` | No | — |
+| `continueLinkUrl` | `string \| null` | No | — |
+| `redirectUrl` | `string \| null` | No | — |
+| `additionalCustomHtml` | `string \| null` | No | — |
+| `showBalanceChecker` | `boolean` | No | — |
+| `defaultFor` | `string` | No | — |
+| `serviceFeeCharged` | `boolean` | No | — |
+| `serviceFeeFixed` | `number` | No | — |
+| `serviceFeePercentage` | `number` | No | — |
+| `tipsEnabled` | `boolean` | No | — |
+| `allowCustomTipValues` | `boolean` | No | — |
+| `overrideTipValues` | `string[]` | No | — |
+
+
+
+---
+
+### updateEmail
+
+`settings.updateEmail`
+
+Update email settings using JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.settings.updateEmail({ patch: [{ op: 'replace', path: '/fromName', value: 'My Brand' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logoUrl` | `string \| null` | No | — |
+| `logoAlignment` | `string` | No | — |
+| `logoWidth` | `number` | No | — |
+| `fromEmail` | `string` | No | — |
+| `fromName` | `string` | No | — |
+| `giftCardEmail` | `object` | No | — |
+| `receiptEmail` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="giftCardEmail full type">
+
+```ts
+{
+  subjectLine?: string,
+  title?: string,
+  introText?: string,
+  footerText?: string,
+  buttonLabel?: string,
+  buttonUrl?: string,
+  buttonColour?: string,
+  buttonAlignment?: string
+}
+```
+</Accordion>
+
+<Accordion title="receiptEmail full type">
+
+```ts
+{
+  subjectLine?: string,
+  title?: string,
+  introText?: string,
+  footerText?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateGiftCard
+
+`settings.updateGiftCard`
+
+Update gift card settings using JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.settings.updateGiftCard({ patch: [{ op: 'replace', path: '/showBalance', value: true }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `defaultDescription` | `string \| null` | No | — |
+| `barcodeFormat` | `string` | No | — |
+| `expiryInMonths` | `number \| null` | No | — |
+| `expiryInDays` | `number \| null` | No | — |
+| `validFromInDays` | `number \| null` | No | — |
+| `showIssuedOnDate` | `boolean` | No | — |
+| `showBalance` | `boolean` | No | — |
+| `showBarcode` | `boolean` | No | — |
+| `generalTerms` | `string \| null` | No | — |
+| `codeFormat` | `string` | No | — |
+
+
+
+---
+
+### uploadArtwork
+
+`settings.uploadArtwork`
+
+Upload or set new gift card design artwork
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.settings.uploadArtwork({ url: 'https://cdn.example.com/artwork.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `replaceAllExistingArtwork` | `boolean` | No | — |
+| `replaceArtworkId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `sortOrder` | `number` | No | — |
+
+
+
+---
+
+## Users
+
+### delete
+
+`users.delete`
+
+Delete a staff user account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.giftup.api.users.delete({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Retrieve user details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.users.get({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `avatarUrl` | `string \| null` | No | — |
+| `pin` | `string \| null` | No | — |
+| `isAdministrator` | `boolean` | No | — |
+| `emailConfirmed` | `boolean` | No | — |
+| `hiddenInRedeemApp` | `boolean` | No | — |
+| `disableSearchInRedeemApp` | `boolean` | No | — |
+| `hideLogInRedeemApp` | `boolean` | No | — |
+| `expiredGiftCardRedemptionDisabled` | `boolean` | No | — |
+| `redeemLocationRestrictionEnforced` | `boolean` | No | — |
+| `locations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`users.invite`
+
+Invite a staff user or administrator
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.users.invite({ email: 'staff@example.com', name: 'Staff User' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `pin` | `string` | No | — |
+| `isAdministrator` | `boolean` | No | — |
+| `hiddenInRedeemApp` | `boolean` | No | — |
+| `disableSearchInRedeemApp` | `boolean` | No | — |
+| `hideLogInRedeemApp` | `boolean` | No | — |
+| `expiredGiftCardRedemptionDisabled` | `boolean` | No | — |
+| `redeemLocationRestrictionEnforced` | `boolean` | No | — |
+| `locationIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `avatarUrl` | `string \| null` | No | — |
+| `pin` | `string \| null` | No | — |
+| `isAdministrator` | `boolean` | No | — |
+| `emailConfirmed` | `boolean` | No | — |
+| `hiddenInRedeemApp` | `boolean` | No | — |
+| `disableSearchInRedeemApp` | `boolean` | No | — |
+| `hideLogInRedeemApp` | `boolean` | No | — |
+| `expiredGiftCardRedemptionDisabled` | `boolean` | No | — |
+| `redeemLocationRestrictionEnforced` | `boolean` | No | — |
+| `locations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List staff users and administrators
+
+**Risk:** `read`
+
+```ts
+await corsair.giftup.api.users.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email: string,
+  avatarUrl?: string | null,
+  pin?: string | null,
+  isAdministrator?: boolean,
+  emailConfirmed?: boolean,
+  hiddenInRedeemApp?: boolean,
+  disableSearchInRedeemApp?: boolean,
+  hideLogInRedeemApp?: boolean,
+  expiredGiftCardRedemptionDisabled?: boolean,
+  redeemLocationRestrictionEnforced?: boolean,
+  locations?: {
+    id: string,
+    name: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`users.update`
+
+Update staff user details using JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.giftup.api.users.update({ id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', patch: [{ op: 'replace', path: '/name', value: 'Updated Staff' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `patch` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="patch full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `avatarUrl` | `string \| null` | No | — |
+| `pin` | `string \| null` | No | — |
+| `isAdministrator` | `boolean` | No | — |
+| `emailConfirmed` | `boolean` | No | — |
+| `hiddenInRedeemApp` | `boolean` | No | — |
+| `disableSearchInRedeemApp` | `boolean` | No | — |
+| `hideLogInRedeemApp` | `boolean` | No | — |
+| `expiredGiftCardRedemptionDisabled` | `boolean` | No | — |
+| `redeemLocationRestrictionEnforced` | `boolean` | No | — |
+| `locations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
