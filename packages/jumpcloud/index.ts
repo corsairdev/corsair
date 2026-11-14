@@ -347,7 +347,7 @@ export const jumpCloudEndpointMeta = {
 		description: 'Get a JumpCloud system user by ID',
 	},
 	'users.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Update a JumpCloud system user; setting state to ACTIVATED on a staged user emails them an activation link',
 	},

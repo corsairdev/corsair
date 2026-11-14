@@ -43,7 +43,7 @@ describe('jumpcloud plugin registry', () => {
 		}
 	});
 
-	it('marks deletes, command runs, user creation (activation email), password and MFA resets destructive', () => {
+	it('marks deletes, command runs, user creation and update (activation email), password and MFA resets destructive', () => {
 		const destructiveOps = paths
 			.filter((op) => meta[op]?.riskLevel === 'destructive')
 			.sort();
@@ -59,6 +59,7 @@ describe('jumpcloud plugin registry', () => {
 			'users.expirePassword',
 			'users.resetMfa',
 			'users.setPassword',
+			'users.update',
 		]);
 	});
 
@@ -150,7 +151,7 @@ describe('safeEventPayload allowlist', () => {
 			safeEventPayload({
 				id: 'x',
 				system_id: 5,
-				userIds: ['1'],
+				systemIds: ['1'],
 				action: 'activate',
 				mode: 'content',
 				limit: 10,
@@ -158,7 +159,7 @@ describe('safeEventPayload allowlist', () => {
 		).toEqual({
 			id: 'x',
 			system_id: 5,
-			userIds: ['1'],
+			systemIds: ['1'],
 			action: 'activate',
 			mode: 'content',
 			limit: 10,
@@ -190,5 +191,17 @@ describe('safeEventPayload allowlist', () => {
 			}),
 		).toEqual({ limit: 25, page: 2 });
 		expect(safeEventPayload({ sort: 'name', description: 'd' })).toEqual({});
+	});
+
+	it('drops undeclared or personal keys that end in Id', () => {
+		// Input schemas are loose, so any extra key reaches the payload filter.
+		expect(
+			safeEventPayload({
+				limit: 10,
+				managedAppleId: 'alice@example.com',
+				externalId: 'emp-42',
+				anyOtherId: 'x',
+			}),
+		).toEqual({ limit: 10 });
 	});
 });
