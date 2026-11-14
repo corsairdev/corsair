@@ -75,18 +75,12 @@ const KEEN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A Keen failure, with the key kept out of the message and the body dropped.
- *
- * The body is dropped rather than kept as `cause`': Keen echoes the request in
- * some validation errors, and an event body can hold anything the caller
- * recorded, so the error carries only what a handler matches on.
+ * A Keen failure that got no answer: a reset, DNS failure, abort or timeout, or
+ * a request with no project ID. An HTTP error from Keen stays core's `ApiError`
+ * (see `sanitizeApiError`), so its status and rate-limit fields reach core and
+ * the error handlers.
  */
 export class KeenAPIError extends Error {
-	readonly status?: number;
-	/** Keen's error code, such as `InvalidApiKeyError`. */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when Keen sent one. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
 	readonly transport: boolean;
@@ -96,10 +90,6 @@ export class KeenAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			/** Keen's `error_code`, passed in rather than read from the cause. */
-			code?: string;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -107,51 +97,85 @@ export class KeenAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KeenAPIError';
-		// The code is never read from `cause`. A response body can echo the key,
-		// so the client drops the cause on a provider failure and passes only the
-		// code here; a transport failure has no body at all.
-		this.code = options.code;
-		this.status = options.status;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	get isAuthError(): boolean {
-		return this.status === 401 || this.code === INVALID_KEY_CODE;
-	}
-
-	/** The query ran past Keen's five minute ceiling and was stopped. */
-	get isQueryIncomplete(): boolean {
-		return this.status === 504 || this.code === QUERY_INCOMPLETE_CODE;
-	}
-
-	/** The project, collection, saved query or dataset is not there. */
-	get isNotFound(): boolean {
-		return this.status === 404 || this.code === RESOURCE_NOT_FOUND_CODE;
-	}
 }
 
-/** The message Keen sent, with its code in front and the key removed. */
+/** Keen's `error_code` on an HTTP error, such as `InvalidApiKeyError`. */
+export function keenErrorCode(error: unknown): string | undefined {
+	return error instanceof ApiError ? errorFields(error.body).code : undefined;
+}
+
+function keenStatus(error: unknown): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+export function isKeenRateLimit(error: unknown): boolean {
+	return keenStatus(error) === 429;
+}
+
+export function isKeenAuthError(error: unknown): boolean {
+	return keenStatus(error) === 401 || keenErrorCode(error) === INVALID_KEY_CODE;
+}
+
+/** The query ran past Keen's five minute ceiling and was stopped. */
+export function isKeenQueryIncomplete(error: unknown): boolean {
+	return (
+		keenStatus(error) === 504 || keenErrorCode(error) === QUERY_INCOMPLETE_CODE
+	);
+}
+
+/** The project, collection, saved query or dataset is not there. */
+export function isKeenNotFound(error: unknown): boolean {
+	return (
+		keenStatus(error) === 404 ||
+		keenErrorCode(error) === RESOURCE_NOT_FOUND_CODE
+	);
+}
+
+/**
+ * The status and Keen's code, without Keen's message text. A 401 message
+ * quotes the key, and a 400 can echo a property or value the caller sent.
+ */
 // unknown: an error body is untyped: `{ message, error_code }`, or text from a
 // proxy that never reached Keen.
 export function describeKeenError(
 	status: number | undefined,
 	body: unknown,
-	fallback: string,
-	apiKey: string,
 ): string {
-	const fields = errorFields(body);
-	const text = redactKeenKey(fields.message ?? fallback, apiKey);
-	const label = [status, fields.code]
-		.filter((part) => part !== undefined)
-		.join(' ');
-	return label ? `Keen ${label}: ${text}` : text;
+	const code = errorFields(body).code;
+	const label = [status, code].filter((part) => part !== undefined).join(' ');
+	return label ? `Keen ${label}: request failed` : 'Keen request failed';
+}
+
+/**
+ * Core's `ApiError` keeps the request body (an event can hold anything the
+ * caller recorded) and the response body (whose message can quote the key or
+ * echo input). The error is rebuilt as an `ApiError` with the same status and
+ * rate-limit fields, the body cut to `{ error_code }` and the sent body dropped.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const { body: _body, formData: _formData, ...request } = error.request;
+	const code = errorFields(error.body).code;
+	return new ApiError(
+		request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: code === undefined ? {} : { error_code: code },
+		},
+		describeKeenError(error.status, error.body),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 export type KeenQueryValue =
@@ -214,21 +238,7 @@ export async function makeKeenRequest(
 			rateLimitConfig: KEEN_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// The cause is deliberately not attached. Keen echoes the key in the
-			// 401 message, and `util.inspect` walks the cause chain, so keeping it
-			// would put the key back into every log line the redaction just kept
-			// it out of. Status, code and retryAfter are copied instead.
-			throw new KeenAPIError(
-				describeKeenError(error.status, error.body, error.message, apiKey),
-				{
-					status: error.status,
-					code: errorFields(error.body).code,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			// A transport failure never had a response body, so its cause is safe

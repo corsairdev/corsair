@@ -1,8 +1,16 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { KeenAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isKeenAuthError,
+	isKeenQueryIncomplete,
+	isKeenRateLimit,
+	KeenAPIError,
+} from './client';
 
+// Keen's HTTP errors arrive as core's ApiError; KeenAPIError is a request that
+// got no answer, so it has no status.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KeenAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // Keen documents nine statuses and an error code on each JSON failure. The rate
@@ -13,25 +21,20 @@ export const errorHandlers = {
 	// delay is real and the retry has to wait it out. Keen sends no Retry-After
 	// header, which is why `initialRetryDelay` is the minute itself.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => error instanceof KeenAPIError && error.isRateLimit,
+		match: (error: Error) => isKeenRateLimit(error),
 		handler: async (error: Error) => ({
 			maxRetries: 2,
 			headersRetryAfterMs:
-				error instanceof KeenAPIError && error.retryAfter !== undefined
+				error instanceof ApiError && error.retryAfter !== undefined
 					? error.retryAfter
 					: 60_000,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// `InvalidApiKeyError` on a 401. The key in the message is already redacted
-	// by the client, so nothing here has to hide it.
+	// `InvalidApiKeyError` on a 401. The client keeps Keen's message, which
+	// quotes the key, off the error, so nothing here has to hide it.
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			const status = statusOf(error);
-			return (
-				(error instanceof KeenAPIError && error.isAuthError) || status === 401
-			);
-		},
+		match: (error: Error) => isKeenAuthError(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403 is a valid key that is not allowed to make this call: a write key on a
@@ -44,8 +47,7 @@ export const errorHandlers = {
 	// 504 `QueryIncompleteError`. The same query sent again is likely to take as
 	// long, and the caller can narrow the timeframe instead.
 	QUERY_TIMEOUT_ERROR: {
-		match: (error: Error) =>
-			error instanceof KeenAPIError && error.isQueryIncomplete,
+		match: (error: Error) => isKeenQueryIncomplete(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 is a malformed analysis and 404 an unknown project, collection, saved
@@ -62,9 +64,9 @@ export const errorHandlers = {
 	// second send would record those events twice.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof KeenAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

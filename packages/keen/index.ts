@@ -324,7 +324,15 @@ export function keen<const T extends KeenPluginOptions>(
 	} satisfies InternalKeenPlugin;
 }
 
-export { KeenAPIError, redactKeenKey } from './client';
+export {
+	isKeenAuthError,
+	isKeenNotFound,
+	isKeenQueryIncomplete,
+	isKeenRateLimit,
+	KeenAPIError,
+	keenErrorCode,
+	redactKeenKey,
+} from './client';
 
 export type {
 	CollectionGetResponse,

@@ -1,16 +1,35 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import { KeenAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An answered request fails as core's ApiError, as the client throws it, with
+// the code in `{ error_code }`; one that got no answer fails as KeenAPIError.
 function apiError(options: {
 	status?: number;
 	code?: string;
-	method?: string;
+	method?: ApiRequestOptions['method'];
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new KeenAPIError('failed', options);
+}): Error {
+	const method = options.method ?? 'GET';
+	if (options.status === undefined) {
+		return new KeenAPIError('failed', { ...options, method });
+	}
+	return new ApiError(
+		{ method, url: '/3.0/projects/p/events' },
+		{
+			url: 'https://api.keen.io/3.0/projects/p/events',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: options.code === undefined ? {} : { error_code: options.code },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**

@@ -1,4 +1,12 @@
-import { describeKeenError, makeKeenRequest, redactKeenKey } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	describeKeenError,
+	isKeenAuthError,
+	isKeenRateLimit,
+	keenErrorCode,
+	makeKeenRequest,
+	redactKeenKey,
+} from './client';
 
 const API_KEY = 'abcdef0123456789abcdef0123456789';
 const PROJECT_ID = '523b527836bf5a3216000006';
@@ -63,31 +71,25 @@ describe('redactKeenKey', () => {
 });
 
 describe('describeKeenError', () => {
-	it('puts the status and code in front of the message', () => {
+	it('puts the status and code in front and leaves Keen’s message out', () => {
 		expect(
-			describeKeenError(
-				400,
-				{ message: 'Bad analysis', error_code: 'BadRequestError' },
-				'fallback',
-				API_KEY,
-			),
-		).toBe('Keen 400 BadRequestError: Bad analysis');
+			describeKeenError(400, {
+				message: 'Property "card_number" value 4111 is invalid',
+				error_code: 'BadRequestError',
+			}),
+		).toBe('Keen 400 BadRequestError: request failed');
 	});
 
-	it('falls back to the error message when the body has none', () => {
-		expect(
-			describeKeenError(500, undefined, 'Internal Server Error', API_KEY),
-		).toBe('Keen 500: Internal Server Error');
+	it('uses the status alone when the body has no code', () => {
+		expect(describeKeenError(500, undefined)).toBe('Keen 500: request failed');
 	});
 
-	it('redacts the key inside the body’s message', () => {
+	it('never carries the key Keen quotes in a 401', () => {
 		expect(
-			describeKeenError(
-				401,
-				{ message: `Invalid key ${API_KEY}`, error_code: 'InvalidApiKeyError' },
-				'fallback',
-				API_KEY,
-			),
+			describeKeenError(401, {
+				message: `Invalid key ${API_KEY}`,
+				error_code: 'InvalidApiKeyError',
+			}),
 		).not.toContain(API_KEY);
 	});
 });
@@ -174,16 +176,45 @@ describe('makeKeenRequest', () => {
 			401,
 		);
 
-		// unknown: the rejection is an error whose fields the assertions read.
-		const error = (await makeKeenRequest(
+		const error = await makeKeenRequest(
 			{ apiKey: API_KEY, projectId: PROJECT_ID },
 			{ method: 'GET', path: '/events' },
-		).catch((caught: unknown) => caught)) as Error & { code?: string };
+		).catch((caught: unknown) => caught);
 
-		expect(error).toMatchObject({ status: 401, code: 'InvalidApiKeyError' });
-		expect(error.cause).toBeUndefined();
-		expect(error).not.toHaveProperty('body');
-		expect(require('node:util').inspect(error)).not.toContain(API_KEY);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 401 });
+		expect(keenErrorCode(error)).toBe('InvalidApiKeyError');
+		expect(isKeenAuthError(error)).toBe(true);
+		expect(require('node:util').inspect(error, { depth: 10 })).not.toContain(
+			API_KEY,
+		);
+	});
+
+	it('keeps neither the event it sent nor an echoed value on the error', async () => {
+		respond(
+			{
+				message: 'Property value secret-4111 is invalid',
+				error_code: 'InvalidPropertyValueError',
+			},
+			400,
+		);
+
+		const error = await makeKeenRequest(
+			{ apiKey: API_KEY, projectId: PROJECT_ID },
+			{
+				method: 'POST',
+				path: '/events/purchases',
+				body: { card: 'secret-4111' },
+			},
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			message: 'Keen 400 InvalidPropertyValueError: request failed',
+		});
+		expect(require('node:util').inspect(error, { depth: 10 })).not.toContain(
+			'secret-4111',
+		);
 	});
 
 	it('keeps a transport failure’s cause, which never held a body', async () => {
@@ -246,22 +277,25 @@ describe('makeKeenRequest', () => {
 			),
 		);
 
-		await expect(
-			makeKeenRequest(
-				{ apiKey: API_KEY, projectId: PROJECT_ID },
-				{ method: 'GET', path: '/events' },
-			),
-		).rejects.toMatchObject({ retryAfter: 5000, isRateLimit: true });
+		const error = await makeKeenRequest(
+			{ apiKey: API_KEY, projectId: PROJECT_ID },
+			{ method: 'GET', path: '/events' },
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ retryAfter: 5000 });
+		expect(isKeenRateLimit(error)).toBe(true);
 	});
 
 	it('reports an unknown key as an auth error and a forbidden key as not', async () => {
 		respond({ message: 'nope', error_code: 'ForbiddenError' }, 403);
 
-		await expect(
-			makeKeenRequest(
-				{ apiKey: API_KEY, projectId: PROJECT_ID },
-				{ method: 'GET', path: '/events' },
-			),
-		).rejects.toMatchObject({ status: 403, isAuthError: false });
+		const error = await makeKeenRequest(
+			{ apiKey: API_KEY, projectId: PROJECT_ID },
+			{ method: 'GET', path: '/events' },
+		).catch((caught: unknown) => caught);
+
+		expect(error).toMatchObject({ status: 403 });
+		expect(isKeenAuthError(error)).toBe(false);
 	});
 });

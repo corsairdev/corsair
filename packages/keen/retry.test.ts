@@ -104,7 +104,7 @@ describe('retry behaviour', () => {
 					.catch((caught: unknown) => caught),
 			);
 
-			expect(error).toMatchObject({ status: 429, isRateLimit: true });
+			expect(error).toMatchObject({ status: 429 });
 			// One attempt plus two retries.
 			expect(fetchMock).toHaveBeenCalledTimes(3);
 		} finally {
@@ -207,7 +207,10 @@ describe('retry behaviour', () => {
 				// narrows it to the fields it checks.
 				.catch((caught: unknown) => caught);
 
-			expect(error).toMatchObject({ status: 401, code: 'InvalidApiKeyError' });
+			expect(error).toMatchObject({
+				status: 401,
+				body: { error_code: 'InvalidApiKeyError' },
+			});
 			expect(String(error)).not.toContain('bad-key');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
@@ -234,7 +237,10 @@ describe('retry behaviour', () => {
 					analysis_type: 'count',
 					event_collection: 'purchases',
 				}),
-			).rejects.toMatchObject({ status: 504, isQueryIncomplete: true });
+			).rejects.toMatchObject({
+				status: 504,
+				body: { error_code: 'QueryIncompleteError' },
+			});
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
@@ -250,7 +256,7 @@ describe('retry behaviour', () => {
 			respond(resourceNotFound, 404);
 
 			await expect(corsair.keen.api.collections.list({})).rejects.toMatchObject(
-				{ status: 404, isNotFound: true },
+				{ status: 404, body: { error_code: 'ResourceNotFoundError' } },
 			);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
