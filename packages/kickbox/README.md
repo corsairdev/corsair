@@ -13,7 +13,7 @@ pnpm add @corsair-dev/kickbox
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `verify.disposable` | `kickbox.api.verify.disposable` | `read` | Check whether an address or domain is a known disposable one. Free, and answered by Kickbox’s open service |
-| `verify.verify` | `kickbox.api.verify.verify` | `write` | Verify one address and get its verdict (deliverable, undeliverable, risky, unknown), the reason, role and free flags, a typo suggestion and a Sendex quality score. Spends one verification credit |
+| `verify.verify` | `kickbox.api.verify.verify` | `destructive` | Verify one address and get its verdict (deliverable, undeliverable, risky, unknown), the reason, role and free flags, a typo suggestion and a Sendex quality score. Spends one verification credit |
 
 ## Auth
 

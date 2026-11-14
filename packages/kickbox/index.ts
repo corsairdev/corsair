@@ -82,7 +82,8 @@ const defaultAuthType = 'api_key' as const;
 
 const kickboxEndpointMeta = {
 	'verify.verify': {
-		riskLevel: 'write',
+		// Spends a verification credit, which R8 marks destructive.
+		riskLevel: 'destructive',
 		description:
 			'Verify one address and get its verdict (deliverable, undeliverable, risky, unknown), the reason, role and free flags, a typo suggestion and a Sendex quality score. Spends one verification credit',
 	},
