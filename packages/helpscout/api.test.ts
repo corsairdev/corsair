@@ -36,6 +36,9 @@ describeLive('Help Scout Live API smoke tests (read-only)', () => {
 	const plugin = helpscout({ key: apiKey });
 
 	it('lists mailboxes successfully', async () => {
+		if (!plugin.endpoints) {
+			throw new Error('plugin.endpoints is not defined');
+		}
 		const result = await plugin.endpoints.mailboxes.list(ctx, { page: 1 });
 		expect(result).toBeDefined();
 		expect(result._embedded).toBeDefined();
@@ -43,6 +46,9 @@ describeLive('Help Scout Live API smoke tests (read-only)', () => {
 	});
 
 	it('lists tags successfully', async () => {
+		if (!plugin.endpoints) {
+			throw new Error('plugin.endpoints is not defined');
+		}
 		const result = await plugin.endpoints.tags.list(ctx, { page: 1 });
 		expect(result).toBeDefined();
 		expect(result._embedded).toBeDefined();

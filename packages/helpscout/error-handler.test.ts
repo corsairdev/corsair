@@ -1,6 +1,14 @@
+import type { ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
 import { helpscout } from './index';
+
+const dummyContext: ErrorContext = {
+	pluginId: 'helpscout',
+	operation: 'test-operation',
+	input: {},
+	originalError: new Error('test-context-error'),
+};
 
 function makeApiError(status: number, message: string, retryAfter?: number) {
 	return new ApiError(
@@ -21,16 +29,23 @@ describe('Help Scout Error Handlers', () => {
 	describe('RATE_LIMIT_ERROR', () => {
 		it('matches on 429 ApiError and returns maxRetries: 0 for single-owner rate limiting', async () => {
 			const err = makeApiError(429, 'Too Many Requests', 5000);
-			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(err, dummyContext)).toBe(
+				true,
+			);
 
-			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				err,
+				dummyContext,
+			);
 			// Required rule: Single-owner rate limiting: RATE_LIMIT_ERROR handler must return { maxRetries: 0 }.
 			expect(result).toEqual({ maxRetries: 0 });
 		});
 
 		it('matches on message containing rate limit keywords', () => {
 			const stringErr = new Error('Client rate limited: too many requests');
-			expect(errorHandlers.RATE_LIMIT_ERROR.match(stringErr)).toBe(true);
+			expect(
+				errorHandlers.RATE_LIMIT_ERROR.match(stringErr, dummyContext),
+			).toBe(true);
 		});
 	});
 
@@ -39,31 +54,41 @@ describe('Help Scout Error Handlers', () => {
 			const err401 = makeApiError(401, 'Unauthorized');
 			const err403 = makeApiError(403, 'Forbidden');
 
-			expect(errorHandlers.AUTH_ERROR.match(err401)).toBe(true);
-			expect(errorHandlers.AUTH_ERROR.match(err403)).toBe(true);
+			expect(errorHandlers.AUTH_ERROR.match(err401, dummyContext)).toBe(true);
+			expect(errorHandlers.AUTH_ERROR.match(err403, dummyContext)).toBe(true);
 
-			await expect(errorHandlers.AUTH_ERROR.handler(err401)).resolves.toEqual({
+			await expect(
+				errorHandlers.AUTH_ERROR.handler(err401, dummyContext),
+			).resolves.toEqual({
 				maxRetries: 0,
 			});
 		});
 
 		it('matches on error message containing auth keywords', () => {
-			expect(errorHandlers.AUTH_ERROR.match(new Error('invalid token'))).toBe(
-				true,
-			);
-			expect(errorHandlers.AUTH_ERROR.match(new Error('invalid api key'))).toBe(
-				true,
-			);
+			expect(
+				errorHandlers.AUTH_ERROR.match(
+					new Error('invalid token'),
+					dummyContext,
+				),
+			).toBe(true);
+			expect(
+				errorHandlers.AUTH_ERROR.match(
+					new Error('invalid api key'),
+					dummyContext,
+				),
+			).toBe(true);
 		});
 	});
 
 	describe('NOT_FOUND_ERROR', () => {
 		it('matches on 404 ApiError', async () => {
 			const err404 = makeApiError(404, 'Resource Not Found');
-			expect(errorHandlers.NOT_FOUND_ERROR.match(err404)).toBe(true);
+			expect(errorHandlers.NOT_FOUND_ERROR.match(err404, dummyContext)).toBe(
+				true,
+			);
 
 			await expect(
-				errorHandlers.NOT_FOUND_ERROR.handler(err404),
+				errorHandlers.NOT_FOUND_ERROR.handler(err404, dummyContext),
 			).resolves.toEqual({
 				maxRetries: 0,
 			});
@@ -75,11 +100,15 @@ describe('Help Scout Error Handlers', () => {
 			const err400 = makeApiError(400, 'Bad Request');
 			const err422 = makeApiError(422, 'Unprocessable Entity');
 
-			expect(errorHandlers.BAD_REQUEST_ERROR.match(err400)).toBe(true);
-			expect(errorHandlers.BAD_REQUEST_ERROR.match(err422)).toBe(true);
+			expect(errorHandlers.BAD_REQUEST_ERROR.match(err400, dummyContext)).toBe(
+				true,
+			);
+			expect(errorHandlers.BAD_REQUEST_ERROR.match(err422, dummyContext)).toBe(
+				true,
+			);
 
 			await expect(
-				errorHandlers.BAD_REQUEST_ERROR.handler(err400),
+				errorHandlers.BAD_REQUEST_ERROR.handler(err400, dummyContext),
 			).resolves.toEqual({
 				maxRetries: 0,
 			});
@@ -89,9 +118,11 @@ describe('Help Scout Error Handlers', () => {
 	describe('DEFAULT Handler', () => {
 		it('matches any error and returns maxRetries: 0', async () => {
 			const unknownErr = new Error('Some unexpected exception');
-			expect(errorHandlers.DEFAULT.match(unknownErr)).toBe(true);
+			expect(errorHandlers.DEFAULT.match(unknownErr, dummyContext)).toBe(true);
 
-			await expect(errorHandlers.DEFAULT.handler(unknownErr)).resolves.toEqual({
+			await expect(
+				errorHandlers.DEFAULT.handler(unknownErr, dummyContext),
+			).resolves.toEqual({
 				maxRetries: 0,
 			});
 		});
@@ -110,6 +141,9 @@ describe('Help Scout Error Handlers', () => {
 			});
 
 			const handlers = plugin.errorHandlers;
+			if (!handlers) {
+				throw new Error('plugin.errorHandlers is undefined');
+			}
 			const handlerKeys = Object.keys(handlers);
 
 			// Caller's custom handler is evaluated first
@@ -118,10 +152,16 @@ describe('Help Scout Error Handlers', () => {
 			expect(handlerKeys[handlerKeys.length - 1]).toBe('DEFAULT');
 
 			const customErr = new Error('custom-429 limit');
-			expect(handlers.CUSTOM_429.match(customErr)).toBe(true);
-			await expect(handlers.CUSTOM_429.handler(customErr)).resolves.toEqual({
-				maxRetries: 2,
-			});
+			const custom429 = handlers.CUSTOM_429;
+			if (!custom429) {
+				throw new Error('handlers.CUSTOM_429 is undefined');
+			}
+			expect(custom429.match(customErr, dummyContext)).toBe(true);
+			await expect(custom429.handler(customErr, dummyContext)).resolves.toEqual(
+				{
+					maxRetries: 2,
+				},
+			);
 		});
 	});
 });

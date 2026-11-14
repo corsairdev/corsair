@@ -1,11 +1,11 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	// Single-owner rate limiting: corsair/http transport handles backoff and
 	// retries (honouring Retry-After); the plugin error handler returns maxRetries: 0.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
+		match: (error: Error, _context?: ErrorContext) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
 			return (
@@ -15,10 +15,12 @@ export const errorHandlers = {
 				msg.includes('429')
 			);
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error?: Error, _context?: ErrorContext) => ({
+			maxRetries: 0,
+		}),
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
+		match: (error: Error, _context?: ErrorContext) => {
 			if (
 				error instanceof ApiError &&
 				(error.status === 401 || error.status === 403)
@@ -34,18 +36,22 @@ export const errorHandlers = {
 				msg.includes('invalid api key')
 			);
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error?: Error, _context?: ErrorContext) => ({
+			maxRetries: 0,
+		}),
 	},
 	NOT_FOUND_ERROR: {
-		match: (error: Error) => {
+		match: (error: Error, _context?: ErrorContext) => {
 			if (error instanceof ApiError && error.status === 404) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('not found') || msg.includes('404');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error?: Error, _context?: ErrorContext) => ({
+			maxRetries: 0,
+		}),
 	},
 	BAD_REQUEST_ERROR: {
-		match: (error: Error) => {
+		match: (error: Error, _context?: ErrorContext) => {
 			if (
 				error instanceof ApiError &&
 				(error.status === 400 || error.status === 422)
@@ -59,10 +65,14 @@ export const errorHandlers = {
 				msg.includes('unprocessable')
 			);
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error?: Error, _context?: ErrorContext) => ({
+			maxRetries: 0,
+		}),
 	},
 	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
+		match: (_error?: Error, _context?: ErrorContext) => true,
+		handler: async (_error?: Error, _context?: ErrorContext) => ({
+			maxRetries: 0,
+		}),
 	},
 } satisfies CorsairErrorHandler;

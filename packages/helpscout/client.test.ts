@@ -72,7 +72,7 @@ describe('Help Scout Client & Transport', () => {
 				HEADERS: {
 					Authorization: 'Bearer my-helpscout-key',
 					'Content-Type': 'application/json',
-					Accept: 'application/json, application/hal+json',
+					Accept: 'application/json',
 				},
 			});
 			expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
@@ -101,6 +101,18 @@ describe('Help Scout Client & Transport', () => {
 			).rejects.toThrow(AuthMissingError);
 
 			expect(mockRequest).not.toHaveBeenCalled();
+		});
+
+		it('parses string response as JSON when server returns string payload', async () => {
+			mockRequest.mockResolvedValueOnce(
+				JSON.stringify({ _embedded: { mailboxes: [] } }),
+			);
+
+			const result = await makeHelpscoutRequest<{
+				_embedded: { mailboxes: unknown[] };
+			}>('/mailboxes', 'valid-key', { method: 'GET' });
+
+			expect(result).toEqual({ _embedded: { mailboxes: [] } });
 		});
 
 		it('wraps non-ApiError non-Error failures in HelpScoutAPIError', async () => {

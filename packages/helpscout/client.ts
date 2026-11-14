@@ -139,7 +139,7 @@ export async function makeHelpscoutRequest<T>(
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Accept: 'application/json, application/hal+json',
+			Accept: 'application/json',
 			...authHeaders,
 		},
 	};
@@ -156,7 +156,15 @@ export async function makeHelpscoutRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		const res = await request<T>(config, requestOptions);
+		if (typeof res === 'string') {
+			try {
+				return JSON.parse(res) as T;
+			} catch {
+				return res as T;
+			}
+		}
+		return res;
 	} catch (error) {
 		if (error instanceof ApiError) {
 			redactApiErrorInPlace(error, apiKey);
