@@ -4685,5 +4685,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/genderapi",
+    "dir": "packages/genderapi",
+    "name": "Gender API",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
