@@ -1,3 +1,7 @@
+import {
+	MemberstackEndpointInputSchemas,
+	MemberstackEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { MemberstackContext } from './index';
 import { memberstack, memberstackEndpointSchemas } from './index';
@@ -63,6 +67,8 @@ beforeEach(() => {
 	});
 });
 afterEach(() => jest.restoreAllMocks());
+// Fixtures represent different endpoint responses, including malformed payloads
+// and empty bodies, so a single narrower response type would hide test cases.
 function respond(body: unknown) {
 	fetchMock.mockResolvedValueOnce(
 		body === undefined
@@ -83,6 +89,19 @@ function request() {
 }
 
 describe('Memberstack public request seam', () => {
+	it('exports the schemas used by each registered endpoint', () => {
+		const schemas = Object.values(memberstackEndpointSchemas);
+		expect(Object.values(MemberstackEndpointInputSchemas)).toHaveLength(
+			schemas.length,
+		);
+		expect(Object.values(MemberstackEndpointOutputSchemas)).toHaveLength(
+			schemas.length,
+		);
+		for (const { input, output } of schemas) {
+			expect(Object.values(MemberstackEndpointInputSchemas)).toContain(input);
+			expect(Object.values(MemberstackEndpointOutputSchemas)).toContain(output);
+		}
+	});
 	const cases = [
 		{
 			name: 'list members',
@@ -309,6 +328,7 @@ describe('Memberstack public request seam', () => {
 				},
 			),
 		);
+		// Rejections can contain any thrown value; the assertions narrow its shape.
 		const error = await api.members
 			.create(context, { email: 'member@example.com' })
 			.catch((e: unknown) => e);

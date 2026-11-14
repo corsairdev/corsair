@@ -17,6 +17,8 @@ const rateLimitConfig: RateLimitConfig = {
 	headerNames: { retryAfter: 'retry-after' },
 };
 
+// The shared transport receives unchecked responses of different shapes; each
+// endpoint parses the result against its own output schema before returning it.
 export async function memberstackRequest(
 	key: string,
 	options: ApiRequestOptions,
@@ -29,5 +31,6 @@ export async function memberstackRequest(
 		CREDENTIALS: 'omit',
 		HEADERS: { 'X-API-KEY': key, Accept: 'application/json' },
 	};
+	// The transport cannot know the endpoint-specific response shape here.
 	return request<unknown>(config, options, { rateLimitConfig });
 }

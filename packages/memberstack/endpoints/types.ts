@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-// Memberstack data tables and member JSON use application-defined keys and values.
+// Data tables, query filters, and member JSON use application-defined keys and
+// values, so their values cannot be typed more narrowly across all accounts.
 const arbitraryObject = z.record(z.string(), z.unknown());
 export const pathSegment = z
 	.string()
@@ -69,6 +70,7 @@ const tableField = z
 		name: z.string(),
 		type: z.string(),
 		required: z.boolean(),
+		// Defaults depend on the user-configured field type and can be null.
 		defaultValue: z.unknown(),
 		tableOrder: z.number(),
 		referencedTableId: z.string().nullable(),
@@ -255,6 +257,8 @@ export const outputs = {
 	recordsUpdate: z.object({ data: record }).loose(),
 	recordsDelete: z.object({ data: record }).loose(),
 } as const;
+export const MemberstackEndpointInputSchemas = inputs;
+export const MemberstackEndpointOutputSchemas = outputs;
 export type MemberstackEndpointInputs = {
 	[K in keyof typeof inputs]: z.infer<(typeof inputs)[K]>;
 };
