@@ -4037,3 +4037,31 @@ describe('Shortcut live API responses', () => {
 		).toBe(true);
 	});
 });
+
+describe('Shortcut response enums', () => {
+	it('accepts values Shortcut adds to response enums later', () => {
+		const fields = structuredClone(ShortcutTestOutputs['listCustomFields']);
+		for (const field of fields as unknown as Record<string, unknown>[]) {
+			field.field_type = 'number';
+		}
+		expect(
+			ShortcutEndpointOutputSchemas['listCustomFields'].safeParse(fields)
+				.success,
+		).toBe(true);
+		const member = structuredClone(ShortcutTestOutputs['getMember']);
+		(member as unknown as Record<string, unknown>).state = 'suspended';
+		expect(
+			ShortcutEndpointOutputSchemas['getMember'].safeParse(member).success,
+		).toBe(true);
+	});
+
+	it('keeps request enums strict', () => {
+		const input = structuredClone(ShortcutTestInputs['getDoc']);
+		expect(
+			ShortcutEndpointInputSchemas['getDoc'].safeParse({
+				...input,
+				query: { content_format: 'pdf' },
+			}).success,
+		).toBe(false);
+	});
+});

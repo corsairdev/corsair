@@ -505,7 +505,7 @@ export const ShortcutCustomField = z
 	.object({
 		description: z.string().optional(),
 		icon_set_identifier: z.string().optional(),
-		entity_type: z.enum(['custom-field']),
+		entity_type: z.enum(['custom-field']).or(z.string()),
 		story_types: z.array(z.string()).optional(),
 		last_edited_by_id: z.string().nullable(),
 		name: z.string(),
@@ -515,7 +515,7 @@ export const ShortcutCustomField = z
 		id: z.string(),
 		values: z.array(z.lazy(() => ShortcutCustomFieldEnumValue)).optional(),
 		last_edited_at: z.string().nullable(),
-		field_type: z.enum(['enum']),
+		field_type: z.enum(['enum']).or(z.string()),
 		position: z.number().int(),
 		canonical_name: z.string().optional(),
 		enabled: z.boolean(),
@@ -529,7 +529,7 @@ export const ShortcutCustomFieldEnumValue = z
 		value: z.string(),
 		position: z.number().int(),
 		color_key: z.string().nullable(),
-		entity_type: z.enum(['custom-field-enum-value']),
+		entity_type: z.enum(['custom-field-enum-value']).or(z.string()),
 		enabled: z.boolean(),
 	})
 	.strict();
@@ -820,7 +820,10 @@ export const ShortcutGroup = z
 		description: z.string(),
 		archived: z.boolean(),
 		entity_type: z.string(),
-		card_aging_mode: z.enum(['off', 'gradual', 'immediate']).nullable(),
+		card_aging_mode: z
+			.enum(['off', 'gradual', 'immediate'])
+			.or(z.string())
+			.nullable(),
 		color: z.string().nullable(),
 		card_aging_threshold_days: z.number().int().nullable(),
 		num_stories_started: z.number().int(),
@@ -868,7 +871,9 @@ export const ShortcutHealth = z
 		epic_id: z.number().int().optional(),
 		objective_id: z.number().int().optional(),
 		updated_at: z.string().optional(),
-		status: z.enum(['At Risk', 'On Track', 'Off Track', 'No Health']),
+		status: z
+			.enum(['At Risk', 'On Track', 'Off Track', 'No Health'])
+			.or(z.string()),
 		id: z.string().nullable(),
 		created_at: z.string().optional(),
 		text: z.string().optional(),
@@ -924,7 +929,7 @@ export const ShortcutHistory = z
 		member_id: z.string().optional(),
 		external_id: z.string().optional(),
 		id: z.string(),
-		version: z.enum(['v1']),
+		version: z.enum(['v1']).or(z.string()),
 		webhook_id: z.string().nullable().optional(),
 		automation_id: z.string().optional(),
 	})
@@ -936,7 +941,7 @@ export const ShortcutHistoryActionBranchCreate = z
 		entity_type: z.string(),
 		name: z.string(),
 		url: z.string(),
-		action: z.enum(['create']),
+		action: z.enum(['create']).or(z.string()),
 	})
 	.strict();
 
@@ -946,7 +951,7 @@ export const ShortcutHistoryActionBranchMerge = z
 		entity_type: z.string(),
 		name: z.string(),
 		url: z.string(),
-		action: z.enum(['merge']),
+		action: z.enum(['merge']).or(z.string()),
 	})
 	.strict();
 
@@ -956,7 +961,7 @@ export const ShortcutHistoryActionBranchPush = z
 		entity_type: z.string(),
 		name: z.string(),
 		url: z.string(),
-		action: z.enum(['push']),
+		action: z.enum(['push']).or(z.string()),
 	})
 	.strict();
 
@@ -964,7 +969,7 @@ export const ShortcutHistoryActionLabelCreate = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['create']),
+		action: z.enum(['create']).or(z.string()),
 		app_url: z.string(),
 		name: z.string(),
 	})
@@ -974,7 +979,7 @@ export const ShortcutHistoryActionLabelDelete = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['delete']),
+		action: z.enum(['delete']).or(z.string()),
 		name: z.string(),
 	})
 	.strict();
@@ -983,7 +988,7 @@ export const ShortcutHistoryActionLabelUpdate = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['update']),
+		action: z.enum(['update']).or(z.string()),
 	})
 	.strict();
 
@@ -991,7 +996,7 @@ export const ShortcutHistoryActionProjectUpdate = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['update']),
+		action: z.enum(['update']).or(z.string()),
 		app_url: z.string(),
 		name: z.string(),
 	})
@@ -1001,7 +1006,9 @@ export const ShortcutHistoryActionPullRequest = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['open', 'update', 'reopen', 'close', 'sync', 'comment']),
+		action: z
+			.enum(['open', 'update', 'reopen', 'close', 'sync', 'comment'])
+			.or(z.string()),
 		number: z.number().int(),
 		title: z.string(),
 		url: z.string(),
@@ -1012,7 +1019,7 @@ export const ShortcutHistoryActionStoryCommentCreate = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['create']),
+		action: z.enum(['create']).or(z.string()),
 		app_url: z.string(),
 		author_id: z.string(),
 	})
@@ -1025,7 +1032,7 @@ export const ShortcutHistoryActionStoryCreate = z
 		started: z.boolean().optional(),
 		entity_type: z.string(),
 		task_ids: z.array(z.number().int()).optional(),
-		story_type: z.enum(['feature', 'chore', 'bug']),
+		story_type: z.enum(['feature', 'chore', 'bug']).or(z.string()),
 		name: z.string(),
 		completed: z.boolean().optional(),
 		blocker: z.boolean().optional(),
@@ -1043,7 +1050,7 @@ export const ShortcutHistoryActionStoryCreate = z
 		parent_story_id: z.number().int().optional(),
 		estimate: z.number().int().optional(),
 		subject_story_link_ids: z.array(z.number().int()).optional(),
-		action: z.enum(['create']),
+		action: z.enum(['create']).or(z.string()),
 		blocked: z.boolean().optional(),
 		project_id: z.number().int().optional(),
 		deadline: z.string().optional(),
@@ -1054,9 +1061,9 @@ export const ShortcutHistoryActionStoryDelete = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['delete']),
+		action: z.enum(['delete']).or(z.string()),
 		name: z.string(),
-		story_type: z.enum(['feature', 'chore', 'bug']),
+		story_type: z.enum(['feature', 'chore', 'bug']).or(z.string()),
 		parent_story_id: z.number().int().optional(),
 	})
 	.strict();
@@ -1065,8 +1072,8 @@ export const ShortcutHistoryActionStoryLinkCreate = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['create']),
-		verb: z.enum(['blocks', 'duplicates', 'relates to']),
+		action: z.enum(['create']).or(z.string()),
+		verb: z.enum(['blocks', 'duplicates', 'relates to']).or(z.string()),
 		subject_id: z.number().int(),
 		object_id: z.number().int(),
 	})
@@ -1076,8 +1083,8 @@ export const ShortcutHistoryActionStoryLinkDelete = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['delete']),
-		verb: z.enum(['blocks', 'duplicates', 'relates to']),
+		action: z.enum(['delete']).or(z.string()),
+		verb: z.enum(['blocks', 'duplicates', 'relates to']).or(z.string()),
 		subject_id: z.number().int().nullable(),
 		object_id: z.number().int().nullable(),
 	})
@@ -1087,8 +1094,8 @@ export const ShortcutHistoryActionStoryLinkUpdate = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['update']),
-		verb: z.enum(['blocks', 'duplicates', 'relates to']),
+		action: z.enum(['update']).or(z.string()),
+		verb: z.enum(['blocks', 'duplicates', 'relates to']).or(z.string()),
 		subject_id: z.number().int(),
 		object_id: z.number().int(),
 		changes: z.lazy(() => ShortcutHistoryChangesStoryLink),
@@ -1099,11 +1106,11 @@ export const ShortcutHistoryActionStoryUpdate = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['update']),
+		action: z.enum(['update']).or(z.string()),
 		app_url: z.string(),
 		changes: z.lazy(() => ShortcutHistoryChangesStory).optional(),
 		name: z.string(),
-		story_type: z.enum(['feature', 'chore', 'bug']),
+		story_type: z.enum(['feature', 'chore', 'bug']).or(z.string()),
 		parent_story_id: z.number().int().optional(),
 	})
 	.strict();
@@ -1116,7 +1123,7 @@ export const ShortcutHistoryActionTaskCreate = z
 		group_mention_ids: z.array(z.string()).optional(),
 		owner_ids: z.array(z.string()).optional(),
 		id: z.number().int(),
-		action: z.enum(['create']),
+		action: z.enum(['create']).or(z.string()),
 		complete: z.boolean(),
 		deadline: z.string().optional(),
 	})
@@ -1126,7 +1133,7 @@ export const ShortcutHistoryActionTaskDelete = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['delete']),
+		action: z.enum(['delete']).or(z.string()),
 		description: z.string(),
 	})
 	.strict();
@@ -1135,7 +1142,7 @@ export const ShortcutHistoryActionTaskUpdate = z
 	.object({
 		id: z.number().int(),
 		entity_type: z.string(),
-		action: z.enum(['update']),
+		action: z.enum(['update']).or(z.string()),
 		changes: z.lazy(() => ShortcutHistoryChangesTask),
 		complete: z.boolean().optional(),
 		description: z.string(),
@@ -1147,7 +1154,7 @@ export const ShortcutHistoryActionWorkspace2BulkUpdate = z
 	.object({
 		id: z.string(),
 		entity_type: z.string(),
-		action: z.enum(['bulk-update']),
+		action: z.enum(['bulk-update']).or(z.string()),
 		name: z.string(),
 	})
 	.strict();
@@ -1314,7 +1321,7 @@ export const ShortcutHistoryReferenceStory = z
 		entity_type: z.string(),
 		app_url: z.string(),
 		name: z.string(),
-		story_type: z.enum(['feature', 'chore', 'bug']),
+		story_type: z.enum(['feature', 'chore', 'bug']).or(z.string()),
 		parent_story_id: z.number().int().optional(),
 	})
 	.strict();
@@ -1331,7 +1338,7 @@ export const ShortcutHistoryReferenceWorkflowState = z
 	.object({
 		id: z.union([z.number().int(), z.string()]),
 		entity_type: z.string(),
-		type: z.enum(['started', 'backlog', 'unstarted', 'done']),
+		type: z.enum(['started', 'backlog', 'unstarted', 'done']).or(z.string()),
 		name: z.string(),
 	})
 	.strict();
@@ -1350,7 +1357,10 @@ export const ShortcutIdentity = z
 	.object({
 		entity_type: z.string(),
 		name: z.string().nullable(),
-		type: z.enum(['slack', 'github', 'gitlab', 'bitbucket']).nullable(),
+		type: z
+			.enum(['slack', 'github', 'gitlab', 'bitbucket'])
+			.or(z.string())
+			.nullable(),
 	})
 	.strict();
 
@@ -1445,7 +1455,7 @@ export const ShortcutKeyResult = z
 		id: z.string(),
 		name: z.string(),
 		objective_id: z.number().int(),
-		type: z.enum(['percent', 'boolean', 'numeric']),
+		type: z.enum(['percent', 'boolean', 'numeric']).or(z.string()),
 		initial_observed_value: z.lazy(() => ShortcutKeyResultValue),
 		current_observed_value: z.lazy(() => ShortcutKeyResultValue),
 		current_target_value: z.lazy(() => ShortcutKeyResultValue),
@@ -1554,7 +1564,7 @@ export const ShortcutMember = z
 		entity_type: z.string(),
 		disabled: z.boolean(),
 		global_id: z.string(),
-		state: z.enum(['partial', 'full', 'disabled', 'imported']),
+		state: z.enum(['partial', 'full', 'disabled', 'imported']).or(z.string()),
 		updated_at: z.string().nullable(),
 		created_without_invite: z.boolean(),
 		group_ids: z.array(z.string()),
@@ -1786,7 +1796,7 @@ export const ShortcutRepository = z
 	.object({
 		entity_type: z.string(),
 		name: z.string().nullable(),
-		type: z.enum(['github', 'gitlab', 'bitbucket']),
+		type: z.enum(['github', 'gitlab', 'bitbucket']).or(z.string()),
 		updated_at: z.string().nullable(),
 		external_id: z.string().nullable(),
 		id: z.number().int().nullable(),
