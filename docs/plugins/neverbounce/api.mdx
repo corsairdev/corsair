@@ -14,9 +14,9 @@ description: "API reference for the NeverBounce plugin in Corsair: every `neverb
 
 `single.check`
 
-Verify an email address; verification may consume credits
+Verify an email address (valid, invalid, disposable, catchall or unknown); uses one verification credit
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.neverbounce.api.single.check({});
@@ -38,28 +38,28 @@ await corsair.neverbounce.api.single.check({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `success` | Yes | — |
-| `result` | `string` | No | — |
-| `flags` | `string[]` | No | — |
-| `suggested_correction` | `string` | No | — |
-| `address_info` | `object` | No | — |
-| `credits_info` | `object` | No | — |
-| `execution_time` | `number` | No | — |
+| `result` | `string \| null` | No | — |
+| `flags` | `string[] \| null` | No | — |
+| `suggested_correction` | `string \| null` | No | — |
+| `address_info` | `object \| null` | No | — |
+| `credits_info` | `object \| null` | No | — |
+| `execution_time` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="address_info full type">
 
 ```ts
 {
-  original_email?: string,
-  normalized_email?: string,
-  addr?: string,
-  alias?: string,
-  host?: string,
-  fqdn?: string,
-  domain?: string,
-  subdomain?: string,
-  tld?: string
-}
+  original_email?: string | null,
+  normalized_email?: string | null,
+  addr?: string | null,
+  alias?: string | null,
+  host?: string | null,
+  fqdn?: string | null,
+  domain?: string | null,
+  subdomain?: string | null,
+  tld?: string | null
+} | null
 ```
 </Accordion>
 
@@ -67,11 +67,11 @@ await corsair.neverbounce.api.single.check({});
 
 ```ts
 {
-  paid_credits_used?: number,
-  free_credits_used?: number,
-  paid_credits_remaining?: number,
-  free_credits_remaining?: number
-}
+  paid_credits_used?: number | null,
+  free_credits_used?: number | null,
+  paid_credits_remaining?: number | null,
+  free_credits_remaining?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -79,3 +79,4 @@ await corsair.neverbounce.api.single.check({});
 
 
 ---
+

@@ -94,17 +94,17 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read**
-
-_No read-style endpoint inferred; pick any operation from the [API](/plugins/neverbounce/api) reference._
-
-
 **Verify an email address**
 
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.neverbounce.api.single.check({ email: 'user@example.com' });
 ```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/neverbounce/api) reference._
 
 
 See the full list on the [API](/plugins/neverbounce/api) page.
