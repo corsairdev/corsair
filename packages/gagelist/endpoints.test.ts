@@ -633,6 +633,8 @@ describe('calibrations', () => {
 	it('maps a connection that drops while the PDF downloads to a retried transport failure', async () => {
 		respondToken();
 		const dropped = new TypeError('terminated');
+		// unknown: a partial Response with only the fields the certificate route reads;
+		// a full Response cannot be built with an arrayBuffer that rejects.
 		fetchMock.mockResolvedValueOnce({
 			ok: true,
 			status: 200,

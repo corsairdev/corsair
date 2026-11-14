@@ -187,6 +187,8 @@ function sanitizeApiError(error: ApiError, replayable: boolean): ApiError {
 }
 
 // DOMException (fetch timeouts) can fail instanceof Error across realms.
+// unknown: a rejected fetch or body read can carry any value, so it is narrowed
+// with instanceof below.
 function transportError(
 	error: unknown,
 	method: string,
