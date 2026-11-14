@@ -31,6 +31,80 @@ describe('ShipEngine schemas', () => {
 		).toBe(false);
 	});
 
+	it('accepts the documented inputs the generated contract dropped or mislabelled', () => {
+		const shipTo = {
+			name: 'Test Person',
+			phone: '5555555555',
+			address_line1: '525 S Winchester Blvd',
+			city_locality: 'San Jose',
+			state_province: 'CA',
+			postal_code: '95128',
+			country_code: 'US',
+		};
+		const createShipments =
+			ShipEngineEndpointInputSchemas['shipments.createShipments'];
+		// warehouse_id in place of ship_from (accepted by the live API), item
+		// descriptions on products and customs items, and one label reference.
+		expect(
+			createShipments.safeParse({
+				body: {
+					shipments: [
+						{
+							carrier_id: 'se-1875518',
+							service_code: 'usps_priority_mail',
+							warehouse_id: 'se-1265587',
+							ship_to: shipTo,
+							packages: [
+								{
+									weight: { value: 1, unit: 'pound' },
+									label_messages: { reference1: 'Order 123' },
+									products: [{ description: 'T-shirt', quantity: 1 }],
+								},
+							],
+							customs: {
+								contents: 'merchandise',
+								non_delivery: 'return_to_sender',
+								customs_items: [{ description: 'T-shirt', quantity: 1 }],
+							},
+						},
+					],
+				},
+			}).success,
+		).toBe(true);
+		const neither = createShipments.safeParse({
+			body: { shipments: [{ ship_to: shipTo }] },
+		});
+		expect(neither.success).toBe(false);
+		expect(neither.error?.issues[0]?.message).toBe(
+			'Set ship_from or warehouse_id.',
+		);
+		expect(
+			ShipEngineEndpointInputSchemas[
+				'packageTypes.createPackageType'
+			].safeParse({
+				body: {
+					package_code: 'laptop_box',
+					name: 'Laptop box',
+					description: 'Packaging for laptops',
+				},
+			}).success,
+		).toBe(true);
+		const connectCarrier =
+			ShipEngineEndpointInputSchemas['carrierAccounts.connectCarrier'];
+		expect(
+			connectCarrier.safeParse({
+				path: { carrier_name: 'sendle' },
+				body: { nickname: 'n', sendle_id: '123456789', api_key: 'k' },
+			}).success,
+		).toBe(true);
+		expect(
+			connectCarrier.safeParse({
+				path: { carrier_name: 'firstmile' },
+				body: { nickname: 'n', mailer_id: 'FM12345', password: 'p' },
+			}).success,
+		).toBe(true);
+	});
+
 	it('rejects undocumented endpoint input fields before transport', () => {
 		for (const operationName of SHIPENGINE_OPERATION_NAMES) {
 			expect(

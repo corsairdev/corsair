@@ -713,6 +713,7 @@ const shipEngineSchema151 = z
 	.strict();
 const shipEngineSchema148 = z
 	.object({
+		description: z.string().max(500).nullable().optional(),
 		package_id: shipEngineSchema145.optional(),
 		package_code: shipEngineSchema149,
 		name: shipEngineSchema16,
@@ -1017,7 +1018,8 @@ const shipEngineSchema172 = z.union([
 	z
 		.object({
 			nickname: shipEngineSchema34,
-			mailer_id: shipEngineSchema116,
+			// FirstMile's own mailer ID, not a ShipEngine se- ID (the contract mislabels it).
+			mailer_id: shipEngineSchema34,
 			profile_name: shipEngineSchema34.optional(),
 			password: shipEngineSchema34,
 		})
@@ -1111,7 +1113,8 @@ const shipEngineSchema172 = z.union([
 	z
 		.object({
 			nickname: shipEngineSchema34,
-			sendle_id: shipEngineSchema116,
+			// Sendle's own account ID, not a ShipEngine se- ID (the contract mislabels it).
+			sendle_id: shipEngineSchema34,
 			api_key: shipEngineSchema34,
 		})
 		.strict(),
@@ -1934,6 +1937,7 @@ const shipEngineSchema320 = z
 const shipEngineSchema324 = shipEngineSchema41.nullable();
 const shipEngineSchema319 = z
 	.object({
+		description: z.string().max(100).nullable().optional(),
 		quantity: shipEngineSchema179.optional(),
 		value: shipEngineSchema164.optional(),
 		value_currency: shipEngineSchema28.optional(),
@@ -2088,9 +2092,9 @@ const shipEngineSchema349 = z
 	.strict();
 const shipEngineSchema352 = z
 	.object({
-		reference1: shipEngineSchema36,
-		reference2: shipEngineSchema36,
-		reference3: shipEngineSchema36,
+		reference1: shipEngineSchema36.optional(),
+		reference2: shipEngineSchema36.optional(),
+		reference3: shipEngineSchema36.optional(),
 	})
 	.strict();
 const shipEngineSchema353 = z.string().min(1).max(35).nullable();
@@ -2151,6 +2155,7 @@ const shipEngineSchema357 = z.array(shipEngineSchema358).min(0);
 const shipEngineSchema364 = z.record(z.string(), z.json());
 const shipEngineSchema355 = z
 	.object({
+		description: z.string().max(100).nullable().optional(),
 		quantity: shipEngineSchema179.optional(),
 		value: shipEngineSchema315.optional(),
 		weight: shipEngineSchema320.optional(),
@@ -2726,6 +2731,7 @@ const shipEngineSchema422 = z
 	.strict();
 const shipEngineSchema423 = z
 	.object({
+		description: z.string().max(500).nullable().optional(),
 		package_id: shipEngineSchema116.optional(),
 		package_code: shipEngineSchema347,
 		name: shipEngineSchema24,
@@ -2734,6 +2740,7 @@ const shipEngineSchema423 = z
 	.strict();
 const shipEngineSchema424 = z
 	.object({
+		description: z.string().max(500).nullable().optional(),
 		package_id: shipEngineSchema145.optional(),
 		package_code: shipEngineSchema149,
 		name: shipEngineSchema16,
@@ -2892,7 +2899,7 @@ const shipEngineSchema449 = z
 		shipment_number: shipEngineSchema294.optional(),
 		ship_date: shipEngineSchema295.optional(),
 		ship_to: shipEngineSchema297,
-		ship_from: shipEngineSchema303,
+		ship_from: shipEngineSchema303.optional(),
 		warehouse_id: shipEngineSchema302.optional(),
 		return_to: shipEngineSchema303.optional(),
 		is_return: shipEngineSchema304.optional(),
@@ -2904,7 +2911,17 @@ const shipEngineSchema449 = z
 		packages: shipEngineSchema345.optional(),
 		comparison_rate_type: shipEngineSchema365.optional(),
 	})
-	.strict();
+	.strict()
+	// The contract lists ship_from as required, but its shipment model notes that
+	// either ship_from or warehouse_id must be set, and the live API accepts a
+	// warehouse_id alone (ship_from is then filled from the warehouse).
+	.refine(
+		(shipment) => shipment.ship_from != null || shipment.warehouse_id != null,
+		{
+			message: 'Set ship_from or warehouse_id.',
+			path: ['ship_from'],
+		},
+	);
 const shipEngineSchema444 = z.union([
 	z
 		.object({
@@ -3110,6 +3127,7 @@ const shipEngineSchema483 = z
 const shipEngineSchema486 = shipEngineSchema52.nullable();
 const shipEngineSchema485 = z
 	.object({
+		description: z.string().max(100).nullable().optional(),
 		customs_item_id: shipEngineSchema89,
 		quantity: shipEngineSchema454.optional(),
 		value: shipEngineSchema154.optional(),
@@ -3300,6 +3318,7 @@ const shipEngineSchema515 = z.array(shipEngineSchema516).min(0);
 const shipEngineSchema522 = z.record(z.string(), z.json());
 const shipEngineSchema513 = z
 	.object({
+		description: z.string().max(100).nullable().optional(),
 		quantity: shipEngineSchema454.optional(),
 		value: shipEngineSchema233.optional(),
 		weight: shipEngineSchema259.optional(),

@@ -2043,6 +2043,7 @@ await corsair.shipengine.api.carriers.getCarrierById({
 
 ```ts
 {
+  description?: string | null,
   package_id?: string,
   package_code: string,
   name: string,
@@ -2170,6 +2171,7 @@ await corsair.shipengine.api.carriers.listCarrierPackageTypes({
 
 ```ts
 {
+  description?: string | null,
   package_id?: string,
   package_code: string,
   name: string,
@@ -2240,6 +2242,7 @@ await corsair.shipengine.api.carriers.listCarriers({});
     is_return_supported?: boolean
   }[],
   packages?: {
+    description?: string | null,
     package_id?: string,
     package_code: string,
     name: string,
@@ -3085,6 +3088,7 @@ Purchase Label purchases one or more carrier labels and can incur shipping charg
       license_number?: string,
       certificate_number?: string,
       customs_items?: {
+        description?: string | null,
         quantity?: number,
         value?: number,
         value_currency?: string,
@@ -3171,13 +3175,14 @@ Purchase Label purchases one or more carrier labels and can incur shipping charg
         amount: number
       },
       label_messages?: {
-        reference1: string | null,
-        reference2: string | null,
-        reference3: string | null
+        reference1?: string | null,
+        reference2?: string | null,
+        reference3?: string | null
       },
       external_package_id?: string,
       content_description?: string | null,
       products?: {
+        description?: string | null,
         quantity?: number,
         value?: {
           currency: string,
@@ -4017,6 +4022,7 @@ Purchase Label from Rate Shopper purchases one or more carrier labels and can in
       license_number?: string,
       certificate_number?: string,
       customs_items?: {
+        description?: string | null,
         quantity?: number,
         value?: number,
         value_currency?: string,
@@ -4103,13 +4109,14 @@ Purchase Label from Rate Shopper purchases one or more carrier labels and can in
         amount: number
       },
       label_messages?: {
-        reference1: string | null,
-        reference2: string | null,
-        reference3: string | null
+        reference1?: string | null,
+        reference2?: string | null,
+        reference3?: string | null
       },
       external_package_id?: string,
       content_description?: string | null,
       products?: {
+        description?: string | null,
         quantity?: number,
         value?: {
           currency: string,
@@ -7009,6 +7016,7 @@ await corsair.shipengine.api.packageTypes.createPackageType({
 
 ```ts
 {
+  description?: string | null,
   package_id?: string,
   package_code: string,
   name: string,
@@ -7029,6 +7037,7 @@ await corsair.shipengine.api.packageTypes.createPackageType({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `description` | `string \| null` | No | — |
 | `package_id` | `string` | No | — |
 | `package_code` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -7129,6 +7138,7 @@ await corsair.shipengine.api.packageTypes.getPackageTypeById({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `description` | `string \| null` | No | — |
 | `package_id` | `string` | No | — |
 | `package_code` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -7178,6 +7188,7 @@ await corsair.shipengine.api.packageTypes.listPackageTypes({});
 
 ```ts
 {
+  description?: string | null,
   package_id?: string,
   package_code: string,
   name: string,
@@ -7232,6 +7243,7 @@ await corsair.shipengine.api.packageTypes.updatePackageType({
 
 ```ts
 {
+  description?: string | null,
   package_id?: string,
   package_code: string,
   name: string,
@@ -7349,7 +7361,7 @@ await corsair.shipengine.api.rates.calculateRates({
         value?: string
       }[]
     },
-    ship_from: {
+    ship_from?: {
       name: string,
       phone?: string,
       email?: string | null,
@@ -7434,6 +7446,7 @@ await corsair.shipengine.api.rates.calculateRates({
       license_number?: string,
       certificate_number?: string,
       customs_items?: {
+        description?: string | null,
         quantity?: number,
         value?: number,
         value_currency?: string,
@@ -7520,13 +7533,14 @@ await corsair.shipengine.api.rates.calculateRates({
         amount: number
       },
       label_messages?: {
-        reference1: string | null,
-        reference2: string | null,
-        reference3: string | null
+        reference1?: string | null,
+        reference2?: string | null,
+        reference3?: string | null
       },
       external_package_id?: string,
       content_description?: string | null,
       products?: {
+        description?: string | null,
         quantity?: number,
         value?: {
           currency: string,
@@ -7767,6 +7781,7 @@ await corsair.shipengine.api.rates.calculateRates({
   license_number?: string,
   certificate_number?: string,
   customs_items?: {
+    description?: string | null,
     customs_item_id: string,
     quantity?: number,
     value?: number,
@@ -7884,6 +7899,7 @@ await corsair.shipengine.api.rates.calculateRates({
   tracking_number?: string,
   content_description?: string | null,
   products?: {
+    description?: string | null,
     quantity?: number,
     value?: {
       currency: string,
@@ -8189,7 +8205,7 @@ await corsair.shipengine.api.rates.compareBulkRates({
         value?: string
       }[]
     },
-    ship_from: {
+    ship_from?: {
       name: string,
       phone?: string,
       email?: string | null,
@@ -8274,6 +8290,7 @@ await corsair.shipengine.api.rates.compareBulkRates({
       license_number?: string,
       certificate_number?: string,
       customs_items?: {
+        description?: string | null,
         quantity?: number,
         value?: number,
         value_currency?: string,
@@ -8360,13 +8377,14 @@ await corsair.shipengine.api.rates.compareBulkRates({
         amount: number
       },
       label_messages?: {
-        reference1: string | null,
-        reference2: string | null,
-        reference3: string | null
+        reference1?: string | null,
+        reference2?: string | null,
+        reference3?: string | null
       },
       external_package_id?: string,
       content_description?: string | null,
       products?: {
+        description?: string | null,
         quantity?: number,
         value?: {
           currency: string,
@@ -9125,7 +9143,7 @@ await corsair.shipengine.api.shipments.createShipments({
         value?: string
       }[]
     },
-    ship_from: {
+    ship_from?: {
       name: string,
       phone?: string,
       email?: string | null,
@@ -9210,6 +9228,7 @@ await corsair.shipengine.api.shipments.createShipments({
       license_number?: string,
       certificate_number?: string,
       customs_items?: {
+        description?: string | null,
         quantity?: number,
         value?: number,
         value_currency?: string,
@@ -9296,13 +9315,14 @@ await corsair.shipengine.api.shipments.createShipments({
         amount: number
       },
       label_messages?: {
-        reference1: string | null,
-        reference2: string | null,
-        reference3: string | null
+        reference1?: string | null,
+        reference2?: string | null,
+        reference3?: string | null
       },
       external_package_id?: string,
       content_description?: string | null,
       products?: {
+        description?: string | null,
         quantity?: number,
         value?: {
           currency: string,
@@ -9501,6 +9521,7 @@ await corsair.shipengine.api.shipments.createShipments({
     license_number?: string,
     certificate_number?: string,
     customs_items?: {
+      description?: string | null,
       customs_item_id: string,
       quantity?: number,
       value?: number,
@@ -9602,6 +9623,7 @@ await corsair.shipengine.api.shipments.createShipments({
     tracking_number?: string,
     content_description?: string | null,
     products?: {
+      description?: string | null,
       quantity?: number,
       value?: {
         currency: string,
@@ -9918,6 +9940,7 @@ await corsair.shipengine.api.shipments.getShipmentByExternalId({
   license_number?: string,
   certificate_number?: string,
   customs_items?: {
+    description?: string | null,
     customs_item_id: string,
     quantity?: number,
     value?: number,
@@ -10035,6 +10058,7 @@ await corsair.shipengine.api.shipments.getShipmentByExternalId({
   tracking_number?: string,
   content_description?: string | null,
   products?: {
+    description?: string | null,
     quantity?: number,
     value?: {
       currency: string,
@@ -10316,6 +10340,7 @@ await corsair.shipengine.api.shipments.getShipmentById({
   license_number?: string,
   certificate_number?: string,
   customs_items?: {
+    description?: string | null,
     customs_item_id: string,
     quantity?: number,
     value?: number,
@@ -10433,6 +10458,7 @@ await corsair.shipengine.api.shipments.getShipmentById({
   tracking_number?: string,
   content_description?: string | null,
   products?: {
+    description?: string | null,
     quantity?: number,
     value?: {
       currency: string,
@@ -10879,6 +10905,7 @@ await corsair.shipengine.api.shipments.listShipments({});
     license_number?: string,
     certificate_number?: string,
     customs_items?: {
+      description?: string | null,
       customs_item_id: string,
       quantity?: number,
       value?: number,
@@ -10980,6 +11007,7 @@ await corsair.shipengine.api.shipments.listShipments({});
     tracking_number?: string,
     content_description?: string | null,
     products?: {
+      description?: string | null,
       quantity?: number,
       value?: {
         currency: string,
@@ -11218,6 +11246,7 @@ await corsair.shipengine.api.shipments.parseShipment({
       license_number?: string,
       certificate_number?: string,
       customs_items?: {
+        description?: string | null,
         quantity?: number,
         value?: number,
         value_currency?: string,
@@ -11304,13 +11333,14 @@ await corsair.shipengine.api.shipments.parseShipment({
         amount: number
       },
       label_messages?: {
-        reference1: string | null,
-        reference2: string | null,
-        reference3: string | null
+        reference1?: string | null,
+        reference2?: string | null,
+        reference3?: string | null
       },
       external_package_id?: string,
       content_description?: string | null,
       products?: {
+        description?: string | null,
         quantity?: number,
         value?: {
           currency: string,
@@ -11510,6 +11540,7 @@ await corsair.shipengine.api.shipments.parseShipment({
     license_number?: string,
     certificate_number?: string,
     customs_items?: {
+      description?: string | null,
       customs_item_id: string,
       quantity?: number,
       value?: number,
@@ -11611,6 +11642,7 @@ await corsair.shipengine.api.shipments.parseShipment({
     tracking_number?: string,
     content_description?: string | null,
     products?: {
+      description?: string | null,
       quantity?: number,
       value?: {
         currency: string,
@@ -12032,6 +12064,7 @@ await corsair.shipengine.api.shipments.updateShipment({
     license_number?: string,
     certificate_number?: string,
     customs_items?: {
+      description?: string | null,
       quantity?: number,
       value?: number,
       value_currency?: string,
@@ -12118,13 +12151,14 @@ await corsair.shipengine.api.shipments.updateShipment({
       amount: number
     },
     label_messages?: {
-      reference1: string | null,
-      reference2: string | null,
-      reference3: string | null
+      reference1?: string | null,
+      reference2?: string | null,
+      reference3?: string | null
     },
     external_package_id?: string,
     content_description?: string | null,
     products?: {
+      description?: string | null,
       quantity?: number,
       value?: {
         currency: string,
@@ -12366,6 +12400,7 @@ await corsair.shipengine.api.shipments.updateShipment({
   license_number?: string,
   certificate_number?: string,
   customs_items?: {
+    description?: string | null,
     customs_item_id: string,
     quantity?: number,
     value?: number,
@@ -12483,6 +12518,7 @@ await corsair.shipengine.api.shipments.updateShipment({
   tracking_number?: string,
   content_description?: string | null,
   products?: {
+    description?: string | null,
     quantity?: number,
     value?: {
       currency: string,
