@@ -1,7 +1,7 @@
 // Live Grist API smoke tests. Excluded from default runs by
 // testPathIgnorePatterns in jest.config.cjs; run explicitly with:
 //
-//   GRIST_API_KEY=... pnpm test:live
+//   GRIST_API_KEY=... [GRIST_BASE_URL=https://<team>.getgrist.com] pnpm test:live
 //
 import { makeGristRequest } from './client';
 import {
@@ -10,6 +10,8 @@ import {
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.GRIST_API_KEY ?? '';
+// the Grist site the key belongs to; personal sites use docs.getgrist.com
+const BASE_URL = process.env.GRIST_BASE_URL ?? 'https://docs.getgrist.com';
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 if (!LIVE_KEY) {
@@ -22,6 +24,7 @@ describeLive('Grist live API (env-gated smoke tests)', () => {
 	it('GET /orgs returns accessible organizations for the live key', async () => {
 		const res = await makeGristRequest<unknown>('/orgs', LIVE_KEY, {
 			method: 'GET',
+			baseUrl: BASE_URL,
 		});
 		const parsed = OrgsListOutputSchema.parse(res);
 		expect(Array.isArray(parsed)).toBe(true);
@@ -30,6 +33,7 @@ describeLive('Grist live API (env-gated smoke tests)', () => {
 	it('GET /profile/user returns user profile for the live key', async () => {
 		const res = await makeGristRequest<unknown>('/profile/user', LIVE_KEY, {
 			method: 'GET',
+			baseUrl: BASE_URL,
 		});
 		const parsed = ProfileGetOutputSchema.parse(res);
 		expect(typeof parsed.id).toBe('number');
