@@ -55,18 +55,18 @@ const DoctypesListOutputSchema = z
 	})
 	.loose();
 
-// frappe/desk/form/load.py getdoctype answers { meta, docs } which the
-// /api/method wrapper nests under `message`: meta carries the DocType schema
-// (field definitions, permissions) and docs the DocType plus parent/child
-// documents.
+// frappe/desk/form/load.py getdoctype returns nothing: it extends
+// frappe.response.docs with the meta bundle (the DocType, then each child
+// table DocType) and sets user_settings (and parent_dt when with_parent
+// resolved a parent), so the answer is { docs, user_settings } with no
+// `message` key.
 const DoctypesGetMetaOutputSchema = z
 	.object({
-		message: z
-			.object({
-				meta: ErpnextDoctypeRecordSchema,
-				docs: z.array(ErpnextDoctypeRecordSchema),
-			})
-			.loose(),
+		docs: z.array(ErpnextDoctypeRecordSchema),
+		// unknown: user_settings is the caller's saved list/report view
+		// settings, a JSON string or object Frappe stores per user.
+		user_settings: z.unknown().optional(),
+		parent_dt: z.string().optional(),
 	})
 	.loose();
 

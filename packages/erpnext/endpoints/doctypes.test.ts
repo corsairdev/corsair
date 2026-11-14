@@ -86,17 +86,18 @@ const RESPONSE_FIXTURES: Record<DoctypesOperationKey, unknown> = {
 	'doctypes.list': {
 		data: [{ name: 'Customer' }, { name: 'Sales Order' }],
 	},
-	// frappe/desk/form/load.py getdoctype answers { meta, docs } under the
-	// message wrapper.
+	// frappe/desk/form/load.py getdoctype extends frappe.response.docs and
+	// sets user_settings; there is no `message` key.
 	'doctypes.getMeta': {
-		message: {
-			meta: {
+		docs: [
+			{
+				doctype: 'DocType',
 				name: 'Customer',
 				module: 'Selling',
 				fields: [{ fieldname: 'customer_name', fieldtype: 'Data' }],
 			},
-			docs: [{ doctype: 'DocType', name: 'Customer' }],
-		},
+		],
+		user_settings: '{}',
 	},
 };
 
