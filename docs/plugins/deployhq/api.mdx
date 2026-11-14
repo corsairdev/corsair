@@ -154,7 +154,7 @@ await corsair.deployhq.api.account.replaceAccount({
 
 Reset password
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.deployhq.api.account.resetPasswordSubmitReset({
@@ -11583,7 +11583,7 @@ await corsair.deployhq.api.servers.updateProjectServer({
 
 Create a new DeployHQ account
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.deployhq.api.signup.createSignup({
@@ -13841,7 +13841,7 @@ await corsair.deployhq.api.testAccess.getProjectTestAccess({ project_id: 'test',
 
 Invite a user
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.deployhq.api.users.createUser({
@@ -14094,7 +14094,7 @@ await corsair.deployhq.api.users.replaceUser({
 
 Resend invitation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.deployhq.api.users.resendInvitationUserResendInvitation({ id: 'test' });
