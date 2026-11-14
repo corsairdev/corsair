@@ -1608,7 +1608,7 @@ const dialpadEndpointMetaValue = {
 			'Call -- Get Ai Recap. Gets the Ai Recap for a call. Requires scope: ``ai_recap`` Rate limit: 12 per minute.',
 	},
 	'call.participants.add': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Call -- Add Participant. Adds another participant to a call. Valid methods to add are by phone or by target. Targets require to have a primary phone Rate limit: 1200 per minute.',
 	},
@@ -1618,7 +1618,7 @@ const dialpadEndpointMetaValue = {
 			"Call -- List. Provides a paginated list of calls matching the specified filter parameters in reverse-chronological order by call start time (i.e. recent calls first) Note: This API will only include calls that have already concluded. When no target is specified, company-level API keys and company admins list all of the company's calls, and other user-level API keys list the authenticated user's own calls. Requires scope: ``calls:list`` Rate limit: 1200 per minute.",
 	},
 	'call.initiate_ivr_call': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Call -- Initiate IVR Call. Initiates an outbound call to ring an IVR Workflow. Rate limit: 10 per minute per IVR. Rate limit: 1200 per minute.',
 	},
@@ -1648,7 +1648,7 @@ const dialpadEndpointMetaValue = {
 			'Call -- Unpark. Unparks a call previously parked on an Office mainline, routing it to the specified user. Rate limit: 1200 per minute.',
 	},
 	'call.initiate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Call -- Initiate via Ring. Initiates an outbound call to ring all devices (or a single specified device). Note that the user must have at least one active device (a web, desktop or mobile Dialpad app; a CTI application; or a physical deskphone). Rate limit: 5 per minute.',
 	},
@@ -1693,7 +1693,7 @@ const dialpadEndpointMetaValue = {
 			'Call Centers -- Create. Create a new call center in the specified office. Requires name and office_id. Requires a company admin API key. Rate limit: 1200 per minute.',
 	},
 	'callback.enqueue': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Call Back -- Enqueue. Requests a call back to a given number by an operator in a given call center, and returns the request's position in the queue. The call back joins the call center queue like a regular call and dials out when the next operator becomes available, respecting the call center's business and holiday hours and queue settings. International call backs are not supported, and a duplicate call back for the same number and call center is rejected. Rate limit: 1200 per minute.",
 	},
@@ -1728,7 +1728,7 @@ const dialpadEndpointMetaValue = {
 			'Operator -- Update Skill Level. Updates the skill level of an operator within a call center. Rate limit: 1200 per minute.',
 	},
 	'callcenters.operators.add': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Operator -- Add. Adds an operator to a call center. > Warning > > This API may result in the usage of call center licenses if required and available. If the licenses are required and not available the operation will fail. Licenses are required when adding an operator that does not have a call center license. Rate limit: 1200 per minute.',
 	},
@@ -1798,7 +1798,7 @@ const dialpadEndpointMetaValue = {
 			'Call Router -- Update. Updates the API call router with the given ID. Rate limit: 1200 per minute.',
 	},
 	'numbers.assign_call_router_number.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Assign. Assigns a number to a callrouter. The number will automatically be taken from the company's reserved pool if there are reserved numbers, otherwise a number will be auto-assigned from the provided area code. Rate limit: 1200 per minute.",
 	},
@@ -2018,7 +2018,7 @@ const dialpadEndpointMetaValue = {
 			'Operator -- Add. Add a user or room as an operator to a department. Specify operator_type (user or room) and optional role (operator or admin). Rate limit: 1200 per minute.',
 	},
 	'faxline.assign': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Fax Line -- Assign. Assigns a fax line to a target. Target includes user and department. Depending on the chosen line type, the number will be taken from the company's reserved pool if there are available reserved numbers, otherwise numbers can be auto-assigned using a provided area code. Requires a company admin API key. Rate limit: 1200 per minute.",
 	},
@@ -2028,17 +2028,17 @@ const dialpadEndpointMetaValue = {
 			'Bulk Message -- Get. Gets a single bulk message by ID. Rate limit: 1200 per minute.',
 	},
 	'fax.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Fax -- Send. Sends a fax to a phone number. Rate limit: 250 per minute.',
 	},
 	'bulk_messages.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Bulk Message -- Send. Sends a bulk message to multiple recipients (up to 50). This endpoint allows you to send the same message to multiple phone numbers. All existing logic (including spam checks, delivery behavior, and visibility in the Bulk Messages UI tab) will remain the same for API-triggered sends. **Important**: Message sending is asynchronous. This endpoint creates the bulk message batch and returns immediately with success=True, indicating the batch was created successfully. Individual messages are sent in the background. To check the delivery status of individual recipients, use the GET /message/bulk/{id} endpoint to retrieve the batch with delivery status information (attempted_send, error_message, delivery_status fields per recipient). Rate limit: 1200 per minute.',
 	},
 	'scheduled_messages.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Schedule -- Create. Creates a new scheduled message that will be sent at the specified time. Messages can be sent to multiple phone numbers OR to a Dialpad channel. Supports both SMS (text only) and MMS (text with media attachments). Rate limit: 1200 per minute.',
 	},
@@ -2078,7 +2078,7 @@ const dialpadEndpointMetaValue = {
 			'Dialpad Number -- Assign. Assigns a specific phone number to a target. Use this when the number to assign is already known; use the auto-assign endpoint to let Dialpad pick one. Valid targets are a user or department, an office, room, callcenter, callrouter, staffgroup, channel or coachinggroup. Rate limit: 1200 per minute.',
 	},
 	'scheduled_messages.send_now': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Schedule -- Send Now. Immediately sends a scheduled message and deletes the schedule. This is useful for testing or when you want to send a scheduled message before its scheduled time. Rate limit: 1200 per minute.',
 	},
@@ -2088,12 +2088,12 @@ const dialpadEndpointMetaValue = {
 			'Dialpad Number -- List. Lists the phone numbers in your company, each with its type, area code, status and the target it is assigned to. Filter by status to find numbers in a particular state, or by area code to find numbers in a particular region. Requires a company admin API key. Rate limit: 1200 per minute.',
 	},
 	'numbers.auto_assign': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Auto-Assign. Assigns an automatically selected phone number to a target and returns the number that was chosen. The number is taken from the company's reserved pool if one exists, otherwise a new number is allocated from the provided area code. Use the assign endpoint instead when a specific number is required. Target includes user, department, office, room, callcenter and callrouter, plus staffgroup, channel and coachinggroup. Rate limit: 1200 per minute.",
 	},
 	'numbers.swap': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Swap. Replaces a target's primary phone number with a different one and returns the new number. The old number is released. How the replacement is chosen depends on swap_details: give a specific number to swap to that number (it must already be in the company's reserved pool, and the company must have the reserved_pool experiment enabled), give an area code to take an available number from that area code, or omit swap_details to have one chosen automatically from the reserved pool, falling back to the target's office area code. Rate limit: 1200 per minute.",
 	},
@@ -2143,7 +2143,7 @@ const dialpadEndpointMetaValue = {
 			'Call Centers -- List. Gets all the call centers for an office. Rate limit: 1200 per minute.',
 	},
 	'numbers.assign_office_number.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Assign. Assigns a number to a office. The number will automatically be taken from the company's reserved pool if there are reserved numbers, otherwise a number will be auto-assigned from the provided area code. Rate limit: 1200 per minute.",
 	},
@@ -2193,7 +2193,7 @@ const dialpadEndpointMetaValue = {
 			"Operator -- Remove. Removes an operator from office's mainline. Rate limit: 1200 per minute.",
 	},
 	'offices.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Office -- Create. Creates a secondary office. This provisions a billed entity: currency, plan period and a billing address are all required, and the new office counts against the company's office limit. There is no corresponding delete endpoint, so an office created here can only be removed by support. Rate limit: 1200 per minute.",
 	},
@@ -2218,7 +2218,7 @@ const dialpadEndpointMetaValue = {
 			'Recording Sharelink -- Get. Gets a recording share link by id. Rate limit: 1200 per minute.',
 	},
 	'numbers.assign_room_number.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Assign. Assigns a number to a room. The number will automatically be taken from the company's reserved block if there are reserved numbers, otherwise a number will be auto-assigned from the provided area code. Rate limit: 1200 per minute.",
 	},
@@ -2337,12 +2337,12 @@ const dialpadEndpointMetaValue = {
 			'Stats -- Get Result. Gets the progress and result of a statistics request. Rate limit: 1200 per minute.',
 	},
 	'sms.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"SMS -- Send. Sends an SMS message to a phone number or to a Dialpad channel on behalf of a user. Provide either to_numbers or channel_hashtag as the recipient, and either text or media as the content. A channel's hashtag is available from the channel endpoints. Tier 0 Rate limit: 100 per minute. Tier 1 Rate limit: 800 per minute.",
 	},
 	'users.initiate_call': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Call -- Initiate. Causes a user's Dialpad application to initiate an outbound call. Note that the user must have at least one active autocallable device (the web or desktop Dialpad app, or a CTI application). The Dialpad mobile apps and physical deskphones do not support this API call. Rate limit: 5 per minute.",
 	},
@@ -2412,7 +2412,7 @@ const dialpadEndpointMetaValue = {
 			"Dialpad Number -- Unassign. Un-assigns a phone number from a user. The number will be returned to the company's reserved block if there is one. Otherwise the number will be released. Rate limit: 1200 per minute.",
 	},
 	'users.assign_number': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Dialpad Number -- Assign. Assigns a number to a user. The number will automatically be taken from the company's reserved block if there are reserved numbers, otherwise a number will be auto-assigned from the provided area code. Rate limit: 1200 per minute.",
 	},
@@ -2457,17 +2457,17 @@ const dialpadEndpointMetaValue = {
 			'User -- Update. Updates the provided fields for an existing user. Rate limit: 1200 per minute.',
 	},
 	'users.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'User -- Create. Creates a new user. Rate limit: 1200 per minute.',
 	},
 	'users.move_office': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"User -- Switch Office. Moves the user to a different office. For international offices only, all of the user's numbers will be unassigned and a new number will be assigned except when the user only has internal numbers starting with 803 -- then the numbers will remain unchanged. Admin can also assign numbers via the user assign number API after. Only supported on paid accounts and there must be enough licenses to transfer the user to the destination office. Rate limit: 1200 per minute.",
 	},
 	'users.create_batch': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'User -- Create Batch. Creates up to 25 users in one call, for example to invite a team. Each user is created independently with the same rules as creating a single user, so a failure does not undo the users that were created before it. The response has one result per requested user, in the order sent, with either the created user or the reason it was not created. The reason code no_seats_available means the office has no free license of the type the user would consume. An unexpected server error ends the whole call with a 503 and no per-user results, and the users created before it stay created. Rate limit: 1200 per minute.',
 	},
@@ -2692,7 +2692,7 @@ const dialpadEndpointMetaValue = {
 			'Get Sms List for a Target. DEBUG: Get a list of recent sms given a Target',
 	},
 	'powerdialer.smsItem': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send SMS. DEBUG: Send a text message through dialpad for a given LeadListItem',
 	},
@@ -2824,7 +2824,7 @@ const dialpadEndpointMetaValue = {
 		description: 'Get Campaign. Get an individual Campaign',
 	},
 	'powerdialer.updateCampaign': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Update Campaign. Update a Campaign like starting, resetting, etc',
 	},
