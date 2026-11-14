@@ -1,6 +1,6 @@
 import { createCorsair } from 'corsair/core';
-import { kommo } from './index';
 import { KommoEndpointOutputSchemas as Outputs } from './endpoints/types';
+import { kommo } from './index';
 
 // Live smoke tests. They run only with a real token and subdomain, and every
 // answer goes through the operation's output schema before an assertion
@@ -10,10 +10,11 @@ const apiKey = process.env.KOMMO_API_KEY;
 const subdomain = process.env.KOMMO_SUBDOMAIN;
 const describeIfKey = apiKey && subdomain ? describe : describe.skip;
 
-if (!describeIfKey) {
+if (!apiKey || !subdomain) {
 	// A skipped run must not read as a pass, so say which variable is missing.
 	if (!apiKey) console.warn('KOMMO_API_KEY is not set: live tests skipped');
-	if (!subdomain) console.warn('KOMMO_SUBDOMAIN is not set: live tests skipped');
+	if (!subdomain)
+		console.warn('KOMMO_SUBDOMAIN is not set: live tests skipped');
 }
 
 describeIfKey('Kommo live API', () => {
