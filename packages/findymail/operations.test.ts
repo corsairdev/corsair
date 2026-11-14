@@ -625,22 +625,107 @@ it('accepts documented tiered job titles and rejects more than three tiers', asy
 	expect(fetchMock).toHaveBeenCalledTimes(1);
 });
 
-it('does not replay a rate-limited write and preserves the provider error', async () => {
-	fetchMock.mockResolvedValueOnce(
-		new Response(
-			JSON.stringify({ error: 'Too many requests', retry_after: 5 }),
-			{
-				status: 429,
-				headers: { 'Content-Type': 'application/json', 'Retry-After': '5' },
-			},
-		),
-	);
+function jsonResponse(body: unknown, status = 200, headers = {}): Response {
+	return new Response(JSON.stringify(body), {
+		status,
+		headers: { 'Content-Type': 'application/json', ...headers },
+	});
+}
+
+it('retries a short concurrency throttle', async () => {
+	fetchMock
+		.mockResolvedValueOnce(
+			jsonResponse({ message: 'Too Many Attempts.' }, 429, {
+				'Retry-After': '0',
+			}),
+		)
+		.mockResolvedValueOnce(jsonResponse({ contact: { email: 'a@a.com' } }));
 	await expect(
 		api.search.name({ name: 'John Doe', domain: 'example.com' }),
-	).rejects.toMatchObject({
-		status: 429,
-		retryAfter: 5000,
-		body: { error: 'Too many requests', retry_after: 5 },
+	).resolves.toEqual({ contact: { email: 'a@a.com' } });
+	expect(fetchMock).toHaveBeenCalledTimes(2);
+});
+
+it('returns a plan-capacity 429 at once with the provider error', async () => {
+	const body = {
+		error: "Your plan's usage capacity is reached for now.",
+		retry_after: 300,
+	};
+	fetchMock.mockResolvedValueOnce(jsonResponse(body, 429));
+	await expect(
+		api.search.name({ name: 'John Doe', domain: 'example.com' }),
+	).rejects.toMatchObject({ status: 429, body });
+	expect(fetchMock).toHaveBeenCalledTimes(1);
+});
+
+it('accepts monitor responses that echo object and array request fields', async () => {
+	const response = {
+		...monitor,
+		icp_filters: { industries: ['Biotechnology'], countries: ['US'] },
+		engagement_types: ['like'],
+		target_companies: ['example.com'],
+		lead_list_id: 42,
+	};
+	fetchMock
+		.mockResolvedValueOnce(jsonResponse(response, 201))
+		.mockResolvedValueOnce(jsonResponse(response))
+		.mockResolvedValueOnce(jsonResponse([response]));
+	await expect(
+		api.monitors.create({ name: 'm', signal_type: 'keyword_mention' }),
+	).resolves.toEqual(response);
+	await expect(api.monitors.update({ id: 1, name: 'm' })).resolves.toEqual(
+		response,
+	);
+	await expect(api.monitors.list({})).resolves.toEqual([response]);
+});
+
+it('accepts null fields the provider sends in lookup responses', async () => {
+	fetchMock
+		.mockResolvedValueOnce(
+			jsonResponse({
+				domain: 'example.com',
+				technologies: [
+					{
+						name: 'React',
+						category: null,
+						subcategory: null,
+						last_detected_at: null,
+					},
+				],
+			}),
+		)
+		.mockResolvedValueOnce(
+			jsonResponse({
+				name: 'Example',
+				domain: 'example.com',
+				company_size: null,
+				industry: null,
+				linkedin_url: null,
+				description: null,
+			}),
+		);
+	await expect(
+		api.technologies.lookup({ domain: 'example.com' }),
+	).resolves.toBeDefined();
+	await expect(
+		api.search.company({ domain: 'example.com' }),
+	).resolves.toBeDefined();
+});
+
+it('runs metered lookups as reads and asks before credit-spending jobs', async () => {
+	await runWithMode('cautious', async () => {
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({ email: 'a@example.com', verified: true }),
+		);
+		await expect(
+			api.verification.verify({ email: 'a@example.com' }),
+		).resolves.toBeDefined();
+		await expect(
+			api.intellimatch.search({ query: 'SaaS companies' }),
+		).rejects.toMatchObject({ name: 'PermissionRequiredError' });
+		await expect(
+			api.monitors.create({ name: 'm', signal_type: 'keyword_mention' }),
+		).rejects.toMatchObject({ name: 'PermissionRequiredError' });
 	});
 	expect(fetchMock).toHaveBeenCalledTimes(1);
 });
