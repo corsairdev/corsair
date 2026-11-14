@@ -11,6 +11,16 @@ export class ShortcutNetworkError extends Error {
 	}
 }
 
+/** A path id that would not stay a single URL segment once resolved. */
+export class ShortcutInvalidPathError extends Error {
+	constructor(parameter: string) {
+		super(
+			`Shortcut path parameter "${parameter}" must not be empty, "." or ".."`,
+		);
+		this.name = 'ShortcutInvalidPathError';
+	}
+}
+
 export type ShortcutRequestOptions = {
 	method?: ApiRequestOptions['method'];
 	path?: Record<string, string | number>;
@@ -29,6 +39,15 @@ export async function makeShortcutRequest(
 		throw new AuthMissingError('shortcut', 'api_key');
 	}
 	if (!apiKey) throw new AuthMissingError('shortcut', 'api_key');
+	// Encoding keeps a `/` inside its segment, but a whole id of `.` or `..` is
+	// a dot segment the URL parser resolves: `/documents/1/epics/..` becomes
+	// `/documents/1`, so an unlink would delete the document.
+	for (const [name, value] of Object.entries(options.path ?? {})) {
+		const segment = String(value);
+		if (segment === '' || segment === '.' || segment === '..') {
+			throw new ShortcutInvalidPathError(name);
+		}
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: SHORTCUT_API_BASE,

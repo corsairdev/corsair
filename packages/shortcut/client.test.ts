@@ -1,7 +1,11 @@
 import type { OpenAPIConfig, RateLimitConfig } from 'corsair/http';
 import * as corsairHttp from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-import { makeShortcutRequest, SHORTCUT_API_BASE } from './client';
+import {
+	makeShortcutRequest,
+	SHORTCUT_API_BASE,
+	ShortcutInvalidPathError,
+} from './client';
 
 const rateLimitConfig = {
 	enabled: true,
@@ -36,6 +40,29 @@ describe('Shortcut HTTP client', () => {
 		);
 		expect(String(url)).not.toContain('token=');
 	});
+
+	it.each(['..', '.', ''])(
+		'refuses a path id of %j before any request',
+		async (id) => {
+			// `/documents/1/epics/..` would resolve to `/documents/1`, turning an
+			// unlink into a document delete.
+			const fetchMock = jest
+				.spyOn(globalThis, 'fetch')
+				.mockResolvedValue(new Response(null, { status: 204 }));
+
+			await expect(
+				makeShortcutRequest(
+					'/api/v3/documents/{doc-public-id}/epics/{epic-public-id}',
+					'safe-test-token',
+					{
+						method: 'DELETE',
+						path: { 'doc-public-id': 'doc-1', 'epic-public-id': id },
+					},
+				),
+			).rejects.toThrow(ShortcutInvalidPathError);
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('keeps a string path id inside one URL segment', async () => {
 		const fetchMock = jest
