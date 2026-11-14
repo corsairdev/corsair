@@ -41,7 +41,7 @@ describe('Grist schema declaration', () => {
 
 		expect(inputKeys).toEqual(outputKeys);
 		expect(inputKeys).toEqual(registryKeys);
-		expect(registryKeys.length).toBe(75);
+		expect(registryKeys.length).toBe(72);
 	});
 });
 

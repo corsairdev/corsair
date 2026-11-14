@@ -1044,60 +1044,12 @@ describe('Profile endpoints', () => {
 		);
 	});
 
-	it('profile.getApiKey calls GET /profile/apikey', async () => {
-		mockedRequest.mockResolvedValue('key_abc123');
-		const result = await Profile.getApiKey(ctx, {});
-		expect(result).toBe('key_abc123');
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/profile/apikey',
-			'test-api-key',
-			{
-				method: 'GET',
-				baseUrl: BASE,
-			},
-		);
-	});
-
-	it('profile.createApiKey calls POST /profile/apikey', async () => {
-		mockedRequest.mockResolvedValue('key_new456');
-		const result = await Profile.createApiKey(ctx, {});
-		expect(result).toBe('key_new456');
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/profile/apikey',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: {},
-				baseUrl: BASE,
-			},
-		);
-	});
-
-	it('profile.createApiKey forwards force to replace an existing key', async () => {
-		mockedRequest.mockResolvedValue('key_new789');
-		await Profile.createApiKey(ctx, { force: true });
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/profile/apikey',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: { force: true },
-				baseUrl: BASE,
-			},
-		);
-	});
-
-	it('profile.deleteApiKey calls DELETE /profile/apikey', async () => {
-		mockedRequest.mockResolvedValue(null);
-		await Profile.deleteApiKey(ctx, {});
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/profile/apikey',
-			'test-api-key',
-			{
-				method: 'DELETE',
-				baseUrl: BASE,
-			},
-		);
+	it('profile exposes no operation that reads, replaces or deletes the connection key', () => {
+		expect(Object.keys(Profile).sort()).toEqual([
+			'get',
+			'updateLocale',
+			'updateName',
+		]);
 	});
 });
 

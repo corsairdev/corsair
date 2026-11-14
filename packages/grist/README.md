@@ -46,10 +46,7 @@ pnpm add @corsair-dev/grist
 | `orgs.listAccess` | `grist.api.orgs.listAccess` | `read` | List users with access permissions to an organization |
 | `orgs.modifyAccess` | `grist.api.orgs.modifyAccess` | `write` | Change user access roles for an organization |
 | `orgs.update` | `grist.api.orgs.update` | `write` | Modify organization metadata such as its name |
-| `profile.createApiKey` | `grist.api.profile.createApiKey` | `write` | Create or regenerate user API key |
-| `profile.deleteApiKey` | `grist.api.profile.deleteApiKey` | `destructive` | Delete user API key |
 | `profile.get` | `grist.api.profile.get` | `read` | Get current authenticated user profile |
-| `profile.getApiKey` | `grist.api.profile.getApiKey` | `read` | Get the current user API key |
 | `profile.updateLocale` | `grist.api.profile.updateLocale` | `write` | Update user locale preference |
 | `profile.updateName` | `grist.api.profile.updateName` | `write` | Update user display name |
 | `records.add` | `grist.api.records.add` | `write` | Add new records with field values to a table |
@@ -62,7 +59,7 @@ pnpm add @corsair-dev/grist
 | `serviceAccounts.deleteApiKey` | `grist.api.serviceAccounts.deleteApiKey` | `destructive` | Delete a service account API key |
 | `serviceAccounts.get` | `grist.api.serviceAccounts.get` | `read` | Get service account details by ID |
 | `serviceAccounts.list` | `grist.api.serviceAccounts.list` | `read` | List all service accounts owned by the user |
-| `serviceAccounts.regenerateApiKey` | `grist.api.serviceAccounts.regenerateApiKey` | `write` | Generate a new API key for a service account |
+| `serviceAccounts.regenerateApiKey` | `grist.api.serviceAccounts.regenerateApiKey` | `destructive` | Generate a new API key for a service account |
 | `serviceAccounts.update` | `grist.api.serviceAccounts.update` | `write` | Modify service account name or label |
 | `session.getActive` | `grist.api.session.getActive` | `read` | Get active session details and current organization |
 | `session.getAll` | `grist.api.session.getAll` | `read` | Get all logged-in session accounts and organizations |

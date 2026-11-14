@@ -956,37 +956,6 @@ export type ProfileUpdateLocaleResponse = z.infer<
 	typeof ProfileUpdateLocaleOutputSchema
 >;
 
-export const ProfileGetApiKeyInputSchema = z.object({}).strict();
-export type ProfileGetApiKeyInput = z.infer<typeof ProfileGetApiKeyInputSchema>;
-export const ProfileGetApiKeyOutputSchema = z.string();
-export type ProfileGetApiKeyResponse = z.infer<
-	typeof ProfileGetApiKeyOutputSchema
->;
-
-export const ProfileCreateApiKeyInputSchema = z
-	.object({
-		// replace the current key if one already exists (the old key stops working)
-		force: z.boolean().optional(),
-	})
-	.strict();
-export type ProfileCreateApiKeyInput = z.infer<
-	typeof ProfileCreateApiKeyInputSchema
->;
-export const ProfileCreateApiKeyOutputSchema = z.string();
-export type ProfileCreateApiKeyResponse = z.infer<
-	typeof ProfileCreateApiKeyOutputSchema
->;
-
-export const ProfileDeleteApiKeyInputSchema = z.object({}).strict();
-export type ProfileDeleteApiKeyInput = z.infer<
-	typeof ProfileDeleteApiKeyInputSchema
->;
-// unknown because the provider returns empty content on 200
-export const ProfileDeleteApiKeyOutputSchema = z.unknown().optional();
-export type ProfileDeleteApiKeyResponse = z.infer<
-	typeof ProfileDeleteApiKeyOutputSchema
->;
-
 // ==========================================
 // Service Accounts
 // ==========================================
@@ -1282,9 +1251,6 @@ export const GristEndpointInputSchemas = {
 	'profile.get': ProfileGetInputSchema,
 	'profile.updateName': ProfileUpdateNameInputSchema,
 	'profile.updateLocale': ProfileUpdateLocaleInputSchema,
-	'profile.getApiKey': ProfileGetApiKeyInputSchema,
-	'profile.createApiKey': ProfileCreateApiKeyInputSchema,
-	'profile.deleteApiKey': ProfileDeleteApiKeyInputSchema,
 
 	'serviceAccounts.list': ServiceAccountsListInputSchema,
 	'serviceAccounts.create': ServiceAccountsCreateInputSchema,
@@ -1374,9 +1340,6 @@ export const GristEndpointOutputSchemas = {
 	'profile.get': ProfileGetOutputSchema,
 	'profile.updateName': ProfileUpdateNameOutputSchema,
 	'profile.updateLocale': ProfileUpdateLocaleOutputSchema,
-	'profile.getApiKey': ProfileGetApiKeyOutputSchema,
-	'profile.createApiKey': ProfileCreateApiKeyOutputSchema,
-	'profile.deleteApiKey': ProfileDeleteApiKeyOutputSchema,
 
 	'serviceAccounts.list': ServiceAccountsListOutputSchema,
 	'serviceAccounts.create': ServiceAccountsCreateOutputSchema,

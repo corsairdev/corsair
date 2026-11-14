@@ -150,9 +150,6 @@ const gristEndpointsNested = {
 		get: Profile.get,
 		updateName: Profile.updateName,
 		updateLocale: Profile.updateLocale,
-		getApiKey: Profile.getApiKey,
-		createApiKey: Profile.createApiKey,
-		deleteApiKey: Profile.deleteApiKey,
 	},
 	serviceAccounts: {
 		list: ServiceAccounts.list,
@@ -414,18 +411,6 @@ export const gristEndpointSchemas = {
 	'profile.updateLocale': {
 		input: GristEndpointInputSchemas['profile.updateLocale'],
 		output: GristEndpointOutputSchemas['profile.updateLocale'],
-	},
-	'profile.getApiKey': {
-		input: GristEndpointInputSchemas['profile.getApiKey'],
-		output: GristEndpointOutputSchemas['profile.getApiKey'],
-	},
-	'profile.createApiKey': {
-		input: GristEndpointInputSchemas['profile.createApiKey'],
-		output: GristEndpointOutputSchemas['profile.createApiKey'],
-	},
-	'profile.deleteApiKey': {
-		input: GristEndpointInputSchemas['profile.deleteApiKey'],
-		output: GristEndpointOutputSchemas['profile.deleteApiKey'],
 	},
 
 	'serviceAccounts.list': {
@@ -732,19 +717,6 @@ const gristEndpointMeta = {
 	'profile.updateLocale': {
 		riskLevel: 'write',
 		description: 'Update user locale preference',
-	},
-	'profile.getApiKey': {
-		riskLevel: 'read',
-		description: 'Get the current user API key',
-	},
-	'profile.createApiKey': {
-		riskLevel: 'destructive',
-		description:
-			'Create a user API key; with force: true it replaces the current key, which stops working',
-	},
-	'profile.deleteApiKey': {
-		riskLevel: 'destructive',
-		description: 'Delete user API key',
 	},
 
 	'serviceAccounts.list': {
