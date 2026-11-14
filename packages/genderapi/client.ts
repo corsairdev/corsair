@@ -306,7 +306,13 @@ function sanitizeApiError(error: ApiError): ApiError {
 			statusText: error.statusText,
 			body: envelope,
 		},
-		describeGenderApiError(error.status, error.body, error.message),
+		// Core's own message can quote the response body, which may echo the
+		// name, email or key, so the fallback is the status line only.
+		describeGenderApiError(
+			error.status,
+			error.body,
+			`HTTP ${error.status}${error.statusText ? ` ${error.statusText}` : ''}`,
+		),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,

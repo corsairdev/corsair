@@ -197,6 +197,25 @@ describe('Gender API client', () => {
 		});
 	});
 
+	it('keeps an unmapped status body out of the message when it has no errmsg', async () => {
+		respond(
+			{
+				message: `lookup failed for zelophehad.quirinus@example.com key ${API_KEY}`,
+			},
+			504,
+		);
+		const error = await failure(
+			invoke(email, { email: 'zelophehad.quirinus@example.com' }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(504);
+		const text = `${error.message} ${String(error.stack)} ${JSON.stringify(error)}`;
+		expect(text).not.toContain('zelophehad');
+		expect(text).not.toContain(API_KEY);
+		expect(error.message).toContain('504');
+	});
+
 	it('marks a dropped connection as a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 		const error = await failure(invoke(name, { name: 'Alice' }));
