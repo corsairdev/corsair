@@ -11,6 +11,26 @@ export class ParallelError extends Error {
 	}
 }
 
+/** Parallel's error body is {"type":"error","error":{"ref_id","message","detail"}}.
+ * Its message says what to change (e.g. a missing memory_scope_key) and never
+ * contains the API key; it is cut to 300 characters.
+ */
+async function errorMessage(response: Response): Promise<string | undefined> {
+	try {
+		// The error body is untrusted JSON; only a string message is read from it.
+		const body: unknown = await response.json();
+		const error =
+			body && typeof body === 'object' && 'error' in body ? body.error : body;
+		const message =
+			error && typeof error === 'object' && 'message' in error
+				? error.message
+				: undefined;
+		return typeof message === 'string' ? message.slice(0, 300) : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 /** Send one request; never retry a potentially billable operation.
  * The untrusted JSON varies by endpoint and must be parsed by its output schema.
  */
@@ -52,8 +72,11 @@ export async function parallelRequest(
 				: Number.isFinite(date)
 					? Math.max(0, date - Date.now())
 					: undefined;
+		const detail = await errorMessage(response);
 		throw new ParallelError(
-			'Parallel HTTP request failed',
+			detail
+				? `Parallel HTTP ${response.status}: ${detail}`
+				: `Parallel HTTP ${response.status}`,
 			response.status,
 			retryAfter,
 		);

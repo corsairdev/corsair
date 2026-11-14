@@ -1051,3 +1051,35 @@ test('task run advanced fetch_policy reaches Parallel', async () => {
 	await api.tasks.createRun({ body });
 	expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toEqual(body);
 });
+
+test("errors carry Parallel's message so the caller knows what to change", async () => {
+	jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+		new Response(
+			JSON.stringify({
+				type: 'error',
+				error: {
+					ref_id: 'ref',
+					message:
+						'Requests with an app API key must include a memory_scope_key.',
+					detail: null,
+				},
+			}),
+			{ status: 403, headers: { 'content-type': 'application/json' } },
+		),
+	);
+	await expect(api.memory.retrieve({ limit: 3 })).rejects.toMatchObject({
+		status: 403,
+		message:
+			'Parallel HTTP 403: Requests with an app API key must include a memory_scope_key.',
+	});
+});
+
+test('errors without a JSON body still report the status', async () => {
+	jest
+		.spyOn(globalThis, 'fetch')
+		.mockResolvedValue(new Response('Bad gateway', { status: 502 }));
+	await expect(api.monitors.stats({})).rejects.toMatchObject({
+		status: 502,
+		message: 'Parallel HTTP 502',
+	});
+});
