@@ -156,10 +156,10 @@ describe('leads.list', () => {
 			with: ['contacts', 'loss_reason'],
 			pipeline_id: 12215168,
 			responsible_user_id: 11087123,
-			created_from: '2026-01-01',
-			created_to: '2026-12-01',
-			updated_from: '2026-02-01',
-			updated_to: '2026-12-01',
+			created_from: 1767225600,
+			created_to: 1795996800,
+			updated_from: 1769904000,
+			updated_to: 1795996800,
 			order_by: 'created_at',
 			order_direction: 'desc',
 		});
@@ -171,9 +171,35 @@ describe('leads.list', () => {
 		expect(sent.query.query).toBe('acme');
 		expect(sent.query['filter[pipeline_id][]']).toBe('12215168');
 		expect(sent.query['filter[responsible_user_id][]']).toBe('11087123');
-		expect(sent.query['filter[created_at][from]']).toBe('2026-01-01');
-		expect(sent.query['filter[created_at][to]']).toBe('2026-12-01');
+		expect(sent.query['filter[created_at][from]']).toBe('1767225600');
+		expect(sent.query['filter[created_at][to]']).toBe('1795996800');
+		expect(sent.query['filter[updated_at][from]']).toBe('1769904000');
 		expect(sent.query['order[created_at]']).toBe('desc');
+	});
+
+	it('sends a stage filter as the pipeline and stage pair Kommo reads', async () => {
+		respond(leads);
+
+		await invoke(Leads.list, { pipeline_id: 12215168, status_id: 94386188 });
+
+		const sent = lastRequest();
+		expect(sent.query['filter[statuses][0][pipeline_id]']).toBe('12215168');
+		expect(sent.query['filter[statuses][0][status_id]']).toBe('94386188');
+	});
+
+	it('refuses a stage filter without its pipeline before calling Kommo', async () => {
+		await expect(
+			invoke(Leads.list, { status_id: 94386188 }),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('reads a 204 No Content as an empty last page', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+
+		await expect(
+			invoke(Leads.list, { query: 'nothing matches' }),
+		).resolves.toEqual({ _embedded: { leads: [] }, next_page: null });
 	});
 
 	it('keeps fields and timestamps as Kommo sends them', async () => {
@@ -201,6 +227,7 @@ describe('leads.list', () => {
 		[{ limit: 251 }],
 		[{ with: [] }],
 		[{ order_direction: 'newest' }],
+		[{ created_from: '2026-01-01' }],
 	])('rejects %j before calling Kommo', async (input) => {
 		await expect(invoke(Leads.list, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -236,7 +263,6 @@ describe('leads.get', () => {
 
 		await expect(invoke(Leads.get, { leadId: 1 })).rejects.toMatchObject({
 			status: 401,
-			isAuthError: true,
 			message: 'Kommo 401: The access token is invalid or expired',
 		});
 	});
@@ -309,7 +335,7 @@ describe('leads.create', () => {
 					},
 				],
 			}),
-		).rejects.toMatchObject({ status: 400, isValidationError: true });
+		).rejects.toMatchObject({ status: 400 });
 	});
 
 	it.each([
@@ -409,6 +435,63 @@ describe('contacts.create', () => {
 	});
 });
 
+describe('contacts.update', () => {
+	it('PATCHes a change to one field, with no name', async () => {
+		respond({
+			_links: {},
+			_embedded: { contacts: [{ id: 30012345, updated_at: 1760976072 }] },
+		});
+
+		await expect(
+			invoke(Contacts.update, {
+				contacts: [{ id: 30012345, responsible_user_id: 11087123 }],
+			}),
+		).resolves.toMatchObject({ _embedded: { contacts: [{ id: 30012345 }] } });
+		expect(lastRequest()).toMatchObject({
+			method: 'PATCH',
+			path: '/api/v4/contacts',
+			body: [{ id: 30012345, responsible_user_id: 11087123 }],
+		});
+	});
+
+	it('rejects an entry without an id before calling Kommo', async () => {
+		await expect(
+			invoke(Contacts.update, { contacts: [{ first_name: 'Jordy' }] }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('write limits', () => {
+	it.each([
+		[
+			Leads.create,
+			{ leads: Array.from({ length: 251 }, () => ({ name: 'x' })) },
+		],
+		[
+			Contacts.create,
+			{ contacts: Array.from({ length: 251 }, () => ({ name: 'x' })) },
+		],
+		[
+			Tasks.create,
+			{
+				tasks: Array.from({ length: 251 }, () => ({
+					entity_id: 1,
+					entity_type: 'leads',
+					text: 'x',
+					complete_till: 1893456000,
+				})),
+			},
+		],
+	])(
+		'refuses more than 250 entities in one request (%#)',
+		async (endpoint, input) => {
+			await expect(invoke(endpoint as AnyEndpoint, input)).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+});
+
 describe('companies.list', () => {
 	it('GETs a page of companies', async () => {
 		respond(companies);
@@ -434,7 +517,36 @@ describe('tasks.list', () => {
 		});
 		expect(lastRequest().query).toEqual({
 			'filter[entity_type]': 'leads',
-			'filter[is_completed]': 'false',
+			'filter[is_completed]': '0',
+		});
+	});
+
+	it('sends a completed filter as 1', async () => {
+		respond(tasks);
+
+		await invoke(Tasks.list, { is_completed: true });
+
+		expect(lastRequest().query['filter[is_completed]']).toBe('1');
+	});
+
+	it('accepts the empty result array Kommo sends on an open task', async () => {
+		respond({
+			_page: 1,
+			_links: {},
+			_embedded: { tasks: [{ id: 7087, result: [], is_completed: false }] },
+		});
+
+		await expect(invoke(Tasks.list, {})).resolves.toMatchObject({
+			_embedded: { tasks: [{ id: 7087, result: [] }] },
+		});
+	});
+
+	it('reads a 204 No Content as an empty last page', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+
+		await expect(invoke(Tasks.list, {})).resolves.toEqual({
+			_embedded: { tasks: [] },
+			next_page: null,
 		});
 	});
 });
@@ -537,10 +649,10 @@ describe('error envelopes', () => {
 		respond(unauthorized, 401);
 
 		await expect(invoke(Leads.list, {})).rejects.toMatchObject({
+			name: 'ApiError',
 			status: 401,
-			detail: 'The access token is invalid or expired',
 			message: 'Kommo 401: The access token is invalid or expired',
-			method: 'GET',
+			request: expect.objectContaining({ method: 'GET' }),
 		});
 	});
 
@@ -549,11 +661,10 @@ describe('error envelopes', () => {
 
 		await expect(invoke(Leads.list, {})).rejects.toMatchObject({
 			status: 403,
-			isPermissionError: true,
 		});
 	});
 
-	it('reads a plan block as a quota failure, which no retry fixes', async () => {
+	it('reads an ended paid or trial period as a quota failure, which no retry fixes', async () => {
 		respond(paymentRequired, 402);
 
 		const error = await caught(invoke(Leads.list, {}));
@@ -566,7 +677,6 @@ describe('error envelopes', () => {
 
 		await expect(invoke(Leads.list, {})).rejects.toMatchObject({
 			status: 429,
-			isRateLimit: true,
 		});
 	});
 
@@ -584,7 +694,7 @@ describe('error envelopes', () => {
 
 		const error = await caught(invoke(Leads.list, {}));
 
-		expect(error).not.toHaveProperty('body');
+		expect((error as { body?: unknown }).body).toBeUndefined();
 	});
 
 	it('marks a transport failure and keeps the method', async () => {

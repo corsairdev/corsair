@@ -86,3 +86,32 @@ export function pageFrom(
 	const limit = requestedLimit ?? 250;
 	return returned >= limit ? (requestedPage ?? 1) + 1 : null;
 }
+
+/**
+ * Shapes a list answer: adds `next_page`, and reads a 204 as an empty page.
+ * Kommo answers 204 No Content when a list or a filter matches nothing, and
+ * `corsair/http` hands that back as undefined.
+ */
+export function shapeList(
+	// unknown: the raw body is an untyped HAL envelope until the output schema
+	// runs.
+	raw: unknown,
+	key: 'leads' | 'contacts' | 'companies' | 'tasks',
+	requestedPage: number | undefined,
+	requestedLimit: number,
+): unknown {
+	if (raw === undefined) {
+		return { _embedded: { [key]: [] }, next_page: null };
+	}
+	const embedded = (raw as { _embedded?: Record<string, unknown> })._embedded;
+	const items = embedded?.[key];
+	return {
+		...(raw as object),
+		next_page: pageFrom(
+			raw,
+			requestedPage,
+			Array.isArray(items) ? items.length : 0,
+			requestedLimit,
+		),
+	};
+}

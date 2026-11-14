@@ -1,6 +1,6 @@
 import type { KommoEndpoints } from '..';
 import { definedQuery } from '../client';
-import { call, pageFrom } from './call';
+import { call, shapeList } from './call';
 import {
 	KommoEndpointInputSchemas as Inputs,
 	KommoEndpointOutputSchemas as Outputs,
@@ -27,26 +27,16 @@ export const list: KommoEndpoints['tasksList'] = (ctx, input) =>
 				'filter[responsible_user_id][]': parsed.responsible_user_id,
 				'filter[entity_type]': parsed.entity_type,
 				'filter[entity_id][]': parsed.entity_id,
-				'filter[is_completed]': parsed.is_completed,
+				// Kommo takes 1 for completed and 0 for open.
+				'filter[is_completed]':
+					parsed.is_completed === undefined
+						? undefined
+						: Number(parsed.is_completed),
 			}),
 		}),
 		{
-			// unknown: `raw` is an untyped HAL envelope; the output schema
-			// validates whatever `shape` returns.
-			shape: (raw, parsed) => {
-				const tasks =
-					((raw as { _embedded?: { tasks?: unknown[] } } | undefined)?._embedded
-						?.tasks as unknown[] | undefined) ?? [];
-				return {
-					...(raw as object),
-					next_page: pageFrom(
-						raw,
-						parsed.page,
-						tasks.length,
-						parsed.limit ?? LIST_LIMIT,
-					),
-				};
-			},
+			shape: (raw, parsed) =>
+				shapeList(raw, 'tasks', parsed.page, parsed.limit ?? LIST_LIMIT),
 			log: (_, result) => ({ count: result._embedded.tasks.length }),
 		},
 	);

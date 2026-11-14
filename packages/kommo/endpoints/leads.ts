@@ -1,6 +1,6 @@
 import type { KommoEndpoints } from '..';
 import { definedQuery, segment } from '../client';
-import { call, pageFrom } from './call';
+import { call, shapeList } from './call';
 import {
 	KommoEndpointInputSchemas as Inputs,
 	KommoEndpointOutputSchemas as Outputs,
@@ -31,6 +31,11 @@ export const list: KommoEndpoints['leadsList'] = (ctx, input) =>
 				// Kommo takes filters as bracketed keys, which corsair/http renders
 				// from a nested object.
 				'filter[pipeline_id][]': parsed.pipeline_id,
+				// A stage is filtered as a pipeline and stage pair; the input schema
+				// makes sure the pipeline is there.
+				'filter[statuses][0][pipeline_id]':
+					parsed.status_id === undefined ? undefined : parsed.pipeline_id,
+				'filter[statuses][0][status_id]': parsed.status_id,
 				'filter[responsible_user_id][]': parsed.responsible_user_id,
 				'filter[created_at][from]': parsed.created_from,
 				'filter[created_at][to]': parsed.created_to,
@@ -45,22 +50,8 @@ export const list: KommoEndpoints['leadsList'] = (ctx, input) =>
 			}),
 		}),
 		{
-			// unknown: `raw` is an untyped HAL envelope; the output schema
-			// validates whatever `shape` returns.
-			shape: (raw, parsed) => {
-				const leads =
-					((raw as { _embedded?: { leads?: unknown[] } } | undefined)?._embedded
-						?.leads as unknown[] | undefined) ?? [];
-				return {
-					...(raw as object),
-					next_page: pageFrom(
-						raw,
-						parsed.page,
-						leads.length,
-						parsed.limit ?? LIST_LIMIT,
-					),
-				};
-			},
+			shape: (raw, parsed) =>
+				shapeList(raw, 'leads', parsed.page, parsed.limit ?? LIST_LIMIT),
 			log: (_, result) => ({ count: result._embedded.leads.length }),
 		},
 	);

@@ -13,6 +13,17 @@ const EntityIdSchema = z
 
 const PAGE_LIMIT = 250;
 
+// Kommo adds or updates at most 250 entities in one request and answers 422
+// past that.
+const WRITE_LIMIT = 250;
+
+// Kommo's date filters take Unix seconds, the same unit its timestamps use.
+const UnixSecondsFilterSchema = z
+	.number()
+	.int()
+	.nonnegative()
+	.describe('Unix seconds.');
+
 // Kommo pages by number and returns at most 250 entities. `_page` and `_links`
 // are in every list answer, which is how a caller knows another page exists.
 const PaginationInputSchema = z.object({
@@ -138,14 +149,28 @@ const LeadsListInputSchema = PaginationInputSchema.extend({
 		.optional()
 		.describe('Embed these extra details on each lead.'),
 	pipeline_id: z.number().int().positive().optional(),
-	status_id: z.number().int().positive().optional(),
+	status_id: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('A stage. Needs `pipeline_id`, the pipeline the stage is in.'),
 	responsible_user_id: z.number().int().positive().optional(),
-	created_from: z.string().optional().describe('ISO 8601 or a Unix timestamp.'),
-	created_to: z.string().optional(),
-	updated_from: z.string().optional(),
-	updated_to: z.string().optional(),
+	created_from: UnixSecondsFilterSchema.optional(),
+	created_to: UnixSecondsFilterSchema.optional(),
+	updated_from: UnixSecondsFilterSchema.optional(),
+	updated_to: UnixSecondsFilterSchema.optional(),
 	order_by: z.enum(['created_at', 'updated_at', 'id']).optional(),
 	order_direction: z.enum(['asc', 'desc']).optional(),
+}).superRefine((value, ctx) => {
+	// Kommo filters a stage as a pipeline and stage pair.
+	if (value.status_id !== undefined && value.pipeline_id === undefined) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['pipeline_id'],
+			message: 'Filtering by `status_id` needs the stage’s `pipeline_id`.',
+		});
+	}
 });
 
 export type LeadsListInput = z.input<typeof LeadsListInputSchema>;
@@ -208,6 +233,7 @@ const LeadsCreateInputSchema = z.object({
 	leads: z
 		.array(LeadWriteSchema.required({ name: true }))
 		.min(1)
+		.max(WRITE_LIMIT)
 		.describe(
 			'At most 250 in one request. A lead without `status_id` or `pipeline_id` lands in the first stage of the main pipeline.',
 		),
@@ -231,6 +257,7 @@ const LeadsUpdateInputSchema = z.object({
 	leads: z
 		.array(LeadWriteSchema.extend({ id: EntityIdSchema }))
 		.min(1)
+		.max(WRITE_LIMIT)
 		.describe('Each lead carries its `id` and the fields to change.'),
 });
 
@@ -266,8 +293,8 @@ const ContactsListInputSchema = PaginationInputSchema.extend({
 		.optional()
 		.describe('Embed the leads each contact is linked to.'),
 	responsible_user_id: z.number().int().positive().optional(),
-	updated_from: z.string().optional(),
-	updated_to: z.string().optional(),
+	updated_from: UnixSecondsFilterSchema.optional(),
+	updated_to: UnixSecondsFilterSchema.optional(),
 });
 
 export type ContactsListInput = z.input<typeof ContactsListInputSchema>;
@@ -287,32 +314,33 @@ const ContactResponseSchema = KommoContactSchema.loose();
 
 export type ContactResponse = z.infer<typeof ContactResponseSchema>;
 
-// A contact needs a name or a first and last name, so the two spellings cannot
-// both be missing; Kommo rejects that rather than storing an unnamed contact.
-const ContactWriteSchema = z
-	.object({
-		name: z.string().min(1).optional(),
-		first_name: z.string().min(1).optional(),
-		last_name: z.string().min(1).optional(),
-		responsible_user_id: z.number().int().positive().optional(),
-		custom_fields_values: z.array(LeadCustomFieldsSchema).min(1).optional(),
-	})
-	.superRefine((value, ctx) => {
-		const named =
-			value.name !== undefined ||
-			value.first_name !== undefined ||
-			value.last_name !== undefined;
-		if (!named) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['name'],
-				message: 'A contact needs a `name`, or a `first_name` and `last_name`.',
-			});
-		}
-	});
+const ContactFieldsSchema = z.object({
+	name: z.string().min(1).optional(),
+	first_name: z.string().min(1).optional(),
+	last_name: z.string().min(1).optional(),
+	responsible_user_id: z.number().int().positive().optional(),
+	custom_fields_values: z.array(LeadCustomFieldsSchema).min(1).optional(),
+});
+
+// A new contact needs a name or a first and last name, so the two spellings
+// cannot both be missing; Kommo rejects that rather than storing an unnamed
+// contact. An update names the contact by `id` and may change any one field.
+const ContactCreateSchema = ContactFieldsSchema.superRefine((value, ctx) => {
+	const named =
+		value.name !== undefined ||
+		value.first_name !== undefined ||
+		value.last_name !== undefined;
+	if (!named) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['name'],
+			message: 'A contact needs a `name`, or a `first_name` and `last_name`.',
+		});
+	}
+});
 
 const ContactsCreateInputSchema = z.object({
-	contacts: z.array(ContactWriteSchema).min(1),
+	contacts: z.array(ContactCreateSchema).min(1).max(WRITE_LIMIT),
 });
 
 export type ContactsCreateInput = z.input<typeof ContactsCreateInputSchema>;
@@ -329,7 +357,11 @@ const ContactsWriteResponseSchema = z
 export type ContactsWriteResponse = z.infer<typeof ContactsWriteResponseSchema>;
 
 const ContactsUpdateInputSchema = z.object({
-	contacts: z.array(ContactWriteSchema.extend({ id: EntityIdSchema })).min(1),
+	contacts: z
+		.array(ContactFieldsSchema.extend({ id: EntityIdSchema }))
+		.min(1)
+		.max(WRITE_LIMIT)
+		.describe('Each contact carries its `id` and the fields to change.'),
 });
 
 export type ContactsUpdateInput = z.input<typeof ContactsUpdateInputSchema>;
@@ -357,8 +389,8 @@ export type KommoCompany = z.infer<typeof KommoCompanySchema>;
 
 const CompaniesListInputSchema = PaginationInputSchema.extend({
 	responsible_user_id: z.number().int().positive().optional(),
-	updated_from: z.string().optional(),
-	updated_to: z.string().optional(),
+	updated_from: UnixSecondsFilterSchema.optional(),
+	updated_to: UnixSecondsFilterSchema.optional(),
 });
 
 export type CompaniesListInput = z.input<typeof CompaniesListInputSchema>;
@@ -383,9 +415,15 @@ export const KommoTaskSchema = z
 		is_completed: z.boolean().nullish(),
 		task_type_id: z.number().nullish(),
 		text: z.string().nullish(),
+		// Kommo sends an empty array until the task has a result.
 		result: z
-			.object({ text: z.string().nullish(), id: z.number().nullish() })
-			.loose()
+			.union([
+				z
+					.object({ text: z.string().nullish(), id: z.number().nullish() })
+					.loose(),
+				// unknown: the empty placeholder carries no entries.
+				z.array(z.unknown()),
+			])
 			.nullish(),
 		responsible_user_id: z.number().nullish(),
 		created_by: z.number().nullish(),
@@ -407,7 +445,10 @@ const TasksListInputSchema = PaginationInputSchema.extend({
 		.describe('Only tasks on this kind of entity.'),
 	entity_id: z.number().int().positive().optional(),
 	responsible_user_id: z.number().int().positive().optional(),
-	is_completed: z.boolean().optional(),
+	is_completed: z
+		.boolean()
+		.optional()
+		.describe('True for completed tasks, false for open ones.'),
 });
 
 export type TasksListInput = z.input<typeof TasksListInputSchema>;
@@ -440,7 +481,8 @@ const TasksCreateInputSchema = z.object({
 				responsible_user_id: z.number().int().positive().optional(),
 			}),
 		)
-		.min(1),
+		.min(1)
+		.max(WRITE_LIMIT),
 });
 
 export type TasksCreateInput = z.input<typeof TasksCreateInputSchema>;

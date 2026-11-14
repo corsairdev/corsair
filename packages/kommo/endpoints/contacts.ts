@@ -1,6 +1,6 @@
 import type { KommoEndpoints } from '..';
 import { definedQuery, segment } from '../client';
-import { call, pageFrom } from './call';
+import { call, shapeList } from './call';
 import {
 	KommoEndpointInputSchemas as Inputs,
 	KommoEndpointOutputSchemas as Outputs,
@@ -34,22 +34,8 @@ export const list: KommoEndpoints['contactsList'] = (ctx, input) =>
 			}),
 		}),
 		{
-			// unknown: `raw` is an untyped HAL envelope; the output schema
-			// validates whatever `shape` returns.
-			shape: (raw, parsed) => {
-				const contacts =
-					((raw as { _embedded?: { contacts?: unknown[] } } | undefined)
-						?._embedded?.contacts as unknown[] | undefined) ?? [];
-				return {
-					...(raw as object),
-					next_page: pageFrom(
-						raw,
-						parsed.page,
-						contacts.length,
-						parsed.limit ?? LIST_LIMIT,
-					),
-				};
-			},
+			shape: (raw, parsed) =>
+				shapeList(raw, 'contacts', parsed.page, parsed.limit ?? LIST_LIMIT),
 			log: (_, result) => ({ count: result._embedded.contacts.length }),
 		},
 	);
