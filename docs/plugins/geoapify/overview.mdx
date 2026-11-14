@@ -1,0 +1,142 @@
+---
+title: "Geoapify plugin"
+sidebarTitle: "Overview"
+description: "Geocode addresses in both directions with Geoapify - autocomplete them, search places by category, calculate routes, isolines and route matrices, and read time zones, boundaries, postcodes and elevation."
+---
+
+Use **Geoapify** through Corsair: one client, typed API calls.
+
+Copy the API key from your Geoapify dashboard (myprojects.geoapify.com). The plugin sends it in the `X-Api-Key` header, which every Geoapify API accepts, so it stays out of request URLs.
+
+Things to know before you call:
+
+- **Two API versions live on one host.** Geocoding, routing, isolines, the route matrix, postcodes, boundaries, elevation, IP geolocation and timezones are `/v1`; places, place details and place info are `/v2`. The plugin picks the right one per operation, so a caller never has to think about it.
+- **Geoapify answers GeoJSON by default.** Every response would be a feature collection with the geometry inline, which is awkward to read when all you want is an address. The plugin asks for `format: json` on geocoding, autocomplete and postcodes, so `results` is a plain array. Routing also takes `format: 'geojson'`; in json it already returns the route line as points per leg.
+- **`places` has no `format` parameter at all.** It always answers a feature collection, so its results sit under `features` with the place under `properties`.
+- **A pair with no route is not a failure.** In `routing.matrix`, an unreachable source-to-target pair has `null` distance and time, and the rest of the matrix is still valid. Points are `{ lat, lon }` objects.
+- **A slow isoline comes back later.** `routing.isoline` can answer with no areas and only `properties.id`; call it again with that `id` alone to read the result. Ranges are at most 3600 seconds or 100000 metres.
+- **The EU host exists.** `region: 'eu'` sends the request to `api-eu.geoapify.com`, where processing stays in the European Union. It takes the same operations and the same key.
+- **`limit` has a per-API maximum.** It is 100 on the geocoding routes and 500 on places, and the plugin rejects a larger value before the request rather than letting the gateway answer 400.
+- **A 429 is not always a burst.** It covers an exhausted quota too. The plugin does not retry `Quota exceeded`, which only fails again until the credits reset; a burst is retried with backoff and honours `Retry-After`.
+- **Geocoding is a read.** Every operation here computes an answer and changes nothing on Geoapify's side, so all of them are `read`. Each request still uses credits. Baseline costs are 1 for a geocode, 1 per waypoint pair for a route, and `max(sources, targets) × min(sources, targets, 10)` for a matrix. Route details such as elevation, avoidances and long distances add more.
+
+**What you get:**
+
+- 14 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/geoapify better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/geoapify better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/geoapify better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/geoapify better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { geoapify } from '@corsair-dev/geoapify';
+
+export const corsair = createCorsair({
+	plugins: [
+		geoapify(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Geoapify API key before the first call: `pnpm corsair setup --plugin=geoapify --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+geoapify()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'geoapify',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Turn an address into coordinates**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.geoapify.api.geocode.forward({
+	text: 'Berlin',
+	countrycodes: ['de'],
+	limit: 3,
+});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/geoapify/api) reference._
+
+
+See the full list on the [API](/plugins/geoapify/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/geoapify/api">
+    Every `geoapify.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

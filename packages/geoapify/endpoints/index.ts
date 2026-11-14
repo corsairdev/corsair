@@ -1,0 +1,16 @@
+export {
+	autocomplete,
+	boundaries,
+	elevation,
+	forwardGeocode,
+	ipGeolocation,
+	isoline,
+	placeDetails,
+	placesSearch,
+	postcodeList,
+	postcodeSearch,
+	reverseGeocode,
+	routeMatrix,
+	routing,
+	timezone,
+} from './geo';

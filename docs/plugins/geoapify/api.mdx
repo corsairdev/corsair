@@ -1,0 +1,1140 @@
+---
+title: "Geoapify API reference"
+sidebarTitle: "API"
+description: "API reference for the Geoapify plugin in Corsair: every `geoapify.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Geo
+
+### boundaries
+
+`geo.boundaries`
+
+Read the administrative boundaries a place belongs to, such as its city, county and country
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geo.boundaries({ lat: 52.5, lon: 13.4, boundaries: ['administrative', 'postal_code'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | A place ID, such as the one a geocode result returned |
+| `lat` | `number` | No | Latitude of a point |
+| `lon` | `number` | No | Longitude of a point |
+| `osm_id` | `number` | No | An OpenStreetMap ID |
+| `osm_type` | `n \| w \| r` | No | The OSM type that goes with `osm_id`: `n` node, `w` way or `r` relation |
+| `boundaries` | `string[]` | No | Which boundary kinds to return, such as `administrative` (the default) or `postal_code` |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+Identify the place by `id`, by `lat`/`lon`, or by `osm_id` with `osm_type`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `features` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  type?: string,
+  properties?: Record<string, any>,
+  geometry?: Record<string, any>,
+  bbox?: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### elevation
+
+`geo.elevation`
+
+Sample the terrain elevation at one or more points, in metres or feet
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geo.elevation({ locations: [{ lat: 52.5, lon: 13.4 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | Yes | The points to sample, in order |
+| `units` | `metric \| imperial` | No | Metres or feet; metric is the default |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  lat: number,
+  lon: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  location?: {
+    lon?: number,
+    lat?: number
+  },
+  elevation: number | null,
+  units?: string,
+  distance?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ip
+
+`geo.ip`
+
+Locate an IP address, or the caller when none is given, returning its country, city and coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geo.ip({ ip: '54.201.16.177' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | No | The IPv4 or IPv6 address to locate. Without one, Geoapify locates the caller |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | No | — |
+| `city` | `Record<string, any>` | No | — |
+| `continent` | `Record<string, any>` | No | — |
+| `country` | `Record<string, any>` | No | — |
+| `postal` | `Record<string, any>` | No | — |
+| `state` | `Record<string, any>` | No | — |
+| `location` | `object` | No | — |
+| `subdivisions` | `Record<string, any>[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  latitude?: number,
+  longitude?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postcodeList
+
+`geo.postcodeList`
+
+Search postcodes by a prefix or a spatial filter, which is what a postcode autocomplete needs
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geo.postcodeList({ text: '1011', countrycode: 'de' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | A postcode or a prefix, such as `1011`. Optional when a `filter` or `countrycode` narrows the list |
+| `countrycode` | `string` | No | Restricts to one country |
+| `filter` | `string[]` | No | A spatial filter |
+| `bias` | `string[]` | No | Biases toward a point or area |
+| `limit` | `number` | No | At most 500 results |
+| `offset` | `number` | No | Skips this many results |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `query` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  postcode?: string,
+  country_code?: string,
+  lon?: number,
+  lat?: number,
+  city?: string,
+  state?: string,
+  state_code?: string,
+  district?: string,
+  suburb?: string,
+  place_id?: string,
+  formatted?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postcodeSearch
+
+`geo.postcodeSearch`
+
+Look up a postcode, returning its coordinates and the places it covers
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geo.postcodeSearch({ postcode: '10115', countrycode: 'de' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postcode` | `string` | No | The postcode to look up. Leave it out to search by `lat`/`lon` |
+| `countrycode` | `string` | No | The country the postcode belongs to, which sharpens the result |
+| `lat` | `number` | No | Finds the postcode at this point, instead of by `postcode` |
+| `lon` | `number` | No | Finds the postcode at this point, instead of by `postcode` |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `query` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  postcode?: string,
+  country_code?: string,
+  lon?: number,
+  lat?: number,
+  city?: string,
+  state?: string,
+  state_code?: string,
+  district?: string,
+  suburb?: string,
+  place_id?: string,
+  formatted?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### timezone
+
+`geo.timezone`
+
+Read the time zone at a point, including whether daylight saving applies at a given moment
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geo.timezone({ lat: 52.5, lon: 13.4 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude of the point |
+| `lon` | `number` | Yes | Longitude of the point |
+| `at` | `string` | No | An ISO 8601 timestamp, such as `2026-11-12T09:16:00Z`, which decides whether daylight saving applies |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `at` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `tzdb_version` | `string` | No | — |
+| `timezones` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="timezones full type">
+
+```ts
+{
+  name: string,
+  type?: string,
+  utc_offset?: string,
+  offset_seconds?: number,
+  abbreviation?: string,
+  local_time?: string,
+  next_transition?: {
+    at?: string,
+    before?: Record<string, any>,
+    after?: Record<string, any>,
+    offset_change_seconds?: number,
+    kind?: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geocode
+
+### autocomplete
+
+`geocode.autocomplete`
+
+Suggest addresses from a partial one as a user types, which is what a search box needs
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geocode.autocomplete({ text: '10 Downing', countrycodes: ['gb'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The partial address as the user types |
+| `type` | `country \| state \| city \| postcode \| street \| amenity \| locality` | No | Restricts the result to one kind of place |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `limit` | `number` | No | At most 100 results |
+| `countrycodes` | `string[]` | No | Restricts the suggestions to these two-letter country codes |
+| `filter` | `string[]` | No | A spatial filter |
+| `bias` | `string[]` | No | Biases toward a point or area |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  formatted?: string,
+  address_line1?: string,
+  address_line2?: string,
+  name?: string,
+  housenumber?: string,
+  street?: string,
+  city?: string,
+  district?: string,
+  postcode?: string,
+  state?: string,
+  state_code?: string,
+  country?: string,
+  country_code?: string,
+  county?: string,
+  suburb?: string,
+  neighbourhood?: string,
+  region?: string,
+  lon: number,
+  lat: number,
+  place_id?: string,
+  result_type?: string,
+  rank?: {
+    confidence?: number,
+    confidence_city_level?: number,
+    match_type?: string
+  },
+  bbox?: {
+    lon1: number,
+    lat1: number,
+    lon2: number,
+    lat2: number
+  },
+  timezone?: {
+    name?: string,
+    offset_STD?: string,
+    offset_STD_seconds?: number,
+    offset_DST?: string,
+    offset_DST_seconds?: number,
+    abbreviation_STD?: string,
+    abbreviation_DST?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  text?: string,
+  parsed?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forward
+
+`geocode.forward`
+
+Turn an address or place name into coordinates, a formatted address and its components, with a confidence for the match
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geocode.forward({ text: 'Berlin', countrycodes: ['de'], limit: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The address or place to look up, such as `Berlin` or `10 Downing Street, London` |
+| `type` | `country \| state \| city \| postcode \| street \| amenity \| locality` | No | Restricts the result to one kind of place |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `limit` | `number` | No | How many results to return, at most 100 |
+| `countrycodes` | `string[]` | No | Restricts the search to these two-letter country codes |
+| `filter` | `string[]` | No | A spatial filter such as `rect:13.3,52.4,13.5,52.6` or `countrycode:de` |
+| `bias` | `string[]` | No | Bias results toward a point or area without excluding anything, such as `proximity:13.4,52.5` |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+Always asks for `format: json`, so matches are under `results`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  formatted?: string,
+  address_line1?: string,
+  address_line2?: string,
+  name?: string,
+  housenumber?: string,
+  street?: string,
+  city?: string,
+  district?: string,
+  postcode?: string,
+  state?: string,
+  state_code?: string,
+  country?: string,
+  country_code?: string,
+  county?: string,
+  suburb?: string,
+  neighbourhood?: string,
+  region?: string,
+  lon: number,
+  lat: number,
+  place_id?: string,
+  result_type?: string,
+  rank?: {
+    confidence?: number,
+    confidence_city_level?: number,
+    match_type?: string
+  },
+  bbox?: {
+    lon1: number,
+    lat1: number,
+    lon2: number,
+    lat2: number
+  },
+  timezone?: {
+    name?: string,
+    offset_STD?: string,
+    offset_STD_seconds?: number,
+    offset_DST?: string,
+    offset_DST_seconds?: number,
+    abbreviation_STD?: string,
+    abbreviation_DST?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  text?: string,
+  parsed?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverse
+
+`geocode.reverse`
+
+Turn a latitude and longitude into the address at that point, with its full set of components
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.geocode.reverse({ lat: 52.5, lon: 13.4 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude of the point |
+| `lon` | `number` | Yes | Longitude of the point |
+| `type` | `country \| state \| city \| postcode \| street \| amenity \| locality \| building` | No | Restricts the result to one kind of place |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `limit` | `number` | No | At most 100 results |
+| `countrycodes` | `string[]` | No | Restricts the result to these two-letter country codes |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  formatted?: string,
+  address_line1?: string,
+  address_line2?: string,
+  name?: string,
+  housenumber?: string,
+  street?: string,
+  city?: string,
+  district?: string,
+  postcode?: string,
+  state?: string,
+  state_code?: string,
+  country?: string,
+  country_code?: string,
+  county?: string,
+  suburb?: string,
+  neighbourhood?: string,
+  region?: string,
+  lon: number,
+  lat: number,
+  place_id?: string,
+  result_type?: string,
+  rank?: {
+    confidence?: number,
+    confidence_city_level?: number,
+    match_type?: string
+  },
+  bbox?: {
+    lon1: number,
+    lat1: number,
+    lon2: number,
+    lat2: number
+  },
+  timezone?: {
+    name?: string,
+    offset_STD?: string,
+    offset_STD_seconds?: number,
+    offset_DST?: string,
+    offset_DST_seconds?: number,
+    abbreviation_STD?: string,
+    abbreviation_DST?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  text?: string,
+  parsed?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Places
+
+### details
+
+`places.details`
+
+Read one place by its ID, with its address, categories, contact details and opening hours
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.places.details({ id: '51289a4b5f3d4d0f4058f2e9c8a1b7d6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `place_id` of a place, as returned by `places.search` |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `features` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  type?: string,
+  properties: {
+    formatted?: string,
+    address_line1?: string,
+    address_line2?: string,
+    name?: string,
+    housenumber?: string,
+    street?: string,
+    city?: string,
+    district?: string,
+    postcode?: string,
+    state?: string,
+    state_code?: string,
+    country?: string,
+    country_code?: string,
+    county?: string,
+    suburb?: string,
+    neighbourhood?: string,
+    region?: string,
+    lon: number,
+    lat: number,
+    place_id: string,
+    result_type?: string,
+    rank?: {
+      confidence?: number,
+      confidence_city_level?: number,
+      match_type?: string
+    },
+    bbox?: {
+      lon1: number,
+      lat1: number,
+      lon2: number,
+      lat2: number
+    },
+    timezone?: {
+      name?: string,
+      offset_STD?: string,
+      offset_STD_seconds?: number,
+      offset_DST?: string,
+      offset_DST_seconds?: number,
+      abbreviation_STD?: string,
+      abbreviation_DST?: string
+    },
+    categories?: string[],
+    category?: string,
+    details?: string[],
+    website?: string,
+    phone?: string,
+    contact?: {
+      phone?: string,
+      email?: string,
+      fax?: string
+    },
+    opening_hours?: string,
+    description?: string,
+    brand?: string,
+    operator?: string,
+    facility_type?: string,
+    datasource?: Record<string, any>
+  },
+  geometry?: Record<string, any>,
+  bbox?: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`places.search`
+
+Find places by category within an area, such as restaurants inside a circle, with the details each place carries
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.places.search({ categories: ['catering.restaurant'], filter: 'circle:13.4,52.5,1000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `string[]` | Yes | What to look for, such as `catering.restaurant`, `accommodation.hotel` or `commercial.supermarket` |
+| `filter` | `string` | No | Where to look, such as a `circle:lon,lat,radius`, a `rect:lon1,lat1,lon2,lat2` or a `place:` ID |
+| `bias` | `string` | No | Bias results toward a point or area |
+| `conditions` | `string[]` | No | Extra conditions such as `named`, `website` or `opening_hours` |
+| `limit` | `number` | No | At most 500 places |
+| `offset` | `number` | No | Skips this many results |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `name` | `string` | No | Filters by a place name |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+A v2 route, so it always answers a feature collection under `features`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `features` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  type?: string,
+  properties: {
+    formatted?: string,
+    address_line1?: string,
+    address_line2?: string,
+    name?: string,
+    housenumber?: string,
+    street?: string,
+    city?: string,
+    district?: string,
+    postcode?: string,
+    state?: string,
+    state_code?: string,
+    country?: string,
+    country_code?: string,
+    county?: string,
+    suburb?: string,
+    neighbourhood?: string,
+    region?: string,
+    lon: number,
+    lat: number,
+    place_id: string,
+    result_type?: string,
+    rank?: {
+      confidence?: number,
+      confidence_city_level?: number,
+      match_type?: string
+    },
+    bbox?: {
+      lon1: number,
+      lat1: number,
+      lon2: number,
+      lat2: number
+    },
+    timezone?: {
+      name?: string,
+      offset_STD?: string,
+      offset_STD_seconds?: number,
+      offset_DST?: string,
+      offset_DST_seconds?: number,
+      abbreviation_STD?: string,
+      abbreviation_DST?: string
+    },
+    categories?: string[],
+    category?: string,
+    details?: string[],
+    website?: string,
+    phone?: string,
+    contact?: {
+      phone?: string,
+      email?: string,
+      fax?: string
+    },
+    opening_hours?: string,
+    description?: string,
+    brand?: string,
+    operator?: string,
+    facility_type?: string,
+    datasource?: Record<string, any>
+  },
+  geometry?: Record<string, any>,
+  bbox?: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Routing
+
+### isoline
+
+`routing.isoline`
+
+Calculate the area reachable from a point within a time or distance, one polygon per range. A slow calculation returns only an id to read it with later
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.routing.isoline({ lat: 52.5, lon: 13.4, type: 'time', range: [300, 600] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | The `properties.id` of an earlier isoline. A slow calculation answers with no areas and only this ID; call again with it alone to read the result |
+| `lat` | `number` | No | Latitude of the center |
+| `lon` | `number` | No | Longitude of the center |
+| `type` | `time \| distance` | No | Whether each range is a number of seconds (at most 3600) or metres (at most 100000) |
+| `range` | `number[]` | No | The ranges to draw, such as `[300, 600, 900]` |
+| `mode` | `drive \| truck \| bicycle \| scooter \| walk \| hike` | No | How to travel; drive is the default |
+| `units` | `metric \| imperial` | No | Units of the answer |
+| `avoid` | `string[]` | No | Features to avoid |
+| `traffic` | `free_flow \| approximated` | No | How to account for traffic |
+| `max_speed` | `number` | No | A speed cap |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `features` | `object[]` | Yes | — |
+| `bbox` | `number[]` | No | — |
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  type?: string,
+  properties?: Record<string, any>,
+  geometry?: Record<string, any>,
+  bbox?: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### matrix
+
+`routing.matrix`
+
+Calculate the time and distance between every source and target, one row per source. A pair with no route has null distance and time
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.routing.matrix({ mode: 'drive', sources: [{ lat: 52.5163, lon: 13.3777 }], targets: [{ lat: 52.52, lon: 13.405 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mode` | `drive \| truck \| light_truck \| bicycle \| mountain_bike \| road_bike \| scooter \| walk \| hike \| motorcycle \| bus` | Yes | How to travel, which decides every cell of the matrix |
+| `sources` | `object[]` | Yes | Starting points, one row each |
+| `targets` | `object[]` | Yes | Destination points, one column each |
+| `type` | `balanced \| short \| less_maneuvers` | No | What to optimize for |
+| `units` | `metric \| imperial` | No | Units of the answer |
+| `avoid` | `(tolls \| ferries \| highways)[]` | No | Road types to avoid |
+| `traffic` | `free_flow \| approximated` | No | How to account for traffic |
+| `max_speed` | `number` | No | A speed cap |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+Points are `{ lat, lon }`. A pair with no route has `null` distance and time, and the rest of the matrix is still valid.
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  lat: number,
+  lon: number
+}[]
+```
+</Accordion>
+
+<Accordion title="targets full type">
+
+```ts
+{
+  lat: number,
+  lon: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mode` | `string` | No | — |
+| `units` | `string` | No | — |
+| `distance_units` | `string` | No | — |
+| `sources_to_targets` | `object[]` | Yes | — |
+| `sources` | `object[]` | No | — |
+| `targets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources_to_targets full type">
+
+```ts
+{
+  distance?: number | null,
+  time?: number | null,
+  source_index?: number,
+  target_index?: number
+}[][]
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+{
+  original_location?: number[],
+  location?: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="targets full type">
+
+```ts
+{
+  original_location?: number[],
+  location?: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### route
+
+`routing.route`
+
+Calculate a route between waypoints, with distance, time and optional turn-by-turn steps and geometry
+
+**Risk:** `read`
+
+```ts
+await corsair.geoapify.api.routing.route({ waypoints: ['52.5163,13.3777', '52.52,13.405'], mode: 'drive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `waypoints` | `string[]` | Yes | The points to route through, one `lat,lon` pair per entry, such as `["52.5163,13.3777", "52.52,13.405"]` |
+| `mode` | `drive \| light_truck \| medium_truck \| truck \| heavy_truck \| truck_dangerous_goods \| long_truck \| bus \| scooter \| motorcycle \| bicycle \| mountain_bike \| road_bike \| walk \| hike \| transit \| approximated_transit` | Yes | How to travel, which decides the roads and paths used |
+| `type` | `balanced \| short \| less_maneuvers` | No | What to optimize for; balanced is the default |
+| `units` | `metric \| imperial` | No | Units of the answer |
+| `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
+| `avoid` | `string[]` | No | Features to avoid, such as `tollways`, `ferries` or `highways` |
+| `details` | `(instruction_details \| route_details \| elevation \| admin_areas \| polyline5 \| polyline6)[]` | No | Extras to include, such as `instruction_details` (maneuver details) or `elevation` |
+| `traffic` | `free_flow \| approximated` | No | How to account for traffic |
+| `max_speed` | `number` | No | A speed cap for the route |
+| `format` | `json \| geojson` | No | Defaults to `json` here; `geojson` adds the route geometry |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
+
+`format` defaults to `json`, where `geometry` is one list of `{ lat, lon }` points per leg; `geojson` returns `features` instead of `results`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `properties` | `Record<string, any>` | No | — |
+| `bbox` | `number[]` | No | — |
+| `type` | `string` | No | — |
+| `features` | `Record<string, any>[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  mode?: string,
+  units?: string,
+  distance?: number,
+  time?: number,
+  distance_units?: string,
+  polyline5?: string,
+  polyline6?: string,
+  waypoints?: {
+    location?: number[],
+    original_index?: number
+  }[],
+  legs?: {
+    distance?: number,
+    time?: number,
+    steps?: {
+      distance?: number,
+      time?: number,
+      from_index?: number,
+      to_index?: number,
+      instruction?: {
+        text?: string,
+        type?: string,
+        transition_instruction?: string,
+        pre_transition_instruction?: string,
+        post_transition_instruction?: string,
+        streets?: string[]
+      },
+      name?: string,
+      toll?: boolean,
+      ferry?: boolean
+    }[],
+    elevation?: number[],
+    elevation_range?: number[][]
+  }[],
+  toll?: boolean,
+  ferry?: boolean,
+  country_code?: string[],
+  geometry?: {
+    lat: number,
+    lon: number
+  }[][]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
