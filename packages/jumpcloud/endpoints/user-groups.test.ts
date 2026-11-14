@@ -70,7 +70,7 @@ describe('userGroups family (mocked JumpCloud transport)', () => {
 		]);
 	});
 
-	it('userGroups.create posts the attributes body to API v2 /usergroups', async () => {
+	it('userGroups.create posts the group name at the body root to API v2 /usergroups', async () => {
 		fetchMock.mockImplementationOnce(() =>
 			Promise.resolve(
 				jsonResponse({ id: 'ug-2', name: 'contractors', type: 'user_group' }),
@@ -78,7 +78,7 @@ describe('userGroups family (mocked JumpCloud transport)', () => {
 		);
 
 		const result = await userGroupsCreate(mockCtx, {
-			body: { attributes: { name: 'contractors' } },
+			body: { name: 'contractors' },
 		});
 
 		expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -87,7 +87,7 @@ describe('userGroups family (mocked JumpCloud transport)', () => {
 		expect(init).toMatchObject({ method: 'POST' });
 		expect(init?.headers).toMatchObject({ 'Content-Type': 'application/json' });
 		expect(JSON.parse(String(init?.body) ?? '{}')).toEqual({
-			attributes: { name: 'contractors' },
+			name: 'contractors',
 		});
 
 		expect(result).toEqual({

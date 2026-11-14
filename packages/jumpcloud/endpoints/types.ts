@@ -13,6 +13,10 @@ import { z } from 'zod';
 // `z.record(z.string(), z.unknown())`: a stricter type would invent structure
 // the provider does not publish, and `.loose()` output objects keep a response
 // parsing when JumpCloud adds or drops such a field.
+// Output fields are `.nullish()`: the live API sends null for fields the spec
+// types as plain strings (e.g. an application's `parentApp`).
+// Output enums are `.or(z.string())`: JumpCloud adds values over time (new
+// device states, colors, account types) and a new value must not fail a read.
 const safePathParam = z
 	.string()
 	.min(1)
@@ -24,6 +28,50 @@ const safePathParam = z
 			value !== '..',
 		{ message: 'path parameters must not contain traversal characters' },
 	);
+
+// POST /search/* bodies (docs.jumpcloud.com/api/1.0 search_systemusers_post):
+// `filter` is either an array of query expressions (all must match) or an
+// object with a single `and` or `or` key holding that array. A query
+// expression maps a field name to a value or an operator object, e.g.
+// {"department":"IT"} or {"lastContact":{"$gt":"2026-01-01"}}.
+// unknown: expression values are any JSON the provider's query language
+// accepts (strings, numbers, operator objects), so they stay unknown.
+const SearchQueryExpressionSchema = z.record(z.string(), z.unknown());
+
+const SearchFilterSchema = z.union([
+	z.array(SearchQueryExpressionSchema),
+	z
+		.object({
+			and: z.array(SearchQueryExpressionSchema).optional(),
+			or: z.array(SearchQueryExpressionSchema).optional(),
+		})
+		.strict(),
+]);
+
+const SearchBodySchema = z
+	.object({
+		filter: SearchFilterSchema.describe(
+			'Query expressions that must all match, e.g. [{"department":"IT"}], or {"or":[{"department":"IT"},{"department":"Sales"}]} to match any.',
+		).optional(),
+		searchFilter: z
+			.object({
+				searchTerm: z
+					.union([z.string(), z.array(z.string())])
+					.describe('Text (or list of texts) to match partially.'),
+				fields: z
+					.array(z.string())
+					.describe('Fields to search in, e.g. ["email"].'),
+			})
+			.describe(
+				'Partial text search: records where any of `fields` contains `searchTerm`.',
+			)
+			.optional(),
+		fields: z
+			.string()
+			.describe('Space separated fields to include in each record.')
+			.optional(),
+	})
+	.loose();
 
 export const UsersListInputSchema = z
 	.object({
@@ -69,11 +117,11 @@ export const UsersListOutputSchema = z
 		results: z
 			.array(z.unknown())
 			.describe('The list of system users.')
-			.optional(),
+			.nullish(),
 		totalCount: z
 			.number()
 			.describe('The total number of system users.')
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -220,141 +268,144 @@ export type UsersCreateInput = z.infer<typeof UsersCreateInputSchema>;
 
 export const UsersCreateOutputSchema = z
 	.object({
-		_id: z.string().optional(),
-		account_locked: z.boolean().optional(),
-		account_locked_date: z.unknown().optional(),
-		activated: z.boolean().optional(),
-		admin: z.unknown().optional(),
+		_id: z.string().nullish(),
+		account_locked: z.boolean().nullish(),
+		account_locked_date: z.unknown().nullish(),
+		activated: z.boolean().nullish(),
+		admin: z.unknown().nullish(),
 		addresses: z
 			.array(
 				z
 					.object({
-						country: z.string().optional(),
-						extendedAddress: z.string().optional(),
-						id: z.string().optional(),
-						locality: z.string().optional(),
-						poBox: z.string().optional(),
-						postalCode: z.string().optional(),
-						region: z.string().optional(),
-						streetAddress: z.string().optional(),
-						type: z.string().optional(),
+						country: z.string().nullish(),
+						extendedAddress: z.string().nullish(),
+						id: z.string().nullish(),
+						locality: z.string().nullish(),
+						poBox: z.string().nullish(),
+						postalCode: z.string().nullish(),
+						region: z.string().nullish(),
+						streetAddress: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		allow_public_key: z.boolean().optional(),
-		alternateEmail: z.string().optional(),
-		attributes: z.array(z.unknown()).optional(),
-		badLoginAttempts: z.number().optional(),
-		company: z.string().optional(),
-		costCenter: z.string().optional(),
-		created: z.string().optional(),
-		department: z.string().optional(),
-		description: z.string().optional(),
-		disableDeviceMaxLoginAttempts: z.boolean().optional(),
-		displayname: z.string().optional(),
-		email: z.string().optional(),
+			.nullish(),
+		allow_public_key: z.boolean().nullish(),
+		alternateEmail: z.string().nullish(),
+		attributes: z.array(z.unknown()).nullish(),
+		badLoginAttempts: z.number().nullish(),
+		company: z.string().nullish(),
+		costCenter: z.string().nullish(),
+		created: z.string().nullish(),
+		department: z.string().nullish(),
+		description: z.string().nullish(),
+		disableDeviceMaxLoginAttempts: z.boolean().nullish(),
+		displayname: z.string().nullish(),
+		email: z.string().nullish(),
 		employeeIdentifier: z
 			.string()
 			.describe('Must be unique per user. ')
-			.optional(),
-		employeeType: z.string().optional(),
-		enable_managed_uid: z.boolean().optional(),
-		enable_user_portal_multifactor: z.boolean().optional(),
-		external_dn: z.string().optional(),
-		external_password_expiration_date: z.string().optional(),
-		external_source_type: z.string().optional(),
+			.nullish(),
+		employeeType: z.string().nullish(),
+		enable_managed_uid: z.boolean().nullish(),
+		enable_user_portal_multifactor: z.boolean().nullish(),
+		external_dn: z.string().nullish(),
+		external_password_expiration_date: z.string().nullish(),
+		external_source_type: z.string().nullish(),
 		externally_managed: z
 			.boolean()
 			.describe(
 				'The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set.',
 			)
-			.optional(),
-		firstname: z.string().optional(),
-		jobTitle: z.string().optional(),
-		lastname: z.string().optional(),
-		ldap_binding_user: z.boolean().optional(),
-		location: z.string().optional(),
+			.nullish(),
+		firstname: z.string().nullish(),
+		jobTitle: z.string().nullish(),
+		lastname: z.string().nullish(),
+		ldap_binding_user: z.boolean().nullish(),
+		location: z.string().nullish(),
 		manager: z
 			.string()
 			.describe(
 				'Relation with another systemuser to identify the last as a manager.',
 			)
-			.optional(),
+			.nullish(),
 		mfa: z
 			.object({
-				configured: z.boolean().optional(),
-				exclusion: z.boolean().optional(),
-				exclusionUntil: z.string().optional(),
-				exclusionDays: z.number().optional(),
+				configured: z.boolean().nullish(),
+				exclusion: z.boolean().nullish(),
+				exclusionUntil: z.string().nullish(),
+				exclusionDays: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		mfaEnrollment: z
 			.object({
-				totpStatus: z.unknown().optional(),
-				webAuthnStatus: z.unknown().optional(),
-				pushStatus: z.unknown().optional(),
-				smsStatus: z.unknown().optional(),
-				overallStatus: z.unknown().optional(),
-				jcGoStatus: z.unknown().optional(),
+				totpStatus: z.unknown().nullish(),
+				webAuthnStatus: z.unknown().nullish(),
+				pushStatus: z.unknown().nullish(),
+				smsStatus: z.unknown().nullish(),
+				overallStatus: z.unknown().nullish(),
+				jcGoStatus: z.unknown().nullish(),
 			})
 			.loose()
-			.optional(),
-		middlename: z.string().optional(),
-		organization: z.string().optional(),
-		password_date: z.unknown().optional(),
-		password_expiration_date: z.unknown().optional(),
-		password_expired: z.boolean().optional(),
-		password_never_expires: z.boolean().optional(),
-		passwordless_sudo: z.boolean().optional(),
+			.nullish(),
+		middlename: z.string().nullish(),
+		organization: z.string().nullish(),
+		password_date: z.unknown().nullish(),
+		password_expiration_date: z.unknown().nullish(),
+		password_expired: z.boolean().nullish(),
+		password_never_expires: z.boolean().nullish(),
+		passwordless_sudo: z.boolean().nullish(),
 		phoneNumbers: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						number: z.string().optional(),
-						type: z.string().optional(),
+						id: z.string().nullish(),
+						number: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		public_key: z.string().optional(),
+			.nullish(),
+		public_key: z.string().nullish(),
 		recoveryEmail: z
 			.object({
-				address: z.string().optional(),
-				verified: z.boolean().optional(),
-				verifiedAt: z.string().optional(),
+				address: z.string().nullish(),
+				verified: z.boolean().nullish(),
+				verifiedAt: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		relationships: z
 			.array(
 				z
 					.object({
-						type: z.string().optional(),
-						value: z.string().optional(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		samba_service_user: z.boolean().optional(),
-		ssh_keys: z.array(z.unknown()).optional(),
-		state: z.enum(['STAGED', 'ACTIVATED', 'SUSPENDED']).optional(),
-		sudo: z.boolean().optional(),
-		suspended: z.boolean().optional(),
-		tags: z.array(z.string()).optional(),
-		totp_enabled: z.boolean().optional(),
-		unix_guid: z.number().optional(),
-		unix_uid: z.number().optional(),
-		username: z.string().optional(),
-		managedAppleId: z.string().optional(),
-		creationSource: z.string().optional(),
+			.nullish(),
+		samba_service_user: z.boolean().nullish(),
+		ssh_keys: z.array(z.unknown()).nullish(),
+		state: z
+			.enum(['STAGED', 'ACTIVATED', 'SUSPENDED'])
+			.or(z.string())
+			.nullish(),
+		sudo: z.boolean().nullish(),
+		suspended: z.boolean().nullish(),
+		tags: z.array(z.string()).nullish(),
+		totp_enabled: z.boolean().nullish(),
+		unix_guid: z.number().nullish(),
+		unix_uid: z.number().nullish(),
+		username: z.string().nullish(),
+		managedAppleId: z.string().nullish(),
+		creationSource: z.string().nullish(),
 		delegatedAuthority: z
 			.unknown()
 			.describe('Used by auth to determine password delegation authority')
-			.optional(),
-		restrictedFields: z.array(z.unknown()).optional(),
+			.nullish(),
+		restrictedFields: z.array(z.unknown()).nullish(),
 	})
 	.loose();
 
@@ -382,141 +433,144 @@ export type UsersGetInput = z.infer<typeof UsersGetInputSchema>;
 
 export const UsersGetOutputSchema = z
 	.object({
-		_id: z.string().optional(),
-		account_locked: z.boolean().optional(),
-		account_locked_date: z.unknown().optional(),
-		activated: z.boolean().optional(),
-		admin: z.unknown().optional(),
+		_id: z.string().nullish(),
+		account_locked: z.boolean().nullish(),
+		account_locked_date: z.unknown().nullish(),
+		activated: z.boolean().nullish(),
+		admin: z.unknown().nullish(),
 		addresses: z
 			.array(
 				z
 					.object({
-						country: z.string().optional(),
-						extendedAddress: z.string().optional(),
-						id: z.string().optional(),
-						locality: z.string().optional(),
-						poBox: z.string().optional(),
-						postalCode: z.string().optional(),
-						region: z.string().optional(),
-						streetAddress: z.string().optional(),
-						type: z.string().optional(),
+						country: z.string().nullish(),
+						extendedAddress: z.string().nullish(),
+						id: z.string().nullish(),
+						locality: z.string().nullish(),
+						poBox: z.string().nullish(),
+						postalCode: z.string().nullish(),
+						region: z.string().nullish(),
+						streetAddress: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		allow_public_key: z.boolean().optional(),
-		alternateEmail: z.string().optional(),
-		attributes: z.array(z.unknown()).optional(),
-		badLoginAttempts: z.number().optional(),
-		company: z.string().optional(),
-		costCenter: z.string().optional(),
-		created: z.string().optional(),
-		department: z.string().optional(),
-		description: z.string().optional(),
-		disableDeviceMaxLoginAttempts: z.boolean().optional(),
-		displayname: z.string().optional(),
-		email: z.string().optional(),
+			.nullish(),
+		allow_public_key: z.boolean().nullish(),
+		alternateEmail: z.string().nullish(),
+		attributes: z.array(z.unknown()).nullish(),
+		badLoginAttempts: z.number().nullish(),
+		company: z.string().nullish(),
+		costCenter: z.string().nullish(),
+		created: z.string().nullish(),
+		department: z.string().nullish(),
+		description: z.string().nullish(),
+		disableDeviceMaxLoginAttempts: z.boolean().nullish(),
+		displayname: z.string().nullish(),
+		email: z.string().nullish(),
 		employeeIdentifier: z
 			.string()
 			.describe('Must be unique per user. ')
-			.optional(),
-		employeeType: z.string().optional(),
-		enable_managed_uid: z.boolean().optional(),
-		enable_user_portal_multifactor: z.boolean().optional(),
-		external_dn: z.string().optional(),
-		external_password_expiration_date: z.string().optional(),
-		external_source_type: z.string().optional(),
+			.nullish(),
+		employeeType: z.string().nullish(),
+		enable_managed_uid: z.boolean().nullish(),
+		enable_user_portal_multifactor: z.boolean().nullish(),
+		external_dn: z.string().nullish(),
+		external_password_expiration_date: z.string().nullish(),
+		external_source_type: z.string().nullish(),
 		externally_managed: z
 			.boolean()
 			.describe(
 				'The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set.',
 			)
-			.optional(),
-		firstname: z.string().optional(),
-		jobTitle: z.string().optional(),
-		lastname: z.string().optional(),
-		ldap_binding_user: z.boolean().optional(),
-		location: z.string().optional(),
+			.nullish(),
+		firstname: z.string().nullish(),
+		jobTitle: z.string().nullish(),
+		lastname: z.string().nullish(),
+		ldap_binding_user: z.boolean().nullish(),
+		location: z.string().nullish(),
 		manager: z
 			.string()
 			.describe(
 				'Relation with another systemuser to identify the last as a manager.',
 			)
-			.optional(),
+			.nullish(),
 		mfa: z
 			.object({
-				configured: z.boolean().optional(),
-				exclusion: z.boolean().optional(),
-				exclusionUntil: z.string().optional(),
-				exclusionDays: z.number().optional(),
+				configured: z.boolean().nullish(),
+				exclusion: z.boolean().nullish(),
+				exclusionUntil: z.string().nullish(),
+				exclusionDays: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		mfaEnrollment: z
 			.object({
-				totpStatus: z.unknown().optional(),
-				webAuthnStatus: z.unknown().optional(),
-				pushStatus: z.unknown().optional(),
-				smsStatus: z.unknown().optional(),
-				overallStatus: z.unknown().optional(),
-				jcGoStatus: z.unknown().optional(),
+				totpStatus: z.unknown().nullish(),
+				webAuthnStatus: z.unknown().nullish(),
+				pushStatus: z.unknown().nullish(),
+				smsStatus: z.unknown().nullish(),
+				overallStatus: z.unknown().nullish(),
+				jcGoStatus: z.unknown().nullish(),
 			})
 			.loose()
-			.optional(),
-		middlename: z.string().optional(),
-		organization: z.string().optional(),
-		password_date: z.unknown().optional(),
-		password_expiration_date: z.unknown().optional(),
-		password_expired: z.boolean().optional(),
-		password_never_expires: z.boolean().optional(),
-		passwordless_sudo: z.boolean().optional(),
+			.nullish(),
+		middlename: z.string().nullish(),
+		organization: z.string().nullish(),
+		password_date: z.unknown().nullish(),
+		password_expiration_date: z.unknown().nullish(),
+		password_expired: z.boolean().nullish(),
+		password_never_expires: z.boolean().nullish(),
+		passwordless_sudo: z.boolean().nullish(),
 		phoneNumbers: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						number: z.string().optional(),
-						type: z.string().optional(),
+						id: z.string().nullish(),
+						number: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		public_key: z.string().optional(),
+			.nullish(),
+		public_key: z.string().nullish(),
 		recoveryEmail: z
 			.object({
-				address: z.string().optional(),
-				verified: z.boolean().optional(),
-				verifiedAt: z.string().optional(),
+				address: z.string().nullish(),
+				verified: z.boolean().nullish(),
+				verifiedAt: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		relationships: z
 			.array(
 				z
 					.object({
-						type: z.string().optional(),
-						value: z.string().optional(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		samba_service_user: z.boolean().optional(),
-		ssh_keys: z.array(z.unknown()).optional(),
-		state: z.enum(['STAGED', 'ACTIVATED', 'SUSPENDED']).optional(),
-		sudo: z.boolean().optional(),
-		suspended: z.boolean().optional(),
-		tags: z.array(z.string()).optional(),
-		totp_enabled: z.boolean().optional(),
-		unix_guid: z.number().optional(),
-		unix_uid: z.number().optional(),
-		username: z.string().optional(),
-		managedAppleId: z.string().optional(),
-		creationSource: z.string().optional(),
+			.nullish(),
+		samba_service_user: z.boolean().nullish(),
+		ssh_keys: z.array(z.unknown()).nullish(),
+		state: z
+			.enum(['STAGED', 'ACTIVATED', 'SUSPENDED'])
+			.or(z.string())
+			.nullish(),
+		sudo: z.boolean().nullish(),
+		suspended: z.boolean().nullish(),
+		tags: z.array(z.string()).nullish(),
+		totp_enabled: z.boolean().nullish(),
+		unix_guid: z.number().nullish(),
+		unix_uid: z.number().nullish(),
+		username: z.string().nullish(),
+		managedAppleId: z.string().nullish(),
+		creationSource: z.string().nullish(),
 		delegatedAuthority: z
 			.unknown()
 			.describe('Used by auth to determine password delegation authority')
-			.optional(),
-		restrictedFields: z.array(z.unknown()).optional(),
+			.nullish(),
+		restrictedFields: z.array(z.unknown()).nullish(),
 	})
 	.loose();
 
@@ -662,141 +716,144 @@ export type UsersUpdateInput = z.infer<typeof UsersUpdateInputSchema>;
 
 export const UsersUpdateOutputSchema = z
 	.object({
-		_id: z.string().optional(),
-		account_locked: z.boolean().optional(),
-		account_locked_date: z.unknown().optional(),
-		activated: z.boolean().optional(),
-		admin: z.unknown().optional(),
+		_id: z.string().nullish(),
+		account_locked: z.boolean().nullish(),
+		account_locked_date: z.unknown().nullish(),
+		activated: z.boolean().nullish(),
+		admin: z.unknown().nullish(),
 		addresses: z
 			.array(
 				z
 					.object({
-						country: z.string().optional(),
-						extendedAddress: z.string().optional(),
-						id: z.string().optional(),
-						locality: z.string().optional(),
-						poBox: z.string().optional(),
-						postalCode: z.string().optional(),
-						region: z.string().optional(),
-						streetAddress: z.string().optional(),
-						type: z.string().optional(),
+						country: z.string().nullish(),
+						extendedAddress: z.string().nullish(),
+						id: z.string().nullish(),
+						locality: z.string().nullish(),
+						poBox: z.string().nullish(),
+						postalCode: z.string().nullish(),
+						region: z.string().nullish(),
+						streetAddress: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		allow_public_key: z.boolean().optional(),
-		alternateEmail: z.string().optional(),
-		attributes: z.array(z.unknown()).optional(),
-		badLoginAttempts: z.number().optional(),
-		company: z.string().optional(),
-		costCenter: z.string().optional(),
-		created: z.string().optional(),
-		department: z.string().optional(),
-		description: z.string().optional(),
-		disableDeviceMaxLoginAttempts: z.boolean().optional(),
-		displayname: z.string().optional(),
-		email: z.string().optional(),
+			.nullish(),
+		allow_public_key: z.boolean().nullish(),
+		alternateEmail: z.string().nullish(),
+		attributes: z.array(z.unknown()).nullish(),
+		badLoginAttempts: z.number().nullish(),
+		company: z.string().nullish(),
+		costCenter: z.string().nullish(),
+		created: z.string().nullish(),
+		department: z.string().nullish(),
+		description: z.string().nullish(),
+		disableDeviceMaxLoginAttempts: z.boolean().nullish(),
+		displayname: z.string().nullish(),
+		email: z.string().nullish(),
 		employeeIdentifier: z
 			.string()
 			.describe('Must be unique per user. ')
-			.optional(),
-		employeeType: z.string().optional(),
-		enable_managed_uid: z.boolean().optional(),
-		enable_user_portal_multifactor: z.boolean().optional(),
-		external_dn: z.string().optional(),
-		external_password_expiration_date: z.string().optional(),
-		external_source_type: z.string().optional(),
+			.nullish(),
+		employeeType: z.string().nullish(),
+		enable_managed_uid: z.boolean().nullish(),
+		enable_user_portal_multifactor: z.boolean().nullish(),
+		external_dn: z.string().nullish(),
+		external_password_expiration_date: z.string().nullish(),
+		external_source_type: z.string().nullish(),
 		externally_managed: z
 			.boolean()
 			.describe(
 				'The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set.',
 			)
-			.optional(),
-		firstname: z.string().optional(),
-		jobTitle: z.string().optional(),
-		lastname: z.string().optional(),
-		ldap_binding_user: z.boolean().optional(),
-		location: z.string().optional(),
+			.nullish(),
+		firstname: z.string().nullish(),
+		jobTitle: z.string().nullish(),
+		lastname: z.string().nullish(),
+		ldap_binding_user: z.boolean().nullish(),
+		location: z.string().nullish(),
 		manager: z
 			.string()
 			.describe(
 				'Relation with another systemuser to identify the last as a manager.',
 			)
-			.optional(),
+			.nullish(),
 		mfa: z
 			.object({
-				configured: z.boolean().optional(),
-				exclusion: z.boolean().optional(),
-				exclusionUntil: z.string().optional(),
-				exclusionDays: z.number().optional(),
+				configured: z.boolean().nullish(),
+				exclusion: z.boolean().nullish(),
+				exclusionUntil: z.string().nullish(),
+				exclusionDays: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		mfaEnrollment: z
 			.object({
-				totpStatus: z.unknown().optional(),
-				webAuthnStatus: z.unknown().optional(),
-				pushStatus: z.unknown().optional(),
-				smsStatus: z.unknown().optional(),
-				overallStatus: z.unknown().optional(),
-				jcGoStatus: z.unknown().optional(),
+				totpStatus: z.unknown().nullish(),
+				webAuthnStatus: z.unknown().nullish(),
+				pushStatus: z.unknown().nullish(),
+				smsStatus: z.unknown().nullish(),
+				overallStatus: z.unknown().nullish(),
+				jcGoStatus: z.unknown().nullish(),
 			})
 			.loose()
-			.optional(),
-		middlename: z.string().optional(),
-		organization: z.string().optional(),
-		password_date: z.unknown().optional(),
-		password_expiration_date: z.unknown().optional(),
-		password_expired: z.boolean().optional(),
-		password_never_expires: z.boolean().optional(),
-		passwordless_sudo: z.boolean().optional(),
+			.nullish(),
+		middlename: z.string().nullish(),
+		organization: z.string().nullish(),
+		password_date: z.unknown().nullish(),
+		password_expiration_date: z.unknown().nullish(),
+		password_expired: z.boolean().nullish(),
+		password_never_expires: z.boolean().nullish(),
+		passwordless_sudo: z.boolean().nullish(),
 		phoneNumbers: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						number: z.string().optional(),
-						type: z.string().optional(),
+						id: z.string().nullish(),
+						number: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		public_key: z.string().optional(),
+			.nullish(),
+		public_key: z.string().nullish(),
 		recoveryEmail: z
 			.object({
-				address: z.string().optional(),
-				verified: z.boolean().optional(),
-				verifiedAt: z.string().optional(),
+				address: z.string().nullish(),
+				verified: z.boolean().nullish(),
+				verifiedAt: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		relationships: z
 			.array(
 				z
 					.object({
-						type: z.string().optional(),
-						value: z.string().optional(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		samba_service_user: z.boolean().optional(),
-		ssh_keys: z.array(z.unknown()).optional(),
-		state: z.enum(['STAGED', 'ACTIVATED', 'SUSPENDED']).optional(),
-		sudo: z.boolean().optional(),
-		suspended: z.boolean().optional(),
-		tags: z.array(z.string()).optional(),
-		totp_enabled: z.boolean().optional(),
-		unix_guid: z.number().optional(),
-		unix_uid: z.number().optional(),
-		username: z.string().optional(),
-		managedAppleId: z.string().optional(),
-		creationSource: z.string().optional(),
+			.nullish(),
+		samba_service_user: z.boolean().nullish(),
+		ssh_keys: z.array(z.unknown()).nullish(),
+		state: z
+			.enum(['STAGED', 'ACTIVATED', 'SUSPENDED'])
+			.or(z.string())
+			.nullish(),
+		sudo: z.boolean().nullish(),
+		suspended: z.boolean().nullish(),
+		tags: z.array(z.string()).nullish(),
+		totp_enabled: z.boolean().nullish(),
+		unix_guid: z.number().nullish(),
+		unix_uid: z.number().nullish(),
+		username: z.string().nullish(),
+		managedAppleId: z.string().nullish(),
+		creationSource: z.string().nullish(),
 		delegatedAuthority: z
 			.unknown()
 			.describe('Used by auth to determine password delegation authority')
-			.optional(),
-		restrictedFields: z.array(z.unknown()).optional(),
+			.nullish(),
+		restrictedFields: z.array(z.unknown()).nullish(),
 	})
 	.loose();
 
@@ -818,141 +875,144 @@ export type UsersDeleteInput = z.infer<typeof UsersDeleteInputSchema>;
 
 export const UsersDeleteOutputSchema = z
 	.object({
-		_id: z.string().optional(),
-		account_locked: z.boolean().optional(),
-		account_locked_date: z.unknown().optional(),
-		activated: z.boolean().optional(),
-		admin: z.unknown().optional(),
+		_id: z.string().nullish(),
+		account_locked: z.boolean().nullish(),
+		account_locked_date: z.unknown().nullish(),
+		activated: z.boolean().nullish(),
+		admin: z.unknown().nullish(),
 		addresses: z
 			.array(
 				z
 					.object({
-						country: z.string().optional(),
-						extendedAddress: z.string().optional(),
-						id: z.string().optional(),
-						locality: z.string().optional(),
-						poBox: z.string().optional(),
-						postalCode: z.string().optional(),
-						region: z.string().optional(),
-						streetAddress: z.string().optional(),
-						type: z.string().optional(),
+						country: z.string().nullish(),
+						extendedAddress: z.string().nullish(),
+						id: z.string().nullish(),
+						locality: z.string().nullish(),
+						poBox: z.string().nullish(),
+						postalCode: z.string().nullish(),
+						region: z.string().nullish(),
+						streetAddress: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		allow_public_key: z.boolean().optional(),
-		alternateEmail: z.string().optional(),
-		attributes: z.array(z.unknown()).optional(),
-		badLoginAttempts: z.number().optional(),
-		company: z.string().optional(),
-		costCenter: z.string().optional(),
-		created: z.string().optional(),
-		department: z.string().optional(),
-		description: z.string().optional(),
-		disableDeviceMaxLoginAttempts: z.boolean().optional(),
-		displayname: z.string().optional(),
-		email: z.string().optional(),
+			.nullish(),
+		allow_public_key: z.boolean().nullish(),
+		alternateEmail: z.string().nullish(),
+		attributes: z.array(z.unknown()).nullish(),
+		badLoginAttempts: z.number().nullish(),
+		company: z.string().nullish(),
+		costCenter: z.string().nullish(),
+		created: z.string().nullish(),
+		department: z.string().nullish(),
+		description: z.string().nullish(),
+		disableDeviceMaxLoginAttempts: z.boolean().nullish(),
+		displayname: z.string().nullish(),
+		email: z.string().nullish(),
 		employeeIdentifier: z
 			.string()
 			.describe('Must be unique per user. ')
-			.optional(),
-		employeeType: z.string().optional(),
-		enable_managed_uid: z.boolean().optional(),
-		enable_user_portal_multifactor: z.boolean().optional(),
-		external_dn: z.string().optional(),
-		external_password_expiration_date: z.string().optional(),
-		external_source_type: z.string().optional(),
+			.nullish(),
+		employeeType: z.string().nullish(),
+		enable_managed_uid: z.boolean().nullish(),
+		enable_user_portal_multifactor: z.boolean().nullish(),
+		external_dn: z.string().nullish(),
+		external_password_expiration_date: z.string().nullish(),
+		external_source_type: z.string().nullish(),
 		externally_managed: z
 			.boolean()
 			.describe(
 				'The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set.',
 			)
-			.optional(),
-		firstname: z.string().optional(),
-		jobTitle: z.string().optional(),
-		lastname: z.string().optional(),
-		ldap_binding_user: z.boolean().optional(),
-		location: z.string().optional(),
+			.nullish(),
+		firstname: z.string().nullish(),
+		jobTitle: z.string().nullish(),
+		lastname: z.string().nullish(),
+		ldap_binding_user: z.boolean().nullish(),
+		location: z.string().nullish(),
 		manager: z
 			.string()
 			.describe(
 				'Relation with another systemuser to identify the last as a manager.',
 			)
-			.optional(),
+			.nullish(),
 		mfa: z
 			.object({
-				configured: z.boolean().optional(),
-				exclusion: z.boolean().optional(),
-				exclusionUntil: z.string().optional(),
-				exclusionDays: z.number().optional(),
+				configured: z.boolean().nullish(),
+				exclusion: z.boolean().nullish(),
+				exclusionUntil: z.string().nullish(),
+				exclusionDays: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		mfaEnrollment: z
 			.object({
-				totpStatus: z.unknown().optional(),
-				webAuthnStatus: z.unknown().optional(),
-				pushStatus: z.unknown().optional(),
-				smsStatus: z.unknown().optional(),
-				overallStatus: z.unknown().optional(),
-				jcGoStatus: z.unknown().optional(),
+				totpStatus: z.unknown().nullish(),
+				webAuthnStatus: z.unknown().nullish(),
+				pushStatus: z.unknown().nullish(),
+				smsStatus: z.unknown().nullish(),
+				overallStatus: z.unknown().nullish(),
+				jcGoStatus: z.unknown().nullish(),
 			})
 			.loose()
-			.optional(),
-		middlename: z.string().optional(),
-		organization: z.string().optional(),
-		password_date: z.unknown().optional(),
-		password_expiration_date: z.unknown().optional(),
-		password_expired: z.boolean().optional(),
-		password_never_expires: z.boolean().optional(),
-		passwordless_sudo: z.boolean().optional(),
+			.nullish(),
+		middlename: z.string().nullish(),
+		organization: z.string().nullish(),
+		password_date: z.unknown().nullish(),
+		password_expiration_date: z.unknown().nullish(),
+		password_expired: z.boolean().nullish(),
+		password_never_expires: z.boolean().nullish(),
+		passwordless_sudo: z.boolean().nullish(),
 		phoneNumbers: z
 			.array(
 				z
 					.object({
-						id: z.string().optional(),
-						number: z.string().optional(),
-						type: z.string().optional(),
+						id: z.string().nullish(),
+						number: z.string().nullish(),
+						type: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		public_key: z.string().optional(),
+			.nullish(),
+		public_key: z.string().nullish(),
 		recoveryEmail: z
 			.object({
-				address: z.string().optional(),
-				verified: z.boolean().optional(),
-				verifiedAt: z.string().optional(),
+				address: z.string().nullish(),
+				verified: z.boolean().nullish(),
+				verifiedAt: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		relationships: z
 			.array(
 				z
 					.object({
-						type: z.string().optional(),
-						value: z.string().optional(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		samba_service_user: z.boolean().optional(),
-		ssh_keys: z.array(z.unknown()).optional(),
-		state: z.enum(['STAGED', 'ACTIVATED', 'SUSPENDED']).optional(),
-		sudo: z.boolean().optional(),
-		suspended: z.boolean().optional(),
-		tags: z.array(z.string()).optional(),
-		totp_enabled: z.boolean().optional(),
-		unix_guid: z.number().optional(),
-		unix_uid: z.number().optional(),
-		username: z.string().optional(),
-		managedAppleId: z.string().optional(),
-		creationSource: z.string().optional(),
+			.nullish(),
+		samba_service_user: z.boolean().nullish(),
+		ssh_keys: z.array(z.unknown()).nullish(),
+		state: z
+			.enum(['STAGED', 'ACTIVATED', 'SUSPENDED'])
+			.or(z.string())
+			.nullish(),
+		sudo: z.boolean().nullish(),
+		suspended: z.boolean().nullish(),
+		tags: z.array(z.string()).nullish(),
+		totp_enabled: z.boolean().nullish(),
+		unix_guid: z.number().nullish(),
+		unix_uid: z.number().nullish(),
+		username: z.string().nullish(),
+		managedAppleId: z.string().nullish(),
+		creationSource: z.string().nullish(),
 		delegatedAuthority: z
 			.unknown()
 			.describe('Used by auth to determine password delegation authority')
-			.optional(),
-		restrictedFields: z.array(z.unknown()).optional(),
+			.nullish(),
+		restrictedFields: z.array(z.unknown()).nullish(),
 	})
 	.loose();
 
@@ -985,6 +1045,7 @@ export const UsersUnlockInputSchema = z
 
 export type UsersUnlockInput = z.infer<typeof UsersUnlockInputSchema>;
 
+// The live API answers text/plain "OK".
 export const UsersUnlockOutputSchema = z.string();
 
 export type UsersUnlockOutput = z.infer<typeof UsersUnlockOutputSchema>;
@@ -999,7 +1060,11 @@ export type UsersExpirePasswordInput = z.infer<
 	typeof UsersExpirePasswordInputSchema
 >;
 
-export const UsersExpirePasswordOutputSchema = z.string();
+// Documented as a string; the live API answers {"orgPasswordPolicyUpdate":false}.
+export const UsersExpirePasswordOutputSchema = z.union([
+	z.string(),
+	z.object({ orgPasswordPolicyUpdate: z.boolean().nullish() }).loose(),
+]);
 
 export type UsersExpirePasswordOutput = z.infer<
 	typeof UsersExpirePasswordOutputSchema
@@ -1061,7 +1126,8 @@ export const UsersSyncMfaInputSchema = z
 
 export type UsersSyncMfaInput = z.infer<typeof UsersSyncMfaInputSchema>;
 
-export const UsersSyncMfaOutputSchema = z.void();
+// Documented without a body; the live API answers text/plain "OK".
+export const UsersSyncMfaOutputSchema = z.string().optional();
 
 export type UsersSyncMfaOutput = z.infer<typeof UsersSyncMfaOutputSchema>;
 
@@ -1076,13 +1142,13 @@ export type UsersListSshKeysInput = z.infer<typeof UsersListSshKeysInputSchema>;
 export const UsersListSshKeysOutputSchema = z.array(
 	z
 		.object({
-			_id: z.string().describe('The ID of the SSH key.').optional(),
+			_id: z.string().describe('The ID of the SSH key.').nullish(),
 			create_date: z
 				.string()
 				.describe('The date the SSH key was created.')
-				.optional(),
-			name: z.string().describe('The name of the SSH key.').optional(),
-			public_key: z.string().describe('The Public SSH key.').optional(),
+				.nullish(),
+			name: z.string().describe('The name of the SSH key.').nullish(),
+			public_key: z.string().describe('The Public SSH key.').nullish(),
 		})
 		.loose(),
 );
@@ -1132,8 +1198,8 @@ export type SystemsListInput = z.infer<typeof SystemsListInputSchema>;
 
 export const SystemsListOutputSchema = z
 	.object({
-		results: z.array(z.unknown()).describe('The list of systems.').optional(),
-		totalCount: z.number().describe('The total number of systems.').optional(),
+		results: z.array(z.unknown()).describe('The list of systems.').nullish(),
+		totalCount: z.number().describe('The total number of systems.').nullish(),
 	})
 	.loose();
 
@@ -1161,206 +1227,219 @@ export type SystemsGetInput = z.infer<typeof SystemsGetInputSchema>;
 
 export const SystemsGetOutputSchema = z
 	.object({
-		_id: z.string().optional(),
-		active: z.boolean().optional(),
-		agentHasFullDiskAccess: z.boolean().optional(),
-		agentVersion: z.string().optional(),
-		allowMultiFactorAuthentication: z.boolean().optional(),
-		allowPublicKeyAuthentication: z.boolean().optional(),
-		allowSshPasswordAuthentication: z.boolean().optional(),
-		allowSshRootLogin: z.boolean().optional(),
-		amazonInstanceID: z.string().optional(),
-		arch: z.string().optional(),
-		archFamily: z.string().optional(),
-		attributes: z.array(z.unknown()).optional(),
-		connectionHistory: z.array(z.record(z.string(), z.unknown())).optional(),
-		created: z.string().optional(),
-		description: z.string().optional(),
-		desktopCapable: z.boolean().optional(),
-		displayName: z.string().optional(),
+		_id: z.string().nullish(),
+		active: z.boolean().nullish(),
+		agentHasFullDiskAccess: z.boolean().nullish(),
+		agentVersion: z.string().nullish(),
+		allowMultiFactorAuthentication: z.boolean().nullish(),
+		allowPublicKeyAuthentication: z.boolean().nullish(),
+		allowSshPasswordAuthentication: z.boolean().nullish(),
+		allowSshRootLogin: z.boolean().nullish(),
+		amazonInstanceID: z.string().nullish(),
+		arch: z.string().nullish(),
+		archFamily: z.string().nullish(),
+		attributes: z.array(z.unknown()).nullish(),
+		connectionHistory: z.array(z.record(z.string(), z.unknown())).nullish(),
+		created: z.string().nullish(),
+		description: z.string().nullish(),
+		desktopCapable: z.boolean().nullish(),
+		displayName: z.string().nullish(),
 		fde: z
 			.object({
-				active: z.boolean().optional(),
-				keyPresent: z.boolean().optional(),
+				active: z.boolean().nullish(),
+				keyPresent: z.boolean().nullish(),
 			})
 			.loose()
 			.describe('Indicates if the Full Disk Encryption is active in the system')
-			.optional(),
-		fileSystem: z.unknown().optional(),
-		hasServiceAccount: z.boolean().optional(),
-		hostname: z.string().optional(),
-		hwVendor: z.string().optional(),
-		isPolicyBound: z.boolean().optional(),
-		lastContact: z.unknown().optional(),
-		modifySSHDConfig: z.boolean().optional(),
+			.nullish(),
+		fileSystem: z.unknown().nullish(),
+		hasServiceAccount: z.boolean().nullish(),
+		hostname: z.string().nullish(),
+		hwVendor: z.string().nullish(),
+		isPolicyBound: z.boolean().nullish(),
+		lastContact: z.unknown().nullish(),
+		modifySSHDConfig: z.boolean().nullish(),
 		networkInterfaces: z
 			.array(
 				z
 					.object({
-						address: z.string().optional(),
-						family: z.enum(['IPv4', 'IPv6']).optional(),
-						internal: z.boolean().optional(),
-						name: z.string().optional(),
+						address: z.string().nullish(),
+						family: z.enum(['IPv4', 'IPv6']).or(z.string()).nullish(),
+						internal: z.boolean().nullish(),
+						name: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		networkInfo: z
 			.object({
-				imei: z.string().describe('PII data; do not log.').optional(),
-				macAddress: z.string().describe('PII data; do not log.').optional(),
-				simInfo: z.array(z.record(z.string(), z.unknown())).optional(),
+				imei: z.string().describe('PII data; do not log.').nullish(),
+				macAddress: z.string().describe('PII data; do not log.').nullish(),
+				simInfo: z.array(z.record(z.string(), z.unknown())).nullish(),
 			})
 			.loose()
-			.optional(),
-		organization: z.string().optional(),
-		os: z.string().optional(),
+			.nullish(),
+		organization: z.string().nullish(),
+		os: z.string().nullish(),
 		osVersionDetail: z
 			.object({
-				osName: z.string().optional(),
-				releaseName: z.string().optional(),
-				major: z.string().optional(),
-				minor: z.string().optional(),
-				patch: z.string().optional(),
-				majorNumber: z.number().optional(),
-				minorNumber: z.number().optional(),
-				patchNumber: z.number().optional(),
-				revision: z.string().optional(),
-				distributionName: z.string().optional(),
-				version: z.string().optional(),
+				osName: z.string().nullish(),
+				releaseName: z.string().nullish(),
+				major: z.string().nullish(),
+				minor: z.string().nullish(),
+				patch: z.string().nullish(),
+				majorNumber: z.number().nullish(),
+				minorNumber: z.number().nullish(),
+				patchNumber: z.number().nullish(),
+				revision: z.string().nullish(),
+				distributionName: z.string().nullish(),
+				version: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		policyStats: z
 			.object({
-				duplicate: z.number().optional(),
-				failed: z.number().optional(),
-				pending: z.number().optional(),
-				success: z.number().optional(),
-				total: z.number().optional(),
-				unsupportedOs: z.number().optional(),
+				duplicate: z.number().nullish(),
+				failed: z.number().nullish(),
+				pending: z.number().nullish(),
+				success: z.number().nullish(),
+				total: z.number().nullish(),
+				unsupportedOs: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		provisionMetadata: z
 			.object({
 				provisioner: z
 					.object({
-						type: z.enum(['administrator', 'mdm', 'user']).optional(),
-						provisionerId: z.string().optional(),
+						type: z
+							.enum(['administrator', 'mdm', 'user'])
+							.or(z.string())
+							.nullish(),
+						provisionerId: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		primarySystemUser: z
 			.object({
-				id: z.unknown().optional(),
+				id: z.unknown().nullish(),
 			})
 			.loose()
-			.optional(),
-		remoteIP: z.string().optional(),
-		serialNumber: z.string().optional(),
-		sshRootEnabled: z.boolean().optional(),
+			.nullish(),
+		remoteIP: z.string().nullish(),
+		serialNumber: z.string().nullish(),
+		sshRootEnabled: z.boolean().nullish(),
 		sshdParams: z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						value: z.string().optional(),
+						name: z.string().nullish(),
+						value: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		systemInsights: z
 			.object({
-				state: z.enum(['enabled', 'disabled', 'deferred']).optional(),
+				state: z
+					.enum(['enabled', 'disabled', 'deferred'])
+					.or(z.string())
+					.nullish(),
 			})
 			.loose()
-			.optional(),
-		systemTimezone: z.number().optional(),
-		tags: z.array(z.string()).optional(),
-		templateName: z.string().optional(),
-		version: z.string().optional(),
+			.nullish(),
+		systemTimezone: z.number().nullish(),
+		tags: z.array(z.string()).nullish(),
+		templateName: z.string().nullish(),
+		version: z.string().nullish(),
 		mdm: z
 			.object({
-				vendor: z.enum(['unknown', 'none', 'internal', 'external']).optional(),
+				vendor: z
+					.enum(['unknown', 'none', 'internal', 'external'])
+					.or(z.string())
+					.nullish(),
 				internal: z
 					.object({
-						deviceId: z.string().optional(),
-						windowsDeviceId: z.string().optional(),
+						deviceId: z.string().nullish(),
+						windowsDeviceId: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
-				profileIdentifier: z.string().optional(),
-				dep: z.boolean().optional(),
-				userApproved: z.boolean().optional(),
+					.nullish(),
+				profileIdentifier: z.string().nullish(),
+				dep: z.boolean().nullish(),
+				userApproved: z.boolean().nullish(),
 				enrollmentType: z
 					.enum(['unknown', 'automated device', 'device', 'user'])
-					.optional(),
-				providerId: z.string().optional(),
+					.or(z.string())
+					.nullish(),
+				providerId: z.string().nullish(),
 				windows: z
 					.object({
-						upn: z.string().optional(),
+						upn: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
-				lostModeStatus: z.string().optional(),
-				deviceLockStatus: z.number().optional(),
-				enrollmentStatus: z.number().optional(),
+					.nullish(),
+				lostModeStatus: z.string().nullish(),
+				deviceLockStatus: z.number().nullish(),
+				enrollmentStatus: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		builtInCommands: z
 			.array(
 				z
 					.object({
-						type: z.enum(['security']).optional(),
-						name: z.enum(['erase', 'lock', 'restart', 'shutdown']).optional(),
+						type: z.enum(['security']).or(z.string()).nullish(),
+						name: z
+							.enum(['erase', 'lock', 'restart', 'shutdown'])
+							.or(z.string())
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		osFamily: z.string().optional(),
+			.nullish(),
+		osFamily: z.string().nullish(),
 		domainInfo: z
 			.object({
-				partOfDomain: z.boolean().optional(),
-				domainName: z.string().optional(),
+				partOfDomain: z.boolean().nullish(),
+				domainName: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		userMetrics: z
 			.array(
 				z
 					.object({
-						userName: z.string().optional(),
-						admin: z.boolean().optional(),
-						managed: z.boolean().optional(),
-						suspended: z.boolean().optional(),
-						secureTokenEnabled: z.boolean().optional(),
+						userName: z.string().nullish(),
+						admin: z.boolean().nullish(),
+						managed: z.boolean().nullish(),
+						suspended: z.boolean().nullish(),
+						secureTokenEnabled: z.boolean().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		serviceAccountState: z
 			.object({
-				hasSecureToken: z.boolean().optional(),
-				passwordODValid: z.boolean().optional(),
-				passwordAPFSValid: z.boolean().optional(),
+				hasSecureToken: z.boolean().nullish(),
+				passwordODValid: z.boolean().nullish(),
+				passwordAPFSValid: z.boolean().nullish(),
 			})
 			.loose()
-			.optional(),
-		azureAdJoined: z.boolean().optional(),
-		displayManager: z.string().optional(),
+			.nullish(),
+		azureAdJoined: z.boolean().nullish(),
+		displayManager: z.string().nullish(),
 		secureLogin: z
 			.object({
-				supported: z.boolean().optional(),
-				enabled: z.boolean().optional(),
+				supported: z.boolean().nullish(),
+				enabled: z.boolean().nullish(),
 			})
 			.loose()
-			.optional(),
-		remoteAssistAgentVersion: z.string().optional(),
+			.nullish(),
+		remoteAssistAgentVersion: z.string().nullish(),
 	})
 	.loose();
 
@@ -1376,206 +1455,219 @@ export type SystemsDeleteInput = z.infer<typeof SystemsDeleteInputSchema>;
 
 export const SystemsDeleteOutputSchema = z
 	.object({
-		_id: z.string().optional(),
-		active: z.boolean().optional(),
-		agentHasFullDiskAccess: z.boolean().optional(),
-		agentVersion: z.string().optional(),
-		allowMultiFactorAuthentication: z.boolean().optional(),
-		allowPublicKeyAuthentication: z.boolean().optional(),
-		allowSshPasswordAuthentication: z.boolean().optional(),
-		allowSshRootLogin: z.boolean().optional(),
-		amazonInstanceID: z.string().optional(),
-		arch: z.string().optional(),
-		archFamily: z.string().optional(),
-		attributes: z.array(z.unknown()).optional(),
-		connectionHistory: z.array(z.record(z.string(), z.unknown())).optional(),
-		created: z.string().optional(),
-		description: z.string().optional(),
-		desktopCapable: z.boolean().optional(),
-		displayName: z.string().optional(),
+		_id: z.string().nullish(),
+		active: z.boolean().nullish(),
+		agentHasFullDiskAccess: z.boolean().nullish(),
+		agentVersion: z.string().nullish(),
+		allowMultiFactorAuthentication: z.boolean().nullish(),
+		allowPublicKeyAuthentication: z.boolean().nullish(),
+		allowSshPasswordAuthentication: z.boolean().nullish(),
+		allowSshRootLogin: z.boolean().nullish(),
+		amazonInstanceID: z.string().nullish(),
+		arch: z.string().nullish(),
+		archFamily: z.string().nullish(),
+		attributes: z.array(z.unknown()).nullish(),
+		connectionHistory: z.array(z.record(z.string(), z.unknown())).nullish(),
+		created: z.string().nullish(),
+		description: z.string().nullish(),
+		desktopCapable: z.boolean().nullish(),
+		displayName: z.string().nullish(),
 		fde: z
 			.object({
-				active: z.boolean().optional(),
-				keyPresent: z.boolean().optional(),
+				active: z.boolean().nullish(),
+				keyPresent: z.boolean().nullish(),
 			})
 			.loose()
 			.describe('Indicates if the Full Disk Encryption is active in the system')
-			.optional(),
-		fileSystem: z.unknown().optional(),
-		hasServiceAccount: z.boolean().optional(),
-		hostname: z.string().optional(),
-		hwVendor: z.string().optional(),
-		isPolicyBound: z.boolean().optional(),
-		lastContact: z.unknown().optional(),
-		modifySSHDConfig: z.boolean().optional(),
+			.nullish(),
+		fileSystem: z.unknown().nullish(),
+		hasServiceAccount: z.boolean().nullish(),
+		hostname: z.string().nullish(),
+		hwVendor: z.string().nullish(),
+		isPolicyBound: z.boolean().nullish(),
+		lastContact: z.unknown().nullish(),
+		modifySSHDConfig: z.boolean().nullish(),
 		networkInterfaces: z
 			.array(
 				z
 					.object({
-						address: z.string().optional(),
-						family: z.enum(['IPv4', 'IPv6']).optional(),
-						internal: z.boolean().optional(),
-						name: z.string().optional(),
+						address: z.string().nullish(),
+						family: z.enum(['IPv4', 'IPv6']).or(z.string()).nullish(),
+						internal: z.boolean().nullish(),
+						name: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		networkInfo: z
 			.object({
-				imei: z.string().describe('PII data; do not log.').optional(),
-				macAddress: z.string().describe('PII data; do not log.').optional(),
-				simInfo: z.array(z.record(z.string(), z.unknown())).optional(),
+				imei: z.string().describe('PII data; do not log.').nullish(),
+				macAddress: z.string().describe('PII data; do not log.').nullish(),
+				simInfo: z.array(z.record(z.string(), z.unknown())).nullish(),
 			})
 			.loose()
-			.optional(),
-		organization: z.string().optional(),
-		os: z.string().optional(),
+			.nullish(),
+		organization: z.string().nullish(),
+		os: z.string().nullish(),
 		osVersionDetail: z
 			.object({
-				osName: z.string().optional(),
-				releaseName: z.string().optional(),
-				major: z.string().optional(),
-				minor: z.string().optional(),
-				patch: z.string().optional(),
-				majorNumber: z.number().optional(),
-				minorNumber: z.number().optional(),
-				patchNumber: z.number().optional(),
-				revision: z.string().optional(),
-				distributionName: z.string().optional(),
-				version: z.string().optional(),
+				osName: z.string().nullish(),
+				releaseName: z.string().nullish(),
+				major: z.string().nullish(),
+				minor: z.string().nullish(),
+				patch: z.string().nullish(),
+				majorNumber: z.number().nullish(),
+				minorNumber: z.number().nullish(),
+				patchNumber: z.number().nullish(),
+				revision: z.string().nullish(),
+				distributionName: z.string().nullish(),
+				version: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		policyStats: z
 			.object({
-				duplicate: z.number().optional(),
-				failed: z.number().optional(),
-				pending: z.number().optional(),
-				success: z.number().optional(),
-				total: z.number().optional(),
-				unsupportedOs: z.number().optional(),
+				duplicate: z.number().nullish(),
+				failed: z.number().nullish(),
+				pending: z.number().nullish(),
+				success: z.number().nullish(),
+				total: z.number().nullish(),
+				unsupportedOs: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		provisionMetadata: z
 			.object({
 				provisioner: z
 					.object({
-						type: z.enum(['administrator', 'mdm', 'user']).optional(),
-						provisionerId: z.string().optional(),
+						type: z
+							.enum(['administrator', 'mdm', 'user'])
+							.or(z.string())
+							.nullish(),
+						provisionerId: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		primarySystemUser: z
 			.object({
-				id: z.unknown().optional(),
+				id: z.unknown().nullish(),
 			})
 			.loose()
-			.optional(),
-		remoteIP: z.string().optional(),
-		serialNumber: z.string().optional(),
-		sshRootEnabled: z.boolean().optional(),
+			.nullish(),
+		remoteIP: z.string().nullish(),
+		serialNumber: z.string().nullish(),
+		sshRootEnabled: z.boolean().nullish(),
 		sshdParams: z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						value: z.string().optional(),
+						name: z.string().nullish(),
+						value: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		systemInsights: z
 			.object({
-				state: z.enum(['enabled', 'disabled', 'deferred']).optional(),
+				state: z
+					.enum(['enabled', 'disabled', 'deferred'])
+					.or(z.string())
+					.nullish(),
 			})
 			.loose()
-			.optional(),
-		systemTimezone: z.number().optional(),
-		tags: z.array(z.string()).optional(),
-		templateName: z.string().optional(),
-		version: z.string().optional(),
+			.nullish(),
+		systemTimezone: z.number().nullish(),
+		tags: z.array(z.string()).nullish(),
+		templateName: z.string().nullish(),
+		version: z.string().nullish(),
 		mdm: z
 			.object({
-				vendor: z.enum(['unknown', 'none', 'internal', 'external']).optional(),
+				vendor: z
+					.enum(['unknown', 'none', 'internal', 'external'])
+					.or(z.string())
+					.nullish(),
 				internal: z
 					.object({
-						deviceId: z.string().optional(),
-						windowsDeviceId: z.string().optional(),
+						deviceId: z.string().nullish(),
+						windowsDeviceId: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
-				profileIdentifier: z.string().optional(),
-				dep: z.boolean().optional(),
-				userApproved: z.boolean().optional(),
+					.nullish(),
+				profileIdentifier: z.string().nullish(),
+				dep: z.boolean().nullish(),
+				userApproved: z.boolean().nullish(),
 				enrollmentType: z
 					.enum(['unknown', 'automated device', 'device', 'user'])
-					.optional(),
-				providerId: z.string().optional(),
+					.or(z.string())
+					.nullish(),
+				providerId: z.string().nullish(),
 				windows: z
 					.object({
-						upn: z.string().optional(),
+						upn: z.string().nullish(),
 					})
 					.loose()
-					.optional(),
-				lostModeStatus: z.string().optional(),
-				deviceLockStatus: z.number().optional(),
-				enrollmentStatus: z.number().optional(),
+					.nullish(),
+				lostModeStatus: z.string().nullish(),
+				deviceLockStatus: z.number().nullish(),
+				enrollmentStatus: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		builtInCommands: z
 			.array(
 				z
 					.object({
-						type: z.enum(['security']).optional(),
-						name: z.enum(['erase', 'lock', 'restart', 'shutdown']).optional(),
+						type: z.enum(['security']).or(z.string()).nullish(),
+						name: z
+							.enum(['erase', 'lock', 'restart', 'shutdown'])
+							.or(z.string())
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		osFamily: z.string().optional(),
+			.nullish(),
+		osFamily: z.string().nullish(),
 		domainInfo: z
 			.object({
-				partOfDomain: z.boolean().optional(),
-				domainName: z.string().optional(),
+				partOfDomain: z.boolean().nullish(),
+				domainName: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		userMetrics: z
 			.array(
 				z
 					.object({
-						userName: z.string().optional(),
-						admin: z.boolean().optional(),
-						managed: z.boolean().optional(),
-						suspended: z.boolean().optional(),
-						secureTokenEnabled: z.boolean().optional(),
+						userName: z.string().nullish(),
+						admin: z.boolean().nullish(),
+						managed: z.boolean().nullish(),
+						suspended: z.boolean().nullish(),
+						secureTokenEnabled: z.boolean().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		serviceAccountState: z
 			.object({
-				hasSecureToken: z.boolean().optional(),
-				passwordODValid: z.boolean().optional(),
-				passwordAPFSValid: z.boolean().optional(),
+				hasSecureToken: z.boolean().nullish(),
+				passwordODValid: z.boolean().nullish(),
+				passwordAPFSValid: z.boolean().nullish(),
 			})
 			.loose()
-			.optional(),
-		azureAdJoined: z.boolean().optional(),
-		displayManager: z.string().optional(),
+			.nullish(),
+		azureAdJoined: z.boolean().nullish(),
+		displayManager: z.string().nullish(),
 		secureLogin: z
 			.object({
-				supported: z.boolean().optional(),
-				enabled: z.boolean().optional(),
+				supported: z.boolean().nullish(),
+				enabled: z.boolean().nullish(),
 			})
 			.loose()
-			.optional(),
-		remoteAssistAgentVersion: z.string().optional(),
+			.nullish(),
+		remoteAssistAgentVersion: z.string().nullish(),
 	})
 	.loose();
 
@@ -1603,34 +1695,7 @@ export const SearchSystemUsersInputSchema = z
 			.number()
 			.describe('The offset into the records to return.')
 			.optional(),
-		body: z
-			.object({
-				filter: z
-					.array(
-						z
-							.object({
-								field: z.string(),
-								operator: z.string(),
-								// unknown: the spec accepts any JSON value in a filter entry,
-								// so the value has no published shape to type.
-								value: z.unknown().optional(),
-							})
-							.loose(),
-					)
-					.describe(
-						'Array of field/operator/value filters, e.g. {"field":"lastname","operator":"$eq","value":"Smith"}.',
-					)
-					.optional(),
-				andLogic: z
-					.boolean()
-					.describe('Whether the filters are ANDed (default) or ORed.')
-					.optional(),
-				limit: z.number().optional(),
-				skip: z.number().optional(),
-				sort: z.string().optional(),
-				fields: z.string().optional(),
-			})
-			.loose(),
+		body: SearchBodySchema,
 	})
 	.loose();
 
@@ -1643,11 +1708,11 @@ export const SearchSystemUsersOutputSchema = z
 		results: z
 			.array(z.unknown())
 			.describe('The list of system users.')
-			.optional(),
+			.nullish(),
 		totalCount: z
 			.number()
 			.describe('The total number of system users.')
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -1677,32 +1742,7 @@ export const SearchSystemsInputSchema = z
 				'A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*',
 			)
 			.optional(),
-		body: z
-			.object({
-				filter: z
-					.array(
-						z
-							.object({
-								field: z.string(),
-								operator: z.string(),
-								// unknown: the spec accepts any JSON value in a filter entry,
-								// so the value has no published shape to type.
-								value: z.unknown().optional(),
-							})
-							.loose(),
-					)
-					.describe('Array of field/operator/value filters.')
-					.optional(),
-				andLogic: z
-					.boolean()
-					.describe('Whether the filters are ANDed (default) or ORed.')
-					.optional(),
-				limit: z.number().optional(),
-				skip: z.number().optional(),
-				sort: z.string().optional(),
-				fields: z.string().optional(),
-			})
-			.loose(),
+		body: SearchBodySchema,
 	})
 	.loose();
 
@@ -1710,8 +1750,8 @@ export type SearchSystemsInput = z.infer<typeof SearchSystemsInputSchema>;
 
 export const SearchSystemsOutputSchema = z
 	.object({
-		results: z.array(z.unknown()).describe('The list of systems.').optional(),
-		totalCount: z.number().describe('The total number of systems.').optional(),
+		results: z.array(z.unknown()).describe('The list of systems.').nullish(),
+		totalCount: z.number().describe('The total number of systems.').nullish(),
 	})
 	.loose();
 
@@ -1756,61 +1796,62 @@ export const CommandsListOutputSchema = z
 			.array(
 				z
 					.object({
-						_id: z.string().describe('The ID of the command.').optional(),
+						_id: z.string().describe('The ID of the command.').nullish(),
 						command: z
 							.string()
 							.describe('The Command to execute, truncated to 10k characters.')
-							.optional(),
-						commandType: z.string().describe('The Command OS.').optional(),
+							.nullish(),
+						commandType: z.string().describe('The Command OS.').nullish(),
 						launchType: z
 							.string()
 							.describe('How the Command is executed.')
-							.optional(),
-						listensTo: z.string().optional(),
-						name: z.string().describe('The name of the Command.').optional(),
+							.nullish(),
+						listensTo: z.string().nullish(),
+						name: z.string().describe('The name of the Command.').nullish(),
 						organization: z
 							.string()
 							.describe('The ID of the Organization.')
-							.optional(),
+							.nullish(),
 						schedule: z
 							.string()
 							.describe(
 								'A crontab that consists of: [ (seconds) (minutes) (hours) (days of month) (months) (weekdays) ] or [ immediate ]. If you send this as an empty string, it will run immediately.',
 							)
-							.optional(),
+							.nullish(),
 						scheduleRepeatType: z
 							.string()
 							.describe('When the command will repeat.')
-							.optional(),
+							.nullish(),
 						trigger: z
 							.string()
 							.describe('Trigger to execute command.')
-							.optional(),
+							.nullish(),
 						description: z
 							.string()
 							.describe('Description of the command.')
-							.optional(),
+							.nullish(),
 						aiGenerated: z
 							.boolean()
 							.describe(
 								'Whether this command was generated with AI assistance.',
 							)
-							.optional(),
+							.nullish(),
 						templatingRequired: z
 							.boolean()
 							.describe(
 								'Whether this command requires templating before execution.',
 							)
-							.optional(),
+							.nullish(),
 						managedBy: z
 							.enum(['enterprise', 'organization'])
+							.or(z.string())
 							.describe('Command owner type (`enterprise` or `organization`).')
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		totalCount: z.number().describe('The total number of commands').optional(),
+			.nullish(),
+		totalCount: z.number().describe('The total number of commands').nullish(),
 	})
 	.loose();
 
@@ -1820,15 +1861,31 @@ export const CommandsCreateInputSchema = z
 	.object({
 		body: z
 			.object({
-				name: z.string().describe('The name of the command.').optional(),
+				name: z.string().describe('The name of the command.'),
 				command: z.string().describe('The command to run.'),
 				commandType: z
 					.string()
 					.describe('The OS of the command target: mac, windows, or linux.'),
-				listenerHost: z.string().optional(),
+				user: z
+					.string()
+					.describe(
+						'The ID of the system user to run the command as. Required for mac and linux commands; 000000000000000000000000 runs it as root.',
+					)
+					.optional(),
+				sudo: z.boolean().optional(),
+				shell: z
+					.string()
+					.describe('The shell used to run the command.')
+					.optional(),
+				launchType: z
+					.string()
+					.describe('How the command will execute, e.g. manual.')
+					.optional(),
 				timeout: z
-					.number()
-					.describe('The command timeout in seconds.')
+					.union([z.string(), z.number()])
+					.describe(
+						'The time in seconds to allow the command to run (max 86400).',
+					)
 					.optional(),
 				schedule: z.string().optional(),
 				trigger: z.string().optional(),
@@ -1847,90 +1904,92 @@ export const CommandsCreateOutputSchema = z
 			.describe(
 				'An array of IDs of the Command Runner Users that can execute this command.',
 			)
-			.optional(),
+			.nullish(),
 		commandTarget: z
 			.enum(['enterprise', 'organization'])
+			.or(z.string())
 			.describe(
 				'EP create target when enterprise command sharing is enabled. `enterprise`\ncreates a default-shared Enterprise command (grants all current child orgs).\n`organization` creates a local command in `targetOrganizationId` (or the\npinned org). Ignored when sharing is disabled.\n',
 			)
-			.optional(),
+			.nullish(),
 		targetOrganizationId: z
 			.string()
 			.describe(
 				'Child organization ID for a local command when `commandTarget` is\n`organization` in Enterprise / View All context. Ignored for Enterprise\ncreate and when sharing is disabled.\n',
 			)
-			.optional(),
+			.nullish(),
 		commandType: z.string().describe('The Command OS'),
 		files: z
 			.array(z.string())
 			.describe('An array of file IDs to include with the command.')
-			.optional(),
-		launchType: z.string().describe('How the command will execute.').optional(),
-		listensTo: z.string().optional(),
+			.nullish(),
+		launchType: z.string().describe('How the command will execute.').nullish(),
+		listensTo: z.string().nullish(),
 		name: z.string(),
-		organization: z.string().describe('The ID of the organization.').optional(),
+		organization: z.string().describe('The ID of the organization.').nullish(),
 		schedule: z
 			.string()
 			.describe(
 				'A crontab that consists of: [ (seconds) (minutes) (hours) (days of month) (months) (weekdays) ] or [ immediate ]. If you send this as an empty string, it will run immediately.\n',
 			)
-			.optional(),
+			.nullish(),
 		scheduleRepeatType: z
 			.string()
 			.describe('When the command will repeat.')
-			.optional(),
-		sudo: z.boolean().optional(),
+			.nullish(),
+		sudo: z.boolean().nullish(),
 		systems: z
 			.array(z.string())
 			.describe(
 				'Not used. Use /api/v2/commands/{id}/associations to bind commands to systems.',
 			)
-			.optional(),
+			.nullish(),
 		template: z
 			.string()
 			.describe('The template this command was created from')
-			.optional(),
+			.nullish(),
 		timeout: z
 			.string()
 			.describe(
 				'The time in seconds to allow the command to run for. The maximum value is 86400 seconds (1 day).',
 			)
-			.optional(),
-		trigger: z.string().describe('The name of the command trigger.').optional(),
+			.nullish(),
+		trigger: z.string().describe('The name of the command trigger.').nullish(),
 		user: z
 			.string()
 			.describe(
 				'The ID of the system user to run the command as. This field is required when creating a command with a commandType of "mac" or "linux".',
 			)
-			.optional(),
-		shell: z.string().describe('The shell used to run the command.').optional(),
+			.nullish(),
+		shell: z.string().describe('The shell used to run the command.').nullish(),
 		timeToLiveSeconds: z
 			.number()
 			.describe(
 				'Time in seconds a command can wait in the queue to be run before timing out',
 			)
-			.optional(),
+			.nullish(),
 		scheduleYear: z
 			.number()
 			.describe('The year that a scheduled command will launch in.')
-			.optional(),
+			.nullish(),
 		filesS3: z
 			.array(z.unknown())
 			.describe('An array of file stored in S3 to include with the command.')
-			.optional(),
-		description: z.string().describe('Description of the command.').optional(),
+			.nullish(),
+		description: z.string().describe('Description of the command.').nullish(),
 		aiGenerated: z
 			.boolean()
 			.describe('Whether this command was generated with AI assistance.')
-			.optional(),
+			.nullish(),
 		templatingRequired: z
 			.boolean()
 			.describe('Whether this command requires templating before execution.')
-			.optional(),
+			.nullish(),
 		managedBy: z
 			.enum(['enterprise', 'organization'])
+			.or(z.string())
 			.describe('Command owner type (`enterprise` or `organization`).')
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -1958,96 +2017,98 @@ export const CommandsGetOutputSchema = z
 		command: z
 			.string()
 			.describe('The command to execute on the server.')
-			.optional(),
+			.nullish(),
 		commandRunners: z
 			.array(z.string())
 			.describe(
 				'An array of IDs of the Command Runner Users that can execute this command.',
 			)
-			.optional(),
+			.nullish(),
 		commandTarget: z
 			.enum(['enterprise', 'organization'])
+			.or(z.string())
 			.describe(
 				'EP create target when enterprise command sharing is enabled. `enterprise`\ncreates a default-shared Enterprise command (grants all current child orgs).\n`organization` creates a local command in `targetOrganizationId` (or the\npinned org). Ignored when sharing is disabled.\n',
 			)
-			.optional(),
+			.nullish(),
 		targetOrganizationId: z
 			.string()
 			.describe(
 				'Child organization ID for a local command when `commandTarget` is\n`organization` in Enterprise / View All context. Ignored for Enterprise\ncreate and when sharing is disabled.\n',
 			)
-			.optional(),
-		commandType: z.string().describe('The Command OS').optional(),
+			.nullish(),
+		commandType: z.string().describe('The Command OS').nullish(),
 		files: z
 			.array(z.string())
 			.describe('An array of file IDs to include with the command.')
-			.optional(),
-		launchType: z.string().describe('How the command will execute.').optional(),
-		listensTo: z.string().optional(),
-		name: z.string().optional(),
-		organization: z.string().describe('The ID of the organization.').optional(),
+			.nullish(),
+		launchType: z.string().describe('How the command will execute.').nullish(),
+		listensTo: z.string().nullish(),
+		name: z.string().nullish(),
+		organization: z.string().describe('The ID of the organization.').nullish(),
 		schedule: z
 			.string()
 			.describe(
 				'A crontab that consists of: [ (seconds) (minutes) (hours) (days of month) (months) (weekdays) ] or [ immediate ]. If you send this as an empty string, it will run immediately.\n',
 			)
-			.optional(),
+			.nullish(),
 		scheduleRepeatType: z
 			.string()
 			.describe('When the command will repeat.')
-			.optional(),
-		sudo: z.boolean().optional(),
+			.nullish(),
+		sudo: z.boolean().nullish(),
 		systems: z
 			.array(z.string())
 			.describe(
 				'Not used. Use /api/v2/commands/{id}/associations to bind commands to systems.',
 			)
-			.optional(),
+			.nullish(),
 		template: z
 			.string()
 			.describe('The template this command was created from')
-			.optional(),
+			.nullish(),
 		timeout: z
 			.string()
 			.describe(
 				'The time in seconds to allow the command to run for. The maximum value is 86400 seconds (1 day).',
 			)
-			.optional(),
-		trigger: z.string().describe('The name of the command trigger.').optional(),
+			.nullish(),
+		trigger: z.string().describe('The name of the command trigger.').nullish(),
 		user: z
 			.string()
 			.describe(
 				'The ID of the system user to run the command as. This field is required when creating a command with a commandType of "mac" or "linux".',
 			)
-			.optional(),
-		shell: z.string().describe('The shell used to run the command.').optional(),
+			.nullish(),
+		shell: z.string().describe('The shell used to run the command.').nullish(),
 		timeToLiveSeconds: z
 			.number()
 			.describe(
 				'Time in seconds a command can wait in the queue to be run before timing out',
 			)
-			.optional(),
+			.nullish(),
 		scheduleYear: z
 			.number()
 			.describe('The year that a scheduled command will launch in.')
-			.optional(),
+			.nullish(),
 		filesS3: z
 			.array(z.unknown())
 			.describe('An array of file stored in S3 to include with the command.')
-			.optional(),
-		description: z.string().describe('Description of the command.').optional(),
+			.nullish(),
+		description: z.string().describe('Description of the command.').nullish(),
 		aiGenerated: z
 			.boolean()
 			.describe('Whether this command was generated with AI assistance.')
-			.optional(),
+			.nullish(),
 		templatingRequired: z
 			.boolean()
 			.describe('Whether this command requires templating before execution.')
-			.optional(),
+			.nullish(),
 		managedBy: z
 			.enum(['enterprise', 'organization'])
+			.or(z.string())
 			.describe('Command owner type (`enterprise` or `organization`).')
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2073,8 +2134,8 @@ export type CommandsRunInput = z.infer<typeof CommandsRunInputSchema>;
 
 export const CommandsRunOutputSchema = z
 	.object({
-		queueIds: z.array(z.string()).optional(),
-		workflowInstanceId: z.string().optional(),
+		queueIds: z.array(z.string()).nullish(),
+		workflowInstanceId: z.string().nullish(),
 	})
 	.loose();
 
@@ -2115,15 +2176,15 @@ export type ApplicationsListInput = z.infer<typeof ApplicationsListInputSchema>;
 
 export const ApplicationsListOutputSchema = z
 	.object({
-		name: z.string().optional(),
+		name: z.string().nullish(),
 		results: z
 			.array(z.unknown())
 			.describe('The list of applications.')
-			.optional(),
+			.nullish(),
 		totalCount: z
 			.number()
 			.describe('The total number of applications.')
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2141,9 +2202,9 @@ export type ApplicationsGetInput = z.infer<typeof ApplicationsGetInputSchema>;
 
 export const ApplicationsGetOutputSchema = z
 	.object({
-		_id: z.string().optional(),
-		active: z.boolean().optional(),
-		beta: z.boolean().optional(),
+		_id: z.string().nullish(),
+		active: z.boolean().nullish(),
+		beta: z.boolean().nullish(),
 		color: z
 			.enum([
 				'',
@@ -2160,106 +2221,107 @@ export const ApplicationsGetOutputSchema = z
 				'#57C49F',
 				'#FF6C03',
 			])
-			.optional(),
+			.or(z.string())
+			.nullish(),
 		config: z
 			.object({
-				spErrorFlow: z.unknown().optional(),
-				signAssertion: z.unknown().optional(),
-				signResponse: z.unknown().optional(),
+				spErrorFlow: z.unknown().nullish(),
+				signAssertion: z.unknown().nullish(),
+				signResponse: z.unknown().nullish(),
 				acsUrl: z
 					.object({
-						label: z.string().optional(),
-						options: z.unknown().optional(),
-						position: z.number().optional(),
-						readOnly: z.boolean().optional(),
-						required: z.boolean().optional(),
-						toggle: z.unknown().optional(),
-						tooltip: z.unknown().optional(),
-						type: z.string().optional(),
-						value: z.string().optional(),
-						visible: z.boolean().optional(),
+						label: z.string().nullish(),
+						options: z.unknown().nullish(),
+						position: z.number().nullish(),
+						readOnly: z.boolean().nullish(),
+						required: z.boolean().nullish(),
+						toggle: z.unknown().nullish(),
+						tooltip: z.unknown().nullish(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
+						visible: z.boolean().nullish(),
 					})
 					.loose()
-					.optional(),
-				constantAttributes: z.unknown().optional(),
+					.nullish(),
+				constantAttributes: z.unknown().nullish(),
 				databaseAttributes: z
 					.object({
-						position: z.number().optional(),
+						position: z.number().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 				idpCertificate: z
 					.object({
-						label: z.string().optional(),
-						options: z.unknown().optional(),
-						position: z.number().optional(),
-						readOnly: z.boolean().optional(),
-						required: z.boolean().optional(),
-						toggle: z.unknown().optional(),
-						tooltip: z.unknown().optional(),
-						type: z.string().optional(),
-						value: z.string().optional(),
-						visible: z.boolean().optional(),
+						label: z.string().nullish(),
+						options: z.unknown().nullish(),
+						position: z.number().nullish(),
+						readOnly: z.boolean().nullish(),
+						required: z.boolean().nullish(),
+						toggle: z.unknown().nullish(),
+						tooltip: z.unknown().nullish(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
+						visible: z.boolean().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 				idpEntityId: z
 					.object({
-						label: z.string().optional(),
-						options: z.unknown().optional(),
-						position: z.number().optional(),
-						readOnly: z.boolean().optional(),
-						required: z.boolean().optional(),
-						toggle: z.unknown().optional(),
-						tooltip: z.unknown().optional(),
-						type: z.string().optional(),
-						value: z.string().optional(),
-						visible: z.boolean().optional(),
+						label: z.string().nullish(),
+						options: z.unknown().nullish(),
+						position: z.number().nullish(),
+						readOnly: z.boolean().nullish(),
+						required: z.boolean().nullish(),
+						toggle: z.unknown().nullish(),
+						tooltip: z.unknown().nullish(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
+						visible: z.boolean().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 				idpPrivateKey: z
 					.object({
-						label: z.string().optional(),
-						options: z.unknown().optional(),
-						position: z.number().optional(),
-						readOnly: z.boolean().optional(),
-						required: z.boolean().optional(),
-						toggle: z.unknown().optional(),
-						tooltip: z.unknown().optional(),
-						type: z.string().optional(),
-						value: z.string().optional(),
-						visible: z.boolean().optional(),
+						label: z.string().nullish(),
+						options: z.unknown().nullish(),
+						position: z.number().nullish(),
+						readOnly: z.boolean().nullish(),
+						required: z.boolean().nullish(),
+						toggle: z.unknown().nullish(),
+						tooltip: z.unknown().nullish(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
+						visible: z.boolean().nullish(),
 					})
 					.loose()
-					.optional(),
+					.nullish(),
 				spEntityId: z
 					.object({
-						label: z.string().optional(),
-						options: z.unknown().optional(),
-						position: z.number().optional(),
-						readOnly: z.boolean().optional(),
-						required: z.boolean().optional(),
-						toggle: z.unknown().optional(),
-						tooltip: z.unknown().optional(),
-						type: z.string().optional(),
-						value: z.string().optional(),
-						visible: z.boolean().optional(),
+						label: z.string().nullish(),
+						options: z.unknown().nullish(),
+						position: z.number().nullish(),
+						readOnly: z.boolean().nullish(),
+						required: z.boolean().nullish(),
+						toggle: z.unknown().nullish(),
+						tooltip: z.unknown().nullish(),
+						type: z.string().nullish(),
+						value: z.string().nullish(),
+						visible: z.boolean().nullish(),
 					})
 					.loose()
-					.optional(),
-				authClaimConfiguration: z.unknown().optional(),
+					.nullish(),
+				authClaimConfiguration: z.unknown().nullish(),
 			})
 			.loose()
 			.describe(
 				'Only required for SAML configuration (not required for Bookmarks)',
 			),
-		created: z.string().optional(),
-		databaseAttributes: z.array(z.record(z.string(), z.unknown())).optional(),
-		description: z.string().optional(),
-		displayLabel: z.string().optional(),
-		displayName: z.string().optional(),
-		learnMore: z.string().optional(),
+		created: z.string().nullish(),
+		databaseAttributes: z.array(z.record(z.string(), z.unknown())).nullish(),
+		description: z.string().nullish(),
+		displayLabel: z.string().nullish(),
+		displayName: z.string().nullish(),
+		learnMore: z.string().nullish(),
 		logo: z
 			.object({
 				color: z
@@ -2278,28 +2340,29 @@ export const ApplicationsGetOutputSchema = z
 						'#57C49F',
 						'#FF6C03',
 					])
-					.optional(),
-				url: z.string().optional(),
+					.or(z.string())
+					.nullish(),
+				url: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		name: z.string(),
-		organization: z.string().optional(),
+		organization: z.string().nullish(),
 		sso: z
 			.object({
-				type: z.string().optional(),
-				beta: z.boolean().optional(),
-				jit: z.boolean().optional(),
-				idpCertExpirationAt: z.string().optional(),
-				idpCertificateUpdatedAt: z.string().optional(),
-				idpPrivateKeyUpdatedAt: z.string().optional(),
-				spCertificateUpdatedAt: z.string().optional(),
-				hidden: z.boolean().optional(),
+				type: z.string().nullish(),
+				beta: z.boolean().nullish(),
+				jit: z.boolean().nullish(),
+				idpCertExpirationAt: z.string().nullish(),
+				idpCertificateUpdatedAt: z.string().nullish(),
+				idpPrivateKeyUpdatedAt: z.string().nullish(),
+				spCertificateUpdatedAt: z.string().nullish(),
+				hidden: z.boolean().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		ssoUrl: z.string(),
-		parentApp: z.string().optional(),
+		parentApp: z.string().nullish(),
 		referenceApplications: z
 			.array(
 				z
@@ -2314,13 +2377,13 @@ export const ApplicationsGetOutputSchema = z
 			.describe(
 				"Organization-specific copies of this shared SSO application chain. Returned only for all-organizations list requests (x-org-id '-').",
 			)
-			.optional(),
+			.nullish(),
 		aiReady: z
 			.boolean()
 			.describe(
 				'Admin opt-in that this application instance should appear as AI Ready in the User Portal. Informational only — does not grant access. Setting to true requires at least one configured MCP connection. Gated by feature flag DC-4194-app-ai-ready.',
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2379,24 +2442,24 @@ export const OrganizationsListOutputSchema = z
 			.array(
 				z
 					.object({
-						_id: z.string().describe('The ID of the organization.').optional(),
+						_id: z.string().describe('The ID of the organization.').nullish(),
 						displayName: z
 							.string()
 							.describe('The name of the organization.')
-							.optional(),
+							.nullish(),
 						logoUrl: z
 							.unknown()
 							.describe('The organization logo image URL. ')
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
 			.describe('The list of organizations.')
-			.optional(),
+			.nullish(),
 		totalCount: z
 			.number()
 			.describe('The total number of organizations. ')
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -2426,8 +2489,8 @@ export type OrganizationsGetInput = z.infer<typeof OrganizationsGetInputSchema>;
 
 export const OrganizationsGetOutputSchema = z
 	.object({
-		_id: z.string().optional(),
-		created: z.string().optional(),
+		_id: z.string().nullish(),
+		created: z.string().nullish(),
 		customEmailSettings: z
 			.object({
 				enabled: z
@@ -2435,32 +2498,32 @@ export const OrganizationsGetOutputSchema = z
 					.describe(
 						'Used to enable or disable custom emails for an organization.',
 					)
-					.optional(),
+					.nullish(),
 			})
 			.loose()
 			.describe('Custom email settings for an organization')
-			.optional(),
-		displayName: z.string().optional(),
+			.nullish(),
+		displayName: z.string().nullish(),
 		entitlement: z
 			.object({
-				billingModel: z.string().optional(),
-				capUserQuantity: z.boolean().optional(),
-				maxUserQuantity: z.number().optional(),
-				purchaseChannel: z.string().optional(),
+				billingModel: z.string().nullish(),
+				capUserQuantity: z.boolean().nullish(),
+				maxUserQuantity: z.number().nullish(),
+				purchaseChannel: z.string().nullish(),
 				entitlementProducts: z
 					.array(z.record(z.string(), z.unknown()))
-					.optional(),
-				isManuallyBilled: z.boolean().optional(),
-				pricePerUserSum: z.number().optional(),
+					.nullish(),
+				isManuallyBilled: z.boolean().nullish(),
+				pricePerUserSum: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
-		hasStripeCustomerId: z.boolean().optional(),
-		hasCreditCard: z.boolean().optional(),
-		lastEstimateCalculationTimeStamp: z.string().optional(),
-		lastSfdcSyncStatus: z.record(z.string(), z.unknown()).optional(),
-		accountsReceivable: z.string().optional(),
-		accessRestriction: z.string().optional(),
+			.nullish(),
+		hasStripeCustomerId: z.boolean().nullish(),
+		hasCreditCard: z.boolean().nullish(),
+		lastEstimateCalculationTimeStamp: z.string().nullish(),
+		lastSfdcSyncStatus: z.record(z.string(), z.unknown()).nullish(),
+		accountsReceivable: z.string().nullish(),
+		accessRestriction: z.string().nullish(),
 		accountType: z
 			.enum([
 				'Alliance',
@@ -2476,58 +2539,60 @@ export const OrganizationsGetOutputSchema = z
 				'Prospective Customer',
 				'Prospective Partner',
 			])
+			.or(z.string())
 			.describe(
 				'Salesforce Account Type (`Account_Type__c`) written back to the org via BSS sync. Returned only when requested via the `fields` query parameter.',
 			)
-			.optional(),
-		logoUrl: z.unknown().optional(),
-		provider: z.unknown().optional(),
+			.nullish(),
+		logoUrl: z.unknown().nullish(),
+		provider: z.unknown().nullish(),
 		settings: z
 			.object({
-				agentVersion: z.string().optional(),
-				betaFeatures: z.record(z.string(), z.unknown()).optional(),
-				chromeDTCEnabled: z.boolean().optional(),
-				contactEmail: z.string().optional(),
-				contactName: z.string().optional(),
-				disableCommandRunner: z.boolean().optional(),
-				disableLdap: z.boolean().optional(),
-				disableUM: z.boolean().optional(),
-				duplicateLDAPGroups: z.boolean().optional(),
-				emailDisclaimer: z.string().optional(),
-				enableGoogleApps: z.boolean().optional(),
-				enableManagedUID: z.boolean().optional(),
-				enableO365: z.boolean().optional(),
-				enableUserPortalAgentInstall: z.boolean().optional(),
-				features: z.record(z.string(), z.unknown()).optional(),
+				agentVersion: z.string().nullish(),
+				betaFeatures: z.record(z.string(), z.unknown()).nullish(),
+				chromeDTCEnabled: z.boolean().nullish(),
+				contactEmail: z.string().nullish(),
+				contactName: z.string().nullish(),
+				disableCommandRunner: z.boolean().nullish(),
+				disableLdap: z.boolean().nullish(),
+				disableUM: z.boolean().nullish(),
+				duplicateLDAPGroups: z.boolean().nullish(),
+				emailDisclaimer: z.string().nullish(),
+				enableGoogleApps: z.boolean().nullish(),
+				enableManagedUID: z.boolean().nullish(),
+				enableO365: z.boolean().nullish(),
+				enableUserPortalAgentInstall: z.boolean().nullish(),
+				features: z.record(z.string(), z.unknown()).nullish(),
 				growthData: z
 					.record(z.string(), z.unknown())
 					.describe(
 						'Object containing Optimizely experimentIds and states corresponding to them',
 					)
-					.optional(),
-				logo: z.string().optional(),
-				name: z.string().optional(),
-				newSystemUserStateDefaults: z
-					.record(z.string(), z.unknown())
-					.optional(),
-				passwordCompliance: z.enum(['custom', 'pci3', 'windows']).optional(),
-				passwordPolicy: z.record(z.string(), z.unknown()).optional(),
-				pendingDelete: z.boolean().optional(),
-				requireAdminMFA: z.boolean().optional(),
-				showIntro: z.boolean().optional(),
-				systemUserDefaults: z.record(z.string(), z.unknown()).optional(),
-				systemUserPasswordExpirationInDays: z.number().optional(),
-				systemUsersCanEdit: z.boolean().optional(),
-				disableGoogleLogin: z.boolean().optional(),
-				userPortal: z.record(z.string(), z.unknown()).optional(),
-				deviceIdentificationEnabled: z.boolean().optional(),
-				trustedAppConfig: z.unknown().optional(),
-				maxSystemUsers: z.number().optional(),
-				windowsMDM: z.record(z.string(), z.unknown()).optional(),
+					.nullish(),
+				logo: z.string().nullish(),
+				name: z.string().nullish(),
+				newSystemUserStateDefaults: z.record(z.string(), z.unknown()).nullish(),
+				passwordCompliance: z
+					.enum(['custom', 'pci3', 'windows'])
+					.or(z.string())
+					.nullish(),
+				passwordPolicy: z.record(z.string(), z.unknown()).nullish(),
+				pendingDelete: z.boolean().nullish(),
+				requireAdminMFA: z.boolean().nullish(),
+				showIntro: z.boolean().nullish(),
+				systemUserDefaults: z.record(z.string(), z.unknown()).nullish(),
+				systemUserPasswordExpirationInDays: z.number().nullish(),
+				systemUsersCanEdit: z.boolean().nullish(),
+				disableGoogleLogin: z.boolean().nullish(),
+				userPortal: z.record(z.string(), z.unknown()).nullish(),
+				deviceIdentificationEnabled: z.boolean().nullish(),
+				trustedAppConfig: z.unknown().nullish(),
+				maxSystemUsers: z.number().nullish(),
+				windowsMDM: z.record(z.string(), z.unknown()).nullish(),
 			})
 			.loose()
-			.optional(),
-		totalBillingEstimate: z.number().optional(),
+			.nullish(),
+		totalBillingEstimate: z.number().nullish(),
 	})
 	.loose();
 
@@ -2571,41 +2636,39 @@ export type UserGroupsListInput = z.infer<typeof UserGroupsListInputSchema>;
 export const UserGroupsListOutputSchema = z.array(
 	z
 		.object({
-			attributes: z.unknown().optional(),
-			email: z.string().describe('Email address of a User Group').optional(),
-			description: z
-				.string()
-				.describe('Description of a User Group')
-				.optional(),
+			attributes: z.unknown().nullish(),
+			email: z.string().describe('Email address of a User Group').nullish(),
+			description: z.string().describe('Description of a User Group').nullish(),
 			id: z
 				.string()
 				.describe('ObjectId uniquely identifying a User Group.')
-				.optional(),
-			memberQuery: z.unknown().optional(),
+				.nullish(),
+			memberQuery: z.unknown().nullish(),
 			// unknown: GraphObjects are polymorphic provider-defined objects, and
 			// the spec publishes no item shape for the exemptions array.
 			memberQueryExemptions: z
 				.array(z.unknown())
 				.describe('Array of GraphObjects exempted from the query')
-				.optional(),
+				.nullish(),
 			memberSuggestionsNotify: z
 				.boolean()
 				.describe(
 					'True if notification emails are to be sent for membership suggestions.',
 				)
-				.optional(),
-			memberQueryErrorFlags: z.unknown().optional(),
-			membershipMethod: z.unknown().optional(),
-			name: z.string().describe('Display name of a User Group.').optional(),
+				.nullish(),
+			memberQueryErrorFlags: z.unknown().nullish(),
+			membershipMethod: z.unknown().nullish(),
+			name: z.string().describe('Display name of a User Group.').nullish(),
 			organizationObjectId: z
 				.unknown()
 				.describe('id of the organization owning this group')
-				.optional(),
-			suggestionCounts: z.unknown().optional(),
+				.nullish(),
+			suggestionCounts: z.unknown().nullish(),
 			type: z
 				.enum(['user_group'])
+				.or(z.string())
 				.describe('The type of the group.')
-				.optional(),
+				.nullish(),
 		})
 		.loose(),
 );
@@ -2616,19 +2679,49 @@ export const UserGroupsCreateInputSchema = z
 	.object({
 		body: z
 			.object({
+				// unknown: the spec does not publish a shape for UserGroup graph
+				// attributes, so no stricter type exists to model.
 				attributes: z
-					.object({
-						name: z.string().describe('The name of the user group.'),
-						description: z
-							.string()
-							.describe('The description of the user group.')
-							.optional(),
-						email: z
-							.string()
-							.describe('The email address of the user group.')
-							.optional(),
-					})
-					.loose(),
+					.unknown()
+					.describe('The graph attributes for a UserGroup.')
+					.optional(),
+				email: z.string().describe('Email address of a User Group').optional(),
+				description: z
+					.string()
+					.describe('Description of a User Group')
+					.optional(),
+				// unknown: the member query DSL is provider-defined (v1 FilterQuery or
+				// v2 filter objects) and has no closed published shape to type.
+				memberQuery: z
+					.unknown()
+					.describe(
+						'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
+					)
+					.optional(),
+				// unknown: GraphObjects are polymorphic provider-defined objects, and
+				// the spec publishes no item shape for the exemptions array.
+				memberQueryExemptions: z
+					.array(z.unknown())
+					.describe('Array of GraphObjects exempted from the query')
+					.optional(),
+				memberSuggestionsNotify: z
+					.boolean()
+					.describe(
+						'True if notification emails are to be sent for membership suggestions.',
+					)
+					.optional(),
+				membershipMethod: z
+					.enum([
+						'NOTSET',
+						'STATIC',
+						'DYNAMIC_REVIEW_REQUIRED',
+						'DYNAMIC_AUTOMATED',
+					])
+					.describe(
+						'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
+					)
+					.optional(),
+				name: z.string().describe('Display name of a User Group.'),
 			})
 			.loose(),
 	})
@@ -2641,35 +2734,35 @@ export const UserGroupsCreateOutputSchema = z
 		attributes: z
 			.unknown()
 			.describe('The graph attributes for a UserGroup.')
-			.optional(),
-		email: z.string().describe('Email address of a User Group').optional(),
-		description: z.string().describe('Description of a User Group').optional(),
+			.nullish(),
+		email: z.string().describe('Email address of a User Group').nullish(),
+		description: z.string().describe('Description of a User Group').nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a User Group.')
-			.optional(),
+			.nullish(),
 		memberQuery: z
 			.unknown()
 			.describe(
 				'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryExemptions: z
 			.array(z.unknown())
 			.describe('Array of GraphObjects exempted from the query')
-			.optional(),
+			.nullish(),
 		memberSuggestionsNotify: z
 			.boolean()
 			.describe(
 				'True if notification emails are to be sent for membership suggestions.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryErrorFlags: z
 			.array(z.string())
 			.describe(
 				'Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b',
 			)
-			.optional(),
+			.nullish(),
 		membershipMethod: z
 			.enum([
 				'NOTSET',
@@ -2677,24 +2770,29 @@ export const UserGroupsCreateOutputSchema = z
 				'DYNAMIC_REVIEW_REQUIRED',
 				'DYNAMIC_AUTOMATED',
 			])
+			.or(z.string())
 			.describe(
 				'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
 			)
-			.optional(),
-		name: z.string().describe('Display name of a User Group.').optional(),
+			.nullish(),
+		name: z.string().describe('Display name of a User Group.').nullish(),
 		organizationObjectId: z
 			.unknown()
 			.describe('id of the organization owning this group')
-			.optional(),
+			.nullish(),
 		suggestionCounts: z
 			.object({
-				add: z.number().optional(),
-				remove: z.number().optional(),
-				total: z.number().optional(),
+				add: z.number().nullish(),
+				remove: z.number().nullish(),
+				total: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
-		type: z.enum(['user_group']).describe('The type of the group.').optional(),
+			.nullish(),
+		type: z
+			.enum(['user_group'])
+			.or(z.string())
+			.describe('The type of the group.')
+			.nullish(),
 	})
 	.loose();
 
@@ -2715,35 +2813,35 @@ export const UserGroupsGetOutputSchema = z
 		attributes: z
 			.unknown()
 			.describe('The graph attributes for a UserGroup.')
-			.optional(),
-		email: z.string().describe('Email address of a User Group').optional(),
-		description: z.string().describe('Description of a User Group').optional(),
+			.nullish(),
+		email: z.string().describe('Email address of a User Group').nullish(),
+		description: z.string().describe('Description of a User Group').nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a User Group.')
-			.optional(),
+			.nullish(),
 		memberQuery: z
 			.unknown()
 			.describe(
 				'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryExemptions: z
 			.array(z.unknown())
 			.describe('Array of GraphObjects exempted from the query')
-			.optional(),
+			.nullish(),
 		memberSuggestionsNotify: z
 			.boolean()
 			.describe(
 				'True if notification emails are to be sent for membership suggestions.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryErrorFlags: z
 			.array(z.string())
 			.describe(
 				'Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b',
 			)
-			.optional(),
+			.nullish(),
 		membershipMethod: z
 			.enum([
 				'NOTSET',
@@ -2751,24 +2849,29 @@ export const UserGroupsGetOutputSchema = z
 				'DYNAMIC_REVIEW_REQUIRED',
 				'DYNAMIC_AUTOMATED',
 			])
+			.or(z.string())
 			.describe(
 				'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
 			)
-			.optional(),
-		name: z.string().describe('Display name of a User Group.').optional(),
+			.nullish(),
+		name: z.string().describe('Display name of a User Group.').nullish(),
 		organizationObjectId: z
 			.unknown()
 			.describe('id of the organization owning this group')
-			.optional(),
+			.nullish(),
 		suggestionCounts: z
 			.object({
-				add: z.number().optional(),
-				remove: z.number().optional(),
-				total: z.number().optional(),
+				add: z.number().nullish(),
+				remove: z.number().nullish(),
+				total: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
-		type: z.enum(['user_group']).describe('The type of the group.').optional(),
+			.nullish(),
+		type: z
+			.enum(['user_group'])
+			.or(z.string())
+			.describe('The type of the group.')
+			.nullish(),
 	})
 	.loose();
 
@@ -2834,35 +2937,35 @@ export const UserGroupsUpdateOutputSchema = z
 		attributes: z
 			.unknown()
 			.describe('The graph attributes for a UserGroup.')
-			.optional(),
-		email: z.string().describe('Email address of a User Group').optional(),
-		description: z.string().describe('Description of a User Group').optional(),
+			.nullish(),
+		email: z.string().describe('Email address of a User Group').nullish(),
+		description: z.string().describe('Description of a User Group').nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a User Group.')
-			.optional(),
+			.nullish(),
 		memberQuery: z
 			.unknown()
 			.describe(
 				'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryExemptions: z
 			.array(z.unknown())
 			.describe('Array of GraphObjects exempted from the query')
-			.optional(),
+			.nullish(),
 		memberSuggestionsNotify: z
 			.boolean()
 			.describe(
 				'True if notification emails are to be sent for membership suggestions.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryErrorFlags: z
 			.array(z.string())
 			.describe(
 				'Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b',
 			)
-			.optional(),
+			.nullish(),
 		membershipMethod: z
 			.enum([
 				'NOTSET',
@@ -2870,24 +2973,29 @@ export const UserGroupsUpdateOutputSchema = z
 				'DYNAMIC_REVIEW_REQUIRED',
 				'DYNAMIC_AUTOMATED',
 			])
+			.or(z.string())
 			.describe(
 				'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
 			)
-			.optional(),
-		name: z.string().describe('Display name of a User Group.').optional(),
+			.nullish(),
+		name: z.string().describe('Display name of a User Group.').nullish(),
 		organizationObjectId: z
 			.unknown()
 			.describe('id of the organization owning this group')
-			.optional(),
+			.nullish(),
 		suggestionCounts: z
 			.object({
-				add: z.number().optional(),
-				remove: z.number().optional(),
-				total: z.number().optional(),
+				add: z.number().nullish(),
+				remove: z.number().nullish(),
+				total: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
-		type: z.enum(['user_group']).describe('The type of the group.').optional(),
+			.nullish(),
+		type: z
+			.enum(['user_group'])
+			.or(z.string())
+			.describe('The type of the group.')
+			.nullish(),
 	})
 	.loose();
 
@@ -2908,35 +3016,35 @@ export const UserGroupsDeleteOutputSchema = z
 		attributes: z
 			.unknown()
 			.describe('The graph attributes for a UserGroup.')
-			.optional(),
-		email: z.string().describe('Email address of a User Group').optional(),
-		description: z.string().describe('Description of a User Group').optional(),
+			.nullish(),
+		email: z.string().describe('Email address of a User Group').nullish(),
+		description: z.string().describe('Description of a User Group').nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a User Group.')
-			.optional(),
+			.nullish(),
 		memberQuery: z
 			.unknown()
 			.describe(
 				'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryExemptions: z
 			.array(z.unknown())
 			.describe('Array of GraphObjects exempted from the query')
-			.optional(),
+			.nullish(),
 		memberSuggestionsNotify: z
 			.boolean()
 			.describe(
 				'True if notification emails are to be sent for membership suggestions.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryErrorFlags: z
 			.array(z.string())
 			.describe(
 				'Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b',
 			)
-			.optional(),
+			.nullish(),
 		membershipMethod: z
 			.enum([
 				'NOTSET',
@@ -2944,26 +3052,33 @@ export const UserGroupsDeleteOutputSchema = z
 				'DYNAMIC_REVIEW_REQUIRED',
 				'DYNAMIC_AUTOMATED',
 			])
+			.or(z.string())
 			.describe(
 				'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
 			)
-			.optional(),
-		name: z.string().describe('Display name of a User Group.').optional(),
+			.nullish(),
+		name: z.string().describe('Display name of a User Group.').nullish(),
 		organizationObjectId: z
 			.unknown()
 			.describe('id of the organization owning this group')
-			.optional(),
+			.nullish(),
 		suggestionCounts: z
 			.object({
-				add: z.number().optional(),
-				remove: z.number().optional(),
-				total: z.number().optional(),
+				add: z.number().nullish(),
+				remove: z.number().nullish(),
+				total: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
-		type: z.enum(['user_group']).describe('The type of the group.').optional(),
+			.nullish(),
+		type: z
+			.enum(['user_group'])
+			.or(z.string())
+			.describe('The type of the group.')
+			.nullish(),
 	})
-	.loose();
+	.loose()
+	// The API answers 200 with the deleted group or 204 with no body.
+	.optional();
 
 export type UserGroupsDeleteOutput = z.infer<
 	typeof UserGroupsDeleteOutputSchema
@@ -2990,8 +3105,8 @@ export type UserGroupsListMembersInput = z.infer<
 export const UserGroupsListMembersOutputSchema = z.array(
 	z
 		.object({
-			attributes: z.unknown().optional(),
-			from: z.unknown().optional(),
+			attributes: z.unknown().nullish(),
+			from: z.unknown().nullish(),
 			to: z.unknown(),
 		})
 		.loose()
@@ -3077,7 +3192,7 @@ export type UserGroupsListMembershipInput = z.infer<
 export const UserGroupsListMembershipOutputSchema = z.array(
 	z
 		.object({
-			compiledAttributes: z.unknown().optional(),
+			compiledAttributes: z.unknown().nullish(),
 			id: z.string().describe('Object ID of this graph object.'),
 			paths: z
 				.array(z.array(z.unknown()))
@@ -3090,8 +3205,8 @@ export const UserGroupsListMembershipOutputSchema = z.array(
 				.describe(
 					'The external resource ID that is being synced. Only present when syncStatus query parameter is true.',
 				)
-				.optional(),
-			syncStatus: z.unknown().optional(),
+				.nullish(),
+			syncStatus: z.unknown().nullish(),
 		})
 		.loose(),
 );
@@ -3136,43 +3251,44 @@ export type SystemGroupsListInput = z.infer<typeof SystemGroupsListInputSchema>;
 export const SystemGroupsListOutputSchema = z.array(
 	z
 		.object({
-			attributes: z.unknown().optional(),
+			attributes: z.unknown().nullish(),
 			description: z
 				.string()
 				.describe('Description of a System Group')
-				.optional(),
+				.nullish(),
 			email: z
 				.string()
 				.describe('E-mail address associated with a System Group')
-				.optional(),
+				.nullish(),
 			id: z
 				.string()
 				.describe('ObjectId uniquely identifying a System Group.')
-				.optional(),
-			memberQuery: z.unknown().optional(),
-			memberQueryErrorFlags: z.unknown().optional(),
+				.nullish(),
+			memberQuery: z.unknown().nullish(),
+			memberQueryErrorFlags: z.unknown().nullish(),
 			// unknown: GraphObjects are polymorphic provider-defined objects, and
 			// the spec publishes no item shape for the exemptions array.
 			memberQueryExemptions: z
 				.array(z.unknown())
 				.describe('Array of GraphObjects exempted from the query')
-				.optional(),
-			membershipMethod: z.unknown().optional(),
+				.nullish(),
+			membershipMethod: z.unknown().nullish(),
 			memberSuggestionsNotify: z
 				.boolean()
 				.describe(
 					'True if notification emails are to be sent for membership suggestions.',
 				)
-				.optional(),
-			name: z.string().describe('Display name of a System Group.').optional(),
+				.nullish(),
+			name: z.string().describe('Display name of a System Group.').nullish(),
 			organizationObjectId: z
 				.unknown()
 				.describe('id of the organization owning this group')
-				.optional(),
+				.nullish(),
 			type: z
 				.enum(['system_group'])
+				.or(z.string())
 				.describe("The type of the group; always 'system' for a System Group.")
-				.optional(),
+				.nullish(),
 		})
 		.loose(),
 );
@@ -3239,35 +3355,32 @@ export type SystemGroupsCreateInput = z.infer<
 
 export const SystemGroupsCreateOutputSchema = z
 	.object({
-		attributes: z.unknown().describe('The graph attributes.').optional(),
-		description: z
-			.string()
-			.describe('Description of a System Group')
-			.optional(),
+		attributes: z.unknown().describe('The graph attributes.').nullish(),
+		description: z.string().describe('Description of a System Group').nullish(),
 		email: z
 			.string()
 			.describe('E-mail address associated with a System Group')
-			.optional(),
+			.nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a System Group.')
-			.optional(),
+			.nullish(),
 		memberQuery: z
 			.unknown()
 			.describe(
 				'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryErrorFlags: z
 			.array(z.string())
 			.describe(
 				'Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryExemptions: z
 			.array(z.unknown())
 			.describe('Array of GraphObjects exempted from the query')
-			.optional(),
+			.nullish(),
 		membershipMethod: z
 			.enum([
 				'NOTSET',
@@ -3275,25 +3388,27 @@ export const SystemGroupsCreateOutputSchema = z
 				'DYNAMIC_REVIEW_REQUIRED',
 				'DYNAMIC_AUTOMATED',
 			])
+			.or(z.string())
 			.describe(
 				'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
 			)
-			.optional(),
+			.nullish(),
 		memberSuggestionsNotify: z
 			.boolean()
 			.describe(
 				'True if notification emails are to be sent for membership suggestions.',
 			)
-			.optional(),
-		name: z.string().describe('Display name of a System Group.').optional(),
+			.nullish(),
+		name: z.string().describe('Display name of a System Group.').nullish(),
 		organizationObjectId: z
 			.unknown()
 			.describe('id of the organization owning this group')
-			.optional(),
+			.nullish(),
 		type: z
 			.enum(['system_group'])
+			.or(z.string())
 			.describe("The type of the group; always 'system' for a System Group.")
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3311,35 +3426,32 @@ export type SystemGroupsGetInput = z.infer<typeof SystemGroupsGetInputSchema>;
 
 export const SystemGroupsGetOutputSchema = z
 	.object({
-		attributes: z.unknown().describe('The graph attributes.').optional(),
-		description: z
-			.string()
-			.describe('Description of a System Group')
-			.optional(),
+		attributes: z.unknown().describe('The graph attributes.').nullish(),
+		description: z.string().describe('Description of a System Group').nullish(),
 		email: z
 			.string()
 			.describe('E-mail address associated with a System Group')
-			.optional(),
+			.nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a System Group.')
-			.optional(),
+			.nullish(),
 		memberQuery: z
 			.unknown()
 			.describe(
 				'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryErrorFlags: z
 			.array(z.string())
 			.describe(
 				'Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryExemptions: z
 			.array(z.unknown())
 			.describe('Array of GraphObjects exempted from the query')
-			.optional(),
+			.nullish(),
 		membershipMethod: z
 			.enum([
 				'NOTSET',
@@ -3347,25 +3459,27 @@ export const SystemGroupsGetOutputSchema = z
 				'DYNAMIC_REVIEW_REQUIRED',
 				'DYNAMIC_AUTOMATED',
 			])
+			.or(z.string())
 			.describe(
 				'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
 			)
-			.optional(),
+			.nullish(),
 		memberSuggestionsNotify: z
 			.boolean()
 			.describe(
 				'True if notification emails are to be sent for membership suggestions.',
 			)
-			.optional(),
-		name: z.string().describe('Display name of a System Group.').optional(),
+			.nullish(),
+		name: z.string().describe('Display name of a System Group.').nullish(),
 		organizationObjectId: z
 			.unknown()
 			.describe('id of the organization owning this group')
-			.optional(),
+			.nullish(),
 		type: z
 			.enum(['system_group'])
+			.or(z.string())
 			.describe("The type of the group; always 'system' for a System Group.")
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3376,18 +3490,48 @@ export const SystemGroupsUpdateInputSchema = z
 		id: safePathParam.describe('ObjectID of the System Group.'),
 		body: z
 			.object({
-				attributes: z
-					.object({
-						name: z
-							.string()
-							.describe('The name of the system group.')
-							.optional(),
-						description: z
-							.string()
-							.describe('The description of the system group.')
-							.optional(),
-					})
-					.loose()
+				// unknown: the spec does not publish a shape for SystemGroup graph
+				// attributes, so no stricter type exists to model.
+				attributes: z.unknown().describe('The graph attributes.').optional(),
+				email: z
+					.string()
+					.describe('Email address of a System Group')
+					.optional(),
+				description: z
+					.string()
+					.describe('Description of a System Group')
+					.optional(),
+				name: z.string().describe('Display name of a System Group.'),
+				// unknown: the member query DSL is provider-defined (v1 FilterQuery or
+				// v2 filter objects) and has no closed published shape to type.
+				memberQuery: z
+					.unknown()
+					.describe(
+						'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
+					)
+					.optional(),
+				membershipMethod: z
+					.enum([
+						'NOTSET',
+						'STATIC',
+						'DYNAMIC_REVIEW_REQUIRED',
+						'DYNAMIC_AUTOMATED',
+					])
+					.describe(
+						'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
+					)
+					.optional(),
+				memberSuggestionsNotify: z
+					.boolean()
+					.describe(
+						'True if notification emails are to be sent for membership suggestions.',
+					)
+					.optional(),
+				// unknown: GraphObjects are polymorphic provider-defined objects, and
+				// the spec publishes no item shape for the exemptions array.
+				memberQueryExemptions: z
+					.array(z.unknown())
+					.describe('Array of GraphObjects exempted from the query')
 					.optional(),
 			})
 			.loose(),
@@ -3400,35 +3544,32 @@ export type SystemGroupsUpdateInput = z.infer<
 
 export const SystemGroupsUpdateOutputSchema = z
 	.object({
-		attributes: z.unknown().describe('The graph attributes.').optional(),
-		description: z
-			.string()
-			.describe('Description of a System Group')
-			.optional(),
+		attributes: z.unknown().describe('The graph attributes.').nullish(),
+		description: z.string().describe('Description of a System Group').nullish(),
 		email: z
 			.string()
 			.describe('E-mail address associated with a System Group')
-			.optional(),
+			.nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a System Group.')
-			.optional(),
+			.nullish(),
 		memberQuery: z
 			.unknown()
 			.describe(
 				'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryErrorFlags: z
 			.array(z.string())
 			.describe(
 				'Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryExemptions: z
 			.array(z.unknown())
 			.describe('Array of GraphObjects exempted from the query')
-			.optional(),
+			.nullish(),
 		membershipMethod: z
 			.enum([
 				'NOTSET',
@@ -3436,25 +3577,27 @@ export const SystemGroupsUpdateOutputSchema = z
 				'DYNAMIC_REVIEW_REQUIRED',
 				'DYNAMIC_AUTOMATED',
 			])
+			.or(z.string())
 			.describe(
 				'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
 			)
-			.optional(),
+			.nullish(),
 		memberSuggestionsNotify: z
 			.boolean()
 			.describe(
 				'True if notification emails are to be sent for membership suggestions.',
 			)
-			.optional(),
-		name: z.string().describe('Display name of a System Group.').optional(),
+			.nullish(),
+		name: z.string().describe('Display name of a System Group.').nullish(),
 		organizationObjectId: z
 			.unknown()
 			.describe('id of the organization owning this group')
-			.optional(),
+			.nullish(),
 		type: z
 			.enum(['system_group'])
+			.or(z.string())
 			.describe("The type of the group; always 'system' for a System Group.")
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -3474,35 +3617,32 @@ export type SystemGroupsDeleteInput = z.infer<
 
 export const SystemGroupsDeleteOutputSchema = z
 	.object({
-		attributes: z.unknown().describe('The graph attributes.').optional(),
-		description: z
-			.string()
-			.describe('Description of a System Group')
-			.optional(),
+		attributes: z.unknown().describe('The graph attributes.').nullish(),
+		description: z.string().describe('Description of a System Group').nullish(),
 		email: z
 			.string()
 			.describe('E-mail address associated with a System Group')
-			.optional(),
+			.nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a System Group.')
-			.optional(),
+			.nullish(),
 		memberQuery: z
 			.unknown()
 			.describe(
 				'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryErrorFlags: z
 			.array(z.string())
 			.describe(
 				'Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b',
 			)
-			.optional(),
+			.nullish(),
 		memberQueryExemptions: z
 			.array(z.unknown())
 			.describe('Array of GraphObjects exempted from the query')
-			.optional(),
+			.nullish(),
 		membershipMethod: z
 			.enum([
 				'NOTSET',
@@ -3510,27 +3650,31 @@ export const SystemGroupsDeleteOutputSchema = z
 				'DYNAMIC_REVIEW_REQUIRED',
 				'DYNAMIC_AUTOMATED',
 			])
+			.or(z.string())
 			.describe(
 				'The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup',
 			)
-			.optional(),
+			.nullish(),
 		memberSuggestionsNotify: z
 			.boolean()
 			.describe(
 				'True if notification emails are to be sent for membership suggestions.',
 			)
-			.optional(),
-		name: z.string().describe('Display name of a System Group.').optional(),
+			.nullish(),
+		name: z.string().describe('Display name of a System Group.').nullish(),
 		organizationObjectId: z
 			.unknown()
 			.describe('id of the organization owning this group')
-			.optional(),
+			.nullish(),
 		type: z
 			.enum(['system_group'])
+			.or(z.string())
 			.describe("The type of the group; always 'system' for a System Group.")
-			.optional(),
+			.nullish(),
 	})
-	.loose();
+	.loose()
+	// The API answers 200 with the deleted group or 204 with no body.
+	.optional();
 
 export type SystemGroupsDeleteOutput = z.infer<
 	typeof SystemGroupsDeleteOutputSchema
@@ -3615,12 +3759,12 @@ export const PoliciesListOutputSchema = z.array(
 			id: z
 				.string()
 				.describe('ObjectId uniquely identifying a Policy.')
-				.optional(),
+				.nullish(),
 			name: z
 				.string()
 				.describe('The description for this specific Policy.')
-				.optional(),
-			template: z.unknown().optional(),
+				.nullish(),
+			template: z.unknown().nullish(),
 		})
 		.loose()
 		.describe('An instance of a policy template.'),
@@ -3657,74 +3801,72 @@ export type PoliciesCreateInput = z.infer<typeof PoliciesCreateInputSchema>;
 
 export const PoliciesCreateOutputSchema = z
 	.object({
-		configFields: z.array(z.unknown()).optional(),
+		configFields: z.array(z.unknown()).nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a Policy.')
-			.optional(),
+			.nullish(),
 		name: z
 			.string()
 			.describe('The description for this specific Policy.')
-			.optional(),
-		notes: z
-			.string()
-			.describe('The notes for this specific Policy.')
-			.optional(),
+			.nullish(),
+		notes: z.string().describe('The notes for this specific Policy.').nullish(),
 		template: z
 			.object({
 				activation: z
 					.string()
 					.describe('Requirements before the policy can be activated.')
-					.optional(),
+					.nullish(),
 				behavior: z
 					.string()
 					.describe('Specifics about the behavior of the policy.')
-					.optional(),
+					.nullish(),
 				deliveryTypes: z
-					.array(z.enum(['agent', 'mdm']))
+					.array(z.enum(['agent', 'mdm']).or(z.string()))
 					.describe(
 						'The supported delivery mechanisms for this policy template.',
 					)
-					.optional(),
+					.nullish(),
 				description: z
 					.string()
 					.describe('The default description for the Policy.')
-					.optional(),
+					.nullish(),
 				displayName: z
 					.string()
 					.describe('The default display name for the Policy.')
-					.optional(),
+					.nullish(),
 				id: z
 					.string()
 					.describe('ObjectId uniquely identifying a Policy Template.')
-					.optional(),
+					.nullish(),
 				name: z
 					.string()
 					.describe('The unique name for the Policy Template.')
-					.optional(),
+					.nullish(),
 				osMetaFamily: z
 					.enum(['linux', 'darwin', 'windows', 'ios', 'universal', 'android'])
-					.optional(),
+					.or(z.string())
+					.nullish(),
 				state: z
 					.string()
 					.describe(
 						'String describing the release status of the policy template.',
 					)
-					.optional(),
+					.nullish(),
 				alert: z
 					.unknown()
 					.describe('Text to describe any risk associated with this policy.')
-					.optional(),
+					.nullish(),
 				reference: z
 					.unknown()
 					.describe('URL to visit for further information.')
-					.optional(),
-				osRestrictions: z.array(z.unknown()).optional(),
+					.nullish(),
+				osRestrictions: z.array(z.unknown()).nullish(),
 			})
 			.loose()
 			.describe('The shallow information about a Policy Template.')
-			.optional(),
-		values: z.array(z.unknown()).optional(),
+			.nullish(),
+		values: z.array(z.unknown()).nullish(),
 	})
 	.loose()
 	.describe('An instance of a policy template.');
@@ -3741,74 +3883,72 @@ export type PoliciesGetInput = z.infer<typeof PoliciesGetInputSchema>;
 
 export const PoliciesGetOutputSchema = z
 	.object({
-		configFields: z.array(z.unknown()).optional(),
+		configFields: z.array(z.unknown()).nullish(),
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a Policy.')
-			.optional(),
+			.nullish(),
 		name: z
 			.string()
 			.describe('The description for this specific Policy.')
-			.optional(),
-		notes: z
-			.string()
-			.describe('The notes for this specific Policy.')
-			.optional(),
+			.nullish(),
+		notes: z.string().describe('The notes for this specific Policy.').nullish(),
 		template: z
 			.object({
 				activation: z
 					.string()
 					.describe('Requirements before the policy can be activated.')
-					.optional(),
+					.nullish(),
 				behavior: z
 					.string()
 					.describe('Specifics about the behavior of the policy.')
-					.optional(),
+					.nullish(),
 				deliveryTypes: z
-					.array(z.enum(['agent', 'mdm']))
+					.array(z.enum(['agent', 'mdm']).or(z.string()))
 					.describe(
 						'The supported delivery mechanisms for this policy template.',
 					)
-					.optional(),
+					.nullish(),
 				description: z
 					.string()
 					.describe('The default description for the Policy.')
-					.optional(),
+					.nullish(),
 				displayName: z
 					.string()
 					.describe('The default display name for the Policy.')
-					.optional(),
+					.nullish(),
 				id: z
 					.string()
 					.describe('ObjectId uniquely identifying a Policy Template.')
-					.optional(),
+					.nullish(),
 				name: z
 					.string()
 					.describe('The unique name for the Policy Template.')
-					.optional(),
+					.nullish(),
 				osMetaFamily: z
 					.enum(['linux', 'darwin', 'windows', 'ios', 'universal', 'android'])
-					.optional(),
+					.or(z.string())
+					.nullish(),
 				state: z
 					.string()
 					.describe(
 						'String describing the release status of the policy template.',
 					)
-					.optional(),
+					.nullish(),
 				alert: z
 					.unknown()
 					.describe('Text to describe any risk associated with this policy.')
-					.optional(),
+					.nullish(),
 				reference: z
 					.unknown()
 					.describe('URL to visit for further information.')
-					.optional(),
-				osRestrictions: z.array(z.unknown()).optional(),
+					.nullish(),
+				osRestrictions: z.array(z.unknown()).nullish(),
 			})
 			.loose()
 			.describe('The shallow information about a Policy Template.')
-			.optional(),
-		values: z.array(z.unknown()).optional(),
+			.nullish(),
+		values: z.array(z.unknown()).nullish(),
 	})
 	.loose()
 	.describe('An instance of a policy template.');
@@ -3841,65 +3981,66 @@ export const PoliciesUpdateOutputSchema = z
 		id: z
 			.string()
 			.describe('ObjectId uniquely identifying a Policy.')
-			.optional(),
+			.nullish(),
 		name: z
 			.string()
 			.describe('The description for this specific Policy.')
-			.optional(),
+			.nullish(),
 		template: z
 			.object({
 				activation: z
 					.string()
 					.describe('Requirements before the policy can be activated.')
-					.optional(),
+					.nullish(),
 				behavior: z
 					.string()
 					.describe('Specifics about the behavior of the policy.')
-					.optional(),
+					.nullish(),
 				deliveryTypes: z
-					.array(z.enum(['agent', 'mdm']))
+					.array(z.enum(['agent', 'mdm']).or(z.string()))
 					.describe(
 						'The supported delivery mechanisms for this policy template.',
 					)
-					.optional(),
+					.nullish(),
 				description: z
 					.string()
 					.describe('The default description for the Policy.')
-					.optional(),
+					.nullish(),
 				displayName: z
 					.string()
 					.describe('The default display name for the Policy.')
-					.optional(),
+					.nullish(),
 				id: z
 					.string()
 					.describe('ObjectId uniquely identifying a Policy Template.')
-					.optional(),
+					.nullish(),
 				name: z
 					.string()
 					.describe('The unique name for the Policy Template.')
-					.optional(),
+					.nullish(),
 				osMetaFamily: z
 					.enum(['linux', 'darwin', 'windows', 'ios', 'universal', 'android'])
-					.optional(),
+					.or(z.string())
+					.nullish(),
 				state: z
 					.string()
 					.describe(
 						'String describing the release status of the policy template.',
 					)
-					.optional(),
+					.nullish(),
 				alert: z
 					.unknown()
 					.describe('Text to describe any risk associated with this policy.')
-					.optional(),
+					.nullish(),
 				reference: z
 					.unknown()
 					.describe('URL to visit for further information.')
-					.optional(),
-				osRestrictions: z.array(z.unknown()).optional(),
+					.nullish(),
+				osRestrictions: z.array(z.unknown()).nullish(),
 			})
 			.loose()
 			.describe('The shallow information about a Policy Template.')
-			.optional(),
+			.nullish(),
 	})
 	.loose()
 	.describe('An instance of a policy template.');
@@ -3960,57 +4101,57 @@ export const PoliciesListStatusesOutputSchema = z.array(
 			detail: z
 				.string()
 				.describe('Details pertaining to the policy result.')
-				.optional(),
+				.nullish(),
 			endedAt: z
 				.string()
 				.describe('The end of the policy application.')
-				.optional(),
+				.nullish(),
 			exitStatus: z
 				.number()
 				.describe(
 					'The 32-bit unsigned exit status from the applying the policy.',
 				)
-				.optional(),
+				.nullish(),
 			id: z
 				.string()
 				.describe('ObjectId uniquely identifying a Policy Result.')
-				.optional(),
+				.nullish(),
 			policyID: z
 				.string()
 				.describe('ObjectId uniquely identifying the parent Policy.')
-				.optional(),
+				.nullish(),
 			startedAt: z
 				.string()
 				.describe('The start of the policy application.')
-				.optional(),
+				.nullish(),
 			state: z
 				.string()
 				.describe(
 					'Enumeration describing the state of the policy. Success, failed, or pending.',
 				)
-				.optional(),
+				.nullish(),
 			stdErr: z
 				.string()
 				.describe('The STDERR output from applying the policy.')
-				.optional(),
+				.nullish(),
 			stdOut: z
 				.string()
 				.describe('The STDOUT output from applying the policy.')
-				.optional(),
+				.nullish(),
 			success: z
 				.boolean()
 				.describe(
 					'True if the policy was successfully applied; false otherwise.',
 				)
-				.optional(),
+				.nullish(),
 			systemID: z
 				.string()
 				.describe('ObjectId uniquely identifying the parent System.')
-				.optional(),
+				.nullish(),
 			userObjectId: z
 				.string()
 				.describe('ObjectId uniquely identifying the parent User.')
-				.optional(),
+				.nullish(),
 		})
 		.loose(),
 );
@@ -4044,7 +4185,7 @@ export type SystemsListUsersInput = z.infer<typeof SystemsListUsersInputSchema>;
 export const SystemsListUsersOutputSchema = z.array(
 	z
 		.object({
-			compiledAttributes: z.unknown().optional(),
+			compiledAttributes: z.unknown().nullish(),
 			id: z.string().describe('Object ID of this graph object.'),
 			paths: z
 				.array(z.array(z.unknown()))
@@ -4057,8 +4198,8 @@ export const SystemsListUsersOutputSchema = z.array(
 				.describe(
 					'The external resource ID that is being synced. Only present when syncStatus query parameter is true.',
 				)
-				.optional(),
-			syncStatus: z.unknown().optional(),
+				.nullish(),
+			syncStatus: z.unknown().nullish(),
 		})
 		.loose(),
 );
@@ -4109,57 +4250,57 @@ export const SystemsListPolicyStatusesOutputSchema = z.array(
 			detail: z
 				.string()
 				.describe('Details pertaining to the policy result.')
-				.optional(),
+				.nullish(),
 			endedAt: z
 				.string()
 				.describe('The end of the policy application.')
-				.optional(),
+				.nullish(),
 			exitStatus: z
 				.number()
 				.describe(
 					'The 32-bit unsigned exit status from the applying the policy.',
 				)
-				.optional(),
+				.nullish(),
 			id: z
 				.string()
 				.describe('ObjectId uniquely identifying a Policy Result.')
-				.optional(),
+				.nullish(),
 			policyID: z
 				.string()
 				.describe('ObjectId uniquely identifying the parent Policy.')
-				.optional(),
+				.nullish(),
 			startedAt: z
 				.string()
 				.describe('The start of the policy application.')
-				.optional(),
+				.nullish(),
 			state: z
 				.string()
 				.describe(
 					'Enumeration describing the state of the policy. Success, failed, or pending.',
 				)
-				.optional(),
+				.nullish(),
 			stdErr: z
 				.string()
 				.describe('The STDERR output from applying the policy.')
-				.optional(),
+				.nullish(),
 			stdOut: z
 				.string()
 				.describe('The STDOUT output from applying the policy.')
-				.optional(),
+				.nullish(),
 			success: z
 				.boolean()
 				.describe(
 					'True if the policy was successfully applied; false otherwise.',
 				)
-				.optional(),
+				.nullish(),
 			systemID: z
 				.string()
 				.describe('ObjectId uniquely identifying the parent System.')
-				.optional(),
+				.nullish(),
 			userObjectId: z
 				.string()
 				.describe('ObjectId uniquely identifying the parent User.')
-				.optional(),
+				.nullish(),
 		})
 		.loose(),
 );
@@ -4193,8 +4334,8 @@ export type SystemsListAssociationsInput = z.infer<
 export const SystemsListAssociationsOutputSchema = z.array(
 	z
 		.object({
-			attributes: z.unknown().optional(),
-			from: z.unknown().optional(),
+			attributes: z.unknown().nullish(),
+			from: z.unknown().nullish(),
 			to: z.unknown(),
 		})
 		.loose()

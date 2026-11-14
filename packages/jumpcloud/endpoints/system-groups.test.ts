@@ -122,7 +122,7 @@ describe('systemGroups family (mocked JumpCloud transport)', () => {
 		});
 	});
 
-	it('systemGroups.update puts the attributes body to the interpolated group path', async () => {
+	it('systemGroups.update puts the group name at the body root to the interpolated group path', async () => {
 		fetchMock.mockImplementationOnce(() =>
 			Promise.resolve(
 				jsonResponse({
@@ -135,7 +135,7 @@ describe('systemGroups family (mocked JumpCloud transport)', () => {
 
 		const result = await systemGroupsUpdate(mockCtx, {
 			id: 'sg-123',
-			body: { attributes: { name: 'servers-v2' } },
+			body: { name: 'servers-v2' },
 		});
 
 		const [url, init] = fetchMock.mock.calls[0]!;
@@ -145,7 +145,7 @@ describe('systemGroups family (mocked JumpCloud transport)', () => {
 		expect(init).toMatchObject({ method: 'PUT' });
 		expect(init?.headers).toMatchObject({ 'Content-Type': 'application/json' });
 		expect(JSON.parse(String(init?.body) ?? '{}')).toEqual({
-			attributes: { name: 'servers-v2' },
+			name: 'servers-v2',
 		});
 
 		expect(result).toEqual({

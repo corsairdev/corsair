@@ -52,7 +52,8 @@ describe('search family (mocked JumpCloud transport)', () => {
 		const result = await searchSystemUsers(mockCtx, {
 			limit: 5,
 			body: {
-				filter: [{ field: 'lastname', operator: '$eq', value: 'Smith' }],
+				filter: { or: [{ lastname: 'Smith' }, { department: 'IT' }] },
+				searchFilter: { searchTerm: 'smith', fields: ['username'] },
 			},
 		});
 
@@ -66,10 +67,11 @@ describe('search family (mocked JumpCloud transport)', () => {
 			'x-api-key': 'jc-test-key',
 			'Content-Type': 'application/json',
 		});
-		// The handler forwards the documented search body (filter/andLogic/limit/
-		// skip/sort/fields) as the JSON request body, verbatim from the input.
+		// The handler forwards the documented search body (filter as an and/or
+		// object or an array of field expressions, plus searchFilter) verbatim.
 		expect(JSON.parse(String(init?.body) ?? '{}')).toEqual({
-			filter: [{ field: 'lastname', operator: '$eq', value: 'Smith' }],
+			filter: { or: [{ lastname: 'Smith' }, { department: 'IT' }] },
+			searchFilter: { searchTerm: 'smith', fields: ['username'] },
 		});
 		expect(result).toEqual({
 			results: [{ _id: 'u-1', username: 'asmith' }],
@@ -92,7 +94,7 @@ describe('search family (mocked JumpCloud transport)', () => {
 			limit: 10,
 			skip: 0,
 			body: {
-				filter: [{ field: 'os', operator: '$eq', value: 'Ubuntu' }],
+				filter: [{ os: 'Ubuntu' }],
 			},
 		});
 
@@ -105,7 +107,7 @@ describe('search family (mocked JumpCloud transport)', () => {
 		// The handler forwards the documented search body as the JSON request
 		// body while still accepting query-level fields/limit/skip/filter.
 		expect(JSON.parse(String(init?.body) ?? '{}')).toEqual({
-			filter: [{ field: 'os', operator: '$eq', value: 'Ubuntu' }],
+			filter: [{ os: 'Ubuntu' }],
 		});
 		expect(init?.headers).toMatchObject({
 			'Content-Type': 'application/json',
