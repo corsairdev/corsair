@@ -4577,5 +4577,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/kontentai",
+    "dir": "packages/kontentai",
+    "name": "Kontent.ai",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
