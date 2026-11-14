@@ -1,12 +1,14 @@
 import { z } from 'zod';
 
 // Object shapes come from the provider's response examples; loose objects preserve additional provider fields.
+// Response fields are nullish: Findymail sends null for fields it has no value for, and a
+// read should not fail on that. Inputs stay strict.
 export const verification_verifyInput = z.object({ email: z.string() });
 export const verification_verifyOutput = z
 	.object({
 		email: z.string(),
 		verified: z.boolean(),
-		provider: z.string().nullable().optional(),
+		provider: z.string().nullish(),
 	})
 	.loose();
 
@@ -17,16 +19,16 @@ export const lists_listOutput = z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						name: z.string().optional(),
-						created_at: z.string().optional(),
-						updated_at: z.string().optional(),
-						shared_with_team: z.boolean().optional(),
-						is_owner: z.boolean().optional(),
+						id: z.number().nullish(),
+						name: z.string().nullish(),
+						created_at: z.string().nullish(),
+						updated_at: z.string().nullish(),
+						shared_with_team: z.boolean().nullish(),
+						is_owner: z.boolean().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -35,15 +37,15 @@ export const lists_createOutput = z
 	.object({
 		list: z
 			.object({
-				id: z.number().int().optional(),
-				name: z.string().optional(),
-				created_at: z.string().optional(),
-				updated_at: z.string().optional(),
-				shared_with_team: z.boolean().optional(),
-				is_owner: z.boolean().optional(),
+				id: z.number().nullish(),
+				name: z.string().nullish(),
+				created_at: z.string().nullish(),
+				updated_at: z.string().nullish(),
+				shared_with_team: z.boolean().nullish(),
+				is_owner: z.boolean().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -54,12 +56,12 @@ export const lists_replaceInput = z.object({
 });
 export const lists_replaceOutput = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
-		shared_with_team: z.boolean().optional(),
-		is_owner: z.boolean().optional(),
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
+		shared_with_team: z.boolean().nullish(),
+		is_owner: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -80,12 +82,12 @@ export const contacts_listOutput = z
 		data: z.array(
 			z
 				.object({
-					id: z.number().optional(),
-					name: z.string().nullable().optional(),
-					email: z.string().nullable().optional(),
-					linkedin_url: z.string().nullable().optional(),
-					company: z.string().nullable().optional(),
-					job_title: z.string().nullable().optional(),
+					id: z.number().nullish(),
+					name: z.string().nullish(),
+					email: z.string().nullish(),
+					linkedin_url: z.string().nullish(),
+					company: z.string().nullish(),
+					job_title: z.string().nullish(),
 				})
 				.loose(),
 		),
@@ -99,17 +101,17 @@ export const search_nameInput = z.object({
 });
 const searchContact = z
 	.object({
-		name: z.string().optional(),
-		domain: z.string().optional(),
-		email: z.string().optional(),
+		name: z.string().nullish(),
+		domain: z.string().nullish(),
+		email: z.string().nullish(),
 	})
 	.loose();
 
 // Findymail shows direct results and callback payloads; validate both whenever present.
 const searchContactResponse = z
 	.object({
-		contact: searchContact.optional(),
-		payload: z.object({ contact: searchContact.optional() }).loose().optional(),
+		contact: searchContact.nullish(),
+		payload: z.object({ contact: searchContact.nullish() }).loose().nullish(),
 	})
 	.loose();
 export const search_nameOutput = searchContactResponse;
@@ -127,16 +129,16 @@ export const exclusionLists_listOutput = z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						name: z.string().optional(),
-						is_shared: z.boolean().optional(),
-						is_owner: z.boolean().optional(),
-						user_id: z.number().int().optional(),
-						owner_name: z.string().optional(),
+						id: z.number().nullish(),
+						name: z.string().nullish(),
+						is_shared: z.boolean().nullish(),
+						is_owner: z.boolean().nullish(),
+						user_id: z.number().nullish(),
+						owner_name: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -146,10 +148,10 @@ export const exclusionLists_createInput = z.object({
 });
 export const exclusionLists_createOutput = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		is_shared: z.boolean().optional(),
-		is_owner: z.boolean().optional(),
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		is_shared: z.boolean().nullish(),
+		is_owner: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -158,12 +160,12 @@ export const exclusionLists_getInput = z.object({
 });
 export const exclusionLists_getOutput = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		is_shared: z.boolean().optional(),
-		is_owner: z.boolean().optional(),
-		user_id: z.number().int().optional(),
-		owner_name: z.string().optional(),
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		is_shared: z.boolean().nullish(),
+		is_owner: z.boolean().nullish(),
+		user_id: z.number().nullish(),
+		owner_name: z.string().nullish(),
 	})
 	.loose();
 
@@ -174,16 +176,16 @@ export const exclusionLists_updateInput = z.object({
 });
 export const exclusionLists_updateOutput = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullish(),
 		list: z
 			.object({
-				id: z.number().int().optional(),
-				name: z.string().optional(),
-				is_shared: z.boolean().optional(),
-				is_owner: z.boolean().optional(),
+				id: z.number().nullish(),
+				name: z.string().nullish(),
+				is_shared: z.boolean().nullish(),
+				is_owner: z.boolean().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -191,7 +193,7 @@ export const exclusionLists_deleteInput = z.object({
 	excludedDomainList_id: z.number().int().nonnegative(),
 });
 export const exclusionLists_deleteOutput = z
-	.object({ success: z.boolean().optional() })
+	.object({ success: z.boolean().nullish() })
 	.loose();
 
 export const excludedDomains_listInput = z.object({
@@ -206,16 +208,16 @@ export const excludedDomains_listOutput = z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						domain: z.string().optional(),
-						excluded_domain_list_id: z.number().int().nullable().optional(),
+						id: z.number().nullish(),
+						domain: z.string().nullish(),
+						excluded_domain_list_id: z.number().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		current_page: z.number().int().optional(),
-		per_page: z.number().int().optional(),
-		total: z.number().int().optional(),
+			.nullish(),
+		current_page: z.number().nullish(),
+		per_page: z.number().nullish(),
+		total: z.number().nullish(),
 	})
 	.loose();
 
@@ -225,11 +227,11 @@ export const excludedDomains_addInput = z.object({
 });
 export const excludedDomains_addOutput = z
 	.object({
-		success: z.boolean().optional(),
-		total: z.number().int().optional(),
-		processed_immediately: z.number().int().optional(),
-		queued: z.number().int().optional(),
-		list_id: z.number().int().optional(),
+		success: z.boolean().nullish(),
+		total: z.number().nullish(),
+		processed_immediately: z.number().nullish(),
+		queued: z.number().nullish(),
+		list_id: z.number().nullish(),
 	})
 	.loose();
 
@@ -239,14 +241,14 @@ export const excludedDomains_removeInput = z.object({
 export const excludedDomains_removeOutput = z.union([
 	z
 		.object({
-			success: z.boolean().optional(),
-			deleted_count: z.number().int().optional(),
+			success: z.boolean().nullish(),
+			deleted_count: z.number().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			success: z.boolean().optional(),
-			deleted_count: z.number().int().optional(),
+			success: z.boolean().nullish(),
+			deleted_count: z.number().nullish(),
 		})
 		.loose(),
 ]);
@@ -272,18 +274,18 @@ export const intellimatch_searchInput = z.object({
 		.optional(),
 });
 export const intellimatch_searchOutput = z
-	.object({ hash: z.string().optional() })
+	.object({ hash: z.string().nullish() })
 	.loose();
 
 export const intellimatch_statusInput = z.object({ hash: z.string() });
 export const intellimatch_statusOutput = z
 	.object({
-		status: z.string().optional(),
-		progress: z.number().int().optional(),
-		total_jobs: z.number().int().optional(),
-		processed_jobs: z.number().int().optional(),
-		pending_jobs: z.number().int().optional(),
-		failed_jobs: z.number().int().optional(),
+		status: z.string().nullish(),
+		progress: z.number().nullish(),
+		total_jobs: z.number().nullish(),
+		processed_jobs: z.number().nullish(),
+		pending_jobs: z.number().nullish(),
+		failed_jobs: z.number().nullish(),
 	})
 	.loose();
 
@@ -298,34 +300,34 @@ export const intellimatch_resultsOutput = z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						name: z.string().optional(),
-						domain: z.string().optional(),
-						description: z.string().optional(),
-						employee_count_range: z.string().optional(),
-						industries: z.array(z.string()).optional(),
-						country: z.string().optional(),
-						match_score: z.number().int().optional(),
-						contact_name: z.string().optional(),
-						contact_email: z.string().optional(),
-						contact_job_title: z.string().optional(),
-						contact_phone: z.string().optional(),
-						contact_linkedin_url: z.string().optional(),
+						id: z.number().nullish(),
+						name: z.string().nullish(),
+						domain: z.string().nullish(),
+						description: z.string().nullish(),
+						employee_count_range: z.string().nullish(),
+						industries: z.array(z.string()).nullish(),
+						country: z.string().nullish(),
+						match_score: z.number().nullish(),
+						contact_name: z.string().nullish(),
+						contact_email: z.string().nullish(),
+						contact_job_title: z.string().nullish(),
+						contact_phone: z.string().nullish(),
+						contact_linkedin_url: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		meta: z
 			.object({
-				current_page: z.number().int().optional(),
-				per_page: z.number().int().optional(),
-				total: z.number().int().optional(),
-				last_page: z.number().int().optional(),
-				from: z.number().int().optional(),
-				to: z.number().int().optional(),
+				current_page: z.number().nullish(),
+				per_page: z.number().nullish(),
+				total: z.number().nullish(),
+				last_page: z.number().nullish(),
+				from: z.number().nullish(),
+				to: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -342,18 +344,18 @@ export const intellimatch_lookalikesOutput = z
 			.array(
 				z
 					.object({
-						domain: z.string().optional(),
-						name: z.string().optional(),
-						linkedin_url: z.string().optional(),
-						company_size: z.string().optional(),
-						country: z.string().optional(),
+						domain: z.string().nullish(),
+						name: z.string().nullish(),
+						linkedin_url: z.string().nullish(),
+						company_size: z.string().nullish(),
+						country: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
-		total: z.number().int().optional(),
-		credits_used: z.number().int().optional(),
-		message: z.string().optional(),
+			.nullish(),
+		total: z.number().nullish(),
+		credits_used: z.number().nullish(),
+		message: z.string().nullish(),
 	})
 	.loose();
 
@@ -363,49 +365,49 @@ export const search_reverseEmailInput = z.object({
 });
 export const search_reverseEmailOutput = z
 	.object({
-		linkedin_url: z.string().nullable().optional(),
-		fullName: z.string().optional(),
-		username: z.string().optional(),
-		headline: z.string().optional(),
-		jobTitle: z.string().optional(),
-		summary: z.string().optional(),
-		city: z.string().optional(),
-		region: z.string().optional(),
-		country: z.string().optional(),
-		companyLinkedinUrl: z.string().optional(),
-		companyName: z.string().optional(),
-		companyWebsite: z.string().optional(),
-		isPremium: z.boolean().optional(),
-		isOpenProfile: z.boolean().optional(),
+		linkedin_url: z.string().nullish(),
+		fullName: z.string().nullish(),
+		username: z.string().nullish(),
+		headline: z.string().nullish(),
+		jobTitle: z.string().nullish(),
+		summary: z.string().nullish(),
+		city: z.string().nullish(),
+		region: z.string().nullish(),
+		country: z.string().nullish(),
+		companyLinkedinUrl: z.string().nullish(),
+		companyName: z.string().nullish(),
+		companyWebsite: z.string().nullish(),
+		isPremium: z.boolean().nullish(),
+		isOpenProfile: z.boolean().nullish(),
 		// The provider examples leave the skills and jobs array item shapes unspecified.
 		// Keep elements unknown rather than inventing a stricter profile contract.
-		skills: z.array(z.unknown()).optional(),
-		jobs: z.array(z.unknown()).optional(),
+		skills: z.array(z.unknown()).nullish(),
+		jobs: z.array(z.unknown()).nullish(),
 		educations: z
 			.array(
 				z
 					.object({
-						school: z.string().optional(),
-						degree: z.string().optional(),
-						fieldOfStudy: z.string().optional(),
-						startDate: z.string().optional(),
-						endDate: z.string().optional(),
+						school: z.string().nullish(),
+						degree: z.string().nullish(),
+						fieldOfStudy: z.string().nullish(),
+						startDate: z.string().nullish(),
+						endDate: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		certificates: z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						issuingOrganization: z.string().optional(),
-						issueDate: z.string().optional(),
-						expirationDate: z.string().optional(),
+						name: z.string().nullish(),
+						issuingOrganization: z.string().nullish(),
+						issueDate: z.string().nullish(),
+						expirationDate: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -416,12 +418,12 @@ export const search_companyInput = z.object({
 });
 export const search_companyOutput = z
 	.object({
-		name: z.string().optional(),
-		domain: z.string().optional(),
-		company_size: z.string().optional(),
-		industry: z.string().optional(),
-		linkedin_url: z.string().optional(),
-		description: z.string().optional(),
+		name: z.string().nullish(),
+		domain: z.string().nullish(),
+		company_size: z.string().nullish(),
+		industry: z.string().nullish(),
+		linkedin_url: z.string().nullish(),
+		description: z.string().nullish(),
 	})
 	.loose();
 
@@ -433,11 +435,11 @@ export const search_employeesInput = z.object({
 export const search_employeesOutput = z.array(
 	z
 		.object({
-			name: z.string().optional(),
-			linkedinUrl: z.string().optional(),
-			companyWebsite: z.string().optional(),
-			companyName: z.string().optional(),
-			jobTitle: z.string().optional(),
+			name: z.string().nullish(),
+			linkedinUrl: z.string().nullish(),
+			companyWebsite: z.string().nullish(),
+			companyName: z.string().nullish(),
+			jobTitle: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -446,14 +448,14 @@ export const search_phoneInput = z.object({ linkedin_url: z.string() });
 export const search_phoneOutput = z.union([
 	z
 		.object({
-			phone: z.string().nullable().optional(),
-			line_type: z.string().nullable().optional(),
+			phone: z.string().nullish(),
+			line_type: z.string().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			phone: z.string().nullable().optional(),
-			line_type: z.string().nullable().optional(),
+			phone: z.string().nullish(),
+			line_type: z.string().nullish(),
 		})
 		.loose(),
 ]);
@@ -473,69 +475,86 @@ export const signals_listOutput = z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						type: z.string().optional(),
-						category: z.string().optional(),
+						id: z.number().nullish(),
+						type: z.string().nullish(),
+						category: z.string().nullish(),
 						payload: z
 							.object({
-								matched_keyword: z.string().optional(),
-								snippet: z.string().optional(),
+								matched_keyword: z.string().nullish(),
+								snippet: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
-						detected_at: z.string().optional(),
-						expires_at: z.string().optional(),
+							.nullish(),
+						detected_at: z.string().nullish(),
+						expires_at: z.string().nullish(),
 						contact: z
 							.object({
-								id: z.number().int().optional(),
-								name: z.string().optional(),
-								job_title: z.string().optional(),
-								linkedin_url: z.string().optional(),
+								id: z.number().nullish(),
+								name: z.string().nullish(),
+								job_title: z.string().nullish(),
+								linkedin_url: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						company: z
 							.object({
-								id: z.number().int().optional(),
-								name: z.string().optional(),
-								domain: z.string().optional(),
-								industry: z.string().optional(),
-								employee_count_range: z.string().optional(),
-								country: z.string().optional(),
+								id: z.number().nullish(),
+								name: z.string().nullish(),
+								domain: z.string().nullish(),
+								industry: z.string().nullish(),
+								employee_count_range: z.string().nullish(),
+								country: z.string().nullish(),
 							})
 							.loose()
-							.optional(),
+							.nullish(),
 						monitors: z
 							.array(
 								z
 									.object({
-										id: z.number().int().optional(),
-										name: z.string().optional(),
-										keywords: z.array(z.string()).optional(),
-										enrichment_level: z.string().optional(),
-										relevance_score: z.number().int().optional(),
-										relevance_reasoning: z.string().optional(),
+										id: z.number().nullish(),
+										name: z.string().nullish(),
+										keywords: z.array(z.string()).nullish(),
+										enrichment_level: z.string().nullish(),
+										relevance_score: z.number().nullish(),
+										relevance_reasoning: z.string().nullish(),
 									})
 									.loose(),
 							)
-							.optional(),
+							.nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		meta: z
 			.object({
-				current_page: z.number().int().optional(),
-				per_page: z.number().int().optional(),
-				total: z.number().int().optional(),
-				last_page: z.number().int().optional(),
-				from: z.number().int().optional(),
-				to: z.number().int().optional(),
+				current_page: z.number().nullish(),
+				per_page: z.number().nullish(),
+				total: z.number().nullish(),
+				last_page: z.number().nullish(),
+				from: z.number().nullish(),
+				to: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 	})
 	.loose();
+
+// Monitor responses echo request fields that are sent as objects and arrays
+// (icp_filters, engagement_types, target_companies); the documented examples
+// only show them as null, so both the request form and a string are accepted.
+const monitorIcpFiltersOutput = z
+	.object({
+		industries: z.array(z.string()).nullish(),
+		employee_count_ranges: z.array(z.string()).nullish(),
+		countries: z.array(z.string()).nullish(),
+		job_title_keywords: z.array(z.string()).nullish(),
+		seniority_levels: z.array(z.number()).nullish(),
+	})
+	.loose()
+	.nullish();
+const monitorStringListOutput = z
+	.union([z.array(z.string()), z.string()])
+	.nullish();
 
 export const monitors_listInput = z.object({
 	ownership: z.string().optional(),
@@ -543,39 +562,32 @@ export const monitors_listInput = z.object({
 export const monitors_listOutput = z.array(
 	z
 		.object({
-			id: z.number().int().optional(),
-			name: z.string().optional(),
-			signal_type: z.string().optional(),
-			signal_type_label: z.string().optional(),
-			signal_level: z.string().optional(),
-			status: z.string().optional(),
-			keywords: z.array(z.string()).optional(),
-			icp_filters: z
-				.object({
-					industries: z.array(z.string()).optional(),
-					countries: z.array(z.string()).optional(),
-				})
-				.loose()
-				.nullable()
-				.optional(),
-			webhook_url: z.string().nullable().optional(),
-			webhook_paused_at: z.string().nullable().optional(),
-			post_url: z.string().nullable().optional(),
-			profile_url: z.string().nullable().optional(),
-			engagement_types: z.string().nullable().optional(),
-			enrichment_level: z.string().nullable().optional(),
-			lead_list_id: z.string().nullable().optional(),
-			ai_relevance_prompt: z.string().nullable().optional(),
-			target_companies: z.string().nullable().optional(),
-			max_matches: z.number().int().nullable().optional(),
-			match_count: z.number().int().optional(),
-			is_shared: z.boolean().optional(),
-			is_owner: z.boolean().optional(),
-			is_team_owner: z.boolean().optional(),
-			uses_current_users_monitor_cap: z.boolean().optional(),
-			user_id: z.number().int().optional(),
-			owner_name: z.string().optional(),
-			created_at: z.string().optional(),
+			id: z.number().nullish(),
+			name: z.string().nullish(),
+			signal_type: z.string().nullish(),
+			signal_type_label: z.string().nullish(),
+			signal_level: z.string().nullish(),
+			status: z.string().nullish(),
+			keywords: z.array(z.string()).nullish(),
+			icp_filters: monitorIcpFiltersOutput,
+			webhook_url: z.string().nullish(),
+			webhook_paused_at: z.string().nullish(),
+			post_url: z.string().nullish(),
+			profile_url: z.string().nullish(),
+			engagement_types: monitorStringListOutput,
+			enrichment_level: z.string().nullish(),
+			lead_list_id: z.union([z.number(), z.string()]).nullish(),
+			ai_relevance_prompt: z.string().nullish(),
+			target_companies: monitorStringListOutput,
+			max_matches: z.number().nullish(),
+			match_count: z.number().nullish(),
+			is_shared: z.boolean().nullish(),
+			is_owner: z.boolean().nullish(),
+			is_team_owner: z.boolean().nullish(),
+			uses_current_users_monitor_cap: z.boolean().nullish(),
+			user_id: z.number().nullish(),
+			owner_name: z.string().nullish(),
+			created_at: z.string().nullish(),
 		})
 		.loose(),
 );
@@ -608,32 +620,32 @@ export const monitors_createInput = z.object({
 // The create response uses the same documented fields as the update response.
 export const monitors_createOutput = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		signal_type: z.string().optional(),
-		signal_type_label: z.string().optional(),
-		signal_level: z.string().optional(),
-		status: z.string().optional(),
-		keywords: z.array(z.string()).optional(),
-		icp_filters: z.string().nullable().optional(),
-		webhook_url: z.string().nullable().optional(),
-		webhook_paused_at: z.string().nullable().optional(),
-		post_url: z.string().nullable().optional(),
-		profile_url: z.string().nullable().optional(),
-		engagement_types: z.string().nullable().optional(),
-		enrichment_level: z.string().nullable().optional(),
-		lead_list_id: z.string().nullable().optional(),
-		ai_relevance_prompt: z.string().nullable().optional(),
-		target_companies: z.string().nullable().optional(),
-		max_matches: z.number().int().nullable().optional(),
-		match_count: z.number().int().optional(),
-		is_shared: z.boolean().optional(),
-		is_owner: z.boolean().optional(),
-		is_team_owner: z.boolean().optional(),
-		uses_current_users_monitor_cap: z.boolean().optional(),
-		user_id: z.number().int().optional(),
-		owner_name: z.string().optional(),
-		created_at: z.string().optional(),
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		signal_type: z.string().nullish(),
+		signal_type_label: z.string().nullish(),
+		signal_level: z.string().nullish(),
+		status: z.string().nullish(),
+		keywords: z.array(z.string()).nullish(),
+		icp_filters: monitorIcpFiltersOutput,
+		webhook_url: z.string().nullish(),
+		webhook_paused_at: z.string().nullish(),
+		post_url: z.string().nullish(),
+		profile_url: z.string().nullish(),
+		engagement_types: monitorStringListOutput,
+		enrichment_level: z.string().nullish(),
+		lead_list_id: z.union([z.number(), z.string()]).nullish(),
+		ai_relevance_prompt: z.string().nullish(),
+		target_companies: monitorStringListOutput,
+		max_matches: z.number().nullish(),
+		match_count: z.number().nullish(),
+		is_shared: z.boolean().nullish(),
+		is_owner: z.boolean().nullish(),
+		is_team_owner: z.boolean().nullish(),
+		uses_current_users_monitor_cap: z.boolean().nullish(),
+		user_id: z.number().nullish(),
+		owner_name: z.string().nullish(),
+		created_at: z.string().nullish(),
 	})
 	.loose();
 
@@ -662,31 +674,31 @@ export const monitors_updateInput = z.object({
 });
 export const monitors_updateOutput = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		signal_type: z.string().optional(),
-		signal_type_label: z.string().optional(),
-		signal_level: z.string().optional(),
-		status: z.string().optional(),
-		keywords: z.array(z.string()).optional(),
-		icp_filters: z.string().nullable().optional(),
-		webhook_url: z.string().nullable().optional(),
-		webhook_paused_at: z.string().nullable().optional(),
-		post_url: z.string().nullable().optional(),
-		profile_url: z.string().nullable().optional(),
-		engagement_types: z.string().nullable().optional(),
-		enrichment_level: z.string().nullable().optional(),
-		lead_list_id: z.string().nullable().optional(),
-		ai_relevance_prompt: z.string().nullable().optional(),
-		target_companies: z.string().nullable().optional(),
-		max_matches: z.number().int().nullable().optional(),
-		match_count: z.number().int().optional(),
-		is_shared: z.boolean().optional(),
-		is_owner: z.boolean().optional(),
-		is_team_owner: z.boolean().optional(),
-		user_id: z.number().int().optional(),
-		owner_name: z.string().optional(),
-		created_at: z.string().optional(),
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		signal_type: z.string().nullish(),
+		signal_type_label: z.string().nullish(),
+		signal_level: z.string().nullish(),
+		status: z.string().nullish(),
+		keywords: z.array(z.string()).nullish(),
+		icp_filters: monitorIcpFiltersOutput,
+		webhook_url: z.string().nullish(),
+		webhook_paused_at: z.string().nullish(),
+		post_url: z.string().nullish(),
+		profile_url: z.string().nullish(),
+		engagement_types: monitorStringListOutput,
+		enrichment_level: z.string().nullish(),
+		lead_list_id: z.union([z.number(), z.string()]).nullish(),
+		ai_relevance_prompt: z.string().nullish(),
+		target_companies: monitorStringListOutput,
+		max_matches: z.number().nullish(),
+		match_count: z.number().nullish(),
+		is_shared: z.boolean().nullish(),
+		is_owner: z.boolean().nullish(),
+		is_team_owner: z.boolean().nullish(),
+		user_id: z.number().nullish(),
+		owner_name: z.string().nullish(),
+		created_at: z.string().nullish(),
 	})
 	.loose();
 
@@ -700,50 +712,50 @@ export const signals_getInput = z.object({
 });
 export const signals_getOutput = z
 	.object({
-		id: z.number().int().optional(),
-		type: z.string().optional(),
-		category: z.string().optional(),
+		id: z.number().nullish(),
+		type: z.string().nullish(),
+		category: z.string().nullish(),
 		payload: z
 			.object({
-				matched_keyword: z.string().optional(),
-				snippet: z.string().optional(),
+				matched_keyword: z.string().nullish(),
+				snippet: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
-		detected_at: z.string().optional(),
-		expires_at: z.string().optional(),
+			.nullish(),
+		detected_at: z.string().nullish(),
+		expires_at: z.string().nullish(),
 		contact: z
 			.object({
-				id: z.number().int().optional(),
-				name: z.string().optional(),
-				job_title: z.string().optional(),
-				linkedin_url: z.string().optional(),
+				id: z.number().nullish(),
+				name: z.string().nullish(),
+				job_title: z.string().nullish(),
+				linkedin_url: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		company: z
 			.object({
-				id: z.number().int().optional(),
-				name: z.string().optional(),
-				domain: z.string().optional(),
-				industry: z.string().optional(),
-				employee_count_range: z.string().optional(),
-				country: z.string().optional(),
+				id: z.number().nullish(),
+				name: z.string().nullish(),
+				domain: z.string().nullish(),
+				industry: z.string().nullish(),
+				employee_count_range: z.string().nullish(),
+				country: z.string().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		monitors: z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						name: z.string().optional(),
-						keywords: z.array(z.string()).optional(),
-						enrichment_level: z.string().optional(),
+						id: z.number().nullish(),
+						name: z.string().nullish(),
+						keywords: z.array(z.string()).nullish(),
+						enrichment_level: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -754,13 +766,13 @@ export const technologies_searchOutput = z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						category: z.string().nullable().optional(),
-						subcategory: z.string().nullable().optional(),
+						name: z.string().nullish(),
+						category: z.string().nullish(),
+						subcategory: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -770,19 +782,19 @@ export const technologies_lookupInput = z.object({
 });
 export const technologies_lookupOutput = z
 	.object({
-		domain: z.string().optional(),
+		domain: z.string().nullish(),
 		technologies: z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						category: z.string().nullable().optional(),
-						subcategory: z.string().nullable().optional(),
-						last_detected_at: z.string().optional(),
+						name: z.string().nullish(),
+						category: z.string().nullish(),
+						subcategory: z.string().nullish(),
+						last_detected_at: z.string().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -790,18 +802,18 @@ export const usage_creditsInput = z.object({ type: z.string().optional() });
 export const usage_creditsOutput = z.union([
 	z
 		.object({
-			credits: z.number().int().optional(),
-			email: z.string().optional(),
-			has_capacity: z.boolean().nullable().optional(),
-			verifier_credits: z.number().int().optional(),
+			credits: z.number().nullish(),
+			email: z.string().nullish(),
+			has_capacity: z.boolean().nullish(),
+			verifier_credits: z.number().nullish(),
 		})
 		.loose(),
 	z
 		.object({
-			credits: z.number().int().optional(),
-			email: z.string().optional(),
-			has_capacity: z.boolean().nullable().optional(),
-			verifier_credits: z.number().int().optional(),
+			credits: z.number().nullish(),
+			email: z.string().nullish(),
+			has_capacity: z.boolean().nullish(),
+			verifier_credits: z.number().nullish(),
 		})
 		.loose(),
 ]);
@@ -812,26 +824,26 @@ export const usage_summaryInput = z.object({
 });
 export const usage_summaryOutput = z
 	.object({
-		from: z.string().optional(),
-		to: z.string().optional(),
+		from: z.string().nullish(),
+		to: z.string().nullish(),
 		total: z
 			.object({
-				finder: z.number().int().optional(),
-				verifier: z.number().int().optional(),
+				finder: z.number().nullish(),
+				verifier: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		items: z
 			.array(
 				z
 					.object({
-						date: z.string().optional(),
-						finder: z.number().int().optional(),
-						verifier: z.number().int().optional(),
+						date: z.string().nullish(),
+						finder: z.number().nullish(),
+						verifier: z.number().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -841,26 +853,26 @@ export const usage_teamSummaryInput = z.object({
 });
 export const usage_teamSummaryOutput = z
 	.object({
-		from: z.string().optional(),
-		to: z.string().optional(),
+		from: z.string().nullish(),
+		to: z.string().nullish(),
 		total: z
 			.object({
-				finder: z.number().int().optional(),
-				verifier: z.number().int().optional(),
+				finder: z.number().nullish(),
+				verifier: z.number().nullish(),
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 		members: z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						finder: z.number().int().optional(),
-						verifier: z.number().int().optional(),
+						name: z.string().nullish(),
+						finder: z.number().nullish(),
+						verifier: z.number().nullish(),
 					})
 					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 
@@ -871,12 +883,12 @@ export const lists_updateInput = z.object({
 });
 export const lists_updateOutput = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
-		shared_with_team: z.boolean().optional(),
-		is_owner: z.boolean().optional(),
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
+		shared_with_team: z.boolean().nullish(),
+		is_owner: z.boolean().nullish(),
 	})
 	.loose();
 
