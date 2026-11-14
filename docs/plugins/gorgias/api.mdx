@@ -1095,6 +1095,9 @@ await corsair.gorgias.api.customers.listCustomerCustomFieldsValues({"path":{"cus
         choices?: boolean[] | null,
         default?: boolean | null
       } | null
+    } | {
+      data_type?: string | null,
+      input_settings?: Record<string, JsonValue> | null
     } | null,
     created_datetime?: string | null,
     updated_datetime?: string | null,
@@ -1481,6 +1484,9 @@ await corsair.gorgias.api.customers.updateCustomerCustomFieldValue({"path":{"cus
       choices?: boolean[] | null,
       default?: boolean | null
     } | null
+  } | {
+    data_type?: string | null,
+    input_settings?: Record<string, JsonValue> | null
   } | null,
   created_datetime?: string | null,
   updated_datetime?: string | null,
@@ -1584,6 +1590,9 @@ await corsair.gorgias.api.customers.updateCustomerCustomFieldValues({"path":{"cu
         choices?: boolean[] | null,
         default?: boolean | null
       } | null
+    } | {
+      data_type?: string | null,
+      input_settings?: Record<string, JsonValue> | null
     } | null,
     created_datetime?: string | null,
     updated_datetime?: string | null,
@@ -1770,6 +1779,9 @@ await corsair.gorgias.api.customFields.createCustomField({"body":{"object_type":
     choices?: boolean[] | null,
     default?: boolean | null
   } | null
+} | {
+  data_type?: string | null,
+  input_settings?: Record<string, JsonValue> | null
 } | null
 ```
 </Accordion>
@@ -1857,6 +1869,9 @@ await corsair.gorgias.api.customFields.getCustomField({"path":{"id":1}});
     choices?: boolean[] | null,
     default?: boolean | null
   } | null
+} | {
+  data_type?: string | null,
+  input_settings?: Record<string, JsonValue> | null
 } | null
 ```
 </Accordion>
@@ -1950,6 +1965,9 @@ await corsair.gorgias.api.customFields.listCustomFields({"query":{"object_type":
       choices?: boolean[] | null,
       default?: boolean | null
     } | null
+  } | {
+    data_type?: string | null,
+    input_settings?: Record<string, JsonValue> | null
   } | null,
   created_datetime?: string | null,
   updated_datetime?: string | null,
@@ -2095,6 +2113,9 @@ await corsair.gorgias.api.customFields.updateCustomField({"path":{"id":1},"body"
     choices?: boolean[] | null,
     default?: boolean | null
   } | null
+} | {
+  data_type?: string | null,
+  input_settings?: Record<string, JsonValue> | null
 } | null
 ```
 </Accordion>
@@ -2211,6 +2232,9 @@ await corsair.gorgias.api.customFields.updateCustomFields({"body":[]});
       choices?: boolean[] | null,
       default?: boolean | null
     } | null
+  } | {
+    data_type?: string | null,
+    input_settings?: Record<string, JsonValue> | null
   } | null,
   created_datetime?: string | null,
   updated_datetime?: string | null,
@@ -2379,7 +2403,7 @@ await corsair.gorgias.api.files.downloadFile({"path":{"file_type":"attachment","
 |------|------|----------|-------------|
 | `path` | `object` | Yes | — |
 
-Returns { kind: "binary", contentType, base64, sizeBytes }. The signed redirect URL is followed internally and is never returned or logged. Downloads above the client safety limit of 20 MiB are rejected.
+Returns `{ kind: "binary", contentType, base64, sizeBytes }`. The signed redirect URL is followed internally and is never returned or logged. Downloads above the client safety limit of 20 MiB are rejected.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -2500,7 +2524,7 @@ await corsair.gorgias.api.integrations.createIntegration({"body":{"name":"x","ty
 
 ```ts
 {
-  deactivated_datetime?: string,
+  deactivated_datetime?: string | null,
   description?: string | null | null,
   http?: {
     form?: null,
@@ -2938,7 +2962,7 @@ await corsair.gorgias.api.integrations.updateIntegration({"path":{"id":1},"body"
 
 ```ts
 {
-  deactivated_datetime?: string,
+  deactivated_datetime?: string | null,
   description?: string | null | null,
   http?: {
     form?: null,
@@ -5379,7 +5403,7 @@ await corsair.gorgias.api.rules.createRule({"body":{"code":"x","name":"x"}});
 {
   code: string,
   code_ast?: Record<string, JsonValue>,
-  deactivated_datetime?: string,
+  deactivated_datetime?: string | null,
   description?: string | null,
   event_types?: ticket-created | ticket-updated | ticket-message-created | ticket-assigned | ticket-self-unsnoozed | satisfaction-survey-responded,
   name: string,
@@ -5611,7 +5635,7 @@ await corsair.gorgias.api.rules.updateRule({"path":{"id":1},"body":{"code":"x","
 {
   code?: string,
   code_ast?: Record<string, JsonValue>,
-  deactivated_datetime?: string,
+  deactivated_datetime?: string | null,
   description?: string | null,
   event_types?: ticket-created | ticket-updated | ticket-message-created | ticket-assigned | ticket-self-unsnoozed | satisfaction-survey-responded,
   name?: string,
@@ -6023,7 +6047,7 @@ await corsair.gorgias.api.statistics.downloadLegacyStatistic({"path":{"name":"ov
 | `path` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
 
-Returns a { kind: "binary", contentType, base64, sizeBytes } object for the provider CSV response.
+Returns a `{ kind: "binary", contentType, base64, sizeBytes }` object for the provider CSV response.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -10327,7 +10351,7 @@ await corsair.gorgias.api.tickets.updateTicket({"path":{"id":1},"body":{"assigne
       color?: string
     }
   }[],
-  trashed_datetime?: string,
+  trashed_datetime?: string | null,
   updated_datetime?: string,
   via?: aircall | api | chat | contact_form | email | facebook | facebook-mention | facebook-messenger | facebook-recommendations | form | helpdesk | help-center | instagram | instagram-ad-comment | instagram-comment | instagram-direct-message | instagram-mention | internal-note | phone | rule | shopify | sms | twilio | twitter | twitter-direct-message | whatsapp | yotpo | yotpo-review | zendesk
 }
@@ -12754,7 +12778,7 @@ await corsair.gorgias.api.widgets.createWidget({"body":{"template":{},"type":"bi
 ```ts
 {
   context?: ticket | customer | user,
-  deactivated_datetime?: string,
+  deactivated_datetime?: string | null,
   integration_id?: number | null,
   app_id?: string | null,
   order?: number,
@@ -12987,7 +13011,7 @@ await corsair.gorgias.api.widgets.updateWidget({"path":{"id":1},"body":{"context
 ```ts
 {
   context?: ticket | customer | user,
-  deactivated_datetime?: string,
+  deactivated_datetime?: string | null,
   integration_id?: number | null,
   app_id?: string | null,
   order?: number,

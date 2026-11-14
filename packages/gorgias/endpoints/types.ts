@@ -1211,6 +1211,14 @@ const CreateCustomFieldSchema = z
 		deactivated_datetime: z.string().optional(),
 	})
 	.strict();
+// The reference example omits data_type and input_type; keep any other
+// definition Gorgias returns instead of failing the whole response.
+const OtherDataTypeDefinitionOutputSchema = z
+	.object({
+		data_type: z.string().nullish(),
+		input_settings: z.record(z.string(), z.json()).nullish(),
+	})
+	.passthrough();
 const CustomFieldSchema = z
 	.object({
 		id: z.number().int().nullish(),
@@ -1232,6 +1240,7 @@ const CustomFieldSchema = z
 				TextDataTypeDefinitionOutputSchema,
 				NumberDataTypeDefinitionOutputSchema,
 				BooleanDataTypeDefinitionOutputSchema,
+				OtherDataTypeDefinitionOutputSchema,
 			])
 			.nullish(),
 		created_datetime: z.string().nullish(),
@@ -7423,7 +7432,7 @@ const AnalyticsReportingSchema = z
 					z.union([
 						z.boolean(),
 						z.string(),
-						z.number().int(),
+						z.number(),
 						z.array(z.record(z.string(), z.json())),
 						z.record(z.string(), z.json()),
 					]),
@@ -7605,6 +7614,7 @@ const CustomerCustomFieldSchema = z
 				TextDataTypeDefinitionOutputSchema,
 				NumberDataTypeDefinitionOutputSchema,
 				BooleanDataTypeDefinitionOutputSchema,
+				OtherDataTypeDefinitionOutputSchema,
 			])
 			.nullish(),
 		created_datetime: z.string().nullish(),
@@ -7858,7 +7868,7 @@ const UpdateTicketSchema = z
 		status: TicketStatusSchema.optional(),
 		subject: z.string().optional(),
 		tags: z.array(UpdateTicketTagSchema).optional(),
-		trashed_datetime: z.string().optional(),
+		trashed_datetime: z.string().nullable().optional(),
 		updated_datetime: z.string().optional(),
 		via: z
 			.enum([
@@ -11916,9 +11926,13 @@ export const GorgiasEndpointInputSchemas = {
 									contentBase64: z
 										.string()
 										.max(27_962_028)
-										.regex(
-											/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/,
-										),
+										// A repeated group over the whole string overflows V8's regex stack
+										// from about 5 MiB, so check the alphabet and padding linearly and
+										// the length separately.
+										.regex(/^[A-Za-z0-9+/]*={0,2}$/)
+										.refine((value) => value.length % 4 === 0, {
+											message: 'Invalid base64 length',
+										}),
 								})
 								.strict(),
 						)
@@ -11943,7 +11957,7 @@ export const GorgiasEndpointInputSchemas = {
 		.object({
 			body: z
 				.object({
-					deactivated_datetime: z.string().optional(),
+					deactivated_datetime: z.string().nullable().optional(),
 					description: z.string().nullable().nullable().optional(),
 					http: z
 						.object({
@@ -12057,7 +12071,7 @@ export const GorgiasEndpointInputSchemas = {
 				.strict(),
 			body: z
 				.object({
-					deactivated_datetime: z.string().optional(),
+					deactivated_datetime: z.string().nullable().optional(),
 					description: z.string().nullable().nullable().optional(),
 					http: z
 						.object({
@@ -12428,7 +12442,7 @@ export const GorgiasEndpointInputSchemas = {
 				.object({
 					code: z.string(),
 					code_ast: z.record(z.string(), z.json()).optional(),
-					deactivated_datetime: z.string().optional(),
+					deactivated_datetime: z.string().nullable().optional(),
 					description: z.string().nullable().optional(),
 					event_types: z
 						.enum([
@@ -12490,7 +12504,7 @@ export const GorgiasEndpointInputSchemas = {
 				.object({
 					code: z.string().optional(),
 					code_ast: z.record(z.string(), z.json()).optional(),
-					deactivated_datetime: z.string().optional(),
+					deactivated_datetime: z.string().nullable().optional(),
 					description: z.string().nullable().optional(),
 					event_types: z
 						.enum([
@@ -14896,7 +14910,7 @@ export const GorgiasEndpointInputSchemas = {
 			body: z
 				.object({
 					context: z.enum(['ticket', 'customer', 'user']).optional(),
-					deactivated_datetime: z.string().optional(),
+					deactivated_datetime: z.string().nullable().optional(),
 					integration_id: z.number().int().min(0).nullable().optional(),
 					app_id: z.string().nullable().optional(),
 					order: z.number().int().min(0).optional(),
@@ -14969,7 +14983,7 @@ export const GorgiasEndpointInputSchemas = {
 			body: z
 				.object({
 					context: z.enum(['ticket', 'customer', 'user']).optional(),
-					deactivated_datetime: z.string().optional(),
+					deactivated_datetime: z.string().nullable().optional(),
 					integration_id: z.number().int().min(0).nullable().optional(),
 					app_id: z.string().nullable().optional(),
 					order: z.number().int().min(0).optional(),

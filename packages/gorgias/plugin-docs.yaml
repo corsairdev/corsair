@@ -243,9 +243,9 @@ apiExamples:
   widgets.updateWidget:
     call: "{\"path\":{\"id\":1},\"body\":{\"context\":\"ticket\",\"deactivated_datetime\":\"2025-01-01T00:00:00Z\",\"integration_id\":1,\"app_id\":\"x\",\"order\":1,\"template\":{},\"type\":\"bigcommerce\"}}"
 apiNotes:
-  files.downloadFile: "Returns { kind: \"binary\", contentType, base64, sizeBytes }. The signed redirect URL is followed internally and is never returned or logged. Downloads above the client safety limit of 20 MiB are rejected."
+  files.downloadFile: "Returns `{ kind: \"binary\", contentType, base64, sizeBytes }`. The signed redirect URL is followed internally and is never returned or logged. Downloads above the client safety limit of 20 MiB are rejected."
   files.uploadFiles: "Provide one to ten files in body.files using filename, contentType, and base64-encoded contentBase64. The client caps combined upload data at 20 MiB."
-  statistics.downloadLegacyStatistic: "Returns a { kind: \"binary\", contentType, base64, sizeBytes } object for the provider CSV response."
+  statistics.downloadLegacyStatistic: "Returns a `{ kind: \"binary\", contentType, base64, sizeBytes }` object for the provider CSV response."
   ticketMessages.listTicketMessages: "Gorgias marks this route deprecated; use ticketMessages.listMessages with query.ticket_id for new integrations."
   tickets.updateTicketCustomFields: "This route replaces all custom-field values on the ticket. Include every value you want to retain."
   ticketMessages.createTicketMessage: "This operation can send a customer-visible message and is marked destructive. Set query.action and the documented If-Unmodified-Since header when using concurrency control."

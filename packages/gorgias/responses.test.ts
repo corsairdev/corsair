@@ -138,4 +138,82 @@ describe('Gorgias live responses', () => {
 		});
 		expect(result.error?.issues ?? []).toEqual([]);
 	});
+
+	it('accepts null to restore a trashed ticket or reactivate a rule, integration or widget', () => {
+		const cases: [OperationKey, object][] = [
+			[
+				'tickets.updateTicket',
+				{ path: { id: 1 }, body: { trashed_datetime: null } },
+			],
+			[
+				'rules.createRule',
+				{ body: { name: 'r', code: 'x', deactivated_datetime: null } },
+			],
+			[
+				'rules.updateRule',
+				{ path: { id: 1 }, body: { deactivated_datetime: null } },
+			],
+			[
+				'integrations.updateIntegration',
+				{ path: { id: 1 }, body: { deactivated_datetime: null } },
+			],
+			[
+				'widgets.updateWidget',
+				{ path: { id: 1 }, body: { deactivated_datetime: null } },
+			],
+		];
+		for (const [key, input] of cases) {
+			const issues =
+				gorgiasEndpointSchemas[key].input.safeParse(input).error?.issues ?? [];
+			expect(
+				issues.filter(
+					(issue) =>
+						issue.path.includes('deactivated_datetime') ||
+						issue.path.includes('trashed_datetime'),
+				),
+			).toEqual([]);
+		}
+	});
+
+	it('parses fractional reporting values such as an average survey score', () => {
+		const result = gorgiasEndpointSchemas[
+			'reportingStatistics.getStatistic'
+		].output.safeParse({
+			object: 'list',
+			data: [{ averageSurveyScore: 4.25, count: 3 }],
+		});
+		expect(result.error?.issues ?? []).toEqual([]);
+	});
+
+	it('parses the reference CustomField definition without data_type', () => {
+		const result = gorgiasEndpointSchemas[
+			'customFields.getCustomField'
+		].output.safeParse({
+			id: 1,
+			label: 'Order id',
+			definition: { input_settings: { placeholder: 'ABC-123' } },
+		});
+		expect(result.error?.issues ?? []).toEqual([]);
+	});
+
+	it('validates a 20 MiB base64 upload without overflowing the regex stack', () => {
+		const schema = gorgiasEndpointSchemas['files.uploadFiles'].input;
+		const file = (contentBase64: string) => ({
+			body: {
+				files: [
+					{
+						filename: 'a.bin',
+						contentType: 'application/octet-stream',
+						contentBase64,
+					},
+				],
+			},
+		});
+		const big = Buffer.alloc(20 * 1024 * 1024, 7).toString('base64');
+		expect(schema.safeParse(file(big)).success).toBe(true);
+		for (const ok of ['', 'QQ==', 'QUI=', 'QUJD'])
+			expect(schema.safeParse(file(ok)).success).toBe(true);
+		for (const bad of ['QQ', 'QQ=', 'Q===', 'QQ==QQ==', 'QU!D'])
+			expect(schema.safeParse(file(bad)).success).toBe(false);
+	});
 });
