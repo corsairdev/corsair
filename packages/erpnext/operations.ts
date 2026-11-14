@@ -86,7 +86,8 @@ export const ERPNEXT_OPERATIONS = [
 		bodyRequired: true,
 		hasResponseBody: true,
 		responseEncoding: 'json',
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Save, submit, cancel, or update a document by sending its docstatus and fields through the frappe.client RPC',
 	},
@@ -424,7 +425,8 @@ export const ERPNEXT_OPERATIONS = [
 		bodyRequired: true,
 		hasResponseBody: true,
 		responseEncoding: 'json',
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Submit a submittable document, moving it from draft to submitted through the frappe.client RPC',
 	},
@@ -439,7 +441,8 @@ export const ERPNEXT_OPERATIONS = [
 		bodyRequired: true,
 		hasResponseBody: true,
 		responseEncoding: 'json',
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Cancel a submitted document by doctype and name through the frappe.client RPC',
 	},
@@ -454,9 +457,10 @@ export const ERPNEXT_OPERATIONS = [
 		bodyRequired: true,
 		hasResponseBody: true,
 		responseEncoding: 'json',
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Apply a workflow action to a document, transitioning it through its configured workflow states',
+			'Apply a workflow action to a document, transitioning it through its configured workflow states; transitions can submit or cancel the document',
 	},
 	{
 		key: 'workflow.getTransitions',
@@ -484,9 +488,9 @@ export const ERPNEXT_OPERATIONS = [
 		bodyRequired: true,
 		hasResponseBody: true,
 		responseEncoding: 'json',
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Add a comment to any document; the caller supplies the reference, content, and commenter identity',
+			'Add a comment to any document; the caller supplies the reference, content, and commenter identity. Users @mentioned in the content are notified by email',
 	},
 	{
 		key: 'desk.addTag',
@@ -783,9 +787,10 @@ export const ERPNEXT_OPERATIONS = [
 		bodyRequired: true,
 		hasResponseBody: true,
 		responseEncoding: 'json',
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Create a stock entry for material transfers, receipts, or issues between warehouses',
+			'Create a stock entry for material transfers, receipts, or issues between warehouses; ERPNext saves and submits it unless do_not_save or do_not_submit is set',
 	},
 	{
 		key: 'files.downloadPdf',

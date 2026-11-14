@@ -44,7 +44,8 @@ export const erpnextEndpointMeta = {
 			'Save an existing document through the frappe.client RPC, passing the complete document object with its changes',
 	},
 	'documents.saveDocs': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Save, submit, cancel, or update a document by sending its docstatus and fields through the frappe.client RPC',
 	},
@@ -149,19 +150,22 @@ export const erpnextEndpointMeta = {
 			'List role assignments (the Has Role child records) with optional user and role filters',
 	},
 	'documents.submit': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Submit a submittable document, moving it from draft to submitted through the frappe.client RPC',
 	},
 	'documents.cancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Cancel a submitted document by doctype and name through the frappe.client RPC',
 	},
 	'workflow.apply': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Apply a workflow action to a document, transitioning it through its configured workflow states',
+			'Apply a workflow action to a document, transitioning it through its configured workflow states; transitions can submit or cancel the document',
 	},
 	'workflow.getTransitions': {
 		riskLevel: 'read',
@@ -169,9 +173,9 @@ export const erpnextEndpointMeta = {
 			'List the workflow transitions available for a document, optionally scoped to a role',
 	},
 	'desk.addComment': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Add a comment to any document; the caller supplies the reference, content, and commenter identity',
+			'Add a comment to any document; the caller supplies the reference, content, and commenter identity. Users @mentioned in the content are notified by email',
 	},
 	'desk.addTag': {
 		riskLevel: 'write',
@@ -260,9 +264,10 @@ export const erpnextEndpointMeta = {
 			'Map a sales order or material request into draft purchase orders grouped by supplier',
 	},
 	'erp.makeStockEntry': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Create a stock entry for material transfers, receipts, or issues between warehouses',
+			'Create a stock entry for material transfers, receipts, or issues between warehouses; ERPNext saves and submits it unless do_not_save or do_not_submit is set',
 	},
 	'files.downloadPdf': {
 		riskLevel: 'read',
