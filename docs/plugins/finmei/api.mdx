@@ -1,0 +1,1151 @@
+---
+title: "Finmei API reference"
+sidebarTitle: "API"
+description: "API reference for the Finmei plugin in Corsair: every `finmei.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Currencies
+
+### list
+
+`currencies.list`
+
+List all currencies supported by Finmei
+
+**Risk:** `read`
+
+```ts
+await corsair.finmei.api.currencies.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Expenses
+
+### create
+
+`expenses.create`
+
+Create a new expense record with its bill file (base64 PDF or image, required)
+
+**Risk:** `write`
+
+```ts
+await corsair.finmei.api.expenses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `seller` | `string` | Yes | — |
+| `total` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `file` | `string` | Yes | — |
+| `fileType` | `string` | No | — |
+| `fileName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  date?: string | null,
+  total: number,
+  currency: string,
+  seller?: string | null,
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`expenses.delete`
+
+Delete an expense record by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.finmei.api.expenses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object \| null`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success?: boolean
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### download
+
+`expenses.download`
+
+Download expense receipt file as binary data
+
+**Risk:** `read`
+
+```ts
+await corsair.finmei.api.expenses.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `size` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`expenses.get`
+
+Retrieve an expense record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.finmei.api.expenses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  date?: string | null,
+  total: number,
+  currency: string,
+  seller?: string | null,
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`expenses.list`
+
+List recorded expenses with optional pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.finmei.api.expenses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  date?: string | null,
+  total: number,
+  currency: string,
+  seller?: string | null,
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  from?: number | null,
+  last_page?: number | null,
+  path?: string | null,
+  per_page?: number | null,
+  to?: number | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`expenses.update`
+
+Update an existing expense record
+
+**Risk:** `write`
+
+```ts
+await corsair.finmei.api.expenses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `seller` | `string` | Yes | — |
+| `total` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  date?: string | null,
+  total: number,
+  currency: string,
+  seller?: string | null,
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFile
+
+`expenses.updateFile`
+
+Update or replace an expense receipt file
+
+**Risk:** `write`
+
+```ts
+await corsair.finmei.api.expenses.updateFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file` | `string` | Yes | — |
+| `fileType` | `string` | No | — |
+| `fileName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  date?: string | null,
+  total: number,
+  currency: string,
+  seller?: string | null,
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Create a new invoice with line items, buyer and seller information
+
+**Risk:** `write`
+
+```ts
+await corsair.finmei.api.invoices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `regular_invoice \| vat_invoice \| preliminary_invoice \| preliminary_vat_invoice \| credit_invoice \| credit_vat_invoice` | Yes | — |
+| `invoice_date` | `string` | Yes | — |
+| `pay_until_date` | `string` | No | — |
+| `series` | `string` | Yes | — |
+| `invoice_number` | `string \| number` | No | — |
+| `currency` | `string` | Yes | — |
+| `payment_status` | `paid \| not_paid` | No | — |
+| `language` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `use_default_seller_info` | `boolean` | No | — |
+| `seller` | `object` | No | — |
+| `buyer` | `object` | Yes | — |
+| `products` | `object[]` | Yes | — |
+| `payment_options` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="seller full type">
+
+```ts
+{
+  company_name?: string,
+  company_code?: string,
+  first_name?: string,
+  last_name?: string,
+  individual_tax_id?: string,
+  vat_code?: string,
+  address?: string,
+  email?: string,
+  phone?: string,
+  custom_fields?: {
+    label: string,
+    value: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="buyer full type">
+
+```ts
+{
+  type: company | individual,
+  first_name?: string,
+  last_name?: string,
+  company_name?: string,
+  company_code?: string,
+  individual_tax_id?: string,
+  vat_code?: string,
+  country?: string,
+  address?: string,
+  email?: string,
+  phone?: string,
+  custom_fields?: {
+    label: string,
+    value: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+{
+  name: string,
+  price: number,
+  quantity: number,
+  units: string,
+  vat_percentage?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="payment_options full type">
+
+```ts
+{
+  type: string,
+  bank_account?: string,
+  bank_name?: string,
+  routing_or_sort_number?: string,
+  swift_bic_code?: string,
+  fields?: {
+    label: string,
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  business_id?: string | null,
+  invoice_type?: string | null,
+  series?: string | null,
+  invoice_number?: string | null,
+  invoice_date?: string | null,
+  pay_until_date?: string | null,
+  language?: string | null,
+  subtotal?: number | null,
+  vat?: number | null,
+  total_incl_vat?: number | null,
+  currency: string,
+  payment_status?: string | null,
+  notes?: string | null,
+  share_link?: string | null,
+  seller?: {
+    business_type?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    company_code?: string | null,
+    individual_tax_id?: string | null,
+    vat_code?: string | null,
+    address?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom_fields?: {
+      label: string,
+      value: string
+    }[] | null
+  } | null,
+  buyer?: {
+    type?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    company_code?: string | null,
+    individual_tax_id?: string | null,
+    vat_code?: string | null,
+    address?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    custom_fields?: {
+      label: string,
+      value: string
+    }[] | null
+  } | null,
+  items?: {
+    id?: string,
+    name: string,
+    price: number,
+    vat_percentage?: number | null,
+    quantity: number,
+    units?: string | null
+  }[],
+  payment_options?: {
+    type?: string,
+    bank_account?: string | null,
+    bank_name?: string | null,
+    routing_or_sort_number?: string | null,
+    swift_bic_code?: string | null,
+    fields?: {
+      label: string,
+      value: string
+    }[] | null
+  }[],
+  bank_accounts?: {
+    account?: string | null,
+    bank_name?: string | null
+  }[],
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`invoices.delete`
+
+Delete an invoice by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.finmei.api.invoices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object \| null`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success?: boolean
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### download
+
+`invoices.download`
+
+Download invoice PDF document as binary data
+
+**Risk:** `read`
+
+```ts
+await corsair.finmei.api.invoices.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `size` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Retrieve an invoice by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.finmei.api.invoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  business_id?: string | null,
+  invoice_type?: string | null,
+  series?: string | null,
+  invoice_number?: string | null,
+  invoice_date?: string | null,
+  pay_until_date?: string | null,
+  language?: string | null,
+  subtotal?: number | null,
+  vat?: number | null,
+  total_incl_vat?: number | null,
+  currency: string,
+  payment_status?: string | null,
+  notes?: string | null,
+  share_link?: string | null,
+  seller?: {
+    business_type?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    company_code?: string | null,
+    individual_tax_id?: string | null,
+    vat_code?: string | null,
+    address?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom_fields?: {
+      label: string,
+      value: string
+    }[] | null
+  } | null,
+  buyer?: {
+    type?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    company_code?: string | null,
+    individual_tax_id?: string | null,
+    vat_code?: string | null,
+    address?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    custom_fields?: {
+      label: string,
+      value: string
+    }[] | null
+  } | null,
+  items?: {
+    id?: string,
+    name: string,
+    price: number,
+    vat_percentage?: number | null,
+    quantity: number,
+    units?: string | null
+  }[],
+  payment_options?: {
+    type?: string,
+    bank_account?: string | null,
+    bank_name?: string | null,
+    routing_or_sort_number?: string | null,
+    swift_bic_code?: string | null,
+    fields?: {
+      label: string,
+      value: string
+    }[] | null
+  }[],
+  bank_accounts?: {
+    account?: string | null,
+    bank_name?: string | null
+  }[],
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices with optional pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.finmei.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  business_id?: string | null,
+  invoice_type?: string | null,
+  series?: string | null,
+  invoice_number?: string | null,
+  invoice_date?: string | null,
+  pay_until_date?: string | null,
+  language?: string | null,
+  subtotal?: number | null,
+  vat?: number | null,
+  total_incl_vat?: number | null,
+  currency: string,
+  payment_status?: string | null,
+  notes?: string | null,
+  share_link?: string | null,
+  seller?: {
+    business_type?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    company_code?: string | null,
+    individual_tax_id?: string | null,
+    vat_code?: string | null,
+    address?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom_fields?: {
+      label: string,
+      value: string
+    }[] | null
+  } | null,
+  buyer?: {
+    type?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    company_code?: string | null,
+    individual_tax_id?: string | null,
+    vat_code?: string | null,
+    address?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    custom_fields?: {
+      label: string,
+      value: string
+    }[] | null
+  } | null,
+  items?: {
+    id?: string,
+    name: string,
+    price: number,
+    vat_percentage?: number | null,
+    quantity: number,
+    units?: string | null
+  }[],
+  payment_options?: {
+    type?: string,
+    bank_account?: string | null,
+    bank_name?: string | null,
+    routing_or_sort_number?: string | null,
+    swift_bic_code?: string | null,
+    fields?: {
+      label: string,
+      value: string
+    }[] | null
+  }[],
+  bank_accounts?: {
+    account?: string | null,
+    bank_name?: string | null
+  }[],
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  from?: number | null,
+  last_page?: number | null,
+  path?: string | null,
+  per_page?: number | null,
+  to?: number | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Update an existing invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.finmei.api.invoices.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `regular_invoice \| vat_invoice \| preliminary_invoice \| preliminary_vat_invoice \| credit_invoice \| credit_vat_invoice` | Yes | — |
+| `invoice_date` | `string` | Yes | — |
+| `pay_until_date` | `string` | No | — |
+| `series` | `string` | Yes | — |
+| `invoice_number` | `string \| number` | No | — |
+| `currency` | `string` | Yes | — |
+| `payment_status` | `paid \| not_paid` | No | — |
+| `language` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `use_default_seller_info` | `boolean` | No | — |
+| `seller` | `object` | No | — |
+| `buyer` | `object` | Yes | — |
+| `products` | `object[]` | Yes | — |
+| `payment_options` | `object[]` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="seller full type">
+
+```ts
+{
+  company_name?: string,
+  company_code?: string,
+  first_name?: string,
+  last_name?: string,
+  individual_tax_id?: string,
+  vat_code?: string,
+  address?: string,
+  email?: string,
+  phone?: string,
+  custom_fields?: {
+    label: string,
+    value: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="buyer full type">
+
+```ts
+{
+  type: company | individual,
+  first_name?: string,
+  last_name?: string,
+  company_name?: string,
+  company_code?: string,
+  individual_tax_id?: string,
+  vat_code?: string,
+  country?: string,
+  address?: string,
+  email?: string,
+  phone?: string,
+  custom_fields?: {
+    label: string,
+    value: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+{
+  name: string,
+  price: number,
+  quantity: number,
+  units: string,
+  vat_percentage?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="payment_options full type">
+
+```ts
+{
+  type: string,
+  bank_account?: string,
+  bank_name?: string,
+  routing_or_sort_number?: string,
+  swift_bic_code?: string,
+  fields?: {
+    label: string,
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  business_id?: string | null,
+  invoice_type?: string | null,
+  series?: string | null,
+  invoice_number?: string | null,
+  invoice_date?: string | null,
+  pay_until_date?: string | null,
+  language?: string | null,
+  subtotal?: number | null,
+  vat?: number | null,
+  total_incl_vat?: number | null,
+  currency: string,
+  payment_status?: string | null,
+  notes?: string | null,
+  share_link?: string | null,
+  seller?: {
+    business_type?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    company_code?: string | null,
+    individual_tax_id?: string | null,
+    vat_code?: string | null,
+    address?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom_fields?: {
+      label: string,
+      value: string
+    }[] | null
+  } | null,
+  buyer?: {
+    type?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    company_code?: string | null,
+    individual_tax_id?: string | null,
+    vat_code?: string | null,
+    address?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    country?: string | null,
+    custom_fields?: {
+      label: string,
+      value: string
+    }[] | null
+  } | null,
+  items?: {
+    id?: string,
+    name: string,
+    price: number,
+    vat_percentage?: number | null,
+    quantity: number,
+    units?: string | null
+  }[],
+  payment_options?: {
+    type?: string,
+    bank_account?: string | null,
+    bank_name?: string | null,
+    routing_or_sort_number?: string | null,
+    swift_bic_code?: string | null,
+    fields?: {
+      label: string,
+      value: string
+    }[] | null
+  }[],
+  bank_accounts?: {
+    account?: string | null,
+    bank_name?: string | null
+  }[],
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profile
+
+### get
+
+`profile.get`
+
+Get profile information for the authenticated business
+
+**Risk:** `read`
+
+```ts
+await corsair.finmei.api.profile.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  business_id: string,
+  business_title?: string | null,
+  business_type?: string | null,
+  address?: string | null,
+  vat_code?: string | null,
+  company_name?: string | null,
+  company_code?: string | null,
+  individual_tax_id?: string | null,
+  first_name?: string | null,
+  last_name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
