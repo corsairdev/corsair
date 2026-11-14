@@ -28,9 +28,7 @@ describe('Handwrytten errorHandlers', () => {
 	it('routes 429 to RATE_LIMIT_ERROR with single-owner maxRetries: 0', async () => {
 		const error = apiError(429, 'Too Many Requests', 1500);
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(),
-		).resolves.toEqual({
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
 	});

@@ -6,7 +6,11 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429') || msg.includes('too many requests');
+			return (
+				msg.includes('rate_limited') ||
+				msg.includes('429') ||
+				msg.includes('too many requests')
+			);
 		},
 		// Core's request() has already retried this 429 (three times, honouring
 		// Retry-After) before it reaches a handler. Single-owner rate limiting
@@ -15,7 +19,10 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && (error.status === 401 || error.status === 403 || error.status === 440)) {
+			if (
+				error instanceof ApiError &&
+				(error.status === 401 || error.status === 403 || error.status === 440)
+			) {
 				return true;
 			}
 			const msg = error.message.toLowerCase();
@@ -32,11 +39,18 @@ export const errorHandlers = {
 	},
 	BAD_REQUEST_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && (error.status === 400 || error.status === 422)) {
+			if (
+				error instanceof ApiError &&
+				(error.status === 400 || error.status === 422)
+			) {
 				return true;
 			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('bad request') || msg.includes('validation error') || msg.includes('invalid');
+			return (
+				msg.includes('bad request') ||
+				msg.includes('validation error') ||
+				msg.includes('invalid')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
@@ -44,7 +58,11 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 404) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('not found') || msg.includes('resource not found') || msg.includes('page not found');
+			return (
+				msg.includes('not found') ||
+				msg.includes('resource not found') ||
+				msg.includes('page not found')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

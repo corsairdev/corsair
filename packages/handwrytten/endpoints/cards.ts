@@ -13,7 +13,8 @@ import {
 } from './types';
 
 export const list: HandwryttenEndpoints['cards.list'] = async (ctx, input) => {
-	const parsedInput = HandwryttenEndpointInputSchemas['cards.list'].parse(input);
+	const parsedInput =
+		HandwryttenEndpointInputSchemas['cards.list'].parse(input);
 	const response = await makeHandwryttenRequest<CardsListResponse>(
 		'/cards/list',
 		ctx.key,

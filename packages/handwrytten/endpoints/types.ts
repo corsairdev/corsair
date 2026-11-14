@@ -309,7 +309,9 @@ export const CardsCategoriesResponseSchema = z
 	})
 	.passthrough();
 
-export type CardsCategoriesResponse = z.infer<typeof CardsCategoriesResponseSchema>;
+export type CardsCategoriesResponse = z.infer<
+	typeof CardsCategoriesResponseSchema
+>;
 
 // ── Custom Cards Endpoints ────────────────────────────────────────────────────
 
@@ -320,7 +322,9 @@ export const CustomCardsDimensionsInputSchema = z
 	})
 	.strict();
 
-export type CustomCardsDimensionsInput = z.infer<typeof CustomCardsDimensionsInputSchema>;
+export type CustomCardsDimensionsInput = z.infer<
+	typeof CustomCardsDimensionsInputSchema
+>;
 
 export const CustomCardsDimensionsResponseSchema = z
 	.object({
@@ -330,7 +334,9 @@ export const CustomCardsDimensionsResponseSchema = z
 	})
 	.passthrough();
 
-export type CustomCardsDimensionsResponse = z.infer<typeof CustomCardsDimensionsResponseSchema>;
+export type CustomCardsDimensionsResponse = z.infer<
+	typeof CustomCardsDimensionsResponseSchema
+>;
 
 export const CustomCardsPresetImagesInputSchema = z
 	.object({
@@ -339,7 +345,9 @@ export const CustomCardsPresetImagesInputSchema = z
 	})
 	.strict();
 
-export type CustomCardsPresetImagesInput = z.infer<typeof CustomCardsPresetImagesInputSchema>;
+export type CustomCardsPresetImagesInput = z.infer<
+	typeof CustomCardsPresetImagesInputSchema
+>;
 
 export const CustomCardsPresetImagesResponseSchema = z
 	.object({
@@ -349,7 +357,9 @@ export const CustomCardsPresetImagesResponseSchema = z
 	})
 	.passthrough();
 
-export type CustomCardsPresetImagesResponse = z.infer<typeof CustomCardsPresetImagesResponseSchema>;
+export type CustomCardsPresetImagesResponse = z.infer<
+	typeof CustomCardsPresetImagesResponseSchema
+>;
 
 export const CustomCardsListImagesInputSchema = z
 	.object({
@@ -357,7 +367,9 @@ export const CustomCardsListImagesInputSchema = z
 	})
 	.strict();
 
-export type CustomCardsListImagesInput = z.infer<typeof CustomCardsListImagesInputSchema>;
+export type CustomCardsListImagesInput = z.infer<
+	typeof CustomCardsListImagesInputSchema
+>;
 
 export const CustomCardsListImagesResponseSchema = z
 	.object({
@@ -367,7 +379,9 @@ export const CustomCardsListImagesResponseSchema = z
 	})
 	.passthrough();
 
-export type CustomCardsListImagesResponse = z.infer<typeof CustomCardsListImagesResponseSchema>;
+export type CustomCardsListImagesResponse = z.infer<
+	typeof CustomCardsListImagesResponseSchema
+>;
 
 export const CustomCardsUploadImageInputSchema = z
 	.object({
@@ -377,7 +391,9 @@ export const CustomCardsUploadImageInputSchema = z
 	})
 	.strict();
 
-export type CustomCardsUploadImageInput = z.infer<typeof CustomCardsUploadImageInputSchema>;
+export type CustomCardsUploadImageInput = z.infer<
+	typeof CustomCardsUploadImageInputSchema
+>;
 
 export const CustomCardsUploadImageResponseSchema = z
 	.object({
@@ -388,7 +404,9 @@ export const CustomCardsUploadImageResponseSchema = z
 	})
 	.passthrough();
 
-export type CustomCardsUploadImageResponse = z.infer<typeof CustomCardsUploadImageResponseSchema>;
+export type CustomCardsUploadImageResponse = z.infer<
+	typeof CustomCardsUploadImageResponseSchema
+>;
 
 export const CustomCardsCheckImageInputSchema = z
 	.object({
@@ -397,7 +415,9 @@ export const CustomCardsCheckImageInputSchema = z
 	})
 	.strict();
 
-export type CustomCardsCheckImageInput = z.infer<typeof CustomCardsCheckImageInputSchema>;
+export type CustomCardsCheckImageInput = z.infer<
+	typeof CustomCardsCheckImageInputSchema
+>;
 
 export const CustomCardsCheckImageResponseSchema = z
 	.object({
@@ -408,7 +428,9 @@ export const CustomCardsCheckImageResponseSchema = z
 	})
 	.passthrough();
 
-export type CustomCardsCheckImageResponse = z.infer<typeof CustomCardsCheckImageResponseSchema>;
+export type CustomCardsCheckImageResponse = z.infer<
+	typeof CustomCardsCheckImageResponseSchema
+>;
 
 export const CustomCardsDeleteImageInputSchema = z
 	.object({
@@ -416,7 +438,9 @@ export const CustomCardsDeleteImageInputSchema = z
 	})
 	.strict();
 
-export type CustomCardsDeleteImageInput = z.infer<typeof CustomCardsDeleteImageInputSchema>;
+export type CustomCardsDeleteImageInput = z.infer<
+	typeof CustomCardsDeleteImageInputSchema
+>;
 
 export const CustomCardsDeleteImageResponseSchema = z
 	.object({
@@ -425,7 +449,9 @@ export const CustomCardsDeleteImageResponseSchema = z
 	})
 	.passthrough();
 
-export type CustomCardsDeleteImageResponse = z.infer<typeof CustomCardsDeleteImageResponseSchema>;
+export type CustomCardsDeleteImageResponse = z.infer<
+	typeof CustomCardsDeleteImageResponseSchema
+>;
 
 export const CustomCardsCreateInputSchema = z
 	.object({
@@ -438,7 +464,9 @@ export const CustomCardsCreateInputSchema = z
 	})
 	.strict();
 
-export type CustomCardsCreateInput = z.infer<typeof CustomCardsCreateInputSchema>;
+export type CustomCardsCreateInput = z.infer<
+	typeof CustomCardsCreateInputSchema
+>;
 
 export const CustomCardsCreateResponseSchema = z
 	.object({
@@ -449,7 +477,9 @@ export const CustomCardsCreateResponseSchema = z
 	})
 	.passthrough();
 
-export type CustomCardsCreateResponse = z.infer<typeof CustomCardsCreateResponseSchema>;
+export type CustomCardsCreateResponse = z.infer<
+	typeof CustomCardsCreateResponseSchema
+>;
 
 export const CustomCardsDeleteInputSchema = z
 	.object({
@@ -457,7 +487,9 @@ export const CustomCardsDeleteInputSchema = z
 	})
 	.strict();
 
-export type CustomCardsDeleteInput = z.infer<typeof CustomCardsDeleteInputSchema>;
+export type CustomCardsDeleteInput = z.infer<
+	typeof CustomCardsDeleteInputSchema
+>;
 
 export const CustomCardsDeleteResponseSchema = z
 	.object({
@@ -466,7 +498,9 @@ export const CustomCardsDeleteResponseSchema = z
 	})
 	.passthrough();
 
-export type CustomCardsDeleteResponse = z.infer<typeof CustomCardsDeleteResponseSchema>;
+export type CustomCardsDeleteResponse = z.infer<
+	typeof CustomCardsDeleteResponseSchema
+>;
 
 // ── Orders Endpoints ──────────────────────────────────────────────────────────
 
@@ -519,7 +553,9 @@ export const OrdersSendSingleResponseSchema = z
 	})
 	.passthrough();
 
-export type OrdersSendSingleResponse = z.infer<typeof OrdersSendSingleResponseSchema>;
+export type OrdersSendSingleResponse = z.infer<
+	typeof OrdersSendSingleResponseSchema
+>;
 
 export const OrdersAddToBasketInputSchema = z
 	.object({
@@ -537,7 +573,9 @@ export const OrdersAddToBasketInputSchema = z
 	})
 	.strict();
 
-export type OrdersAddToBasketInput = z.infer<typeof OrdersAddToBasketInputSchema>;
+export type OrdersAddToBasketInput = z.infer<
+	typeof OrdersAddToBasketInputSchema
+>;
 
 export const OrdersAddToBasketResponseSchema = z
 	.object({
@@ -547,7 +585,9 @@ export const OrdersAddToBasketResponseSchema = z
 	})
 	.passthrough();
 
-export type OrdersAddToBasketResponse = z.infer<typeof OrdersAddToBasketResponseSchema>;
+export type OrdersAddToBasketResponse = z.infer<
+	typeof OrdersAddToBasketResponseSchema
+>;
 
 export const OrdersGetInputSchema = z
 	.object({
@@ -662,12 +702,16 @@ export const SignaturesListResponseSchema = z
 	})
 	.passthrough();
 
-export type SignaturesListResponse = z.infer<typeof SignaturesListResponseSchema>;
+export type SignaturesListResponse = z.infer<
+	typeof SignaturesListResponseSchema
+>;
 
 // ── Address Book Endpoints ────────────────────────────────────────────────────
 
 export const AddressBookCountriesInputSchema = z.object({}).strict();
-export type AddressBookCountriesInput = z.infer<typeof AddressBookCountriesInputSchema>;
+export type AddressBookCountriesInput = z.infer<
+	typeof AddressBookCountriesInputSchema
+>;
 
 export const AddressBookCountriesResponseSchema = z
 	.object({
@@ -677,7 +721,9 @@ export const AddressBookCountriesResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookCountriesResponse = z.infer<typeof AddressBookCountriesResponseSchema>;
+export type AddressBookCountriesResponse = z.infer<
+	typeof AddressBookCountriesResponseSchema
+>;
 
 export const AddressBookStatesInputSchema = z
 	.object({
@@ -686,7 +732,9 @@ export const AddressBookStatesInputSchema = z
 	})
 	.strict();
 
-export type AddressBookStatesInput = z.infer<typeof AddressBookStatesInputSchema>;
+export type AddressBookStatesInput = z.infer<
+	typeof AddressBookStatesInputSchema
+>;
 
 export const AddressBookStatesResponseSchema = z
 	.object({
@@ -696,10 +744,14 @@ export const AddressBookStatesResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookStatesResponse = z.infer<typeof AddressBookStatesResponseSchema>;
+export type AddressBookStatesResponse = z.infer<
+	typeof AddressBookStatesResponseSchema
+>;
 
 export const AddressBookListRecipientsInputSchema = z.object({}).strict();
-export type AddressBookListRecipientsInput = z.infer<typeof AddressBookListRecipientsInputSchema>;
+export type AddressBookListRecipientsInput = z.infer<
+	typeof AddressBookListRecipientsInputSchema
+>;
 
 export const AddressBookListRecipientsResponseSchema = z
 	.object({
@@ -709,7 +761,9 @@ export const AddressBookListRecipientsResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookListRecipientsResponse = z.infer<typeof AddressBookListRecipientsResponseSchema>;
+export type AddressBookListRecipientsResponse = z.infer<
+	typeof AddressBookListRecipientsResponseSchema
+>;
 
 export const AddressBookAddRecipientInputSchema = z
 	.object({
@@ -728,7 +782,9 @@ export const AddressBookAddRecipientInputSchema = z
 	})
 	.strict();
 
-export type AddressBookAddRecipientInput = z.infer<typeof AddressBookAddRecipientInputSchema>;
+export type AddressBookAddRecipientInput = z.infer<
+	typeof AddressBookAddRecipientInputSchema
+>;
 
 export const AddressBookAddRecipientResponseSchema = z
 	.object({
@@ -738,7 +794,9 @@ export const AddressBookAddRecipientResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookAddRecipientResponse = z.infer<typeof AddressBookAddRecipientResponseSchema>;
+export type AddressBookAddRecipientResponse = z.infer<
+	typeof AddressBookAddRecipientResponseSchema
+>;
 
 export const AddressBookUpdateRecipientInputSchema = z
 	.object({
@@ -757,7 +815,9 @@ export const AddressBookUpdateRecipientInputSchema = z
 	})
 	.strict();
 
-export type AddressBookUpdateRecipientInput = z.infer<typeof AddressBookUpdateRecipientInputSchema>;
+export type AddressBookUpdateRecipientInput = z.infer<
+	typeof AddressBookUpdateRecipientInputSchema
+>;
 
 export const AddressBookUpdateRecipientResponseSchema = z
 	.object({
@@ -767,7 +827,9 @@ export const AddressBookUpdateRecipientResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookUpdateRecipientResponse = z.infer<typeof AddressBookUpdateRecipientResponseSchema>;
+export type AddressBookUpdateRecipientResponse = z.infer<
+	typeof AddressBookUpdateRecipientResponseSchema
+>;
 
 export const AddressBookDeleteRecipientInputSchema = z
 	.object({
@@ -775,7 +837,9 @@ export const AddressBookDeleteRecipientInputSchema = z
 	})
 	.strict();
 
-export type AddressBookDeleteRecipientInput = z.infer<typeof AddressBookDeleteRecipientInputSchema>;
+export type AddressBookDeleteRecipientInput = z.infer<
+	typeof AddressBookDeleteRecipientInputSchema
+>;
 
 export const AddressBookDeleteRecipientResponseSchema = z
 	.object({
@@ -785,10 +849,14 @@ export const AddressBookDeleteRecipientResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookDeleteRecipientResponse = z.infer<typeof AddressBookDeleteRecipientResponseSchema>;
+export type AddressBookDeleteRecipientResponse = z.infer<
+	typeof AddressBookDeleteRecipientResponseSchema
+>;
 
 export const AddressBookListSendersInputSchema = z.object({}).strict();
-export type AddressBookListSendersInput = z.infer<typeof AddressBookListSendersInputSchema>;
+export type AddressBookListSendersInput = z.infer<
+	typeof AddressBookListSendersInputSchema
+>;
 
 export const AddressBookListSendersResponseSchema = z
 	.object({
@@ -798,10 +866,14 @@ export const AddressBookListSendersResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookListSendersResponse = z.infer<typeof AddressBookListSendersResponseSchema>;
+export type AddressBookListSendersResponse = z.infer<
+	typeof AddressBookListSendersResponseSchema
+>;
 
 export const AddressBookGetSenderInputSchema = z.object({}).strict();
-export type AddressBookGetSenderInput = z.infer<typeof AddressBookGetSenderInputSchema>;
+export type AddressBookGetSenderInput = z.infer<
+	typeof AddressBookGetSenderInputSchema
+>;
 
 export const AddressBookGetSenderResponseSchema = z
 	.object({
@@ -813,7 +885,9 @@ export const AddressBookGetSenderResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookGetSenderResponse = z.infer<typeof AddressBookGetSenderResponseSchema>;
+export type AddressBookGetSenderResponse = z.infer<
+	typeof AddressBookGetSenderResponseSchema
+>;
 
 export const AddressBookAddSenderInputSchema = z
 	.object({
@@ -831,7 +905,9 @@ export const AddressBookAddSenderInputSchema = z
 	})
 	.strict();
 
-export type AddressBookAddSenderInput = z.infer<typeof AddressBookAddSenderInputSchema>;
+export type AddressBookAddSenderInput = z.infer<
+	typeof AddressBookAddSenderInputSchema
+>;
 
 export const AddressBookAddSenderResponseSchema = z
 	.object({
@@ -842,7 +918,9 @@ export const AddressBookAddSenderResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookAddSenderResponse = z.infer<typeof AddressBookAddSenderResponseSchema>;
+export type AddressBookAddSenderResponse = z.infer<
+	typeof AddressBookAddSenderResponseSchema
+>;
 
 export const AddressBookUpdateSenderInputSchema = z
 	.object({
@@ -854,7 +932,9 @@ export const AddressBookUpdateSenderInputSchema = z
 	})
 	.strict();
 
-export type AddressBookUpdateSenderInput = z.infer<typeof AddressBookUpdateSenderInputSchema>;
+export type AddressBookUpdateSenderInput = z.infer<
+	typeof AddressBookUpdateSenderInputSchema
+>;
 
 export const AddressBookUpdateSenderResponseSchema = z
 	.object({
@@ -865,7 +945,9 @@ export const AddressBookUpdateSenderResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookUpdateSenderResponse = z.infer<typeof AddressBookUpdateSenderResponseSchema>;
+export type AddressBookUpdateSenderResponse = z.infer<
+	typeof AddressBookUpdateSenderResponseSchema
+>;
 
 export const AddressBookDeleteSenderInputSchema = z
 	.object({
@@ -873,7 +955,9 @@ export const AddressBookDeleteSenderInputSchema = z
 	})
 	.strict();
 
-export type AddressBookDeleteSenderInput = z.infer<typeof AddressBookDeleteSenderInputSchema>;
+export type AddressBookDeleteSenderInput = z.infer<
+	typeof AddressBookDeleteSenderInputSchema
+>;
 
 export const AddressBookDeleteSenderResponseSchema = z
 	.object({
@@ -882,7 +966,9 @@ export const AddressBookDeleteSenderResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookDeleteSenderResponse = z.infer<typeof AddressBookDeleteSenderResponseSchema>;
+export type AddressBookDeleteSenderResponse = z.infer<
+	typeof AddressBookDeleteSenderResponseSchema
+>;
 
 export const AddressBookSetDefaultSenderInputSchema = z
 	.object({
@@ -890,7 +976,9 @@ export const AddressBookSetDefaultSenderInputSchema = z
 	})
 	.strict();
 
-export type AddressBookSetDefaultSenderInput = z.infer<typeof AddressBookSetDefaultSenderInputSchema>;
+export type AddressBookSetDefaultSenderInput = z.infer<
+	typeof AddressBookSetDefaultSenderInputSchema
+>;
 
 export const AddressBookSetDefaultSenderResponseSchema = z
 	.object({
@@ -899,12 +987,16 @@ export const AddressBookSetDefaultSenderResponseSchema = z
 	})
 	.passthrough();
 
-export type AddressBookSetDefaultSenderResponse = z.infer<typeof AddressBookSetDefaultSenderResponseSchema>;
+export type AddressBookSetDefaultSenderResponse = z.infer<
+	typeof AddressBookSetDefaultSenderResponseSchema
+>;
 
 // ── Templates Endpoints ───────────────────────────────────────────────────────
 
 export const TemplatesCategoriesInputSchema = z.object({}).strict();
-export type TemplatesCategoriesInput = z.infer<typeof TemplatesCategoriesInputSchema>;
+export type TemplatesCategoriesInput = z.infer<
+	typeof TemplatesCategoriesInputSchema
+>;
 
 export const TemplatesCategoriesResponseSchema = z
 	.object({
@@ -914,7 +1006,9 @@ export const TemplatesCategoriesResponseSchema = z
 	})
 	.passthrough();
 
-export type TemplatesCategoriesResponse = z.infer<typeof TemplatesCategoriesResponseSchema>;
+export type TemplatesCategoriesResponse = z.infer<
+	typeof TemplatesCategoriesResponseSchema
+>;
 
 export const TemplatesListInputSchema = z
 	.object({
@@ -972,7 +1066,9 @@ export const TemplatesCreateResponseSchema = z
 	})
 	.passthrough();
 
-export type TemplatesCreateResponse = z.infer<typeof TemplatesCreateResponseSchema>;
+export type TemplatesCreateResponse = z.infer<
+	typeof TemplatesCreateResponseSchema
+>;
 
 export const TemplatesUpdateInputSchema = z
 	.object({
@@ -994,7 +1090,9 @@ export const TemplatesUpdateResponseSchema = z
 	})
 	.passthrough();
 
-export type TemplatesUpdateResponse = z.infer<typeof TemplatesUpdateResponseSchema>;
+export type TemplatesUpdateResponse = z.infer<
+	typeof TemplatesUpdateResponseSchema
+>;
 
 export const TemplatesDeleteInputSchema = z
 	.object({
@@ -1011,7 +1109,9 @@ export const TemplatesDeleteResponseSchema = z
 	})
 	.passthrough();
 
-export type TemplatesDeleteResponse = z.infer<typeof TemplatesDeleteResponseSchema>;
+export type TemplatesDeleteResponse = z.infer<
+	typeof TemplatesDeleteResponseSchema
+>;
 
 // ── Gift Cards Endpoints ──────────────────────────────────────────────────────
 
@@ -1127,7 +1227,9 @@ export const QrCodesDashboardResponseSchema = z
 	})
 	.passthrough();
 
-export type QrCodesDashboardResponse = z.infer<typeof QrCodesDashboardResponseSchema>;
+export type QrCodesDashboardResponse = z.infer<
+	typeof QrCodesDashboardResponseSchema
+>;
 
 export const QrCodesFramesInputSchema = z.object({}).strict();
 export type QrCodesFramesInput = z.infer<typeof QrCodesFramesInputSchema>;
@@ -1146,7 +1248,9 @@ export type QrCodesFramesResponse = z.infer<typeof QrCodesFramesResponseSchema>;
 // ── Shipping Endpoints ────────────────────────────────────────────────────────
 
 export const ShippingStampOptionsInputSchema = z.object({}).strict();
-export type ShippingStampOptionsInput = z.infer<typeof ShippingStampOptionsInputSchema>;
+export type ShippingStampOptionsInput = z.infer<
+	typeof ShippingStampOptionsInputSchema
+>;
 
 export const ShippingStampOptionsResponseSchema = z
 	.object({
@@ -1156,7 +1260,9 @@ export const ShippingStampOptionsResponseSchema = z
 	})
 	.passthrough();
 
-export type ShippingStampOptionsResponse = z.infer<typeof ShippingStampOptionsResponseSchema>;
+export type ShippingStampOptionsResponse = z.infer<
+	typeof ShippingStampOptionsResponseSchema
+>;
 
 // ── Prospecting Endpoints ─────────────────────────────────────────────────────
 
@@ -1171,7 +1277,9 @@ export const ProspectingCalculateTargetsInputSchema = z
 	})
 	.strict();
 
-export type ProspectingCalculateTargetsInput = z.infer<typeof ProspectingCalculateTargetsInputSchema>;
+export type ProspectingCalculateTargetsInput = z.infer<
+	typeof ProspectingCalculateTargetsInputSchema
+>;
 
 export const ProspectingCalculateTargetsResponseSchema = z
 	.object({
@@ -1182,7 +1290,9 @@ export const ProspectingCalculateTargetsResponseSchema = z
 	})
 	.passthrough();
 
-export type ProspectingCalculateTargetsResponse = z.infer<typeof ProspectingCalculateTargetsResponseSchema>;
+export type ProspectingCalculateTargetsResponse = z.infer<
+	typeof ProspectingCalculateTargetsResponseSchema
+>;
 
 export const ProspectingPreviewInputSchema = z
 	.object({
@@ -1194,7 +1304,9 @@ export const ProspectingPreviewInputSchema = z
 	})
 	.strict();
 
-export type ProspectingPreviewInput = z.infer<typeof ProspectingPreviewInputSchema>;
+export type ProspectingPreviewInput = z.infer<
+	typeof ProspectingPreviewInputSchema
+>;
 
 export const ProspectingPreviewResponseSchema = z
 	.object({
@@ -1206,7 +1318,9 @@ export const ProspectingPreviewResponseSchema = z
 	})
 	.passthrough();
 
-export type ProspectingPreviewResponse = z.infer<typeof ProspectingPreviewResponseSchema>;
+export type ProspectingPreviewResponse = z.infer<
+	typeof ProspectingPreviewResponseSchema
+>;
 
 export const ProspectingCreateOrderInputSchema = z
 	.object({
@@ -1223,7 +1337,9 @@ export const ProspectingCreateOrderInputSchema = z
 	})
 	.strict();
 
-export type ProspectingCreateOrderInput = z.infer<typeof ProspectingCreateOrderInputSchema>;
+export type ProspectingCreateOrderInput = z.infer<
+	typeof ProspectingCreateOrderInputSchema
+>;
 
 export const ProspectingCreateOrderResponseSchema = z
 	.object({
@@ -1233,7 +1349,9 @@ export const ProspectingCreateOrderResponseSchema = z
 	})
 	.passthrough();
 
-export type ProspectingCreateOrderResponse = z.infer<typeof ProspectingCreateOrderResponseSchema>;
+export type ProspectingCreateOrderResponse = z.infer<
+	typeof ProspectingCreateOrderResponseSchema
+>;
 
 // ── Auth / Account Endpoints ──────────────────────────────────────────────────
 
@@ -1284,7 +1402,9 @@ export const AuthSetTestModeResponseSchema = z
 	})
 	.passthrough();
 
-export type AuthSetTestModeResponse = z.infer<typeof AuthSetTestModeResponseSchema>;
+export type AuthSetTestModeResponse = z.infer<
+	typeof AuthSetTestModeResponseSchema
+>;
 
 export const AuthLogoutInputSchema = z.object({}).strict();
 export type AuthLogoutInput = z.infer<typeof AuthLogoutInputSchema>;

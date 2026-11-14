@@ -367,11 +367,10 @@ describe('Basket Endpoints', () => {
 		});
 
 		await Basket.send(ctx, { notes: 'Batch send test' });
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/basket/send',
-			'test-api-key',
-			{ method: 'POST', body: { notes: 'Batch send test' } },
-		);
+		expect(mockedRequest).toHaveBeenCalledWith('/basket/send', 'test-api-key', {
+			method: 'POST',
+			body: { notes: 'Batch send test' },
+		});
 	});
 });
 
@@ -384,11 +383,9 @@ describe('Fonts and Signatures Endpoints', () => {
 		});
 
 		const res = await Fonts.list(ctx, {});
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/fonts/list',
-			'test-api-key',
-			{ method: 'GET' },
-		);
+		expect(mockedRequest).toHaveBeenCalledWith('/fonts/list', 'test-api-key', {
+			method: 'GET',
+		});
 		expect(res.fonts?.[0]?.id).toBe('hwCasual');
 	});
 
@@ -801,10 +798,9 @@ describe('Auth Endpoints', () => {
 		);
 
 		await Auth.logout(ctx, {});
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/auth/logout',
-			'test-api-key',
-			{ method: 'POST', body: {} },
-		);
+		expect(mockedRequest).toHaveBeenCalledWith('/auth/logout', 'test-api-key', {
+			method: 'POST',
+			body: {},
+		});
 	});
 });

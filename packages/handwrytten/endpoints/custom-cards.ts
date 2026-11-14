@@ -20,14 +20,15 @@ export const dimensions: HandwryttenEndpoints['customCards.dimensions'] =
 	async (ctx, input) => {
 		const parsedInput =
 			HandwryttenEndpointInputSchemas['customCards.dimensions'].parse(input);
-		const response = await makeHandwryttenRequest<CustomCardsDimensionsResponse>(
-			'/design/dimensions',
-			ctx.key,
-			{
-				method: 'GET',
-				query: parsedInput,
-			},
-		);
+		const response =
+			await makeHandwryttenRequest<CustomCardsDimensionsResponse>(
+				'/design/dimensions',
+				ctx.key,
+				{
+					method: 'GET',
+					query: parsedInput,
+				},
+			);
 		const parsed =
 			HandwryttenEndpointOutputSchemas['customCards.dimensions'].parse(
 				response,
@@ -123,14 +124,15 @@ export const checkImage: HandwryttenEndpoints['customCards.checkImage'] =
 	async (ctx, input) => {
 		const parsedInput =
 			HandwryttenEndpointInputSchemas['customCards.checkImage'].parse(input);
-		const response = await makeHandwryttenRequest<CustomCardsCheckImageResponse>(
-			'/cards/checkUploadedCustomLogo',
-			ctx.key,
-			{
-				method: 'POST',
-				body: parsedInput,
-			},
-		);
+		const response =
+			await makeHandwryttenRequest<CustomCardsCheckImageResponse>(
+				'/cards/checkUploadedCustomLogo',
+				ctx.key,
+				{
+					method: 'POST',
+					body: parsedInput,
+				},
+			);
 		const parsed =
 			HandwryttenEndpointOutputSchemas['customCards.checkImage'].parse(
 				response,

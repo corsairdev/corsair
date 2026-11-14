@@ -14,9 +14,9 @@ import {
 export const calculateTargets: HandwryttenEndpoints['prospecting.calculateTargets'] =
 	async (ctx, input) => {
 		const parsedInput =
-			HandwryttenEndpointInputSchemas[
-				'prospecting.calculateTargets'
-			].parse(input);
+			HandwryttenEndpointInputSchemas['prospecting.calculateTargets'].parse(
+				input,
+			);
 		const response =
 			await makeHandwryttenRequest<ProspectingCalculateTargetsResponse>(
 				'/outbound/calcTargets',
@@ -27,9 +27,9 @@ export const calculateTargets: HandwryttenEndpoints['prospecting.calculateTarget
 				},
 			);
 		const parsed =
-			HandwryttenEndpointOutputSchemas[
-				'prospecting.calculateTargets'
-			].parse(response);
+			HandwryttenEndpointOutputSchemas['prospecting.calculateTargets'].parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'handwrytten.prospecting.calculateTargets',
@@ -45,15 +45,14 @@ export const preview: HandwryttenEndpoints['prospecting.preview'] = async (
 ) => {
 	const parsedInput =
 		HandwryttenEndpointInputSchemas['prospecting.preview'].parse(input);
-	const response =
-		await makeHandwryttenRequest<ProspectingPreviewResponse>(
-			'/outbound/process',
-			ctx.key,
-			{
-				method: 'POST',
-				body: parsedInput,
-			},
-		);
+	const response = await makeHandwryttenRequest<ProspectingPreviewResponse>(
+		'/outbound/process',
+		ctx.key,
+		{
+			method: 'POST',
+			body: parsedInput,
+		},
+	);
 	const parsed =
 		HandwryttenEndpointOutputSchemas['prospecting.preview'].parse(response);
 	await logEventFromContext(
@@ -68,9 +67,7 @@ export const preview: HandwryttenEndpoints['prospecting.preview'] = async (
 export const createOrder: HandwryttenEndpoints['prospecting.createOrder'] =
 	async (ctx, input) => {
 		const parsedInput =
-			HandwryttenEndpointInputSchemas[
-				'prospecting.createOrder'
-			].parse(input);
+			HandwryttenEndpointInputSchemas['prospecting.createOrder'].parse(input);
 		const response =
 			await makeHandwryttenRequest<ProspectingCreateOrderResponse>(
 				'/outbound/addToBasket',
@@ -81,9 +78,9 @@ export const createOrder: HandwryttenEndpoints['prospecting.createOrder'] =
 				},
 			);
 		const parsed =
-			HandwryttenEndpointOutputSchemas[
-				'prospecting.createOrder'
-			].parse(response);
+			HandwryttenEndpointOutputSchemas['prospecting.createOrder'].parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'handwrytten.prospecting.createOrder',

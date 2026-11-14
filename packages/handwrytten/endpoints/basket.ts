@@ -64,7 +64,8 @@ export const send: HandwryttenEndpoints['basket.send'] = async (ctx, input) => {
 			body: parsedInput,
 		},
 	);
-	const parsed = HandwryttenEndpointOutputSchemas['basket.send'].parse(response);
+	const parsed =
+		HandwryttenEndpointOutputSchemas['basket.send'].parse(response);
 	await logEventFromContext(ctx, 'handwrytten.basket.send', {}, 'completed');
 	return parsed;
 };

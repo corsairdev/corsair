@@ -122,11 +122,6 @@ export const frames: HandwryttenEndpoints['qrCodes.frames'] = async (
 	);
 	const parsed =
 		HandwryttenEndpointOutputSchemas['qrCodes.frames'].parse(response);
-	await logEventFromContext(
-		ctx,
-		'handwrytten.qrCodes.frames',
-		{},
-		'completed',
-	);
+	await logEventFromContext(ctx, 'handwrytten.qrCodes.frames', {}, 'completed');
 	return parsed;
 };

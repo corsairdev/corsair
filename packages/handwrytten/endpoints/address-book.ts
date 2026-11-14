@@ -301,9 +301,9 @@ export const deleteSender: HandwryttenEndpoints['addressBook.deleteSender'] =
 export const setDefaultSender: HandwryttenEndpoints['addressBook.setDefaultSender'] =
 	async (ctx, input) => {
 		const parsedInput =
-			HandwryttenEndpointInputSchemas[
-				'addressBook.setDefaultSender'
-			].parse(input);
+			HandwryttenEndpointInputSchemas['addressBook.setDefaultSender'].parse(
+				input,
+			);
 		const response =
 			await makeHandwryttenRequest<AddressBookSetDefaultSenderResponse>(
 				'/profile/setDefaultAddress',
@@ -314,9 +314,9 @@ export const setDefaultSender: HandwryttenEndpoints['addressBook.setDefaultSende
 				},
 			);
 		const parsed =
-			HandwryttenEndpointOutputSchemas[
-				'addressBook.setDefaultSender'
-			].parse(response);
+			HandwryttenEndpointOutputSchemas['addressBook.setDefaultSender'].parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'handwrytten.addressBook.setDefaultSender',

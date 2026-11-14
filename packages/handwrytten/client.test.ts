@@ -119,12 +119,7 @@ describe('makeHandwryttenRequest', () => {
 			apiKey: 'secret_live_key',
 			credit_card_id: 'cc_9999',
 		};
-		const sensitiveError = apiError(
-			400,
-			'Bad Request',
-			undefined,
-			rawBody,
-		);
+		const sensitiveError = apiError(400, 'Bad Request', undefined, rawBody);
 		mockRequest.mockRejectedValue(sensitiveError);
 
 		// `unknown` because rejection value has no static type; assertion below narrows it.
@@ -161,9 +156,9 @@ describe('handwrytten keyBuilder', () => {
 		const plugin = handwrytten({ key: 'direct-opt-key' });
 		if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
 		// `unknown` because test context provides only properties used by keyBuilder.
-		const ctx = { meteredOperationId: 'orders.sendSingle' } as unknown as Parameters<
-			NonNullable<typeof plugin.keyBuilder>
-		>[0];
+		const ctx = {
+			meteredOperationId: 'orders.sendSingle',
+		} as unknown as Parameters<NonNullable<typeof plugin.keyBuilder>>[0];
 		const key = await plugin.keyBuilder(ctx, 'endpoint');
 		expect(key).toBe('direct-opt-key');
 	});

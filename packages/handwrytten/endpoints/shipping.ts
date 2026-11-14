@@ -10,18 +10,15 @@ import {
 export const stampOptions: HandwryttenEndpoints['shipping.stampOptions'] =
 	async (ctx, input) => {
 		HandwryttenEndpointInputSchemas['shipping.stampOptions'].parse(input);
-		const response =
-			await makeHandwryttenRequest<ShippingStampOptionsResponse>(
-				'/shipping/stampOptions',
-				ctx.key,
-				{
-					method: 'GET',
-				},
-			);
+		const response = await makeHandwryttenRequest<ShippingStampOptionsResponse>(
+			'/shipping/stampOptions',
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
 		const parsed =
-			HandwryttenEndpointOutputSchemas['shipping.stampOptions'].parse(
-				response,
-			);
+			HandwryttenEndpointOutputSchemas['shipping.stampOptions'].parse(response);
 		await logEventFromContext(
 			ctx,
 			'handwrytten.shipping.stampOptions',

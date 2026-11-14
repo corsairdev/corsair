@@ -63,7 +63,8 @@ export const addToBasket: HandwryttenEndpoints['orders.addToBasket'] = async (
 };
 
 export const get: HandwryttenEndpoints['orders.get'] = async (ctx, input) => {
-	const parsedInput = HandwryttenEndpointInputSchemas['orders.get'].parse(input);
+	const parsedInput =
+		HandwryttenEndpointInputSchemas['orders.get'].parse(input);
 	const response = await makeHandwryttenRequest<OrdersGetResponse>(
 		'/orders/details',
 		ctx.key,

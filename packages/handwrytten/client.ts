@@ -34,7 +34,13 @@ const SENSITIVE_FIELD_NAMES = new Set([
 
 // `unknown` because request payloads can be arbitrary JSON primitives, arrays, or objects.
 function redactValue(value: unknown): unknown {
-	if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === null || value === undefined) {
+	if (
+		typeof value === 'string' ||
+		typeof value === 'number' ||
+		typeof value === 'boolean' ||
+		value === null ||
+		value === undefined
+	) {
 		return value;
 	}
 	if (Array.isArray(value)) {
@@ -68,7 +74,12 @@ export async function makeHandwryttenRequest<T>(
 		baseUrl?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, baseUrl = HANDWRYTTEN_API_BASE } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		baseUrl = HANDWRYTTEN_API_BASE,
+	} = options;
 
 	// An explicitly empty key means no credentials are configured (the
 	// keyBuilder resolves that case to ''). Public callers pass undefined
@@ -111,7 +122,9 @@ export async function makeHandwryttenRequest<T>(
 		if (error instanceof ApiError) {
 			if (error.request && error.request.body) {
 				// `unknown` because request.body contains untrusted request JSON.
-				(error.request as { body: unknown }).body = redactValue(error.request.body);
+				(error.request as { body: unknown }).body = redactValue(
+					error.request.body,
+				);
 			}
 			throw error;
 		}

@@ -470,7 +470,8 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 export const handwryttenEndpointMeta = {
 	'cards.list': {
 		riskLevel: 'read',
-		description: 'List available greeting cards and designs with optional filtering and pagination',
+		description:
+			'List available greeting cards and designs with optional filtering and pagination',
 	},
 	'cards.get': {
 		riskLevel: 'read',
@@ -487,7 +488,8 @@ export const handwryttenEndpointMeta = {
 
 	'customCards.dimensions': {
 		riskLevel: 'read',
-		description: 'List supported card dimensions and print orientations for custom cards',
+		description:
+			'List supported card dimensions and print orientations for custom cards',
 	},
 	'customCards.presetImages': {
 		riskLevel: 'read',
@@ -503,7 +505,8 @@ export const handwryttenEndpointMeta = {
 	},
 	'customCards.checkImage': {
 		riskLevel: 'read',
-		description: 'Check image quality, resolution, and DPI for printing compatibility',
+		description:
+			'Check image quality, resolution, and DPI for printing compatibility',
 	},
 	'customCards.deleteImage': {
 		riskLevel: 'destructive',
@@ -511,7 +514,8 @@ export const handwryttenEndpointMeta = {
 	},
 	'customCards.create': {
 		riskLevel: 'write',
-		description: 'Create a custom card template with uploaded cover or inside artwork',
+		description:
+			'Create a custom card template with uploaded cover or inside artwork',
 	},
 	'customCards.delete': {
 		riskLevel: 'destructive',
@@ -520,11 +524,13 @@ export const handwryttenEndpointMeta = {
 
 	'orders.sendSingle': {
 		riskLevel: 'destructive',
-		description: 'Place a single real handwritten card order (spends credits and triggers robotic fulfillment)',
+		description:
+			'Place a single real handwritten card order (spends credits and triggers robotic fulfillment)',
 	},
 	'orders.addToBasket': {
 		riskLevel: 'write',
-		description: 'Add a handwritten card order to the shopping basket for batch sending',
+		description:
+			'Add a handwritten card order to the shopping basket for batch sending',
 	},
 	'orders.get': {
 		riskLevel: 'read',
@@ -545,12 +551,14 @@ export const handwryttenEndpointMeta = {
 	},
 	'basket.send': {
 		riskLevel: 'destructive',
-		description: 'Submit and charge all pending orders in the shopping basket for robotic fulfillment',
+		description:
+			'Submit and charge all pending orders in the shopping basket for robotic fulfillment',
 	},
 
 	'fonts.list': {
 		riskLevel: 'read',
-		description: 'List available realistic handwriting font styles and stroke properties',
+		description:
+			'List available realistic handwriting font styles and stroke properties',
 	},
 
 	'signatures.list': {
@@ -560,7 +568,8 @@ export const handwryttenEndpointMeta = {
 
 	'addressBook.countries': {
 		riskLevel: 'read',
-		description: 'List supported destination countries and country codes for mailing',
+		description:
+			'List supported destination countries and country codes for mailing',
 	},
 	'addressBook.states': {
 		riskLevel: 'read',
@@ -576,7 +585,8 @@ export const handwryttenEndpointMeta = {
 	},
 	'addressBook.updateRecipient': {
 		riskLevel: 'destructive',
-		description: 'Update an existing recipient address in the user address book',
+		description:
+			'Update an existing recipient address in the user address book',
 	},
 	'addressBook.deleteRecipient': {
 		riskLevel: 'destructive',
@@ -634,17 +644,20 @@ export const handwryttenEndpointMeta = {
 
 	'giftCards.list': {
 		riskLevel: 'read',
-		description: 'List physical merchant gift cards and denominations that can be enclosed in notes',
+		description:
+			'List physical merchant gift cards and denominations that can be enclosed in notes',
 	},
 
 	'inserts.list': {
 		riskLevel: 'read',
-		description: 'List custom marketing inserts and business cards available for envelope insertion',
+		description:
+			'List custom marketing inserts and business cards available for envelope insertion',
 	},
 
 	'bundles.list': {
 		riskLevel: 'read',
-		description: 'List product bundles and gift pairings available to enclose with cards',
+		description:
+			'List product bundles and gift pairings available to enclose with cards',
 	},
 
 	'qrCodes.list': {
@@ -653,7 +666,8 @@ export const handwryttenEndpointMeta = {
 	},
 	'qrCodes.create': {
 		riskLevel: 'write',
-		description: 'Create a dynamic trackable QR code to print on handwritten cards',
+		description:
+			'Create a dynamic trackable QR code to print on handwritten cards',
 	},
 	'qrCodes.delete': {
 		riskLevel: 'destructive',
@@ -670,33 +684,40 @@ export const handwryttenEndpointMeta = {
 
 	'shipping.stampOptions': {
 		riskLevel: 'read',
-		description: 'List postage stamp options (first-class vs presorted mail) and rates',
+		description:
+			'List postage stamp options (first-class vs presorted mail) and rates',
 	},
 
 	'prospecting.calculateTargets': {
 		riskLevel: 'read',
-		description: 'Calculate target recipient counts based on demographic and geographic filters',
+		description:
+			'Calculate target recipient counts based on demographic and geographic filters',
 	},
 	'prospecting.preview': {
 		riskLevel: 'read',
-		description: 'Preview prospecting order pricing and recipient volume before sending',
+		description:
+			'Preview prospecting order pricing and recipient volume before sending',
 	},
 	'prospecting.createOrder': {
 		riskLevel: 'destructive',
-		description: 'Create a direct-mail prospecting campaign order with targeted recipient lists',
+		description:
+			'Create a direct-mail prospecting campaign order with targeted recipient lists',
 	},
 
 	'auth.getUser': {
 		riskLevel: 'read',
-		description: 'Get authenticated user profile details, email, and credit balance',
+		description:
+			'Get authenticated user profile details, email, and credit balance',
 	},
 	'auth.checkAuth': {
 		riskLevel: 'read',
-		description: 'Check API key authentication status and whether test mode is active',
+		description:
+			'Check API key authentication status and whether test mode is active',
 	},
 	'auth.setTestMode': {
 		riskLevel: 'write',
-		description: 'Enable or disable account test mode for simulating orders without fulfillment charges',
+		description:
+			'Enable or disable account test mode for simulating orders without fulfillment charges',
 	},
 	'auth.logout': {
 		riskLevel: 'write',
@@ -746,8 +767,8 @@ const PUBLIC_ENDPOINTS = new Set([
 ]);
 
 export function handwrytten<const T extends HandwryttenPluginOptions>(
-	incomingOptions: HandwryttenPluginOptions & T = {} as HandwryttenPluginOptions &
-		T,
+	incomingOptions: HandwryttenPluginOptions &
+		T = {} as HandwryttenPluginOptions & T,
 ): ExternalHandwryttenPlugin<T> {
 	const options = {
 		...incomingOptions,

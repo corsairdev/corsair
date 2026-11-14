@@ -1,7 +1,4 @@
-import {
-	handwryttenEndpointMeta,
-	handwryttenEndpointSchemas,
-} from './index';
+import { handwryttenEndpointMeta, handwryttenEndpointSchemas } from './index';
 import {
 	AddressBookAddRecipientInputSchema,
 	AddressBookAddRecipientResponseSchema,
@@ -98,9 +95,7 @@ describe('Handwrytten Schemas', () => {
 			});
 			expect(valid.category_id).toBe(12);
 
-			expect(() =>
-				CardsListInputSchema.parse({ page: -1 }),
-			).toThrow();
+			expect(() => CardsListInputSchema.parse({ page: -1 })).toThrow();
 
 			// Undocumented input field rejected
 			expect(() =>
@@ -233,9 +228,9 @@ describe('Handwrytten Schemas', () => {
 				CustomCardsCheckImageInputSchema.parse({ image_id: 0 }),
 			).toThrow();
 
-			expect(
-				CustomCardsDeleteImageInputSchema.parse({ image_id: 50 }),
-			).toEqual({ image_id: 50 });
+			expect(CustomCardsDeleteImageInputSchema.parse({ image_id: 50 })).toEqual(
+				{ image_id: 50 },
+			);
 
 			expect(
 				CustomCardsCreateInputSchema.parse({
@@ -245,7 +240,9 @@ describe('Handwrytten Schemas', () => {
 			).toEqual({ name: 'My Custom Card', dimension_id: 4 });
 			expect(() => CustomCardsCreateInputSchema.parse({ name: '' })).toThrow();
 
-			expect(CustomCardsDeleteInputSchema.parse({ id: 80 })).toEqual({ id: 80 });
+			expect(CustomCardsDeleteInputSchema.parse({ id: 80 })).toEqual({
+				id: 80,
+			});
 			expect(() => CustomCardsDeleteInputSchema.parse({ id: -1 })).toThrow();
 		});
 	});
@@ -306,9 +303,9 @@ describe('Handwrytten Schemas', () => {
 			expect(AddressBookDeleteSenderInputSchema.parse({ id: 9 })).toEqual({
 				id: 9,
 			});
-			expect(
-				AddressBookSetDefaultSenderInputSchema.parse({ id: 9 }),
-			).toEqual({ id: 9 });
+			expect(AddressBookSetDefaultSenderInputSchema.parse({ id: 9 })).toEqual({
+				id: 9,
+			});
 		});
 
 		it('parses AddressBook responses', () => {
@@ -395,7 +392,9 @@ describe('Handwrytten Schemas', () => {
 			const gcRes = GiftCardsListResponseSchema.parse({
 				httpCode: 200,
 				status: 'ok',
-				gcards: [{ id: 5, name: 'Amazon', denominations: [{ id: 1, nominal: 25 }] }],
+				gcards: [
+					{ id: 5, name: 'Amazon', denominations: [{ id: 1, nominal: 25 }] },
+				],
 			});
 			expect(gcRes.gcards?.[0]?.name).toBe('Amazon');
 
