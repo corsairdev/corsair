@@ -754,6 +754,58 @@ describe('error envelopes', () => {
 		expect(String(error)).not.toContain('jane.doe@example.com');
 	});
 
+	it('keeps an unformatted phone, a name and the token GatherUp quotes back out of an HTTP error', async () => {
+		respond(
+			{
+				errorCode: 11,
+				errorMessage: `Customer Zelphine Quarrington, phone 8083333334, token ${API_KEY} rejected`,
+			},
+			400,
+		);
+
+		const error = await caught(
+			invoke(Customers.create, {
+				businessId: 34291,
+				customerFirstName: 'Zelphine',
+				customerLastName: 'Quarrington',
+				customerEmail: 'z.q@example.com',
+				customerPhone: '+1 (808) 333-3334',
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const text = `${String(error)} ${JSON.stringify(error)}`;
+		expect(text).not.toContain('Zelphine');
+		expect(text).not.toContain('Quarrington');
+		expect(text).not.toContain('8083333334');
+		expect(text).not.toContain(API_KEY);
+		expect((error as Error).message).toContain('rejected');
+	});
+
+	it('keeps an unformatted phone, a name and the token GatherUp quotes back out of a 200 error', async () => {
+		respond({
+			errorCode: 11,
+			errorMessage: `Duplicate customer Zelphine Quarrington 8083333334 ${API_KEY}`,
+		});
+
+		const error = await caught(
+			invoke(Customers.create, {
+				businessId: 34291,
+				customerFirstName: 'Zelphine',
+				customerLastName: 'Quarrington',
+				customerEmail: 'z.q@example.com',
+			}),
+		);
+
+		expect(error).toBeInstanceOf(GatherupAPIError);
+		const text = `${String(error)} ${JSON.stringify(error)}`;
+		expect(text).not.toContain('Zelphine');
+		expect(text).not.toContain('Quarrington');
+		expect(text).not.toContain('8083333334');
+		expect(text).not.toContain(API_KEY);
+		expect((error as Error).message).toContain('Duplicate customer');
+	});
+
 	it('keeps the token and client ID out of the error', async () => {
 		respond(unauthorized, 401);
 

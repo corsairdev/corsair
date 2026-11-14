@@ -158,22 +158,61 @@ export function gatherupErrorInfo(error: unknown): GatherupErrorInfo {
 }
 
 // GatherUp's messages can quote what a request carried, such as
-// "Invalid email: jane@example.com". An address or a phone number is a
-// customer's personal data, so both are replaced before a message reaches an
-// error.
+// "Invalid email: jane@example.com". A customer's name, address or phone and
+// the bearer token must not reach an error, so addresses and phone-shaped
+// numbers are replaced, then every other value the request sent.
 const EMAIL_ADDRESS = /[^\s@<>"'(),;:]+@[^\s@<>"'(),;:]+\.[^\s@<>"'(),;:]+/g;
 // A run of digits with the usual phone separators, counted as a phone once it
 // holds at least 7 digits, so a business or customer ID stays readable.
+// A run of 10 or more digits with no separators also reads as a phone, which is
+// how a provider often echoes a number it normalised.
 const PHONE_NUMBER = /\+?\(?\d[\d\s().-]{5,}\d/g;
 
-export function redactPersonal(text: string): string {
-	return text
+/**
+ * The string values a request sent (body, query, token), longest first, so a
+ * message that quotes any of them back can have it replaced. Values shorter
+ * than 3 characters are skipped: they are flags and small numbers, and
+ * replacing them would garble the message.
+ */
+// unknown: the sent body is any JSON the endpoint's schema built.
+export function sentValues(...sources: unknown[]): string[] {
+	const found = new Set<string>();
+	// unknown: walks nested JSON of any shape.
+	const walk = (value: unknown): void => {
+		if (typeof value === 'string') {
+			if (value.length >= 3) found.add(value);
+		} else if (typeof value === 'number' && Math.abs(value) >= 1_000_000) {
+			found.add(String(value));
+		} else if (Array.isArray(value)) {
+			value.forEach(walk);
+		} else if (value !== null && typeof value === 'object') {
+			Object.values(value).forEach(walk);
+		}
+	};
+	sources.forEach(walk);
+	return [...found].sort((a, b) => b.length - a.length);
+}
+
+function escapeRegExp(text: string): string {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function redactPersonal(text: string, sent: string[] = []): string {
+	let redacted = text
 		.replace(EMAIL_ADDRESS, '[email]')
-		.replace(PHONE_NUMBER, (match) =>
-			match.replace(/\D/g, '').length >= 7 && /[\s().+-]/.test(match)
+		.replace(PHONE_NUMBER, (match) => {
+			const digits = match.replace(/\D/g, '').length;
+			return (digits >= 7 && /[\s().+-]/.test(match)) || digits >= 10
 				? '[phone]'
-				: match,
+				: match;
+		});
+	for (const value of sent) {
+		redacted = redacted.replace(
+			new RegExp(escapeRegExp(value), 'gi'),
+			'[redacted]',
 		);
+	}
+	return redacted;
 }
 
 /** The message GatherUp sent, with the status and body code in front. */
@@ -183,9 +222,10 @@ export function describeGatherupError(
 	status: number | undefined,
 	body: unknown,
 	fallback: string,
+	sent: string[] = [],
 ): string {
 	const fields = readError(body);
-	const text = redactPersonal(fields.errorMessage ?? fallback);
+	const text = redactPersonal(fields.errorMessage ?? fallback, sent);
 	const label = [status, fields.errorCode]
 		.filter((part) => part !== undefined)
 		.join(' ');
@@ -243,6 +283,7 @@ export async function makeGatherupRequest(
 		body: sendBody,
 		mediaType: sendBody === undefined ? undefined : 'application/json',
 	};
+	const sent = sentValues(sendBody, query, credentials);
 
 	try {
 		const raw = await request<unknown>(config, requestOptions, {
@@ -253,14 +294,19 @@ export async function makeGatherupRequest(
 		const fields = readError(raw);
 		if (fields.errorCode !== undefined && fields.errorCode !== 0) {
 			throw new GatherupAPIError(
-				describeGatherupError(undefined, raw, 'GatherUp refused the request'),
+				describeGatherupError(
+					undefined,
+					raw,
+					'GatherUp refused the request',
+					sent,
+				),
 				{ errorCode: fields.errorCode, bodyError: true, method },
 			);
 		}
 		return raw;
 	} catch (error) {
 		if (error instanceof GatherupAPIError) throw error;
-		if (error instanceof ApiError) throw sanitizeApiError(error);
+		if (error instanceof ApiError) throw sanitizeApiError(error, sent);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			// A transport failure never had a response body, so its cause is safe.
@@ -286,7 +332,7 @@ export async function makeGatherupRequest(
  * numbers replaced) as the body, and the sent body, form data and query
  * dropped.
  */
-function sanitizeApiError(error: ApiError): ApiError {
+function sanitizeApiError(error: ApiError, sent: string[]): ApiError {
 	const {
 		body: _body,
 		formData: _formData,
@@ -300,7 +346,7 @@ function sanitizeApiError(error: ApiError): ApiError {
 			errorMessage:
 				fields.errorMessage === undefined
 					? undefined
-					: redactPersonal(fields.errorMessage),
+					: redactPersonal(fields.errorMessage, sent),
 		}).filter(([, value]) => value !== undefined),
 	);
 	return new ApiError(
@@ -312,7 +358,7 @@ function sanitizeApiError(error: ApiError): ApiError {
 			statusText: error.statusText,
 			body: envelope,
 		},
-		describeGatherupError(error.status, error.body, error.message),
+		describeGatherupError(error.status, error.body, error.message, sent),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
