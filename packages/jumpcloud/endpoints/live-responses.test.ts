@@ -87,6 +87,35 @@ describe('live JumpCloud response shapes', () => {
 		expect(result.parentApp).toBeNull();
 	});
 
+	it('applications.get accepts a bookmark app with no config', async () => {
+		fetchMock.mockImplementationOnce(() =>
+			Promise.resolve(
+				jsonResponse({
+					_id: 'app-2',
+					name: 'bookmark',
+					displayLabel: 'Wiki',
+					ssoUrl: 'https://wiki.example.com',
+					sso: { type: 'bookmark' },
+				}),
+			),
+		);
+		const result = await applicationsGet(ctx, { id: 'app-2' });
+		expect(result.config).toBeUndefined();
+		fetchMock.mockImplementationOnce(() =>
+			Promise.resolve(
+				jsonResponse({
+					_id: 'app-3',
+					name: 'bookmark',
+					ssoUrl: 'https://wiki.example.com',
+					config: null,
+				}),
+			),
+		);
+		await expect(applicationsGet(ctx, { id: 'app-3' })).resolves.toMatchObject({
+			config: null,
+		});
+	});
+
 	it('group deletes resolve on the documented 204 with no body', async () => {
 		fetchMock.mockImplementation(() =>
 			Promise.resolve(new Response(null, { status: 204 })),

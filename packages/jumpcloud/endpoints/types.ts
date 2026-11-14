@@ -2313,6 +2313,7 @@ export const ApplicationsGetOutputSchema = z
 				authClaimConfiguration: z.unknown().nullish(),
 			})
 			.loose()
+			.nullish()
 			.describe(
 				'Only required for SAML configuration (not required for Bookmarks)',
 			),
