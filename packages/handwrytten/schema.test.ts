@@ -1,4 +1,3 @@
-import { handwryttenEndpointMeta, handwryttenEndpointSchemas } from './index';
 import {
 	AddressBookAddRecipientInputSchema,
 	AddressBookAddRecipientResponseSchema,
@@ -72,6 +71,7 @@ import {
 	TemplatesListInputSchema,
 	TemplatesUpdateInputSchema,
 } from './endpoints/types';
+import { handwryttenEndpointMeta, handwryttenEndpointSchemas } from './index';
 
 describe('Handwrytten Schemas', () => {
 	it('keeps input schema, output schema, and metadata keys in sync', () => {
