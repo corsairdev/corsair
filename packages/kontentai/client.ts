@@ -110,6 +110,8 @@ export class KontentAPIError extends Error {
  * is an unknown environment, a configuration mistake, while 100 and 101 are a
  * missing item or type; all three answer 404.
  */
+// unknown: callers pass whatever they caught; `instanceof ApiError` narrows it
+// before the body is read.
 export function kontentErrorFields(error: unknown): {
 	errorCode?: number;
 	requestId?: string;
