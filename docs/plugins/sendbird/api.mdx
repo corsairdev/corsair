@@ -254,7 +254,7 @@ await corsair.sendbird.api.channels.delete({ channel_url: 'example-channel' });
 
 
 
-**Output:** `void`
+**Output:** _empty object_
 
 
 ---
@@ -945,7 +945,7 @@ await corsair.sendbird.api.messages.delete({ channel_type: 'group_channels', cha
 
 
 
-**Output:** `void`
+**Output:** _empty object_
 
 
 ---
@@ -1193,9 +1193,9 @@ Supply at least one of `message_ts` or `message_id`.
 
 `messages.send`
 
-Send a text message.
+Send a text message to a channel; members can see it.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.sendbird.api.messages.send({ channel_type: 'group_channels', channel_url: 'example-channel', body: { message_type: 'MESG', user_id: 'user-1', message: 'Hello' } });
@@ -1502,6 +1502,7 @@ await corsair.sendbird.api.users.create({ user_id: 'user-1', nickname: 'User', p
 
 
 ---
+
 ### delete
 
 `users.delete`
@@ -1522,7 +1523,7 @@ await corsair.sendbird.api.users.delete({ user_id: 'user-1' });
 
 
 
-**Output:** `void`
+**Output:** _empty object_
 
 
 ---
@@ -1715,3 +1716,4 @@ await corsair.sendbird.api.users.update({
 
 
 ---
+

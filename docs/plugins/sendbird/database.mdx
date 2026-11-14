@@ -1,10 +1,10 @@
 ---
 title: "Sendbird database"
 sidebarTitle: "Database"
-description: "Sendbird database entities and search filters in Corsair."
+description: "Sendbird local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
-The Sendbird plugin defines database entities, but its API operations do not automatically populate or sync them. If you populate them separately, use `corsair.sendbird.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Sendbird plugin syncs data locally. Use `corsair.sendbird.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
@@ -120,3 +120,4 @@ const rows = await corsair.sendbird.db.users.search({
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
+
