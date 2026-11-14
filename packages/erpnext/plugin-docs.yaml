@@ -5,7 +5,9 @@ description: Open-source ERP integration for documents, DocTypes, workflows, sto
 domain: frappe.io
 recommendedAuth: api_key
 overviewNote: |
-  Authenticate with a Frappe token pair: `Authorization: token <api_key>:<api_secret>`, created per user under Settings > My Settings > API Access. Every ERPNext deployment is its own site, so a token only works on the site that issued it. When credentials are configured explicitly, set the matching `baseUrl` beside them. When credentials come from a connected account, that account must also store its matching `base_url`; requests do not fall back to the plugin option.
+  Authenticate with a Frappe token pair: `Authorization: token <api_key>:<api_secret>`, created per user under Settings > My Settings > API Access. Every ERPNext deployment is its own site, so a token only works on the site that issued it. When credentials are configured explicitly, set the matching `baseUrl` beside them. When credentials come from a connected account, that account must also store its matching `base_url`; requests do not fall back to the plugin option. The site URL must be an https URL (for example `https://yourcompany.frappe.cloud`); without one, Corsair raises AuthMissingError so the account can be connected with it.
+
+  Submitting, cancelling and workflow transitions cannot be undone, and stock entries made by `erp.makeStockEntry` are submitted unless `do_not_submit` is set, so those operations are `destructive`. So is `desk.addComment`: users @mentioned in a comment get an email.
 
   This plugin implements the requested 51 operations over the generic Frappe REST surface. Inbound webhooks are not included.
 factory:
