@@ -1,0 +1,100 @@
+displayName: Fibery
+description: Manage Fibery workspace schema, entities, documents, files, views, and paginated change history through the documented HTTP APIs.
+recommendedAuth: api_key
+factory:
+  note: Replace the sample workspaceUrl with your Fibery workspace's HTTPS origin.
+  options:
+    workspaceUrl: "https://acme.fibery.io"
+examples:
+  read:
+    path: document.get
+    title: Read a collaborative document
+    args:
+      secret: 019dcf9a-c5ab-7292-9bdb-8956eea1b532
+  write:
+    path: document.update
+    title: Update a collaborative document
+    args:
+      secret: 019dcf9a-c5ab-7292-9bdb-8956eea1b532
+      content: Sample document text
+overviewNote: >-
+  Set workspaceUrl to the HTTPS origin of the Fibery workspace (such as
+  https://acme.fibery.io). Static API tokens use Authorization: Token; OAuth
+  access tokens use Authorization: Bearer. Fibery documents limits of 3
+  requests per second per token and 7 per second per workspace. Register an
+  OAuth app in the target workspace; its scopes are openid and offline, and
+  its token endpoint uses HTTP Basic client authentication. Corsair refreshes
+  expired OAuth access tokens using the documented refresh grant. Entity-query
+  pagination uses the documented fibery/id cursor pattern; history uses
+  nextPage.sinceItem. Webhook administration, API-token lifecycle endpoints,
+  and URL-based file import are intentionally not exposed.
+apiExamples:
+  schema.query: {}
+  schema.createDatabase:
+    call: "{ database: { 'fibery/name': 'CRM/Lead', 'fibery/meta': { 'fibery/domain?': true, 'fibery/secured?': true }, 'fibery/fields': [{ 'fibery/name': 'fibery/id', 'fibery/type': 'fibery/uuid', 'fibery/meta': { 'fibery/id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/public-id', 'fibery/type': 'fibery/text', 'fibery/meta': { 'fibery/public-id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/creation-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/creation-date?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'fibery/modification-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/modification-date?': true, 'fibery/required?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'CRM/Name', 'fibery/type': 'fibery/text', 'fibery/meta': { 'ui/title?': true } }] } }"
+  schema.renameDatabase:
+    call: "{ fromName: 'CRM/Lead', toName: 'CRM/Prospect' }"
+  schema.deleteDatabase:
+    call: "{ name: 'CRM/Prospect', deleteEntities: false, deleteRelatedFields: false }"
+  schema.createField:
+    call: "{ holderType: 'CRM/Lead', name: 'CRM/Website', type: 'fibery/text' }"
+  schema.createEnum:
+    call: "{ name: 'CRM/Status_CRM/Lead' }"
+  schema.renameField:
+    call: "{ holderType: 'CRM/Lead', fromName: 'CRM/Website', toName: 'CRM/Company URL' }"
+  schema.deleteField:
+    call: "{ holderType: 'CRM/Lead', name: 'CRM/Company URL', deleteValues: false }"
+  schema.setFieldMeta:
+    call: "{ holderType: 'CRM/Lead', name: 'CRM/Company URL', key: 'fibery/required?', value: false }"
+  schema.installMixins:
+    call: "{ types: { 'CRM/Lead': ['fibery/rank-mixin'] } }"
+  entity.query:
+    call: "{ query: { 'q/from': 'CRM/Lead', 'q/select': ['fibery/id', 'CRM/Name'], 'q/limit': 100 } }"
+  entity.create:
+    call: "{ type: 'CRM/Lead', entity: { 'CRM/Name': 'Sample Lead' } }"
+  entity.update:
+    call: "{ type: 'CRM/Lead', entity: { 'fibery/id': '019dcf9a-c5ab-7292-9bdb-8956eea1b532', 'CRM/Name': 'Updated Lead' } }"
+  entity.delete:
+    call: "{ type: 'CRM/Lead', id: '019dcf9a-c5ab-7292-9bdb-8956eea1b532' }"
+  entity.upsert:
+    call: "{ type: 'CRM/Lead', entities: [{ 'fibery/id': '019dcf9a-c5ab-7292-9bdb-8956eea1b532', 'CRM/Name': 'Sample Lead' }], conflictField: 'CRM/Name', conflictAction: 'skip-create' }"
+  collection.add:
+    call: "{ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', itemIds: ['019dcf9a-c294-71cc-b740-ccdbd5722322'] }"
+  collection.remove:
+    call: "{ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', itemIds: ['019dcf9a-c294-71cc-b740-ccdbd5722322'] }"
+  collection.set:
+    call: "{ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', itemIds: [] }"
+  collection.reset:
+    call: "{ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532' }"
+  document.get:
+    call: "{ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', format: 'md' }"
+  document.getBatch:
+    call: "{ secrets: ['019dcf9a-c5ab-7292-9bdb-8956eea1b532'] }"
+  document.update:
+    call: "{ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', format: 'md', content: 'Sample document text' }"
+  document.updateBatch:
+    call: "{ documents: [{ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', content: 'Sample document text' }] }"
+  file.upload:
+    call: "{ name: 'note.txt', contentType: 'text/plain', base64: 'SGVsbG8=' }"
+  file.download:
+    call: "{ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532' }"
+  file.signUrls:
+    call: "{ secrets: ['019dcf9a-c5ab-7292-9bdb-8956eea1b532'] }"
+  views.query: {}
+  views.create:
+    call: "{ views: [{ 'fibery/id': '019dcf9a-c5ab-7292-9bdb-8956eea1b532', 'fibery/name': 'Lead Board', 'fibery/type': 'board', 'fibery/meta': {}, 'fibery/container-app': { 'fibery/id': '019dcf9a-c294-71cc-b740-ccdbd5722322' } }] }"
+  views.update:
+    call: "{ updates: [{ id: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', values: { 'fibery/name': 'Updated Board' } }] }"
+  views.delete:
+    call: "{ ids: ['019dcf9a-c5ab-7292-9bdb-8956eea1b532'] }"
+  history.search:
+    call: "{ limit: 50, where: [], timeframe: { start: '2025-01-01T00:00:00.000Z', end: '2025-01-02T00:00:00.000Z' } }"
+apiNotes:
+  entity.query: "Entity queries return workspace-defined fields; select a bounded q/limit and follow Fibery's fibery/id cursor pagination pattern. Collection subqueries are limited to 100."
+  schema.deleteDatabase: "This destructive operation can delete every entity in the database and related fields when the corresponding flags are enabled."
+  schema.deleteField: "Deleting a non-empty field requires deleteValues: true; removed values cannot be restored by this operation."
+  file.upload: "Supply the file bytes as base64 and provide the original file name and MIME content type."
+  file.download: "Returns `{ kind: 'binary', contentType, base64 }`. Fibery's URL import endpoint is omitted because it fetches caller-provided URLs server-side."
+  document.get: "Rich-text fields are collaborative documents; first query the related document secret from the entity field."
+  document.update: "Rich-text fields are collaborative documents; first query the related document secret from the entity field."
+  history.search: "Pages may be shorter than limit; continue only while nextPage.hasNext, passing nextPage.sinceItem. The timeframe maximum span is one year. Field and operator values are documented string literals; the reference generator omits quotes around enum values in rendered type tables."

@@ -186,6 +186,8 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// klazify.com's own favicon (the black K). Its web-app manifest icon is a
 	// Woord badge copied from a sibling product, which twenty-icons picked up.
 	klazify: 'https://www.klazify.com/img/favicon.png',
+	// ramp.com's own 180px touch icon; twenty-icons only has the 32px favicon.
+	ramp: 'https://ramp.com/apple-touch-icon.png',
 	// The site's own 256px touch icon (the tag gun); its favicon is 32px.
 	taggun: 'https://www.taggun.io/apple-touch-icon.png',
 	zoom: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/fc/d0/96/fcd09664-56c3-f856-4311-da9dcbae1fd2/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.png',

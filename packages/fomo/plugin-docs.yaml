@@ -1,0 +1,58 @@
+displayName: Fomo
+description: Social proof marketing platform providing automated notification feeds, event tracking, and conversion analytics.
+domain: usefomo.com
+recommendedAuth: api_key
+overviewNote: |
+  Fomo authenticates API requests using an Auth Token passed in the `Authorization: Token <token>` header.
+  To find your token, log into Fomo, navigate to **Settings > Site**, and copy the Auth Token located near the bottom of the page.
+  Each website connected to Fomo has its own unique application token.
+references:
+  - title: Fomo API Reference
+    url: https://docs.usefomo.com/reference
+  - title: Fomo Authentication
+    url: https://docs.usefomo.com/reference/fomo-api-auth-token
+examples:
+  read:
+    path: events.list
+    title: List recent notification events
+    args:
+      per: 10
+      page: 1
+  write:
+    path: events.create
+    title: Create a new notification event
+    args:
+      event_type_id: 123
+      first_name: John
+      city: New York
+      title: Annual Subscription
+      url: https://example.com/product
+apiExamples:
+  events.list:
+    call: "{ per: 30, page: 1, show_meta: true }"
+  events.get:
+    call: "{ id: 1 }"
+  events.create:
+    call: "{ event_type_id: 123, first_name: 'John', city: 'New York', title: 'Product Purchase', url: 'https://example.com/item' }"
+  events.update:
+    call: "{ id: 1, first_name: 'Jane' }"
+  events.delete:
+    call: "{ id: 1 }"
+  events.search:
+    call: "{ field: 'email_address', q: 'user@example.com' }"
+  templates.list:
+    call: "{ per: 20, page: 1 }"
+  templates.get:
+    call: "{ id: 52 }"
+  templates.create:
+    call: "{ name: 'New Lead', message: '{{ first_name }} in {{ city }} just downloaded the ebook' }"
+  templates.update:
+    call: "{ id: 52, name: 'Lead Download' }"
+  templates.delete:
+    call: "{ id: 52 }"
+  application.get:
+    call: "{}"
+  application.update:
+    call: "{ name: 'My Online Store', position: 'bottom_left', theme: 'theme1' }"
+  application.getStats:
+    call: "{ date_range: { from: '2026-01-01', to: '2026-01-31' } }"
