@@ -4,7 +4,7 @@ sidebarTitle: "Webhooks"
 description: "ElevenLabs incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
-The ElevenLabs plugin handles incoming webhooks. In ElevenLabs, create a webhook under Developers, Webhooks with HMAC auth, point it at your Corsair HTTP handler, and save the secret it shows you as the account's `webhook_signature` (see [Overview](/plugins/elevenlabs/overview) for setup). Tick the events you want; post-call events also need the webhook selected in the agent's settings. Deliveries name no account, so with several tenants add `?tenantId=<id>` to the URL. The signature covers the body but not the URL, so `?tenantId=` only picks which tenant's secret checks a delivery. When tenants share a secret, by storing the same one or through the `webhookSecret` option, anyone holding a signed delivery under 30 minutes old can resend it with another `tenantId`, and that tenant's hooks run on it. Give each tenant its own webhook secret, or check in an `after` hook that the event's ids belong to that tenant before acting on it. By then the plugin has logged the event under that tenant. A `before` hook runs ahead of the signature check, so it can receive an unsigned or forged delivery. Keep side effects in `after`. The same event can arrive more than once, from ElevenLabs' retries or from someone resending a signed delivery within 30 minutes, so make hooks safe to run twice, for example by recording the `conversation_id` or `request_id` each one acted on.
+The ElevenLabs plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/elevenlabs/overview) for setup context and the exact URL shape).
 
 <Info>
 **New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
@@ -32,15 +32,22 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    // The raw text: ElevenLabs signs the exact bytes it sent, so don't parse it first.
-    const body = await request.text();
-    // Carries ?tenantId=<id>, which picks the tenant whose secret checks the signature.
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
     const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
     const result = await processWebhook(corsair, headers, body, query);
-    // Answer non-2xx when processing failed (a bad signature, a payload that fails
-    // validation, no secret stored yet), so ElevenLabs counts it and retries if retries are on.
-    return Response.json(result.response ?? { success: false }, {
-        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
     });
 }
 ```
