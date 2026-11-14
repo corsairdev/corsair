@@ -51,7 +51,7 @@ describe('kickbox plugin definition', () => {
 				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
 			),
 		).toEqual({
-			'verify.verify': 'destructive',
+			'verify.verify': 'read',
 			'verify.disposable': 'read',
 		});
 	});

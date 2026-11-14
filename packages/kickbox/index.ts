@@ -82,8 +82,9 @@ const defaultAuthType = 'api_key' as const;
 
 const kickboxEndpointMeta = {
 	'verify.verify': {
-		// Spends a verification credit, which R8 marks destructive.
-		riskLevel: 'destructive',
+		// A lookup that only returns data. It uses a verification credit, but
+		// metered reads stay `read` (as in the Ahrefs plugin).
+		riskLevel: 'read',
 		description:
 			'Verify one address and get its verdict (deliverable, undeliverable, risky, unknown), the reason, role and free flags, a typo suggestion and a Sendex quality score. Spends one verification credit',
 	},
