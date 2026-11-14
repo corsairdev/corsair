@@ -4,6 +4,11 @@ const apiKey = process.env.FORMDESK_API_KEY;
 const domain = process.env.FORMDESK_DOMAIN;
 const host = process.env.FORMDESK_HOST;
 const liveIt = apiKey && domain && host ? it : it.skip;
+if (!apiKey || !domain || !host) {
+	console.warn(
+		'Skipping Formdesk live test: set FORMDESK_API_KEY, FORMDESK_DOMAIN and FORMDESK_HOST.',
+	);
+}
 
 liveIt('lists forms with the configured Formdesk API key', async () => {
 	if (!apiKey || !domain || !host)
