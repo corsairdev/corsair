@@ -3040,6 +3040,7 @@ export const createStoryReaction: ShortcutEndpoint<
 				'comment-public-id': parsed.path.commentPublicId,
 			},
 			query: undefined,
+			body: parsed.body,
 		},
 	);
 	return ShortcutEndpointOutputSchemas['createStoryReaction'].parse(response);
@@ -3060,6 +3061,7 @@ export const deleteStoryReaction: ShortcutEndpoint<
 				'comment-public-id': parsed.path.commentPublicId,
 			},
 			query: undefined,
+			body: parsed.body,
 		},
 	);
 	return ShortcutEndpointOutputSchemas['deleteStoryReaction'].parse(response);

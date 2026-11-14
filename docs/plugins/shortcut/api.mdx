@@ -2747,7 +2747,7 @@ Create Story Reaction
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createStoryReaction.post({"path":{"storyPublicId":1,"commentPublicId":1}});
+await corsair.shortcut.api.createStoryReaction.post({"path":{"storyPublicId":1,"commentPublicId":1},"body":{"emoji":":thumbsup:"}});
 ```
 
 **Input**
@@ -2755,6 +2755,7 @@ await corsair.shortcut.api.createStoryReaction.post({"path":{"storyPublicId":1,"
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -2763,6 +2764,15 @@ await corsair.shortcut.api.createStoryReaction.post({"path":{"storyPublicId":1,"
 {
   storyPublicId: number,
   commentPublicId: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  emoji: string
 }
 ```
 </Accordion>
@@ -3528,7 +3538,7 @@ Delete Story Reaction
 **Risk:** `destructive`
 
 ```ts
-await corsair.shortcut.api.deleteStoryReaction.delete({"path":{"storyPublicId":1,"commentPublicId":1}});
+await corsair.shortcut.api.deleteStoryReaction.delete({"path":{"storyPublicId":1,"commentPublicId":1},"body":{"emoji":":thumbsup:"}});
 ```
 
 **Input**
@@ -3536,6 +3546,7 @@ await corsair.shortcut.api.deleteStoryReaction.delete({"path":{"storyPublicId":1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -3544,6 +3555,15 @@ await corsair.shortcut.api.deleteStoryReaction.delete({"path":{"storyPublicId":1
 {
   storyPublicId: number,
   commentPublicId: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  emoji: string
 }
 ```
 </Accordion>
@@ -3881,7 +3901,7 @@ Get Doc
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.getDoc.get({"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"}});
+await corsair.shortcut.api.getDoc.get({"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"},"query":{}});
 ```
 
 **Input**
@@ -5069,7 +5089,7 @@ Get Member
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.getMember.get({"path":{"memberPublicId":"12345678-9012-3456-7890-123456789012"}});
+await corsair.shortcut.api.getMember.get({"path":{"memberPublicId":"12345678-9012-3456-7890-123456789012"},"query":{}});
 ```
 
 **Input**
@@ -6913,7 +6933,7 @@ List Epics
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listEpics.get({});
+await corsair.shortcut.api.listEpics.get({"query":{}});
 ```
 
 **Input**
@@ -7032,7 +7052,7 @@ List Epics Paginated
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listEpicsPaginated.get({});
+await corsair.shortcut.api.listEpicsPaginated.get({"query":{}});
 ```
 
 **Input**
@@ -7162,7 +7182,7 @@ List Epic Stories
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listEpicStories.get({"path":{"epicPublicId":1}});
+await corsair.shortcut.api.listEpicStories.get({"path":{"epicPublicId":1},"query":{}});
 ```
 
 **Input**
@@ -7354,7 +7374,7 @@ List Groups
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listGroups.get({});
+await corsair.shortcut.api.listGroups.get({"query":{}});
 ```
 
 **Input**
@@ -7431,7 +7451,7 @@ List Group Stories
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listGroupStories.get({"path":{"groupPublicId":"12345678-9012-3456-7890-123456789012"}});
+await corsair.shortcut.api.listGroupStories.get({"path":{"groupPublicId":"12345678-9012-3456-7890-123456789012"},"query":{}});
 ```
 
 **Input**
@@ -7676,7 +7696,7 @@ List Iteration Stories
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listIterationStories.get({"path":{"iterationPublicId":1}});
+await corsair.shortcut.api.listIterationStories.get({"path":{"iterationPublicId":1},"query":{}});
 ```
 
 **Input**
@@ -7938,7 +7958,7 @@ List Labels
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listLabels.get({});
+await corsair.shortcut.api.listLabels.get({"query":{}});
 ```
 
 **Input**
@@ -8016,7 +8036,7 @@ List Label Stories
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listLabelStories.get({"path":{"labelPublicId":1}});
+await corsair.shortcut.api.listLabelStories.get({"path":{"labelPublicId":1},"query":{}});
 ```
 
 **Input**
@@ -8207,7 +8227,7 @@ List Members
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listMembers.get({});
+await corsair.shortcut.api.listMembers.get({"query":{}});
 ```
 
 **Input**
@@ -8815,7 +8835,7 @@ List Stories
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.listStories.get({"path":{"projectPublicId":1}});
+await corsair.shortcut.api.listStories.get({"path":{"projectPublicId":1},"query":{}});
 ```
 
 **Input**
@@ -9215,7 +9235,7 @@ await corsair.shortcut.api.listWorkflows.get({});
 
 Query Stories
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.shortcut.api.queryStories.post({"body":{}});
@@ -13843,7 +13863,7 @@ Upload Files
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.uploadFiles.post({"body":{"file0":null}});
+await corsair.shortcut.api.uploadFiles.post({"body":{"file0": new Blob(["sample"])}});
 ```
 
 **Input**

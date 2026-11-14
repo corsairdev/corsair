@@ -193,8 +193,14 @@ export const ShortcutTestInputs = {
 		body: { text: 'foo' },
 	},
 	deleteStoryComment: { path: { storyPublicId: 1, commentPublicId: 1 } },
-	createStoryReaction: { path: { storyPublicId: 1, commentPublicId: 1 } },
-	deleteStoryReaction: { path: { storyPublicId: 1, commentPublicId: 1 } },
+	createStoryReaction: {
+		path: { storyPublicId: 1, commentPublicId: 1 },
+		body: { emoji: ':thumbsup:' },
+	},
+	deleteStoryReaction: {
+		path: { storyPublicId: 1, commentPublicId: 1 },
+		body: { emoji: ':thumbsup:' },
+	},
 	unlinkCommentThreadFromSlack: {
 		path: { storyPublicId: 1, commentPublicId: 1 },
 	},

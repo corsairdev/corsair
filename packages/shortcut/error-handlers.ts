@@ -5,7 +5,9 @@ import { ShortcutOperations } from './endpoints/operations';
 
 const isReadOperation = (operation: string): boolean =>
 	Object.entries(ShortcutOperations).some(
-		([id, detail]) => operation.startsWith(`${id}.`) && detail.method === 'GET',
+		([id, detail]) =>
+			operation.startsWith(`${id}.`) &&
+			(detail.method === 'GET' || id === 'queryStories'),
 	);
 
 export const errorHandlers = {

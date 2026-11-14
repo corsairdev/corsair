@@ -46,7 +46,7 @@ apiExamples:
   createDoc.post:
     call: '{"body":{"title":"foo","content":"foo"}}'
   getDoc.get:
-    call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"}}'
+    call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"},"query":{}}'
   updateDoc.put:
     call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
   deleteDoc.delete:
@@ -74,11 +74,11 @@ apiExamples:
   getEpicWorkflow.get:
     call: '{}'
   listEpics.get:
-    call: '{}'
+    call: '{"query":{}}'
   createEpic.post:
     call: '{"body":{"name":"foo"}}'
   listEpicsPaginated.get:
-    call: '{}'
+    call: '{"query":{}}'
   getEpic.get:
     call: '{"path":{"epicPublicId":1}}'
   updateEpic.put:
@@ -106,13 +106,13 @@ apiExamples:
   listEpicHealths.get:
     call: '{"path":{"epicPublicId":1}}'
   listEpicStories.get:
-    call: '{"path":{"epicPublicId":1}}'
+    call: '{"path":{"epicPublicId":1},"query":{}}'
   getExternalLinkStories.get:
     call: '{"query":{"external_link":"foo"}}'
   listFiles.get:
     call: '{}'
   uploadFiles.post:
-    call: '{"body":{"file0":null}}'
+    call: '{"body":{"file0": new Blob(["sample"])}}'
   getFile.get:
     call: '{"path":{"filePublicId":1}}'
   updateFile.put:
@@ -120,7 +120,7 @@ apiExamples:
   deleteFile.delete:
     call: '{"path":{"filePublicId":1}}'
   listGroups.get:
-    call: '{}'
+    call: '{"query":{}}'
   createGroup.post:
     call: '{"body":{"mention_name":"foo","name":"foo"}}'
   getGroup.get:
@@ -128,7 +128,7 @@ apiExamples:
   updateGroup.put:
     call: '{"path":{"groupPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
   listGroupStories.get:
-    call: '{"path":{"groupPublicId":"12345678-9012-3456-7890-123456789012"}}'
+    call: '{"path":{"groupPublicId":"12345678-9012-3456-7890-123456789012"},"query":{}}'
   updateHealth.put:
     call: '{"path":{"healthPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
   listIterations.get:
@@ -146,13 +146,13 @@ apiExamples:
   deleteIteration.delete:
     call: '{"path":{"iterationPublicId":1}}'
   listIterationStories.get:
-    call: '{"path":{"iterationPublicId":1}}'
+    call: '{"path":{"iterationPublicId":1},"query":{}}'
   getKeyResult.get:
     call: '{"path":{"keyResultPublicId":"12345678-9012-3456-7890-123456789012"}}'
   updateKeyResult.put:
     call: '{"path":{"keyResultPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
   listLabels.get:
-    call: '{}'
+    call: '{"query":{}}'
   createLabel.post:
     call: '{"body":{"name":"foo"}}'
   getLabel.get:
@@ -164,7 +164,7 @@ apiExamples:
   listLabelEpics.get:
     call: '{"path":{"labelPublicId":1}}'
   listLabelStories.get:
-    call: '{"path":{"labelPublicId":1}}'
+    call: '{"path":{"labelPublicId":1},"query":{}}'
   listLinkedFiles.get:
     call: '{}'
   createLinkedFile.post:
@@ -178,9 +178,9 @@ apiExamples:
   getCurrentMemberInfo.get:
     call: '{}'
   listMembers.get:
-    call: '{}'
+    call: '{"query":{}}'
   getMember.get:
-    call: '{"path":{"memberPublicId":"12345678-9012-3456-7890-123456789012"}}'
+    call: '{"path":{"memberPublicId":"12345678-9012-3456-7890-123456789012"},"query":{}}'
   listMilestones.get:
     call: '{}'
   createMilestone.post:
@@ -222,7 +222,7 @@ apiExamples:
   deleteProject.delete:
     call: '{"path":{"projectPublicId":1}}'
   listStories.get:
-    call: '{"path":{"projectPublicId":1}}'
+    call: '{"path":{"projectPublicId":1},"query":{}}'
   listRepositories.get:
     call: '{}'
   getRepository.get:
@@ -270,9 +270,9 @@ apiExamples:
   deleteStoryComment.delete:
     call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
   createStoryReaction.post:
-    call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
+    call: '{"path":{"storyPublicId":1,"commentPublicId":1},"body":{"emoji":":thumbsup:"}}'
   deleteStoryReaction.delete:
-    call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
+    call: '{"path":{"storyPublicId":1,"commentPublicId":1},"body":{"emoji":":thumbsup:"}}'
   unlinkCommentThreadFromSlack.post:
     call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
   storyHistory.get:

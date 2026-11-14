@@ -1058,7 +1058,7 @@ const shortcutEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create Story From Template',
 	},
-	'queryStories.post': { riskLevel: 'write', description: 'Query Stories' },
+	'queryStories.post': { riskLevel: 'read', description: 'Query Stories' },
 	'getStory.get': { riskLevel: 'read', description: 'Get Story' },
 	'updateStory.put': { riskLevel: 'write', description: 'Update Story' },
 	'deleteStory.delete': {

@@ -2584,7 +2584,7 @@ describe('Shortcut REST v3 operations', () => {
 						ShortcutTestInputs['createStoryReaction'].path.commentPublicId,
 				},
 				query: undefined,
-				body: undefined,
+				body: ShortcutTestInputs['createStoryReaction'].body,
 			},
 		);
 		expect(requestMock).toHaveBeenCalledTimes(1);
@@ -2607,7 +2607,7 @@ describe('Shortcut REST v3 operations', () => {
 						ShortcutTestInputs['deleteStoryReaction'].path.commentPublicId,
 				},
 				query: undefined,
-				body: undefined,
+				body: ShortcutTestInputs['deleteStoryReaction'].body,
 			},
 		);
 		expect(requestMock).toHaveBeenCalledTimes(1);

@@ -55,6 +55,12 @@ describe('Shortcut error handlers', () => {
 		await expect(
 			errorHandlers.SERVER_ERROR?.handler(
 				serverError,
+				context('queryStories.post'),
+			),
+		).resolves.toEqual({ maxRetries: 2 });
+		await expect(
+			errorHandlers.SERVER_ERROR?.handler(
+				serverError,
 				context('createStory.post'),
 			),
 		).resolves.toEqual({ maxRetries: 0 });
@@ -64,6 +70,12 @@ describe('Shortcut error handlers', () => {
 			errorHandlers.NETWORK_ERROR?.handler(
 				networkError,
 				context('getStory.get'),
+			),
+		).resolves.toEqual({ maxRetries: 2 });
+		await expect(
+			errorHandlers.NETWORK_ERROR?.handler(
+				networkError,
+				context('queryStories.post'),
 			),
 		).resolves.toEqual({ maxRetries: 2 });
 		await expect(

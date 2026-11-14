@@ -55,29 +55,26 @@ export async function makeShortcutRequest(
 		return await request<unknown>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Provider error bodies and request payloads can contain private story/document text.
-			const safeRequest: ApiRequestOptions = {
-				...error.request,
+			// Preserve core ApiError identity/stack and retry fields; strip input, response body, and IDs.
+			const message = `Shortcut request failed with HTTP ${error.status}`;
+			const stack = error.stack?.split('\n');
+			if (stack?.length) stack[0] = `${error.name}: ${message}`;
+			Object.assign(error.request, {
+				url: '/api/v3',
+				path: undefined,
+				query: undefined,
 				body: undefined,
 				formData: undefined,
-			};
-			throw new ApiError(
-				safeRequest,
-				{
-					url: error.url,
-					ok: false,
-					status: error.status,
-					statusText: error.statusText,
-					body: undefined,
-				},
-				`Shortcut request failed with HTTP ${error.status}`,
-				{
-					retryAfter: error.retryAfter,
-					rateLimitReset: error.rateLimitReset,
-					rateLimitRemaining: error.rateLimitRemaining,
-					rateLimitLimit: error.rateLimitLimit,
-				},
-			);
+				headers: undefined,
+				cookies: undefined,
+			});
+			Object.assign(error, {
+				message,
+				stack: stack?.join('\n'),
+				url: `${SHORTCUT_API_BASE}/api/v3`,
+				body: undefined,
+			});
+			throw error;
 		}
 		if (error instanceof Error) throw new ShortcutNetworkError();
 		// `unknown` because JavaScript permits throwing values that are not Error instances.

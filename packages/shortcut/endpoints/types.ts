@@ -3727,6 +3727,7 @@ export const CreateStoryReactionInputSchema = z
 				commentPublicId: z.number().int(),
 			})
 			.strict(),
+		body: z.object({ emoji: z.string() }).strict(),
 	})
 	.strict();
 
@@ -3742,6 +3743,7 @@ export const DeleteStoryReactionInputSchema = z
 				commentPublicId: z.number().int(),
 			})
 			.strict(),
+		body: z.object({ emoji: z.string() }).strict(),
 	})
 	.strict();
 

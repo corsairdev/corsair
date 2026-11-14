@@ -1,8 +1,38 @@
+import { readFileSync } from 'node:fs';
 import {
 	ShortcutEndpointInputSchemas,
 	ShortcutEndpointOutputSchemas,
 } from './endpoints/types';
 import { ShortcutTestInputs, ShortcutTestOutputs } from './test-fixtures';
+
+// Documentation call arguments remain unknown until a specific endpoint schema validates them.
+function readDocumentationArguments(): Record<string, unknown> {
+	const yaml = readFileSync('plugin-docs.yaml', 'utf8');
+	const section = yaml.slice(yaml.indexOf('apiExamples:'));
+	const lines = section.split(/\r?\n/);
+	const result: Record<string, unknown> = {};
+	for (let index = 1; index < lines.length; index += 2) {
+		const key = lines[index]?.match(
+			/^  ([A-Za-z0-9]+)\.(get|post|put|delete|patch):$/,
+		);
+		const call = lines[index + 1]?.match(/^    call: '(.*)'$/);
+		const operationId = key?.[1];
+		const method = key?.[2];
+		const callText = call?.[1];
+		if (!operationId || !method || callText === undefined) continue;
+		const shortPath = `${operationId}.${method}`;
+		if (operationId === 'uploadFiles') {
+			result[shortPath] = { body: { file0: new Blob(['sample']) } };
+			continue;
+		}
+		// `unknown` because parsed YAML call text is untrusted until its endpoint schema validates it.
+		const parsed: unknown = JSON.parse(callText.replace(/''/g, "'"));
+		result[shortPath] = parsed;
+	}
+	return result;
+}
+
+const documentationArguments = readDocumentationArguments();
 
 describe('Shortcut OpenAPI schemas', () => {
 	it('listCategories validates documented input and response', () => {
@@ -2942,5 +2972,1003 @@ describe('Shortcut OpenAPI schemas', () => {
 				Symbol('invalid response'),
 			).success,
 		).toBe(false);
+	});
+});
+
+describe('generated API-call documentation examples', () => {
+	it('listCategories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listCategories'].safeParse(
+				documentationArguments['listCategories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createCategory.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createCategory'].safeParse(
+				documentationArguments['createCategory.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getCategory.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getCategory'].safeParse(
+				documentationArguments['getCategory.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateCategory.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateCategory'].safeParse(
+				documentationArguments['updateCategory.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteCategory.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteCategory'].safeParse(
+				documentationArguments['deleteCategory.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listCategoryMilestones.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listCategoryMilestones'].safeParse(
+				documentationArguments['listCategoryMilestones.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listCategoryObjectives.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listCategoryObjectives'].safeParse(
+				documentationArguments['listCategoryObjectives.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listCustomFields.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listCustomFields'].safeParse(
+				documentationArguments['listCustomFields.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getCustomField.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getCustomField'].safeParse(
+				documentationArguments['getCustomField.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateCustomField.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateCustomField'].safeParse(
+				documentationArguments['updateCustomField.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteCustomField.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteCustomField'].safeParse(
+				documentationArguments['deleteCustomField.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listDocs.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listDocs'].safeParse(
+				documentationArguments['listDocs.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createDoc.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createDoc'].safeParse(
+				documentationArguments['createDoc.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getDoc.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getDoc'].safeParse(
+				documentationArguments['getDoc.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateDoc.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateDoc'].safeParse(
+				documentationArguments['updateDoc.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteDoc.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteDoc'].safeParse(
+				documentationArguments['deleteDoc.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listDocumentEpics.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listDocumentEpics'].safeParse(
+				documentationArguments['listDocumentEpics.get'],
+			).success,
+		).toBe(true);
+	});
+	it('linkDocumentToEpic.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['linkDocumentToEpic'].safeParse(
+				documentationArguments['linkDocumentToEpic.put'],
+			).success,
+		).toBe(true);
+	});
+	it(
+		'unlinkDocumentFromEpic.delete' + ' is accepted by its input schema',
+		() => {
+			expect(
+				ShortcutEndpointInputSchemas['unlinkDocumentFromEpic'].safeParse(
+					documentationArguments['unlinkDocumentFromEpic.delete'],
+				).success,
+			).toBe(true);
+		},
+	);
+	it('listEntityTemplates.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listEntityTemplates'].safeParse(
+				documentationArguments['listEntityTemplates.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createEntityTemplate.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createEntityTemplate'].safeParse(
+				documentationArguments['createEntityTemplate.post'],
+			).success,
+		).toBe(true);
+	});
+	it('disableStoryTemplates.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['disableStoryTemplates'].safeParse(
+				documentationArguments['disableStoryTemplates.put'],
+			).success,
+		).toBe(true);
+	});
+	it('enableStoryTemplates.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['enableStoryTemplates'].safeParse(
+				documentationArguments['enableStoryTemplates.put'],
+			).success,
+		).toBe(true);
+	});
+	it('getEntityTemplate.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getEntityTemplate'].safeParse(
+				documentationArguments['getEntityTemplate.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateEntityTemplate.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateEntityTemplate'].safeParse(
+				documentationArguments['updateEntityTemplate.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteEntityTemplate.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteEntityTemplate'].safeParse(
+				documentationArguments['deleteEntityTemplate.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('getEpicWorkflow.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getEpicWorkflow'].safeParse(
+				documentationArguments['getEpicWorkflow.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listEpics.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listEpics'].safeParse(
+				documentationArguments['listEpics.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createEpic.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createEpic'].safeParse(
+				documentationArguments['createEpic.post'],
+			).success,
+		).toBe(true);
+	});
+	it('listEpicsPaginated.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listEpicsPaginated'].safeParse(
+				documentationArguments['listEpicsPaginated.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getEpic.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getEpic'].safeParse(
+				documentationArguments['getEpic.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateEpic.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateEpic'].safeParse(
+				documentationArguments['updateEpic.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteEpic.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteEpic'].safeParse(
+				documentationArguments['deleteEpic.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listEpicComments.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listEpicComments'].safeParse(
+				documentationArguments['listEpicComments.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createEpicComment.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createEpicComment'].safeParse(
+				documentationArguments['createEpicComment.post'],
+			).success,
+		).toBe(true);
+	});
+	it(
+		'createEpicCommentComment.post' + ' is accepted by its input schema',
+		() => {
+			expect(
+				ShortcutEndpointInputSchemas['createEpicCommentComment'].safeParse(
+					documentationArguments['createEpicCommentComment.post'],
+				).success,
+			).toBe(true);
+		},
+	);
+	it('getEpicComment.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getEpicComment'].safeParse(
+				documentationArguments['getEpicComment.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateEpicComment.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateEpicComment'].safeParse(
+				documentationArguments['updateEpicComment.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteEpicComment.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteEpicComment'].safeParse(
+				documentationArguments['deleteEpicComment.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listEpicDocuments.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listEpicDocuments'].safeParse(
+				documentationArguments['listEpicDocuments.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getEpicHealth.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getEpicHealth'].safeParse(
+				documentationArguments['getEpicHealth.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createEpicHealth.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createEpicHealth'].safeParse(
+				documentationArguments['createEpicHealth.post'],
+			).success,
+		).toBe(true);
+	});
+	it('listEpicHealths.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listEpicHealths'].safeParse(
+				documentationArguments['listEpicHealths.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listEpicStories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listEpicStories'].safeParse(
+				documentationArguments['listEpicStories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getExternalLinkStories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getExternalLinkStories'].safeParse(
+				documentationArguments['getExternalLinkStories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listFiles.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listFiles'].safeParse(
+				documentationArguments['listFiles.get'],
+			).success,
+		).toBe(true);
+	});
+	it('uploadFiles.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['uploadFiles'].safeParse(
+				documentationArguments['uploadFiles.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getFile.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getFile'].safeParse(
+				documentationArguments['getFile.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateFile.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateFile'].safeParse(
+				documentationArguments['updateFile.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteFile.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteFile'].safeParse(
+				documentationArguments['deleteFile.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listGroups.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listGroups'].safeParse(
+				documentationArguments['listGroups.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createGroup.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createGroup'].safeParse(
+				documentationArguments['createGroup.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getGroup.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getGroup'].safeParse(
+				documentationArguments['getGroup.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateGroup.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateGroup'].safeParse(
+				documentationArguments['updateGroup.put'],
+			).success,
+		).toBe(true);
+	});
+	it('listGroupStories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listGroupStories'].safeParse(
+				documentationArguments['listGroupStories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateHealth.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateHealth'].safeParse(
+				documentationArguments['updateHealth.put'],
+			).success,
+		).toBe(true);
+	});
+	it('listIterations.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listIterations'].safeParse(
+				documentationArguments['listIterations.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createIteration.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createIteration'].safeParse(
+				documentationArguments['createIteration.post'],
+			).success,
+		).toBe(true);
+	});
+	it('disableIterations.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['disableIterations'].safeParse(
+				documentationArguments['disableIterations.put'],
+			).success,
+		).toBe(true);
+	});
+	it('enableIterations.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['enableIterations'].safeParse(
+				documentationArguments['enableIterations.put'],
+			).success,
+		).toBe(true);
+	});
+	it('getIteration.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getIteration'].safeParse(
+				documentationArguments['getIteration.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateIteration.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateIteration'].safeParse(
+				documentationArguments['updateIteration.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteIteration.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteIteration'].safeParse(
+				documentationArguments['deleteIteration.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listIterationStories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listIterationStories'].safeParse(
+				documentationArguments['listIterationStories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getKeyResult.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getKeyResult'].safeParse(
+				documentationArguments['getKeyResult.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateKeyResult.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateKeyResult'].safeParse(
+				documentationArguments['updateKeyResult.put'],
+			).success,
+		).toBe(true);
+	});
+	it('listLabels.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listLabels'].safeParse(
+				documentationArguments['listLabels.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createLabel.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createLabel'].safeParse(
+				documentationArguments['createLabel.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getLabel.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getLabel'].safeParse(
+				documentationArguments['getLabel.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateLabel.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateLabel'].safeParse(
+				documentationArguments['updateLabel.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteLabel.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteLabel'].safeParse(
+				documentationArguments['deleteLabel.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listLabelEpics.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listLabelEpics'].safeParse(
+				documentationArguments['listLabelEpics.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listLabelStories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listLabelStories'].safeParse(
+				documentationArguments['listLabelStories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listLinkedFiles.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listLinkedFiles'].safeParse(
+				documentationArguments['listLinkedFiles.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createLinkedFile.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createLinkedFile'].safeParse(
+				documentationArguments['createLinkedFile.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getLinkedFile.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getLinkedFile'].safeParse(
+				documentationArguments['getLinkedFile.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateLinkedFile.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateLinkedFile'].safeParse(
+				documentationArguments['updateLinkedFile.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteLinkedFile.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteLinkedFile'].safeParse(
+				documentationArguments['deleteLinkedFile.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('getCurrentMemberInfo.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getCurrentMemberInfo'].safeParse(
+				documentationArguments['getCurrentMemberInfo.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listMembers.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listMembers'].safeParse(
+				documentationArguments['listMembers.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getMember.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getMember'].safeParse(
+				documentationArguments['getMember.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listMilestones.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listMilestones'].safeParse(
+				documentationArguments['listMilestones.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createMilestone.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createMilestone'].safeParse(
+				documentationArguments['createMilestone.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getMilestone.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getMilestone'].safeParse(
+				documentationArguments['getMilestone.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateMilestone.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateMilestone'].safeParse(
+				documentationArguments['updateMilestone.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteMilestone.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteMilestone'].safeParse(
+				documentationArguments['deleteMilestone.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listMilestoneEpics.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listMilestoneEpics'].safeParse(
+				documentationArguments['listMilestoneEpics.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listObjectives.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listObjectives'].safeParse(
+				documentationArguments['listObjectives.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createObjective.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createObjective'].safeParse(
+				documentationArguments['createObjective.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getObjective.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getObjective'].safeParse(
+				documentationArguments['getObjective.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateObjective.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateObjective'].safeParse(
+				documentationArguments['updateObjective.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteObjective.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteObjective'].safeParse(
+				documentationArguments['deleteObjective.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listObjectiveEpics.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listObjectiveEpics'].safeParse(
+				documentationArguments['listObjectiveEpics.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getObjectiveHealth.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getObjectiveHealth'].safeParse(
+				documentationArguments['getObjectiveHealth.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createObjectiveHealth.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createObjectiveHealth'].safeParse(
+				documentationArguments['createObjectiveHealth.post'],
+			).success,
+		).toBe(true);
+	});
+	it('listObjectiveHealths.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listObjectiveHealths'].safeParse(
+				documentationArguments['listObjectiveHealths.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listProjects.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listProjects'].safeParse(
+				documentationArguments['listProjects.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createProject.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createProject'].safeParse(
+				documentationArguments['createProject.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getProject.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getProject'].safeParse(
+				documentationArguments['getProject.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateProject.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateProject'].safeParse(
+				documentationArguments['updateProject.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteProject.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteProject'].safeParse(
+				documentationArguments['deleteProject.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listStories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listStories'].safeParse(
+				documentationArguments['listStories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listRepositories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listRepositories'].safeParse(
+				documentationArguments['listRepositories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getRepository.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getRepository'].safeParse(
+				documentationArguments['getRepository.get'],
+			).success,
+		).toBe(true);
+	});
+	it('search.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['search'].safeParse(
+				documentationArguments['search.get'],
+			).success,
+		).toBe(true);
+	});
+	it('searchDocuments.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['searchDocuments'].safeParse(
+				documentationArguments['searchDocuments.get'],
+			).success,
+		).toBe(true);
+	});
+	it('searchEpics.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['searchEpics'].safeParse(
+				documentationArguments['searchEpics.get'],
+			).success,
+		).toBe(true);
+	});
+	it('searchIterations.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['searchIterations'].safeParse(
+				documentationArguments['searchIterations.get'],
+			).success,
+		).toBe(true);
+	});
+	it('searchMilestones.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['searchMilestones'].safeParse(
+				documentationArguments['searchMilestones.get'],
+			).success,
+		).toBe(true);
+	});
+	it('searchObjectives.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['searchObjectives'].safeParse(
+				documentationArguments['searchObjectives.get'],
+			).success,
+		).toBe(true);
+	});
+	it('searchStories.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['searchStories'].safeParse(
+				documentationArguments['searchStories.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createStory.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createStory'].safeParse(
+				documentationArguments['createStory.post'],
+			).success,
+		).toBe(true);
+	});
+	it('createMultipleStories.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createMultipleStories'].safeParse(
+				documentationArguments['createMultipleStories.post'],
+			).success,
+		).toBe(true);
+	});
+	it('updateMultipleStories.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateMultipleStories'].safeParse(
+				documentationArguments['updateMultipleStories.put'],
+			).success,
+		).toBe(true);
+	});
+	it(
+		'deleteMultipleStories.delete' + ' is accepted by its input schema',
+		() => {
+			expect(
+				ShortcutEndpointInputSchemas['deleteMultipleStories'].safeParse(
+					documentationArguments['deleteMultipleStories.delete'],
+				).success,
+			).toBe(true);
+		},
+	);
+	it(
+		'createStoryFromTemplate.post' + ' is accepted by its input schema',
+		() => {
+			expect(
+				ShortcutEndpointInputSchemas['createStoryFromTemplate'].safeParse(
+					documentationArguments['createStoryFromTemplate.post'],
+				).success,
+			).toBe(true);
+		},
+	);
+	it('queryStories.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['queryStories'].safeParse(
+				documentationArguments['queryStories.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getStory.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getStory'].safeParse(
+				documentationArguments['getStory.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateStory.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateStory'].safeParse(
+				documentationArguments['updateStory.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteStory.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteStory'].safeParse(
+				documentationArguments['deleteStory.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listStoryComment.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listStoryComment'].safeParse(
+				documentationArguments['listStoryComment.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createStoryComment.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createStoryComment'].safeParse(
+				documentationArguments['createStoryComment.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getStoryComment.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getStoryComment'].safeParse(
+				documentationArguments['getStoryComment.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateStoryComment.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateStoryComment'].safeParse(
+				documentationArguments['updateStoryComment.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteStoryComment.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteStoryComment'].safeParse(
+				documentationArguments['deleteStoryComment.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('createStoryReaction.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createStoryReaction'].safeParse(
+				documentationArguments['createStoryReaction.post'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteStoryReaction.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteStoryReaction'].safeParse(
+				documentationArguments['deleteStoryReaction.delete'],
+			).success,
+		).toBe(true);
+	});
+	it(
+		'unlinkCommentThreadFromSlack.post' + ' is accepted by its input schema',
+		() => {
+			expect(
+				ShortcutEndpointInputSchemas['unlinkCommentThreadFromSlack'].safeParse(
+					documentationArguments['unlinkCommentThreadFromSlack.post'],
+				).success,
+			).toBe(true);
+		},
+	);
+	it('storyHistory.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['storyHistory'].safeParse(
+				documentationArguments['storyHistory.get'],
+			).success,
+		).toBe(true);
+	});
+	it('listStorySubTasks.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listStorySubTasks'].safeParse(
+				documentationArguments['listStorySubTasks.get'],
+			).success,
+		).toBe(true);
+	});
+	it('createTask.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createTask'].safeParse(
+				documentationArguments['createTask.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getTask.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getTask'].safeParse(
+				documentationArguments['getTask.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateTask.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateTask'].safeParse(
+				documentationArguments['updateTask.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteTask.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteTask'].safeParse(
+				documentationArguments['deleteTask.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('createStoryLink.post' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['createStoryLink'].safeParse(
+				documentationArguments['createStoryLink.post'],
+			).success,
+		).toBe(true);
+	});
+	it('getStoryLink.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getStoryLink'].safeParse(
+				documentationArguments['getStoryLink.get'],
+			).success,
+		).toBe(true);
+	});
+	it('updateStoryLink.put' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['updateStoryLink'].safeParse(
+				documentationArguments['updateStoryLink.put'],
+			).success,
+		).toBe(true);
+	});
+	it('deleteStoryLink.delete' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['deleteStoryLink'].safeParse(
+				documentationArguments['deleteStoryLink.delete'],
+			).success,
+		).toBe(true);
+	});
+	it('listWorkflows.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['listWorkflows'].safeParse(
+				documentationArguments['listWorkflows.get'],
+			).success,
+		).toBe(true);
+	});
+	it('getWorkflow.get' + ' is accepted by its input schema', () => {
+		expect(
+			ShortcutEndpointInputSchemas['getWorkflow'].safeParse(
+				documentationArguments['getWorkflow.get'],
+			).success,
+		).toBe(true);
 	});
 });
