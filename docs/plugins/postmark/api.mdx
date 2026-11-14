@@ -1,0 +1,998 @@
+---
+title: "Postmark API reference"
+sidebarTitle: "API"
+description: "API reference for the Postmark plugin in Corsair: every `postmark.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bounces
+
+### activate
+
+`bounces.activate`
+
+Reactivate an address Postmark deactivated after a bounce. A hard bounce that cannot be reactivated reports so
+
+**Risk:** `write`
+
+```ts
+await corsair.postmark.api.bounces.activate({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The bounce id whose address should be reactivated. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Message` | `string \| null` | No | — |
+| `Bounce` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Bounce full type">
+
+```ts
+{
+  ID?: number | null,
+  Type?: string | null,
+  TypeCode?: number | null,
+  Name?: string | null,
+  Tag?: string | null,
+  MessageID?: string | null,
+  Description?: string | null,
+  Details?: string | null,
+  Email?: string | null,
+  BouncedAt?: string | null,
+  DumpAvailable?: boolean | null,
+  Inactive?: boolean | null,
+  CanActivate?: boolean | null,
+  Subject?: string | null,
+  ServerID?: number | null,
+  MessageStream?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delivery
+
+`bounces.delivery`
+
+Read delivery statistics broken down by bounce type
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.bounces.delivery({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `InactiveMails` | `number \| null` | No | — |
+| `Bounces` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Bounces full type">
+
+```ts
+{
+  Type?: string | null,
+  Name?: string | null,
+  Count?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`bounces.get`
+
+Read one bounce by its numeric id
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.bounces.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The numeric bounce id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `number \| null` | No | — |
+| `Type` | `string \| null` | No | The bounce type, such as `HardBounce`. |
+| `TypeCode` | `number \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Tag` | `string \| null` | No | — |
+| `MessageID` | `string \| null` | No | — |
+| `Description` | `string \| null` | No | — |
+| `Details` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `BouncedAt` | `string \| null` | No | — |
+| `DumpAvailable` | `boolean \| null` | No | — |
+| `Inactive` | `boolean \| null` | No | — |
+| `CanActivate` | `boolean \| null` | No | — |
+| `Subject` | `string \| null` | No | — |
+| `ServerID` | `number \| null` | No | — |
+| `MessageStream` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`bounces.list`
+
+List bounces filtered by type, address, tag, message or date window
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.bounces.list({ Count: 10, Offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Count` | `number` | No | How many bounces to return, at most 500. |
+| `Offset` | `number` | No | How many to skip. |
+| `Type` | `string` | No | Only this bounce type, such as `HardBounce`. |
+| `Inactive` | `boolean` | No | — |
+| `EmailFilter` | `string` | No | Only this address. |
+| `Tag` | `string` | No | Only bounces carrying this tag. |
+| `MessageID` | `string` | No | Only the bounce for this message. |
+| `FromDate` | `string` | No | Inclusive start, as YYYY-MM-DD. |
+| `ToDate` | `string` | No | Inclusive end, as YYYY-MM-DD. |
+| `MessageStream` | `string` | No | Only this stream. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TotalCount` | `number` | Yes | — |
+| `Bounces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Bounces full type">
+
+```ts
+{
+  ID?: number | null,
+  Type?: string | null,
+  TypeCode?: number | null,
+  Name?: string | null,
+  Tag?: string | null,
+  MessageID?: string | null,
+  Description?: string | null,
+  Details?: string | null,
+  Email?: string | null,
+  BouncedAt?: string | null,
+  DumpAvailable?: boolean | null,
+  Inactive?: boolean | null,
+  CanActivate?: boolean | null,
+  Subject?: string | null,
+  ServerID?: number | null,
+  MessageStream?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email
+
+### send
+
+`email.send`
+
+Send one transactional email. This delivers a real message and cannot be recalled once Postmark accepts it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postmark.api.email.send({ From: 'sender@example.com', To: 'receiver@example.com', Subject: 'Password Reset', TextBody: 'Click here to reset your password.', MessageStream: 'outbound' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `From` | `string` | Yes | The sender. The address needs a confirmed Sender Signature or a verified domain. |
+| `To` | `string` | Yes | Comma-separated addresses. `To`, `Cc` and `Bcc` together allow 50, and each address is at most 254 characters. |
+| `Cc` | `string` | No | Comma-separated addresses. `To`, `Cc` and `Bcc` together allow 50, and each address is at most 254 characters. |
+| `Bcc` | `string` | No | Comma-separated addresses. `To`, `Cc` and `Bcc` together allow 50, and each address is at most 254 characters. |
+| `Subject` | `string` | No | Max 2000 characters. |
+| `Tag` | `string` | No | Categorises the message for statistics. |
+| `HtmlBody` | `string` | No | — |
+| `TextBody` | `string` | No | — |
+| `ReplyTo` | `string` | No | Comma-separated addresses. `To`, `Cc` and `Bcc` together allow 50, and each address is at most 254 characters. |
+| `Headers` | `object[]` | No | Custom headers to include. |
+| `TrackOpens` | `boolean` | No | — |
+| `TrackLinks` | `None \| HtmlAndText \| HtmlOnly \| TextOnly` | No | Which bodies get their links rewritten for tracking. |
+| `Attachments` | `object[]` | No | — |
+| `Metadata` | `Record<string, string>` | No | — |
+| `MessageStream` | `string` | No | Defaults to the `outbound` transactional stream. |
+
+<AccordionGroup>
+<Accordion title="Headers full type">
+
+```ts
+{
+  Name: string,
+  Value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="Attachments full type">
+
+```ts
+{
+  Name: string,
+  Content: string,
+  ContentType: string,
+  ContentID?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  To?: string | null,
+  SubmittedAt?: string | null,
+  MessageID?: string | null,
+  ErrorCode?: number | null,
+  Message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendBatch
+
+`email.sendBatch`
+
+Send up to 500 emails in one request. The response is a per-message result list, and a 200 does not mean every message was sent
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postmark.api.email.sendBatch({ Messages: [{ From: 'sender@example.com', To: 'one@example.com', TextBody: 'Hello one' }, { From: 'sender@example.com', To: 'two@example.com', TextBody: 'Hello two' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Messages` | `object[]` | Yes | Up to 500 messages, which is the API limit per request. |
+
+<AccordionGroup>
+<Accordion title="Messages full type">
+
+```ts
+{
+  From: string,
+  To: string,
+  Cc?: string,
+  Bcc?: string,
+  Subject?: string,
+  Tag?: string,
+  HtmlBody?: string,
+  TextBody?: string,
+  ReplyTo?: string,
+  Headers?: {
+    Name: string,
+    Value: string
+  }[],
+  TrackOpens?: boolean,
+  TrackLinks?: None | HtmlAndText | HtmlOnly | TextOnly,
+  Attachments?: {
+    Name: string,
+    Content: string,
+    ContentType: string,
+    ContentID?: string
+  }[],
+  Metadata?: Record<string, string>,
+  MessageStream?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  To?: string | null,
+  SubmittedAt?: string | null,
+  MessageID?: string | null,
+  ErrorCode?: number | null,
+  Message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Server
+
+### get
+
+`server.get`
+
+Read this server's settings, including its delivery type and whether SMTP is on
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.server.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `number \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Color` | `string \| null` | No | — |
+| `SmtpApiActivated` | `boolean \| null` | No | — |
+| `RawEmailEnabled` | `boolean \| null` | No | — |
+| `DeliveryType` | `string \| null` | No | `Live` or `Sandbox`. It cannot change after creation. |
+| `ServerLink` | `string \| null` | No | — |
+| `InboundAddress` | `string \| null` | No | — |
+| `InboundHookUrl` | `string \| null` | No | — |
+| `BounceHookUrl` | `string \| null` | No | — |
+| `OpenHookUrl` | `string \| null` | No | — |
+| `DeliveryHookUrl` | `string \| null` | No | — |
+| `PostFirstOpenOnly` | `boolean \| null` | No | — |
+| `InboundDomain` | `string \| null` | No | — |
+| `InboundHash` | `string \| null` | No | — |
+| `InboundSpamThreshold` | `number \| null` | No | — |
+| `TrackOpens` | `boolean \| null` | No | — |
+| `TrackLinks` | `string \| null` | No | — |
+| `ApiTokens` | `string[] \| null` | No | — |
+
+
+
+---
+
+### update
+
+`server.update`
+
+Change server settings such as tracking, hook URLs and the inbound spam threshold
+
+**Risk:** `write`
+
+```ts
+await corsair.postmark.api.server.update({ TrackOpens: true, InboundSpamThreshold: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | No | — |
+| `Color` | `Purple \| Blue \| Turquoise \| Green \| Red \| Yellow \| Grey \| Orange` | No | — |
+| `SmtpApiActivated` | `boolean` | No | — |
+| `RawEmailEnabled` | `boolean` | No | — |
+| `TrackOpens` | `boolean` | No | — |
+| `TrackLinks` | `None \| HtmlAndText \| HtmlOnly \| TextOnly` | No | — |
+| `InboundHookUrl` | `string` | No | — |
+| `BounceHookUrl` | `string` | No | — |
+| `OpenHookUrl` | `string` | No | — |
+| `DeliveryHookUrl` | `string` | No | — |
+| `PostFirstOpenOnly` | `boolean` | No | — |
+| `InboundDomain` | `string` | No | — |
+| `InboundSpamThreshold` | `number` | No | A spam threshold between 0 and 30. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `number \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Color` | `string \| null` | No | — |
+| `SmtpApiActivated` | `boolean \| null` | No | — |
+| `RawEmailEnabled` | `boolean \| null` | No | — |
+| `DeliveryType` | `string \| null` | No | `Live` or `Sandbox`. It cannot change after creation. |
+| `ServerLink` | `string \| null` | No | — |
+| `InboundAddress` | `string \| null` | No | — |
+| `InboundHookUrl` | `string \| null` | No | — |
+| `BounceHookUrl` | `string \| null` | No | — |
+| `OpenHookUrl` | `string \| null` | No | — |
+| `DeliveryHookUrl` | `string \| null` | No | — |
+| `PostFirstOpenOnly` | `boolean \| null` | No | — |
+| `InboundDomain` | `string \| null` | No | — |
+| `InboundHash` | `string \| null` | No | — |
+| `InboundSpamThreshold` | `number \| null` | No | — |
+| `TrackOpens` | `boolean \| null` | No | — |
+| `TrackLinks` | `string \| null` | No | — |
+| `ApiTokens` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Stats
+
+### overview
+
+`stats.overview`
+
+Read the outbound overview: sends, opens, clicks, bounces and spam complaints with their rates
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.stats.overview({ FromDate: '2026-01-01', ToDate: '2026-01-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Tag` | `string` | No | Only messages with this tag. |
+| `FromDate` | `string` | No | Inclusive start, as YYYY-MM-DD. It cannot be older than a year. |
+| `ToDate` | `string` | No | Inclusive end, as YYYY-MM-DD. |
+| `MessageStream` | `string` | No | Only this stream. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Inbound` | `number \| null` | No | — |
+| `Outbound` | `number \| null` | No | — |
+| `Transatlantic` | `number \| null` | No | — |
+| `Tracked` | `number \| null` | No | — |
+| `Opens` | `number \| null` | No | — |
+| `UniqueOpens` | `number \| null` | No | — |
+| `OpenRate` | `number \| null` | No | — |
+| `Clicks` | `number \| null` | No | — |
+| `UniqueLinksClicked` | `number \| null` | No | — |
+| `ClickRate` | `number \| null` | No | — |
+| `UniqueClicks` | `number \| null` | No | — |
+| `Bounces` | `number \| null` | No | — |
+| `BounceRate` | `number \| null` | No | — |
+| `SpamComplaints` | `number \| null` | No | — |
+| `SpamComplaintsRate` | `number \| null` | No | — |
+
+
+
+---
+
+### sends
+
+`stats.sends`
+
+Read the daily sent count over a date window
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.stats.sends({ FromDate: '2026-01-01', ToDate: '2026-01-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Tag` | `string` | No | Only messages with this tag. |
+| `FromDate` | `string` | No | Inclusive start, as YYYY-MM-DD. It cannot be older than a year. |
+| `ToDate` | `string` | No | Inclusive end, as YYYY-MM-DD. |
+| `MessageStream` | `string` | No | Only this stream. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Days` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Days full type">
+
+```ts
+{
+  Date?: string | null,
+  Sent?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Streams
+
+### archive
+
+`streams.archive`
+
+Archive a message stream, after which it can no longer send. The default transactional and inbound streams cannot be archived
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postmark.api.streams.archive({ id: 'broadcast-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The stream id to archive. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`streams.get`
+
+Read one message stream
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.streams.get({ id: 'outbound' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The stream id, such as `outbound`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Description` | `string \| null` | No | — |
+| `MessageStreamType` | `string \| null` | No | `Transactional`, `Inbound` or `Broadcast`. |
+| `CreatedAt` | `string \| null` | No | — |
+| `UpdatedAt` | `string \| null` | No | — |
+| `ArchivedAt` | `string \| null` | No | — |
+| `ExpectedPurgeDate` | `string \| null` | No | — |
+| `SubscriptionManagementConfiguration` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="SubscriptionManagementConfiguration full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`streams.list`
+
+List the message streams on this server
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.streams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `MessageStreamType` | `Transactional \| Inbound \| Broadcast` | No | Only streams of this kind. |
+| `IncludeArchivedStreams` | `boolean` | No | Include archived streams. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `MessageStreams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="MessageStreams full type">
+
+```ts
+{
+  ID?: string | null,
+  Name?: string | null,
+  Description?: string | null,
+  MessageStreamType?: string | null,
+  CreatedAt?: string | null,
+  UpdatedAt?: string | null,
+  ArchivedAt?: string | null,
+  ExpectedPurgeDate?: string | null,
+  SubscriptionManagementConfiguration?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a standard or layout template
+
+**Risk:** `write`
+
+```ts
+await corsair.postmark.api.templates.create({ Name: 'Welcome Email', Alias: 'onboarding-v1', Subject: 'Hello, from {{company.name}}', HtmlBody: '<html><body>Hello {{name}}</body></html>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `Subject` | `string` | No | — |
+| `HtmlBody` | `string` | No | — |
+| `TextBody` | `string` | No | — |
+| `Alias` | `string` | No | Your own identifier: letters, digits, and `.`, `-`, `_`, starting with a letter. |
+| `TemplateType` | `Standard \| Layout` | No | — |
+| `LayoutTemplate` | `string` | No | The layout alias a standard template should use. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TemplateId` | `number \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Subject` | `string \| null` | No | — |
+| `HtmlBody` | `string \| null` | No | — |
+| `TextBody` | `string \| null` | No | — |
+| `AssociatedServerId` | `number \| null` | No | — |
+| `Active` | `boolean \| null` | No | — |
+| `Alias` | `string \| null` | No | — |
+| `TemplateType` | `string \| null` | No | `Standard` or `Layout`. |
+| `LayoutTemplate` | `string \| null` | No | The layout alias a standard template uses, if any. |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a template. Sends already made with it are unaffected, but it cannot be restored
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postmark.api.templates.delete({ idOrAlias: 'onboarding-v1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idOrAlias` | `string` | Yes | The numeric template id or its alias. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template by id or alias
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.templates.get({ idOrAlias: 'onboarding-v1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idOrAlias` | `string` | Yes | The numeric template id or its alias. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TemplateId` | `number \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Subject` | `string \| null` | No | — |
+| `HtmlBody` | `string \| null` | No | — |
+| `TextBody` | `string \| null` | No | — |
+| `AssociatedServerId` | `number \| null` | No | — |
+| `Active` | `boolean \| null` | No | — |
+| `Alias` | `string \| null` | No | — |
+| `TemplateType` | `string \| null` | No | `Standard` or `Layout`. |
+| `LayoutTemplate` | `string \| null` | No | The layout alias a standard template uses, if any. |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List the templates on this server, paged by `Count` and `Offset`
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.templates.list({ Count: 10, Offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Count` | `number` | No | How many templates to return, at most 500. |
+| `Offset` | `number` | No | How many to skip. |
+| `TemplateType` | `Standard \| Layout` | No | Only templates of this kind. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TotalCount` | `number` | Yes | — |
+| `Templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Templates full type">
+
+```ts
+{
+  TemplateId?: number | null,
+  Name?: string | null,
+  Subject?: string | null,
+  HtmlBody?: string | null,
+  TextBody?: string | null,
+  AssociatedServerId?: number | null,
+  Active?: boolean | null,
+  Alias?: string | null,
+  TemplateType?: string | null,
+  LayoutTemplate?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Change a template's name, subject, bodies or alias
+
+**Risk:** `write`
+
+```ts
+await corsair.postmark.api.templates.update({ idOrAlias: 'onboarding-v1', Subject: 'Welcome aboard' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idOrAlias` | `string` | Yes | The numeric template id or its alias. |
+| `Name` | `string` | No | — |
+| `Subject` | `string` | No | — |
+| `HtmlBody` | `string` | No | — |
+| `TextBody` | `string` | No | — |
+| `Alias` | `string` | No | — |
+| `TemplateType` | `Standard \| Layout` | No | — |
+| `LayoutTemplate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TemplateId` | `number \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Subject` | `string \| null` | No | — |
+| `HtmlBody` | `string \| null` | No | — |
+| `TextBody` | `string \| null` | No | — |
+| `AssociatedServerId` | `number \| null` | No | — |
+| `Active` | `boolean \| null` | No | — |
+| `Alias` | `string \| null` | No | — |
+| `TemplateType` | `string \| null` | No | `Standard` or `Layout`. |
+| `LayoutTemplate` | `string \| null` | No | The layout alias a standard template uses, if any. |
+
+
+
+---
+
+### validate
+
+`templates.validate`
+
+Render a template against a model and report whether its subject and bodies are valid
+
+**Risk:** `read`
+
+```ts
+await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', TemplateModel: { name: 'Kevin' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Subject` | `string` | No | — |
+| `HtmlBody` | `string` | No | — |
+| `TextBody` | `string` | No | — |
+| `TemplateModel` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `AllContentIsValid` | `boolean` | Yes | True when both bodies and the subject rendered correctly. |
+| `HtmlBody` | `object \| null` | No | — |
+| `TextBody` | `object \| null` | No | — |
+| `Subject` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="HtmlBody full type">
+
+```ts
+{
+  ContentIsValid?: boolean | null,
+  RenderErrors?: JsonValue[] | null,
+  ValidationErrors?: JsonValue[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="TextBody full type">
+
+```ts
+{
+  ContentIsValid?: boolean | null,
+  RenderErrors?: JsonValue[] | null,
+  ValidationErrors?: JsonValue[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Subject full type">
+
+```ts
+{
+  ContentIsValid?: boolean | null,
+  RenderErrors?: JsonValue[] | null,
+  ValidationErrors?: JsonValue[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

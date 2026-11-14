@@ -3423,6 +3423,14 @@
                 ]
               },
               {
+                "group": "Postmark",
+                "pages": [
+                  "plugins/postmark/overview",
+                  "plugins/postmark/api",
+                  "plugins/postmark/database"
+                ]
+              },
+              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
