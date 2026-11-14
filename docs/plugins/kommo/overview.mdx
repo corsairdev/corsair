@@ -6,7 +6,7 @@ description: "CRM with Kommo - manage leads, contacts, companies and tasks, and 
 
 Use **Kommo** through Corsair: one client, typed API calls.
 
-Create a private integration in Kommo, then generate a long-lived token under its Keys and scopes tab. A token lasts from one day to five years, and only an account administrator can create one. It is sent as a bearer token.
+Create a private integration in Kommo, then generate a long-lived token under its Keys and scopes tab. A token lasts from one day to five years, and only an account administrator can create one. It is sent as a bearer token. A long-lived token has no refresh token: once it expires, every call answers 401 until a new token is generated and stored.
 
 Two things are needed before the first call:
 
@@ -16,13 +16,13 @@ Two things are needed before the first call:
 Things to know before you call:
 
 - **Timestamps are Unix seconds.** `created_at`, `updated_at`, `closed_at`, `closest_task_at` and a task's `complete_till` are integers counting seconds, not ISO strings. The plugin passes them through as Kommo sends them.
-- **Paging is by page number.** A list takes `page` and `limit` (250 at most) and returns a `_page` and `_links` block. The plugin adds `next_page`, which is null on the last page.
-- **Filters are bracketed query keys.** `pipeline_id`, `status_id` and the date filters become `filter[pipeline_id][]` and `filter[created_at][from]` on the wire, which is how Kommo documents them. Kommo allows only one stage in one pipeline per request.
-- **A write takes an array.** `leads.create` and `contacts.create` post up to 250 entities at once, and the update routes are PATCH with each entity carrying its `id`. A field left out of an update is untouched.
+- **Paging is by page number.** A list takes `page` and `limit` (250 at most) and returns a `_page` and `_links` block. The plugin adds `next_page`, which is null on the last page. Kommo answers an empty list with 204 No Content, which the plugin returns as an empty page.
+- **Filters are bracketed query keys.** `pipeline_id` and the date filters become `filter[pipeline_id][]` and `filter[created_at][from]` on the wire, which is how Kommo documents them. The date filters take Unix seconds. A stage filter is `status_id` together with its `pipeline_id`, sent as `filter[statuses][0][...]`; Kommo allows only one stage in one pipeline per request.
+- **A write takes an array.** `leads.create`, `contacts.create` and `tasks.create` post up to 250 entities at once, and the update routes are PATCH with each entity carrying its `id`. A field left out of an update is untouched.
 - **Custom field values go by `field_id` or `field_code`.** The plugin refuses a value that names neither, because Kommo would reject it. A value's type follows its `field_type`, so a `date_time` field takes a Unix timestamp.
-- **A contact needs a name.** `name`, or `first_name` and `last_name`; a contact with neither is refused before the call.
+- **A new contact needs a name.** `name`, or `first_name` and `last_name`; a contact created with neither is refused before the call. An update can change any one field.
 - **A task needs a deadline.** `complete_till` is required, in Unix seconds.
-- **Rate limits.** Kommo allows two requests a second with a burst of seven, and sends `Retry-After` on a 429, which the plugin honours before backing off. A 402 means the account's plan does not include that entity, and is not retried. Only reads are replayed after a 5xx, because a retried lead create would make a second lead.
+- **Rate limits.** Kommo allows seven requests a second and answers 429 past that, with `Retry-After`, which the plugin honours before backing off. A 402 means the account's paid or trial period has ended, and is not retried. Only reads are replayed after a 5xx, because a retried lead create would make a second lead.
 - **Webhooks.** Kommo does send webhooks, but this plugin does not receive them; that is a separate integration surface.
 
 **What you get:**
@@ -83,7 +83,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-This plugin saves no credentials of its own. A call made without a stored key for the tenant throws `AuthMissingError`, which may carry a `connectUrl` to the page that collects one. Kommo also needs the account subdomain, delivered as the `subdomain` credential beside the key.
+Store the Kommo API key before the first call: `pnpm corsair setup --plugin=kommo --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 kommo()

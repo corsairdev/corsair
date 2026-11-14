@@ -63,8 +63,8 @@ await corsair.kommo.api.companies.list({ limit: 50 });
 | `limit` | `number` | No | Entities per page. Defaults to 250, which is the maximum. |
 | `query` | `string` | No | A search across the entity’s filled fields. |
 | `responsible_user_id` | `number` | No | — |
-| `updated_from` | `string` | No | — |
-| `updated_to` | `string` | No | — |
+| `updated_from` | `number` | No | Unix seconds. |
+| `updated_to` | `number` | No | Unix seconds. |
 
 
 
@@ -347,8 +347,8 @@ await corsair.kommo.api.contacts.list({ limit: 50, with: ['leads'] });
 | `query` | `string` | No | A search across the entity’s filled fields. |
 | `with` | `leads[]` | No | Embed the leads each contact is linked to. |
 | `responsible_user_id` | `number` | No | — |
-| `updated_from` | `string` | No | — |
-| `updated_to` | `string` | No | — |
+| `updated_from` | `number` | No | Unix seconds. |
+| `updated_to` | `number` | No | Unix seconds. |
 
 
 
@@ -444,7 +444,7 @@ await corsair.kommo.api.contacts.update({ contacts: [{ id: 30012345, first_name:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contacts` | `object[]` | Yes | — |
+| `contacts` | `object[]` | Yes | Each contact carries its `id` and the fields to change. |
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -749,16 +749,16 @@ await corsair.kommo.api.leads.list({ limit: 50, pipeline_id: 12215168, with: ['c
 | `query` | `string` | No | A search across the entity’s filled fields. |
 | `with` | `(contacts \| loss_reason \| catalog_elements \| source)[]` | No | Embed these extra details on each lead. |
 | `pipeline_id` | `number` | No | — |
-| `status_id` | `number` | No | — |
+| `status_id` | `number` | No | A stage. Needs `pipeline_id`, the pipeline the stage is in. |
 | `responsible_user_id` | `number` | No | — |
-| `created_from` | `string` | No | ISO 8601 or a Unix timestamp. |
-| `created_to` | `string` | No | — |
-| `updated_from` | `string` | No | — |
-| `updated_to` | `string` | No | — |
+| `created_from` | `number` | No | Unix seconds. |
+| `created_to` | `number` | No | Unix seconds. |
+| `updated_from` | `number` | No | Unix seconds. |
+| `updated_to` | `number` | No | Unix seconds. |
 | `order_by` | `created_at \| updated_at \| id` | No | — |
 | `order_direction` | `asc \| desc` | No | — |
 
-Pages by number, 250 at most. `next_page` is null on the last page. Kommo allows one stage in one pipeline per request.
+Pages by number, 250 at most. `next_page` is null on the last page. Date filters are Unix seconds. A `status_id` filter needs its `pipeline_id`; Kommo allows one stage in one pipeline per request.
 
 
 
@@ -1024,7 +1024,7 @@ Create tasks against a lead, contact or company; every task needs a `complete_ti
 **Risk:** `write`
 
 ```ts
-await corsair.kommo.api.tasks.create({ tasks: [{ entity_id: 20024930, entity_type: 'leads', text: 'Call about the quote', complete_till: 1762000000 }] });
+await corsair.kommo.api.tasks.create({ tasks: [{ entity_id: 20024930, entity_type: 'leads', text: 'Call about the quote', complete_till: 1893456000 }] });
 ```
 
 **Input**
@@ -1074,7 +1074,7 @@ await corsair.kommo.api.tasks.create({ tasks: [{ entity_id: 20024930, entity_typ
     result?: {
       text?: string | null,
       id?: number | null
-    } | null,
+    } | any[] | null,
     responsible_user_id?: number | null,
     created_by?: number | null,
     updated_by?: number | null,
@@ -1114,7 +1114,7 @@ await corsair.kommo.api.tasks.list({ entity_type: 'leads', is_completed: false }
 | `entity_type` | `leads \| contacts \| companies` | No | Only tasks on this kind of entity. |
 | `entity_id` | `number` | No | — |
 | `responsible_user_id` | `number` | No | — |
-| `is_completed` | `boolean` | No | — |
+| `is_completed` | `boolean` | No | True for completed tasks, false for open ones. |
 
 
 
@@ -1156,7 +1156,7 @@ await corsair.kommo.api.tasks.list({ entity_type: 'leads', is_completed: false }
     result?: {
       text?: string | null,
       id?: number | null
-    } | null,
+    } | any[] | null,
     responsible_user_id?: number | null,
     created_by?: number | null,
     updated_by?: number | null,
