@@ -1,8 +1,11 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { KontentAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { KontentAPIError, kontentErrorFields } from './client';
 
+// An HTTP error from Kontent is core's ApiError; KontentAPIError is a request
+// that got no answer or could not be sent.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KontentAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The Delivery API documents 401, 403, 404 and 429, and distinguishes a missing
@@ -12,12 +15,11 @@ export const errorHandlers = {
 	// A 429 is a throughput limit, and Kontent sends no Retry-After, so the
 	// handler's own backoff is the only delay.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof KontentAPIError && error.isRateLimit,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof KontentAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -25,8 +27,7 @@ export const errorHandlers = {
 	// is a configuration mistake rather than a missing item. It sits before
 	// VALIDATION_ERROR because both answer 404.
 	ENVIRONMENT_NOT_FOUND_ERROR: {
-		match: (error: Error) =>
-			error instanceof KontentAPIError && error.isEnvironmentNotFound,
+		match: (error: Error) => kontentErrorFields(error).isEnvironmentNotFound,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A preview token the environment refused. A published read sends no token.
@@ -48,10 +49,7 @@ export const errorHandlers = {
 	// Every call here is a GET, so replaying one cannot change anything at
 	// Kontent and cannot be charged twice.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof KontentAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

@@ -1,7 +1,10 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { KontentAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An answered request fails as core's ApiError; one that got no answer as
+// KontentAPIError.
 function apiError(options: {
 	status?: number;
 	errorCode?: number;
@@ -9,8 +12,25 @@ function apiError(options: {
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new KontentAPIError('failed', options);
+}): Error {
+	if (options.status === undefined) {
+		return new KontentAPIError('failed', options);
+	}
+	return new ApiError(
+		{ method: 'GET', url: '/env/items' },
+		{
+			url: 'https://deliver.kontent.ai/env/items',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body:
+				options.errorCode === undefined
+					? { message: 'failed' }
+					: { message: 'failed', error_code: options.errorCode },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**

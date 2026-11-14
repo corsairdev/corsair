@@ -217,7 +217,7 @@ export function kontentai<const T extends KontentPluginOptions>(
 	} satisfies InternalKontentPlugin;
 }
 
-export { KontentAPIError } from './client';
+export { KontentAPIError, kontentErrorFields } from './client';
 
 export type {
 	ItemGetInput,

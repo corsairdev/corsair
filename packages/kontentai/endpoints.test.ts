@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { KontentAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { KontentAPIError, kontentErrorFields } from './client';
 import { Items, Taxonomy } from './endpoints';
 import {
 	contentType,
@@ -171,6 +172,43 @@ describe('items.list', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('rejects a filter repeated in in_filter instead of dropping one', async () => {
+		await expect(
+			invoke(Items.list, {
+				in_filter:
+					'elements.category[contains]=nature&elements.category[contains]=technology',
+			}),
+		).rejects.toThrow('Each filter may appear once');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		[{ type: 'article', in_filter: 'system.type=coffee' }, 'system.type'],
+		[
+			{ collection: 'default', in_filter: 'system.collection=blog' },
+			'system.collection',
+		],
+	])(
+		'rejects %j, where in_filter would replace the field',
+		async (input, name) => {
+			await expect(invoke(Items.list, input)).rejects.toThrow(name);
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
+	it('keeps type beside a system.type operator filter, which Kontent ANDs', async () => {
+		respond(items);
+
+		await invoke(Items.list, {
+			type: 'article',
+			in_filter: 'system.type[neq]=coffee',
+		});
+
+		const sent = lastRequest();
+		expect(sent.query['system.type']).toBe('article');
+		expect(sent.query['system.type[neq]']).toBe('coffee');
+	});
+
 	it('reads the next skip out of the full next_page URL', async () => {
 		respond(itemsWithNext);
 
@@ -304,9 +342,9 @@ describe('items.get', () => {
 
 		await expect(invoke(Items.get, { codename: 'nope' })).rejects.toMatchObject(
 			{
+				name: 'ApiError',
 				status: 404,
-				errorCode: 100,
-				isNotFound: true,
+				body: { error_code: 100 },
 				message:
 					"Kontent 404 100: The requested content item 'nope' was not found. (request fc4c2800fa381362)",
 			},
@@ -316,13 +354,11 @@ describe('items.get', () => {
 	it('surfaces an unknown environment as a configuration error', async () => {
 		respond(environmentNotFound, 404);
 
-		await expect(
-			invoke(Items.get, { codename: 'about_us' }),
-		).rejects.toMatchObject({
-			status: 404,
-			errorCode: 105,
-			isEnvironmentNotFound: true,
-		});
+		const error = await caught(invoke(Items.get, { codename: 'about_us' }));
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 404, body: { error_code: 105 } });
+		expect(kontentErrorFields(error).isEnvironmentNotFound).toBe(true);
 	});
 
 	it.each([[{}], [{ codename: '' }], [{ codename: 'about_us', depth: 5 }]])(
@@ -370,7 +406,7 @@ describe('types.get', () => {
 
 		await expect(
 			invoke(Taxonomy.get, { codename: 'nope' }),
-		).rejects.toMatchObject({ status: 404, errorCode: 101 });
+		).rejects.toMatchObject({ status: 404, body: { error_code: 101 } });
 	});
 });
 
@@ -401,6 +437,18 @@ describe('languages.list', () => {
 		expect(lastRequest()).toMatchObject({
 			path: `/${ENVIRONMENT_ID}/languages`,
 		});
+	});
+});
+
+describe('the stored Delivery API key', () => {
+	it('is optional when Corsair has no key manager (no database or kek)', async () => {
+		respond(items);
+		const ctx = { key: ENVIRONMENT_ID, options: {} };
+
+		await expect(
+			(Items.list as never as AnyEndpoint)(ctx as never, {} as never),
+		).resolves.toMatchObject({ items: expect.any(Array) });
+		expect(lastRequest().headers.get('authorization')).toBeNull();
 	});
 });
 
@@ -440,15 +488,28 @@ describe('error envelopes', () => {
 
 		await expect(
 			invoke(Items.get, { codename: 'about_us', preview: true }, 'bad'),
-		).rejects.toMatchObject({ status: 401, isAuthError: true });
+		).rejects.toMatchObject({ status: 401, name: 'ApiError' });
 	});
 
-	it('keeps no body on the error', async () => {
+	it('passes an HTTP failure on as core ApiError with the request it made', async () => {
 		respond(itemNotFound, 404);
 
 		const error = await caught(invoke(Items.list, {}));
 
-		expect(error).not.toHaveProperty('body');
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).not.toBeInstanceOf(KontentAPIError);
+		expect(error).toMatchObject({ request: { method: 'GET' } });
+	});
+
+	it('keeps the Delivery API key off the error', async () => {
+		respond(unauthorized, 401);
+
+		const error = await caught(
+			invoke(Items.get, { codename: 'about_us' }, 'secret-delivery-key'),
+		);
+
+		expect(JSON.stringify(error)).not.toContain('secret-delivery-key');
+		expect((error as Error).message).not.toContain('secret-delivery-key');
 	});
 
 	it('marks a transport failure and keeps the method', async () => {
@@ -464,10 +525,13 @@ describe('error envelopes', () => {
 	it('keeps the request id, which Kontent support asks for', async () => {
 		respond(itemNotFound, 404);
 
-		await expect(invoke(Items.get, { codename: 'nope' })).rejects.toMatchObject(
-			{
-				requestId: 'fc4c2800fa381362',
-			},
-		);
+		const error = await caught(invoke(Items.get, { codename: 'nope' }));
+
+		expect((error as Error).message).toContain('fc4c2800fa381362');
+		expect(kontentErrorFields(error)).toEqual({
+			errorCode: 100,
+			requestId: 'fc4c2800fa381362',
+			isEnvironmentNotFound: false,
+		});
 	});
 });

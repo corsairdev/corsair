@@ -143,6 +143,14 @@ export type KontentItem = z.infer<typeof KontentItemSchema>;
 const FILTER = String.raw`(?:system|elements)\.[A-Za-z0-9_]+(?:\[[a-z]+\])?(?:=[^&]*)?`;
 const FILTER_EXPRESSIONS = new RegExp(`^${FILTER}(?:&${FILTER})*$`);
 
+/** The parameter name of each filter, such as `elements.price[gt]`. */
+function filterNames(expression: string): string[] {
+	return expression.split('&').map((filter) => {
+		const at = filter.indexOf('=');
+		return at === -1 ? filter : filter.slice(0, at);
+	});
+}
+
 /** Splits `in_filter` into the query parameters Kontent reads, one per filter. */
 export function filterParams(expression: string): Record<string, string> {
 	const params: Record<string, string> = {};
@@ -181,6 +189,14 @@ const ItemsListInputSchema = ListInputBase.extend({
 			FILTER_EXPRESSIONS,
 			'Use Kontent filters such as `elements.price[gt]=10`, joined with `&`',
 		)
+		// A query keeps one value per name, so a repeated filter would drop a
+		// condition the caller asked for.
+		.refine(
+			(expression) =>
+				new Set(filterNames(expression)).size ===
+				filterNames(expression).length,
+			'Each filter may appear once in `in_filter`; use an operator such as `[any]` or `[all]` for several values',
+		)
 		.optional()
 		.describe(
 			'Kontent filters, such as `elements.price[gt]=10` or `system.type[in]=article,coffee&elements.title[nempty]`. Each `&`-separated filter is sent as its own query parameter, and an item must match all of them.',
@@ -192,6 +208,22 @@ const ItemsListInputSchema = ListInputBase.extend({
 		.describe(
 			'Return only these element codenames. Sent as one comma-separated `elements` value.',
 		),
+}).superRefine((input, ctx) => {
+	// `type` and `collection` go out as `system.type` and `system.collection`,
+	// so the same filter in `in_filter` would replace them.
+	const names = input.in_filter ? filterNames(input.in_filter) : [];
+	for (const [field, name] of [
+		['type', 'system.type'],
+		['collection', 'system.collection'],
+	] as const) {
+		if (input[field] !== undefined && names.includes(name)) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['in_filter'],
+				message: `\`${field}\` is already sent as \`${name}\`; drop one of them`,
+			});
+		}
+	}
 });
 
 export type ItemsListInput = z.input<typeof ItemsListInputSchema>;

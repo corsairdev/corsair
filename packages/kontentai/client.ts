@@ -74,14 +74,16 @@ export const KONTENT_ENVIRONMENT_NOT_FOUND = 105;
 /** A content item, type or taxonomy with that codename is missing. */
 export const KONTENT_RESOURCE_NOT_FOUND = 100;
 
+/**
+ * A Kontent request that got no answer (a reset, DNS failure, abort or
+ * timeout) or could not be sent, such as a preview read without a key.
+ *
+ * An HTTP error from Kontent stays core's `ApiError`, so its status,
+ * Retry-After and rate-limit fields reach core and the error handlers. Its
+ * `body` is Kontent's envelope, with `error_code` and `request_id`; see
+ * `kontentErrorFields`.
+ */
 export class KontentAPIError extends Error {
-	readonly status?: number;
-	/** Kontent's `error_code`, such as 105 for an unknown environment. */
-	readonly errorCode?: number;
-	/** Kontent's `request_id`, which its support asks for. */
-	readonly requestId?: string;
-	/** Milliseconds from a Retry-After header, when Kontent sent one. */
-	readonly retryAfter?: number;
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
@@ -90,10 +92,6 @@ export class KontentAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			errorCode?: number;
-			requestId?: string;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -101,33 +99,28 @@ export class KontentAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KontentAPIError';
-		this.status = options.status;
-		this.errorCode = options.errorCode;
-		this.requestId = options.requestId;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** The environment ID is wrong, which reads as a config error, not a bad key. */
-	get isEnvironmentNotFound(): boolean {
-		return this.errorCode === KONTENT_ENVIRONMENT_NOT_FOUND;
-	}
-
-	/** A preview token the environment refused. */
-	get isAuthError(): boolean {
-		return this.status === 401 || this.status === 403;
-	}
-
-	/** The entity is not there, or was never published. */
-	get isNotFound(): boolean {
-		return this.status === 404;
-	}
+/**
+ * Kontent's `error_code` and `request_id` from a failed call. `error_code` 105
+ * is an unknown environment, a configuration mistake, while 100 and 101 are a
+ * missing item or type; all three answer 404.
+ */
+export function kontentErrorFields(error: unknown): {
+	errorCode?: number;
+	requestId?: string;
+	isEnvironmentNotFound: boolean;
+} {
+	const fields = error instanceof ApiError ? readError(error.body) : {};
+	return {
+		errorCode: fields.errorCode,
+		requestId: fields.requestId,
+		isEnvironmentNotFound: fields.errorCode === KONTENT_ENVIRONMENT_NOT_FOUND,
+	};
 }
 
 /** The message Kontent sent, with the status and code in front. */
@@ -215,15 +208,24 @@ export async function makeKontentRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const fields = readError(error.body);
-			throw new KontentAPIError(
+			// The same error, with Kontent's message, code and request ID in front
+			// of core's generic one. Every call is a GET with no body, so nothing
+			// the caller sent rides along.
+			throw new ApiError(
+				error.request,
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
 				describeKontentError(error.status, error.body, error.message),
 				{
-					status: error.status,
-					errorCode: fields.errorCode,
-					requestId: fields.requestId,
 					retryAfter: error.retryAfter,
-					method: 'GET',
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}

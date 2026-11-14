@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	describeKontentError,
 	makeKontentRequest,
@@ -188,12 +189,12 @@ describe('makeKontentRequest', () => {
 				path: '/items/nope',
 			}),
 		).rejects.toMatchObject({
-			name: 'KontentAPIError',
+			name: 'ApiError',
 			status: 404,
-			errorCode: 100,
-			requestId: 'abc',
-			method: 'GET',
-			transport: false,
+			body: { error_code: 100, request_id: 'abc' },
+			message:
+				"Kontent 404 100: The requested content item 'nope' was not found. (request abc)",
+			request: { method: 'GET' },
 		});
 	});
 
@@ -207,19 +208,15 @@ describe('makeKontentRequest', () => {
 
 		await expect(
 			makeKontentRequest(ENVIRONMENT_ID, { method: 'GET', path: '/items' }),
-		).rejects.toMatchObject({ retryAfter: 3000, isRateLimit: true });
+		).rejects.toMatchObject({ retryAfter: 3000, status: 429 });
 	});
 
-	it('keeps no body on the error', async () => {
+	it('passes an HTTP failure on as core ApiError', async () => {
 		respond({ message: 'Not found', error_code: 100 }, 404);
 
-		// unknown: the rejection is an error whose fields the assertions read.
-		const error = (await makeKontentRequest(ENVIRONMENT_ID, {
-			method: 'GET',
-			path: '/items',
-		}).catch((caught: unknown) => caught)) as Error;
-
-		expect(error).not.toHaveProperty('body');
+		await expect(
+			makeKontentRequest(ENVIRONMENT_ID, { method: 'GET', path: '/items' }),
+		).rejects.toBeInstanceOf(ApiError);
 	});
 
 	it('marks a transport failure and keeps its cause, which never held a body', async () => {
