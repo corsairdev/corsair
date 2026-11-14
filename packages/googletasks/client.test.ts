@@ -91,6 +91,7 @@ describe('Google Tasks OAuth client', () => {
 			{ retryAfter: 4000, rateLimitRemaining: 0 },
 		);
 		mockedRequest.mockRejectedValue(failure);
+		// `unknown` in the catch: a rejection can carry any value; the assertions below narrow it to ApiError.
 		const thrown = await makeGoogleTasksRequest(
 			'/tasks/v1/lists/l/tasks',
 			{ key: 'private-access-token' },

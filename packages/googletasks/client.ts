@@ -24,6 +24,7 @@ export type GoogleTasksRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
+// `unknown`: a caught value can be anything at runtime, so narrow to ApiError before reading status.
 function isUnauthorized(error: unknown): boolean {
 	return error instanceof ApiError && error.status === 401;
 }
@@ -60,6 +61,7 @@ function sendGoogleTasksRequest(
 // A failed write would otherwise carry the submitted task (title, notes) on
 // ApiError.request. Rebuild the error without the request body; status, provider
 // body, message and rate-limit fields stay as core set them.
+// `unknown`: the caught value may not be an ApiError; anything else is rethrown untouched.
 function withoutRequestBody(error: unknown): unknown {
 	if (!(error instanceof ApiError) || error.request?.body === undefined) {
 		return error;
