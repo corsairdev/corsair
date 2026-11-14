@@ -1,0 +1,74 @@
+displayName: GageList
+description: Gauge calibration management with GageList - manage gages and their calibration records, read calibration certificates, and manage manufacturers, custom field values and the account's plan limits.
+domain: gagelist.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a private client in GageList and copy its client ID and client secret. Both are needed: the pair is exchanged for a bearer token before any call.
+
+  Things to know before you call:
+
+  - **The pair mints a token, and the token expires.** The plugin posts the pair to `/api/token` with `grant_type=password`, caches the token for the hour GageList allows, and mints a new one after a 401. A `401` from a protected route means the token was refused, not that the pair is wrong; a rejected pair comes back from the token endpoint as `invalid_client`.
+  - **Field names are PascalCase and case-sensitive.** The API binds `SerialNumber`, `CalibrationDueDate` and so on, and one of them is misspelled in the API itself: `DateAquired`, not `DateAcquired`. Use the API's spelling.
+  - **The lists are POST, not GET.** `gages.list`, `calibrations.list` and `manufacturers.list` take their paging in the request body as `start` and `record_number`, and answer `total` plus `count`. The plugin returns `next_start`, which is null on the last page.
+  - **An update replaces the record.** `gages.update` and `calibrations.update` take the whole object with its `Id`, so a field left out is not "unchanged" in the way a PATCH would leave it. Read the record with `gages.get` or `calibrations.get`, change the fields you mean to change, and send the whole record back.
+  - **Deletes are POSTs.** GageList deletes with `POST` to a `Delete/{id}` path rather than an HTTP DELETE, and a gage is marked deleted rather than erased.
+  - **The custom-value route takes a bare array.** `customFields.updateValues` posts `[{ FieldId, RefID, RefType, FieldValue }]`, not the usual object wrapper. `RefType` is `1` for a gage and `2` for a calibration, and a wrong one writes to the other table, so it is constrained to those two values.
+  - **A certificate is a PDF, not JSON.** `calibrations.certificate` returns the file's bytes base64-encoded in `certificate`, with `encoding`, `contentType` and `byteLength`; decode it before saving the file.
+  - **No webhooks.** GageList does not push; a caller polls.
+examples:
+  read:
+    path: gages.list
+    title: List the first page of gages
+    args:
+      start: 0
+      record_number: 25
+  write:
+    path: calibrations.create
+    title: Record a calibration against a gage
+    args:
+      EquipmentRefId: 12
+      EquipmentAsFound: '0.01'
+      EquipmentAsLeft: '0.00'
+      CalibrationDueDate: '2027-04-24T00:00:00Z'
+apiExamples:
+  gages.list:
+    call: "{ start: 0, record_number: 25 }"
+  gages.get:
+    call: "{ id: 12 }"
+  gages.create:
+    call: "{ SerialNumber: 'SN-1001', Type: 'Caliper', Manufacturer: 'Mitutoyo', Years: 1, Location: 'Bench 3' }"
+  gages.update:
+    call: "{ ...(await corsair.gagelist.api.gages.get({ id: 12 })).data, Location: 'Bench 4' }"
+  gages.delete:
+    call: "{ id: 12 }"
+  calibrations.list:
+    call: "{ start: 0, record_number: 25 }"
+  calibrations.get:
+    call: "{ id: 500 }"
+  calibrations.create:
+    call: "{ EquipmentRefId: 12, EquipmentAsFound: '0.01', EquipmentAsLeft: '0.00', CalibrationDueDate: '2027-04-24T00:00:00Z' }"
+  calibrations.update:
+    call: "{ ...(await corsair.gagelist.api.calibrations.get({ id: 500 })).data, Uncertainty: '0.003' }"
+  calibrations.delete:
+    call: "{ id: 500 }"
+  calibrations.certificate:
+    call: "{ id: 500 }"
+  manufacturers.list:
+    call: "{ start: 0, record_number: 25 }"
+  manufacturers.create:
+    call: "{ Name: 'Starrett', Website: 'https://starrett.example' }"
+  manufacturers.update:
+    call: "{ Id: 7, Name: 'Mitutoyo Corp' }"
+  manufacturers.delete:
+    call: "{ id: 7 }"
+  customFields.list: {}
+  customFields.updateValues:
+    call: "{ values: [{ Id: 0, FieldId: 3, RefID: 12, RefType: 1, FieldValue: 'CC-1' }] }"
+  account.status: {}
+apiNotes:
+  gages.list: 'Pages by `start` and `record_number` in the request body. `next_start` is null on the last page.'
+  gages.create: 'Field names are PascalCase and bind case-sensitively. GageList spells the acquisition date `DateAquired`.'
+  gages.update: 'The body is the whole record with its `Id`, not a partial patch: read it with `gages.get` and send it back with your change.'
+  calibrations.update: 'The body is the whole record with its `Id`, not a partial patch: read it with `calibrations.get` and send it back with your change.'
+  calibrations.certificate: 'Returns the PDF base64-encoded in `certificate`, with `encoding`, `contentType` and `byteLength`.'
+  customFields.updateValues: 'Posts a bare JSON array. `RefType` is `1` for a gage and `2` for a calibration.'

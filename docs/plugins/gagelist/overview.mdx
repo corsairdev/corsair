@@ -1,0 +1,145 @@
+---
+title: "GageList plugin"
+sidebarTitle: "Overview"
+description: "Gauge calibration management with GageList - manage gages and their calibration records, read calibration certificates, and manage manufacturers, custom field values and the account's plan limits."
+---
+
+Use **GageList** through Corsair: one client, typed API calls.
+
+Create a private client in GageList and copy its client ID and client secret. Both are needed: the pair is exchanged for a bearer token before any call.
+
+Things to know before you call:
+
+- **The pair mints a token, and the token expires.** The plugin posts the pair to `/api/token` with `grant_type=password`, caches the token for the hour GageList allows, and mints a new one after a 401. A `401` from a protected route means the token was refused, not that the pair is wrong; a rejected pair comes back from the token endpoint as `invalid_client`.
+- **Field names are PascalCase and case-sensitive.** The API binds `SerialNumber`, `CalibrationDueDate` and so on, and one of them is misspelled in the API itself: `DateAquired`, not `DateAcquired`. Use the API's spelling.
+- **The lists are POST, not GET.** `gages.list`, `calibrations.list` and `manufacturers.list` take their paging in the request body as `start` and `record_number`, and answer `total` plus `count`. The plugin returns `next_start`, which is null on the last page.
+- **An update replaces the record.** `gages.update` and `calibrations.update` take the whole object with its `Id`, so a field left out is not "unchanged" in the way a PATCH would leave it. Read the record with `gages.get` or `calibrations.get`, change the fields you mean to change, and send the whole record back.
+- **Deletes are POSTs.** GageList deletes with `POST` to a `Delete/{id}` path rather than an HTTP DELETE, and a gage is marked deleted rather than erased.
+- **The custom-value route takes a bare array.** `customFields.updateValues` posts `[{ FieldId, RefID, RefType, FieldValue }]`, not the usual object wrapper. `RefType` is `1` for a gage and `2` for a calibration, and a wrong one writes to the other table, so it is constrained to those two values.
+- **A certificate is a PDF, not JSON.** `calibrations.certificate` returns the file's bytes base64-encoded in `certificate`, with `encoding`, `contentType` and `byteLength`; decode it before saving the file.
+- **No webhooks.** GageList does not push; a caller polls.
+
+**What you get:**
+
+- 18 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/gagelist better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/gagelist better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/gagelist better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/gagelist better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { gagelist } from '@corsair-dev/gagelist';
+
+export const corsair = createCorsair({
+	plugins: [
+		gagelist(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the GageList API key before the first call: `pnpm corsair setup --plugin=gagelist --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+gagelist()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'gagelist',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of gages**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gagelist.api.gages.list({ start: 0, record_number: 25 });
+```
+
+
+**Record a calibration against a gage**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gagelist.api.calibrations.create({
+	EquipmentRefId: 12,
+	EquipmentAsFound: '0.01',
+	EquipmentAsLeft: '0.00',
+	CalibrationDueDate: '2027-04-24T00:00:00Z',
+});
+```
+
+
+See the full list on the [API](/plugins/gagelist/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/gagelist/api">
+    Every `gagelist.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
