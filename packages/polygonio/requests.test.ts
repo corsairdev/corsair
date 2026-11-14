@@ -76,6 +76,26 @@ describe('aggregates endpoints', () => {
 		);
 	});
 
+	it('rejects a nextUrl from another operation and sends nothing', async () => {
+		await expect(
+			Aggregates.bars(ctx, {
+				nextUrl:
+					'https://api.massive.com/v2/snapshot/locale/us/markets/stocks/gainers',
+			}),
+		).rejects.toThrow(/not a page of another operation/);
+		await expect(
+			Tickers.list(ctx, {
+				nextUrl: 'https://api.massive.com/v3/reference/exchanges?cursor=x',
+			}),
+		).rejects.toThrow(/not a page of another operation/);
+		await expect(
+			MarketOperations.exchanges(ctx, {
+				nextUrl: 'https://api.massive.com/v3/reference/tickers/AAPL',
+			}),
+		).rejects.toThrow(/not a page of another operation/);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
 	it('bars follows nextUrl as the whole next page, ignoring the other filters', async () => {
 		mockedRequest.mockResolvedValue({ status: 'OK', results: [] });
 

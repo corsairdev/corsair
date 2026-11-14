@@ -161,9 +161,21 @@ export function segment(value: string | number): string {
  * The URL already carries the caller's `cursor` and the original filters, so
  * nothing is rebuilt here: it is the API's own next page. Any `apiKey` the
  * provider echoed is dropped, because the client appends the caller's own.
+ * `route` is the calling operation's path pattern.
  */
-export function nextPageRequest(nextUrl: string): PolygonioRequest {
+export function nextPageRequest(
+	nextUrl: string,
+	route: RegExp,
+): PolygonioRequest {
 	const url = new URL(nextUrl);
+	// The URL is the caller's input, so its path must be a page of the operation
+	// being called. Otherwise an allowed operation could fetch a route whose own
+	// operation the app denies, with the tenant's key.
+	if (!route.test(url.pathname)) {
+		throw new Error(
+			'nextUrl must be the next_url this operation returned, not a page of another operation',
+		);
+	}
 	url.searchParams.delete(POLYGONIO_KEY_PARAM);
 	const query: PolygonioQuery = {};
 	for (const [key, value] of url.searchParams) {

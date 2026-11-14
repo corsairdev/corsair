@@ -6,13 +6,18 @@ import {
 	PolygonioEndpointOutputSchemas as Outputs,
 } from './types';
 
+/** The custom-bars route, the only one whose answers `bars` pages through. */
+const BARS_ROUTE =
+	/^\/v2\/aggs\/ticker\/[^/]+\/range\/[^/]+\/[^/]+\/[^/]+\/[^/]+$/;
+
 export const bars: PolygonioEndpoints['bars'] = (ctx, input) =>
 	call(
 		ctx,
 		{ event: 'bars', input: Inputs.bars, output: Outputs.bars },
 		input,
 		(parsed) => {
-			if (parsed.nextUrl !== undefined) return nextPageRequest(parsed.nextUrl);
+			if (parsed.nextUrl !== undefined)
+				return nextPageRequest(parsed.nextUrl, BARS_ROUTE);
 			const { ticker, multiplier, timespan, from, to, ...query } = parsed;
 			// The refinement rejects a call that omits any of these, so reaching the
 			// path with one unset would mean the schema and this handler disagreed.

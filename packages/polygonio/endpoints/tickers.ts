@@ -35,7 +35,9 @@ export const list: PolygonioEndpoints['tickersList'] = (ctx, input) =>
 			limit,
 			nextUrl,
 		}) =>
-			(nextUrl === undefined ? undefined : nextPageRequest(nextUrl)) ?? {
+			(nextUrl === undefined
+				? undefined
+				: nextPageRequest(nextUrl, /^\/v3\/reference\/tickers$/)) ?? {
 				method: 'GET',
 				path: '/v3/reference/tickers',
 				query: {

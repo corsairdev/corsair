@@ -82,6 +82,7 @@ describe('nextPageRequest', () => {
 		expect(
 			nextPageRequest(
 				'https://api.massive.com/v2/aggs/ticker/AAPL/range/1/day/1578114000000/2020-01-10?cursor=bGltaXQ9MiZzb3J0PWFzYw',
+				/^\/v2\/aggs\//,
 			),
 		).toEqual({
 			method: 'GET',
@@ -93,6 +94,7 @@ describe('nextPageRequest', () => {
 	it('splits the cursor out of the path, so the client can add its own key', () => {
 		const request = nextPageRequest(
 			'https://api.massive.com/v3/reference/tickers?cursor=abc&apiKey=leaked',
+			/^\/v3\/reference\/tickers$/,
 		);
 
 		// The path must carry no query of its own: the client appends `?apiKey=`,
@@ -101,6 +103,15 @@ describe('nextPageRequest', () => {
 		expect(request.path).not.toContain('?');
 		// Keeping the provider's key would send two apiKey values.
 		expect(request.query).toEqual({ cursor: 'abc' });
+	});
+
+	it("rejects a URL whose path is not the calling operation's route", () => {
+		expect(() =>
+			nextPageRequest(
+				'https://api.massive.com/v2/snapshot/locale/us/markets/stocks/gainers',
+				/^\/v3\/reference\/tickers$/,
+			),
+		).toThrow(/not a page of another operation/);
 	});
 });
 

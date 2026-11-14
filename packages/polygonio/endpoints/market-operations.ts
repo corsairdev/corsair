@@ -49,7 +49,9 @@ export const exchanges: PolygonioEndpoints['exchanges'] = (ctx, input) =>
 		},
 		input,
 		({ asset_class, locale, nextUrl }) =>
-			(nextUrl === undefined ? undefined : nextPageRequest(nextUrl)) ?? {
+			(nextUrl === undefined
+				? undefined
+				: nextPageRequest(nextUrl, /^\/v3\/reference\/exchanges$/)) ?? {
 				method: 'GET',
 				path: '/v3/reference/exchanges',
 				query: { asset_class, locale },
