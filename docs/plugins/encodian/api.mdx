@@ -16,7 +16,7 @@ description: "API reference for the Encodian plugin in Corsair: every `encodian.
 
 Barcode - Read (AI)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.aiBarcodeRead({"body":{"FileContent":"<base64-encoded PNG barcode file>"}});
@@ -66,7 +66,7 @@ await corsair.encodian.api.barcodes.aiBarcodeRead({"body":{"FileContent":"<base6
 
 Barcode - Create
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.createBarcode({"body":{"codeTextEncoding":"Default","dotCodemask":0}});
@@ -186,7 +186,7 @@ await corsair.encodian.api.barcodes.createBarcode({"body":{"codeTextEncoding":"D
 
 QR Code - Create
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.createQrCode({"body":{"barcodeData":"x","barcodeImageFormat":"PNG"}});
@@ -262,7 +262,7 @@ await corsair.encodian.api.barcodes.createQrCode({"body":{"barcodeData":"x","bar
 
 Swiss QR Code - Create
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.createSwissQrCode({"body":{"account":"x","amount":0,"creditor":{"countryCode":"Afghanistan","name":"x"},"currency":"CHF","debtor":{"countryCode":"Afghanistan","name":"x"},"imageFormat":"PNG","reference":"x"}});
@@ -348,7 +348,7 @@ await corsair.encodian.api.barcodes.createSwissQrCode({"body":{"account":"x","am
 
 Barcode - Read from Document
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.readBarcodeFromDocument({"body":{}});
@@ -400,7 +400,7 @@ await corsair.encodian.api.barcodes.readBarcodeFromDocument({"body":{}});
 
 Barcode - Read from Image
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.readBarcodeFromImage({"body":{"barcodeImageFormat":"PNG","fileContent":"AA=="}});
@@ -449,7 +449,7 @@ await corsair.encodian.api.barcodes.readBarcodeFromImage({"body":{"barcodeImageF
 
 QR Code - Read from Document
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.readQrCodeFromDocument({"body":{}});
@@ -501,7 +501,7 @@ await corsair.encodian.api.barcodes.readQrCodeFromDocument({"body":{}});
 
 QR Code - Read from Image
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.readQrCodeFromImage({"body":{"barcodeImageFormat":"PNG","fileContent":"AA=="}});
@@ -550,7 +550,7 @@ await corsair.encodian.api.barcodes.readQrCodeFromImage({"body":{"barcodeImageFo
 
 Swiss QR Code - Read from Image
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.readSwissQrCodeFromImage({"body":{"fileContent":"AA=="}});
@@ -617,7 +617,7 @@ await corsair.encodian.api.barcodes.readSwissQrCodeFromImage({"body":{"fileConte
 
 Swiss QR Code - Read from Document
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.barcodes.readSwissQrCodesFromDocument({"body":{"fileContent":"AA=="}});
@@ -707,7 +707,7 @@ await corsair.encodian.api.barcodes.readSwissQrCodesFromDocument({"body":{"fileC
 
 Convert - File to PDF
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.basicConversion({"body":{"fileContent":"AA==","FileName":"x","outputFilename":"x"}});
@@ -762,7 +762,7 @@ await corsair.encodian.api.conversion.basicConversion({"body":{"fileContent":"AA
 
 Convert - CAD
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertCad({"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}});
@@ -829,7 +829,7 @@ await corsair.encodian.api.conversion.convertCad({"body":{"fileContent":"AA==","
 
 Convert - Excel
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertExcel({"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}});
@@ -901,7 +901,7 @@ await corsair.encodian.api.conversion.convertExcel({"body":{"fileContent":"AA=="
 
 Convert - HEIC to PDF
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertHeicToPdf({"body":{"fileContent":"AA=="}});
@@ -947,7 +947,7 @@ await corsair.encodian.api.conversion.convertHeicToPdf({"body":{"fileContent":"A
 
 Convert - Image to PDF
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertImageToPdf({"body":{"fileContent":"AA=="}});
@@ -1005,7 +1005,7 @@ await corsair.encodian.api.conversion.convertImageToPdf({"body":{"fileContent":"
 
 Convert - JSON to Excel
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertJsonToExcel({"body":{"outputFilename":"x"}});
@@ -1066,7 +1066,7 @@ await corsair.encodian.api.conversion.convertJsonToExcel({"body":{"outputFilenam
 
 Convert - Email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertMailMessage({"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x"}});
@@ -1122,7 +1122,7 @@ await corsair.encodian.api.conversion.convertMailMessage({"body":{"fileContent":
 
 Convert - PDF to Excel
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertPdfToExcel({"body":{"fileContent":"AA=="}});
@@ -1168,7 +1168,7 @@ await corsair.encodian.api.conversion.convertPdfToExcel({"body":{"fileContent":"
 
 Convert - PDF to Images
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertPdfToImages({"body":{"fileContent":"AA==","imageFormat":"JPG"}});
@@ -1229,7 +1229,7 @@ await corsair.encodian.api.conversion.convertPdfToImages({"body":{"fileContent":
 
 Convert - PDF to JPG
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertPdfToJpg({"body":{"fileContent":"AA=="}});
@@ -1283,7 +1283,7 @@ await corsair.encodian.api.conversion.convertPdfToJpg({"body":{"fileContent":"AA
 
 Convert - PDF to PNG
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertPdfToPng({"body":{"bitDepth":0,"fileContent":"AA=="}});
@@ -1336,7 +1336,7 @@ await corsair.encodian.api.conversion.convertPdfToPng({"body":{"bitDepth":0,"fil
 
 Convert - PDF to TIFF
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertPdfToTiff({"body":{"fileContent":"AA=="}});
@@ -1388,7 +1388,7 @@ await corsair.encodian.api.conversion.convertPdfToTiff({"body":{"fileContent":"A
 
 Convert - PDF to Word
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertPdfToWord({"body":{"fileName":"x","finalOperation":false,"outputFilename":"x"}});
@@ -1440,7 +1440,7 @@ await corsair.encodian.api.conversion.convertPdfToWord({"body":{"fileName":"x","
 
 Convert - PowerPoint
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertPowerPoint({"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}});
@@ -1513,7 +1513,7 @@ await corsair.encodian.api.conversion.convertPowerPoint({"body":{"fileContent":"
 
 Convert - PDF to PDFA
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertToPdfA({"body":{"FileName":"x"}});
@@ -1564,7 +1564,7 @@ await corsair.encodian.api.conversion.convertToPdfA({"body":{"FileName":"x"}});
 
 Convert - Visio
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertVisio({"body":{"fileContent":"AA==","fileName":"x","outputFormat":"PDF"}});
@@ -1644,7 +1644,7 @@ await corsair.encodian.api.conversion.convertVisio({"body":{"fileContent":"AA=="
 
 Convert - Word
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.convertWord({"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}});
@@ -1726,7 +1726,7 @@ await corsair.encodian.api.conversion.convertWord({"body":{"fileContent":"AA==",
 
 Convert - HTML to Image
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.htmlToImage({"body":{}});
@@ -1780,7 +1780,7 @@ await corsair.encodian.api.conversion.htmlToImage({"body":{}});
 
 Convert - HTML to PDF
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.htmlToPdf({"body":{"encoding":"UTF8","FileName":"x","htmlData":"<html><body>Example</body></html>","outputFilename":"x"}});
@@ -1853,7 +1853,7 @@ await corsair.encodian.api.conversion.htmlToPdf({"body":{"encoding":"UTF8","File
 
 Convert - HTML to PDF (V2)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.htmlToPDFV2({"body":{}});
@@ -1919,7 +1919,7 @@ await corsair.encodian.api.conversion.htmlToPDFV2({"body":{}});
 
 Convert - HTML to Word
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.htmlToWord({"body":{"FileName":"x","FinalOperation":false,"outputFilename":"x"}});
@@ -1982,7 +1982,7 @@ await corsair.encodian.api.conversion.htmlToWord({"body":{"FileName":"x","FinalO
 
 Convert - Text to PDF
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.textToPdf({"body":{"FileName":"x","outputFilename":"x","textData":"Example text"}});
@@ -2034,7 +2034,7 @@ await corsair.encodian.api.conversion.textToPdf({"body":{"FileName":"x","outputF
 
 Convert - Word to PDF Form
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.conversion.wordToPdfForm({"body":{"fileContent":"AA==","FileName":"x","outputFilename":"x"}});
@@ -2086,7 +2086,7 @@ await corsair.encodian.api.conversion.wordToPdfForm({"body":{"fileContent":"AA==
 
 Excel - Add Rows
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.addRowsToExcel({"body":{"fileContent":"AA==","jsonData":"x"}});
@@ -2143,7 +2143,7 @@ await corsair.encodian.api.excel.addRowsToExcel({"body":{"fileContent":"AA==","j
 
 Excel - Delete Worksheets
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.deleteExcelWorksheets({"body":{"fileContent":"AA=="}});
@@ -2191,7 +2191,7 @@ await corsair.encodian.api.excel.deleteExcelWorksheets({"body":{"fileContent":"A
 
 Excel - Delete Rows
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.deleteRowsFromExcel({"body":{"fileContent":"AA=="}});
@@ -2242,7 +2242,7 @@ await corsair.encodian.api.excel.deleteRowsFromExcel({"body":{"fileContent":"AA=
 
 Excel - Add Image Header or Footer
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelAddImageHeaderOrFooter({"body":{"fileContent":"AA==","imageFileContent":"AA==","position":"HeaderLeft"}});
@@ -2297,7 +2297,7 @@ await corsair.encodian.api.excel.excelAddImageHeaderOrFooter({"body":{"fileConte
 
 Excel - Add Text Header or Footer
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelAddTextHeadersAndFooters({"body":{"fileContent":"AA=="}});
@@ -2352,7 +2352,7 @@ await corsair.encodian.api.excel.excelAddTextHeadersAndFooters({"body":{"fileCon
 
 Excel - Merge Worksheets
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelMergeWorksheets({"body":{"fileContent":"AA=="}});
@@ -2404,7 +2404,7 @@ await corsair.encodian.api.excel.excelMergeWorksheets({"body":{"fileContent":"AA
 
 Excel - Remove Headers and Footers
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelRemoveHeadersAndFooters({"body":{"fileContent":"AA=="}});
@@ -2459,7 +2459,7 @@ await corsair.encodian.api.excel.excelRemoveHeadersAndFooters({"body":{"fileCont
 
 Excel - Rename Worksheets
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelRenameWorksheets({"body":{"fileContent":"AA==","worksheets":[]}});
@@ -2511,7 +2511,7 @@ await corsair.encodian.api.excel.excelRenameWorksheets({"body":{"fileContent":"A
 
 Excel - Replace Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelReplaceText({"body":{"fileContent":"AA==","phrases":[]}});
@@ -2573,7 +2573,7 @@ await corsair.encodian.api.excel.excelReplaceText({"body":{"fileContent":"AA==",
 
 Excel - Separate Worksheets
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelSeparateWorksheets({"body":{"fileContent":"AA=="}});
@@ -2632,7 +2632,7 @@ await corsair.encodian.api.excel.excelSeparateWorksheets({"body":{"fileContent":
 
 Excel - Add Text Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelWatermarkText({"body":{"columnPosition":0,"fileContent":"AA==","height":0,"rowPosition":0,"text":"x","width":0}});
@@ -2694,7 +2694,7 @@ await corsair.encodian.api.excel.excelWatermarkText({"body":{"columnPosition":0,
 
 Excel - Remove Text Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.excelWatermarkTextRemove({"body":{"fileContent":"AA==","watermarkId":0}});
@@ -2744,7 +2744,7 @@ await corsair.encodian.api.excel.excelWatermarkTextRemove({"body":{"fileContent"
 
 Excel - Extract Worksheets
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.extractExcelWorksheets({"body":{"fileContent":"AA=="}});
@@ -2792,7 +2792,7 @@ await corsair.encodian.api.excel.extractExcelWorksheets({"body":{"fileContent":"
 
 Excel - Extract Rows
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.getRowsFromExcel({"body":{"fileContent":"AA=="}});
@@ -2852,7 +2852,7 @@ await corsair.encodian.api.excel.getRowsFromExcel({"body":{"fileContent":"AA=="}
 
 Excel - Merge Files
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.mergeArrayOfExcelDocuments({"body":{"documents":[]}});
@@ -2907,7 +2907,7 @@ await corsair.encodian.api.excel.mergeArrayOfExcelDocuments({"body":{"documents"
 
 Excel - Merge Rows
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.mergeExcelRows({"body":{"documents":[],"outputFormat":"PDF"}});
@@ -2963,7 +2963,7 @@ await corsair.encodian.api.excel.mergeExcelRows({"body":{"documents":[],"outputF
 
 CSV - Parse
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.parseCsv({"body":{"FileContent":"AA==","FileName":"x"}});
@@ -3014,7 +3014,7 @@ await corsair.encodian.api.excel.parseCsv({"body":{"FileContent":"AA==","FileNam
 
 Excel - Populate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.populateExcel({"body":{"fileContent":"AA==","jsonData":"x"}});
@@ -3070,7 +3070,7 @@ await corsair.encodian.api.excel.populateExcel({"body":{"fileContent":"AA==","js
 
 Excel - Secure
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.secureExcel({"body":{"fileContent":"AA=="}});
@@ -3124,7 +3124,7 @@ await corsair.encodian.api.excel.secureExcel({"body":{"fileContent":"AA=="}});
 
 Excel - Unlock
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.unlockExcel({"body":{"fileContent":"AA=="}});
@@ -3176,7 +3176,7 @@ await corsair.encodian.api.excel.unlockExcel({"body":{"fileContent":"AA=="}});
 
 Excel - Update Rows
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.excel.updateRowsInExcel({"body":{"fileContent":"AA==","jsonData":"x","updateColumn":0,"updateRow":0}});
@@ -3234,7 +3234,7 @@ await corsair.encodian.api.excel.updateRowsInExcel({"body":{"fileContent":"AA=="
 
 Archive (ZIP) - Create
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.addToZip({"body":{"documents":[],"FinalOperation":false,"outputFilename":"x"}});
@@ -3290,7 +3290,7 @@ await corsair.encodian.api.general.addToZip({"body":{"documents":[],"FinalOperat
 
 AI - Process Bank Check (US)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessBankCheckUs({"body":{}});
@@ -3341,7 +3341,7 @@ await corsair.encodian.api.general.aiProcessBankCheckUs({"body":{}});
 
 AI - Process Bank Statement (US)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessBankStatementUs({"body":{}});
@@ -3392,7 +3392,7 @@ await corsair.encodian.api.general.aiProcessBankStatementUs({"body":{}});
 
 AI - Process Contract
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessContract({"body":{}});
@@ -3443,7 +3443,7 @@ await corsair.encodian.api.general.aiProcessContract({"body":{}});
 
 AI - Process Credit Card
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessCreditCard({"body":{}});
@@ -3494,7 +3494,7 @@ await corsair.encodian.api.general.aiProcessCreditCard({"body":{}});
 
 AI - Process Health Insurance Card (US)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessHealthInsuranceCardUs({"body":{}});
@@ -3545,7 +3545,7 @@ await corsair.encodian.api.general.aiProcessHealthInsuranceCardUs({"body":{}});
 
 AI - Process ID Document
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessIDDocument({"body":{}});
@@ -3596,7 +3596,7 @@ await corsair.encodian.api.general.aiProcessIDDocument({"body":{}});
 
 AI - Process Invoice
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessInvoice({"body":{}});
@@ -3647,7 +3647,7 @@ await corsair.encodian.api.general.aiProcessInvoice({"body":{}});
 
 AI - Process Marriage Certificate (US)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessMarriageCertificateUs({"body":{}});
@@ -3698,7 +3698,7 @@ await corsair.encodian.api.general.aiProcessMarriageCertificateUs({"body":{}});
 
 AI - Process Mortgage Document (US)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessMortgageUs({"body":{}});
@@ -3749,7 +3749,7 @@ await corsair.encodian.api.general.aiProcessMortgageUs({"body":{}});
 
 AI - Process Pay Stub (US)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessPayStubUs({"body":{}});
@@ -3800,7 +3800,7 @@ await corsair.encodian.api.general.aiProcessPayStubUs({"body":{}});
 
 AI - Process Receipt
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessReceipt({"body":{}});
@@ -3851,7 +3851,7 @@ await corsair.encodian.api.general.aiProcessReceipt({"body":{}});
 
 AI - Process Tax Document (US)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiProcessTaxUs({"body":{}});
@@ -3902,7 +3902,7 @@ await corsair.encodian.api.general.aiProcessTaxUs({"body":{}});
 
 AI – Run Prompt (Text)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiRunPromptText({"body":{"model":"GPT_4_1","prompt":"x"}});
@@ -3957,7 +3957,7 @@ await corsair.encodian.api.general.aiRunPromptText({"body":{"model":"GPT_4_1","p
 
 AI - Speech to Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiSpeechToText({"body":{"fileContent":"AA=="}});
@@ -4008,7 +4008,7 @@ await corsair.encodian.api.general.aiSpeechToText({"body":{"fileContent":"AA=="}
 
 AI - Translate File
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiTranslateFile({"body":{"fileContent":"AA==","fileName":"x","targetLanguage":"Afrikaans"}});
@@ -4058,7 +4058,7 @@ await corsair.encodian.api.general.aiTranslateFile({"body":{"fileContent":"AA=="
 
 AI - Translate Text (Single)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiTranslateText({"body":{"targetLanguage":"Afrikaans","text":"x"}});
@@ -4109,7 +4109,7 @@ await corsair.encodian.api.general.aiTranslateText({"body":{"targetLanguage":"Af
 
 AI - Translate Text (Multiple)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.aiTranslateTextMultiple({"body":{"targetLanguages":[],"text":"x"}});
@@ -4160,7 +4160,7 @@ await corsair.encodian.api.general.aiTranslateTextMultiple({"body":{"targetLangu
 
 Subscription - Buy Additional Credits (charges the subscription for extra Flowr credits)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.buyAdditionalCredits({"body":{"credits":0,"productName":"Flowr","purchaseType":"Automated"}});
@@ -4208,7 +4208,7 @@ await corsair.encodian.api.general.buyAdditionalCredits({"body":{"credits":0,"pr
 
 Archive (ZIP) - Extract
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.extractFromArchive({"body":{"fileContent":"AA==","includeFolders":false}});
@@ -4268,7 +4268,7 @@ await corsair.encodian.api.general.extractFromArchive({"body":{"fileContent":"AA
 
 Archive (ZIP) - Extract (V2)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.extractFromArchiveV2({"body":{"fileContent":"AA==","pathSeparator":"Backslash","recursive":false}});
@@ -4330,7 +4330,7 @@ await corsair.encodian.api.general.extractFromArchiveV2({"body":{"fileContent":"
 
 Email - Extract Attachments
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.getEmailAttachments({"body":{"fileContent":"AA==","fileName":"x","getInlineAttachments":false}});
@@ -4390,7 +4390,7 @@ await corsair.encodian.api.general.getEmailAttachments({"body":{"fileContent":"A
 
 Email - Extract Metadata
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.getEmailInfo({"body":{"fileContent":"AA=="}});
@@ -4494,7 +4494,7 @@ await corsair.encodian.api.general.getSubscriptionStatus({});
 
 File - Search and Replace Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.searchAndReplaceText({"body":{"Phrases":[]}});
@@ -4557,7 +4557,7 @@ await corsair.encodian.api.general.searchAndReplaceText({"body":{"Phrases":[]}})
 
 File - Replace Text with Image
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.general.searchAndReplaceTextWithImage({"body":{"imageFileContent":"AA==","imageFilename":"x","SearchText":"x"}});
@@ -4617,7 +4617,7 @@ await corsair.encodian.api.general.searchAndReplaceTextWithImage({"body":{"image
 
 Image - Add Image Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.addImageWatermarkToImage({"body":{"fileContent":"AA==","filename":"x","watermarkFileContent":"AA==","watermarkFilename":"x","watermarkPosition":"BottomLeft"}});
@@ -4674,7 +4674,7 @@ await corsair.encodian.api.image.addImageWatermarkToImage({"body":{"fileContent"
 
 Image - Add Text Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.addTextWatermarkToImage({"body":{"FileName":"x","FinalOperation":false,"Text":"x"}});
@@ -4729,7 +4729,7 @@ await corsair.encodian.api.image.addTextWatermarkToImage({"body":{"FileName":"x"
 
 Image - Compress
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.compressImage({"body":{"fileContent":"AA==","fileName":"x","imageType":"JPG"}});
@@ -4779,7 +4779,7 @@ await corsair.encodian.api.image.compressImage({"body":{"fileContent":"AA==","fi
 
 Image - Crop
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.cropImage({"body":{"cropType":"Border","fileContent":"AA=="}});
@@ -4844,7 +4844,7 @@ await corsair.encodian.api.image.cropImage({"body":{"cropType":"Border","fileCon
 
 Image - Flip
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.flipImage({"body":{"fileContent":"AA==","flipOrientation":"Horizontal"}});
@@ -4891,7 +4891,7 @@ await corsair.encodian.api.image.flipImage({"body":{"fileContent":"AA==","flipOr
 
 Image - Extract Metadata
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.getImageInfo({"body":{"fileContent":"AA=="}});
@@ -4948,7 +4948,7 @@ await corsair.encodian.api.image.getImageInfo({"body":{"fileContent":"AA=="}});
 
 Image - Clean Up (Document)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.imageCleanUpDocument({"body":{"AutoRotateConfidenceLevel":0,"FileName":"x","FinalOperation":false}});
@@ -5011,7 +5011,7 @@ await corsair.encodian.api.image.imageCleanUpDocument({"body":{"AutoRotateConfid
 
 Image - Clean Up (Photo)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.imageCleanUpPhoto({"body":{"AutoRotateConfidenceLevel":0,"FileName":"x","FinalOperation":false}});
@@ -5072,7 +5072,7 @@ await corsair.encodian.api.image.imageCleanUpPhoto({"body":{"AutoRotateConfidenc
 
 Image - Convert Format
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.imageConvertFormat({"body":{"currentImageFormat":"BMP","fileContent":"AA==","fileName":"x","newImageFormat":"BMP"}});
@@ -5122,7 +5122,7 @@ await corsair.encodian.api.image.imageConvertFormat({"body":{"currentImageFormat
 
 Image - Convert to Grayscale
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.imageConvertToGrayscale({"body":{"fileContent":"AA=="}});
@@ -5168,7 +5168,7 @@ await corsair.encodian.api.image.imageConvertToGrayscale({"body":{"fileContent":
 
 Image - Extract Text (AI OCR)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.imageExtractText({"body":{"AutoRotateConfidenceLevel":0,"fileContent":"AA==","fileName":"x","imageType":"JPG"}});
@@ -5231,7 +5231,7 @@ await corsair.encodian.api.image.imageExtractText({"body":{"AutoRotateConfidence
 
 Image - Remove EXIF Tags
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.imageRemoveExifTags({"body":{"fileContent":"AA==","fileName":"x","imageType":"JPG"}});
@@ -5280,7 +5280,7 @@ await corsair.encodian.api.image.imageRemoveExifTags({"body":{"fileContent":"AA=
 
 Image - Resize
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.resizeImage({"body":{"FileContent":"AA==","FileName":"x","FinalOperation":false,"ImageResizeType":"Percentage"}});
@@ -5337,7 +5337,7 @@ await corsair.encodian.api.image.resizeImage({"body":{"FileContent":"AA==","File
 
 Image - Rotate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.rotateImage({"body":{"fileContent":"AA=="}});
@@ -5387,7 +5387,7 @@ await corsair.encodian.api.image.rotateImage({"body":{"fileContent":"AA=="}});
 
 Image - Rotate by EXIF Data
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.image.rotateImageByExifData({"body":{}});
@@ -5435,7 +5435,7 @@ await corsair.encodian.api.image.rotateImageByExifData({"body":{}});
 
 PDF - Add Attachments
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.addAttachmentsToPdf({"body":{"attachments":[],"fileContent":"AA=="}});
@@ -5486,7 +5486,7 @@ await corsair.encodian.api.pdf.addAttachmentsToPdf({"body":{"attachments":[],"fi
 
 PDF - Add HTML Header or Footer
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.addHtmlHeaderFooter({"body":{"FileName":"x","htmlHeaderFooter":"x","htmlHeaderFooterLocation":"Header"}});
@@ -5546,7 +5546,7 @@ await corsair.encodian.api.pdf.addHtmlHeaderFooter({"body":{"FileName":"x","html
 
 PDF - Add Image Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.addImageWatermark({"body":{"FileName":"x","watermarkFileContent":"AA==","watermarkFilename":"x"}});
@@ -5604,7 +5604,7 @@ await corsair.encodian.api.pdf.addImageWatermark({"body":{"FileName":"x","waterm
 
 PDF - Add Image Watermark (Advanced)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.addImageWatermarkAdvanced({"body":{"FileName":"x","watermarkFileContent":"AA==","watermarkFilename":"x"}});
@@ -5670,7 +5670,7 @@ await corsair.encodian.api.pdf.addImageWatermarkAdvanced({"body":{"FileName":"x"
 
 PDF - Add Page Numbers
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.addPageNumbers({"body":{"FileName":"x"}});
@@ -5734,7 +5734,7 @@ await corsair.encodian.api.pdf.addPageNumbers({"body":{"FileName":"x"}});
 
 PDF - Add Text Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.addTextWatermark({"body":{"FileName":"x","Text":"x"}});
@@ -5796,7 +5796,7 @@ await corsair.encodian.api.pdf.addTextWatermark({"body":{"FileName":"x","Text":"
 
 PDF - Add Text Watermark (Advanced)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.addTextWatermarkAdvanced({"body":{"FileName":"x","Text":"x"}});
@@ -5872,7 +5872,7 @@ await corsair.encodian.api.pdf.addTextWatermarkAdvanced({"body":{"FileName":"x",
 
 PDF - Apply OCR (AI)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.aiOcrPdfDocument({"body":{"fileContent":"AA==","rotateConfidenceLevel":0}});
@@ -5932,7 +5932,7 @@ await corsair.encodian.api.pdf.aiOcrPdfDocument({"body":{"fileContent":"AA==","r
 
 PDF - Compress
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.compressPdf({"body":{"fileContent":"AA=="}});
@@ -5992,7 +5992,7 @@ await corsair.encodian.api.pdf.compressPdf({"body":{"fileContent":"AA=="}});
 
 PDF - Delete Pages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.deletePdfPages({"body":{"fileContent":"AA=="}});
@@ -6041,7 +6041,7 @@ await corsair.encodian.api.pdf.deletePdfPages({"body":{"fileContent":"AA=="}});
 
 PDF - Extract Attachments
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.extractAttachmentsFromPdf({"body":{"fileContent":"AA=="}});
@@ -6099,7 +6099,7 @@ await corsair.encodian.api.pdf.extractAttachmentsFromPdf({"body":{"fileContent":
 
 PDF - Extract Images from Regions
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.extractImages({"body":{"FileName":"x","ImageRegions":[]}});
@@ -6170,7 +6170,7 @@ await corsair.encodian.api.pdf.extractImages({"body":{"FileName":"x","ImageRegio
 
 PDF - Extract Images
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.extractImagesAll({"body":{"fileContent":"AA=="}});
@@ -6232,7 +6232,7 @@ await corsair.encodian.api.pdf.extractImagesAll({"body":{"fileContent":"AA=="}})
 
 PDF - Extract Pages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.extractPdfPages({"body":{"fileContent":"AA=="}});
@@ -6281,7 +6281,7 @@ await corsair.encodian.api.pdf.extractPdfPages({"body":{"fileContent":"AA=="}});
 
 PDF - Extract Pages by Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.extractPdfPagesByText({"body":{"fileContent":"AA==","searchValue":"x"}});
@@ -6330,7 +6330,7 @@ await corsair.encodian.api.pdf.extractPdfPagesByText({"body":{"fileContent":"AA=
 
 PDF - Extract Text from Regions
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.extractTextRegions({"body":{"FileName":"x","TextRegions":[]}});
@@ -6403,7 +6403,7 @@ await corsair.encodian.api.pdf.extractTextRegions({"body":{"FileName":"x","TextR
 
 PDF - Fill Form
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.fillPdfForm({"body":{"FileName":"x","formData":"x"}});
@@ -6452,7 +6452,7 @@ await corsair.encodian.api.pdf.fillPdfForm({"body":{"FileName":"x","formData":"x
 
 PDF - Flatten
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.flattenPdf({"body":{"fileContent":"AA=="}});
@@ -6499,7 +6499,7 @@ await corsair.encodian.api.pdf.flattenPdf({"body":{"fileContent":"AA=="}});
 
 PDF - Extract Metadata
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.getPdfDocumentInfo({"body":{"fileContent":"AA==","FileName":"x"}});
@@ -6567,7 +6567,7 @@ await corsair.encodian.api.pdf.getPdfDocumentInfo({"body":{"fileContent":"AA==",
 
 PDF - Extract Form Data
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.getPdfFormData({"body":{"FileName":"x","FinalOperation":false}});
@@ -6618,7 +6618,7 @@ await corsair.encodian.api.pdf.getPdfFormData({"body":{"FileName":"x","FinalOper
 
 PDF - Extract Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.getPdfTextLayer({"body":{"FileName":"x"}});
@@ -6673,7 +6673,7 @@ await corsair.encodian.api.pdf.getPdfTextLayer({"body":{"FileName":"x"}});
 
 PDF - Insert HTML
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.insertHtmlToPdf({"body":{"FileName":"x","FinalOperation":false,"htmlData":"x"}});
@@ -6736,7 +6736,7 @@ await corsair.encodian.api.pdf.insertHtmlToPdf({"body":{"FileName":"x","FinalOpe
 
 PDF - Merge Files
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.mergeArrayOfDocumentsToPdf({"body":{"documents":[],"FileName":"x","outputFilename":"x"}});
@@ -6795,7 +6795,7 @@ await corsair.encodian.api.pdf.mergeArrayOfDocumentsToPdf({"body":{"documents":[
 
 PDF - Merge Specific Files
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.mergeDocumentsToPdf({"body":{"fileContent":"AA==","fileContent2":"AA==","FileName":"x","fileName2":"x","outputFilename":"x"}});
@@ -6869,7 +6869,7 @@ await corsair.encodian.api.pdf.mergeDocumentsToPdf({"body":{"fileContent":"AA=="
 
 PDF - Apply OCR (Standard)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.ocrPdfDocument({"body":{"AutoRotateConfidenceLevel":0,"FileName":"x"}});
@@ -6938,7 +6938,7 @@ await corsair.encodian.api.pdf.ocrPdfDocument({"body":{"AutoRotateConfidenceLeve
 
 PDF - Check Password Protection
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfCheckPassword({"body":{"fileContent":"AA=="}});
@@ -6986,7 +6986,7 @@ await corsair.encodian.api.pdf.pdfCheckPassword({"body":{"fileContent":"AA=="}})
 
 PDF - Create ZUGFeRD Invoice
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfCreateZUGFeRDInvoice({"body":{"fileContent":"AA==","zUGFeRDFileContent":"AA=="}});
@@ -7033,7 +7033,7 @@ await corsair.encodian.api.pdf.pdfCreateZUGFeRDInvoice({"body":{"fileContent":"A
 
 PDF - Delete Blank Pages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfDeleteBlankPages({"body":{"fileContent":"AA=="}});
@@ -7082,7 +7082,7 @@ await corsair.encodian.api.pdf.pdfDeleteBlankPages({"body":{"fileContent":"AA=="
 
 PDF - Extract Hyperlinks
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfExtractHyperlinks({"body":{"fileContent":"AA=="}});
@@ -7132,7 +7132,7 @@ await corsair.encodian.api.pdf.pdfExtractHyperlinks({"body":{"fileContent":"AA==
 
 PDF - Extract Table Data
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfExtractTableData({"body":{}});
@@ -7183,7 +7183,7 @@ await corsair.encodian.api.pdf.pdfExtractTableData({"body":{}});
 
 PDF - Extract Text by Page
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfExtractTextByPage({"body":{"FileContent":"AA=="}});
@@ -7246,7 +7246,7 @@ await corsair.encodian.api.pdf.pdfExtractTextByPage({"body":{"FileContent":"AA==
 
 PDF - Flatten Fields
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfFlattenFields({"body":{"fileContent":"AA=="}});
@@ -7294,7 +7294,7 @@ await corsair.encodian.api.pdf.pdfFlattenFields({"body":{"fileContent":"AA=="}})
 
 PDF - Generate Bookmarks
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfGenerateBookmarks({"body":{"bookmarks":"x","fileContent":"AA=="}});
@@ -7341,7 +7341,7 @@ await corsair.encodian.api.pdf.pdfGenerateBookmarks({"body":{"bookmarks":"x","fi
 
 PDF - Insert Pages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfInsertPages({"body":{"documents":[],"fileContent":"AA==","outputFilename":"x"}});
@@ -7397,7 +7397,7 @@ await corsair.encodian.api.pdf.pdfInsertPages({"body":{"documents":[],"fileConte
 
 PDF - Insert Table of Contents
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfInsertToc({"body":{"fileContent":"AA=="}});
@@ -7462,7 +7462,7 @@ await corsair.encodian.api.pdf.pdfInsertToc({"body":{"fileContent":"AA=="}});
 
 PDF - Linearize
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfLinearize({"body":{"fileContent":"AA=="}});
@@ -7508,7 +7508,7 @@ await corsair.encodian.api.pdf.pdfLinearize({"body":{"fileContent":"AA=="}});
 
 PDF - Remove Digital Signature
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfRemoveDigitalSignature({"body":{"fileContent":"AA=="}});
@@ -7554,7 +7554,7 @@ await corsair.encodian.api.pdf.pdfRemoveDigitalSignature({"body":{"fileContent":
 
 PDF - Replace Text with Image
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfReplaceTextWithImage({"body":{"FileContent":"AA==","imageFileContent":"AA==","SearchText":"x"}});
@@ -7607,7 +7607,7 @@ await corsair.encodian.api.pdf.pdfReplaceTextWithImage({"body":{"FileContent":"A
 
 PDF - Replace Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfSearchAndReplaceText({"body":{"phrases":[]}});
@@ -7667,7 +7667,7 @@ await corsair.encodian.api.pdf.pdfSearchAndReplaceText({"body":{"phrases":[]}});
 
 PDF - Set Metadata
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfSetMetadata({"body":{"fileContent":"AA=="}});
@@ -7721,7 +7721,7 @@ await corsair.encodian.api.pdf.pdfSetMetadata({"body":{"fileContent":"AA=="}});
 
 PDF - Update Hyperlinks
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.pdfUpdateHyperlinks({"body":{"fileContent":"AA==","hyperlinks":[]}});
@@ -7777,7 +7777,7 @@ await corsair.encodian.api.pdf.pdfUpdateHyperlinks({"body":{"fileContent":"AA=="
 
 PDF - Redact
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.redactPdf({"body":{"FileName":"x","Redactions":[]}});
@@ -7836,7 +7836,7 @@ await corsair.encodian.api.pdf.redactPdf({"body":{"FileName":"x","Redactions":[]
 
 PDF - Remove Watermarks
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.removeWatermarksFromPdf({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -7886,7 +7886,7 @@ await corsair.encodian.api.pdf.removeWatermarksFromPdf({"body":{"fileContent":"A
 
 PDF - Repair
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.repairPdf({"body":{"fileContent":"AA=="}});
@@ -7933,7 +7933,7 @@ await corsair.encodian.api.pdf.repairPdf({"body":{"fileContent":"AA=="}});
 
 PDF - Resize
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.resizePdf({"body":{"FileContent":"AA==","pageSize":"Default"}});
@@ -7989,7 +7989,7 @@ await corsair.encodian.api.pdf.resizePdf({"body":{"FileContent":"AA==","pageSize
 
 PDF - Rotate Pages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.rotatePdfPages({"body":{"fileContent":"AA==","pdfPageRotation":"Degrees90"}});
@@ -8040,7 +8040,7 @@ await corsair.encodian.api.pdf.rotatePdfPages({"body":{"fileContent":"AA==","pdf
 
 PDF - Secure
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.securePdfDocument({"body":{"FileName":"x","FinalOperation":false}});
@@ -8101,7 +8101,7 @@ await corsair.encodian.api.pdf.securePdfDocument({"body":{"FileName":"x","FinalO
 
 PDF - Set Privileges
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.setPdfPrivileges({"body":{"FileName":"x"}});
@@ -8159,7 +8159,7 @@ await corsair.encodian.api.pdf.setPdfPrivileges({"body":{"FileName":"x"}});
 
 PDF - Sign
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.signPdf({"body":{"certificateType":"Standard","fileContent":"AA=="}});
@@ -8238,7 +8238,7 @@ await corsair.encodian.api.pdf.signPdf({"body":{"certificateType":"Standard","fi
 
 PDF - Split
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.splitDocument({"body":{"fileName":"x","splitByType":"NumberOfPages","splitConfiguration":"x"}});
@@ -8301,7 +8301,7 @@ await corsair.encodian.api.pdf.splitDocument({"body":{"fileName":"x","splitByTyp
 
 PDF - Split by Barcode
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.splitPdfByBarcode({"body":{"fileName":"x","splitPdfByBarcodeAction":"SplitOn","splitPdfByBarcodeType":"AllInstances"}});
@@ -8366,7 +8366,7 @@ await corsair.encodian.api.pdf.splitPdfByBarcode({"body":{"fileName":"x","splitP
 
 PDF - Split by Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.splitPdfByText({"body":{"fileName":"x","splitAction":"SplitOn","splitPdfByTextType":"AllInstances","splitValue":"x"}});
@@ -8430,7 +8430,7 @@ await corsair.encodian.api.pdf.splitPdfByText({"body":{"fileName":"x","splitActi
 
 PDF - Unlock
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.unlockPdfDocument({"body":{"FileName":"x","FinalOperation":false,"password":"x"}});
@@ -8481,7 +8481,7 @@ await corsair.encodian.api.pdf.unlockPdfDocument({"body":{"FileName":"x","FinalO
 
 PDF - Validate Text Layer
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.pdf.validatePdfTextLayer({"body":{"fileContent":"AA=="}});
@@ -8530,7 +8530,7 @@ await corsair.encodian.api.pdf.validatePdfTextLayer({"body":{"fileContent":"AA==
 
 PowerPoint - Compress
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.powerPoint.compressPowerPoint({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -8584,7 +8584,7 @@ await corsair.encodian.api.powerPoint.compressPowerPoint({"body":{"fileContent":
 
 PowerPoint - Merge Files
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.powerPoint.mergePresentations({"body":{"documents":[],"mergePresentationOutputFormat":"FODP"}});
@@ -8639,7 +8639,7 @@ await corsair.encodian.api.powerPoint.mergePresentations({"body":{"documents":[]
 
 PowerPoint - Populate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.powerPoint.populatePowerPoint({"body":{"fileContent":"AA==","jsonData":"x"}});
@@ -8694,7 +8694,7 @@ await corsair.encodian.api.powerPoint.populatePowerPoint({"body":{"fileContent":
 
 PowerPoint - Delete Slides
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.powerPoint.powerPointDeleteSlides({"body":{"fileContent":"AA=="}});
@@ -8744,7 +8744,7 @@ await corsair.encodian.api.powerPoint.powerPointDeleteSlides({"body":{"fileConte
 
 PowerPoint - Replace Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.powerPoint.powerPointSearchAndReplaceText({"body":{"phrases":[]}});
@@ -8808,7 +8808,7 @@ await corsair.encodian.api.powerPoint.powerPointSearchAndReplaceText({"body":{"p
 
 PowerPoint - Split
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.powerPoint.powerPointSplit({"body":{"fileContent":"AA==","splitType":"All"}});
@@ -8871,7 +8871,7 @@ await corsair.encodian.api.powerPoint.powerPointSplit({"body":{"fileContent":"AA
 
 Envelope - Sign Multiple Files
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.sign.envelopeCreateMultiple({"body":{"downloadAs":"Default","expiresIn":0,"files":[],"recipients":[],"sender":"x","title":"x"}});
@@ -8947,7 +8947,7 @@ await corsair.encodian.api.sign.envelopeCreateMultiple({"body":{"downloadAs":"De
 
 Envelope - Sign Multiple Files with Stages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.sign.envelopeCreateMultipleWithStages({"body":{"downloadAs":"Default","expiresIn":0,"files":[],"sender":"x","stages":[],"title":"x"}});
@@ -9025,7 +9025,7 @@ await corsair.encodian.api.sign.envelopeCreateMultipleWithStages({"body":{"downl
 
 Envelope - Sign Single File
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.sign.envelopeCreateSingle({"body":{"downloadAs":"Default","expiresIn":0,"file":"AA==","sender":"x","title":"x"}});
@@ -9097,7 +9097,7 @@ await corsair.encodian.api.sign.envelopeCreateSingle({"body":{"downloadAs":"Defa
 
 Envelope - Sign Single File with Stages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.sign.envelopeCreateSingleWithStages({"body":{"downloadAs":"Default","expiresIn":0,"file":"AA==","sender":"x","stages":[],"title":"x"}});
@@ -9325,7 +9325,7 @@ await corsair.encodian.api.sign.envelopeGetStatus({"body":{}});
 
 Recipient - Add Multiple
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.sign.recipientCreateMultiple({"body":{"recipients":[]}});
@@ -9379,7 +9379,7 @@ await corsair.encodian.api.sign.recipientCreateMultiple({"body":{"recipients":[]
 
 Recipient - Add
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.sign.recipientCreateSingle({"body":{"emailAddress":"x"}});
@@ -9638,7 +9638,7 @@ await corsair.encodian.api.trigr.getTrigrSubscriptionStatus({});
 
 Utility - AES Decryption
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.aesDecryption({"body":{"data":"x","inputDataEncodingMethod":"BASE64","key":"x","mode":"CBC"}});
@@ -9689,7 +9689,7 @@ await corsair.encodian.api.utilities.aesDecryption({"body":{"data":"x","inputDat
 
 Utility - AES Encryption
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.aesEncryption({"body":{"data":"x","key":"x","mode":"CBC","outputDataEncodingMethod":"BASE64"}});
@@ -9740,7 +9740,7 @@ await corsair.encodian.api.utilities.aesEncryption({"body":{"data":"x","key":"x"
 
 Utility - Array Add Items
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayAddItems({"body":{"data":"x","itemPosition":"First","items":"x"}});
@@ -9790,7 +9790,7 @@ await corsair.encodian.api.utilities.arrayAddItems({"body":{"data":"x","itemPosi
 
 Utility - Array Combine
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayCombine({"body":{"data":"x","dataKey":"x","mergeData":"x"}});
@@ -9842,7 +9842,7 @@ await corsair.encodian.api.utilities.arrayCombine({"body":{"data":"x","dataKey":
 
 Utility - Array Contains Value
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayContainsValue({"body":{"data":"x","value":"x"}});
@@ -9891,7 +9891,7 @@ await corsair.encodian.api.utilities.arrayContainsValue({"body":{"data":"x","val
 
 Utility - Array to JSON
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayConvertToJson({"body":{"data":"x","name":"x"}});
@@ -9939,7 +9939,7 @@ await corsair.encodian.api.utilities.arrayConvertToJson({"body":{"data":"x","nam
 
 Utility - Array to XML
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayConvertToXml({"body":{"data":"x","item":"x","root":"x"}});
@@ -9988,7 +9988,7 @@ await corsair.encodian.api.utilities.arrayConvertToXml({"body":{"data":"x","item
 
 Utility - Array Count Items
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayCountItems({"body":{"data":"x"}});
@@ -10035,7 +10035,7 @@ await corsair.encodian.api.utilities.arrayCountItems({"body":{"data":"x"}});
 
 Utility - Array Filter Items
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayFilterItems({"body":{"data":"x","keywords":"x","matchType":"All"}});
@@ -10085,7 +10085,7 @@ await corsair.encodian.api.utilities.arrayFilterItems({"body":{"data":"x","keywo
 
 Utility - Array Filter Items via Regex
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayFilterItemsViaRegex({"body":{"data":"x","matchType":"All","regex":"x"}});
@@ -10135,7 +10135,7 @@ await corsair.encodian.api.utilities.arrayFilterItemsViaRegex({"body":{"data":"x
 
 Utility - Array Get Item(s)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayGetItems({"body":{"data":"x","itemPosition":"First"}});
@@ -10184,7 +10184,7 @@ await corsair.encodian.api.utilities.arrayGetItems({"body":{"data":"x","itemPosi
 
 Utility - Array Merge
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayMerge({"body":{"data":"x","mergeData":"x"}});
@@ -10233,7 +10233,7 @@ await corsair.encodian.api.utilities.arrayMerge({"body":{"data":"x","mergeData":
 
 Utility - Array Remove Duplicates
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayRemoveDuplicates({"body":{"data":"x","ignoreCase":false}});
@@ -10281,7 +10281,7 @@ await corsair.encodian.api.utilities.arrayRemoveDuplicates({"body":{"data":"x","
 
 Utility - Array Remove Items
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayRemoveItems({"body":{"data":"x","itemPosition":"First"}});
@@ -10330,7 +10330,7 @@ await corsair.encodian.api.utilities.arrayRemoveItems({"body":{"data":"x","itemP
 
 Utility - Array Remove Items via Regex
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayRemoveItemsRegex({"body":{"data":"x","regex":"x"}});
@@ -10378,7 +10378,7 @@ await corsair.encodian.api.utilities.arrayRemoveItemsRegex({"body":{"data":"x","
 
 Utility - Array Replace Values
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayReplaceValues({"body":{"data":"x"}});
@@ -10427,7 +10427,7 @@ await corsair.encodian.api.utilities.arrayReplaceValues({"body":{"data":"x"}});
 
 Utility - Array Reverse Items
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arrayReverseItems({"body":{"data":"x"}});
@@ -10474,7 +10474,7 @@ await corsair.encodian.api.utilities.arrayReverseItems({"body":{"data":"x"}});
 
 Utility - Array Sort Items
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arraySortItems({"body":{"data":"x"}});
@@ -10524,7 +10524,7 @@ await corsair.encodian.api.utilities.arraySortItems({"body":{"data":"x"}});
 
 Utility - Array Split Items
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.arraySplitItems({"body":{"data":"x"}});
@@ -10574,7 +10574,7 @@ await corsair.encodian.api.utilities.arraySplitItems({"body":{"data":"x"}});
 
 Utility - Calculate Date
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.calculateDate({"body":{"date":"x","interval":0,"measurement":"Ticks","operation":"Add"}});
@@ -10626,7 +10626,7 @@ await corsair.encodian.api.utilities.calculateDate({"body":{"date":"x","interval
 
 Utility - Clean Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.cleanString({"body":{"text":"x"}});
@@ -10676,7 +10676,7 @@ await corsair.encodian.api.utilities.cleanString({"body":{"text":"x"}});
 
 Utility - Compare Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.compareText({"body":{"primaryText":"x","secondaryText":"x"}});
@@ -10724,7 +10724,7 @@ await corsair.encodian.api.utilities.compareText({"body":{"primaryText":"x","sec
 
 Utility - Concatenate Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.concatenateText({"body":{}});
@@ -10772,7 +10772,7 @@ await corsair.encodian.api.utilities.concatenateText({"body":{}});
 
 Utility - Convert JSON To XML
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.convertJsonToXml({"body":{"json":"x"}});
@@ -10820,7 +10820,7 @@ await corsair.encodian.api.utilities.convertJsonToXml({"body":{"json":"x"}});
 
 Utility - Convert Time Zone
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.convertTimeZoneEnc({"body":{"date":"x","newTimeZone":"Default"}});
@@ -10869,7 +10869,7 @@ await corsair.encodian.api.utilities.convertTimeZoneEnc({"body":{"date":"x","new
 
 Utility - Convert XML to JSON
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.convertXmlToJson({"body":{"xml":"x"}});
@@ -10916,7 +10916,7 @@ await corsair.encodian.api.utilities.convertXmlToJson({"body":{"xml":"x"}});
 
 Utility - Create GUID
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.createGuid({"body":{"case":"Lower"}});
@@ -10962,7 +10962,7 @@ await corsair.encodian.api.utilities.createGuid({"body":{"case":"Lower"}});
 
 Utility - Create Hash Code
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.createHashCodeV2({"body":{"data":"x","digestAlgorithm":"SHA1"}});
@@ -11013,7 +11013,7 @@ await corsair.encodian.api.utilities.createHashCodeV2({"body":{"data":"x","diges
 
 Utility - Create HMAC
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.createHMACV2({"body":{"digestAlgorithm":"SHA1","key":"x"}});
@@ -11066,7 +11066,7 @@ await corsair.encodian.api.utilities.createHMACV2({"body":{"digestAlgorithm":"SH
 
 Utility - Create JWT
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.createJwt({"body":{"key":"x","securityAlgorithm":"HmacSha256Signature"}});
@@ -11122,7 +11122,7 @@ await corsair.encodian.api.utilities.createJwt({"body":{"key":"x","securityAlgor
 
 Utility - RSA Create Key Pair
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.createRsaKeyPair({"body":{"addHeaderAndFooter":false,"keySize":"Size2048","privateKeyFormat":"PKCS1"}});
@@ -11170,7 +11170,7 @@ await corsair.encodian.api.utilities.createRsaKeyPair({"body":{"addHeaderAndFoot
 
 Utility - Escape HTML
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.escapeHtml({"body":{"html":"x"}});
@@ -11216,7 +11216,7 @@ await corsair.encodian.api.utilities.escapeHtml({"body":{"html":"x"}});
 
 Utility - Extract Text Instances between Values
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.extractAllTextInstancesBetweenValues({"body":{"text":"x"}});
@@ -11268,7 +11268,7 @@ await corsair.encodian.api.utilities.extractAllTextInstancesBetweenValues({"body
 
 Utility - Extract Email Addresses from Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.extractEmailAddressesFromText({"body":{"regex":"x","text":"x"}});
@@ -11315,7 +11315,7 @@ await corsair.encodian.api.utilities.extractEmailAddressesFromText({"body":{"reg
 
 Utility - Extract Text between Values
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.extractTextBetweenValues({"body":{"text":"x"}});
@@ -11366,7 +11366,7 @@ await corsair.encodian.api.utilities.extractTextBetweenValues({"body":{"text":"x
 
 Utility - Extract URL's from Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.extractUrlsFromText({"body":{"regex":"x","text":"x"}});
@@ -11413,7 +11413,7 @@ await corsair.encodian.api.utilities.extractUrlsFromText({"body":{"regex":"x","t
 
 Utility - Format Date
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.formatDate({"body":{"date":"x","format":"x"}});
@@ -11461,7 +11461,7 @@ await corsair.encodian.api.utilities.formatDate({"body":{"date":"x","format":"x"
 
 Utility - Format Text Case
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.formatTextCase({"body":{"action":"ToUpper","text":"x"}});
@@ -11509,7 +11509,7 @@ await corsair.encodian.api.utilities.formatTextCase({"body":{"action":"ToUpper",
 
 Utility - Generate Password
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.generatePassword({"body":{"length":0}});
@@ -11560,7 +11560,7 @@ await corsair.encodian.api.utilities.generatePassword({"body":{"length":0}});
 
 Utility - Generate Random Number
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.generateRandomNumber({"body":{}});
@@ -11607,7 +11607,7 @@ await corsair.encodian.api.utilities.generateRandomNumber({"body":{}});
 
 Utility - Get Date and Time Difference
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.getDateTimeDifference({"body":{"endDateTime":"x","interval":"Year","startDateTime":"x"}});
@@ -11657,7 +11657,7 @@ await corsair.encodian.api.utilities.getDateTimeDifference({"body":{"endDateTime
 
 Utility - Get File Extension
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.getFileExtension({"body":{"fileName":"x"}});
@@ -11704,7 +11704,7 @@ await corsair.encodian.api.utilities.getFileExtension({"body":{"fileName":"x"}})
 
 Utility - Get File Format
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.getFileFormat({"body":{"fileContent":"AA=="}});
@@ -11751,7 +11751,7 @@ await corsair.encodian.api.utilities.getFileFormat({"body":{"fileContent":"AA=="
 
 Utility - Parse HTML Table
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.parseHtmlTable({"body":{}});
@@ -11803,7 +11803,7 @@ await corsair.encodian.api.utilities.parseHtmlTable({"body":{}});
 
 Utility - Search Text (Regex)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.regexSearchTextV2({"body":{"query":"x","text":"x"}});
@@ -11858,7 +11858,7 @@ await corsair.encodian.api.utilities.regexSearchTextV2({"body":{"query":"x","tex
 
 Utility - Remove Diacritics
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.removeDiacritics({"body":{"text":"x"}});
@@ -11906,7 +11906,7 @@ await corsair.encodian.api.utilities.removeDiacritics({"body":{"text":"x"}});
 
 Utility - Remove Text between Values
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.removeTextBetweenValues({"body":{"endValue":"x","startValue":"x","text":"x"}});
@@ -11958,7 +11958,7 @@ await corsair.encodian.api.utilities.removeTextBetweenValues({"body":{"endValue"
 
 Utility - Remove Whitespace from Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.removeWhitespaceFromText({"body":{"text":"x"}});
@@ -12005,7 +12005,7 @@ await corsair.encodian.api.utilities.removeWhitespaceFromText({"body":{"text":"x
 
 Utility - Replace Value with Regex
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.replaceValueWithRegex({"body":{"regex":"x","text":"x"}});
@@ -12054,7 +12054,7 @@ await corsair.encodian.api.utilities.replaceValueWithRegex({"body":{"regex":"x",
 
 Utility - Replace Value with Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.replaceValueWithText({"body":{"text":"x"}});
@@ -12104,7 +12104,7 @@ await corsair.encodian.api.utilities.replaceValueWithText({"body":{"text":"x"}})
 
 Utility - RSA Decryption
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.rsaDecryption({"body":{"data":"x","key":"x","keyType":"PUBLIC","mode":"RSA","rsaInputDataType":"BASE64"}});
@@ -12155,7 +12155,7 @@ await corsair.encodian.api.utilities.rsaDecryption({"body":{"data":"x","key":"x"
 
 Utility - RSA Encryption
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.rsaEncryption({"body":{"data":"x","key":"x","keyType":"PUBLIC","mode":"RSA","rsaOutputDataType":"BASE64"}});
@@ -12206,7 +12206,7 @@ await corsair.encodian.api.utilities.rsaEncryption({"body":{"data":"x","key":"x"
 
 Utility - Split Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.splitText({"body":{"text":"x"}});
@@ -12257,7 +12257,7 @@ await corsair.encodian.api.utilities.splitText({"body":{"text":"x"}});
 
 Utility - Split Text via Regex
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.splitTextViaRegex({"body":{"regex":"x","text":"x"}});
@@ -12308,7 +12308,7 @@ await corsair.encodian.api.utilities.splitTextViaRegex({"body":{"regex":"x","tex
 
 Utility - Text Contains Value
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.textContainsValue({"body":{"text":"x","value":"x"}});
@@ -12358,7 +12358,7 @@ await corsair.encodian.api.utilities.textContainsValue({"body":{"text":"x","valu
 
 Utility - Trim Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.trimText({"body":{"text":"x","textTrimPosition":"TrimStartAndEnd"}});
@@ -12406,7 +12406,7 @@ await corsair.encodian.api.utilities.trimText({"body":{"text":"x","textTrimPosit
 
 Utility - Unescape HTML
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.unescapeHtml({"body":{"html":"x"}});
@@ -12452,7 +12452,7 @@ await corsair.encodian.api.utilities.unescapeHtml({"body":{"html":"x"}});
 
 Utility - Validate Email Address
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.validateEmailAddress({"body":{"emailAddress":"x","regex":"x"}});
@@ -12499,7 +12499,7 @@ await corsair.encodian.api.utilities.validateEmailAddress({"body":{"emailAddress
 
 Utility - Validate GUID
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.validateGuid({"body":{"guid":"x"}});
@@ -12545,7 +12545,7 @@ await corsair.encodian.api.utilities.validateGuid({"body":{"guid":"x"}});
 
 Utility - Validate JSON
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.validateJson({"body":{"json":"x"}});
@@ -12592,7 +12592,7 @@ await corsair.encodian.api.utilities.validateJson({"body":{"json":"x"}});
 
 Utility - Validate URL Availability
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.validateUrlAvailability({"body":{"url":"x"}});
@@ -12639,7 +12639,7 @@ await corsair.encodian.api.utilities.validateUrlAvailability({"body":{"url":"x"}
 
 Utility - Validate URL Syntax
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.utilities.validateUrlSyntax({"body":{"url":"x"}});
@@ -12687,7 +12687,7 @@ await corsair.encodian.api.utilities.validateUrlSyntax({"body":{"url":"x"}});
 
 Word - Add Headers and Footers
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.addHtmlHeaderFooterWord({"body":{"fileContent":"AA=="}});
@@ -12744,7 +12744,7 @@ await corsair.encodian.api.word.addHtmlHeaderFooterWord({"body":{"fileContent":"
 
 Word - Add Image Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.addImageWatermarkWord({"body":{"fileContent":"AA==","fileName":"x","watermarkFileContent":"AA==","watermarkFilename":"x"}});
@@ -12798,7 +12798,7 @@ await corsair.encodian.api.word.addImageWatermarkWord({"body":{"fileContent":"AA
 
 Word - Add Text Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.addTextWatermarkWord({"body":{"fileContent":"AA==","fileName":"x","text":"x"}});
@@ -12853,7 +12853,7 @@ await corsair.encodian.api.word.addTextWatermarkWord({"body":{"fileContent":"AA=
 
 Word - Compare
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.compareWordDocuments({"body":{"fileContentOne":"AA==","fileContentTwo":"AA=="}});
@@ -12910,7 +12910,7 @@ await corsair.encodian.api.word.compareWordDocuments({"body":{"fileContentOne":"
 
 Word - Delete Pages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.deleteWordPages({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -12962,7 +12962,7 @@ await corsair.encodian.api.word.deleteWordPages({"body":{"fileContent":"AA==","f
 
 Word - Disable Tracked Changes
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.disableTrackedChanges({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -13011,7 +13011,7 @@ await corsair.encodian.api.word.disableTrackedChanges({"body":{"fileContent":"AA
 
 Word - Enable Tracked Changes
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.enableTrackedChanges({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -13060,7 +13060,7 @@ await corsair.encodian.api.word.enableTrackedChanges({"body":{"fileContent":"AA=
 
 Word - Extract Pages
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.extractWordPages({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -13112,7 +13112,7 @@ await corsair.encodian.api.word.extractWordPages({"body":{"fileContent":"AA==","
 
 Word - Extract Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.getTextFromWord({"body":{"fileContent":"AA=="}});
@@ -13164,7 +13164,7 @@ await corsair.encodian.api.word.getTextFromWord({"body":{"fileContent":"AA=="}})
 
 Word - Extract Tracked Changes
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.getTrackedChanges({"body":{"fileContent":"AA=="}});
@@ -13213,7 +13213,7 @@ await corsair.encodian.api.word.getTrackedChanges({"body":{"fileContent":"AA=="}
 
 Word - Manage Tracked Changes
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.manageTrackedChanges({"body":{"FileContent":"AA==","FileName":"x"}});
@@ -13267,7 +13267,7 @@ await corsair.encodian.api.word.manageTrackedChanges({"body":{"FileContent":"AA=
 
 Word - Merge Files
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.mergeArrayOfDocumentsToWord({"body":{"documents":[],"FinalOperation":false,"outputFilename":"x"}});
@@ -13325,7 +13325,7 @@ await corsair.encodian.api.word.mergeArrayOfDocumentsToWord({"body":{"documents"
 
 Word - Optimise
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.optimiseWordDocument({"body":{"fileContent":"AA==","fileName":"x","version":"Word2000"}});
@@ -13375,7 +13375,7 @@ await corsair.encodian.api.word.optimiseWordDocument({"body":{"fileContent":"AA=
 
 Word - Populate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.populateWordDocument({"body":{"documentData":"x","fileContent":"AA==","populationOptions":"Default"}});
@@ -13431,7 +13431,7 @@ await corsair.encodian.api.word.populateWordDocument({"body":{"documentData":"x"
 
 Word - Remove Headers and Footers
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.removeHeaderFooterWord({"body":{"fileContent":"AA=="}});
@@ -13485,7 +13485,7 @@ await corsair.encodian.api.word.removeHeaderFooterWord({"body":{"fileContent":"A
 
 Word - Remove Watermark
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.removeWatermarksFromWord({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -13534,7 +13534,7 @@ await corsair.encodian.api.word.removeWatermarksFromWord({"body":{"fileContent":
 
 Word - Remove Table of Contents
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.removeWordTableOfContents({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -13584,7 +13584,7 @@ await corsair.encodian.api.word.removeWordTableOfContents({"body":{"fileContent"
 
 Word - Update Hyperlinks
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.searchAndReplaceHyperlink({"body":{"fileContent":"AA==","hyperlinks":[]}});
@@ -13642,7 +13642,7 @@ await corsair.encodian.api.word.searchAndReplaceHyperlink({"body":{"fileContent"
 
 Word - Secure
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.secureWordDocument({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -13695,7 +13695,7 @@ await corsair.encodian.api.word.secureWordDocument({"body":{"fileContent":"AA=="
 
 Word - Split
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.splitWordDocument({"body":{"fileContent":"AA==","fileName":"x","splitType":"AllPages"}});
@@ -13757,7 +13757,7 @@ await corsair.encodian.api.word.splitWordDocument({"body":{"fileContent":"AA==",
 
 Word - Update Table of Contents
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.updateWordTableOfContents({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -13807,7 +13807,7 @@ await corsair.encodian.api.word.updateWordTableOfContents({"body":{"fileContent"
 
 Word - Add Page Numbers
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordAddPageNumbers({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -13867,7 +13867,7 @@ await corsair.encodian.api.word.wordAddPageNumbers({"body":{"fileContent":"AA=="
 
 Word - Extract Field Data
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordExtractFieldData({"body":{"fileContent":"AA=="}});
@@ -13920,7 +13920,7 @@ await corsair.encodian.api.word.wordExtractFieldData({"body":{"fileContent":"AA=
 
 Word - Extract Files
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordExtractFiles({"body":{"fileContent":"AA=="}});
@@ -13982,7 +13982,7 @@ await corsair.encodian.api.word.wordExtractFiles({"body":{"fileContent":"AA=="}}
 
 Word - Extract Images
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordExtractImages({"body":{"fileContent":"AA=="}});
@@ -14048,7 +14048,7 @@ await corsair.encodian.api.word.wordExtractImages({"body":{"fileContent":"AA=="}
 
 Word - Extract Metadata
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordExtractMetadata({"body":{"fileContent":"AA=="}});
@@ -14119,7 +14119,7 @@ await corsair.encodian.api.word.wordExtractMetadata({"body":{"fileContent":"AA==
 
 Word - Insert Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordInsertText({"body":{"elementType":"Any","fileContent":"AA==","fileName":"x","insertAs":"New","instance":0,"instances":"All","searchBy":"Element","text":"x","textPlacement":"Append"}});
@@ -14203,7 +14203,7 @@ await corsair.encodian.api.word.wordInsertText({"body":{"elementType":"Any","fil
 
 Word - Replace Text With Image
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordReplaceTextWithImage({"body":{"FileContent":"AA==","FileName":"x","imageFileContent":"AA==","SearchText":"x"}});
@@ -14258,7 +14258,7 @@ await corsair.encodian.api.word.wordReplaceTextWithImage({"body":{"FileContent":
 
 Word - Replace Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordSearchAndReplaceText({"body":{"fileName":"x","phrases":[]}});
@@ -14326,7 +14326,7 @@ await corsair.encodian.api.word.wordSearchAndReplaceText({"body":{"fileName":"x"
 
 Word - Set Metadata
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordSetMetadata({"body":{"fileContent":"AA==","fileName":"x"}});
@@ -14392,7 +14392,7 @@ await corsair.encodian.api.word.wordSetMetadata({"body":{"fileContent":"AA==","f
 
 Word - Split by Text
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordSplitByText({"body":{"fileContent":"AA==","fileName":"x","splitAction":"SplitOn","splitValue":"x","wordSplitByTextType":"All"}});
@@ -14457,7 +14457,7 @@ await corsair.encodian.api.word.wordSplitByText({"body":{"fileContent":"AA==","f
 
 Word - Unlock
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.encodian.api.word.wordUnlock({"body":{"fileContent":"AA==","fileName":"x"}});
