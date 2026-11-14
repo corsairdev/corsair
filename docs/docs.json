@@ -2268,6 +2268,14 @@
                 ]
               },
               {
+                "group": "Fly.io",
+                "pages": [
+                  "plugins/fly/overview",
+                  "plugins/fly/api",
+                  "plugins/fly/database"
+                ]
+              },
+              {
                 "group": "Folk",
                 "pages": [
                   "plugins/folk/overview",

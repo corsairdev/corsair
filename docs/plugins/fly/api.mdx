@@ -1,0 +1,1673 @@
+---
+title: "Fly.io API reference"
+sidebarTitle: "API"
+description: "API reference for the Fly.io plugin in Corsair: every `fly.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### userOnlyToken
+
+`account.userOnlyToken`
+
+Check whether the token is user-only
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.account.userOnlyToken({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `boolean`
+
+
+---
+
+### viewer
+
+`account.viewer`
+
+Get the current token principal
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.account.viewer({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `avatarUrl` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `name` | `string \| null` | Yes | — |
+
+
+
+---
+
+## Add Ons
+
+### create
+
+`addOns.create`
+
+Create an add-on
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.addOns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  type: arcjet | enveloop | fly_mysql | kubernetes | redis | supabase | tigris | upstash_kafka | upstash_redis | upstash_vector | wafris,
+  appId?: string | null,
+  organizationId?: string | null,
+  name?: string | null,
+  organizationPlanId?: string | null,
+  planId?: string | null,
+  primaryRegion?: string | null,
+  readRegions?: string[] | null,
+  options?: JsonValue | null,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addOn` | `object` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="addOn full type">
+
+```ts
+{
+  id: string,
+  name: string | null,
+  status: string | null,
+  primaryRegion: string | null,
+  publicUrl: string | null,
+  createdAt: string,
+  updatedAt: string,
+  organization: {
+    id: string,
+    name: string,
+    slug: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`addOns.delete`
+
+Delete an add-on
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.addOns.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  addOnId?: string | null,
+  name?: string | null,
+  provider?: string | null,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deletedAddOnName` | `string \| null` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+
+
+---
+
+### get
+
+`addOns.get`
+
+Get an add-on
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.addOns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | Yes | — |
+| `status` | `string \| null` | Yes | — |
+| `primaryRegion` | `string \| null` | Yes | — |
+| `publicUrl` | `string \| null` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `organization` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  slug: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`addOns.list`
+
+List add-ons
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.addOns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `first` | `number \| null` | No | — |
+| `last` | `number \| null` | No | — |
+| `type` | `arcjet \| enveloop \| fly_mysql \| kubernetes \| redis \| supabase \| tigris \| upstash_kafka \| upstash_redis \| upstash_vector \| wafris \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[] \| null` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+(
+  {
+    id: string,
+    name: string | null,
+    status: string | null,
+    primaryRegion: string | null,
+    publicUrl: string | null,
+    createdAt: string,
+    updatedAt: string,
+    organization: {
+      id: string,
+      name: string,
+      slug: string
+    }
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  endCursor: string | null,
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### plans
+
+`addOns.plans`
+
+List add-on plans
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.addOns.plans({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `first` | `number \| null` | No | — |
+| `last` | `number \| null` | No | — |
+| `type` | `arcjet \| enveloop \| fly_mysql \| kubernetes \| redis \| supabase \| tigris \| upstash_kafka \| upstash_redis \| upstash_vector \| wafris \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[] \| null` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+(
+  {
+    id: string,
+    name: string | null,
+    displayName: string | null,
+    description: string | null,
+    pricePerMonth: number | null
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  endCursor: string | null,
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### provider
+
+`addOns.provider`
+
+Get an add-on provider
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.addOns.provider({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | Yes | — |
+| `displayName` | `string \| null` | Yes | — |
+| `resourceName` | `string` | Yes | — |
+| `beta` | `boolean` | Yes | — |
+| `internal` | `boolean` | Yes | — |
+
+
+
+---
+
+### resetPassword
+
+`addOns.resetPassword`
+
+Reset an add-on password
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.addOns.resetPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  name: string,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addOn` | `object` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="addOn full type">
+
+```ts
+{
+  id: string,
+  name: string | null,
+  status: string | null,
+  primaryRegion: string | null,
+  publicUrl: string | null,
+  createdAt: string,
+  updatedAt: string,
+  organization: {
+    id: string,
+    name: string,
+    slug: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`addOns.update`
+
+Update an add-on
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.addOns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  addOnId?: string | null,
+  name?: string | null,
+  provider?: string | null,
+  planId?: string | null,
+  readRegions?: string[] | null,
+  metadata?: JsonValue | null,
+  options?: JsonValue | null,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addOn` | `object` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="addOn full type">
+
+```ts
+{
+  id: string,
+  name: string | null,
+  status: string | null,
+  primaryRegion: string | null,
+  publicUrl: string | null,
+  createdAt: string,
+  updatedAt: string,
+  organization: {
+    id: string,
+    name: string,
+    slug: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Apps
+
+### get
+
+`apps.get`
+
+Get a Fly app
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.apps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `internalId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `hostname` | `string \| null` | Yes | — |
+| `appUrl` | `string \| null` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organization` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`apps.list`
+
+List Fly apps
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.apps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `first` | `number \| null` | No | — |
+| `last` | `number \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `organizationId` | `string \| null` | No | — |
+| `platform` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[] \| null` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+(
+  {
+    id: string,
+    name: string,
+    status: string,
+    hostname: string | null,
+    appUrl: string | null,
+    createdAt: string,
+    organization: {
+      id: string,
+      slug: string,
+      name: string
+    }
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  endCursor: string | null,
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### nameAvailable
+
+`apps.nameAvailable`
+
+Check app name availability
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.apps.nameAvailable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+## Checks
+
+### createJob
+
+`checks.createJob`
+
+Create a health check job
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.checks.createJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  organizationId: string,
+  url: string,
+  locations: string[],
+  httpOptions: {
+    headers?: string[] | null,
+    verb?: GET | HEAD
+  },
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkJob` | `object` | Yes | — |
+| `checkJobRun` | `object \| null` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="checkJob full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  schedule: string | null,
+  nextRunAt: string | null,
+  httpOptions: {
+    verb: GET | HEAD | string,
+    headers: string[]
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="checkJobRun full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  state: string,
+  createdAt: string,
+  completedAt: string | null,
+  tests: string[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jobs
+
+`checks.jobs`
+
+List health check jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.checks.jobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `first` | `number \| null` | No | — |
+| `last` | `number \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[] \| null` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+(
+  {
+    id: string,
+    url: string,
+    schedule: string | null,
+    nextRunAt: string | null,
+    httpOptions: {
+      verb: GET | HEAD | string,
+      headers: string[]
+    } | null
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  endCursor: string | null,
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations
+
+`checks.locations`
+
+List health check locations
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.checks.locations({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  title: string,
+  country: string,
+  locality: string,
+  state: string | null,
+  coordinates: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### runJob
+
+`checks.runJob`
+
+Run a health check job
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.checks.runJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  checkJobId: string,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkJob` | `object` | Yes | — |
+| `checkJobRun` | `object \| null` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="checkJob full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  schedule: string | null,
+  nextRunAt: string | null,
+  httpOptions: {
+    verb: GET | HEAD | string,
+    headers: string[]
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="checkJobRun full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  state: string,
+  createdAt: string,
+  completedAt: string | null,
+  tests: string[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### delete
+
+`organizations.delete`
+
+Permanently delete an organization
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.organizations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  organizationId: string,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deletedOrganizationId` | `string` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+
+
+---
+
+### get
+
+`organizations.get`
+
+Get an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `type` | `PERSONAL \| SHARED \| string` | Yes | — |
+
+
+
+---
+
+### list
+
+`organizations.list`
+
+List organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `first` | `number \| null` | No | — |
+| `last` | `number \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `type` | `PERSONAL \| SHARED \| null` | No | — |
+| `withBillingIssuesOnly` | `boolean \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[] \| null` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+(
+  {
+    id: string,
+    name: string,
+    slug: string,
+    type: PERSONAL | SHARED | string
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  endCursor: string | null,
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### personal
+
+`organizations.personal`
+
+Get the personal organization
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.organizations.personal({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `type` | `PERSONAL \| SHARED \| string` | Yes | — |
+
+
+
+---
+
+## Platform
+
+### nearestRegion
+
+`platform.nearestRegion`
+
+Get the nearest Fly region
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.platform.nearestRegion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wireguardGateway` | `boolean \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `latitude` | `number \| null` | Yes | — |
+| `longitude` | `number \| null` | Yes | — |
+| `gatewayAvailable` | `boolean` | Yes | — |
+
+
+
+---
+
+## Third Party
+
+### create
+
+`thirdParty.create`
+
+Create a third-party configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.thirdParty.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  organizationId: string,
+  name: string,
+  location: string,
+  customLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED,
+  flyctlLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED,
+  uiexLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thirdPartyConfiguration` | `object` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="thirdPartyConfiguration full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  location: string,
+  customLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+  flyctlLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+  uiexLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+  createdAt: string,
+  updatedAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`thirdParty.delete`
+
+Delete a third-party configuration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.thirdParty.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  thirdPartyConfigurationId: string,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+
+
+---
+
+### list
+
+`thirdParty.list`
+
+List third-party configurations
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.thirdParty.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `after` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `first` | `number \| null` | No | — |
+| `last` | `number \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thirdPartyConfigurations` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="thirdPartyConfigurations full type">
+
+```ts
+{
+  nodes: (
+    {
+      id: string,
+      name: string,
+      location: string,
+      customLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+      flyctlLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+      uiexLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+      createdAt: string,
+      updatedAt: string
+    } | null
+  )[] | null,
+  pageInfo: {
+    endCursor: string | null,
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    startCursor: string | null
+  },
+  totalCount: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`thirdParty.update`
+
+Update a third-party configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.thirdParty.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  thirdPartyConfigurationId: string,
+  name?: string | null,
+  location?: string | null,
+  customLevel?: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | null,
+  flyctlLevel?: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | null,
+  uiexLevel?: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | null,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thirdPartyConfiguration` | `object` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="thirdPartyConfiguration full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  location: string,
+  customLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+  flyctlLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+  uiexLevel: ADMIN_OPT_OUT | DISABLED | MEMBER_OPT_OUT | OPT_IN | REQUIRED | string,
+  createdAt: string,
+  updatedAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Wireguard
+
+### addPeer
+
+`wireguard.addPeer`
+
+Add a WireGuard peer
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.wireguard.addPeer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  name: string,
+  organizationId: string,
+  pubkey: string,
+  ephemeral?: boolean | null,
+  gwname?: string | null,
+  network?: string | null,
+  region?: string | null,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpointip` | `string` | Yes | — |
+| `network` | `string \| null` | Yes | — |
+| `peerip` | `string` | Yes | — |
+| `pubkey` | `string` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+
+
+---
+
+### getPeer
+
+`wireguard.getPeer`
+
+Get a WireGuard peer
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.wireguard.getPeer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `peerName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wireGuardPeer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="wireGuardPeer full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  network: string | null,
+  peerip: string,
+  pubkey: string,
+  region: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPeers
+
+`wireguard.listPeers`
+
+List organization WireGuard peers
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.wireguard.listPeers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `after` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `first` | `number \| null` | No | — |
+| `last` | `number \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wireGuardPeers` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="wireGuardPeers full type">
+
+```ts
+{
+  nodes: (
+    {
+      id: string,
+      name: string,
+      network: string | null,
+      peerip: string,
+      pubkey: string,
+      region: string
+    } | null
+  )[] | null,
+  pageInfo: {
+    endCursor: string | null,
+    hasNextPage: boolean,
+    hasPreviousPage: boolean,
+    startCursor: string | null
+  },
+  totalCount: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removePeer
+
+`wireguard.removePeer`
+
+Remove a WireGuard peer
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.wireguard.removePeer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  name: string,
+  organizationId: string,
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `object` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  slug: string,
+  type: PERSONAL | SHARED | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validatePeers
+
+`wireguard.validatePeers`
+
+Validate WireGuard peer addresses
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.wireguard.validatePeers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  peerIps: string[],
+  clientMutationId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invalidPeerIps` | `string[]` | Yes | — |
+| `validPeerIps` | `string[]` | Yes | — |
+| `clientMutationId` | `string \| null` | Yes | — |
+
+
+
+---
+
