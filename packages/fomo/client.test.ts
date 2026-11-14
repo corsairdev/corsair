@@ -157,10 +157,7 @@ describe('makeFomoRequest client', () => {
 			expect(bodyRecord.api_key).toBe('[REDACTED]');
 			expect(bodyRecord.token).toBe('[REDACTED]');
 			expect(bodyRecord.client_secret).toBe('[REDACTED]');
-			// `unknown` because request body property is untyped JSON on ApiRequestOptions.
-			const reqRecord = caught.request.body as Record<string, unknown>;
-			expect(reqRecord.auth_token).toBe('[REDACTED]');
-			expect(reqRecord.normal_field).toBe('safe');
+			expect(caught.request.body).toBeUndefined();
 		}
 	});
 
@@ -196,11 +193,58 @@ describe('makeFomoRequest client', () => {
 			expect(bodyArray[1]?.apiKey).toBe('[REDACTED]');
 			expect(bodyArray[1]?.field).toBe('name');
 
-			// `unknown` because request body property is untyped JSON on ApiRequestOptions.
-			const reqArray = caught.request.body as Array<Record<string, unknown>>;
-			expect(Array.isArray(reqArray)).toBe(true);
-			expect(reqArray[0]?.token).toBe('[REDACTED]');
-			expect(reqArray[0]?.value).toBe(123);
+			expect(caught.request.body).toBeUndefined();
+		}
+	});
+
+	it('keeps customer fields, search values and the key off a rebuilt ApiError', async () => {
+		const failed = new ApiError(
+			{
+				method: 'GET',
+				url: '/applications/me/events/find',
+				query: { field: 'email_address', q: 'jane@example.com' },
+				body: {
+					event: {
+						email_address: 'jane@example.com',
+						first_name: 'Jane',
+						ip_address: '203.0.113.7',
+					},
+				},
+			},
+			{
+				url: 'https://api.fomo.com/api/v1/applications/me/events/find?field=email_address&q=jane%40example.com',
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable Entity',
+				body: { error: 'Invalid token my-token-123 for this app' },
+			},
+			'Unprocessable Entity',
+		);
+		mockRequest.mockRejectedValue(failed);
+
+		// `unknown` because caught rejection value has no static type before runtime assertion.
+		const caught = await makeFomoRequest(
+			'/applications/me/events/find',
+			'my-token-123',
+		).catch((e: unknown) => e);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		if (caught instanceof ApiError) {
+			expect(caught.status).toBe(422);
+			expect(caught.request.body).toBeUndefined();
+			expect(caught.request.query).toBeUndefined();
+			expect(caught.url).toBe(
+				'https://api.fomo.com/api/v1/applications/me/events/find',
+			);
+			const serialized = JSON.stringify({
+				body: caught.body,
+				request: caught.request,
+				url: caught.url,
+				message: caught.message,
+			});
+			expect(serialized).not.toContain('jane');
+			expect(serialized).not.toContain('203.0.113.7');
+			expect(serialized).not.toContain('my-token-123');
 		}
 	});
 

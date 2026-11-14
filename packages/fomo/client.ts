@@ -43,10 +43,16 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 // `unknown` because arbitrary JSON structures may appear in request/response payloads before sanitization.
-export function redactValue(value: unknown): unknown {
+// Values under secret-named keys are replaced; the caller's key is also removed from free-text strings.
+export function redactValue(value: unknown, apiKey?: string): unknown {
 	if (value === null || value === undefined) return value;
+	if (typeof value === 'string') {
+		return apiKey && apiKey.length > 0
+			? value.replaceAll(apiKey, '[REDACTED]')
+			: value;
+	}
 	if (Array.isArray(value)) {
-		return value.map((item) => redactValue(item));
+		return value.map((item) => redactValue(item, apiKey));
 	}
 	if (!isRecord(value)) return value;
 	// `unknown` because the sanitized object preserves untrusted JSON values.
@@ -55,7 +61,7 @@ export function redactValue(value: unknown): unknown {
 		if (SENSITIVE_KEY_NAMES.has(normalizeKey(k))) {
 			result[k] = '[REDACTED]';
 		} else {
-			result[k] = redactValue(v);
+			result[k] = redactValue(v, apiKey);
 		}
 	}
 	return result;
@@ -127,18 +133,22 @@ export async function makeFomoRequest<T>(
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const sanitizedMessage = redactMessage(error.message, apiKey);
-			// `unknown` because request body contains arbitrary JSON that must be sanitized.
-			const sanitizedRequestBody: unknown = redactValue(error.request?.body);
 			// `unknown` because error response body contains arbitrary JSON that must be sanitized.
-			const sanitizedResponseBody: unknown = redactValue(error.body);
+			const sanitizedResponseBody: unknown = redactValue(error.body, apiKey);
+			// The sent body (event customer fields: email, name, IP) and the query (search values)
+			// stay off the error (R8); status, retryAfter and Fomo's own reply are kept.
+			const url = new URL(error.url, FOMO_API_BASE);
+			url.search = '';
 
 			const sanitizedError = new ApiError(
 				{
 					...error.request,
-					body: sanitizedRequestBody,
+					body: undefined,
+					formData: undefined,
+					query: undefined,
 				},
 				{
-					url: error.url,
+					url: url.toString(),
 					ok: false,
 					status: error.status,
 					statusText: redactMessage(error.statusText, apiKey),
