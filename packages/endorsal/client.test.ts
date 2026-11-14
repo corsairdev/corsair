@@ -95,6 +95,48 @@ describe('makeEndorsalRequest', () => {
 		expect(result.message).not.toContain('private@example.com');
 	});
 
+	it('keeps the original stack frames and drops the query and URL parameters', async () => {
+		const original = new ApiError(
+			{
+				method: 'POST',
+				url: '/v1/contacts',
+				query: { campaignID: 'cmp_private' },
+			},
+			{
+				url: `${ENDORSAL_API_BASE}/v1/contacts?campaignID=cmp_private`,
+				ok: false,
+				status: 500,
+				statusText: 'Server Error',
+				body: { message: 'private@example.com failed' },
+			},
+			'Server Error',
+		);
+		mockedRequest.mockRejectedValue(original);
+		// `unknown` because a rejected promise may produce any value; the checks narrow it.
+		const result = await makeEndorsalRequest('/v1/contacts', 'test-key', {
+			method: 'POST',
+			query: { campaignID: 'cmp_private' },
+		}).catch((caught: unknown) => caught);
+		if (!(result instanceof ApiError)) throw new Error('Expected ApiError');
+		const frames = (stack: string | undefined) =>
+			(stack ?? '').split('\n').slice(1).join('\n');
+		expect(frames(result.stack)).toBe(frames(original.stack));
+		expect(result.stack?.split('\n')[0]).toContain(
+			'Endorsal API request failed (500)',
+		);
+		expect(result.request.query).toBeUndefined();
+		expect(result.url).not.toContain('cmp_private');
+		expect(JSON.stringify(result)).not.toContain('private@example.com');
+	});
+
+	it('marks contacts.post destructive, since campaignID enrolls the contact in emails', () => {
+		const meta = endorsal().endpointMeta as Record<
+			string,
+			{ riskLevel: string }
+		>;
+		expect(meta['contacts.post']?.riskLevel).toBe('destructive');
+	});
+
 	it('configures the transport to extract Retry-After without retrying writes', async () => {
 		mockedRequest.mockResolvedValue({ success: true });
 		await makeEndorsalRequest('/v1/testimonials', 'test-key', {

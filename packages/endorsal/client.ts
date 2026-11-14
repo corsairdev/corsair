@@ -58,16 +58,19 @@ export async function makeEndorsalRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Contact and testimonial values can contain personal data. Keep the
-			// status and retry metadata but never propagate request/response bodies.
-			throw new ApiError(
+			// Contact and testimonial values can contain personal data, and a query
+			// can carry a campaign or a render flag. Keep the status and retry
+			// metadata but never propagate request/response bodies or the query.
+			const { query: _query, ...sentRequest } = error.request;
+			const sanitized = new ApiError(
 				{
-					...error.request,
+					...sentRequest,
+					url: sentRequest.url.split('?')[0] ?? sentRequest.url,
 					body:
 						error.request.body === undefined ? undefined : { redacted: true },
 				},
 				{
-					url: error.url,
+					url: error.url.split('?')[0] ?? error.url,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
@@ -81,6 +84,14 @@ export async function makeEndorsalRequest<T>(
 					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
+			// Keep the frames of the request that failed, under the new message
+			// line, since the original first line can quote the provider.
+			if (error.stack && sanitized.stack) {
+				const [headline] = sanitized.stack.split('\n');
+				const frames = error.stack.split('\n').slice(1);
+				sanitized.stack = [headline, ...frames].join('\n');
+			}
+			throw sanitized;
 		}
 		throw error;
 	}
