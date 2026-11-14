@@ -1,13 +1,9 @@
 import { z } from 'zod';
 
 // Route components cannot alter the path, even after URL normalization.
-const pathPart = z
-	.string()
-	.min(1)
-	.refine(
-		(value) => value !== '.' && value !== '..' && !/[\/\\"']/.test(value),
-		'Invalid path component',
-	);
+const isSafePart = (value: string) =>
+	value !== '.' && value !== '..' && !/[\/\\"']/.test(value);
+const pathPart = z.string().min(1).refine(isSafePart, 'Invalid path component');
 const channelType = z.enum(['open_channels', 'group_channels']);
 const userPath = z.object({ user_id: pathPart });
 const channelPath = z.object({ channel_url: pathPart });
@@ -168,7 +164,12 @@ export const SendbirdEndpointInputSchemas = {
 		.strict(),
 	usersCreate: z
 		.object({
-			user_id: z.string().min(1).max(80),
+			// Same rule as the path operations, so a created user can be read, updated and deleted.
+			user_id: z
+				.string()
+				.min(1)
+				.max(80)
+				.refine(isSafePart, 'Invalid path component'),
 			nickname: z.string().max(80),
 			profile_url: z.string().max(2048),
 			issue_access_token: z.boolean().optional(),
@@ -230,7 +231,7 @@ export const SendbirdEndpointInputSchemas = {
 		.extend({
 			user_ids: z.array(z.string()).min(1).max(100),
 			operator_ids: z.array(z.string()).optional(),
-			channel_url: z.string().optional(),
+			channel_url: pathPart.optional(),
 			is_ephemeral: z.boolean().optional(),
 			inviter_id: z.string().optional(),
 			strict: z.boolean().optional(),

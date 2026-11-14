@@ -229,6 +229,19 @@ describe('Sendbird public request seam', () => {
 			expect(mockRequest).not.toHaveBeenCalled();
 		},
 	);
+	it('rejects at creation the IDs the path operations cannot address', async () => {
+		await expect(
+			groups.users.create(ctx, {
+				user_id: 'team/user-1',
+				nickname: 'A',
+				profile_url: '',
+			}),
+		).rejects.toThrow();
+		await expect(
+			groups.channels.create(ctx, { user_ids: ['u'], channel_url: '..' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 	it('requires a reference for listing messages and rejects unsupported message variants', async () => {
 		await expect(groups.messages?.list?.(ctx, path)).rejects.toThrow();
 		await expect(
