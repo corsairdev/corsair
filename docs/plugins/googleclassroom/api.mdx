@@ -3,6 +3,7 @@ title: "Google Classroom API reference"
 sidebarTitle: "API"
 description: "API reference for Google Classroom: every `googleclassroom.api.*` operation with input and output types."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -939,13 +940,13 @@ await corsair.googleclassroom.api.courses.announcements.create({ pathParams: {"c
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `materials` | `object[]` | No | Additional materials. Announcements must have no more than 20 material items. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`. |
 | `scheduledTime` | `string` | No | Optional timestamp when this announcement is scheduled to be published. |
 | `id` | `string` | No | Classroom-assigned identifier of this announcement, unique per course. Read-only. |
 | `individualStudentsOptions` | `object` | No | Identifiers of students with access to the announcement. This field is set only if `assigneeMode` is `INDIVIDUAL_STUDENTS`. If the `assigneeMode` is `INDIVIDUAL_STUDENTS`, then only students specified in this field can see the announcement. |
 | `creationTime` | `string` | No | Timestamp when this announcement was created. Read-only. |
 | `updateTime` | `string` | No | Timestamp of the most recent change to this announcement. Read-only. |
-| `state` | `ANNOUNCEMENT_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this announcement. If unspecified, the default state is `DRAFT`. |
+| `state` | `ANNOUNCEMENT_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this announcement. If unspecified, the default state is `DRAFT`. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to this announcement in the Classroom web UI. This is only populated if `state` is `PUBLISHED`. Read-only. |
 | `creatorUserId` | `string` | No | Identifier for the user that created the announcement. Read-only. |
@@ -980,7 +981,7 @@ await corsair.googleclassroom.api.courses.announcements.create({ pathParams: {"c
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -1112,13 +1113,13 @@ await corsair.googleclassroom.api.courses.announcements.get({ pathParams: {"id":
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `materials` | `object[]` | No | Additional materials. Announcements must have no more than 20 material items. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`. |
 | `scheduledTime` | `string` | No | Optional timestamp when this announcement is scheduled to be published. |
 | `id` | `string` | No | Classroom-assigned identifier of this announcement, unique per course. Read-only. |
 | `individualStudentsOptions` | `object` | No | Identifiers of students with access to the announcement. This field is set only if `assigneeMode` is `INDIVIDUAL_STUDENTS`. If the `assigneeMode` is `INDIVIDUAL_STUDENTS`, then only students specified in this field can see the announcement. |
 | `creationTime` | `string` | No | Timestamp when this announcement was created. Read-only. |
 | `updateTime` | `string` | No | Timestamp of the most recent change to this announcement. Read-only. |
-| `state` | `ANNOUNCEMENT_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this announcement. If unspecified, the default state is `DRAFT`. |
+| `state` | `ANNOUNCEMENT_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this announcement. If unspecified, the default state is `DRAFT`. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to this announcement in the Classroom web UI. This is only populated if `state` is `PUBLISHED`. Read-only. |
 | `creatorUserId` | `string` | No | Identifier for the user that created the announcement. Read-only. |
@@ -1153,7 +1154,7 @@ await corsair.googleclassroom.api.courses.announcements.get({ pathParams: {"id":
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -1354,7 +1355,7 @@ await corsair.googleclassroom.api.courses.announcements.list({ pathParams: {"cou
         id?: string,
         title?: string
       },
-      shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+      shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
     },
     notebook?: {
       url?: string,
@@ -1367,7 +1368,7 @@ await corsair.googleclassroom.api.courses.announcements.list({ pathParams: {"cou
       title?: string
     }
   }[],
-  assigneeMode?: ASSIGNEE_MODE_UNSPECIFIED | ALL_STUDENTS | INDIVIDUAL_STUDENTS,
+  assigneeMode?: ASSIGNEE_MODE_UNSPECIFIED | ALL_STUDENTS | INDIVIDUAL_STUDENTS | string,
   scheduledTime?: string,
   id?: string,
   individualStudentsOptions?: {
@@ -1375,7 +1376,7 @@ await corsair.googleclassroom.api.courses.announcements.list({ pathParams: {"cou
   },
   creationTime?: string,
   updateTime?: string,
-  state?: ANNOUNCEMENT_STATE_UNSPECIFIED | PUBLISHED | DRAFT | DELETED,
+  state?: ANNOUNCEMENT_STATE_UNSPECIFIED | PUBLISHED | DRAFT | DELETED | string,
   courseId?: string,
   alternateLink?: string,
   creatorUserId?: string,
@@ -1453,13 +1454,13 @@ await corsair.googleclassroom.api.courses.announcements.modifyAssignees({ pathPa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `materials` | `object[]` | No | Additional materials. Announcements must have no more than 20 material items. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`. |
 | `scheduledTime` | `string` | No | Optional timestamp when this announcement is scheduled to be published. |
 | `id` | `string` | No | Classroom-assigned identifier of this announcement, unique per course. Read-only. |
 | `individualStudentsOptions` | `object` | No | Identifiers of students with access to the announcement. This field is set only if `assigneeMode` is `INDIVIDUAL_STUDENTS`. If the `assigneeMode` is `INDIVIDUAL_STUDENTS`, then only students specified in this field can see the announcement. |
 | `creationTime` | `string` | No | Timestamp when this announcement was created. Read-only. |
 | `updateTime` | `string` | No | Timestamp of the most recent change to this announcement. Read-only. |
-| `state` | `ANNOUNCEMENT_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this announcement. If unspecified, the default state is `DRAFT`. |
+| `state` | `ANNOUNCEMENT_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this announcement. If unspecified, the default state is `DRAFT`. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to this announcement in the Classroom web UI. This is only populated if `state` is `PUBLISHED`. Read-only. |
 | `creatorUserId` | `string` | No | Identifier for the user that created the announcement. Read-only. |
@@ -1494,7 +1495,7 @@ await corsair.googleclassroom.api.courses.announcements.modifyAssignees({ pathPa
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -1635,13 +1636,13 @@ await corsair.googleclassroom.api.courses.announcements.patch({ pathParams: {"co
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `materials` | `object[]` | No | Additional materials. Announcements must have no more than 20 material items. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`. |
 | `scheduledTime` | `string` | No | Optional timestamp when this announcement is scheduled to be published. |
 | `id` | `string` | No | Classroom-assigned identifier of this announcement, unique per course. Read-only. |
 | `individualStudentsOptions` | `object` | No | Identifiers of students with access to the announcement. This field is set only if `assigneeMode` is `INDIVIDUAL_STUDENTS`. If the `assigneeMode` is `INDIVIDUAL_STUDENTS`, then only students specified in this field can see the announcement. |
 | `creationTime` | `string` | No | Timestamp when this announcement was created. Read-only. |
 | `updateTime` | `string` | No | Timestamp of the most recent change to this announcement. Read-only. |
-| `state` | `ANNOUNCEMENT_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this announcement. If unspecified, the default state is `DRAFT`. |
+| `state` | `ANNOUNCEMENT_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this announcement. If unspecified, the default state is `DRAFT`. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to this announcement in the Classroom web UI. This is only populated if `state` is `PUBLISHED`. Read-only. |
 | `creatorUserId` | `string` | No | Identifier for the user that created the announcement. Read-only. |
@@ -1676,7 +1677,7 @@ await corsair.googleclassroom.api.courses.announcements.patch({ pathParams: {"co
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -2402,7 +2403,7 @@ await corsair.googleclassroom.api.courses.courseWork.addOnAttachments.studentSub
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `postSubmissionState` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT` | No | Submission state of add-on attachment's parent post (i.e. assignment). |
+| `postSubmissionState` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT \| string` | No | Submission state of add-on attachment's parent post (i.e. assignment). |
 | `pointsEarned` | `number` | No | Student grade on this attachment. If unset, no grade was set. |
 | `courseWorkSubmissionId` | `string` | No | Output only. Identifier of the course work submission under which this attachment submission was made. |
 | `userId` | `string` | No | Identifier for the student that owns this submission. Requires the user to be a teacher in the course and have permission to read student submissions. See [`courseWork.studentSubmissions.get`](/workspace/classroom/reference/rest/v1/courses.courseWork.studentSubmissions/get#authorization-scopes) for the list of acceptable OAuth scopes for this field. Read-only. |
@@ -2473,7 +2474,7 @@ await corsair.googleclassroom.api.courses.courseWork.addOnAttachments.studentSub
 
 ```ts
 {
-  postSubmissionState?: SUBMISSION_STATE_UNSPECIFIED | NEW | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT,
+  postSubmissionState?: SUBMISSION_STATE_UNSPECIFIED | NEW | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | string,
   pointsEarned?: number,
   courseWorkSubmissionId?: string,
   userId?: string,
@@ -2552,7 +2553,7 @@ To clear a passback grade, include pointsEarned in updateMask and omit pointsEar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `postSubmissionState` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT` | No | Submission state of add-on attachment's parent post (i.e. assignment). |
+| `postSubmissionState` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT \| string` | No | Submission state of add-on attachment's parent post (i.e. assignment). |
 | `pointsEarned` | `number` | No | Student grade on this attachment. If unset, no grade was set. |
 | `courseWorkSubmissionId` | `string` | No | Output only. Identifier of the course work submission under which this attachment submission was made. |
 | `userId` | `string` | No | Identifier for the student that owns this submission. Requires the user to be a teacher in the course and have permission to read student submissions. See [`courseWork.studentSubmissions.get`](/workspace/classroom/reference/rest/v1/courses.courseWork.studentSubmissions/get#authorization-scopes) for the list of acceptable OAuth scopes for this field. Read-only. |
@@ -2568,7 +2569,7 @@ To clear a passback grade, include pointsEarned in updateMask and omit pointsEar
 
 Creates course work. The resulting course work (and corresponding student submissions) are associated with the Developer Console project of the [OAuth client ID](https://support.google.com/cloud/answer/6158849) used to make the request. Classroom API requests to modify course work and student submissions must be made with an OAuth client ID from the associated Developer Console project. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to access the requested course, create course work in the requested course, share a Drive attachment, or for access errors. * `INVALID_ARGUMENT` if the request is malformed. * `NOT_FOUND` if the requested course does not exist. * `FAILED_PRECONDITION` for the following request error: * AttachmentNotVisible
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleclassroom.api.courses.courseWork.create({ pathParams: {"courseId":"courseId-123"}, query: {}, body: {"title":"Assignment","workType":"ASSIGNMENT"} });
@@ -2706,12 +2707,12 @@ await corsair.googleclassroom.api.courses.courseWork.create({ pathParams: {"cour
 |------|------|----------|-------------|
 | `gradingPeriodId` | `string` | No | Identifier of the grading period associated with the coursework. * At creation, if unspecified, the grading period ID will be set based on the `dueDate` (or `scheduledTime` if no `dueDate` is set). * To indicate no association to any grading period, set this field to an empty string (""). * If specified, it must match an existing grading period ID in the course. |
 | `creationTime` | `string` | No | Timestamp when this course work was created. Read-only. |
-| `state` | `COURSE_WORK_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this course work. If unspecified, the default state is `DRAFT`. |
+| `state` | `COURSE_WORK_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this course work. If unspecified, the default state is `DRAFT`. |
 | `dueDate` | `object` | No | Optional date, in UTC, that submissions for this course work are due. This must be specified if `due_time` is specified. |
 | `topicId` | `string` | No | Identifier for the topic that this coursework is associated with. Must match an existing topic in the course. |
 | `gradeCategory` | `object` | No | The category that this coursework's grade contributes to. Present only when a category has been chosen for the coursework. May be used in calculating the overall grade. Read-only. |
 | `materials` | `object[]` | No | Additional materials. CourseWork must have no more than 20 material items. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`. |
 | `associatedWithDeveloper` | `boolean` | No | Whether this course work item is associated with the Developer Console project making the request. See CreateCourseWork for more details. Read-only. |
 | `updateTime` | `string` | No | Timestamp of the most recent change to this course work. Read-only. |
 | `description` | `string` | No | Optional description of this course work. If set, the description must be a valid UTF-8 string containing no more than 30,000 characters. |
@@ -2720,9 +2721,9 @@ await corsair.googleclassroom.api.courses.courseWork.create({ pathParams: {"cour
 | `maxPoints` | `number` | No | Maximum grade for this course work. If zero or unspecified, this assignment is considered ungraded. This must be a non-negative integer value. |
 | `assignment` | `object` | No | Assignment details. This is populated only when `work_type` is `ASSIGNMENT`. Read-only. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
-| `submissionModificationMode` | `SUBMISSION_MODIFICATION_MODE_UNSPECIFIED \| MODIFIABLE_UNTIL_TURNED_IN \| MODIFIABLE` | No | Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`. |
+| `submissionModificationMode` | `SUBMISSION_MODIFICATION_MODE_UNSPECIFIED \| MODIFIABLE_UNTIL_TURNED_IN \| MODIFIABLE \| string` | No | Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`. |
 | `id` | `string` | No | Classroom-assigned identifier of this course work, unique per course. Read-only. |
-| `workType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION` | No | Type of this course work. The type is set when the course work is created and cannot be changed. |
+| `workType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION \| string` | No | Type of this course work. The type is set when the course work is created and cannot be changed. |
 | `title` | `string` | No | Title of this course work. The title must be a valid UTF-8 string containing between 1 and 3000 characters. |
 | `scheduledTime` | `string` | No | Optional timestamp when this course work is scheduled to be published. |
 | `individualStudentsOptions` | `object` | No | Identifiers of students with access to the coursework. This field is set only if `assigneeMode` is `INDIVIDUAL_STUDENTS`. If the `assigneeMode` is `INDIVIDUAL_STUDENTS`, then only students specified in this field are assigned the coursework. |
@@ -2781,7 +2782,7 @@ await corsair.googleclassroom.api.courses.courseWork.create({ pathParams: {"cour
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -2948,12 +2949,12 @@ await corsair.googleclassroom.api.courses.courseWork.get({ pathParams: {"id":"id
 |------|------|----------|-------------|
 | `gradingPeriodId` | `string` | No | Identifier of the grading period associated with the coursework. * At creation, if unspecified, the grading period ID will be set based on the `dueDate` (or `scheduledTime` if no `dueDate` is set). * To indicate no association to any grading period, set this field to an empty string (""). * If specified, it must match an existing grading period ID in the course. |
 | `creationTime` | `string` | No | Timestamp when this course work was created. Read-only. |
-| `state` | `COURSE_WORK_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this course work. If unspecified, the default state is `DRAFT`. |
+| `state` | `COURSE_WORK_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this course work. If unspecified, the default state is `DRAFT`. |
 | `dueDate` | `object` | No | Optional date, in UTC, that submissions for this course work are due. This must be specified if `due_time` is specified. |
 | `topicId` | `string` | No | Identifier for the topic that this coursework is associated with. Must match an existing topic in the course. |
 | `gradeCategory` | `object` | No | The category that this coursework's grade contributes to. Present only when a category has been chosen for the coursework. May be used in calculating the overall grade. Read-only. |
 | `materials` | `object[]` | No | Additional materials. CourseWork must have no more than 20 material items. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`. |
 | `associatedWithDeveloper` | `boolean` | No | Whether this course work item is associated with the Developer Console project making the request. See CreateCourseWork for more details. Read-only. |
 | `updateTime` | `string` | No | Timestamp of the most recent change to this course work. Read-only. |
 | `description` | `string` | No | Optional description of this course work. If set, the description must be a valid UTF-8 string containing no more than 30,000 characters. |
@@ -2962,9 +2963,9 @@ await corsair.googleclassroom.api.courses.courseWork.get({ pathParams: {"id":"id
 | `maxPoints` | `number` | No | Maximum grade for this course work. If zero or unspecified, this assignment is considered ungraded. This must be a non-negative integer value. |
 | `assignment` | `object` | No | Assignment details. This is populated only when `work_type` is `ASSIGNMENT`. Read-only. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
-| `submissionModificationMode` | `SUBMISSION_MODIFICATION_MODE_UNSPECIFIED \| MODIFIABLE_UNTIL_TURNED_IN \| MODIFIABLE` | No | Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`. |
+| `submissionModificationMode` | `SUBMISSION_MODIFICATION_MODE_UNSPECIFIED \| MODIFIABLE_UNTIL_TURNED_IN \| MODIFIABLE \| string` | No | Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`. |
 | `id` | `string` | No | Classroom-assigned identifier of this course work, unique per course. Read-only. |
-| `workType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION` | No | Type of this course work. The type is set when the course work is created and cannot be changed. |
+| `workType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION \| string` | No | Type of this course work. The type is set when the course work is created and cannot be changed. |
 | `title` | `string` | No | Title of this course work. The title must be a valid UTF-8 string containing between 1 and 3000 characters. |
 | `scheduledTime` | `string` | No | Optional timestamp when this course work is scheduled to be published. |
 | `individualStudentsOptions` | `object` | No | Identifiers of students with access to the coursework. This field is set only if `assigneeMode` is `INDIVIDUAL_STUDENTS`. If the `assigneeMode` is `INDIVIDUAL_STUDENTS`, then only students specified in this field are assigned the coursework. |
@@ -3023,7 +3024,7 @@ await corsair.googleclassroom.api.courses.courseWork.get({ pathParams: {"id":"id
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -3235,7 +3236,7 @@ await corsair.googleclassroom.api.courses.courseWork.list({ pathParams: {"course
 {
   gradingPeriodId?: string,
   creationTime?: string,
-  state?: COURSE_WORK_STATE_UNSPECIFIED | PUBLISHED | DRAFT | DELETED,
+  state?: COURSE_WORK_STATE_UNSPECIFIED | PUBLISHED | DRAFT | DELETED | string,
   dueDate?: {
     year?: number,
     month?: number,
@@ -3273,7 +3274,7 @@ await corsair.googleclassroom.api.courses.courseWork.list({ pathParams: {"course
         id?: string,
         title?: string
       },
-      shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+      shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
     },
     notebook?: {
       url?: string,
@@ -3286,7 +3287,7 @@ await corsair.googleclassroom.api.courses.courseWork.list({ pathParams: {"course
       title?: string
     }
   }[],
-  assigneeMode?: ASSIGNEE_MODE_UNSPECIFIED | ALL_STUDENTS | INDIVIDUAL_STUDENTS,
+  assigneeMode?: ASSIGNEE_MODE_UNSPECIFIED | ALL_STUDENTS | INDIVIDUAL_STUDENTS | string,
   associatedWithDeveloper?: boolean,
   updateTime?: string,
   description?: string,
@@ -3308,9 +3309,9 @@ await corsair.googleclassroom.api.courses.courseWork.list({ pathParams: {"course
     }
   },
   courseId?: string,
-  submissionModificationMode?: SUBMISSION_MODIFICATION_MODE_UNSPECIFIED | MODIFIABLE_UNTIL_TURNED_IN | MODIFIABLE,
+  submissionModificationMode?: SUBMISSION_MODIFICATION_MODE_UNSPECIFIED | MODIFIABLE_UNTIL_TURNED_IN | MODIFIABLE | string,
   id?: string,
-  workType?: COURSE_WORK_TYPE_UNSPECIFIED | ASSIGNMENT | SHORT_ANSWER_QUESTION | MULTIPLE_CHOICE_QUESTION,
+  workType?: COURSE_WORK_TYPE_UNSPECIFIED | ASSIGNMENT | SHORT_ANSWER_QUESTION | MULTIPLE_CHOICE_QUESTION | string,
   title?: string,
   scheduledTime?: string,
   individualStudentsOptions?: {
@@ -3392,12 +3393,12 @@ await corsair.googleclassroom.api.courses.courseWork.modifyAssignees({ pathParam
 |------|------|----------|-------------|
 | `gradingPeriodId` | `string` | No | Identifier of the grading period associated with the coursework. * At creation, if unspecified, the grading period ID will be set based on the `dueDate` (or `scheduledTime` if no `dueDate` is set). * To indicate no association to any grading period, set this field to an empty string (""). * If specified, it must match an existing grading period ID in the course. |
 | `creationTime` | `string` | No | Timestamp when this course work was created. Read-only. |
-| `state` | `COURSE_WORK_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this course work. If unspecified, the default state is `DRAFT`. |
+| `state` | `COURSE_WORK_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this course work. If unspecified, the default state is `DRAFT`. |
 | `dueDate` | `object` | No | Optional date, in UTC, that submissions for this course work are due. This must be specified if `due_time` is specified. |
 | `topicId` | `string` | No | Identifier for the topic that this coursework is associated with. Must match an existing topic in the course. |
 | `gradeCategory` | `object` | No | The category that this coursework's grade contributes to. Present only when a category has been chosen for the coursework. May be used in calculating the overall grade. Read-only. |
 | `materials` | `object[]` | No | Additional materials. CourseWork must have no more than 20 material items. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`. |
 | `associatedWithDeveloper` | `boolean` | No | Whether this course work item is associated with the Developer Console project making the request. See CreateCourseWork for more details. Read-only. |
 | `updateTime` | `string` | No | Timestamp of the most recent change to this course work. Read-only. |
 | `description` | `string` | No | Optional description of this course work. If set, the description must be a valid UTF-8 string containing no more than 30,000 characters. |
@@ -3406,9 +3407,9 @@ await corsair.googleclassroom.api.courses.courseWork.modifyAssignees({ pathParam
 | `maxPoints` | `number` | No | Maximum grade for this course work. If zero or unspecified, this assignment is considered ungraded. This must be a non-negative integer value. |
 | `assignment` | `object` | No | Assignment details. This is populated only when `work_type` is `ASSIGNMENT`. Read-only. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
-| `submissionModificationMode` | `SUBMISSION_MODIFICATION_MODE_UNSPECIFIED \| MODIFIABLE_UNTIL_TURNED_IN \| MODIFIABLE` | No | Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`. |
+| `submissionModificationMode` | `SUBMISSION_MODIFICATION_MODE_UNSPECIFIED \| MODIFIABLE_UNTIL_TURNED_IN \| MODIFIABLE \| string` | No | Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`. |
 | `id` | `string` | No | Classroom-assigned identifier of this course work, unique per course. Read-only. |
-| `workType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION` | No | Type of this course work. The type is set when the course work is created and cannot be changed. |
+| `workType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION \| string` | No | Type of this course work. The type is set when the course work is created and cannot be changed. |
 | `title` | `string` | No | Title of this course work. The title must be a valid UTF-8 string containing between 1 and 3000 characters. |
 | `scheduledTime` | `string` | No | Optional timestamp when this course work is scheduled to be published. |
 | `individualStudentsOptions` | `object` | No | Identifiers of students with access to the coursework. This field is set only if `assigneeMode` is `INDIVIDUAL_STUDENTS`. If the `assigneeMode` is `INDIVIDUAL_STUDENTS`, then only students specified in this field are assigned the coursework. |
@@ -3467,7 +3468,7 @@ await corsair.googleclassroom.api.courses.courseWork.modifyAssignees({ pathParam
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -3677,12 +3678,12 @@ await corsair.googleclassroom.api.courses.courseWork.patch({ pathParams: {"id":"
 |------|------|----------|-------------|
 | `gradingPeriodId` | `string` | No | Identifier of the grading period associated with the coursework. * At creation, if unspecified, the grading period ID will be set based on the `dueDate` (or `scheduledTime` if no `dueDate` is set). * To indicate no association to any grading period, set this field to an empty string (""). * If specified, it must match an existing grading period ID in the course. |
 | `creationTime` | `string` | No | Timestamp when this course work was created. Read-only. |
-| `state` | `COURSE_WORK_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this course work. If unspecified, the default state is `DRAFT`. |
+| `state` | `COURSE_WORK_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this course work. If unspecified, the default state is `DRAFT`. |
 | `dueDate` | `object` | No | Optional date, in UTC, that submissions for this course work are due. This must be specified if `due_time` is specified. |
 | `topicId` | `string` | No | Identifier for the topic that this coursework is associated with. Must match an existing topic in the course. |
 | `gradeCategory` | `object` | No | The category that this coursework's grade contributes to. Present only when a category has been chosen for the coursework. May be used in calculating the overall grade. Read-only. |
 | `materials` | `object[]` | No | Additional materials. CourseWork must have no more than 20 material items. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`. |
 | `associatedWithDeveloper` | `boolean` | No | Whether this course work item is associated with the Developer Console project making the request. See CreateCourseWork for more details. Read-only. |
 | `updateTime` | `string` | No | Timestamp of the most recent change to this course work. Read-only. |
 | `description` | `string` | No | Optional description of this course work. If set, the description must be a valid UTF-8 string containing no more than 30,000 characters. |
@@ -3691,9 +3692,9 @@ await corsair.googleclassroom.api.courses.courseWork.patch({ pathParams: {"id":"
 | `maxPoints` | `number` | No | Maximum grade for this course work. If zero or unspecified, this assignment is considered ungraded. This must be a non-negative integer value. |
 | `assignment` | `object` | No | Assignment details. This is populated only when `work_type` is `ASSIGNMENT`. Read-only. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
-| `submissionModificationMode` | `SUBMISSION_MODIFICATION_MODE_UNSPECIFIED \| MODIFIABLE_UNTIL_TURNED_IN \| MODIFIABLE` | No | Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`. |
+| `submissionModificationMode` | `SUBMISSION_MODIFICATION_MODE_UNSPECIFIED \| MODIFIABLE_UNTIL_TURNED_IN \| MODIFIABLE \| string` | No | Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`. |
 | `id` | `string` | No | Classroom-assigned identifier of this course work, unique per course. Read-only. |
-| `workType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION` | No | Type of this course work. The type is set when the course work is created and cannot be changed. |
+| `workType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION \| string` | No | Type of this course work. The type is set when the course work is created and cannot be changed. |
 | `title` | `string` | No | Title of this course work. The title must be a valid UTF-8 string containing between 1 and 3000 characters. |
 | `scheduledTime` | `string` | No | Optional timestamp when this course work is scheduled to be published. |
 | `individualStudentsOptions` | `object` | No | Identifiers of students with access to the coursework. This field is set only if `assigneeMode` is `INDIVIDUAL_STUDENTS`. If the `assigneeMode` is `INDIVIDUAL_STUDENTS`, then only students specified in this field are assigned the coursework. |
@@ -3752,7 +3753,7 @@ await corsair.googleclassroom.api.courses.courseWork.patch({ pathParams: {"id":"
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -4310,14 +4311,14 @@ await corsair.googleclassroom.api.courses.courseWork.studentSubmissions.get({ pa
 | `creationTime` | `string` | No | Creation time of this submission. This may be unset if the student has not accessed this item. Read-only. |
 | `assignedGrade` | `number` | No | Optional grade. If unset, no grade was set. This value must be non-negative. Decimal (that is, non-integer) values are allowed, but are rounded to two decimal places. This may be modified only by course teachers. |
 | `assignmentSubmission` | `object` | No | Submission content when course_work_type is ASSIGNMENT. Students can modify this content using ModifyAttachments. |
-| `courseWorkType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION` | No | Type of course work this submission is for. Read-only. |
+| `courseWorkType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION \| string` | No | Type of course work this submission is for. Read-only. |
 | `submissionHistory` | `object[]` | No | The history of the submission (includes state and grade histories). Read-only. |
 | `id` | `string` | No | Classroom-assigned Identifier for the student submission. This is unique among submissions for the relevant course work. Read-only. |
 | `assignedRubricGrades` | `object` | No | Assigned rubric grades based on the rubric's Criteria. This map is empty if there is no rubric attached to this course work or if a rubric is attached, but no grades have been set on any Criteria. Entries are only populated for grades that have been set. Key: The rubric's criterion ID. Read-only. |
 | `draftRubricGrades` | `object` | No | Pending rubric grades based on the rubric's criteria. This map is empty if there is no rubric attached to this course work or if a rubric is attached, but no grades have been set on any criteria. Entries are only populated for grades that have been set. Key: The rubric's criterion ID. Read-only. |
 | `associatedWithDeveloper` | `boolean` | No | Whether this student submission is associated with the Developer Console project making the request. See CreateCourseWork for more details. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to the submission in the Classroom web UI. Read-only. |
-| `state` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT` | No | State of this submission. Read-only. |
+| `state` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT \| string` | No | State of this submission. Read-only. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `courseWorkId` | `string` | No | Identifier for the course work this corresponds to. Read-only. |
 | `late` | `boolean` | No | Whether this submission is late. Read-only. |
@@ -4366,14 +4367,14 @@ await corsair.googleclassroom.api.courses.courseWork.studentSubmissions.get({ pa
 ```ts
 {
   gradeHistory?: {
-    gradeChangeType?: UNKNOWN_GRADE_CHANGE_TYPE | DRAFT_GRADE_POINTS_EARNED_CHANGE | ASSIGNED_GRADE_POINTS_EARNED_CHANGE | MAX_POINTS_CHANGE,
+    gradeChangeType?: UNKNOWN_GRADE_CHANGE_TYPE | DRAFT_GRADE_POINTS_EARNED_CHANGE | ASSIGNED_GRADE_POINTS_EARNED_CHANGE | MAX_POINTS_CHANGE | string,
     gradeTimestamp?: string,
     pointsEarned?: number,
     maxPoints?: number,
     actorUserId?: string
   },
   stateHistory?: {
-    state?: STATE_UNSPECIFIED | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | STUDENT_EDITED_AFTER_TURN_IN,
+    state?: STATE_UNSPECIFIED | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | STUDENT_EDITED_AFTER_TURN_IN | string,
     actorUserId?: string,
     stateTimestamp?: string
   }
@@ -4518,17 +4519,17 @@ await corsair.googleclassroom.api.courses.courseWork.studentSubmissions.list({ p
       }
     }[]
   },
-  courseWorkType?: COURSE_WORK_TYPE_UNSPECIFIED | ASSIGNMENT | SHORT_ANSWER_QUESTION | MULTIPLE_CHOICE_QUESTION,
+  courseWorkType?: COURSE_WORK_TYPE_UNSPECIFIED | ASSIGNMENT | SHORT_ANSWER_QUESTION | MULTIPLE_CHOICE_QUESTION | string,
   submissionHistory?: {
     gradeHistory?: {
-      gradeChangeType?: UNKNOWN_GRADE_CHANGE_TYPE | DRAFT_GRADE_POINTS_EARNED_CHANGE | ASSIGNED_GRADE_POINTS_EARNED_CHANGE | MAX_POINTS_CHANGE,
+      gradeChangeType?: UNKNOWN_GRADE_CHANGE_TYPE | DRAFT_GRADE_POINTS_EARNED_CHANGE | ASSIGNED_GRADE_POINTS_EARNED_CHANGE | MAX_POINTS_CHANGE | string,
       gradeTimestamp?: string,
       pointsEarned?: number,
       maxPoints?: number,
       actorUserId?: string
     },
     stateHistory?: {
-      state?: STATE_UNSPECIFIED | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | STUDENT_EDITED_AFTER_TURN_IN,
+      state?: STATE_UNSPECIFIED | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | STUDENT_EDITED_AFTER_TURN_IN | string,
       actorUserId?: string,
       stateTimestamp?: string
     }
@@ -4546,7 +4547,7 @@ await corsair.googleclassroom.api.courses.courseWork.studentSubmissions.list({ p
   }>,
   associatedWithDeveloper?: boolean,
   alternateLink?: string,
-  state?: SUBMISSION_STATE_UNSPECIFIED | NEW | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT,
+  state?: SUBMISSION_STATE_UNSPECIFIED | NEW | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | string,
   courseId?: string,
   courseWorkId?: string,
   late?: boolean,
@@ -4655,14 +4656,14 @@ await corsair.googleclassroom.api.courses.courseWork.studentSubmissions.modifyAt
 | `creationTime` | `string` | No | Creation time of this submission. This may be unset if the student has not accessed this item. Read-only. |
 | `assignedGrade` | `number` | No | Optional grade. If unset, no grade was set. This value must be non-negative. Decimal (that is, non-integer) values are allowed, but are rounded to two decimal places. This may be modified only by course teachers. |
 | `assignmentSubmission` | `object` | No | Submission content when course_work_type is ASSIGNMENT. Students can modify this content using ModifyAttachments. |
-| `courseWorkType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION` | No | Type of course work this submission is for. Read-only. |
+| `courseWorkType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION \| string` | No | Type of course work this submission is for. Read-only. |
 | `submissionHistory` | `object[]` | No | The history of the submission (includes state and grade histories). Read-only. |
 | `id` | `string` | No | Classroom-assigned Identifier for the student submission. This is unique among submissions for the relevant course work. Read-only. |
 | `assignedRubricGrades` | `object` | No | Assigned rubric grades based on the rubric's Criteria. This map is empty if there is no rubric attached to this course work or if a rubric is attached, but no grades have been set on any Criteria. Entries are only populated for grades that have been set. Key: The rubric's criterion ID. Read-only. |
 | `draftRubricGrades` | `object` | No | Pending rubric grades based on the rubric's criteria. This map is empty if there is no rubric attached to this course work or if a rubric is attached, but no grades have been set on any criteria. Entries are only populated for grades that have been set. Key: The rubric's criterion ID. Read-only. |
 | `associatedWithDeveloper` | `boolean` | No | Whether this student submission is associated with the Developer Console project making the request. See CreateCourseWork for more details. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to the submission in the Classroom web UI. Read-only. |
-| `state` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT` | No | State of this submission. Read-only. |
+| `state` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT \| string` | No | State of this submission. Read-only. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `courseWorkId` | `string` | No | Identifier for the course work this corresponds to. Read-only. |
 | `late` | `boolean` | No | Whether this submission is late. Read-only. |
@@ -4711,14 +4712,14 @@ await corsair.googleclassroom.api.courses.courseWork.studentSubmissions.modifyAt
 ```ts
 {
   gradeHistory?: {
-    gradeChangeType?: UNKNOWN_GRADE_CHANGE_TYPE | DRAFT_GRADE_POINTS_EARNED_CHANGE | ASSIGNED_GRADE_POINTS_EARNED_CHANGE | MAX_POINTS_CHANGE,
+    gradeChangeType?: UNKNOWN_GRADE_CHANGE_TYPE | DRAFT_GRADE_POINTS_EARNED_CHANGE | ASSIGNED_GRADE_POINTS_EARNED_CHANGE | MAX_POINTS_CHANGE | string,
     gradeTimestamp?: string,
     pointsEarned?: number,
     maxPoints?: number,
     actorUserId?: string
   },
   stateHistory?: {
-    state?: STATE_UNSPECIFIED | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | STUDENT_EDITED_AFTER_TURN_IN,
+    state?: STATE_UNSPECIFIED | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | STUDENT_EDITED_AFTER_TURN_IN | string,
     actorUserId?: string,
     stateTimestamp?: string
   }
@@ -4836,14 +4837,14 @@ await corsair.googleclassroom.api.courses.courseWork.studentSubmissions.patch({ 
 | `creationTime` | `string` | No | Creation time of this submission. This may be unset if the student has not accessed this item. Read-only. |
 | `assignedGrade` | `number` | No | Optional grade. If unset, no grade was set. This value must be non-negative. Decimal (that is, non-integer) values are allowed, but are rounded to two decimal places. This may be modified only by course teachers. |
 | `assignmentSubmission` | `object` | No | Submission content when course_work_type is ASSIGNMENT. Students can modify this content using ModifyAttachments. |
-| `courseWorkType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION` | No | Type of course work this submission is for. Read-only. |
+| `courseWorkType` | `COURSE_WORK_TYPE_UNSPECIFIED \| ASSIGNMENT \| SHORT_ANSWER_QUESTION \| MULTIPLE_CHOICE_QUESTION \| string` | No | Type of course work this submission is for. Read-only. |
 | `submissionHistory` | `object[]` | No | The history of the submission (includes state and grade histories). Read-only. |
 | `id` | `string` | No | Classroom-assigned Identifier for the student submission. This is unique among submissions for the relevant course work. Read-only. |
 | `assignedRubricGrades` | `object` | No | Assigned rubric grades based on the rubric's Criteria. This map is empty if there is no rubric attached to this course work or if a rubric is attached, but no grades have been set on any Criteria. Entries are only populated for grades that have been set. Key: The rubric's criterion ID. Read-only. |
 | `draftRubricGrades` | `object` | No | Pending rubric grades based on the rubric's criteria. This map is empty if there is no rubric attached to this course work or if a rubric is attached, but no grades have been set on any criteria. Entries are only populated for grades that have been set. Key: The rubric's criterion ID. Read-only. |
 | `associatedWithDeveloper` | `boolean` | No | Whether this student submission is associated with the Developer Console project making the request. See CreateCourseWork for more details. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to the submission in the Classroom web UI. Read-only. |
-| `state` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT` | No | State of this submission. Read-only. |
+| `state` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT \| string` | No | State of this submission. Read-only. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `courseWorkId` | `string` | No | Identifier for the course work this corresponds to. Read-only. |
 | `late` | `boolean` | No | Whether this submission is late. Read-only. |
@@ -4892,14 +4893,14 @@ await corsair.googleclassroom.api.courses.courseWork.studentSubmissions.patch({ 
 ```ts
 {
   gradeHistory?: {
-    gradeChangeType?: UNKNOWN_GRADE_CHANGE_TYPE | DRAFT_GRADE_POINTS_EARNED_CHANGE | ASSIGNED_GRADE_POINTS_EARNED_CHANGE | MAX_POINTS_CHANGE,
+    gradeChangeType?: UNKNOWN_GRADE_CHANGE_TYPE | DRAFT_GRADE_POINTS_EARNED_CHANGE | ASSIGNED_GRADE_POINTS_EARNED_CHANGE | MAX_POINTS_CHANGE | string,
     gradeTimestamp?: string,
     pointsEarned?: number,
     maxPoints?: number,
     actorUserId?: string
   },
   stateHistory?: {
-    state?: STATE_UNSPECIFIED | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | STUDENT_EDITED_AFTER_TURN_IN,
+    state?: STATE_UNSPECIFIED | CREATED | TURNED_IN | RETURNED | RECLAIMED_BY_STUDENT | STUDENT_EDITED_AFTER_TURN_IN | string,
     actorUserId?: string,
     stateTimestamp?: string
   }
@@ -5781,7 +5782,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.addOnAttachments.p
 
 Creates a course work material. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to access the requested course, create course work material in the requested course, share a Drive attachment, or for access errors. * `INVALID_ARGUMENT` if the request is malformed or if more than 20 * materials are provided. * `NOT_FOUND` if the requested course does not exist. * `FAILED_PRECONDITION` for the following request error: * AttachmentNotVisible
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleclassroom.api.courses.courseWorkMaterials.create({ pathParams: {"courseId":"courseId-123"}, query: {}, body: {"title":"Reading material"} });
@@ -5886,7 +5887,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.create({ pathParam
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `scheduledTime` | `string` | No | Optional timestamp when this course work material is scheduled to be published. |
-| `state` | `COURSEWORK_MATERIAL_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this course work material. If unspecified, the default state is `DRAFT`. |
+| `state` | `COURSEWORK_MATERIAL_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this course work material. If unspecified, the default state is `DRAFT`. |
 | `materials` | `object[]` | No | Additional materials. A course work material must have no more than 20 material items. |
 | `alternateLink` | `string` | No | Absolute link to this course work material in the Classroom web UI. This is only populated if `state` is `PUBLISHED`. Read-only. |
 | `creatorUserId` | `string` | No | Identifier for the user that created the course work material. Read-only. |
@@ -5895,7 +5896,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.create({ pathParam
 | `description` | `string` | No | Optional description of this course work material. The text must be a valid UTF-8 string containing no more than 30,000 characters. |
 | `topicId` | `string` | No | Identifier for the topic that this course work material is associated with. Must match an existing topic in the course. |
 | `creationTime` | `string` | No | Timestamp when this course work material was created. Read-only. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the course work material. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the course work material. If unspecified, the default value is `ALL_STUDENTS`. |
 | `title` | `string` | No | Title of this course work material. The title must be a valid UTF-8 string containing between 1 and 3000 characters. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `id` | `string` | No | Classroom-assigned identifier of this course work material, unique per course. Read-only. |
@@ -5929,7 +5930,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.create({ pathParam
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -6061,7 +6062,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.get({ pathParams: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `scheduledTime` | `string` | No | Optional timestamp when this course work material is scheduled to be published. |
-| `state` | `COURSEWORK_MATERIAL_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this course work material. If unspecified, the default state is `DRAFT`. |
+| `state` | `COURSEWORK_MATERIAL_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this course work material. If unspecified, the default state is `DRAFT`. |
 | `materials` | `object[]` | No | Additional materials. A course work material must have no more than 20 material items. |
 | `alternateLink` | `string` | No | Absolute link to this course work material in the Classroom web UI. This is only populated if `state` is `PUBLISHED`. Read-only. |
 | `creatorUserId` | `string` | No | Identifier for the user that created the course work material. Read-only. |
@@ -6070,7 +6071,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.get({ pathParams: 
 | `description` | `string` | No | Optional description of this course work material. The text must be a valid UTF-8 string containing no more than 30,000 characters. |
 | `topicId` | `string` | No | Identifier for the topic that this course work material is associated with. Must match an existing topic in the course. |
 | `creationTime` | `string` | No | Timestamp when this course work material was created. Read-only. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the course work material. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the course work material. If unspecified, the default value is `ALL_STUDENTS`. |
 | `title` | `string` | No | Title of this course work material. The title must be a valid UTF-8 string containing between 1 and 3000 characters. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `id` | `string` | No | Classroom-assigned identifier of this course work material, unique per course. Read-only. |
@@ -6104,7 +6105,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.get({ pathParams: 
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -6283,7 +6284,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.list({ pathParams:
 ```ts
 {
   scheduledTime?: string,
-  state?: COURSEWORK_MATERIAL_STATE_UNSPECIFIED | PUBLISHED | DRAFT | DELETED,
+  state?: COURSEWORK_MATERIAL_STATE_UNSPECIFIED | PUBLISHED | DRAFT | DELETED | string,
   materials?: {
     gem?: {
       id?: string,
@@ -6309,7 +6310,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.list({ pathParams:
         id?: string,
         title?: string
       },
-      shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+      shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
     },
     notebook?: {
       url?: string,
@@ -6331,7 +6332,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.list({ pathParams:
   description?: string,
   topicId?: string,
   creationTime?: string,
-  assigneeMode?: ASSIGNEE_MODE_UNSPECIFIED | ALL_STUDENTS | INDIVIDUAL_STUDENTS,
+  assigneeMode?: ASSIGNEE_MODE_UNSPECIFIED | ALL_STUDENTS | INDIVIDUAL_STUDENTS | string,
   title?: string,
   courseId?: string,
   id?: string
@@ -6457,7 +6458,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.patch({ pathParams
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `scheduledTime` | `string` | No | Optional timestamp when this course work material is scheduled to be published. |
-| `state` | `COURSEWORK_MATERIAL_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED` | No | Status of this course work material. If unspecified, the default state is `DRAFT`. |
+| `state` | `COURSEWORK_MATERIAL_STATE_UNSPECIFIED \| PUBLISHED \| DRAFT \| DELETED \| string` | No | Status of this course work material. If unspecified, the default state is `DRAFT`. |
 | `materials` | `object[]` | No | Additional materials. A course work material must have no more than 20 material items. |
 | `alternateLink` | `string` | No | Absolute link to this course work material in the Classroom web UI. This is only populated if `state` is `PUBLISHED`. Read-only. |
 | `creatorUserId` | `string` | No | Identifier for the user that created the course work material. Read-only. |
@@ -6466,7 +6467,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.patch({ pathParams
 | `description` | `string` | No | Optional description of this course work material. The text must be a valid UTF-8 string containing no more than 30,000 characters. |
 | `topicId` | `string` | No | Identifier for the topic that this course work material is associated with. Must match an existing topic in the course. |
 | `creationTime` | `string` | No | Timestamp when this course work material was created. Read-only. |
-| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS` | No | Assignee mode of the course work material. If unspecified, the default value is `ALL_STUDENTS`. |
+| `assigneeMode` | `ASSIGNEE_MODE_UNSPECIFIED \| ALL_STUDENTS \| INDIVIDUAL_STUDENTS \| string` | No | Assignee mode of the course work material. If unspecified, the default value is `ALL_STUDENTS`. |
 | `title` | `string` | No | Title of this course work material. The title must be a valid UTF-8 string containing between 1 and 3000 characters. |
 | `courseId` | `string` | No | Identifier of the course. Read-only. |
 | `id` | `string` | No | Classroom-assigned identifier of this course work material, unique per course. Read-only. |
@@ -6500,7 +6501,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.patch({ pathParams
       id?: string,
       title?: string
     },
-    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY | string
   },
   notebook?: {
     url?: string,
@@ -6647,7 +6648,7 @@ await corsair.googleclassroom.api.courses.create({ pathParams: {}, query: {}, bo
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `courseState` | `COURSE_STATE_UNSPECIFIED \| ACTIVE \| ARCHIVED \| PROVISIONED \| DECLINED \| SUSPENDED` | No | State of the course. If unspecified, the default state is `PROVISIONED`. |
+| `courseState` | `COURSE_STATE_UNSPECIFIED \| ACTIVE \| ARCHIVED \| PROVISIONED \| DECLINED \| SUSPENDED \| string` | No | State of the course. If unspecified, the default state is `PROVISIONED`. |
 | `descriptionHeading` | `string` | No | Optional heading for the description. For example, "Welcome to 10th Grade Biology." If set, this field must be a valid UTF-8 string and no longer than 3600 characters. |
 | `guardiansEnabled` | `boolean` | No | Whether or not guardian notifications are enabled for this course. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to this course in the Classroom web UI. Read-only. |
@@ -6691,8 +6692,8 @@ await corsair.googleclassroom.api.courses.create({ pathParams: {}, query: {}, bo
     weight?: number,
     name?: string
   }[],
-  calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES,
-  displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY
+  calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES | string,
+  displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY | string
 }
 ```
 </Accordion>
@@ -6835,7 +6836,7 @@ await corsair.googleclassroom.api.courses.get({ pathParams: {"id":"id-123"}, que
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `courseState` | `COURSE_STATE_UNSPECIFIED \| ACTIVE \| ARCHIVED \| PROVISIONED \| DECLINED \| SUSPENDED` | No | State of the course. If unspecified, the default state is `PROVISIONED`. |
+| `courseState` | `COURSE_STATE_UNSPECIFIED \| ACTIVE \| ARCHIVED \| PROVISIONED \| DECLINED \| SUSPENDED \| string` | No | State of the course. If unspecified, the default state is `PROVISIONED`. |
 | `descriptionHeading` | `string` | No | Optional heading for the description. For example, "Welcome to 10th Grade Biology." If set, this field must be a valid UTF-8 string and no longer than 3600 characters. |
 | `guardiansEnabled` | `boolean` | No | Whether or not guardian notifications are enabled for this course. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to this course in the Classroom web UI. Read-only. |
@@ -6879,8 +6880,8 @@ await corsair.googleclassroom.api.courses.get({ pathParams: {"id":"id-123"}, que
     weight?: number,
     name?: string
   }[],
-  calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES,
-  displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY
+  calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES | string,
+  displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY | string
 }
 ```
 </Accordion>
@@ -7063,7 +7064,7 @@ await corsair.googleclassroom.api.courses.list({ pathParams: {}, query: {"course
 
 ```ts
 {
-  courseState?: COURSE_STATE_UNSPECIFIED | ACTIVE | ARCHIVED | PROVISIONED | DECLINED | SUSPENDED,
+  courseState?: COURSE_STATE_UNSPECIFIED | ACTIVE | ARCHIVED | PROVISIONED | DECLINED | SUSPENDED | string,
   descriptionHeading?: string,
   guardiansEnabled?: boolean,
   alternateLink?: string,
@@ -7088,8 +7089,8 @@ await corsair.googleclassroom.api.courses.list({ pathParams: {}, query: {"course
       weight?: number,
       name?: string
     }[],
-    calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES,
-    displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY
+    calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES | string,
+    displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY | string
   },
   calendarId?: string,
   subject?: string,
@@ -7252,7 +7253,7 @@ await corsair.googleclassroom.api.courses.patch({ pathParams: {"id":"id-123"}, q
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `courseState` | `COURSE_STATE_UNSPECIFIED \| ACTIVE \| ARCHIVED \| PROVISIONED \| DECLINED \| SUSPENDED` | No | State of the course. If unspecified, the default state is `PROVISIONED`. |
+| `courseState` | `COURSE_STATE_UNSPECIFIED \| ACTIVE \| ARCHIVED \| PROVISIONED \| DECLINED \| SUSPENDED \| string` | No | State of the course. If unspecified, the default state is `PROVISIONED`. |
 | `descriptionHeading` | `string` | No | Optional heading for the description. For example, "Welcome to 10th Grade Biology." If set, this field must be a valid UTF-8 string and no longer than 3600 characters. |
 | `guardiansEnabled` | `boolean` | No | Whether or not guardian notifications are enabled for this course. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to this course in the Classroom web UI. Read-only. |
@@ -7296,8 +7297,8 @@ await corsair.googleclassroom.api.courses.patch({ pathParams: {"id":"id-123"}, q
     weight?: number,
     name?: string
   }[],
-  calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES,
-  displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY
+  calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES | string,
+  displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY | string
 }
 ```
 </Accordion>
@@ -8047,7 +8048,7 @@ Deprecated posts-based route retained for compatibility. Use the matching resour
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `postSubmissionState` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT` | No | Submission state of add-on attachment's parent post (i.e. assignment). |
+| `postSubmissionState` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT \| string` | No | Submission state of add-on attachment's parent post (i.e. assignment). |
 | `pointsEarned` | `number` | No | Student grade on this attachment. If unset, no grade was set. |
 | `courseWorkSubmissionId` | `string` | No | Output only. Identifier of the course work submission under which this attachment submission was made. |
 | `userId` | `string` | No | Identifier for the student that owns this submission. Requires the user to be a teacher in the course and have permission to read student submissions. See [`courseWork.studentSubmissions.get`](/workspace/classroom/reference/rest/v1/courses.courseWork.studentSubmissions/get#authorization-scopes) for the list of acceptable OAuth scopes for this field. Read-only. |
@@ -8122,7 +8123,7 @@ Deprecated posts-based route retained for compatibility. Use the matching resour
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `postSubmissionState` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT` | No | Submission state of add-on attachment's parent post (i.e. assignment). |
+| `postSubmissionState` | `SUBMISSION_STATE_UNSPECIFIED \| NEW \| CREATED \| TURNED_IN \| RETURNED \| RECLAIMED_BY_STUDENT \| string` | No | Submission state of add-on attachment's parent post (i.e. assignment). |
 | `pointsEarned` | `number` | No | Student grade on this attachment. If unset, no grade was set. |
 | `courseWorkSubmissionId` | `string` | No | Output only. Identifier of the course work submission under which this attachment submission was made. |
 | `userId` | `string` | No | Identifier for the student that owns this submission. Requires the user to be a teacher in the course and have permission to read student submissions. See [`courseWork.studentSubmissions.get`](/workspace/classroom/reference/rest/v1/courses.courseWork.studentSubmissions/get#authorization-scopes) for the list of acceptable OAuth scopes for this field. Read-only. |
@@ -8754,7 +8755,7 @@ await corsair.googleclassroom.api.courses.students.create({ pathParams: {"course
   id?: string,
   photoUrl?: string,
   permissions?: {
-    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
   }[],
   emailAddress?: string,
   verifiedTeacher?: boolean
@@ -8897,7 +8898,7 @@ await corsair.googleclassroom.api.courses.students.get({ pathParams: {"courseId"
   id?: string,
   photoUrl?: string,
   permissions?: {
-    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
   }[],
   emailAddress?: string,
   verifiedTeacher?: boolean
@@ -8984,7 +8985,7 @@ await corsair.googleclassroom.api.courses.students.list({ pathParams: {"courseId
     id?: string,
     photoUrl?: string,
     permissions?: {
-      permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+      permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
     }[],
     emailAddress?: string,
     verifiedTeacher?: boolean
@@ -9074,7 +9075,7 @@ await corsair.googleclassroom.api.courses.teachers.create({ pathParams: {"course
   id?: string,
   photoUrl?: string,
   permissions?: {
-    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
   }[],
   emailAddress?: string,
   verifiedTeacher?: boolean
@@ -9205,7 +9206,7 @@ await corsair.googleclassroom.api.courses.teachers.get({ pathParams: {"userId":"
   id?: string,
   photoUrl?: string,
   permissions?: {
-    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
   }[],
   emailAddress?: string,
   verifiedTeacher?: boolean
@@ -9286,7 +9287,7 @@ await corsair.googleclassroom.api.courses.teachers.list({ pathParams: {"courseId
     id?: string,
     photoUrl?: string,
     permissions?: {
-      permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+      permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
     }[],
     emailAddress?: string,
     verifiedTeacher?: boolean
@@ -9629,7 +9630,7 @@ await corsair.googleclassroom.api.courses.topics.patch({ pathParams: {"courseId"
 
 Updates a course. Note: Unlike other fields, `levels` is not cleared if omitted from the request. The `UpdateCourse` method only modifies `levels` if it is explicitly provided; otherwise, the existing value is preserved. Use the `PatchCourse` method to clear the `levels` field. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to modify the requested course or for access errors. * `NOT_FOUND` if no course exists with the requested ID. * `FAILED_PRECONDITION` for the following request errors: * CourseNotModifiable * CourseTitleCannotContainUrl
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleclassroom.api.courses.update({ pathParams: {"id":"id-123"}, query: {}, body: {"name":"Biology","ownerId":"me"} });
@@ -9741,7 +9742,7 @@ await corsair.googleclassroom.api.courses.update({ pathParams: {"id":"id-123"}, 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `courseState` | `COURSE_STATE_UNSPECIFIED \| ACTIVE \| ARCHIVED \| PROVISIONED \| DECLINED \| SUSPENDED` | No | State of the course. If unspecified, the default state is `PROVISIONED`. |
+| `courseState` | `COURSE_STATE_UNSPECIFIED \| ACTIVE \| ARCHIVED \| PROVISIONED \| DECLINED \| SUSPENDED \| string` | No | State of the course. If unspecified, the default state is `PROVISIONED`. |
 | `descriptionHeading` | `string` | No | Optional heading for the description. For example, "Welcome to 10th Grade Biology." If set, this field must be a valid UTF-8 string and no longer than 3600 characters. |
 | `guardiansEnabled` | `boolean` | No | Whether or not guardian notifications are enabled for this course. Read-only. |
 | `alternateLink` | `string` | No | Absolute link to this course in the Classroom web UI. Read-only. |
@@ -9785,8 +9786,8 @@ await corsair.googleclassroom.api.courses.update({ pathParams: {"id":"id-123"}, 
     weight?: number,
     name?: string
   }[],
-  calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES,
-  displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY
+  calculationType?: CALCULATION_TYPE_UNSPECIFIED | TOTAL_POINTS | WEIGHTED_CATEGORIES | string,
+  displaySetting?: DISPLAY_SETTING_UNSPECIFIED | SHOW_OVERALL_GRADE | HIDE_OVERALL_GRADE | SHOW_TEACHERS_ONLY | string
 }
 ```
 </Accordion>
@@ -10044,7 +10045,7 @@ await corsair.googleclassroom.api.invitations.create({ pathParams: {}, query: {}
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | No | Identifier assigned by Classroom. Read-only. |
-| `role` | `COURSE_ROLE_UNSPECIFIED \| STUDENT \| TEACHER \| OWNER` | No | Role to invite the user to have. Must not be `COURSE_ROLE_UNSPECIFIED`. |
+| `role` | `COURSE_ROLE_UNSPECIFIED \| STUDENT \| TEACHER \| OWNER \| string` | No | Role to invite the user to have. Must not be `COURSE_ROLE_UNSPECIFIED`. |
 | `userId` | `string` | No | Identifier of the invited user. When specified as a parameter of a request, this identifier can be set to one of the following: * the numeric identifier for the user * the email address of the user * the string literal `"me"`, indicating the requesting user |
 | `courseId` | `string` | No | Identifier of the course to invite the user to. |
 
@@ -10152,7 +10153,7 @@ await corsair.googleclassroom.api.invitations.get({ pathParams: {"id":"id-123"},
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | No | Identifier assigned by Classroom. Read-only. |
-| `role` | `COURSE_ROLE_UNSPECIFIED \| STUDENT \| TEACHER \| OWNER` | No | Role to invite the user to have. Must not be `COURSE_ROLE_UNSPECIFIED`. |
+| `role` | `COURSE_ROLE_UNSPECIFIED \| STUDENT \| TEACHER \| OWNER \| string` | No | Role to invite the user to have. Must not be `COURSE_ROLE_UNSPECIFIED`. |
 | `userId` | `string` | No | Identifier of the invited user. When specified as a parameter of a request, this identifier can be set to one of the following: * the numeric identifier for the user * the email address of the user * the string literal `"me"`, indicating the requesting user |
 | `courseId` | `string` | No | Identifier of the course to invite the user to. |
 
@@ -10221,7 +10222,7 @@ await corsair.googleclassroom.api.invitations.list({ pathParams: {}, query: {"us
 ```ts
 {
   id?: string,
-  role?: COURSE_ROLE_UNSPECIFIED | STUDENT | TEACHER | OWNER,
+  role?: COURSE_ROLE_UNSPECIFIED | STUDENT | TEACHER | OWNER | string,
   userId?: string,
   courseId?: string
 }[]
@@ -10324,7 +10325,7 @@ A valid Google Cloud Pub/Sub topic must exist and grant Classroom permission to 
 
 ```ts
 {
-  feedType?: FEED_TYPE_UNSPECIFIED | DOMAIN_ROSTER_CHANGES | COURSE_ROSTER_CHANGES | COURSE_WORK_CHANGES,
+  feedType?: FEED_TYPE_UNSPECIFIED | DOMAIN_ROSTER_CHANGES | COURSE_ROSTER_CHANGES | COURSE_WORK_CHANGES | string,
   courseWorkChangesInfo?: {
     courseId?: string
   },
@@ -10466,7 +10467,7 @@ Profile email and photo fields require their corresponding Google OAuth scopes a
 
 ```ts
 {
-  permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+  permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
 }[]
 ```
 </Accordion>
@@ -10538,7 +10539,7 @@ await corsair.googleclassroom.api.userProfiles.guardianInvitations.create({ path
 | `invitationId` | `string` | No | Unique identifier for this invitation. Read-only. |
 | `creationTime` | `string` | No | The time that this invitation was created. Read-only. |
 | `studentId` | `string` | No | ID of the student (in standard format) |
-| `state` | `GUARDIAN_INVITATION_STATE_UNSPECIFIED \| PENDING \| COMPLETE` | No | The state that this invitation is in. |
+| `state` | `GUARDIAN_INVITATION_STATE_UNSPECIFIED \| PENDING \| COMPLETE \| string` | No | The state that this invitation is in. |
 | `invitedEmailAddress` | `string` | No | Email address that the invitation was sent to. This field is only visible to domain administrators. |
 
 
@@ -10598,7 +10599,7 @@ await corsair.googleclassroom.api.userProfiles.guardianInvitations.get({ pathPar
 | `invitationId` | `string` | No | Unique identifier for this invitation. Read-only. |
 | `creationTime` | `string` | No | The time that this invitation was created. Read-only. |
 | `studentId` | `string` | No | ID of the student (in standard format) |
-| `state` | `GUARDIAN_INVITATION_STATE_UNSPECIFIED \| PENDING \| COMPLETE` | No | The state that this invitation is in. |
+| `state` | `GUARDIAN_INVITATION_STATE_UNSPECIFIED \| PENDING \| COMPLETE \| string` | No | The state that this invitation is in. |
 | `invitedEmailAddress` | `string` | No | Email address that the invitation was sent to. This field is only visible to domain administrators. |
 
 
@@ -10669,7 +10670,7 @@ await corsair.googleclassroom.api.userProfiles.guardianInvitations.list({ pathPa
   invitationId?: string,
   creationTime?: string,
   studentId?: string,
-  state?: GUARDIAN_INVITATION_STATE_UNSPECIFIED | PENDING | COMPLETE,
+  state?: GUARDIAN_INVITATION_STATE_UNSPECIFIED | PENDING | COMPLETE | string,
   invitedEmailAddress?: string
 }[]
 ```
@@ -10686,7 +10687,7 @@ await corsair.googleclassroom.api.userProfiles.guardianInvitations.list({ pathPa
 
 Modifies a guardian invitation. Currently, the only valid modification is to change the `state` from `PENDING` to `COMPLETE`. This has the effect of withdrawing the invitation. This method returns the following error codes: * `PERMISSION_DENIED` if the current user does not have permission to manage guardians, if guardians are not enabled for the domain in question or for other access errors. * `FAILED_PRECONDITION` if the guardian link is not in the `PENDING` state. * `INVALID_ARGUMENT` if the format of the student ID provided cannot be recognized (it is not an email address, nor a `user_id` from this API), or if the passed `GuardianInvitation` has a `state` other than `COMPLETE`, or if it modifies fields other than `state`. * `NOT_FOUND` if the student ID provided is a valid student ID, but Classroom has no record of that student, or if the `id` field does not refer to a guardian invitation known to Classroom.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.googleclassroom.api.userProfiles.guardianInvitations.patch({ pathParams: {"invitationId":"invitationId-123","studentId":"studentId-123"}, query: {"updateMask":"state"}, body: {"state":"PENDING"} });
@@ -10743,7 +10744,7 @@ await corsair.googleclassroom.api.userProfiles.guardianInvitations.patch({ pathP
 | `invitationId` | `string` | No | Unique identifier for this invitation. Read-only. |
 | `creationTime` | `string` | No | The time that this invitation was created. Read-only. |
 | `studentId` | `string` | No | ID of the student (in standard format) |
-| `state` | `GUARDIAN_INVITATION_STATE_UNSPECIFIED \| PENDING \| COMPLETE` | No | The state that this invitation is in. |
+| `state` | `GUARDIAN_INVITATION_STATE_UNSPECIFIED \| PENDING \| COMPLETE \| string` | No | The state that this invitation is in. |
 | `invitedEmailAddress` | `string` | No | Email address that the invitation was sent to. This field is only visible to domain administrators. |
 
 
@@ -10869,7 +10870,7 @@ await corsair.googleclassroom.api.userProfiles.guardians.get({ pathParams: {"gua
   id?: string,
   photoUrl?: string,
   permissions?: {
-    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+    permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
   }[],
   emailAddress?: string,
   verifiedTeacher?: boolean
@@ -10951,7 +10952,7 @@ await corsair.googleclassroom.api.userProfiles.guardians.list({ pathParams: {"st
     id?: string,
     photoUrl?: string,
     permissions?: {
-      permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE
+      permission?: PERMISSION_UNSPECIFIED | CREATE_COURSE | string
     }[],
     emailAddress?: string,
     verifiedTeacher?: boolean
@@ -10967,3 +10968,4 @@ await corsair.googleclassroom.api.userProfiles.guardians.list({ pathParams: {"st
 
 
 ---
+
