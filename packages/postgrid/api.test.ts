@@ -8,10 +8,12 @@
 //
 // A key created in test mode only reads test-mode data, which is what the
 // fixture-less reads below need. There is no separate sandbox host.
+import { ApiError } from 'corsair/http';
 import {
+	isCredentialRejection,
 	makePostgridRequest,
 	POSTGRID_API_BASE,
-	PostgridAPIError,
+	readErrorCode,
 } from './client';
 import {
 	ContactSchema,
@@ -71,20 +73,24 @@ describeLive('PostGrid live API', () => {
 	});
 
 	it('rejects a wrong key as a credential failure, keeping it off the error', async () => {
+		const badKey = 'definitely-not-a-key';
 		const error = await captureError(
-			makePostgridRequest('definitely-not-a-key', {
-				method: 'GET',
-				path: '/contacts',
-			}),
+			makePostgridRequest(badKey, { method: 'GET', path: '/contacts' }),
 		);
 
-		expect(error).toBeInstanceOf(PostgridAPIError);
-		if (!(error instanceof PostgridAPIError)) return;
+		// HTTP failures come back as core's ApiError (R8), so its status and the
+		// provider's code in the body are what the handlers read.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.credentialsRejected).toBe(true);
-		expect(error.code).toBe('invalid_api_key_error');
+		expect(readErrorCode(error.body)).toBe('invalid_api_key_error');
+		// PostGrid echoes the submitted key in this message; the client removes it.
+		expect(error.message).toContain('[REDACTED]');
+		expect(isCredentialRejection(error.status, error.body)).toBe(true);
 		// The key rode in a header, so nothing may echo it back.
-		expect(JSON.stringify(error)).not.toContain('definitely-not-a-key');
+		expect(error.message).not.toContain(badKey);
+		expect(String(error.stack)).not.toContain(badKey);
+		expect(JSON.stringify(error)).not.toContain(badKey);
 	});
 
 	it('exposes the documented print-mail base', () => {
