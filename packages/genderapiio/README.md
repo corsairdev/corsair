@@ -15,9 +15,9 @@ pnpm add @corsair-dev/genderapiio
 | `account.capabilities` | `genderapiio.api.account.capabilities` | `read` | Read the deployment version, the AI availability and the batch limit. This route is free |
 | `account.errorCatalog` | `genderapiio.api.account.errorCatalog` | `read` | Read every error code with the statuses it uses and what a caller should do about it. This route is free |
 | `account.usage` | `genderapiio.api.account.usage` | `read` | Read the shared balance, the trial reset time and whether this call used a key or the IP trial. This route is free |
-| `gender.batch` | `genderapiio.api.gender.batch` | `read` | Infer gender for up to 50 names, emails or usernames in one request. An item can fail on its own, and only successful items are billed |
-| `gender.infer` | `genderapiio.api.gender.infer` | `read` | Infer gender from a name, an email address or a username, with a confidence, the source that answered (dataset or AI) and the credits it cost |
-| `phone.validate` | `genderapiio.api.phone.validate` | `read` | Validate and format a phone number, returning its E.164 form, country and calling code |
+| `gender.batch` | `genderapiio.api.gender.batch` | `destructive` | Infer gender for up to 50 names, emails or usernames in one request. An item can fail on its own, and only successful items are billed |
+| `gender.infer` | `genderapiio.api.gender.infer` | `destructive` | Infer gender from a name, an email address or a username, with a confidence, the source that answered (dataset or AI) and the credits it cost |
+| `phone.validate` | `genderapiio.api.phone.validate` | `destructive` | Validate and format a phone number, returning its E.164 form, country and calling code |
 
 ## Auth
 

@@ -124,17 +124,17 @@ const defaultAuthType = 'api_key' as const;
 
 const genderApiIoEndpointMeta = {
 	'gender.infer': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Infer gender from a name, an email address or a username, with a confidence, the source that answered (dataset or AI) and the credits it cost',
 	},
 	'gender.batch': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Infer gender for up to 50 names, emails or usernames in one request. An item can fail on its own, and only successful items are billed',
 	},
 	'phone.validate': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Validate and format a phone number, returning its E.164 form, country and calling code',
 	},
@@ -220,7 +220,11 @@ export function genderapiio<const T extends GenderApiIoPluginOptions>(
 	} satisfies InternalGenderApiIoPlugin;
 }
 
-export { GENDERAPIIO_ERROR_CODES, GenderApiIoAPIError } from './client';
+export {
+	GENDERAPIIO_ERROR_CODES,
+	GenderApiIoAPIError,
+	genderApiIoErrorInfo,
+} from './client';
 
 export type {
 	GenderApiIoAccess,
