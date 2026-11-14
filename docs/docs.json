@@ -2796,6 +2796,14 @@
                 ]
               },
               {
+                "group": "JumpCloud",
+                "pages": [
+                  "plugins/jumpcloud/overview",
+                  "plugins/jumpcloud/api",
+                  "plugins/jumpcloud/database"
+                ]
+              },
+              {
                 "group": "Kadoa",
                 "pages": [
                   "plugins/kadoa/overview",
