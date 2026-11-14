@@ -95,7 +95,7 @@ await corsair.cloudconvert.api.formats.listSupported({});
 
 Create an asynchronous job from a task graph. CloudConvert limits job task names to alphanumeric characters, hyphens and underscores, with at most 2000 tasks. Docs: https://cloudconvert.com/docs/api-reference/jobs#create-job
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudconvert.api.jobs.create({
@@ -233,7 +233,7 @@ Record<string, {
 
 Create a job and wait for completion on CloudConvert’s synchronous API. Prefer jobs.create for long-running work because clients and network stacks may time out. redirect=true is rejected because it returns raw file bytes unsupported by this JSON endpoint. Docs: https://cloudconvert.com/docs/api-reference/jobs#create-job-and-wait
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudconvert.api.jobs.createAndWait({
@@ -982,7 +982,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
 
 Create a Google Cloud Storage export task in a new job; CloudConvert task creation is part of POST /jobs. Docs: https://cloudconvert.com/docs/import-export/export-files#google-cloud-storage and https://cloudconvert.com/docs/api-reference/jobs#create-job
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudconvert.api.tasks.createExportGoogleCloudStorage({
@@ -1124,7 +1124,7 @@ Record<string, {
 
 Create an S3 export task in a new job; CloudConvert task creation is part of POST /jobs. Docs: https://cloudconvert.com/docs/import-export/export-files#s3 and https://cloudconvert.com/docs/api-reference/jobs#create-job
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudconvert.api.tasks.createExportS3({
@@ -1552,7 +1552,7 @@ await corsair.cloudconvert.api.tasks.remove({ taskId: 'task-id' });
 
 Create a new task using the payload of an existing task. Docs: https://cloudconvert.com/docs/api-reference/tasks#retry-task
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudconvert.api.tasks.retry({ taskId: 'task-id' });

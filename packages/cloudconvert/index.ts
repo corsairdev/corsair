@@ -202,12 +202,12 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const cloudConvertEndpointMeta = {
 	'jobs.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create an asynchronous job from a task graph. CloudConvert limits job task names to alphanumeric characters, hyphens and underscores, with at most 2000 tasks. Docs: https://cloudconvert.com/docs/api-reference/jobs#create-job',
 	},
 	'jobs.createAndWait': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a job and wait for completion on CloudConvert’s synchronous API. Prefer jobs.create for long-running work because clients and network stacks may time out. redirect=true is rejected because it returns raw file bytes unsupported by this JSON endpoint. Docs: https://cloudconvert.com/docs/api-reference/jobs#create-job-and-wait',
 	},
@@ -232,12 +232,12 @@ const cloudConvertEndpointMeta = {
 			'Delete a job, including all of its tasks and data. Docs: https://cloudconvert.com/docs/api-reference/jobs#delete-job',
 	},
 	'tasks.createExportGoogleCloudStorage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a Google Cloud Storage export task in a new job; CloudConvert task creation is part of POST /jobs. Docs: https://cloudconvert.com/docs/import-export/export-files#google-cloud-storage and https://cloudconvert.com/docs/api-reference/jobs#create-job',
 	},
 	'tasks.createExportS3': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create an S3 export task in a new job; CloudConvert task creation is part of POST /jobs. Docs: https://cloudconvert.com/docs/import-export/export-files#s3 and https://cloudconvert.com/docs/api-reference/jobs#create-job',
 	},
@@ -262,7 +262,7 @@ const cloudConvertEndpointMeta = {
 			'Cancel a task that is waiting or processing. Docs: https://cloudconvert.com/docs/api-reference/tasks#cancel-task',
 	},
 	'tasks.retry': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a new task using the payload of an existing task. Docs: https://cloudconvert.com/docs/api-reference/tasks#retry-task',
 	},
