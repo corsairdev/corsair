@@ -317,7 +317,7 @@ export const e2bEndpointSchemas = {
 
 export const e2bEndpointMeta = {
 	'sandboxes.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: e2bOperationRoutes['sandboxes.create'].description,
 	},
 	'sandboxes.list': {
@@ -349,15 +349,15 @@ export const e2bEndpointMeta = {
 		description: e2bOperationRoutes['sandboxes.pause'].description,
 	},
 	'sandboxes.fork': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: e2bOperationRoutes['sandboxes.fork'].description,
 	},
 	'sandboxes.connect': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: e2bOperationRoutes['sandboxes.connect'].description,
 	},
 	'sandboxes.setTimeout': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: e2bOperationRoutes['sandboxes.setTimeout'].description,
 	},
 	'sandboxes.updateNetwork': {
@@ -365,7 +365,7 @@ export const e2bEndpointMeta = {
 		description: e2bOperationRoutes['sandboxes.updateNetwork'].description,
 	},
 	'sandboxes.refresh': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: e2bOperationRoutes['sandboxes.refresh'].description,
 	},
 	'sandboxes.createSnapshot': {
@@ -521,7 +521,7 @@ export const e2bEndpointMeta = {
 		description: e2bOperationRoutes['process.sendInput'].description,
 	},
 	'process.sendSignal': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: e2bOperationRoutes['process.sendSignal'].description,
 	},
 	'process.update': {

@@ -3,6 +3,7 @@ import {
 	E2bEndpointInputSchemas,
 	E2bEndpointOutputSchemas,
 } from './endpoints/types';
+import { e2bEndpointMeta } from './index';
 
 describe('E2B operation schemas', () => {
 	it('declares schemas for every registered route', () => {
@@ -112,5 +113,31 @@ describe('E2B operation schemas', () => {
 			E2bEndpointOutputSchemas['filesystem.remove'].safeParse({ removed: true })
 				.success,
 		).toBe(true);
+	});
+
+	it('marks billed, irreversible and deleting operations destructive', () => {
+		// E2B bills compute per second while a sandbox runs, so starting,
+		// resuming, forking or extending one spends money.
+		const destructive = [
+			'sandboxes.create',
+			'sandboxes.fork',
+			'sandboxes.connect',
+			'sandboxes.setTimeout',
+			'sandboxes.refresh',
+			'sandboxes.kill',
+			'templates.delete',
+			'tags.delete',
+			'volumes.delete',
+			'secrets.delete',
+			'filesystem.remove',
+			'process.sendSignal',
+		] as const;
+		for (const id of destructive) {
+			expect([id, e2bEndpointMeta[id].riskLevel]).toEqual([id, 'destructive']);
+			expect([id, e2bOperationRoutes[id].riskLevel]).toEqual([
+				id,
+				'destructive',
+			]);
+		}
 	});
 });
