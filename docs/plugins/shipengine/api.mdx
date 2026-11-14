@@ -6109,7 +6109,7 @@ await corsair.shipengine.api.labels.listLabels({});
 
 Void a Label By ID
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.shipengine.api.labels.voidLabel({
@@ -6994,7 +6994,7 @@ Create Custom Package Type
 
 ```ts
 await corsair.shipengine.api.packageTypes.createPackageType({
-	body: { name: 'example', package_code: 'small_flat_rate_box' },
+	body: { name: 'example', package_code: 'custom_bigbox' },
 });
 ```
 
@@ -7207,7 +7207,7 @@ Update Custom Package Type By ID
 ```ts
 await corsair.shipengine.api.packageTypes.updatePackageType({
 	path: { package_id: 'se-28529731' },
-	body: { name: 'example', package_code: 'small_flat_rate_box' },
+	body: { name: 'example', package_code: 'custom_bigbox' },
 });
 ```
 
@@ -7306,8 +7306,8 @@ await corsair.shipengine.api.rates.calculateRates({
   ship_from_service_point_id?: string | null,
   shipment: {
     validate_address?: no_validation | validate_only | validate_and_clean,
-    carrier_id: string,
-    service_code: string,
+    carrier_id?: string,
+    service_code?: string,
     shipping_rule_id?: string,
     external_order_id?: string | null,
     items?: {
@@ -8146,8 +8146,8 @@ await corsair.shipengine.api.rates.compareBulkRates({
   ship_from_service_point_id?: string | null,
   shipments: {
     validate_address?: no_validation | validate_only | validate_and_clean,
-    carrier_id: string,
-    service_code: string,
+    carrier_id?: string,
+    service_code?: string,
     shipping_rule_id?: string,
     external_order_id?: string | null,
     items?: {
@@ -9082,8 +9082,8 @@ await corsair.shipengine.api.shipments.createShipments({
 {
   shipments: {
     validate_address?: no_validation | validate_only | validate_and_clean,
-    carrier_id: string,
-    service_code: string,
+    carrier_id?: string,
+    service_code?: string,
     shipping_rule_id?: string,
     external_order_id?: string | null,
     items?: {
@@ -10538,170 +10538,153 @@ await corsair.shipengine.api.shipments.listShipmentRates({
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `rates` | `object[]` | Yes | — |
-| `invalid_rates` | `object[]` | Yes | — |
-| `rate_request_id` | `string` | Yes | — |
-| `shipment_id` | `string` | Yes | — |
-| `created_at` | `string` | Yes | — |
-| `status` | `working \| completed \| partial \| error` | Yes | — |
-| `errors` | `object[]` | Yes | — |
+**Output:** `object[]`
 
 <AccordionGroup>
-<Accordion title="rates full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  rate_id: string,
-  rate_type: check | shipment,
-  carrier_id: string,
-  shipping_amount: {
-    currency: string,
-    amount: number
-  },
-  insurance_amount: {
-    currency: string,
-    amount: number
-  },
-  confirmation_amount: {
-    currency: string,
-    amount: number
-  },
-  other_amount: {
-    currency: string,
-    amount: number
-  },
-  requested_comparison_amount?: {
-    currency: string,
-    amount: number
-  },
-  tax_amount?: {
-    currency: string,
-    amount: number
-  },
-  rate_details?: {
-    rate_detail_type?: uncategorized | shipping | insurance | confirmation | discount | fuel_charge | additional_fees | tariff | tax | delivery | handling | special_goods | pickup | location_fee | oversize | returns | notifications | tip | duties_and_taxes | brokerage_fee | admin_fee | adjustment,
-    carrier_description?: string,
-    carrier_billing_code?: string,
-    carrier_memo?: string,
-    amount?: {
+  rates: {
+    rate_id: string,
+    rate_type: check | shipment,
+    carrier_id: string,
+    shipping_amount: {
       currency: string,
       amount: number
     },
-    rate_detail_attributes?: {
-      tax_type?: vat,
-      tax_percentage?: number
-    },
-    billing_source?: string
-  }[],
-  zone: number | null,
-  package_type: string | null,
-  delivery_days?: number,
-  guaranteed_service: boolean,
-  estimated_delivery_date?: string | null,
-  carrier_delivery_days?: string,
-  ship_date?: string,
-  negotiated_rate: boolean,
-  service_type: string,
-  service_code: string,
-  trackable: boolean,
-  carrier_code: string,
-  carrier_nickname: string,
-  carrier_friendly_name: string,
-  validation_status: valid | invalid | has_warnings | unknown,
-  warning_messages: string[],
-  error_messages: string[],
-  rate_attributes?: (best_value | cheapest | fastest)[]
-}[]
-```
-</Accordion>
-
-<Accordion title="invalid_rates full type">
-
-```ts
-{
-  rate_id: string,
-  rate_type: check | shipment,
-  carrier_id: string,
-  shipping_amount: {
-    currency: string,
-    amount: number
-  },
-  insurance_amount: {
-    currency: string,
-    amount: number
-  },
-  confirmation_amount: {
-    currency: string,
-    amount: number
-  },
-  other_amount: {
-    currency: string,
-    amount: number
-  },
-  requested_comparison_amount?: {
-    currency: string,
-    amount: number
-  },
-  tax_amount?: {
-    currency: string,
-    amount: number
-  },
-  rate_details?: {
-    rate_detail_type?: uncategorized | shipping | insurance | confirmation | discount | fuel_charge | additional_fees | tariff | tax | delivery | handling | special_goods | pickup | location_fee | oversize | returns | notifications | tip | duties_and_taxes | brokerage_fee | admin_fee | adjustment,
-    carrier_description?: string,
-    carrier_billing_code?: string,
-    carrier_memo?: string,
-    amount?: {
+    insurance_amount: {
       currency: string,
       amount: number
     },
-    rate_detail_attributes?: {
-      tax_type?: vat,
-      tax_percentage?: number
+    confirmation_amount: {
+      currency: string,
+      amount: number
     },
-    billing_source?: string
+    other_amount: {
+      currency: string,
+      amount: number
+    },
+    requested_comparison_amount?: {
+      currency: string,
+      amount: number
+    },
+    tax_amount?: {
+      currency: string,
+      amount: number
+    },
+    rate_details?: {
+      rate_detail_type?: uncategorized | shipping | insurance | confirmation | discount | fuel_charge | additional_fees | tariff | tax | delivery | handling | special_goods | pickup | location_fee | oversize | returns | notifications | tip | duties_and_taxes | brokerage_fee | admin_fee | adjustment,
+      carrier_description?: string,
+      carrier_billing_code?: string,
+      carrier_memo?: string,
+      amount?: {
+        currency: string,
+        amount: number
+      },
+      rate_detail_attributes?: {
+        tax_type?: vat,
+        tax_percentage?: number
+      },
+      billing_source?: string
+    }[],
+    zone: number | null,
+    package_type: string | null,
+    delivery_days?: number,
+    guaranteed_service: boolean,
+    estimated_delivery_date?: string | null,
+    carrier_delivery_days?: string,
+    ship_date?: string,
+    negotiated_rate: boolean,
+    service_type: string,
+    service_code: string,
+    trackable: boolean,
+    carrier_code: string,
+    carrier_nickname: string,
+    carrier_friendly_name: string,
+    validation_status: valid | invalid | has_warnings | unknown,
+    warning_messages: string[],
+    error_messages: string[],
+    rate_attributes?: (best_value | cheapest | fastest)[]
   }[],
-  zone: number | null,
-  package_type: string | null,
-  delivery_days?: number,
-  guaranteed_service: boolean,
-  estimated_delivery_date?: string | null,
-  carrier_delivery_days?: string,
-  ship_date?: string,
-  negotiated_rate: boolean,
-  service_type: string,
-  service_code: string,
-  trackable: boolean,
-  carrier_code: string,
-  carrier_nickname: string,
-  carrier_friendly_name: string,
-  validation_status: valid | invalid | has_warnings | unknown,
-  warning_messages: string[],
-  error_messages: string[]
-}[]
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-  error_source: carrier | order_source | shipengine,
-  error_type: account_status | business_rules | validation | security | system | integrations,
-  error_code: auto_fund_not_supported | batch_cannot_be_modified | carrier_conflict | carrier_disconnected | carrier_not_connected | carrier_not_supported | confirmation_not_supported | default_warehouse_cannot_be_deleted | field_conflict | field_value_required | forbidden | identifier_conflict | identifiers_must_match | insufficient_funds | invalid_address | invalid_billing_plan | invalid_field_value | invalid_identifier | invalid_status | invalid_string_length | label_images_not_supported | meter_failure | order_source_not_active | rate_limit_exceeded | refresh_not_supported | request_body_required | return_label_not_supported | settings_not_supported | subscription_inactive | terms_not_accepted | tracking_not_supported | trial_expired | unauthorized | unknown | unspecified | verification_failure | warehouse_conflict | webhook_event_type_conflict | customs_items_required | incompatible_paired_labels | invalid_charge_event | invalid_object | no_rates_returned | file_not_found | shipping_rule_not_found | service_not_determined | funding_source_registration_in_progress | insurance_failure | funding_source_missing_configuration | funding_source_error,
-  message: string,
-  carrier_id?: string,
-  carrier_code?: string,
-  field_name?: string
+  invalid_rates: {
+    rate_id: string,
+    rate_type: check | shipment,
+    carrier_id: string,
+    shipping_amount: {
+      currency: string,
+      amount: number
+    },
+    insurance_amount: {
+      currency: string,
+      amount: number
+    },
+    confirmation_amount: {
+      currency: string,
+      amount: number
+    },
+    other_amount: {
+      currency: string,
+      amount: number
+    },
+    requested_comparison_amount?: {
+      currency: string,
+      amount: number
+    },
+    tax_amount?: {
+      currency: string,
+      amount: number
+    },
+    rate_details?: {
+      rate_detail_type?: uncategorized | shipping | insurance | confirmation | discount | fuel_charge | additional_fees | tariff | tax | delivery | handling | special_goods | pickup | location_fee | oversize | returns | notifications | tip | duties_and_taxes | brokerage_fee | admin_fee | adjustment,
+      carrier_description?: string,
+      carrier_billing_code?: string,
+      carrier_memo?: string,
+      amount?: {
+        currency: string,
+        amount: number
+      },
+      rate_detail_attributes?: {
+        tax_type?: vat,
+        tax_percentage?: number
+      },
+      billing_source?: string
+    }[],
+    zone: number | null,
+    package_type: string | null,
+    delivery_days?: number,
+    guaranteed_service: boolean,
+    estimated_delivery_date?: string | null,
+    carrier_delivery_days?: string,
+    ship_date?: string,
+    negotiated_rate: boolean,
+    service_type: string,
+    service_code: string,
+    trackable: boolean,
+    carrier_code: string,
+    carrier_nickname: string,
+    carrier_friendly_name: string,
+    validation_status: valid | invalid | has_warnings | unknown,
+    warning_messages: string[],
+    error_messages: string[]
+  }[],
+  rate_request_id: string,
+  shipment_id: string,
+  created_at: string,
+  status: working | completed | partial | error,
+  errors: {
+    error_source: carrier | order_source | shipengine,
+    error_type: account_status | business_rules | validation | security | system | integrations,
+    error_code: auto_fund_not_supported | batch_cannot_be_modified | carrier_conflict | carrier_disconnected | carrier_not_connected | carrier_not_supported | confirmation_not_supported | default_warehouse_cannot_be_deleted | field_conflict | field_value_required | forbidden | identifier_conflict | identifiers_must_match | insufficient_funds | invalid_address | invalid_billing_plan | invalid_field_value | invalid_identifier | invalid_status | invalid_string_length | label_images_not_supported | meter_failure | order_source_not_active | rate_limit_exceeded | refresh_not_supported | request_body_required | return_label_not_supported | settings_not_supported | subscription_inactive | terms_not_accepted | tracking_not_supported | trial_expired | unauthorized | unknown | unspecified | verification_failure | warehouse_conflict | webhook_event_type_conflict | customs_items_required | incompatible_paired_labels | invalid_charge_event | invalid_object | no_rates_returned | file_not_found | shipping_rule_not_found | service_not_determined | funding_source_registration_in_progress | insurance_failure | funding_source_missing_configuration | funding_source_error,
+    message: string,
+    carrier_id?: string,
+    carrier_code?: string,
+    field_name?: string
+  }[]
 }[]
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -13492,3 +13475,4 @@ await corsair.shipengine.api.warehouses.updateWarehouseSettings({
 
 
 ---
+
