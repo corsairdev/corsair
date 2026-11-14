@@ -3,6 +3,9 @@ import { makeFireberryRequest } from './client';
 import { FireberryEndpointOutputSchemas } from './endpoints/types';
 
 const liveKey = process.env.FIREBERRY_API_KEY ?? '';
+if (liveKey.length === 0) {
+	console.warn('Skipping Fireberry live tests: FIREBERRY_API_KEY is not set.');
+}
 const describeLive = liveKey.length > 0 ? describe : describe.skip;
 
 describeLive('Fireberry live API (read-only)', () => {
