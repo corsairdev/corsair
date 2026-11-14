@@ -102,7 +102,7 @@ describe('retry behaviour', () => {
 					.catch((caught: unknown) => caught),
 			);
 
-			expect(error).toMatchObject({ status: 429, isRateLimit: true });
+			expect(error).toMatchObject({ status: 429 });
 			// One attempt plus two retries.
 			expect(fetchMock).toHaveBeenCalledTimes(3);
 		} finally {
@@ -117,7 +117,10 @@ describe('retry behaviour', () => {
 
 			await expect(
 				corsair.kickbox.api.verify.verify({ email: 'test@example.com' }),
-			).rejects.toMatchObject({ status: 403, isQuotaError: true });
+			).rejects.toMatchObject({
+				status: 403,
+				body: { code: 'INSUFFICIENT_BALANCE' },
+			});
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
@@ -131,25 +134,43 @@ describe('retry behaviour', () => {
 
 			await expect(
 				corsair.kickbox.api.verify.verify({ email: 'test@example.com' }),
-			).rejects.toMatchObject({ status: 403, isAuthError: true });
+			).rejects.toMatchObject({
+				status: 403,
+				body: { code: 'FORBIDDEN' },
+			});
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}
 	});
 
-	it('replays a check after a 5xx, which Kickbox answered without a verdict', async () => {
-		jest.useFakeTimers();
+	it('does not replay a paid check after a 5xx, which may have been charged', async () => {
 		const { corsair, testDb } = await createClient({ key: API_KEY });
 		try {
 			respond({ success: false, message: 'Service Unavailable' }, 503);
 			respond(deliverable);
 
-			const result = await withFakeTimers(
+			await expect(
 				corsair.kickbox.api.verify.verify({ email: 'test@example.com' }),
+			).rejects.toMatchObject({ status: 503 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('replays the free disposable check after a 5xx', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({ key: API_KEY });
+		try {
+			respond({ success: false, message: 'Service Unavailable' }, 503);
+			respond({ disposable: false });
+
+			const result = await withFakeTimers(
+				corsair.kickbox.api.verify.disposable({ address: 'mailinator.com' }),
 			);
 
-			expect(result.result).toBe('deliverable');
+			expect(result.disposable).toBe(false);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();

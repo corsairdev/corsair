@@ -19,6 +19,8 @@ import { ApiError, request } from 'corsair/http';
 export const KICKBOX_API_BASE = 'https://api.kickbox.com';
 export const KICKBOX_EU_API_BASE = 'https://api.eu.kickbox.com';
 export const KICKBOX_OPEN_BASE = 'https://open.kickbox.com';
+/** The free disposable check's path on the open host. */
+export const KICKBOX_DISPOSABLE_PATH = '/v1/disposable/';
 
 // Verification reaches an SMTP server, and Kickbox's own default timeout is six
 // seconds with a ceiling of thirty. The HTTP timeout sits five seconds above that
@@ -70,16 +72,15 @@ const KICKBOX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A Kickbox failure.
+ * A Kickbox failure that is not an HTTP error: a `200` with
+ * `{ success: false }`, or a request that got no answer.
  *
- * There is one trap worth naming: Kickbox answers `200` with
- * `{ success: false }` for a refused key or a spent balance, so a caller that
- * trusted the status alone would read a failure as a verification result with
- * every field missing. The client throws on that body instead.
+ * Kickbox answers `200` with `{ success: false }` for a refused key or a spent
+ * balance, so a caller that trusted the status alone would read a failure as a
+ * verification result with every field missing. The client throws on that
+ * body instead.
  *
- * The key travels in the query string, so the body is dropped: `ApiError`
- * redacts `apikey` in a URL, but it does not redact a body, and a validation
- * failure echoes the request.
+ * An HTTP error stays core's `ApiError` (see `sanitizeApiError`).
  */
 export class KickboxAPIError extends Error {
 	readonly status?: number;
@@ -142,6 +143,107 @@ export class KickboxAPIError extends Error {
 	get isValidationError(): boolean {
 		return this.status === 400 || this.status === 422;
 	}
+}
+
+/**
+ * The status and Kickbox's code on an error of either kind, for handlers and
+ * callers.
+ */
+export function kickboxErrorStatus(error: unknown): number | undefined {
+	if (error instanceof ApiError || error instanceof KickboxAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+export function kickboxErrorCode(error: unknown): string | undefined {
+	if (error instanceof ApiError) return readFailure(error.body).code;
+	if (error instanceof KickboxAPIError) return error.code;
+	return undefined;
+}
+
+/** The account has run out of verification credits, which no retry fixes. */
+export function isKickboxQuotaError(error: unknown): boolean {
+	return kickboxErrorCode(error) === 'INSUFFICIENT_BALANCE';
+}
+
+/** A refused or missing key. A spent balance is also a 403, but not this. */
+export function isKickboxAuthError(error: unknown): boolean {
+	if (isKickboxQuotaError(error)) return false;
+	const status = kickboxErrorStatus(error);
+	return (
+		status === 401 || status === 403 || kickboxErrorCode(error) === 'FORBIDDEN'
+	);
+}
+
+/**
+ * True when the request went to the paid verification host. A paid request
+ * that failed may still have been charged, so it is never replayed.
+ */
+export function isPaidKickboxRequest(error: unknown): boolean {
+	if (error instanceof KickboxAPIError) return error.paid;
+	// The open host serves only the free disposable check; every other path
+	// is the paid verification.
+	if (error instanceof ApiError) {
+		return !error.request.url.startsWith(KICKBOX_DISPOSABLE_PATH);
+	}
+	return false;
+}
+
+function redactAddress(url: string): string {
+	return url
+		.replace(/([?&]email=)[^&#]*/g, '$1[REDACTED]')
+		.replace(/(\/v1\/disposable\/)[^?#]*/, '$1[REDACTED]');
+}
+
+/**
+ * Core's `ApiError` keeps the raw response, and a Kickbox validation failure
+ * echoes the address it was given. The error is rebuilt as an `ApiError` with
+ * the same status and rate-limit fields, the body cut to `{ success, code }`,
+ * a message made of the status and code only, and the checked address
+ * redacted from the URL and query. Core already redacts the key there.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const fields = readFailure(error.body);
+	const body = Object.fromEntries(
+		Object.entries({ success: fields.success, code: fields.code }).filter(
+			([, value]) => value !== undefined,
+		),
+	);
+	const label = [error.status, fields.code]
+		.filter((part) => part !== undefined)
+		.join(' ');
+	// The checked address is personal data: it rides in `email` on a paid
+	// verification and in the path of a disposable check.
+	const query = error.request.query
+		? Object.fromEntries(
+				Object.entries(error.request.query).map(([key, value]) => [
+					key,
+					key === 'email' ? '[REDACTED]' : value,
+				]),
+			)
+		: undefined;
+	return new ApiError(
+		{
+			...error.request,
+			url: redactAddress(error.request.url),
+			...(query ? { query } : {}),
+		},
+		{
+			url: redactAddress(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body,
+		},
+		`Kickbox ${label}: request failed`,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /** The message Kickbox sent, with its code in front. */
@@ -214,19 +316,7 @@ export async function makeKickboxRequest(
 		return body;
 	} catch (error) {
 		if (error instanceof KickboxAPIError) throw error;
-		if (error instanceof ApiError) {
-			const fields = readFailure(error.body);
-			throw new KickboxAPIError(
-				describeKickboxError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					code: fields.code,
-					retryAfter: error.retryAfter,
-					method,
-					paid,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			// A transport failure never had a response body, so its cause is safe.

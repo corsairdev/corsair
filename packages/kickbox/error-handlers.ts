@@ -1,8 +1,17 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { KickboxAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isKickboxAuthError,
+	isKickboxQuotaError,
+	isPaidKickboxRequest,
+	KickboxAPIError,
+	kickboxErrorStatus,
+} from './client';
 
+// An HTTP error arrives as core's ApiError; a 200 with `success: false` or a
+// request that got no answer arrives as KickboxAPIError.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KickboxAPIError ? error.status : undefined;
+	return kickboxErrorStatus(error);
 }
 
 // Kickbox answers 400, 401, 403, 429, 500 and 503, and puts its own code in the
@@ -13,19 +22,19 @@ export const errorHandlers = {
 	// INSUFFICIENT_BALANCE. It sits before AUTH_ERROR, which would also take a
 	// 403, and before RATE_LIMIT_ERROR because a spent balance never clears.
 	QUOTA_ERROR: {
-		match: (error: Error) =>
-			error instanceof KickboxAPIError && error.isQuotaError,
+		match: (error: Error) => isKickboxQuotaError(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A 429 is a throughput limit. Kickbox publishes no Retry-After, so the
 	// handler's own backoff is the only delay.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof KickboxAPIError && error.isRateLimit,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 2,
 			headersRetryAfterMs:
-				error instanceof KickboxAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError || error instanceof KickboxAPIError
+					? error.retryAfter
+					: undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -33,8 +42,7 @@ export const errorHandlers = {
 	// key, so a 403 usually means it was replaced.
 	// Kickbox can also send the FORBIDDEN code on a 200, which isAuthError covers.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof KickboxAPIError && error.isAuthError,
+		match: (error: Error) => isKickboxAuthError(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 and 422 are an address or timeout Kickbox will not accept. A retry
@@ -46,15 +54,14 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 500 and 503 are Kickbox's own failures, answered without a verdict. Both
-	// operations here are GETs, so replaying one cannot change anything at Kickbox.
+	// 500 and 503 are Kickbox's own failures, answered without a verdict. The
+	// free disposable check is replayed. A paid verification is not: Kickbox does
+	// not document whether a 5xx was charged, so a replay could spend a second
+	// credit.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof KickboxAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
-		handler: async () => ({
-			maxRetries: 2,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
+		handler: async (error: Error) => ({
+			maxRetries: isPaidKickboxRequest(error) ? 0 : 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

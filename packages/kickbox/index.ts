@@ -141,7 +141,14 @@ export function kickbox<const T extends KickboxPluginOptions>(
 	} satisfies InternalKickboxPlugin;
 }
 
-export { KickboxAPIError } from './client';
+export {
+	isKickboxAuthError,
+	isKickboxQuotaError,
+	isPaidKickboxRequest,
+	KickboxAPIError,
+	kickboxErrorCode,
+	kickboxErrorStatus,
+} from './client';
 
 export type {
 	DisposableInput,

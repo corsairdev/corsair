@@ -2,6 +2,7 @@ import type { KickboxEndpoints } from '..';
 import {
 	definedQuery,
 	KICKBOX_API_BASE,
+	KICKBOX_DISPOSABLE_PATH,
 	KICKBOX_EU_API_BASE,
 	KICKBOX_OPEN_BASE,
 	segment,
@@ -57,7 +58,7 @@ export const disposable: KickboxEndpoints['disposable'] = (ctx, input) =>
 		({ address }) => ({
 			method: 'GET',
 			base: KICKBOX_OPEN_BASE,
-			path: `/v1/disposable/${segment(address)}`,
+			path: `${KICKBOX_DISPOSABLE_PATH}${segment(address)}`,
 		}),
 		{ log: ({ address }) => ({ domain: domainOf(address) }) },
 	);

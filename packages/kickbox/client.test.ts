@@ -1,5 +1,8 @@
+import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeKickboxError,
+	kickboxErrorCode,
 	makeKickboxRequest,
 	readFailure,
 } from './client';
@@ -182,9 +185,9 @@ describe('makeKickboxRequest', () => {
 				path: '/v2/verify',
 			}),
 		).rejects.toMatchObject({
+			name: 'ApiError',
 			status: 403,
-			code: 'FORBIDDEN',
-			transport: false,
+			body: { code: 'FORBIDDEN' },
 		});
 	});
 
@@ -202,20 +205,34 @@ describe('makeKickboxRequest', () => {
 				base: 'https://api.kickbox.com',
 				path: '/v2/verify',
 			}),
-		).rejects.toMatchObject({ retryAfter: 7000, isRateLimit: true });
+		).rejects.toMatchObject({ status: 429, retryAfter: 7000 });
 	});
 
-	it('keeps no body on the error', async () => {
-		respond({ success: false, code: 'BAD_REQUEST', message: 'Bad' }, 400);
+	it('stays core ApiError without the address Kickbox echoes or the key', async () => {
+		respond(
+			{
+				success: false,
+				code: 'BAD_REQUEST',
+				message: 'Invalid email: person@private.example',
+			},
+			400,
+		);
 
-		// unknown: the rejection is an error whose fields the assertions read.
-		const error = (await makeKickboxRequest(API_KEY, {
+		const error = await makeKickboxRequest(API_KEY, {
 			method: 'GET',
 			base: 'https://api.kickbox.com',
 			path: '/v2/verify',
-		}).catch((caught: unknown) => caught)) as Error;
+			query: { email: 'person@private.example', apikey: API_KEY },
+		}).catch((caught: unknown) => caught);
 
-		expect(error).not.toHaveProperty('body');
+		expect(error).toBeInstanceOf(ApiError);
+		expect(kickboxErrorCode(error)).toBe('BAD_REQUEST');
+		expect(error).toMatchObject({
+			message: 'Kickbox 400 BAD_REQUEST: request failed',
+		});
+		expect(inspect(error, { depth: 10 })).not.toContain('Invalid email');
+		expect(inspect(error, { depth: 10 })).not.toContain('person@private');
+		expect(inspect(error, { depth: 10 })).not.toContain(API_KEY);
 	});
 
 	it('marks a transport failure and keeps its cause, which never held a body', async () => {
