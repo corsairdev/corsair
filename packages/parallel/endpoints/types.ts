@@ -207,6 +207,7 @@ export const PlaceSearchOutput = z
 					distance_km: z.number().nullable().optional(),
 					rating: z
 						.enum(['fair', 'good', 'great', 'excellent'])
+						.or(z.string())
 						.nullable()
 						.optional(),
 					price_level: z.number().int().nullable().optional(),
@@ -335,7 +336,7 @@ const memoryCommon = {
 export const MemoryRetrieveOutput = z
 	.object({
 		results: z.array(
-			z.discriminatedUnion('kind', [
+			z.union([
 				z
 					.object({
 						kind: z.literal('task'),
@@ -347,7 +348,7 @@ export const MemoryRetrieveOutput = z
 					.object({
 						kind: z.literal('monitor'),
 						...memoryCommon,
-						status: z.enum(['active', 'cancelled']),
+						status: z.enum(['active', 'cancelled']).or(z.string()),
 						matched_events: z
 							.array(
 								z
@@ -369,6 +370,10 @@ export const MemoryRetrieveOutput = z
 						matched_count: z.number().int(),
 					})
 					.passthrough(),
+				// A memory kind Parallel adds later still parses.
+				z
+					.object({ kind: z.string(), ...memoryCommon })
+					.passthrough(),
 			]),
 		),
 	})
@@ -384,6 +389,10 @@ export const safeId = z
 	);
 const monitorType = z.enum(['event_stream', 'snapshot']);
 const monitorProcessor = z.enum(['lite', 'base', 'core']);
+// Response enums also take values Parallel adds later; inputs stay strict.
+const monitorTypeOut = monitorType.or(z.string());
+const monitorProcessorOut = monitorProcessor.or(z.string());
+const monitorStatusOut = z.enum(['active', 'cancelled']).or(z.string());
 const monitorWebhook = z.object({
 	url: z.string(),
 	event_types: z
@@ -393,6 +402,19 @@ const monitorWebhook = z.object({
 				'monitor.execution.completed',
 				'monitor.execution.failed',
 			]),
+		)
+		.optional(),
+});
+const monitorWebhookOut = monitorWebhook.extend({
+	event_types: z
+		.array(
+			z
+				.enum([
+					'monitor.event.detected',
+					'monitor.execution.completed',
+					'monitor.execution.failed',
+				])
+				.or(z.string()),
 		)
 		.optional(),
 });
@@ -469,13 +491,13 @@ export const MonitorUpdateInput = z.object({
 });
 export const MonitorOutput = z
 	.object({
-		type: monitorType,
+		type: monitorTypeOut,
 		monitor_id: z.string(),
-		status: z.enum(['active', 'cancelled']),
+		status: monitorStatusOut,
 		frequency: z.string(),
-		processor: monitorProcessor,
+		processor: monitorProcessorOut,
 		created_at: z.string(),
-		webhook: monitorWebhook.nullable().optional(),
+		webhook: monitorWebhookOut.nullable().optional(),
 		metadata: z.record(z.string(), z.string()).nullable().optional(),
 		last_run_at: z.string().nullable().optional(),
 		settings: z.union([
@@ -519,12 +541,9 @@ export const MonitorEventsOutput = z
 		events: z.array(
 			z
 				.object({
-					event_type: z.enum([
-						'event_stream',
-						'snapshot',
-						'completion',
-						'error',
-					]),
+					event_type: z
+						.enum(['event_stream', 'snapshot', 'completion', 'error'])
+						.or(z.string()),
 					event_id: z.string().optional(),
 					event_group_id: z.string().optional(),
 					event_date: z.string().nullable().optional(),
@@ -573,6 +592,7 @@ export const TaskRunInput = z.object({
 	advanced_settings: z
 		.object({
 			location: z.string().nullable().optional(),
+			fetch_policy: fetchPolicy.nullable().optional(),
 			data_sources: z
 				.object({
 					pay_per_use: z.array(z.string()).optional(),
@@ -602,15 +622,17 @@ export const TaskRunInput = z.object({
 	enable_events: z.boolean().nullable().optional(),
 	webhook: taskWebhook.nullable().optional(),
 });
-const taskStatus = z.enum([
-	'queued',
-	'action_required',
-	'running',
-	'completed',
-	'failed',
-	'cancelling',
-	'cancelled',
-]);
+const taskStatus = z
+	.enum([
+		'queued',
+		'action_required',
+		'running',
+		'completed',
+		'failed',
+		'cancelling',
+		'cancelled',
+	])
+	.or(z.string());
 export const TaskRunOutput = z
 	.object({
 		run_id: z.string(),
@@ -729,6 +751,7 @@ export const TaskResultOutput = z
 
 const matchCondition = z.object({ name: z.string(), description: z.string() });
 const findallGenerator = z.enum(['base', 'core', 'pro', 'preview']);
+const findallGeneratorOut = findallGenerator.or(z.string());
 const mcpServer = z.object({
 	type: z.literal('url').optional(),
 	url: z.string(),
@@ -790,14 +813,14 @@ export const FindAllSchemaOutput = z
 		entity_type: z.string(),
 		match_conditions: z.array(matchCondition),
 		enrichments: z.array(enrichBody).nullable().optional(),
-		generator: findallGenerator.optional(),
+		generator: findallGeneratorOut.optional(),
 		match_limit: z.number().int().nullable().optional(),
 	})
 	.passthrough();
 export const FindAllRunOutput = z
 	.object({
 		findall_id: z.string(),
-		generator: findallGenerator,
+		generator: findallGeneratorOut,
 		status: z
 			.object({
 				status: taskStatus,
@@ -818,6 +841,7 @@ export const FindAllRunOutput = z
 						'timeout',
 						'insufficient_funds',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
 			})
@@ -836,12 +860,9 @@ export const FindAllResultOutput = z
 					candidate_id: z.string(),
 					name: z.string(),
 					url: z.string(),
-					match_status: z.enum([
-						'generated',
-						'matched',
-						'unmatched',
-						'discarded',
-					]),
+					match_status: z
+						.enum(['generated', 'matched', 'unmatched', 'discarded'])
+						.or(z.string()),
 					description: z.string().nullable().optional(),
 					output: z.record(z.string(), z.json()).nullable().optional(),
 					basis: z.array(taskBasis).nullable().optional(),
@@ -989,6 +1010,10 @@ const responseItem = z.union([
 			tools: z.array(z.json()),
 			error: z.string().nullable().optional(),
 		})
+		.passthrough(),
+	// Output item types Parallel adds later (e.g. reasoning) still parse.
+	z
+		.object({ type: z.string() })
 		.passthrough(),
 ]);
 export const ResponseOutput = z
