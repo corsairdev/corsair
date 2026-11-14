@@ -186,7 +186,9 @@ const contactInputFields = {
 		.string()
 		.min(1)
 		.optional()
-		.describe('An existing contact id. Use this or the address fields.'),
+		.describe(
+			'An existing contact id. Use this or the address fields: when `id` is set, only the id is sent and the other fields here are ignored.',
+		),
 	firstName: z.string().min(1).optional(),
 	lastName: z.string().min(1).optional(),
 	companyName: z.string().min(1).optional(),
@@ -202,11 +204,15 @@ const contactInputFields = {
 	skipVerification: z
 		.boolean()
 		.optional()
-		.describe('Skip address correction and verification.'),
+		.describe(
+			'Skip address correction and verification. Applies only to an inline contact (address fields, no `id`).',
+		),
 	forceVerifiedStatus: z
 		.boolean()
 		.optional()
-		.describe('Mark the address verified even if verification fails.'),
+		.describe(
+			'Mark the address verified even if verification fails. Applies only to an inline contact (address fields, no `id`).',
+		),
 	// Documented on an inline contact: hides the contact's details from API
 	// responses and the dashboard. Omitting the field here would silently drop a
 	// caller's `secret: true` before the request was built.

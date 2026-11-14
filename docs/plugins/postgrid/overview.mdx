@@ -15,7 +15,7 @@ What to know before you print:
 - **Cancelling.** An order can be cancelled only while its status is `ready`. After that it is with the printer. For a send-as-soon-as-possible order that is roughly midnight Eastern on the following day.
 - **Tracking.** Every order carries `status`, from `ready` through `printing` and `processed_for_delivery` to `completed` or `cancelled`. Live mail bound for the US also gains `imbStatus`, the USPS stage, plus `imbDate` and `imbZIPCode`.
 - **Paging is by offset.** List routes take `skip` and `limit` and return `totalCount`; page while `skip` is below it by adding `limit` each time.
-- **Addresses are corrected.** A created contact may come back with a different address than it was sent, and `addressStatus` says whether it was `verified`, `corrected` or `failed`.
+- **Addresses are corrected.** A created contact may come back with a different address than it was sent, and `addressStatus` says whether it was `verified`, `corrected` or `failed`. On an order, a `to` or `from` contact given with an `id` is sent as that id alone, so `skipVerification` and `forceVerifiedStatus` take effect only on an inline contact (address fields, no `id`).
 - **Webhooks.** PostGrid can post delivery notifications to a URL you register in its dashboard, but this plugin does not handle inbound deliveries.
 
 **What you get:**
