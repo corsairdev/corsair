@@ -1,0 +1,60 @@
+displayName: Polygon.io
+description: US stock market data API serving historical aggregates, ticker reference data, snapshots and market status.
+domain: polygon.io
+recommendedAuth: api_key
+overviewNote: |
+  Polygon.io publishes its site at polygon.io and its docs as Massive, and both names serve the same API on `api.polygon.io` and `api.massive.com`. Create a key in the dashboard and paste it into the plugin; it travels as the documented `apiKey` query parameter.
+
+  What to know before you query:
+
+  - **Plans gate the data, not the routes.** A free key reaches market status, ticker reference and end-of-day bars, while real-time snapshots need a paid plan. When a plan does not include a dataset the API answers 403 rather than an empty result, and the plugin reports that as a permission error instead of retrying.
+  - **`status` is not always `OK`.** A plan with delayed data answers `DELAYED`, so the field stays a string rather than an enum a future value could break.
+  - **Paging.** The list routes return `next_url` while another page exists. It already carries the cursor and your filters, so pass it to the same operation as `nextUrl` and the other arguments are ignored. Any `apiKey` the URL echoes is dropped, because the plugin adds the caller's own.
+  - **A missing bar is not an error.** `aggregates.bars` returns an empty `results` when no qualifying trades happened in a window, so an empty page means the market was closed rather than a failed call.
+  - **Rates.** The free tier allows a small number of calls a minute. A 429 is retried three times with a two-second floor, which matches the documented window.
+  - **Webhooks.** The API sends none, so the plugin receives none.
+references:
+  - title: Stocks REST API
+    url: https://massive.com/docs/rest/stocks/overview
+  - title: REST quickstart
+    url: https://massive.com/docs/rest/quickstart
+# `timespan` is an enum, and the validator renders enum members unquoted while
+# requiring a quoted string example, so the call lives in `apiExamples` below
+# where the argument string is passed through verbatim.
+examples:
+  read:
+    path: tickers.list
+    title: List actively traded US stocks
+    args:
+      market: stocks
+      active: true
+  write:
+    path: snapshots.snapshot
+    title: Read a ticker's latest snapshot
+    args:
+      ticker: AAPL
+apiExamples:
+  aggregates.bars:
+    call: "{ ticker: 'AAPL', multiplier: 1, timespan: 'day', from: '2026-01-02', to: '2026-01-09' }"
+  aggregates.previousDay:
+    call: "{ ticker: 'AAPL', adjusted: true }"
+  aggregates.dailySummary:
+    call: "{ ticker: 'AAPL', date: '2026-01-09' }"
+  aggregates.marketSummary:
+    call: "{ date: '2026-01-09', limit: 100 }"
+  snapshots.snapshot:
+    call: "{ ticker: 'AAPL' }"
+  snapshots.movers:
+    call: "{ direction: 'gainers', include_otc: false }"
+  tickers.list:
+    call: "{ market: 'stocks', active: true, limit: 50 }"
+  tickers.overview:
+    call: "{ ticker: 'AAPL' }"
+  tickers.types:
+    call: "{ asset_class: 'stocks' }"
+  market.status:
+    call: '{}'
+  market.holidays:
+    call: '{}'
+  market.exchanges:
+    call: "{ asset_class: 'stocks', locale: 'us' }"
