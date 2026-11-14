@@ -267,8 +267,13 @@ export const findymailEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof findymailEndpointsNested
 >;
+// Finder, verifier, phone, company, technology and lookalike lookups use credits
+// but only return data, so they stay `read` (as in the Ahrefs plugin). An
+// Intellimatch export runs as a background job billed per company and contact
+// found, and a monitor keeps charging credits per delivered signal, so both are
+// `destructive`.
 const findymailEndpointMeta = {
-	'verification.verify': { riskLevel: 'write', description: 'Verify an email' },
+	'verification.verify': { riskLevel: 'read', description: 'Verify an email' },
 	'lists.list': {
 		riskLevel: 'read',
 		description: 'Get the list of contact lists',
@@ -280,9 +285,9 @@ const findymailEndpointMeta = {
 		description: 'Delete a given list',
 	},
 	'contacts.list': { riskLevel: 'read', description: 'Get contacts saved' },
-	'search.name': { riskLevel: 'write', description: 'Find from name' },
+	'search.name': { riskLevel: 'read', description: 'Find from name' },
 	'search.businessProfile': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Find from business profile',
 	},
 	'exclusionLists.list': {
@@ -317,29 +322,35 @@ const findymailEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Remove excluded domains',
 	},
-	'intellimatch.search': { riskLevel: 'write', description: 'Search leads' },
+	'intellimatch.search': {
+		riskLevel: 'destructive',
+		description: 'Search leads',
+	},
 	'intellimatch.status': {
 		riskLevel: 'read',
 		description: 'Get export status',
 	},
 	'intellimatch.results': { riskLevel: 'read', description: 'Get results' },
 	'intellimatch.lookalikes': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Search lookalike companies',
 	},
 	'search.reverseEmail': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Reverse email lookup',
 	},
 	'search.company': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get company information',
 	},
-	'search.employees': { riskLevel: 'write', description: 'Find employees' },
-	'search.phone': { riskLevel: 'write', description: 'Find phone' },
+	'search.employees': { riskLevel: 'read', description: 'Find employees' },
+	'search.phone': { riskLevel: 'read', description: 'Find phone' },
 	'signals.list': { riskLevel: 'read', description: 'List signals' },
 	'monitors.list': { riskLevel: 'read', description: 'List monitors' },
-	'monitors.create': { riskLevel: 'write', description: 'Create a monitor' },
+	'monitors.create': {
+		riskLevel: 'destructive',
+		description: 'Create a monitor',
+	},
 	'monitors.update': { riskLevel: 'write', description: 'Update a monitor' },
 	'monitors.delete': {
 		riskLevel: 'destructive',
@@ -351,7 +362,7 @@ const findymailEndpointMeta = {
 		description: 'Search technologies',
 	},
 	'technologies.lookup': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Lookup technologies by domain',
 	},
 	'usage.credits': { riskLevel: 'read', description: 'Get remaining credits' },
