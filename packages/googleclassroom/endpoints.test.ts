@@ -3313,7 +3313,7 @@ describe('Google Classroom operations', () => {
 				studentId: 'studentId-123',
 			},
 			query: { fields: 'id', updateMask: 'state' },
-			body: { state: 'PENDING' },
+			body: { state: 'COMPLETE' },
 		});
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
@@ -3322,7 +3322,7 @@ describe('Google Classroom operations', () => {
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'state' },
-				body: { state: 'PENDING' },
+				body: { state: 'COMPLETE' },
 			},
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(

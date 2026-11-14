@@ -235,7 +235,7 @@ apiExamples:
   "userProfiles.guardianInvitations.list":
     call: "{ pathParams: {\"studentId\":\"studentId-123\"}, query: {\"invitedEmailAddress\":\"guardian@school.test\",\"pageSize\":1,\"states\":[\"PENDING\"]} }"
   "userProfiles.guardianInvitations.patch":
-    call: "{ pathParams: {\"invitationId\":\"invitationId-123\",\"studentId\":\"studentId-123\"}, query: {\"updateMask\":\"state\"}, body: {\"state\":\"PENDING\"} }"
+    call: "{ pathParams: {\"invitationId\":\"invitationId-123\",\"studentId\":\"studentId-123\"}, query: {\"updateMask\":\"state\"}, body: {\"state\":\"COMPLETE\"} }"
   "userProfiles.guardians.delete":
     call: "{ pathParams: {\"guardianId\":\"guardianId-123\",\"studentId\":\"studentId-123\"}, query: {} }"
   "userProfiles.guardians.get":

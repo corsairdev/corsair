@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { GoogleClassroomResponseSchemas } from './endpoints/models';
 import {
 	GOOGLE_CLASSROOM_OAUTH_SCOPES,
@@ -2794,7 +2796,7 @@ describe('Google Classroom endpoint schemas', () => {
 					studentId: 'studentId-123',
 				},
 				query: { fields: 'id', updateMask: 'state' },
-				body: { state: 'PENDING' },
+				body: { state: 'COMPLETE' },
 			}).success,
 		).toBe(true);
 		expect(
@@ -2806,7 +2808,7 @@ describe('Google Classroom endpoint schemas', () => {
 					studentId: 'studentId-123',
 				},
 				query: { fields: 'id', updateMask: 'state' },
-				body: { state: 'PENDING' },
+				body: { state: 'COMPLETE' },
 				unlistedCallback: 'https://corsair.dev/callback',
 			}).success,
 		).toBe(false);
@@ -2959,5 +2961,41 @@ describe('Google Classroom risk levels and response tolerance', () => {
 				body: { name: 'x', ownerId: 'me', notAField: true },
 			}),
 		).toThrow();
+	});
+});
+
+describe('Google Classroom provider contract details', () => {
+	it('accepts OWNER invitations, which Google documents as a valid role', () => {
+		expect(
+			GoogleClassroomEndpointInputSchemas['invitations.create'].safeParse({
+				pathParams: {},
+				query: {},
+				body: { userId: 'teacher-123', courseId: 'course-123', role: 'OWNER' },
+			}).success,
+		).toBe(true);
+	});
+
+	it('only lets a guardian invitation patch move the state to COMPLETE', () => {
+		const patch =
+			GoogleClassroomEndpointInputSchemas[
+				'userProfiles.guardianInvitations.patch'
+			];
+		const input = (state: string) => ({
+			pathParams: {
+				invitationId: 'invitationId-123',
+				studentId: 'studentId-123',
+			},
+			query: { updateMask: 'state' },
+			body: { state },
+		});
+		expect(patch.safeParse(input('COMPLETE')).success).toBe(true);
+		expect(patch.safeParse(input('PENDING')).success).toBe(false);
+	});
+
+	it('links to Google docs with absolute URLs, not paths on the Corsair docs host', () => {
+		for (const file of ['endpoints/types.ts', 'endpoints/models.ts']) {
+			const source = readFileSync(join(__dirname, file), 'utf8');
+			expect(source.match(/\]\(\/[^)]*\)/g) ?? []).toEqual([]);
+		}
 	});
 });

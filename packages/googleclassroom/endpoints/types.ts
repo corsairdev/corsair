@@ -306,7 +306,7 @@ export const GOOGLE_CLASSROOM_ROUTES = {
 		method: 'POST',
 		path: '/v1/courses/{courseId}/courseWork/{courseWorkId}/rubrics',
 		description:
-			"Creates a rubric. The requesting user and course owner must have rubrics creation capabilities. For details, see [licensing requirements](https://developers.google.com/workspace/classroom/rubrics/limitations#license-requirements). For further details, see [Rubrics structure and known limitations](/classroom/rubrics/limitations). This request must be made by the Google Cloud console of the [OAuth client ID](https://support.google.com/cloud/answer/6158849) used to create the parent course work item. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user isn't permitted to create rubrics for course work in the requested course. * `INTERNAL` if the request has insufficient OAuth scopes. * `INVALID_ARGUMENT` if the request is malformed and for the following request error: * `RubricCriteriaInvalidFormat` * `NOT_FOUND` if the requested course or course work don't exist or the user doesn't have access to the course or course work. * `FAILED_PRECONDITION` for the following request error: * `AttachmentNotVisible`",
+			"Creates a rubric. The requesting user and course owner must have rubrics creation capabilities. For details, see [licensing requirements](https://developers.google.com/workspace/classroom/rubrics/limitations#license-requirements). For further details, see [Rubrics structure and known limitations](https://developers.google.com/workspace/classroom/rubrics/limitations). This request must be made by the Google Cloud console of the [OAuth client ID](https://support.google.com/cloud/answer/6158849) used to create the parent course work item. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user isn't permitted to create rubrics for course work in the requested course. * `INTERNAL` if the request has insufficient OAuth scopes. * `INVALID_ARGUMENT` if the request is malformed and for the following request error: * `RubricCriteriaInvalidFormat` * `NOT_FOUND` if the requested course or course work don't exist or the user doesn't have access to the course or course work. * `FAILED_PRECONDITION` for the following request error: * `AttachmentNotVisible`",
 		scopes: ['https://www.googleapis.com/auth/classroom.coursework.students'],
 		riskLevel: 'write',
 	},
@@ -348,7 +348,7 @@ export const GOOGLE_CLASSROOM_ROUTES = {
 		method: 'PATCH',
 		path: '/v1/courses/{courseId}/courseWork/{courseWorkId}/rubrics/{id}',
 		description:
-			"Updates a rubric. See google.classroom.v1.Rubric for details of which fields can be updated. Rubric update capabilities are [limited](/classroom/rubrics/limitations) once grading has started. The requesting user and course owner must have rubrics creation capabilities. For details, see [licensing requirements](https://developers.google.com/workspace/classroom/rubrics/limitations#license-requirements). This request must be made by the Google Cloud console of the [OAuth client ID](https://support.google.com/cloud/answer/6158849) used to create the parent course work item. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting developer project didn't create the corresponding course work, if the user isn't permitted to make the requested modification to the rubric, or for access errors. This error code is also returned if grading has already started on the rubric. * `INVALID_ARGUMENT` if the request is malformed and for the following request error: * `RubricCriteriaInvalidFormat` * `NOT_FOUND` if the requested course, course work, or rubric doesn't exist or if the user doesn't have access to the corresponding course work. * `INTERNAL` if grading has already started on the rubric.",
+			"Updates a rubric. See google.classroom.v1.Rubric for details of which fields can be updated. Rubric update capabilities are [limited](https://developers.google.com/workspace/classroom/rubrics/limitations) once grading has started. The requesting user and course owner must have rubrics creation capabilities. For details, see [licensing requirements](https://developers.google.com/workspace/classroom/rubrics/limitations#license-requirements). This request must be made by the Google Cloud console of the [OAuth client ID](https://support.google.com/cloud/answer/6158849) used to create the parent course work item. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting developer project didn't create the corresponding course work, if the user isn't permitted to make the requested modification to the rubric, or for access errors. This error code is also returned if grading has already started on the rubric. * `INVALID_ARGUMENT` if the request is malformed and for the following request error: * `RubricCriteriaInvalidFormat` * `NOT_FOUND` if the requested course, course work, or rubric doesn't exist or if the user doesn't have access to the corresponding course work. * `INTERNAL` if grading has already started on the rubric.",
 		scopes: ['https://www.googleapis.com/auth/classroom.coursework.students'],
 		riskLevel: 'destructive',
 	},
@@ -1119,7 +1119,7 @@ const InvitationCreateBodySchema = z
 	.object({
 		userId: z.string().min(1),
 		courseId: z.string().min(1),
-		role: z.enum(['STUDENT', 'TEACHER']),
+		role: z.enum(['STUDENT', 'TEACHER', 'OWNER']),
 	})
 	.strict();
 const GuardianInvitationCreateBodySchema = z
@@ -1130,7 +1130,8 @@ const GuardianInvitationCreateBodySchema = z
 	.strict();
 const GuardianInvitationUpdateBodySchema = z
 	.object({
-		state: z.enum(['PENDING', 'COMPLETE']),
+		// Google only allows PENDING -> COMPLETE here (it withdraws the invitation).
+		state: z.enum(['COMPLETE']),
 	})
 	.strict();
 const RegistrationCreateBodySchema = z
