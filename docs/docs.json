@@ -2866,6 +2866,14 @@
                 ]
               },
               {
+                "group": "NeverBounce",
+                "pages": [
+                  "plugins/neverbounce/overview",
+                  "plugins/neverbounce/api",
+                  "plugins/neverbounce/database"
+                ]
+              },
+              {
                 "group": "NextDNS",
                 "pages": [
                   "plugins/nextdns/overview",

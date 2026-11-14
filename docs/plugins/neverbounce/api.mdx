@@ -1,0 +1,81 @@
+---
+title: "NeverBounce API reference"
+sidebarTitle: "API"
+description: "API reference for the NeverBounce plugin in Corsair: every `neverbounce.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Single
+
+### check
+
+`single.check`
+
+Verify an email address; verification may consume credits
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neverbounce.api.single.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Email address to verify, including invalid addresses for syntax checking |
+| `address_info` | `number` | No | Include address details (default 0) |
+| `credits_info` | `number` | No | Include credit details (default 0) |
+| `timeout` | `number` | No | Maximum verification time in seconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `result` | `string` | No | — |
+| `flags` | `string[]` | No | — |
+| `suggested_correction` | `string` | No | — |
+| `address_info` | `object` | No | — |
+| `credits_info` | `object` | No | — |
+| `execution_time` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="address_info full type">
+
+```ts
+{
+  original_email?: string,
+  normalized_email?: string,
+  addr?: string,
+  alias?: string,
+  host?: string,
+  fqdn?: string,
+  domain?: string,
+  subdomain?: string,
+  tld?: string
+}
+```
+</Accordion>
+
+<Accordion title="credits_info full type">
+
+```ts
+{
+  paid_credits_used?: number,
+  free_credits_used?: number,
+  paid_credits_remaining?: number,
+  free_credits_remaining?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
