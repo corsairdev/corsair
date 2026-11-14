@@ -209,7 +209,9 @@ export const BaseProviders = [
 	'deployhq',
 	'desktime',
 	'devinmcp',
+	'dialpad',
 	'diffbot',
+	'digicert',
 	'digitalocean',
 	'discord',
 	'dnsfilter',
@@ -230,6 +232,7 @@ export const BaseProviders = [
 	'dynapictures',
 	'e2b',
 	'elevenlabs',
+	'elorus',
 	'emailoctopus',
 	'emelia',
 	'encodian',
@@ -250,26 +253,38 @@ export const BaseProviders = [
 	'facebook',
 	'fal',
 	'faraday',
+	'fathom',
+	'felt',
+	'fibery',
 	'fidel',
 	'figma',
 	'filevine',
 	'filloutforms',
 	'finage',
 	'finerworks',
+	'finmei',
+	'fireberry',
 	'firecrawl',
 	'fireflies',
 	'fixer',
 	'flexisign',
 	'flutterwave',
 	'fluxguard',
+	'folk',
 	'followupboss',
+	'fomo',
 	'formbricks',
+	'formdesk',
 	'foursquare',
 	'fundable',
 	'gemini',
+	'gagelist',
 	'gamma',
+	'gatherup',
 	'genderapi',
+	'genderapiio',
 	'genderize',
+	'geoapify',
 	'giphy',
 	'github',
 	'gitlab',
@@ -319,7 +334,10 @@ export const BaseProviders = [
 	'intercom',
 	'jigsawstack',
 	'jira',
+	'kadoa',
 	'kaggle',
+	'kanbanize',
+	'keen',
 	'keenable',
 	'keyword',
 	'kibana',
@@ -766,7 +784,9 @@ export const ProviderDisplayNames = {
 	deployhq: 'DeployHQ',
 	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
+	dialpad: 'Dialpad',
 	diffbot: 'Diffbot',
+	digicert: 'DigiCert',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dnsfilter: 'DNSFilter',
@@ -787,6 +807,7 @@ export const ProviderDisplayNames = {
 	dynapictures: 'Dynapictures',
 	e2b: 'E2B',
 	elevenlabs: 'ElevenLabs',
+	elorus: 'Elorus',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
 	encodian: 'Encodian',
@@ -807,26 +828,38 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	fal: 'fal',
 	faraday: 'Faraday',
+	fathom: 'Fathom',
+	felt: 'Felt',
+	fibery: 'Fibery',
 	fidel: 'Fidel',
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
 	finage: 'Finage',
 	finerworks: 'FinerWorks',
+	finmei: 'Finmei',
+	fireberry: 'Fireberry',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	fixer: 'Fixer',
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
 	fluxguard: 'Fluxguard',
+	folk: 'Folk',
 	followupboss: 'Follow Up Boss',
+	fomo: 'Fomo',
 	formbricks: 'Formbricks',
+	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
+	gagelist: 'Gagelist',
 	gamma: 'Gamma',
+	gatherup: 'GatherUp',
 	genderapi: 'Gender API',
+	genderapiio: 'GenderAPI.io',
 	genderize: 'Genderize',
+	geoapify: 'Geoapify',
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
@@ -876,7 +909,10 @@ export const ProviderDisplayNames = {
 	intercom: 'Intercom',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
+	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
+	kanbanize: 'Kanbanize',
+	keen: 'Keen',
 	keenable: 'Keenable',
 	keyword: 'Keyword',
 	kibana: 'Kibana',
@@ -1330,7 +1366,9 @@ export type AllProviders =
 	| 'deployhq'
 	| 'desktime'
 	| 'devinmcp'
+	| 'dialpad'
 	| 'diffbot'
+	| 'digicert'
 	| 'digitalocean'
 	| 'discord'
 	| 'dnsfilter'
@@ -1351,6 +1389,7 @@ export type AllProviders =
 	| 'dynapictures'
 	| 'e2b'
 	| 'elevenlabs'
+	| 'elorus'
 	| 'emailoctopus'
 	| 'emelia'
 	| 'encodian'
@@ -1371,26 +1410,38 @@ export type AllProviders =
 	| 'facebook'
 	| 'fal'
 	| 'faraday'
+	| 'fathom'
+	| 'felt'
+	| 'fibery'
 	| 'fidel'
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
 	| 'finage'
 	| 'finerworks'
+	| 'finmei'
+	| 'fireberry'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'fixer'
 	| 'flexisign'
 	| 'flutterwave'
 	| 'fluxguard'
+	| 'folk'
 	| 'followupboss'
+	| 'fomo'
 	| 'formbricks'
+	| 'formdesk'
 	| 'foursquare'
 	| 'fundable'
 	| 'gemini'
+	| 'gagelist'
 	| 'gamma'
+	| 'gatherup'
 	| 'genderapi'
+	| 'genderapiio'
 	| 'genderize'
+	| 'geoapify'
 	| 'giphy'
 	| 'github'
 	| 'gitlab'
@@ -1440,7 +1491,10 @@ export type AllProviders =
 	| 'intercom'
 	| 'jigsawstack'
 	| 'jira'
+	| 'kadoa'
 	| 'kaggle'
+	| 'kanbanize'
+	| 'keen'
 	| 'keenable'
 	| 'keyword'
 	| 'kibana'

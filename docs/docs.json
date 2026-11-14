@@ -1763,11 +1763,27 @@
                 ]
               },
               {
+                "group": "Dialpad",
+                "pages": [
+                  "plugins/dialpad/overview",
+                  "plugins/dialpad/api",
+                  "plugins/dialpad/database"
+                ]
+              },
+              {
                 "group": "Diffbot",
                 "pages": [
                   "plugins/diffbot/overview",
                   "plugins/diffbot/api",
                   "plugins/diffbot/database"
+                ]
+              },
+              {
+                "group": "DigiCert",
+                "pages": [
+                  "plugins/digicert/overview",
+                  "plugins/digicert/api",
+                  "plugins/digicert/database"
                 ]
               },
               {
@@ -1937,6 +1953,14 @@
                 ]
               },
               {
+                "group": "Elorus",
+                "pages": [
+                  "plugins/elorus/overview",
+                  "plugins/elorus/api",
+                  "plugins/elorus/database"
+                ]
+              },
+              {
                 "group": "EmailOctopus",
                 "pages": [
                   "plugins/emailoctopus/overview",
@@ -2102,6 +2126,30 @@
                 ]
               },
               {
+                "group": "Fathom",
+                "pages": [
+                  "plugins/fathom/overview",
+                  "plugins/fathom/api",
+                  "plugins/fathom/database"
+                ]
+              },
+              {
+                "group": "Felt",
+                "pages": [
+                  "plugins/felt/overview",
+                  "plugins/felt/api",
+                  "plugins/felt/database"
+                ]
+              },
+              {
+                "group": "Fibery",
+                "pages": [
+                  "plugins/fibery/overview",
+                  "plugins/fibery/api",
+                  "plugins/fibery/database"
+                ]
+              },
+              {
                 "group": "Fidel",
                 "pages": [
                   "plugins/fidel/overview",
@@ -2149,6 +2197,22 @@
                   "plugins/finerworks/overview",
                   "plugins/finerworks/api",
                   "plugins/finerworks/database"
+                ]
+              },
+              {
+                "group": "Finmei",
+                "pages": [
+                  "plugins/finmei/overview",
+                  "plugins/finmei/api",
+                  "plugins/finmei/database"
+                ]
+              },
+              {
+                "group": "Fireberry",
+                "pages": [
+                  "plugins/fireberry/overview",
+                  "plugins/fireberry/api",
+                  "plugins/fireberry/database"
                 ]
               },
               {
@@ -2204,6 +2268,14 @@
                 ]
               },
               {
+                "group": "Folk",
+                "pages": [
+                  "plugins/folk/overview",
+                  "plugins/folk/api",
+                  "plugins/folk/database"
+                ]
+              },
+              {
                 "group": "Follow Up Boss",
                 "pages": [
                   "plugins/followupboss/overview",
@@ -2212,11 +2284,27 @@
                 ]
               },
               {
+                "group": "Fomo",
+                "pages": [
+                  "plugins/fomo/overview",
+                  "plugins/fomo/api",
+                  "plugins/fomo/database"
+                ]
+              },
+              {
                 "group": "Formbricks",
                 "pages": [
                   "plugins/formbricks/overview",
                   "plugins/formbricks/api",
                   "plugins/formbricks/database"
+                ]
+              },
+              {
+                "group": "Formdesk",
+                "pages": [
+                  "plugins/formdesk/overview",
+                  "plugins/formdesk/api",
+                  "plugins/formdesk/database"
                 ]
               },
               {
@@ -2236,11 +2324,27 @@
                 ]
               },
               {
+                "group": "GageList",
+                "pages": [
+                  "plugins/gagelist/overview",
+                  "plugins/gagelist/api",
+                  "plugins/gagelist/database"
+                ]
+              },
+              {
                 "group": "Gamma",
                 "pages": [
                   "plugins/gamma/overview",
                   "plugins/gamma/api",
                   "plugins/gamma/database"
+                ]
+              },
+              {
+                "group": "GatherUp",
+                "pages": [
+                  "plugins/gatherup/overview",
+                  "plugins/gatherup/api",
+                  "plugins/gatherup/database"
                 ]
               },
               {
@@ -2265,6 +2369,22 @@
                   "plugins/genderize/overview",
                   "plugins/genderize/api",
                   "plugins/genderize/database"
+                ]
+              },
+              {
+                "group": "GenderAPI.io",
+                "pages": [
+                  "plugins/genderapiio/overview",
+                  "plugins/genderapiio/api",
+                  "plugins/genderapiio/database"
+                ]
+              },
+              {
+                "group": "Geoapify",
+                "pages": [
+                  "plugins/geoapify/overview",
+                  "plugins/geoapify/api",
+                  "plugins/geoapify/database"
                 ]
               },
               {
@@ -2684,11 +2804,35 @@
                 ]
               },
               {
+                "group": "Kadoa",
+                "pages": [
+                  "plugins/kadoa/overview",
+                  "plugins/kadoa/api",
+                  "plugins/kadoa/database"
+                ]
+              },
+              {
                 "group": "Kaggle",
                 "pages": [
                   "plugins/kaggle/overview",
                   "plugins/kaggle/api",
                   "plugins/kaggle/database"
+                ]
+              },
+              {
+                "group": "Kanbanize",
+                "pages": [
+                  "plugins/kanbanize/overview",
+                  "plugins/kanbanize/api",
+                  "plugins/kanbanize/database"
+                ]
+              },
+              {
+                "group": "Keen",
+                "pages": [
+                  "plugins/keen/overview",
+                  "plugins/keen/api",
+                  "plugins/keen/database"
                 ]
               },
               {
