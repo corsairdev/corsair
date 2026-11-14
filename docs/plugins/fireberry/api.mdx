@@ -57,7 +57,7 @@ await corsair.fireberry.api.batch.delete({ objectCode: '1', ids: ['00000000-0000
 | `objectCode` | `account \| activitylog \| article \| accountproduct \| businessunit \| campaign \| competitor \| contact \| contract \| activity \| note \| opportunity \| crmorderitem \| calllog \| product \| project \| task \| cases \| string` | Yes | — |
 | `ids` | `string[]` | Yes | — |
 
-Deletion accepts at most 20 record GUIDs under data. Batch API availability depends on the Fireberry license.
+Pass 1–20 record GUIDs in ids; the plugin sends them to Fireberry as data. Batch API availability depends on the Fireberry license.
 
 
 
