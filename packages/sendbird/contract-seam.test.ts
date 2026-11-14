@@ -1,5 +1,4 @@
 import { ApiError, request } from 'corsair/http';
-import { SendbirdAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 import type { SendbirdContext } from './index';
 import {
@@ -217,7 +216,8 @@ describe('Sendbird public request seam', () => {
 				body: 'body' in fixture ? fixture.body : undefined,
 				query: 'query' in fixture ? fixture.query : undefined,
 			});
-			expect(transport.rateLimitConfig.maxRetries).toBe(0);
+			// Core's default 429 retries (R8) stay on: no plugin override.
+			expect(transport?.rateLimitConfig).toBeUndefined();
 		},
 	);
 	it.each(['', '.', '..', 'a/b', 'a\\b', 'a"b', "a'b"])(
@@ -318,32 +318,25 @@ describe('Sendbird public request seam', () => {
 		await expect(groups.users?.list?.(bad, {})).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
-	it('preserves Sendbird error bodies and rate-limit retry timing without replay', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'GET', url: '/users' },
-				{
-					url: '/users',
-					ok: false,
-					status: 429,
-					statusText: 'Too Many Requests',
-					body: { message: 'rate limit', code: 429000, error: true },
-				},
-				'limited',
-				{ retryAfter: 5000 },
-			),
+	it('passes core ApiError through with its status, body and Retry-After', async () => {
+		const limited = new ApiError(
+			{ method: 'GET', url: '/users' },
+			{
+				url: '/users',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { message: 'rate limit', code: 429000, error: true },
+			},
+			'limited',
+			{ retryAfter: 5000 },
 		);
-		await expect(groups.users?.list?.(ctx, {})).rejects.toMatchObject({
-			name: 'SendbirdAPIError',
-			status: 429,
-			body: { code: 429000 },
-			retryAfter: 5000,
-		});
+		mockRequest.mockRejectedValue(limited);
+		await expect(groups.users?.list?.(ctx, {})).rejects.toBe(limited);
 		expect(mockRequest).toHaveBeenCalledTimes(1);
-		expect(
-			errorHandlers.RATE_LIMIT_ERROR.match(
-				new SendbirdAPIError('limited', 429),
-			),
-		).toBe(true);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(limited)).toBe(true);
+		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(limited)).toMatchObject(
+			{ maxRetries: 0, headersRetryAfterMs: 5000 },
+		);
 	});
 });

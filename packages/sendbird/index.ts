@@ -204,7 +204,6 @@ export function sendbird<const T extends SendbirdPluginOptions>(
 		},
 	} satisfies InternalSendbirdPlugin;
 }
-export { SendbirdAPIError } from './client';
 export type {
 	SendbirdEndpointInputs,
 	SendbirdEndpointOutputs,
