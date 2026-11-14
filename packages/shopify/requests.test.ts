@@ -772,6 +772,10 @@ describe('shop', () => {
 
 		expect(sentGraphql().query).toContain('query ShopGet');
 		expect(sentGraphql().variables).toEqual({});
+		// displayName is deprecated on ShopPlan; the replacement is aliased.
+		expect(sentGraphql().query).toContain(
+			'plan { displayName: publicDisplayName }',
+		);
 		expect(result.shop.myshopifyDomain).toBe('corsair-test.myshopify.com');
 	});
 

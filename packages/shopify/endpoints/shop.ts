@@ -21,7 +21,9 @@ query ShopGet {
     ianaTimezone
     email
     description
-    plan { displayName }
+    # ShopPlan.displayName is deprecated in 2026-10; publicDisplayName is its
+    # replacement, aliased so the output keeps the displayName key.
+    plan { displayName: publicDisplayName }
   }
 }`;
 
