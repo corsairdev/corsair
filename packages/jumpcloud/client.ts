@@ -6,11 +6,6 @@ export class JumpCloudAPIError extends Error {
 		public readonly code?: string,
 		public readonly status?: number,
 		public readonly retryAfter?: number,
-		// unknown: provider error bodies differ per status and endpoint (JSON
-		// object, plain text, or empty) and can echo submitted request values,
-		// so no single schema can type them; the body is kept as structured
-		// detail for programmatic use and must never be printed or logged.
-		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'JumpCloudAPIError';
@@ -87,26 +82,18 @@ export async function makeJumpCloudRequest<T>(
 				options.body === undefined ? undefined : JSON.stringify(options.body),
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
-	} catch (error) {
-		throw new JumpCloudAPIError(
-			`Failed to reach the JumpCloud API: ${error instanceof Error ? error.message : 'unknown error'}`,
-		);
+	} catch {
+		throw new JumpCloudAPIError('Failed to reach the JumpCloud API');
 	}
 
 	if (!response.ok) {
-		const text = await response.text().catch(() => '');
-		// The message stays status-based: JumpCloud error bodies can echo the
-		// submitted request values (emails, names, commands), and R8 keeps
-		// customer data out of error messages and log lines. The raw response
-		// is preserved only on the error's `body` field for programmatic use.
+		// Provider response bodies and reason phrases can echo customer data;
+		// retain only the status and rate-limit metadata.
 		throw new JumpCloudAPIError(
-			`JumpCloud API returned ${response.status}${
-				response.statusText ? ` ${response.statusText}` : ''
-			}`,
+			`JumpCloud API returned ${response.status}`,
 			undefined,
 			response.status,
 			parseRetryAfter(response.headers.get('retry-after')),
-			text || undefined,
 		);
 	}
 

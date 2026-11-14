@@ -1,5 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import { JumpCloudAPIError, makeJumpCloudRequest } from './client';
+import { usersCreate } from './endpoints/users';
+import { errorHandlers } from './error-handlers';
 
 // The shared HTTP boundary of this plugin is the client's fetch transport.
 const fetchMock = jest.fn<
@@ -176,7 +178,7 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 	it('keeps provider response body content out of the error message', async () => {
 		// JumpCloud error bodies can echo submitted request values, and the
 		// default error handler prints error.message, so only the status and
-		// reason phrase may appear there (R8: customer data stays out of logs).
+		// no provider-provided text may appear there (R8: customer data stays out of logs).
 		fetchMock.mockImplementationOnce(() =>
 			Promise.resolve(
 				new Response(
@@ -202,8 +204,49 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 		expect(apiError.status).toBe(400);
 		expect(apiError.message).toBe('JumpCloud API returned 400');
 		expect(apiError.message).not.toContain('alice@example.com');
-		// The raw response stays available as structured detail for programmatic
-		// use, but nothing prints it.
-		expect(apiError.body).toContain('alice@example.com');
+		expect(JSON.stringify(apiError)).not.toContain('alice@example.com');
+		expect(apiError).not.toHaveProperty('body');
+	});
+	it('does not expose customer data from a network failure', async () => {
+		fetchMock.mockRejectedValue(new Error('failed for alice@example.com'));
+		let caught: Error | undefined;
+		try {
+			await makeJumpCloudRequest('jc-key', 1, 'GET', '/systemusers');
+		} catch (error) {
+			caught = error as Error;
+		}
+		expect(caught?.message).toBe('Failed to reach the JumpCloud API');
+		expect(JSON.stringify(caught)).not.toContain('alice@example.com');
+	});
+
+	it('does not expose provider details through a user operation or its error handler', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('alice@example.com', {
+				status: 400,
+				statusText: 'alice@example.com',
+			}),
+		);
+		const log = jest.spyOn(console, 'error').mockImplementation(() => {});
+		try {
+			let caught: Error | undefined;
+			try {
+				await usersCreate({ key: 'jc-key' } as never, {
+					body: { username: 'alice', email: 'alice@example.com' },
+				});
+			} catch (error) {
+				caught = error as Error;
+			}
+			expect(caught).toBeInstanceOf(JumpCloudAPIError);
+			expect(caught?.message).toBe('JumpCloud API returned 400');
+			expect(JSON.stringify(caught)).not.toContain('alice@example.com');
+			await errorHandlers.DEFAULT.handler(caught!, {} as never);
+			await errorHandlers.DEFAULT.handler(
+				new Error('alice@example.com'),
+				{} as never,
+			);
+			expect(JSON.stringify(log.mock.calls)).not.toContain('alice@example.com');
+		} finally {
+			log.mockRestore();
+		}
 	});
 });

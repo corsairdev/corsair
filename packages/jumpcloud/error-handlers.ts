@@ -55,13 +55,9 @@ export const errorHandlers = {
 	},
 	DEFAULT: {
 		match: () => true,
-		handler: async (error, context) => {
-			// The client builds JumpCloudAPIError messages from the HTTP status
-			// only, so printing the message never leaks provider response bodies
-			// (which can echo submitted request values) into the logs.
-			console.error(
-				`[JUMPCLOUD:${context.operation}] Unhandled error: ${error.message}`,
-			);
+		handler: async (_error, _context) => {
+			// Unexpected errors may include customer input or provider data.
+			console.error('[JUMPCLOUD] Unhandled error');
 			return { maxRetries: 0 };
 		},
 	},
