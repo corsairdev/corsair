@@ -572,6 +572,13 @@ describe('fomo plugin structure', () => {
 		expect(plugin.webhooks).toEqual({});
 	});
 
+	it('marks events.create destructive: it publishes a notification visitors see (R8)', () => {
+		const plugin = fomo({});
+		expect(plugin.endpointMeta?.['events.create']?.riskLevel).toBe(
+			'destructive',
+		);
+	});
+
 	it('registers schemas for every endpoint', () => {
 		const expectedEndpoints = [
 			'events.list',

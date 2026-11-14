@@ -159,7 +159,7 @@ const fomoEndpointMeta = {
 		description: 'Retrieve a Fomo event by ID',
 	},
 	'events.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Create a new Fomo event; it shows as a social-proof notification on the site's live feed",
 	},
