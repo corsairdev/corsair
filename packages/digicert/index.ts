@@ -13,6 +13,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import type { DigiCertOneRegion } from './client';
+import { DIGICERT_ONE_HOSTS } from './client';
 import { endpoints } from './endpoints';
 import {
 	generatedDocEndpointMeta,
@@ -323,6 +324,9 @@ export function digicert<const T extends DigicertPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	// OAuth runs on the same DigiCert ONE host as the data calls; every regional
+	// host serves /imauth/oauth2/token.
+	const oneAuthBase = `https://${DIGICERT_ONE_HOSTS[options.digicertOneRegion ?? 'us']}/imauth/oauth2`;
 	return {
 		id: 'digicert',
 		authConfig: digicertAuthConfig,
@@ -348,7 +352,7 @@ export function digicert<const T extends DigicertPluginOptions>(
 				}
 				const accessToken = await getOAuthAccessToken(ctx, {
 					plugin: 'digicert',
-					tokenUrl: 'https://one.digicert.com/imauth/oauth2/token',
+					tokenUrl: `${oneAuthBase}/token`,
 				});
 				return accessToken;
 			}
@@ -369,8 +373,8 @@ export function digicert<const T extends DigicertPluginOptions>(
 		},
 		oauthConfig: {
 			providerName: 'DigiCert Content Trust',
-			authUrl: 'https://one.digicert.com/imauth/oauth2/authorize',
-			tokenUrl: 'https://one.digicert.com/imauth/oauth2/token',
+			authUrl: `${oneAuthBase}/authorize`,
+			tokenUrl: `${oneAuthBase}/token`,
 			scopes: ['service'],
 		},
 	} satisfies InternalDigicertPlugin;
