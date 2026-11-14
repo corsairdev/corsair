@@ -171,6 +171,7 @@ describe('makeImgixRequest', () => {
 				path: 'sources',
 				body: requestBody,
 			});
+			// `unknown` because a caught value has no static type; the assertions below narrow it.
 		} catch (err: unknown) {
 			propagated = err;
 		}
@@ -287,6 +288,7 @@ describe('makeImgixRequest', () => {
 						},
 					},
 				)
+				// `unknown` because a rejection reason has no static type until narrowed.
 				.catch((e: unknown) => e);
 
 			expect(err).toBeInstanceOf(ApiError);

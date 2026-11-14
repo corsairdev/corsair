@@ -49,6 +49,7 @@ function redactedPath(path: string): string {
 export async function makeImgixRequest(
 	apiKey: string | undefined,
 	{ method = 'GET', path, query, body, headers }: ImgixRequest,
+	// `unknown` because each endpoint's output schema validates the response; the client does not know its shape.
 ): Promise<unknown> {
 	// An explicitly empty key means no credentials are configured
 	if (apiKey !== undefined && apiKey.length === 0) {
@@ -88,6 +89,7 @@ export async function makeImgixRequest(
 	};
 
 	try {
+		// `unknown` because the response is a JSON:API document or a string body, checked below and by the output schema.
 		const response = await request<unknown>(config, requestOptions);
 		if (typeof response === 'string') {
 			try {
