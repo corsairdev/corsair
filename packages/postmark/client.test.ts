@@ -173,6 +173,49 @@ describe('makePostmarkRequest', () => {
 		expect(error.message).not.toContain('harry@example.com');
 	});
 
+	it('keeps addresses out of the error url and the request it carries', async () => {
+		// A failed send or an address-filtered list must not leave the recipient,
+		// sender or filter on the error, where it reaches callers and logs.
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/email',
+					query: { emailFilter: 'customer@example.com', count: 5 },
+					body: {
+						From: 'sender@example.com',
+						To: 'customer@example.com',
+						Subject: 'Hi',
+					},
+				},
+				{
+					url: `${POSTMARK_API_BASE}/bounces?emailFilter=customer%40example.com&count=5`,
+					ok: false,
+					status: 401,
+					statusText: 'Unauthorized',
+					body: { ErrorCode: 10, Message: 'bad token' },
+				},
+				'Unauthorized',
+				{ retryAfter: 7 },
+			),
+		);
+
+		const error = await captureError(
+			makePostmarkRequest('token', { method: 'POST', path: '/email' }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.url).not.toMatch(/customer(@|%40)example\.com/);
+		expect(error.url).toContain('count=5');
+		expect(JSON.stringify(error.request)).not.toContain('example.com');
+		expect(error.request.query).toMatchObject({ count: 5 });
+		expect(error.request.body).toMatchObject({ Subject: 'Hi' });
+		expect(error.request.method).toBe('POST');
+		expect(error.status).toBe(401);
+		expect(error.retryAfter).toBe(7);
+	});
+
 	it('flags a dropped connection as a transport failure with its method', async () => {
 		mockRequest.mockRejectedValue(new Error('fetch failed'));
 

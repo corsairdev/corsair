@@ -158,6 +158,32 @@ export function redactAddresses(value: Untyped): Untyped {
 }
 
 /**
+ * Replaces every address in a URL's query, where it can appear percent-encoded
+ * (an `emailFilter` on `/bounces`, for example).
+ */
+export function redactUrlAddresses(url: string): string {
+	const queryIndex = url.indexOf('?');
+	if (queryIndex === -1) return url;
+	const query = url
+		.slice(queryIndex + 1)
+		.split('&')
+		.map((pair) => {
+			let decoded = pair;
+			try {
+				decoded = decodeURIComponent(pair.replace(/\+/g, ' '));
+			} catch {
+				decoded = pair;
+			}
+			EMAIL.lastIndex = 0;
+			if (!EMAIL.test(decoded)) return pair;
+			const eq = pair.indexOf('=');
+			return eq === -1 ? REDACTED : `${pair.slice(0, eq)}=${REDACTED}`;
+		})
+		.join('&');
+	return `${url.slice(0, queryIndex + 1)}${query}`;
+}
+
+/**
  * Removes the server's API tokens from a settings response.
  *
  * `server.get` is a read, and a caller limited to reads must not be able to lift
@@ -265,13 +291,17 @@ export async function makePostmarkRequest(
 	} catch (error) {
 		// Core's ApiError goes through (R8) so status, retryAfter and
 		// isRateLimitError() keep working. Postmark's `Message` can repeat an
-		// address, and the body it rides in travels on the error, so both are
-		// rebuilt without private values.
+		// address, and the request (recipients, an `emailFilter`) and URL travel
+		// on the error too, so all of them are rebuilt without private values.
 		if (error instanceof ApiError) {
 			throw new ApiError(
-				error.request,
 				{
-					url: error.url,
+					...error.request,
+					query: asRecord(redactAddresses(error.request.query)),
+					body: redactAddresses(error.request.body),
+				},
+				{
+					url: redactUrlAddresses(error.url),
 					ok: false,
 					status: error.status,
 					statusText: redactAddresses(error.statusText),
