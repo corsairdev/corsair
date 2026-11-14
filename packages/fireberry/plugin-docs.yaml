@@ -71,7 +71,7 @@ apiNotes:
   metadata.objects: 'Metadata responses identify system object names and numeric object types for metadata and batch routes.'
   batch.create: 'Batch create accepts 1–20 records under data. Invalid items may fail while valid records in the same request are still created.'
   batch.update: 'Batch update accepts 1–20 items; each item requires an id and a record field map. Invalid items may fail while valid records continue.'
-  batch.delete: 'Deletion accepts at most 20 record GUIDs under data. Batch API availability depends on the Fireberry license.'
+  batch.delete: 'Pass 1–20 record GUIDs in ids; the plugin sends them to Fireberry as data. Batch API availability depends on the Fireberry license.'
   customFields.create: 'Custom field names must begin with pcf. Picklist option values must be unique within the field.'
   customFields.update: 'The documented Date & Time update OpenAPI path ends with the literal segment `fieldName` while also declaring a required fieldName path parameter. That contradictory route is not exposed until Fireberry clarifies it.'
   files.create: 'The input base64 string is converted to the provider-required multipart `file` field. Fireberry encodes uploaded filenames; use alphanumeric names to avoid encoded punctuation.'
