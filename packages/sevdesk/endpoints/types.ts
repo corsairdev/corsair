@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { SevdeskResponse } from './responses';
 
 // Generated from the documented Sevdesk OpenAPI schemas. Requests reject undocumented fields; response objects remain extensible where the spec does not close them.
 const requestComponent_Model_CheckAccountResponse = z
@@ -714,6 +715,9 @@ const requestComponent_Model_creditNote = z
 			})
 			.strict(),
 		creditNoteDate: z.string(),
+		// Not in Sevdesk's OpenAPI document, but the live API refuses a credit note without it ("Must set deliveryDate").
+		deliveryDate: z.string().nullable().optional(),
+		deliveryDateUntil: z.number().int().nullable().optional(),
 		status: z.union([
 			z.literal('100'),
 			z.literal('200'),
@@ -1601,6 +1605,10 @@ const requestComponent_Model_Order = z
 
 const requestComponent_Model_OrderPos = z
 	.object({
+		// Not in Sevdesk's OpenAPI document, but saveOrder refuses positions without both
+		// ("orderPosSave expected array with 'id' and 'objectName'"), as for invoice positions.
+		objectName: z.string(),
+		mapAll: z.boolean(),
 		order: z
 			.object({
 				id: z.number().int(),
@@ -1931,23 +1939,28 @@ const requestComponent_Model_VoucherPos = z
 	.object({
 		objectName: z.string(),
 		mapAll: z.boolean(),
+		// Update 2.0 accounts book positions to accountDatev; accountingType is the 1.0 field. The OpenAPI
+		// document marks both required, but the live API saves a 2.0 position with accountDatev alone.
 		accountDatev: z
 			.object({
 				id: z.number().int(),
 				objectName: z.string(),
 			})
-			.strict(),
+			.strict()
+			.optional(),
 		accountingType: z
 			.object({
 				id: z.number().int(),
 				objectName: z.string(),
 			})
-			.strict(),
+			.strict()
+			.optional(),
 		taxRate: z.number(),
 		net: z.boolean(),
 		isAsset: z.boolean().optional(),
-		sumNet: z.number(),
-		sumGross: z.number(),
+		// Sevdesk derives the other amount: send sumGross when net is false, sumNet when net is true.
+		sumNet: z.number().optional(),
+		sumGross: z.number().optional(),
 		comment: z.string().nullable().optional(),
 	})
 	.strict();
@@ -2948,7 +2961,20 @@ const responseComponent_Model_Textparser_fetchDictionaryEntriesByType_response =
 					z
 						.object({
 							key: z.string().optional(),
-							value: z.string().optional(),
+							// Groups such as ADDRESS, PHONE and CUSTOM_FIELDS hold nested key/value entries instead of a string.
+							value: z
+								.union([
+									z.string(),
+									z.array(
+										z
+											.object({
+												key: z.string().optional(),
+												value: z.json().optional(),
+											})
+											.passthrough(),
+									),
+								])
+								.optional(),
 						})
 						.passthrough(),
 				)
@@ -8341,6 +8367,8 @@ export const SevdeskEndpointInputSchemas = {
 			query: z
 				.object({
 					download: z.boolean().optional(),
+					// Not in Sevdesk's OpenAPI document, but the live API answers 500 without it (same values as the invoice report, e.g. "all").
+					view: z.string(),
 					sevQuery: z
 						.object({
 							limit: z.number().int().optional(),
@@ -8517,8 +8545,12 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_CheckAccountResponse).optional(),
 		})
 		.passthrough(),
-	'checkAccount.updateCheckAccount':
-		responseComponent_Model_CheckAccountResponse,
+	'checkAccount.updateCheckAccount': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_CheckAccountResponse.optional(),
+		})
+		.passthrough(),
 	'checkAccount.deleteCheckAccount': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -8536,8 +8568,13 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'checkAccountTransaction.createTransaction':
-		responseComponent_Model_CheckAccountTransactionResponse,
+	'checkAccountTransaction.createTransaction': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects:
+				responseComponent_Model_CheckAccountTransactionResponse.optional(),
+		})
+		.passthrough(),
 	'checkAccountTransaction.getCheckAccountTransactionById': z
 		.object({
 			objects: z
@@ -8545,8 +8582,13 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'checkAccountTransaction.updateCheckAccountTransaction':
-		responseComponent_Model_CheckAccountTransactionResponse,
+	'checkAccountTransaction.updateCheckAccountTransaction': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects:
+				responseComponent_Model_CheckAccountTransactionResponse.optional(),
+		})
+		.passthrough(),
 	'checkAccountTransaction.deleteCheckAccountTransaction': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -8564,8 +8606,13 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'privateTransactionRule.createPrivateTransactionRule':
-		responseComponent_Model_PrivateTransactionRuleResponse,
+	'privateTransactionRule.createPrivateTransactionRule': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects:
+				responseComponent_Model_PrivateTransactionRuleResponse.optional(),
+		})
+		.passthrough(),
 	'privateTransactionRule.deletePrivateTransactionRule': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -8591,13 +8638,23 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_ContactResponse).optional(),
 		})
 		.passthrough(),
-	'contact.createContact': responseComponent_Model_ContactResponse,
+	'contact.createContact': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ContactResponse.optional(),
+		})
+		.passthrough(),
 	'contact.getContactById': z
 		.object({
 			objects: z.array(responseComponent_Model_ContactResponse).optional(),
 		})
 		.passthrough(),
-	'contact.updateContact': responseComponent_Model_ContactResponse,
+	'contact.updateContact': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ContactResponse.optional(),
+		})
+		.passthrough(),
 	'contact.deleteContact': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -8616,8 +8673,12 @@ export const SevdeskEndpointOutputSchemas = {
 			invoicePos: z.number().optional(),
 		})
 		.passthrough(),
-	'contactAddress.createContactAddress':
-		responseComponent_Model_ContactAddressResponse,
+	'contactAddress.createContactAddress': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ContactAddressResponse.optional(),
+		})
+		.passthrough(),
 	'contactAddress.getContactAddresses': z
 		.object({
 			objects: z
@@ -8632,8 +8693,12 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'contactAddress.updateContactAddress':
-		responseComponent_Model_ContactAddressResponse,
+	'contactAddress.updateContactAddress': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ContactAddressResponse.optional(),
+		})
+		.passthrough(),
 	'contactAddress.deleteContactAddress': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -8646,8 +8711,12 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'communicationWay.createCommunicationWay':
-		responseComponent_Model_CommunicationWayResponse,
+	'communicationWay.createCommunicationWay': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_CommunicationWayResponse.optional(),
+		})
+		.passthrough(),
 	'communicationWay.getCommunicationWayById': z
 		.object({
 			objects: z
@@ -8660,8 +8729,12 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(z.json()).optional(),
 		})
 		.passthrough(),
-	'communicationWay.updateCommunicationWay':
-		responseComponent_Model_CommunicationWayResponse,
+	'communicationWay.updateCommunicationWay': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_CommunicationWayResponse.optional(),
+		})
+		.passthrough(),
 	'communicationWay.getCommunicationWayKeys': z
 		.object({
 			objects: z
@@ -8698,8 +8771,12 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'accountingContact.createAccountingContact':
-		responseComponent_Model_AccountingContactResponse,
+	'accountingContact.createAccountingContact': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_AccountingContactResponse.optional(),
+		})
+		.passthrough(),
 	'accountingContact.getAccountingContactById': z
 		.object({
 			objects: z
@@ -8707,8 +8784,12 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'accountingContact.updateAccountingContact':
-		responseComponent_Model_AccountingContactResponse,
+	'accountingContact.updateAccountingContact': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_AccountingContactResponse.optional(),
+		})
+		.passthrough(),
 	'accountingContact.deleteAccountingContact': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -8730,8 +8811,12 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'contactField.createContactField':
-		responseComponent_Model_ContactCustomFieldResponse,
+	'contactField.createContactField': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ContactCustomFieldResponse.optional(),
+		})
+		.passthrough(),
 	'contactField.getContactFieldsById': z
 		.object({
 			objects: z
@@ -8739,8 +8824,12 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'contactField.updateContactfield':
-		responseComponent_Model_ContactCustomFieldResponse,
+	'contactField.updateContactfield': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ContactCustomFieldResponse.optional(),
+		})
+		.passthrough(),
 	'contactField.deleteContactCustomFieldId': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -8755,9 +8844,9 @@ export const SevdeskEndpointOutputSchemas = {
 		.passthrough(),
 	'contactField.createContactFieldSetting': z
 		.object({
-			objects: z
-				.array(responseComponent_Model_ContactCustomFieldSettingResponse)
-				.optional(),
+			// The live API returns the created setting, not the array its OpenAPI document shows.
+			objects:
+				responseComponent_Model_ContactCustomFieldSettingResponse.optional(),
 		})
 		.passthrough(),
 	'contactField.getContactFieldSettingById': z
@@ -8767,8 +8856,13 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'contactField.updateContactFieldSetting':
-		responseComponent_Model_ContactCustomFieldSettingResponse,
+	'contactField.updateContactFieldSetting': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects:
+				responseComponent_Model_ContactCustomFieldSettingResponse.optional(),
+		})
+		.passthrough(),
 	'contactField.deleteContactFieldSetting': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -8784,7 +8878,12 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_creditNoteResponse).optional(),
 		})
 		.passthrough(),
-	'creditNote.createcreditNote': responseComponent_saveCreditNoteResponse,
+	'creditNote.createcreditNote': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_saveCreditNoteResponse.optional(),
+		})
+		.passthrough(),
 	'creditNote.createCreditNoteFromInvoice': z
 		.object({
 			objects: z
@@ -8822,15 +8921,29 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_creditNoteResponse).optional(),
 		})
 		.passthrough(),
-	'creditNote.updatecreditNote': responseComponent_Model_creditNoteResponse,
+	'creditNote.updatecreditNote': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_creditNoteResponse.optional(),
+		})
+		.passthrough(),
 	'creditNote.deletecreditNote': z
 		.object({
 			objects: z.array(z.json()).optional(),
 		})
 		.passthrough(),
-	'creditNote.sendCreditNoteByPrinting':
-		responseComponent_Model_CreditNote_sendByWithRender,
-	'creditNote.creditNoteSendBy': responseComponent_Model_creditNoteResponse,
+	'creditNote.sendCreditNoteByPrinting': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_CreditNote_sendByWithRender.optional(),
+		})
+		.passthrough(),
+	'creditNote.creditNoteSendBy': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_creditNoteResponse.optional(),
+		})
+		.passthrough(),
 	'creditNote.creditNoteEnshrine': z
 		.object({
 			objects: z.json().optional(),
@@ -9035,13 +9148,23 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_Part).optional(),
 		})
 		.passthrough(),
-	'part.createPart': responseComponent_Model_Part,
+	'part.createPart': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_Part.optional(),
+		})
+		.passthrough(),
 	'part.getPartById': z
 		.object({
 			objects: z.array(responseComponent_Model_Part).optional(),
 		})
 		.passthrough(),
-	'part.updatePart': responseComponent_Model_Part,
+	'part.updatePart': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_Part.optional(),
+		})
+		.passthrough(),
 	'part.partGetStock': z
 		.object({
 			objects: z.number().int().optional(),
@@ -9052,7 +9175,12 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_InvoiceResponse).optional(),
 		})
 		.passthrough(),
-	'invoice.createInvoiceByFactory': responseComponent_saveInvoiceResponse,
+	'invoice.createInvoiceByFactory': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_saveInvoiceResponse.optional(),
+		})
+		.passthrough(),
 	'invoice.getInvoiceById': z
 		.object({
 			objects: z.array(responseComponent_Model_InvoiceResponse).optional(),
@@ -9063,14 +9191,29 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_InvoicePosResponse).optional(),
 		})
 		.passthrough(),
-	'invoice.createInvoiceFromOrder': responseComponent_Model_InvoiceResponse,
-	'invoice.createInvoiceReminder': responseComponent_Model_InvoiceResponse,
+	'invoice.createInvoiceFromOrder': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_InvoiceResponse.optional(),
+		})
+		.passthrough(),
+	'invoice.createInvoiceReminder': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_InvoiceResponse.optional(),
+		})
+		.passthrough(),
 	'invoice.getIsInvoicePartiallyPaid': z
 		.object({
 			objects: z.boolean().optional(),
 		})
 		.passthrough(),
-	'invoice.cancelInvoice': responseComponent_Model_InvoiceResponse,
+	'invoice.cancelInvoice': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_InvoiceResponse.optional(),
+		})
+		.passthrough(),
 	'invoice.invoiceRender': z
 		.object({
 			pdf: z.string().optional(),
@@ -9100,7 +9243,12 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'invoice.sendInvoiceViaEMail': responseComponent_Model_Email,
+	'invoice.sendInvoiceViaEMail': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_Email.optional(),
+		})
+		.passthrough(),
 	'invoice.invoiceGetPdf': z
 		.object({
 			filename: z.string().optional(),
@@ -9109,7 +9257,12 @@ export const SevdeskEndpointOutputSchemas = {
 			content: z.string().optional(),
 		})
 		.passthrough(),
-	'invoice.invoiceSendBy': responseComponent_Model_InvoiceResponse,
+	'invoice.invoiceSendBy': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_InvoiceResponse.optional(),
+		})
+		.passthrough(),
 	'invoice.invoiceEnshrine': z
 		.object({
 			objects: z.json().optional(),
@@ -9221,22 +9374,46 @@ export const SevdeskEndpointOutputSchemas = {
 				.optional(),
 		})
 		.passthrough(),
-	'layout.updateInvoiceTemplate': responseComponent_Model_ChangeLayoutResponse,
-	'layout.updateOrderTemplate': responseComponent_Model_ChangeLayoutResponse,
-	'layout.updateCreditNoteTemplate':
-		responseComponent_Model_ChangeLayoutResponse,
+	'layout.updateInvoiceTemplate': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ChangeLayoutResponse.optional(),
+		})
+		.passthrough(),
+	'layout.updateOrderTemplate': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ChangeLayoutResponse.optional(),
+		})
+		.passthrough(),
+	'layout.updateCreditNoteTemplate': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_ChangeLayoutResponse.optional(),
+		})
+		.passthrough(),
 	'order.getOrders': z
 		.object({
 			objects: z.array(responseComponent_Model_OrderResponse).optional(),
 		})
 		.passthrough(),
-	'order.createOrder': responseComponent_saveOrderResponse,
+	'order.createOrder': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_saveOrderResponse.optional(),
+		})
+		.passthrough(),
 	'order.getOrderById': z
 		.object({
 			objects: z.array(responseComponent_Model_OrderResponse).optional(),
 		})
 		.passthrough(),
-	'order.updateOrder': responseComponent_Model_OrderResponse,
+	'order.updateOrder': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_OrderResponse.optional(),
+		})
+		.passthrough(),
 	'order.deleteOrder': z
 		.object({
 			objects: z.array(z.json()).optional(),
@@ -9262,8 +9439,18 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_EmailOrder).optional(),
 		})
 		.passthrough(),
-	'order.createPackingListFromOrder': responseComponent_Model_OrderResponse,
-	'order.createContractNoteFromOrder': responseComponent_Model_OrderResponse,
+	'order.createPackingListFromOrder': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_OrderResponse.optional(),
+		})
+		.passthrough(),
+	'order.createContractNoteFromOrder': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_OrderResponse.optional(),
+		})
+		.passthrough(),
 	'order.orderGetPdf': z
 		.object({
 			filename: z.string().optional(),
@@ -9272,7 +9459,12 @@ export const SevdeskEndpointOutputSchemas = {
 			content: z.string().optional(),
 		})
 		.passthrough(),
-	'order.orderSendBy': responseComponent_Model_OrderResponse,
+	'order.orderSendBy': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_OrderResponse.optional(),
+		})
+		.passthrough(),
 	'orderPos.getOrderPositions': z
 		.object({
 			objects: z.array(responseComponent_Model_OrderPosResponse).optional(),
@@ -9283,13 +9475,23 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_OrderPosResponse).optional(),
 		})
 		.passthrough(),
-	'orderPos.updateOrderPosition': responseComponent_Model_OrderPosResponse,
+	'orderPos.updateOrderPosition': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_OrderPosResponse.optional(),
+		})
+		.passthrough(),
 	'orderPos.deleteOrderPos': z
 		.object({
 			objects: z.array(z.json()).optional(),
 		})
 		.passthrough(),
-	'voucher.voucherFactorySaveVoucher': responseComponent_saveVoucherResponse,
+	'voucher.voucherFactorySaveVoucher': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_saveVoucherResponse.optional(),
+		})
+		.passthrough(),
 	'voucher.getVouchers': z
 		.object({
 			objects: z.array(responseComponent_Model_VoucherResponse).optional(),
@@ -9300,7 +9502,12 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_VoucherResponse).optional(),
 		})
 		.passthrough(),
-	'voucher.updateVoucher': responseComponent_Model_VoucherResponse,
+	'voucher.updateVoucher': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_VoucherResponse.optional(),
+		})
+		.passthrough(),
 	'voucher.voucherEnshrine': z
 		.object({
 			objects: z.json().optional(),
@@ -9371,7 +9578,13 @@ export const SevdeskEndpointOutputSchemas = {
 		.passthrough(),
 	'voucher.forAccountNumber': z
 		.object({
-			objects: z.array(responseComponent_ReceiptGuideDto).optional(),
+			// One account number returns one guide object; the OpenAPI document shows an array.
+			objects: z
+				.union([
+					responseComponent_ReceiptGuideDto,
+					z.array(responseComponent_ReceiptGuideDto),
+				])
+				.optional(),
 		})
 		.passthrough(),
 	'voucher.forTaxRule': z
@@ -9451,13 +9664,23 @@ export const SevdeskEndpointOutputSchemas = {
 			objects: z.array(responseComponent_Model_TagResponse).optional(),
 		})
 		.passthrough(),
-	'tag.updateTag': responseComponent_Model_TagResponse,
+	'tag.updateTag': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_TagResponse.optional(),
+		})
+		.passthrough(),
 	'tag.deleteTag': z
 		.object({
 			objects: z.array(z.json()).optional(),
 		})
 		.passthrough(),
-	'tag.createTag': responseComponent_Model_TagCreateResponse,
+	'tag.createTag': z
+		.object({
+			// Sevdesk wraps this response in `objects`; its OpenAPI document shows the bare model.
+			objects: responseComponent_Model_TagCreateResponse.optional(),
+		})
+		.passthrough(),
 	'tag.getTagRelations': z
 		.object({
 			objects: z.array(responseComponent_Model_TagCreateResponse).optional(),
@@ -9923,458 +10146,626 @@ export type SevdeskEndpointInputs = {
 };
 
 export type SevdeskEndpointOutputs = {
-	'basics.bookkeepingSystemVersion': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['basics.bookkeepingSystemVersion']
+	'basics.bookkeepingSystemVersion': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['basics.bookkeepingSystemVersion']
+		>
+	>;
+	'checkAccount.getCheckAccounts': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccount.getCheckAccounts']
+		>
+	>;
+	'checkAccount.createFileImportAccount': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccount.createFileImportAccount']
+		>
+	>;
+	'checkAccount.createClearingAccount': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccount.createClearingAccount']
+		>
+	>;
+	'checkAccount.getCheckAccountById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccount.getCheckAccountById']
+		>
+	>;
+	'checkAccount.updateCheckAccount': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccount.updateCheckAccount']
+		>
+	>;
+	'checkAccount.deleteCheckAccount': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccount.deleteCheckAccount']
+		>
+	>;
+	'checkAccount.getBalanceAtDate': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccount.getBalanceAtDate']
+		>
+	>;
+	'checkAccountTransaction.getTransactions': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.getTransactions']
+		>
+	>;
+	'checkAccountTransaction.createTransaction': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.createTransaction']
+		>
+	>;
+	'checkAccountTransaction.getCheckAccountTransactionById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.getCheckAccountTransactionById']
+		>
+	>;
+	'checkAccountTransaction.updateCheckAccountTransaction': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.updateCheckAccountTransaction']
+		>
+	>;
+	'checkAccountTransaction.deleteCheckAccountTransaction': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.deleteCheckAccountTransaction']
+		>
+	>;
+	'checkAccountTransaction.checkAccountTransactionEnshrine': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.checkAccountTransactionEnshrine']
+		>
+	>;
+	'privateTransactionRule.listPrivateTransactionRules': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['privateTransactionRule.listPrivateTransactionRules']
+		>
+	>;
+	'privateTransactionRule.createPrivateTransactionRule': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['privateTransactionRule.createPrivateTransactionRule']
+		>
+	>;
+	'privateTransactionRule.deletePrivateTransactionRule': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['privateTransactionRule.deletePrivateTransactionRule']
+		>
+	>;
+	'contact.getNextCustomerNumber': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contact.getNextCustomerNumber']
+		>
+	>;
+	'contact.findContactsByCustomFieldValue': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contact.findContactsByCustomFieldValue']
+		>
+	>;
+	'contact.contactCustomerNumberAvailabilityCheck': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contact.contactCustomerNumberAvailabilityCheck']
+		>
+	>;
+	'contact.getContacts': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['contact.getContacts']>
+	>;
+	'contact.createContact': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['contact.createContact']>
+	>;
+	'contact.getContactById': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['contact.getContactById']>
+	>;
+	'contact.updateContact': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['contact.updateContact']>
+	>;
+	'contact.deleteContact': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['contact.deleteContact']>
+	>;
+	'contact.getContactTabsItemCountById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contact.getContactTabsItemCountById']
+		>
+	>;
+	'contactAddress.createContactAddress': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactAddress.createContactAddress']
+		>
+	>;
+	'contactAddress.getContactAddresses': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactAddress.getContactAddresses']
+		>
+	>;
+	'contactAddress.contactAddressId': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactAddress.contactAddressId']
+		>
+	>;
+	'contactAddress.updateContactAddress': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactAddress.updateContactAddress']
+		>
+	>;
+	'contactAddress.deleteContactAddress': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactAddress.deleteContactAddress']
+		>
+	>;
+	'communicationWay.getCommunicationWays': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['communicationWay.getCommunicationWays']
+		>
+	>;
+	'communicationWay.createCommunicationWay': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['communicationWay.createCommunicationWay']
+		>
+	>;
+	'communicationWay.getCommunicationWayById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['communicationWay.getCommunicationWayById']
+		>
+	>;
+	'communicationWay.deleteCommunicationWay': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['communicationWay.deleteCommunicationWay']
+		>
+	>;
+	'communicationWay.updateCommunicationWay': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['communicationWay.updateCommunicationWay']
+		>
+	>;
+	'communicationWay.getCommunicationWayKeys': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['communicationWay.getCommunicationWayKeys']
+		>
+	>;
+	'accountingContact.getAccountingContact': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['accountingContact.getAccountingContact']
+		>
+	>;
+	'accountingContact.createAccountingContact': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['accountingContact.createAccountingContact']
+		>
+	>;
+	'accountingContact.getAccountingContactById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['accountingContact.getAccountingContactById']
+		>
+	>;
+	'accountingContact.updateAccountingContact': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['accountingContact.updateAccountingContact']
+		>
+	>;
+	'accountingContact.deleteAccountingContact': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['accountingContact.deleteAccountingContact']
+		>
+	>;
+	'contactField.getPlaceholder': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.getPlaceholder']
+		>
+	>;
+	'contactField.getContactFields': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.getContactFields']
+		>
+	>;
+	'contactField.createContactField': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.createContactField']
+		>
+	>;
+	'contactField.getContactFieldsById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.getContactFieldsById']
+		>
+	>;
+	'contactField.updateContactfield': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.updateContactfield']
+		>
+	>;
+	'contactField.deleteContactCustomFieldId': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.deleteContactCustomFieldId']
+		>
+	>;
+	'contactField.getContactFieldSettings': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.getContactFieldSettings']
+		>
+	>;
+	'contactField.createContactFieldSetting': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.createContactFieldSetting']
+		>
+	>;
+	'contactField.getContactFieldSettingById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.getContactFieldSettingById']
+		>
+	>;
+	'contactField.updateContactFieldSetting': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.updateContactFieldSetting']
+		>
+	>;
+	'contactField.deleteContactFieldSetting': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.deleteContactFieldSetting']
+		>
+	>;
+	'contactField.getReferenceCount': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['contactField.getReferenceCount']
+		>
+	>;
+	'creditNote.getCreditNotes': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['creditNote.getCreditNotes']>
+	>;
+	'creditNote.createcreditNote': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.createcreditNote']
+		>
+	>;
+	'creditNote.createCreditNoteFromInvoice': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.createCreditNoteFromInvoice']
+		>
+	>;
+	'creditNote.createCreditNoteFromVoucher': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.createCreditNoteFromVoucher']
+		>
+	>;
+	'creditNote.getcreditNoteById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.getcreditNoteById']
+		>
+	>;
+	'creditNote.updatecreditNote': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.updatecreditNote']
+		>
+	>;
+	'creditNote.deletecreditNote': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.deletecreditNote']
+		>
+	>;
+	'creditNote.sendCreditNoteByPrinting': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.sendCreditNoteByPrinting']
+		>
+	>;
+	'creditNote.creditNoteSendBy': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteSendBy']
+		>
+	>;
+	'creditNote.creditNoteEnshrine': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteEnshrine']
+		>
+	>;
+	'creditNote.creditNoteGetPdf': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteGetPdf']
+		>
+	>;
+	'creditNote.sendCreditNoteViaEMail': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.sendCreditNoteViaEMail']
+		>
+	>;
+	'creditNote.bookCreditNote': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['creditNote.bookCreditNote']>
+	>;
+	'creditNote.creditNoteResetToOpen': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteResetToOpen']
+		>
+	>;
+	'creditNote.creditNoteResetToDraft': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteResetToDraft']
+		>
+	>;
+	'creditNotePos.getcreditNotePositions': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['creditNotePos.getcreditNotePositions']
+		>
+	>;
+	'export.updateExportConfig': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.updateExportConfig']>
+	>;
+	'export.exportDatevDepricated': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['export.exportDatevDepricated']
+		>
+	>;
+	'export.exportDatevCSV': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportDatevCSV']>
+	>;
+	'export.exportDatevXML': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportDatevXML']>
+	>;
+	'export.generateDownloadHash': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['export.generateDownloadHash']
+		>
+	>;
+	'export.getProgress': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.getProgress']>
+	>;
+	'export.jobDownloadInfo': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.jobDownloadInfo']>
+	>;
+	'export.exportInvoice': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportInvoice']>
+	>;
+	'export.exportInvoiceZip': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportInvoiceZip']>
+	>;
+	'export.exportCreditNote': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportCreditNote']>
+	>;
+	'export.exportVoucher': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportVoucher']>
+	>;
+	'export.exportTransactions': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportTransactions']>
+	>;
+	'export.exportVoucherZip': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportVoucherZip']>
+	>;
+	'export.exportContact': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['export.exportContact']>
+	>;
+	'part.getParts': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['part.getParts']>
+	>;
+	'part.createPart': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['part.createPart']>
+	>;
+	'part.getPartById': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['part.getPartById']>
+	>;
+	'part.updatePart': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['part.updatePart']>
+	>;
+	'part.partGetStock': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['part.partGetStock']>
+	>;
+	'invoice.getInvoices': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.getInvoices']>
+	>;
+	'invoice.createInvoiceByFactory': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['invoice.createInvoiceByFactory']
+		>
+	>;
+	'invoice.getInvoiceById': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.getInvoiceById']>
+	>;
+	'invoice.getInvoicePositionsById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['invoice.getInvoicePositionsById']
+		>
+	>;
+	'invoice.createInvoiceFromOrder': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['invoice.createInvoiceFromOrder']
+		>
+	>;
+	'invoice.createInvoiceReminder': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['invoice.createInvoiceReminder']
+		>
+	>;
+	'invoice.getIsInvoicePartiallyPaid': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['invoice.getIsInvoicePartiallyPaid']
+		>
+	>;
+	'invoice.cancelInvoice': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.cancelInvoice']>
+	>;
+	'invoice.invoiceRender': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceRender']>
+	>;
+	'invoice.sendInvoiceViaEMail': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['invoice.sendInvoiceViaEMail']
+		>
+	>;
+	'invoice.invoiceGetPdf': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceGetPdf']>
+	>;
+	'invoice.invoiceSendBy': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceSendBy']>
+	>;
+	'invoice.invoiceEnshrine': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceEnshrine']>
+	>;
+	'invoice.bookInvoice': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.bookInvoice']>
+	>;
+	'invoice.invoiceResetToOpen': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceResetToOpen']>
+	>;
+	'invoice.invoiceResetToDraft': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceResetToDraft']
+		>
+	>;
+	'invoicePos.getInvoicePos': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['invoicePos.getInvoicePos']>
+	>;
+	'layout.getLetterpapersWithThumb': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['layout.getLetterpapersWithThumb']
+		>
+	>;
+	'layout.getTemplates': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['layout.getTemplates']>
+	>;
+	'layout.updateInvoiceTemplate': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['layout.updateInvoiceTemplate']
+		>
+	>;
+	'layout.updateOrderTemplate': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['layout.updateOrderTemplate']>
+	>;
+	'layout.updateCreditNoteTemplate': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['layout.updateCreditNoteTemplate']
+		>
+	>;
+	'order.getOrders': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.getOrders']>
+	>;
+	'order.createOrder': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.createOrder']>
+	>;
+	'order.getOrderById': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.getOrderById']>
+	>;
+	'order.updateOrder': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.updateOrder']>
+	>;
+	'order.deleteOrder': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.deleteOrder']>
+	>;
+	'order.getOrderPositionsById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['order.getOrderPositionsById']
+		>
+	>;
+	'order.getDiscounts': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.getDiscounts']>
+	>;
+	'order.getRelatedObjects': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.getRelatedObjects']>
 	>;
-	'checkAccount.getCheckAccounts': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccount.getCheckAccounts']
+	'order.sendorderViaEMail': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.sendorderViaEMail']>
 	>;
-	'checkAccount.createFileImportAccount': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccount.createFileImportAccount']
+	'order.createPackingListFromOrder': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['order.createPackingListFromOrder']
+		>
 	>;
-	'checkAccount.createClearingAccount': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccount.createClearingAccount']
+	'order.createContractNoteFromOrder': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['order.createContractNoteFromOrder']
+		>
 	>;
-	'checkAccount.getCheckAccountById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccount.getCheckAccountById']
+	'order.orderGetPdf': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.orderGetPdf']>
 	>;
-	'checkAccount.updateCheckAccount': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccount.updateCheckAccount']
+	'order.orderSendBy': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['order.orderSendBy']>
 	>;
-	'checkAccount.deleteCheckAccount': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccount.deleteCheckAccount']
+	'orderPos.getOrderPositions': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['orderPos.getOrderPositions']>
 	>;
-	'checkAccount.getBalanceAtDate': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccount.getBalanceAtDate']
+	'orderPos.getOrderPositionById': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['orderPos.getOrderPositionById']
+		>
 	>;
-	'checkAccountTransaction.getTransactions': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.getTransactions']
+	'orderPos.updateOrderPosition': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['orderPos.updateOrderPosition']
+		>
 	>;
-	'checkAccountTransaction.createTransaction': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.createTransaction']
+	'orderPos.deleteOrderPos': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['orderPos.deleteOrderPos']>
 	>;
-	'checkAccountTransaction.getCheckAccountTransactionById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.getCheckAccountTransactionById']
+	'voucher.voucherFactorySaveVoucher': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['voucher.voucherFactorySaveVoucher']
+		>
 	>;
-	'checkAccountTransaction.updateCheckAccountTransaction': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.updateCheckAccountTransaction']
+	'voucher.getVouchers': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.getVouchers']>
 	>;
-	'checkAccountTransaction.deleteCheckAccountTransaction': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.deleteCheckAccountTransaction']
+	'voucher.getVoucherById': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.getVoucherById']>
 	>;
-	'checkAccountTransaction.checkAccountTransactionEnshrine': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['checkAccountTransaction.checkAccountTransactionEnshrine']
+	'voucher.updateVoucher': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.updateVoucher']>
 	>;
-	'privateTransactionRule.listPrivateTransactionRules': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['privateTransactionRule.listPrivateTransactionRules']
+	'voucher.voucherEnshrine': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.voucherEnshrine']>
 	>;
-	'privateTransactionRule.createPrivateTransactionRule': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['privateTransactionRule.createPrivateTransactionRule']
+	'voucher.bookVoucher': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.bookVoucher']>
 	>;
-	'privateTransactionRule.deletePrivateTransactionRule': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['privateTransactionRule.deletePrivateTransactionRule']
+	'voucher.voucherResetToOpen': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.voucherResetToOpen']>
 	>;
-	'contact.getNextCustomerNumber': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.getNextCustomerNumber']
+	'voucher.voucherResetToDraft': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['voucher.voucherResetToDraft']
+		>
 	>;
-	'contact.findContactsByCustomFieldValue': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.findContactsByCustomFieldValue']
+	'voucherPos.getVoucherPositions': SevdeskResponse<
+		z.infer<
+			(typeof SevdeskEndpointOutputSchemas)['voucherPos.getVoucherPositions']
+		>
 	>;
-	'contact.contactCustomerNumberAvailabilityCheck': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.contactCustomerNumberAvailabilityCheck']
+	'voucher.forAllAccounts': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.forAllAccounts']>
 	>;
-	'contact.getContacts': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.getContacts']
+	'voucher.forAccountNumber': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.forAccountNumber']>
 	>;
-	'contact.createContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.createContact']
+	'voucher.forTaxRule': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.forTaxRule']>
 	>;
-	'contact.getContactById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.getContactById']
+	'voucher.forRevenue': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.forRevenue']>
 	>;
-	'contact.updateContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.updateContact']
+	'voucher.forExpense': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['voucher.forExpense']>
 	>;
-	'contact.deleteContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.deleteContact']
+	'report.reportInvoice': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['report.reportInvoice']>
 	>;
-	'contact.getContactTabsItemCountById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contact.getContactTabsItemCountById']
+	'report.reportOrder': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['report.reportOrder']>
 	>;
-	'contactAddress.createContactAddress': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactAddress.createContactAddress']
+	'report.reportContact': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['report.reportContact']>
 	>;
-	'contactAddress.getContactAddresses': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactAddress.getContactAddresses']
+	'report.reportVoucher': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['report.reportVoucher']>
 	>;
-	'contactAddress.contactAddressId': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactAddress.contactAddressId']
+	'tag.getTags': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['tag.getTags']>
 	>;
-	'contactAddress.updateContactAddress': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactAddress.updateContactAddress']
+	'tag.getTagById': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['tag.getTagById']>
 	>;
-	'contactAddress.deleteContactAddress': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactAddress.deleteContactAddress']
+	'tag.updateTag': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['tag.updateTag']>
 	>;
-	'communicationWay.getCommunicationWays': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['communicationWay.getCommunicationWays']
+	'tag.deleteTag': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['tag.deleteTag']>
 	>;
-	'communicationWay.createCommunicationWay': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['communicationWay.createCommunicationWay']
+	'tag.createTag': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['tag.createTag']>
 	>;
-	'communicationWay.getCommunicationWayById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['communicationWay.getCommunicationWayById']
-	>;
-	'communicationWay.deleteCommunicationWay': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['communicationWay.deleteCommunicationWay']
-	>;
-	'communicationWay.updateCommunicationWay': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['communicationWay.updateCommunicationWay']
-	>;
-	'communicationWay.getCommunicationWayKeys': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['communicationWay.getCommunicationWayKeys']
-	>;
-	'accountingContact.getAccountingContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['accountingContact.getAccountingContact']
-	>;
-	'accountingContact.createAccountingContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['accountingContact.createAccountingContact']
-	>;
-	'accountingContact.getAccountingContactById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['accountingContact.getAccountingContactById']
-	>;
-	'accountingContact.updateAccountingContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['accountingContact.updateAccountingContact']
-	>;
-	'accountingContact.deleteAccountingContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['accountingContact.deleteAccountingContact']
-	>;
-	'contactField.getPlaceholder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.getPlaceholder']
-	>;
-	'contactField.getContactFields': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.getContactFields']
-	>;
-	'contactField.createContactField': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.createContactField']
-	>;
-	'contactField.getContactFieldsById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.getContactFieldsById']
-	>;
-	'contactField.updateContactfield': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.updateContactfield']
-	>;
-	'contactField.deleteContactCustomFieldId': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.deleteContactCustomFieldId']
-	>;
-	'contactField.getContactFieldSettings': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.getContactFieldSettings']
-	>;
-	'contactField.createContactFieldSetting': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.createContactFieldSetting']
-	>;
-	'contactField.getContactFieldSettingById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.getContactFieldSettingById']
-	>;
-	'contactField.updateContactFieldSetting': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.updateContactFieldSetting']
-	>;
-	'contactField.deleteContactFieldSetting': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.deleteContactFieldSetting']
-	>;
-	'contactField.getReferenceCount': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['contactField.getReferenceCount']
-	>;
-	'creditNote.getCreditNotes': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.getCreditNotes']
-	>;
-	'creditNote.createcreditNote': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.createcreditNote']
-	>;
-	'creditNote.createCreditNoteFromInvoice': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.createCreditNoteFromInvoice']
-	>;
-	'creditNote.createCreditNoteFromVoucher': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.createCreditNoteFromVoucher']
-	>;
-	'creditNote.getcreditNoteById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.getcreditNoteById']
-	>;
-	'creditNote.updatecreditNote': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.updatecreditNote']
-	>;
-	'creditNote.deletecreditNote': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.deletecreditNote']
-	>;
-	'creditNote.sendCreditNoteByPrinting': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.sendCreditNoteByPrinting']
-	>;
-	'creditNote.creditNoteSendBy': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteSendBy']
-	>;
-	'creditNote.creditNoteEnshrine': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteEnshrine']
-	>;
-	'creditNote.creditNoteGetPdf': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteGetPdf']
-	>;
-	'creditNote.sendCreditNoteViaEMail': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.sendCreditNoteViaEMail']
-	>;
-	'creditNote.bookCreditNote': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.bookCreditNote']
-	>;
-	'creditNote.creditNoteResetToOpen': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteResetToOpen']
-	>;
-	'creditNote.creditNoteResetToDraft': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNote.creditNoteResetToDraft']
-	>;
-	'creditNotePos.getcreditNotePositions': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['creditNotePos.getcreditNotePositions']
-	>;
-	'export.updateExportConfig': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.updateExportConfig']
-	>;
-	'export.exportDatevDepricated': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportDatevDepricated']
-	>;
-	'export.exportDatevCSV': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportDatevCSV']
-	>;
-	'export.exportDatevXML': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportDatevXML']
-	>;
-	'export.generateDownloadHash': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.generateDownloadHash']
-	>;
-	'export.getProgress': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.getProgress']
-	>;
-	'export.jobDownloadInfo': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.jobDownloadInfo']
-	>;
-	'export.exportInvoice': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportInvoice']
-	>;
-	'export.exportInvoiceZip': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportInvoiceZip']
-	>;
-	'export.exportCreditNote': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportCreditNote']
-	>;
-	'export.exportVoucher': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportVoucher']
-	>;
-	'export.exportTransactions': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportTransactions']
-	>;
-	'export.exportVoucherZip': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportVoucherZip']
-	>;
-	'export.exportContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['export.exportContact']
-	>;
-	'part.getParts': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['part.getParts']
-	>;
-	'part.createPart': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['part.createPart']
-	>;
-	'part.getPartById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['part.getPartById']
-	>;
-	'part.updatePart': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['part.updatePart']
-	>;
-	'part.partGetStock': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['part.partGetStock']
-	>;
-	'invoice.getInvoices': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.getInvoices']
-	>;
-	'invoice.createInvoiceByFactory': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.createInvoiceByFactory']
-	>;
-	'invoice.getInvoiceById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.getInvoiceById']
-	>;
-	'invoice.getInvoicePositionsById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.getInvoicePositionsById']
-	>;
-	'invoice.createInvoiceFromOrder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.createInvoiceFromOrder']
-	>;
-	'invoice.createInvoiceReminder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.createInvoiceReminder']
-	>;
-	'invoice.getIsInvoicePartiallyPaid': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.getIsInvoicePartiallyPaid']
-	>;
-	'invoice.cancelInvoice': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.cancelInvoice']
-	>;
-	'invoice.invoiceRender': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceRender']
-	>;
-	'invoice.sendInvoiceViaEMail': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.sendInvoiceViaEMail']
-	>;
-	'invoice.invoiceGetPdf': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceGetPdf']
-	>;
-	'invoice.invoiceSendBy': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceSendBy']
-	>;
-	'invoice.invoiceEnshrine': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceEnshrine']
-	>;
-	'invoice.bookInvoice': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.bookInvoice']
-	>;
-	'invoice.invoiceResetToOpen': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceResetToOpen']
-	>;
-	'invoice.invoiceResetToDraft': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoice.invoiceResetToDraft']
-	>;
-	'invoicePos.getInvoicePos': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['invoicePos.getInvoicePos']
-	>;
-	'layout.getLetterpapersWithThumb': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['layout.getLetterpapersWithThumb']
-	>;
-	'layout.getTemplates': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['layout.getTemplates']
-	>;
-	'layout.updateInvoiceTemplate': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['layout.updateInvoiceTemplate']
-	>;
-	'layout.updateOrderTemplate': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['layout.updateOrderTemplate']
-	>;
-	'layout.updateCreditNoteTemplate': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['layout.updateCreditNoteTemplate']
-	>;
-	'order.getOrders': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.getOrders']
-	>;
-	'order.createOrder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.createOrder']
-	>;
-	'order.getOrderById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.getOrderById']
-	>;
-	'order.updateOrder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.updateOrder']
-	>;
-	'order.deleteOrder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.deleteOrder']
-	>;
-	'order.getOrderPositionsById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.getOrderPositionsById']
-	>;
-	'order.getDiscounts': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.getDiscounts']
-	>;
-	'order.getRelatedObjects': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.getRelatedObjects']
-	>;
-	'order.sendorderViaEMail': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.sendorderViaEMail']
-	>;
-	'order.createPackingListFromOrder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.createPackingListFromOrder']
-	>;
-	'order.createContractNoteFromOrder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.createContractNoteFromOrder']
-	>;
-	'order.orderGetPdf': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.orderGetPdf']
-	>;
-	'order.orderSendBy': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['order.orderSendBy']
-	>;
-	'orderPos.getOrderPositions': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['orderPos.getOrderPositions']
-	>;
-	'orderPos.getOrderPositionById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['orderPos.getOrderPositionById']
-	>;
-	'orderPos.updateOrderPosition': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['orderPos.updateOrderPosition']
-	>;
-	'orderPos.deleteOrderPos': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['orderPos.deleteOrderPos']
-	>;
-	'voucher.voucherFactorySaveVoucher': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.voucherFactorySaveVoucher']
-	>;
-	'voucher.getVouchers': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.getVouchers']
-	>;
-	'voucher.getVoucherById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.getVoucherById']
-	>;
-	'voucher.updateVoucher': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.updateVoucher']
-	>;
-	'voucher.voucherEnshrine': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.voucherEnshrine']
-	>;
-	'voucher.bookVoucher': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.bookVoucher']
-	>;
-	'voucher.voucherResetToOpen': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.voucherResetToOpen']
-	>;
-	'voucher.voucherResetToDraft': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.voucherResetToDraft']
-	>;
-	'voucherPos.getVoucherPositions': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucherPos.getVoucherPositions']
-	>;
-	'voucher.forAllAccounts': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.forAllAccounts']
-	>;
-	'voucher.forAccountNumber': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.forAccountNumber']
-	>;
-	'voucher.forTaxRule': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.forTaxRule']
-	>;
-	'voucher.forRevenue': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.forRevenue']
-	>;
-	'voucher.forExpense': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['voucher.forExpense']
-	>;
-	'report.reportInvoice': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['report.reportInvoice']
-	>;
-	'report.reportOrder': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['report.reportOrder']
-	>;
-	'report.reportContact': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['report.reportContact']
-	>;
-	'report.reportVoucher': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['report.reportVoucher']
-	>;
-	'tag.getTags': z.infer<(typeof SevdeskEndpointOutputSchemas)['tag.getTags']>;
-	'tag.getTagById': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['tag.getTagById']
-	>;
-	'tag.updateTag': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['tag.updateTag']
-	>;
-	'tag.deleteTag': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['tag.deleteTag']
-	>;
-	'tag.createTag': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['tag.createTag']
-	>;
-	'tag.getTagRelations': z.infer<
-		(typeof SevdeskEndpointOutputSchemas)['tag.getTagRelations']
+	'tag.getTagRelations': SevdeskResponse<
+		z.infer<(typeof SevdeskEndpointOutputSchemas)['tag.getTagRelations']>
 	>;
 };

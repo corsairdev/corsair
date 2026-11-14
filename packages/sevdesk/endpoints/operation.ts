@@ -4,6 +4,8 @@ import type { ZodType } from 'zod';
 import type { SevdeskHttpMethod } from '../client';
 import { makeSevdeskRequest } from '../client';
 import type { SevdeskContext } from '../index';
+import type { SevdeskResponse } from './responses';
+import { parseSevdeskResponse } from './responses';
 
 export const NON_REPLAYABLE_GETS = new Set([
 	'creditNote.sendCreditNoteByPrinting',
@@ -30,7 +32,7 @@ export function createSevdeskEndpoint<
 	operation: string,
 	method: SevdeskHttpMethod,
 	route: string,
-): CorsairEndpoint<SevdeskContext, Input, Output> {
+): CorsairEndpoint<SevdeskContext, Input, SevdeskResponse<Output>> {
 	return async (ctx, input) => {
 		const parsedInput = inputSchema.parse(input);
 		// JSON is provider-controlled until the operation output schema validates it.
@@ -42,7 +44,11 @@ export function createSevdeskEndpoint<
 				parsedInput.resourceVersion ?? ctx.options.resourceVersion,
 			replayable: method === 'GET' && !NON_REPLAYABLE_GETS.has(operation),
 		});
-		const parsedOutput = outputSchema.parse(response);
+		const parsedOutput = parseSevdeskResponse(
+			operation,
+			outputSchema,
+			response,
+		);
 		await logEventFromContext(ctx, 'sevdesk.' + operation, {}, 'completed');
 		return parsedOutput;
 	};

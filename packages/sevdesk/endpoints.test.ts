@@ -3228,9 +3228,13 @@ const cases = [
 		key: 'report.reportVoucher',
 		method: 'GET',
 		route: '/Report/voucherlist',
-		input: { query: { sevQuery: { modelName: {}, objectName: {} } } },
+		input: {
+			query: { view: 'all', sevQuery: { modelName: {}, objectName: {} } },
+		},
 		response: {},
-		expectedOptions: { query: { sevQuery: { modelName: {}, objectName: {} } } },
+		expectedOptions: {
+			query: { view: 'all', sevQuery: { modelName: {}, objectName: {} } },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.report.reportVoucher, undefined, [
 				ctx,
