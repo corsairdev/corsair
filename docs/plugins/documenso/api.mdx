@@ -32,7 +32,7 @@ await corsair.documenso.api.documents.attachments.create.post({
 | `documentId` | `number` | Yes | — |
 | `data` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/attachment/create); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/attachment/create`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -76,7 +76,7 @@ await corsair.documenso.api.documents.attachments.delete.post({ id: 'sample' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/attachment/delete); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/attachment/delete`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -108,7 +108,7 @@ await corsair.documenso.api.documents.attachments.find.get({ documentId: 1 });
 |------|------|----------|-------------|
 | `documentId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (GET /document/attachment); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /document/attachment`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -158,7 +158,7 @@ await corsair.documenso.api.documents.attachments.update.post({
 | `id` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/attachment/update); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/attachment/update`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -206,7 +206,7 @@ await corsair.documenso.api.documents.create.post({
 | `payload` | `object` | Yes | — |
 | `file` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/create); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/create`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="payload full type">
@@ -552,7 +552,7 @@ await corsair.documenso.api.documents.createV0.post({ title: 'sample' });
 | `attachments` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
-Deprecated Documenso v2 route (POST /document/create/beta); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/create/beta`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="formValues full type">
@@ -1152,7 +1152,7 @@ await corsair.documenso.api.documents.delete.post({ documentId: 1 });
 |------|------|----------|-------------|
 | `documentId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/delete); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/delete`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -1185,7 +1185,7 @@ await corsair.documenso.api.documents.distribute.post({ documentId: 1 });
 | `documentId` | `number` | Yes | — |
 | `meta` | `object` | No | — |
 
-Deprecated Documenso v2 route (POST /document/distribute); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/distribute`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -1296,7 +1296,7 @@ await corsair.documenso.api.documents.documentDownload.get({ documentId: 1 });
 | `documentId` | `number` | Yes | — |
 | `version` | `original \| signed` | No | — |
 
-Deprecated Documenso v2 route (GET /document/{documentId}/download-beta); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /document/{documentId}/download-beta`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -1331,7 +1331,7 @@ await corsair.documenso.api.documents.download.get({ documentId: 1 });
 | `documentId` | `number` | Yes | — |
 | `version` | `original \| signed` | No | — |
 
-Deprecated Documenso v2 route (GET /document/{documentId}/download); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /document/{documentId}/download`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -1366,7 +1366,7 @@ await corsair.documenso.api.documents.duplicate.post({ documentId: 1 });
 |------|------|----------|-------------|
 | `documentId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/duplicate); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/duplicate`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -1411,7 +1411,7 @@ await corsair.documenso.api.documents.fields.create.post({
 | `documentId` | `number` | Yes | — |
 | `field` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/field/create); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/field/create`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="field full type">
@@ -1810,7 +1810,7 @@ await corsair.documenso.api.documents.fields.createMany.post({
 | `documentId` | `number` | Yes | — |
 | `fields` | `object[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/field/create-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/field/create-many`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="fields full type">
@@ -2209,7 +2209,7 @@ await corsair.documenso.api.documents.fields.delete.post({ fieldId: 1 });
 |------|------|----------|-------------|
 | `fieldId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/field/delete); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/field/delete`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -2241,7 +2241,7 @@ await corsair.documenso.api.documents.fields.get.get({ fieldId: 1 });
 |------|------|----------|-------------|
 | `fieldId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (GET /document/field/{fieldId}); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /document/field/{fieldId}`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -2417,7 +2417,7 @@ await corsair.documenso.api.documents.fields.update.post({
 | `documentId` | `number` | Yes | — |
 | `field` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/field/update); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/field/update`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="field full type">
@@ -2816,7 +2816,7 @@ await corsair.documenso.api.documents.fields.updateMany.post({
 | `documentId` | `number` | Yes | — |
 | `fields` | `object[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/field/update-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/field/update-many`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="fields full type">
@@ -3224,7 +3224,7 @@ await corsair.documenso.api.documents.find.get({});
 | `orderByColumn` | `createdAt` | No | — |
 | `orderByDirection` | `asc \| desc` | No | — |
 
-Deprecated Documenso v2 route (GET /document); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /document`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -3327,7 +3327,7 @@ await corsair.documenso.api.documents.get.get({ documentId: 1 });
 |------|------|----------|-------------|
 | `documentId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (GET /document/{documentId}); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /document/{documentId}`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -3672,7 +3672,7 @@ await corsair.documenso.api.documents.getMany.post({
 |------|------|----------|-------------|
 | `documentIds` | `number[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/get-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/get-many`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -3775,7 +3775,7 @@ await corsair.documenso.api.documents.recipients.create.post({
 | `documentId` | `number` | Yes | — |
 | `recipient` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/recipient/create); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/recipient/create`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipient full type">
@@ -3857,7 +3857,7 @@ await corsair.documenso.api.documents.recipients.createMany.post({
 | `documentId` | `number` | Yes | — |
 | `recipients` | `object[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/recipient/create-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/recipient/create-many`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -3937,7 +3937,7 @@ await corsair.documenso.api.documents.recipients.delete.post({ recipientId: 1 })
 |------|------|----------|-------------|
 | `recipientId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/recipient/delete); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/recipient/delete`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -3969,7 +3969,7 @@ await corsair.documenso.api.documents.recipients.get.get({ recipientId: 1 });
 |------|------|----------|-------------|
 | `recipientId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (GET /document/recipient/{recipientId}); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /document/recipient/{recipientId}`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -4176,7 +4176,7 @@ await corsair.documenso.api.documents.recipients.update.post({
 | `documentId` | `number` | Yes | — |
 | `recipient` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/recipient/update); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/recipient/update`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipient full type">
@@ -4400,7 +4400,7 @@ await corsair.documenso.api.documents.recipients.updateMany.post({
 | `documentId` | `number` | Yes | — |
 | `recipients` | `object[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/recipient/update-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/recipient/update-many`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -4619,7 +4619,7 @@ await corsair.documenso.api.documents.redistribute.post({
 | `documentId` | `number` | Yes | — |
 | `recipients` | `number[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /document/redistribute); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/redistribute`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -4653,7 +4653,7 @@ await corsair.documenso.api.documents.update.post({ documentId: 1 });
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 
-Deprecated Documenso v2 route (POST /document/update); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /document/update`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -9866,7 +9866,7 @@ await corsair.documenso.api.templates.create.post({
 | `payload` | `object` | Yes | — |
 | `file` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/create); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/create`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="payload full type">
@@ -9980,7 +9980,7 @@ await corsair.documenso.api.templates.createTemplateTemporary.post({ title: 'sam
 | `meta` | `object` | No | — |
 | `attachments` | `object[]` | No | — |
 
-Deprecated Documenso v2 route (POST /template/create/beta); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/create/beta`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -10320,7 +10320,7 @@ await corsair.documenso.api.templates.delete.post({ templateId: 1 });
 |------|------|----------|-------------|
 | `templateId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/delete); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/delete`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -10353,7 +10353,7 @@ await corsair.documenso.api.templates.directLinks.create.post({ templateId: 1 })
 | `templateId` | `number` | Yes | — |
 | `directRecipientId` | `number` | No | — |
 
-Deprecated Documenso v2 route (POST /template/direct/create); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/direct/create`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -10391,7 +10391,7 @@ await corsair.documenso.api.templates.directLinks.delete.post({ templateId: 1 })
 |------|------|----------|-------------|
 | `templateId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/direct/delete); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/direct/delete`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -10424,7 +10424,7 @@ await corsair.documenso.api.templates.directLinks.toggle.post({ templateId: 1, e
 | `templateId` | `number` | Yes | — |
 | `enabled` | `boolean` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/direct/toggle); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/direct/toggle`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -10462,7 +10462,7 @@ await corsair.documenso.api.templates.duplicate.post({ templateId: 1 });
 |------|------|----------|-------------|
 | `templateId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/duplicate); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/duplicate`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -10533,7 +10533,7 @@ await corsair.documenso.api.templates.fields.create.post({
 | `templateId` | `number` | Yes | — |
 | `field` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/field/create); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/field/create`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="field full type">
@@ -10932,7 +10932,7 @@ await corsair.documenso.api.templates.fields.createMany.post({
 | `templateId` | `number` | Yes | — |
 | `fields` | `object[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/field/create-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/field/create-many`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="fields full type">
@@ -11331,7 +11331,7 @@ await corsair.documenso.api.templates.fields.delete.post({ fieldId: 1 });
 |------|------|----------|-------------|
 | `fieldId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/field/delete); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/field/delete`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -11363,7 +11363,7 @@ await corsair.documenso.api.templates.fields.get.get({ fieldId: 1 });
 |------|------|----------|-------------|
 | `fieldId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (GET /template/field/{fieldId}); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /template/field/{fieldId}`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -11539,7 +11539,7 @@ await corsair.documenso.api.templates.fields.update.post({
 | `templateId` | `number` | Yes | — |
 | `field` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/field/update); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/field/update`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="field full type">
@@ -11938,7 +11938,7 @@ await corsair.documenso.api.templates.fields.updateMany.post({
 | `templateId` | `number` | Yes | — |
 | `fields` | `object[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/field/update-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/field/update-many`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="fields full type">
@@ -12341,7 +12341,7 @@ await corsair.documenso.api.templates.find.get({});
 | `type` | `PUBLIC \| PRIVATE \| ORGANISATION` | No | — |
 | `folderId` | `string` | No | — |
 
-Deprecated Documenso v2 route (GET /template); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /template`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -12577,7 +12577,7 @@ await corsair.documenso.api.templates.get.get({ templateId: 1 });
 |------|------|----------|-------------|
 | `templateId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (GET /template/{templateId}); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /template/{templateId}`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -12917,7 +12917,7 @@ await corsair.documenso.api.templates.getMany.post({
 |------|------|----------|-------------|
 | `templateIds` | `number[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/get-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/get-many`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -13153,7 +13153,7 @@ await corsair.documenso.api.templates.recipients.create.post({
 | `templateId` | `number` | Yes | — |
 | `recipient` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/recipient/create); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/recipient/create`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipient full type">
@@ -13235,7 +13235,7 @@ await corsair.documenso.api.templates.recipients.createMany.post({
 | `templateId` | `number` | Yes | — |
 | `recipients` | `object[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/recipient/create-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/recipient/create-many`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -13315,7 +13315,7 @@ await corsair.documenso.api.templates.recipients.delete.post({ recipientId: 1 })
 |------|------|----------|-------------|
 | `recipientId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/recipient/delete); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/recipient/delete`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -13347,7 +13347,7 @@ await corsair.documenso.api.templates.recipients.get.get({ recipientId: 1 });
 |------|------|----------|-------------|
 | `recipientId` | `number` | Yes | — |
 
-Deprecated Documenso v2 route (GET /template/recipient/{recipientId}); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`GET /template/recipient/{recipientId}`); use the corresponding envelope-based operation for new integrations.
 
 
 
@@ -13554,7 +13554,7 @@ await corsair.documenso.api.templates.recipients.update.post({
 | `templateId` | `number` | Yes | — |
 | `recipient` | `object` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/recipient/update); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/recipient/update`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipient full type">
@@ -13778,7 +13778,7 @@ await corsair.documenso.api.templates.recipients.updateMany.post({
 | `templateId` | `number` | Yes | — |
 | `recipients` | `object[]` | Yes | — |
 
-Deprecated Documenso v2 route (POST /template/recipient/update-many); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/recipient/update-many`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -13995,7 +13995,7 @@ await corsair.documenso.api.templates.update.post({ templateId: 1 });
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 
-Deprecated Documenso v2 route (POST /template/update); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/update`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -14129,7 +14129,7 @@ await corsair.documenso.api.templates.use.post({
 | `attachments` | `object[]` | No | — |
 | `formValues` | `object` | No | — |
 
-Deprecated Documenso v2 route (POST /template/use); use the corresponding envelope-based operation for new integrations.
+Deprecated Documenso v2 route (`POST /template/use`); use the corresponding envelope-based operation for new integrations.
 
 <AccordionGroup>
 <Accordion title="recipients full type">
