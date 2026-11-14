@@ -1,0 +1,286 @@
+---
+title: "Prismic API reference"
+sidebarTitle: "API"
+description: "API reference for the Prismic plugin in Corsair: every `prismic.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Documents
+
+### get
+
+`documents.get`
+
+Read one published document by id, optionally at a ref
+
+**Risk:** `read`
+
+```ts
+await corsair.prismic.api.documents.get({ id: 'ZMI65RQAADkECUFM' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The document id. |
+| `ref` | `string` | No | Pins the query to a ref, such as a release preview. Defaults to `master`. |
+| `lang` | `string` | No | Only documents in this locale, such as `en-us`. Also accepts `*`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `type` | `string \| null` | No | The custom type id. |
+| `lang` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `data` | `Record<string, JsonValue> \| null` | No | — |
+| `slugs` | `string[] \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `url` | `string \| null` | No | Absent on a document with no route set. |
+| `first_publication_date` | `string \| null` | No | — |
+| `last_publication_date` | `string \| null` | No | — |
+| `alternate_languages` | `object[] \| null` | No | — |
+| `linked_documents` | `JsonValue[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="alternate_languages full type">
+
+```ts
+{
+  id?: string | null,
+  lang?: string | null,
+  type?: string | null,
+  uid?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`documents.search`
+
+Query published documents with Prismic predicates, ordering, tags and locale, paged by number or by a `next_page` cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.prismic.api.documents.search({ pageSize: 20, orderings: '[my.page.date desc]' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+| `pageSize` | `number` | No | Documents per page. Prismic caps this at 100 on most plans, so a full page means another page may exist. |
+| `orderings` | `string` | No | An ordering such as `[my.document.date desc]`, or several separated by a space. |
+| `q` | `string` | No | A Prismic predicate expression such as `[[at(document.type, "page")]]`. |
+| `lang` | `string` | No | Only documents in this locale, such as `en-us`. Also accepts `*`. |
+| `tags` | `string[]` | No | Only documents carrying every one of these tags. |
+| `after` | `string` | No | Continues after a cursor Prismic returned on the previous page, which is more reliable than `page` for a changing dataset. |
+| `ref` | `string` | No | Pins the query to a ref, such as a release preview. Defaults to `master`. |
+| `nextPage` | `string` | No | The previous answer's `next_page`. It already carries the ref and every filter, so the other fields are ignored when it is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `results_per_page` | `number \| null` | No | — |
+| `results_size` | `number \| null` | No | — |
+| `total_results_size` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `next_page` | `string \| null` | No | The absolute next page URL. Absent on the last page. |
+| `prev_page` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  uid?: string | null,
+  type?: string | null,
+  lang?: string | null,
+  tags?: string[] | null,
+  data?: Record<string, JsonValue> | null,
+  slugs?: string[] | null,
+  href?: string | null,
+  url?: string | null,
+  first_publication_date?: string | null,
+  last_publication_date?: string | null,
+  alternate_languages?: {
+    id?: string | null,
+    lang?: string | null,
+    type?: string | null,
+    uid?: string | null
+  }[] | null,
+  linked_documents?: JsonValue[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Migration
+
+### create
+
+`migration.create`
+
+Create one page as a draft in a migration release. It is not published until the release is published, and Prismic accepts one page per request at one request per second
+
+**Risk:** `write`
+
+```ts
+await corsair.prismic.api.migration.create({ title: 'Example page', type: 'page', uid: 'example-page', lang: 'en-us', tags: ['Red'], data: {} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | The display title shown in the page list. |
+| `type` | `string` | Yes | The custom type id. |
+| `uid` | `string` | No | The document UID, unique within its type. Required if the type has one. |
+| `lang` | `string` | Yes | The locale code, such as `en-us`. |
+| `data` | `Record<string, JsonValue>` | Yes | The document's fields and slices. Each key is a field or slice zone on the type. |
+| `tags` | `string[]` | No | — |
+| `alternate_language_id` | `string` | No | The document this one translates. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `lang` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`migration.update`
+
+Update one existing page. The type, locale and translation link cannot be changed, and omitting `tags` deletes them all
+
+**Risk:** `write`
+
+```ts
+await corsair.prismic.api.migration.update({ id: 'ZMI65RQAADkECUFM', title: 'Updated title' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of the document to update. |
+| `uid` | `string` | No | The document UID, unique within its type. Required if the type has one. |
+| `data` | `Record<string, JsonValue>` | No | — |
+| `title` | `string` | No | — |
+| `tags` | `string[]` | No | Replaces the existing tags; omitting it deletes them all. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `lang` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+
+
+
+---
+
+## Repository
+
+### info
+
+`repository.info`
+
+Read the repository's refs, custom types, languages and tags, which a document query needs since it is pinned to a ref
+
+**Risk:** `read`
+
+```ts
+await corsair.prismic.api.repository.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository` | `string` | No | Overrides the plugin option for this call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refs` | `object[]` | Yes | Every ref, including `master` and any open releases. |
+| `bookmarks` | `Record<string, string> \| null` | No | Saved queries by name. |
+| `types` | `Record<string, string> \| null` | No | Custom type ids to their display labels. |
+| `languages` | `object[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `integrationFieldsRef` | `string \| null` | No | — |
+| `license` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="refs full type">
+
+```ts
+{
+  id?: string | null,
+  ref?: string | null,
+  label?: string | null,
+  isMasterRef?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
