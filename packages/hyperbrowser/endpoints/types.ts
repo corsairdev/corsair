@@ -1,5 +1,11 @@
 import { z } from 'zod';
 
+// Output status fields list the documented values but accept any string, so a
+// status Hyperbrowser adds later does not fail an otherwise valid response.
+function openEnum<const T extends readonly [string, ...string[]]>(values: T) {
+	return z.union([z.enum(values), z.string()]);
+}
+
 // ==========================================
 // Profiles Schemas
 // ==========================================
@@ -128,7 +134,7 @@ export const CreateSessionInputSchema = z
 export const SessionDetailSchema = z.object({
 	id: z.string().optional(),
 	teamId: z.string().optional(),
-	status: z.enum(['active', 'closed', 'error', 'close-error']).optional(),
+	status: openEnum(['active', 'closed', 'error', 'close-error']).optional(),
 	startTime: z.string().nullable().optional(),
 	endTime: z.string().nullable().optional(),
 	createdAt: z.string().optional(),
@@ -222,7 +228,7 @@ export const GetSessionRecordingUrlInputSchema = z
 	.strict();
 
 export const GetSessionRecordingUrlOutputSchema = z.object({
-	status: z.enum([
+	status: openEnum([
 		'not_enabled',
 		'pending',
 		'in_progress',
@@ -249,7 +255,7 @@ export const GetSessionDownloadsUrlInputSchema = z
 	.strict();
 
 export const GetSessionDownloadsUrlOutputSchema = z.object({
-	status: z.enum([
+	status: openEnum([
 		'not_enabled',
 		'pending',
 		'in_progress',
@@ -264,7 +270,7 @@ export const GetSessionDownloadsUrlOutputSchema = z.object({
 // Scrape Schemas
 // ==========================================
 
-export const JobStatusEnum = z.enum([
+export const JobStatusEnum = openEnum([
 	'pending',
 	'running',
 	'completed',
@@ -413,7 +419,7 @@ export const GetCrawlJobInputSchema = z
 
 export const CrawledPageSchema = z.object({
 	url: z.string(),
-	status: z.enum(['completed', 'failed']),
+	status: openEnum(['completed', 'failed']),
 	error: z.string().nullable().optional(),
 	markdown: z.string().optional(),
 	html: z.string().optional(),
@@ -473,7 +479,7 @@ export const GetWebCrawlJobInputSchema = z
 
 export const WebCrawlPageDataSchema = z.object({
 	url: z.string(),
-	status: z.enum(['completed', 'failed', 'pending', 'running']),
+	status: openEnum(['completed', 'failed', 'pending', 'running']),
 	error: z.string().nullable().optional(),
 	markdown: z.string().optional(),
 	html: z.string().optional(),
@@ -587,7 +593,7 @@ export const FetchPageInputSchema = z
 
 export const FetchPageOutputSchema = z.object({
 	jobId: z.string(),
-	status: z.enum(['completed', 'failed', 'pending', 'running']),
+	status: openEnum(['completed', 'failed', 'pending', 'running']),
 	error: z.string().nullable().optional(),
 	data: z
 		.object({
@@ -614,7 +620,7 @@ export const SearchWebInputSchema = z
 
 export const SearchWebOutputSchema = z.object({
 	jobId: z.string(),
-	status: z.enum(['completed', 'failed', 'pending', 'running', 'stopped']),
+	status: openEnum(['completed', 'failed', 'pending', 'running', 'stopped']),
 	error: z.string().nullable().optional(),
 	data: z
 		.object({
@@ -623,7 +629,7 @@ export const SearchWebOutputSchema = z.object({
 				z.object({
 					title: z.string(),
 					url: z.string(),
-					description: z.string(),
+					description: z.string().optional(),
 				}),
 			),
 		})

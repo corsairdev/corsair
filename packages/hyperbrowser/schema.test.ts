@@ -586,3 +586,37 @@ describe('Hyperbrowser endpoint schemas', () => {
 		});
 	});
 });
+
+describe('Hyperbrowser output schemas tolerate provider additions', () => {
+	it('accepts a status value the provider adds later', () => {
+		expect(
+			GetSessionOutputSchema.safeParse({ id: 's1', status: 'suspended' })
+				.success,
+		).toBe(true);
+		expect(
+			GetScrapeJobOutputSchema.safeParse({ jobId: 'j1', status: 'queued' })
+				.success,
+		).toBe(true);
+		expect(
+			GetSessionRecordingUrlOutputSchema.safeParse({ status: 'expired' })
+				.success,
+		).toBe(true);
+		expect(
+			FetchPageOutputSchema.safeParse({ jobId: 'j1', status: 'stopped' })
+				.success,
+		).toBe(true);
+	});
+
+	it('accepts search results without a description (the spec only requires title and url)', () => {
+		expect(
+			SearchWebOutputSchema.safeParse({
+				jobId: 'search_123',
+				status: 'completed',
+				data: {
+					query: 'q',
+					results: [{ title: 'T', url: 'https://example.com' }],
+				},
+			}).success,
+		).toBe(true);
+	});
+});
