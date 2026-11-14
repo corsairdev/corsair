@@ -48,9 +48,7 @@ Every operation validates its input and response against a Zod schema. Search op
 
 ## API-surface note
 
-The OSS catalog currently shows 32 operation slots. The current v2 reference index documents 25 operations, which are the operations implemented here. The catalog also includes older or otherwise unverified job/export operations and separate similar-company operations; v2 exposes lookalike search through `companies.search` and `companies.searchCount`, and its OpenAPI description excludes saved-list exports. Those unverified catalog operations are not implemented.
-
-The current v2 reference also documents six operations not listed in the 32-operation catalog: get a company by ID, preview company search, get a person by ID, find a person's work email, count people, and preview people search. They are included here because they are current documented v2 endpoints.
+This plugin implements the 25 synchronous v2 operations listed above. The v2 OpenAPI also documents 10 asynchronous operations that are not implemented here: bulk company enrichment (`POST /v2/companies/enrich/bulk` and its results download), company and people search exports (`POST /v2/companies/search/export`, `POST /v2/people/search/export` and their results downloads), and batch management (`GET /v2/batches`, `GET /v2/batches/{id}`, `POST /v2/batches/{id}/cancel`, `GET /v2/batches/{id}/results`). Lookalike search runs through `companies.search` and `companies.searchCount`. Saved company lists and list-based exports are V1 only; the v2 description says they are not planned for v2.
 
 ## Webhooks
 
