@@ -1,4 +1,5 @@
 import { makeShortcutRequest } from './client';
+import * as operations from './endpoints/operations';
 import {
 	createCategory,
 	createDoc,
@@ -142,7 +143,7 @@ import {
 	uploadFiles,
 } from './endpoints/operations';
 import { ShortcutEndpointInputSchemas } from './endpoints/types';
-import { ShortcutTestInputs } from './test-fixtures';
+import { ShortcutTestInputs, ShortcutTestOutputs } from './test-fixtures';
 
 jest.mock('./client', () => ({ makeShortcutRequest: jest.fn() }));
 const requestMock = jest.mocked(makeShortcutRequest);
@@ -2880,4 +2881,40 @@ describe('Shortcut REST v3 operations', () => {
 		);
 		expect(requestMock).toHaveBeenCalledTimes(1);
 	});
+});
+
+describe('Shortcut REST v3 operations: documented responses', () => {
+	type Handler = (
+		context: typeof ctx,
+		// `unknown` because each handler parses its own input with its Zod schema.
+		input: unknown,
+	) => Promise<unknown>;
+	const handlers = operations as unknown as Record<string, Handler>;
+	const names = Object.keys(ShortcutTestOutputs).filter(
+		(name) => typeof handlers[name] === 'function',
+	);
+
+	it('covers every operation', () => {
+		expect(names).toHaveLength(
+			Object.keys(operations.ShortcutOperations).length,
+		);
+	});
+
+	it.each(names)(
+		'%s resolves to the parsed documented response',
+		async (name) => {
+			const fixtures = ShortcutTestInputs as Record<string, { body?: object }>;
+			const fixture = fixtures[name];
+			const input =
+				name === 'uploadFiles'
+					? {
+							...fixture,
+							body: { ...fixture?.body, file0: new Blob(['sample']) },
+						}
+					: fixture;
+			const output = (ShortcutTestOutputs as Record<string, unknown>)[name];
+			requestMock.mockResolvedValueOnce(output);
+			await expect(handlers[name]?.(ctx, input)).resolves.toEqual(output);
+		},
+	);
 });
