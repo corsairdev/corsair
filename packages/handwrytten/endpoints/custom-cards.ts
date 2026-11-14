@@ -27,6 +27,7 @@ export const dimensions: HandwryttenEndpoints['customCards.dimensions'] =
 				{
 					method: 'GET',
 					query: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -53,6 +54,7 @@ export const presetImages: HandwryttenEndpoints['customCards.presetImages'] =
 				{
 					method: 'GET',
 					query: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -79,6 +81,7 @@ export const listImages: HandwryttenEndpoints['customCards.listImages'] =
 				{
 					method: 'GET',
 					query: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -105,6 +108,7 @@ export const uploadImage: HandwryttenEndpoints['customCards.uploadImage'] =
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -131,6 +135,7 @@ export const checkImage: HandwryttenEndpoints['customCards.checkImage'] =
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -157,6 +162,7 @@ export const deleteImage: HandwryttenEndpoints['customCards.deleteImage'] =
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -184,6 +190,7 @@ export const create: HandwryttenEndpoints['customCards.create'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -207,6 +214,7 @@ export const deleteCustomCard: HandwryttenEndpoints['customCards.delete'] =
 			{
 				method: 'POST',
 				body: parsedInput,
+				baseUrl: ctx.options?.baseUrl,
 			},
 		);
 		const parsed =

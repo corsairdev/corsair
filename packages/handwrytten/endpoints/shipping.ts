@@ -15,6 +15,7 @@ export const stampOptions: HandwryttenEndpoints['shipping.stampOptions'] =
 			ctx.key,
 			{
 				method: 'GET',
+				baseUrl: ctx.options?.baseUrl,
 			},
 		);
 		const parsed =

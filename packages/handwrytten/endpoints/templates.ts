@@ -24,6 +24,7 @@ export const categories: HandwryttenEndpoints['templates.categories'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -49,6 +50,7 @@ export const list: HandwryttenEndpoints['templates.list'] = async (
 		{
 			method: 'GET',
 			query: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -74,6 +76,7 @@ export const get: HandwryttenEndpoints['templates.get'] = async (
 		{
 			method: 'GET',
 			query: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -99,6 +102,7 @@ export const create: HandwryttenEndpoints['templates.create'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -124,6 +128,7 @@ export const update: HandwryttenEndpoints['templates.update'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -149,6 +154,7 @@ export const deleteTemplate: HandwryttenEndpoints['templates.delete'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =

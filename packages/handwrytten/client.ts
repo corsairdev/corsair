@@ -14,6 +14,37 @@ export class HandwryttenAPIError extends Error {
 
 export const HANDWRYTTEN_API_BASE = 'https://api.handwrytten.com/v1';
 
+export const PUBLIC_ROUTES = new Set([
+	'/fonts/list',
+	'fonts/list',
+	'/cards/list',
+	'cards/list',
+	'/cards/view',
+	'cards/view',
+	'/cards/list/sections',
+	'cards/list/sections',
+	'/categories/list',
+	'categories/list',
+	'/design/dimensions',
+	'design/dimensions',
+	'/design/presetImages',
+	'design/presetImages',
+	'/templateCategories/list',
+	'templateCategories/list',
+	'/shipping/stampOptions',
+	'shipping/stampOptions',
+	'/giftCards/list',
+	'giftCards/list',
+	'/inserts/list',
+	'inserts/list',
+	'/bundles/list',
+	'bundles/list',
+	'/countries/list',
+	'countries/list',
+	'/countries/listStates',
+	'countries/listStates',
+]);
+
 const SENSITIVE_FIELD_NAMES = new Set([
 	'authorization',
 	'apikey',
@@ -72,6 +103,7 @@ export async function makeHandwryttenRequest<T>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		baseUrl?: string;
+		isPublic?: boolean;
 	} = {},
 ): Promise<T> {
 	const {
@@ -79,19 +111,23 @@ export async function makeHandwryttenRequest<T>(
 		body,
 		query,
 		baseUrl = HANDWRYTTEN_API_BASE,
+		isPublic,
 	} = options;
 
-	// An explicitly empty key means no credentials are configured (the
-	// keyBuilder resolves that case to ''). Public callers pass undefined
-	// instead, so only keyed endpoints hit this gate — they fail fast with
-	// Corsair's missing-auth error instead of sending a keyless request.
-	if (apiKey !== undefined && apiKey.length === 0) {
+	const normalizedEndpoint = endpoint.replace(/^\/+/, '');
+	const isPublicRoute =
+		isPublic ??
+		(PUBLIC_ROUTES.has(endpoint) || PUBLIC_ROUTES.has(normalizedEndpoint));
+
+	const trimmedKey = (apiKey ?? '').trim();
+
+	// An empty key on a non-public endpoint fails fast with Corsair's missing-auth error
+	if (!isPublicRoute && trimmedKey.length === 0) {
 		throw new AuthMissingError('handwrytten', 'api_key');
 	}
 
-	const authHeaders: Record<string, string> = apiKey
-		? { Authorization: apiKey }
-		: {};
+	const authHeaders: Record<string, string> =
+		trimmedKey.length > 0 ? { Authorization: trimmedKey } : {};
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,

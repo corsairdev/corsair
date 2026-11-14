@@ -22,6 +22,7 @@ export const getUser: HandwryttenEndpoints['auth.getUser'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -45,6 +46,7 @@ export const checkAuth: HandwryttenEndpoints['auth.checkAuth'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -70,6 +72,7 @@ export const setTestMode: HandwryttenEndpoints['auth.setTestMode'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -94,6 +97,7 @@ export const logout: HandwryttenEndpoints['auth.logout'] = async (
 		{
 			method: 'POST',
 			body: {},
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =

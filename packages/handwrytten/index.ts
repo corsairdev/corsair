@@ -42,6 +42,7 @@ import { HandwryttenSchema } from './schema';
 export type HandwryttenPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	baseUrl?: string;
 	hooks?: InternalHandwryttenPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof handwryttenEndpointsNested>;
@@ -797,11 +798,14 @@ export function handwrytten<const T extends HandwryttenPluginOptions>(
 		keyBuilder: async (ctx: HandwryttenKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key) return options.key;
+			if (ctx.keys) {
+				const apiKey = await ctx.keys.get_api_key();
+				if (apiKey && apiKey.trim().length > 0) {
+					return apiKey.trim();
+				}
+			}
 			if (PUBLIC_ENDPOINTS.has(ctx.meteredOperationId ?? '')) return '';
-			if (!ctx.keys) throw new AuthMissingError('handwrytten', 'api_key');
-			const apiKey = await ctx.keys.get_api_key();
-			if (!apiKey) throw new AuthMissingError('handwrytten', 'api_key');
-			return apiKey;
+			throw new AuthMissingError('handwrytten', 'api_key');
 		},
 	} satisfies InternalHandwryttenPlugin;
 }

@@ -21,6 +21,7 @@ export const list: HandwryttenEndpoints['cards.list'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed = HandwryttenEndpointOutputSchemas['cards.list'].parse(response);
@@ -41,6 +42,7 @@ export const get: HandwryttenEndpoints['cards.get'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed = HandwryttenEndpointOutputSchemas['cards.get'].parse(response);
@@ -65,6 +67,7 @@ export const sections: HandwryttenEndpoints['cards.sections'] = async (
 		{
 			method: 'GET',
 			query: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -88,6 +91,7 @@ export const categories: HandwryttenEndpoints['cards.categories'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =

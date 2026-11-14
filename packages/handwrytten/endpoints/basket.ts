@@ -21,6 +21,7 @@ export const count: HandwryttenEndpoints['basket.count'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -45,6 +46,7 @@ export const clear: HandwryttenEndpoints['basket.clear'] = async (
 		{
 			method: 'POST',
 			body: {},
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -62,6 +64,7 @@ export const send: HandwryttenEndpoints['basket.send'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =

@@ -5,8 +5,9 @@ import {
 	HandwryttenAPIError,
 	makeHandwryttenRequest,
 } from './client';
+import { Cards } from './endpoints';
 import { errorHandlers } from './error-handlers';
-import { handwrytten } from './index';
+import { type HandwryttenContext, handwrytten } from './index';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -73,19 +74,29 @@ describe('makeHandwryttenRequest', () => {
 		);
 	});
 
-	it('makes unauthenticated requests without Authorization header for public routes', async () => {
+	it('makes unauthenticated requests without Authorization header for public routes with empty or undefined key', async () => {
 		mockRequest.mockResolvedValue({ status: 'ok', httpCode: 200 });
 
+		// When key is undefined
 		await makeHandwryttenRequest('/fonts/list', undefined, {
 			method: 'GET',
 		});
-
 		expect(mockRequest).toHaveBeenCalledTimes(1);
-		const [config] = mockRequest.mock.calls[0] ?? [];
-		expect(config?.HEADERS).not.toHaveProperty('Authorization');
+		const [config1] = mockRequest.mock.calls[0] ?? [];
+		expect(config1?.HEADERS).not.toHaveProperty('Authorization');
+
+		// When key is an empty string (as returned by keyBuilder for public endpoints)
+		mockRequest.mockClear();
+		mockRequest.mockResolvedValue({ status: 'ok', httpCode: 200 });
+		await makeHandwryttenRequest('/cards/list', '', {
+			method: 'GET',
+		});
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [config2] = mockRequest.mock.calls[0] ?? [];
+		expect(config2?.HEADERS).not.toHaveProperty('Authorization');
 	});
 
-	it('throws AuthMissingError for an explicitly empty key without sending a request', async () => {
+	it('throws AuthMissingError for an explicitly empty key on private endpoints without sending a request', async () => {
 		mockRequest.mockResolvedValue({ status: 'ok' });
 
 		await expect(
@@ -93,6 +104,20 @@ describe('makeHandwryttenRequest', () => {
 		).rejects.toThrow(AuthMissingError);
 
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('honors custom baseUrl override when provided', async () => {
+		mockRequest.mockResolvedValue({ status: 'ok' });
+		const customBase = 'https://api.handwrytten.com/v2';
+
+		await makeHandwryttenRequest('/fonts/list', '', {
+			method: 'GET',
+			baseUrl: customBase,
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [config] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.BASE).toBe(customBase);
 	});
 
 	it('rethrows ApiError with status and retryAfter intact', async () => {
@@ -163,13 +188,28 @@ describe('handwrytten keyBuilder', () => {
 		expect(key).toBe('direct-opt-key');
 	});
 
-	it('returns empty string for public endpoints without touching ctx.keys', async () => {
+	it('returns stored key when present, even on public endpoints', async () => {
 		const plugin = handwrytten();
 		if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
 		// `unknown` because test context provides only properties used by keyBuilder.
-		const ctx = { meteredOperationId: 'cards.list' } as unknown as Parameters<
-			NonNullable<typeof plugin.keyBuilder>
-		>[0];
+		const ctx = {
+			meteredOperationId: 'cards.list',
+			keys: {
+				get_api_key: async () => 'stored_tenant_key',
+			},
+		} as unknown as Parameters<NonNullable<typeof plugin.keyBuilder>>[0];
+		const key = await plugin.keyBuilder(ctx, 'endpoint');
+		expect(key).toBe('stored_tenant_key');
+	});
+
+	it('returns empty string for public endpoints when no key is configured or stored', async () => {
+		const plugin = handwrytten();
+		if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
+		// `unknown` because test context provides only properties used by keyBuilder.
+		const ctx = {
+			meteredOperationId: 'cards.list',
+			keys: undefined,
+		} as unknown as Parameters<NonNullable<typeof plugin.keyBuilder>>[0];
 		const key = await plugin.keyBuilder(ctx, 'endpoint');
 		expect(key).toBe('');
 	});
@@ -187,7 +227,7 @@ describe('handwrytten keyBuilder', () => {
 		);
 	});
 
-	it('throws AuthMissingError when get_api_key returns empty or null', async () => {
+	it('throws AuthMissingError when get_api_key returns empty or null on private endpoints', async () => {
 		const plugin = handwrytten();
 		if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
 		// `unknown` because test context provides only properties used by keyBuilder.
@@ -201,18 +241,118 @@ describe('handwrytten keyBuilder', () => {
 			AuthMissingError,
 		);
 	});
+});
 
-	it('returns stored key when present', async () => {
+describe('credential resolution joined with endpoint execution', () => {
+	it('executes public endpoint without authentication when no credentials exist', async () => {
+		mockRequest.mockResolvedValue({
+			status: 'success',
+			cards: [{ id: 10, name: 'Thank You' }],
+		});
+
 		const plugin = handwrytten();
 		if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
-		// `unknown` because test context provides only properties used by keyBuilder.
-		const ctx = {
-			meteredOperationId: 'orders.sendSingle',
+
+		// 1. Resolve key for cards.list via keyBuilder
+		// `unknown` because mock context models minimal runtime interface for keyBuilder.
+		const kbCtx = {
+			meteredOperationId: 'cards.list',
+		} as unknown as Parameters<NonNullable<typeof plugin.keyBuilder>>[0];
+		const resolvedKey = await plugin.keyBuilder(kbCtx, 'endpoint');
+		expect(resolvedKey).toBe('');
+
+		// 2. Pass resolved key into endpoint invocation
+		// `unknown` because mock context models minimal runtime interface for endpoint.
+		const endpointCtx = {
+			key: resolvedKey,
+			options: plugin.options,
+			$getAccountId: () => 'test-account',
+		} as unknown as HandwryttenContext;
+
+		const result = await Cards.list(endpointCtx, {});
+		expect(result.status).toBe('success');
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+
+		const [config] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.HEADERS).not.toHaveProperty('Authorization');
+	});
+
+	it('executes public endpoint with Authorization header when tenant key is stored', async () => {
+		mockRequest.mockResolvedValue({
+			status: 'success',
+			cards: [{ id: 10, name: 'Thank You' }],
+		});
+
+		const plugin = handwrytten();
+		if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
+
+		// 1. Resolve key when tenant has stored credentials
+		// `unknown` because mock context models minimal runtime interface for keyBuilder.
+		const kbCtx = {
+			meteredOperationId: 'cards.list',
 			keys: {
-				get_api_key: async () => 'stored_vault_key',
+				get_api_key: async () => 'tenant_stored_api_key',
 			},
 		} as unknown as Parameters<NonNullable<typeof plugin.keyBuilder>>[0];
-		const key = await plugin.keyBuilder(ctx, 'endpoint');
-		expect(key).toBe('stored_vault_key');
+		const resolvedKey = await plugin.keyBuilder(kbCtx, 'endpoint');
+		expect(resolvedKey).toBe('tenant_stored_api_key');
+
+		// 2. Pass resolved key into endpoint invocation
+		// `unknown` because mock context models minimal runtime interface for endpoint.
+		const endpointCtx = {
+			key: resolvedKey,
+			options: plugin.options,
+			$getAccountId: () => 'test-account',
+		} as unknown as HandwryttenContext;
+
+		const result = await Cards.list(endpointCtx, {});
+		expect(result.status).toBe('success');
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+
+		const [config] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.HEADERS).toHaveProperty(
+			'Authorization',
+			'tenant_stored_api_key',
+		);
+	});
+
+	it('forwards custom baseUrl from plugin options to endpoint request', async () => {
+		mockRequest.mockResolvedValue({
+			status: 'success',
+			cards: [],
+		});
+
+		const customBase = 'https://custom-gateway.handwrytten.com/v1';
+		const plugin = handwrytten({
+			baseUrl: customBase,
+		});
+
+		// `unknown` because mock context models minimal runtime interface for endpoint.
+		const endpointCtx = {
+			key: '',
+			options: plugin.options,
+			$getAccountId: () => 'test-account',
+		} as unknown as HandwryttenContext;
+
+		await Cards.list(endpointCtx, {});
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+
+		const [config] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.BASE).toBe(customBase);
+	});
+
+	it('fails fast on private endpoint when credentials are missing', async () => {
+		const plugin = handwrytten();
+		if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
+
+		// `unknown` because mock context models minimal runtime interface for keyBuilder.
+		const kbCtx = {
+			meteredOperationId: 'orders.sendSingle',
+		} as unknown as Parameters<NonNullable<typeof plugin.keyBuilder>>[0];
+
+		await expect(plugin.keyBuilder(kbCtx, 'endpoint')).rejects.toThrow(
+			AuthMissingError,
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });

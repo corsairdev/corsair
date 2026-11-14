@@ -30,6 +30,7 @@ export const countries: HandwryttenEndpoints['addressBook.countries'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -55,6 +56,7 @@ export const states: HandwryttenEndpoints['addressBook.states'] = async (
 		{
 			method: 'GET',
 			query: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -77,6 +79,7 @@ export const listRecipients: HandwryttenEndpoints['addressBook.listRecipients'] 
 				ctx.key,
 				{
 					method: 'GET',
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -103,6 +106,7 @@ export const addRecipient: HandwryttenEndpoints['addressBook.addRecipient'] =
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -131,6 +135,7 @@ export const updateRecipient: HandwryttenEndpoints['addressBook.updateRecipient'
 				{
 					method: 'PUT',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -159,6 +164,7 @@ export const deleteRecipient: HandwryttenEndpoints['addressBook.deleteRecipient'
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -183,6 +189,7 @@ export const listSenders: HandwryttenEndpoints['addressBook.listSenders'] =
 				ctx.key,
 				{
 					method: 'GET',
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -208,6 +215,7 @@ export const getSender: HandwryttenEndpoints['addressBook.getSender'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -233,6 +241,7 @@ export const addSender: HandwryttenEndpoints['addressBook.addSender'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -257,6 +266,7 @@ export const updateSender: HandwryttenEndpoints['addressBook.updateSender'] =
 				{
 					method: 'PUT',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -283,6 +293,7 @@ export const deleteSender: HandwryttenEndpoints['addressBook.deleteSender'] =
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -311,6 +322,7 @@ export const setDefaultSender: HandwryttenEndpoints['addressBook.setDefaultSende
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =

@@ -17,6 +17,7 @@ export const list: HandwryttenEndpoints['bundles.list'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =

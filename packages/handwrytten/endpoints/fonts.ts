@@ -14,6 +14,7 @@ export const list: HandwryttenEndpoints['fonts.list'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed = HandwryttenEndpointOutputSchemas['fonts.list'].parse(response);

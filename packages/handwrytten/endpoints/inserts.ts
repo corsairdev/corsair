@@ -19,6 +19,7 @@ export const list: HandwryttenEndpoints['inserts.list'] = async (
 		{
 			method: 'GET',
 			query: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =

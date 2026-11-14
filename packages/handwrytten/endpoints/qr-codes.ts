@@ -23,6 +23,7 @@ export const list: HandwryttenEndpoints['qrCodes.list'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -48,6 +49,7 @@ export const create: HandwryttenEndpoints['qrCodes.create'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -72,6 +74,7 @@ export const deleteQrCode: HandwryttenEndpoints['qrCodes.delete'] = async (
 		ctx.key,
 		{
 			method: 'DELETE',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -95,6 +98,7 @@ export const dashboard: HandwryttenEndpoints['qrCodes.dashboard'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -118,6 +122,7 @@ export const frames: HandwryttenEndpoints['qrCodes.frames'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =

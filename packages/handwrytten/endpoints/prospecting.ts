@@ -24,6 +24,7 @@ export const calculateTargets: HandwryttenEndpoints['prospecting.calculateTarget
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =
@@ -51,6 +52,7 @@ export const preview: HandwryttenEndpoints['prospecting.preview'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -75,6 +77,7 @@ export const createOrder: HandwryttenEndpoints['prospecting.createOrder'] =
 				{
 					method: 'POST',
 					body: parsedInput,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const parsed =

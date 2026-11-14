@@ -24,6 +24,7 @@ export const sendSingle: HandwryttenEndpoints['orders.sendSingle'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -49,6 +50,7 @@ export const addToBasket: HandwryttenEndpoints['orders.addToBasket'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
@@ -71,6 +73,7 @@ export const get: HandwryttenEndpoints['orders.get'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed = HandwryttenEndpointOutputSchemas['orders.get'].parse(response);
@@ -95,6 +98,7 @@ export const cancel: HandwryttenEndpoints['orders.cancel'] = async (
 		{
 			method: 'POST',
 			body: parsedInput,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const parsed =
