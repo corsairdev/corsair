@@ -1,5 +1,4 @@
 import { ApiError, request } from 'corsair/http';
-import { ShortioAPIError } from './client';
 import type { ShortioContext } from './index';
 import { shortio, shortioEndpointMeta, shortioEndpointSchemas } from './index';
 
@@ -339,9 +338,13 @@ describe('Short.io public request seam', () => {
 	it('preserves 429 status, body, and retry-after after core retries', async () => {
 		mockRequest.mockRejectedValue(
 			new ApiError(
-				{ method: 'POST', url: '/links' },
 				{
-					url: 'https://api.short.io/links',
+					method: 'POST',
+					url: '/links',
+					body: { originalURL: 'https://example.com/alice@example.com' },
+				},
+				{
+					url: 'https://api.short.io/links?originalURL=alice%40example.com',
 					ok: false,
 					status: 429,
 					statusText: 'Too Many Requests',
@@ -361,12 +364,14 @@ describe('Short.io public request seam', () => {
 		} catch (error) {
 			caught = error;
 		}
-		expect(caught).toBeInstanceOf(ShortioAPIError);
+		// Core's ApiError comes through (R8), minus the request body and query.
+		expect(caught).toBeInstanceOf(ApiError);
 		expect(caught).toMatchObject({
 			status: 429,
 			retryAfter: 3000,
 			body: { error: 'rate limit' },
 		});
+		expect(JSON.stringify(caught)).not.toContain('alice@example.com');
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		const handler = shortio().errorHandlers?.RATE_LIMIT_ERROR;
 		const context = {

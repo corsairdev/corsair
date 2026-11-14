@@ -176,7 +176,6 @@ export function shortio<const T extends ShortioPluginOptions>(
 		},
 	} satisfies InternalShortioPlugin;
 }
-export { ShortioAPIError } from './client';
 export type {
 	ShortioEndpointInputs,
 	ShortioEndpointOutputs,

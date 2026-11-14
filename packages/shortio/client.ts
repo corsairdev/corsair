@@ -6,19 +6,6 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export class ShortioAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly status: number,
-		public readonly retryAfter?: number,
-		// Error bodies may be JSON, text, or empty and have no shared schema.
-		public readonly body?: unknown,
-	) {
-		super(message);
-		this.name = 'ShortioAPIError';
-	}
-}
-
 // Core retries a 429 up to three times and honours Retry-After.
 const rateLimitConfig: RateLimitConfig = {
 	enabled: true,
@@ -58,13 +45,30 @@ export async function makeShortioRequest(
 		// Endpoint-specific response schemas narrow the untrusted payload.
 		return await request<unknown>(config, requestOptions, { rateLimitConfig });
 	} catch (error) {
-		if (error instanceof ApiError)
-			throw new ShortioAPIError(
+		// Core's ApiError goes through as an ApiError (status and retryAfter
+		// drive the 429 handler), rebuilt without the request body, query and
+		// URL query string: they hold link URLs, paths and titles.
+		if (error instanceof ApiError) {
+			const sanitized = new ApiError(
+				{ ...error.request, body: undefined, query: undefined },
+				{
+					url: error.url.split('?')[0] ?? error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
 				error.message,
-				error.status,
-				error.retryAfter,
-				error.body,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
 			);
+			sanitized.stack = error.stack;
+			throw sanitized;
+		}
 		throw error;
 	}
 }
