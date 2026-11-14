@@ -1,0 +1,2573 @@
+---
+title: "Help Scout API reference"
+sidebarTitle: "API"
+description: "API reference for the Help Scout plugin in Corsair: every `helpscout.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Conversations
+
+### create
+
+`conversations.create`
+
+Create a new conversation with initial thread
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.conversations.create({ subject: 'Support request', type: 'email', mailboxId: 100, customer: { email: 'customer@example.com' }, threads: [{ type: 'customer', text: 'Need assistance' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | Yes | — |
+| `type` | `email \| chat \| phone` | Yes | — |
+| `mailboxId` | `number` | Yes | — |
+| `customer` | `object` | Yes | — |
+| `status` | `active \| pending \| closed \| spam` | No | — |
+| `assignTo` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `threads` | `object[]` | Yes | — |
+| `tags` | `string[]` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number,
+  email?: string,
+  firstName?: string,
+  lastName?: string
+}
+```
+</Accordion>
+
+<Accordion title="threads full type">
+
+```ts
+{
+  type: customer | reply | note | phone | chat,
+  text: string,
+  customer?: {
+    id?: number,
+    email?: string
+  },
+  user?: number,
+  draft?: boolean,
+  attachments?: {
+    fileName: string,
+    mimeType: string,
+    data: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  id: number,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### delete
+
+`conversations.delete`
+
+Delete a conversation permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.conversations.delete({ conversationId: 1000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### get
+
+`conversations.get`
+
+Get a specific Help Scout conversation by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.conversations.get({ conversationId: 1000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `embed` | `threads` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `number` | No | — |
+| `threadsCount` | `number` | No | — |
+| `type` | `string` | No | — |
+| `folderId` | `number` | No | — |
+| `status` | `string` | No | — |
+| `state` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `mailboxId` | `number` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `createdBy` | `object \| null` | No | — |
+| `createdAt` | `string` | No | — |
+| `closedBy` | `number \| null` | No | — |
+| `closedAt` | `string \| null` | No | — |
+| `userUpdatedAt` | `string` | No | — |
+| `customer` | `object \| null` | No | — |
+| `source` | `object` | No | — |
+| `tags` | `object[]` | No | — |
+| `_embedded` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  id?: number,
+  type?: string,
+  first?: string,
+  last?: string,
+  email?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="createdBy full type">
+
+```ts
+{
+  id?: number,
+  type?: string,
+  first?: string,
+  last?: string,
+  email?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number,
+  first?: string,
+  last?: string,
+  email?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string,
+  via?: string
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+(string | {
+  id?: number,
+  tag: string,
+  slug?: string
+})[]
+```
+</Accordion>
+
+<Accordion title="_embedded full type">
+
+```ts
+{
+  threads?: Record<string, any>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List and filter conversations in Help Scout
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox` | `number \| string` | No | — |
+| `folder` | `number \| string` | No | — |
+| `status` | `all \| active \| open \| closed \| pending \| spam` | No | — |
+| `tag` | `string` | No | — |
+| `assigned_to` | `number \| string` | No | — |
+| `modifiedSince` | `string` | No | — |
+| `number` | `number` | No | — |
+| `sortField` | `createdAt \| modifiedAt \| number \| status` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `page` | `number` | No | — |
+| `embed` | `threads` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+| `_links` | `object` | No | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  conversations: {
+    id: number,
+    number?: number,
+    threadsCount?: number,
+    type?: string,
+    folderId?: number,
+    status?: string,
+    state?: string,
+    subject?: string,
+    preview?: string,
+    mailboxId?: number,
+    assignee?: {
+      id?: number,
+      type?: string,
+      first?: string,
+      last?: string,
+      email?: string
+    } | null,
+    createdBy?: {
+      id?: number,
+      type?: string,
+      first?: string,
+      last?: string,
+      email?: string
+    } | null,
+    createdAt?: string,
+    closedBy?: number | null,
+    closedAt?: string | null,
+    userUpdatedAt?: string,
+    customer?: {
+      id?: number,
+      first?: string,
+      last?: string,
+      email?: string
+    } | null,
+    source?: {
+      type?: string,
+      via?: string
+    },
+    tags?: (string | {
+      id?: number,
+      tag: string,
+      slug?: string
+    })[],
+    _embedded?: {
+      threads?: Record<string, any>[]
+    }
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href: string
+  },
+  first?: {
+    href: string
+  },
+  last?: {
+    href: string
+  },
+  next?: {
+    href: string
+  },
+  previous?: {
+    href: string
+  },
+  page?: {
+    href: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number,
+  totalElements?: number,
+  totalPages?: number,
+  number?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`conversations.update`
+
+Update fields of a conversation via JSON Patch
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.conversations.update({ conversationId: 1000, op: 'replace', path: '/status', value: 'closed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `op` | `replace \| add \| remove \| move` | Yes | — |
+| `path` | `/subject \| /primaryCustomer.id \| /draft \| /mailboxId \| /status \| /assignTo` | Yes | — |
+| `value` | `string \| number \| boolean` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateFields
+
+`conversations.updateFields`
+
+Update custom field values on a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.conversations.updateFields({ conversationId: 1000, fields: [{ id: 1, value: 'VIP' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: number,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateTags
+
+`conversations.updateTags`
+
+Update tags assigned to a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.conversations.updateTags({ conversationId: 1000, tags: ['urgent'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a new customer profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `company` | `string` | No | — |
+| `photoUrl` | `string` | No | — |
+| `photoType` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `address` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  value: string,
+  type?: work | home | other
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value: string,
+  type?: work | home | mobile | fax | pager | other
+}[]
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address?: string,
+  address2?: string,
+  city?: string,
+  state?: string,
+  postalCode?: string,
+  country?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createAddress
+
+`customers.createAddress`
+
+Create customer physical address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.createAddress({ customerId: 200, city: 'Boston', state: 'MA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `address` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `postalCode` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createChat
+
+`customers.createChat`
+
+Add a chat handle to a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.createChat({ customerId: 200, value: 'alice_chat', type: 'slack' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createEmail
+
+`customers.createEmail`
+
+Add an email address to a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.createEmail({ customerId: 200, value: 'alice@example.com', type: 'work' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `work \| home \| other` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createPhone
+
+`customers.createPhone`
+
+Add a phone number to a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.createPhone({ customerId: 200, value: '555-0123', type: 'work' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `work \| home \| mobile \| fax \| pager \| other` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createSocialProfile
+
+`customers.createSocialProfile`
+
+Add a social profile to a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.createSocialProfile({ customerId: 200, value: 'https://twitter.com/alice', type: 'twitter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createWebsite
+
+`customers.createWebsite`
+
+Add a website URL to a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.createWebsite({ customerId: 200, value: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Delete a customer profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.delete({ customerId: 200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### deleteAddress
+
+`customers.deleteAddress`
+
+Delete customer physical address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.deleteAddress({ customerId: 200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### deleteChat
+
+`customers.deleteChat`
+
+Delete a chat handle from a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.deleteChat({ customerId: 200, chatId: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `chatId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### deleteEmail
+
+`customers.deleteEmail`
+
+Delete an email address from a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.deleteEmail({ customerId: 200, emailId: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `emailId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### deletePhone
+
+`customers.deletePhone`
+
+Delete a phone number from a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.deletePhone({ customerId: 200, phoneId: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `phoneId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### deleteSocialProfile
+
+`customers.deleteSocialProfile`
+
+Delete a social profile from a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.deleteSocialProfile({ customerId: 200, profileId: 40 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `profileId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### deleteWebsite
+
+`customers.deleteWebsite`
+
+Delete a website URL from a customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.deleteWebsite({ customerId: 200, websiteId: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `websiteId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### get
+
+`customers.get`
+
+Get details of a specific customer by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.customers.get({ customerId: 200 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `photoUrl` | `string \| null` | No | — |
+| `photoType` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `age` | `string \| null` | No | — |
+| `organization` | `string \| null` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `_embedded` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  emails?: {
+    id?: number,
+    value: string,
+    type?: string
+  }[],
+  phones?: {
+    id?: number,
+    value: string,
+    type?: string
+  }[],
+  address?: {
+    id?: number,
+    city?: string,
+    state?: string,
+    postalCode?: string,
+    country?: string,
+    lines?: string[],
+    address?: string,
+    address2?: string
+  } | null,
+  chats?: {
+    id?: number,
+    value: string,
+    type?: string
+  }[],
+  socialProfiles?: {
+    id?: number,
+    value: string,
+    type?: string
+  }[],
+  websites?: {
+    id?: number,
+    value: string,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List and search customers in Help Scout
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox` | `number \| string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `query` | `string` | No | — |
+| `sortField` | `createdAt \| modifiedAt \| score` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+| `_links` | `object` | No | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  customers: {
+    id: number,
+    firstName?: string | null,
+    lastName?: string | null,
+    jobTitle?: string | null,
+    company?: string | null,
+    photoUrl?: string | null,
+    photoType?: string | null,
+    gender?: string | null,
+    age?: string | null,
+    organization?: string | null,
+    createdAt?: string,
+    updatedAt?: string,
+    _embedded?: {
+      emails?: {
+        id?: number,
+        value: string,
+        type?: string
+      }[],
+      phones?: {
+        id?: number,
+        value: string,
+        type?: string
+      }[],
+      address?: {
+        id?: number,
+        city?: string,
+        state?: string,
+        postalCode?: string,
+        country?: string,
+        lines?: string[],
+        address?: string,
+        address2?: string
+      } | null,
+      chats?: {
+        id?: number,
+        value: string,
+        type?: string
+      }[],
+      socialProfiles?: {
+        id?: number,
+        value: string,
+        type?: string
+      }[],
+      websites?: {
+        id?: number,
+        value: string,
+        type?: string
+      }[]
+    }
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href: string
+  },
+  first?: {
+    href: string
+  },
+  last?: {
+    href: string
+  },
+  next?: {
+    href: string
+  },
+  previous?: {
+    href: string
+  },
+  page?: {
+    href: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number,
+  totalElements?: number,
+  totalPages?: number,
+  number?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`customers.patch`
+
+Partially update customer profile fields
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.patch({ customerId: 200, op: 'replace', path: '/firstName', value: 'Alice' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `op` | `replace \| add \| remove` | Yes | — |
+| `path` | `string` | Yes | — |
+| `value` | `string \| number \| boolean` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### update
+
+`customers.update`
+
+Overwrite an existing customer profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.update({ customerId: 200, firstName: 'Alice' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `company` | `string` | No | — |
+| `photoUrl` | `string` | No | — |
+| `photoType` | `string` | No | — |
+| `organization` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateAddress
+
+`customers.updateAddress`
+
+Update customer physical address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.updateAddress({ customerId: 200, city: 'Cambridge', state: 'MA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `address` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `postalCode` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateChat
+
+`customers.updateChat`
+
+Update an existing customer chat handle
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.updateChat({ customerId: 200, chatId: 30, value: 'alice_new_chat', type: 'slack' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `chatId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateEmail
+
+`customers.updateEmail`
+
+Update an existing customer email address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.updateEmail({ customerId: 200, emailId: 10, value: 'alice.smith@example.com', type: 'work' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `emailId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `work \| home \| other` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updatePhone
+
+`customers.updatePhone`
+
+Update an existing customer phone number
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.updatePhone({ customerId: 200, phoneId: 20, value: '555-0199', type: 'mobile' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `phoneId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `work \| home \| mobile \| fax \| pager \| other` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateSocialProfile
+
+`customers.updateSocialProfile`
+
+Update an existing customer social profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.updateSocialProfile({ customerId: 200, profileId: 40, value: 'https://x.com/alice', type: 'twitter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `profileId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateWebsite
+
+`customers.updateWebsite`
+
+Update an existing customer website URL
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.customers.updateWebsite({ customerId: 200, websiteId: 50, value: 'https://blog.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number \| string` | Yes | — |
+| `websiteId` | `number \| string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Custom Fields
+
+### list
+
+`customFields.list`
+
+List custom fields configured on a mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.customFields.list({ mailboxId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+| `_links` | `object` | No | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  fields: {
+    id: number,
+    name: string,
+    type?: string,
+    required?: boolean,
+    order?: number,
+    options?: {
+      id: number,
+      name: string,
+      order?: number
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href: string
+  },
+  first?: {
+    href: string
+  },
+  last?: {
+    href: string
+  },
+  next?: {
+    href: string
+  },
+  previous?: {
+    href: string
+  },
+  page?: {
+    href: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number,
+  totalElements?: number,
+  totalPages?: number,
+  number?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### list
+
+`folders.list`
+
+List folders belonging to a mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.folders.list({ mailboxId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+| `_links` | `object` | No | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  folders: {
+    id: number,
+    name: string,
+    type?: string,
+    userId?: number,
+    totalCount?: number,
+    activeCount?: number,
+    modifiedAt?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href: string
+  },
+  first?: {
+    href: string
+  },
+  last?: {
+    href: string
+  },
+  next?: {
+    href: string
+  },
+  previous?: {
+    href: string
+  },
+  page?: {
+    href: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number,
+  totalElements?: number,
+  totalPages?: number,
+  number?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mailboxes
+
+### get
+
+`mailboxes.get`
+
+Get details of a specific Help Scout mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.mailboxes.get({ mailboxId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `email` | `string` | Yes | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`mailboxes.list`
+
+List mailboxes in Help Scout
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.mailboxes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+| `_links` | `object` | No | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  mailboxes: {
+    id: number,
+    name: string,
+    slug?: string,
+    email: string,
+    createdAt?: string,
+    updatedAt?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href: string
+  },
+  first?: {
+    href: string
+  },
+  last?: {
+    href: string
+  },
+  next?: {
+    href: string
+  },
+  previous?: {
+    href: string
+  },
+  page?: {
+    href: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number,
+  totalElements?: number,
+  totalPages?: number,
+  number?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### getChat
+
+`reports.getChat`
+
+Get live chat channel report metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.reports.getChat({ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `previousStart` | `string` | No | — |
+| `previousEnd` | `string` | No | — |
+| `mailboxes` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `types` | `email \| chat \| phone` | No | — |
+| `folders` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getCompany
+
+`reports.getCompany`
+
+Get overall company performance report metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.reports.getCompany({ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `previousStart` | `string` | No | — |
+| `previousEnd` | `string` | No | — |
+| `mailboxes` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `types` | `email \| chat \| phone` | No | — |
+| `folders` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getConversations
+
+`reports.getConversations`
+
+Get aggregate conversations report metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.reports.getConversations({ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `previousStart` | `string` | No | — |
+| `previousEnd` | `string` | No | — |
+| `mailboxes` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `types` | `email \| chat \| phone` | No | — |
+| `folders` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getDocs
+
+`reports.getDocs`
+
+Get Help Scout Docs knowledge base report metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.reports.getDocs({ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `previousStart` | `string` | No | — |
+| `previousEnd` | `string` | No | — |
+| `mailboxes` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `types` | `email \| chat \| phone` | No | — |
+| `folders` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getEmail
+
+`reports.getEmail`
+
+Get email channel performance report metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.reports.getEmail({ start: '2026-01-01T00:00:00Z', end: '2026-01-31T23:59:59Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `previousStart` | `string` | No | — |
+| `previousEnd` | `string` | No | — |
+| `mailboxes` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `types` | `email \| chat \| phone` | No | — |
+| `folders` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Saved Replies
+
+### create
+
+`savedReplies.create`
+
+Create a saved reply in a mailbox
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.savedReplies.create({ mailboxId: 100, name: 'Default Greeting', text: 'Hello! How can we assist you today?' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `chatText` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### delete
+
+`savedReplies.delete`
+
+Delete a saved reply from a mailbox
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.savedReplies.delete({ mailboxId: 100, savedReplyId: 300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number \| string` | Yes | — |
+| `savedReplyId` | `number \| string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### get
+
+`savedReplies.get`
+
+Get a saved reply by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.savedReplies.get({ mailboxId: 100, savedReplyId: 300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number \| string` | Yes | — |
+| `savedReplyId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preview` | `string` | No | — |
+| `chatPreview` | `string` | No | — |
+| `text` | `string` | No | — |
+| `chatText` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`savedReplies.list`
+
+List saved replies for a mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.savedReplies.list({ mailboxId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number \| string` | Yes | — |
+| `includeChatReplies` | `boolean` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[] \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  preview?: string,
+  chatPreview?: string,
+  text?: string,
+  chatText?: string
+}[] | {
+  _embedded: {
+    savedReplies: {
+      id: number,
+      name: string,
+      preview?: string,
+      chatPreview?: string,
+      text?: string,
+      chatText?: string
+    }[]
+  },
+  _links?: {
+    self?: {
+      href: string
+    },
+    first?: {
+      href: string
+    },
+    last?: {
+      href: string
+    },
+    next?: {
+      href: string
+    },
+    previous?: {
+      href: string
+    },
+    page?: {
+      href: string
+    }
+  },
+  page?: {
+    size?: number,
+    totalElements?: number,
+    totalPages?: number,
+    number?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`savedReplies.update`
+
+Update an existing saved reply
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.savedReplies.update({ mailboxId: 100, savedReplyId: 300, name: 'Updated Greeting' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number \| string` | Yes | — |
+| `savedReplyId` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `chatText` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Tags
+
+### get
+
+`tags.get`
+
+Get details of a tag by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.tags.get({ tagId: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `ticketCount` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List all tags used across mailboxes
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+| `_links` | `object` | No | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  tags: {
+    id: number,
+    tag: string,
+    slug?: string,
+    ticketCount?: number,
+    createdAt?: string,
+    updatedAt?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href: string
+  },
+  first?: {
+    href: string
+  },
+  last?: {
+    href: string
+  },
+  next?: {
+    href: string
+  },
+  previous?: {
+    href: string
+  },
+  page?: {
+    href: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number,
+  totalElements?: number,
+  totalPages?: number,
+  number?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Threads
+
+### createChat
+
+`threads.createChat`
+
+Create a chat thread on a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.threads.createChat({ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Chat conversation transcript' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `customer` | `object` | Yes | — |
+| `text` | `string` | Yes | — |
+| `attachments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  fileName: string,
+  mimeType: string,
+  data: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createCustomer
+
+`threads.createCustomer`
+
+Create a customer message thread on a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.threads.createCustomer({ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Follow-up message' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `customer` | `object` | Yes | — |
+| `text` | `string` | Yes | — |
+| `attachments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  fileName: string,
+  mimeType: string,
+  data: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createNote
+
+`threads.createNote`
+
+Create an internal note thread on a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.threads.createNote({ conversationId: 1000, text: 'Internal team note' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `user` | `number` | No | — |
+| `status` | `active \| pending \| closed \| spam` | No | — |
+| `attachments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  fileName: string,
+  mimeType: string,
+  data: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createPhone
+
+`threads.createPhone`
+
+Create a phone call log thread on a conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.threads.createPhone({ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Phone conversation summary' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `customer` | `object` | Yes | — |
+| `text` | `string` | Yes | — |
+| `user` | `number` | No | — |
+| `attachments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  fileName: string,
+  mimeType: string,
+  data: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### createReply
+
+`threads.createReply`
+
+Create a reply thread sent to the customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.threads.createReply({ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Thank you for reaching out.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `customer` | `object` | Yes | — |
+| `text` | `string` | Yes | — |
+| `user` | `number` | No | — |
+| `draft` | `boolean` | No | — |
+| `status` | `active \| pending \| closed \| spam` | No | — |
+| `assignTo` | `number` | No | — |
+| `cc` | `string[]` | No | — |
+| `bcc` | `string[]` | No | — |
+| `attachments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  fileName: string,
+  mimeType: string,
+  data: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getOriginalSource
+
+`threads.getOriginalSource`
+
+Get original email source of a thread
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.threads.getOriginalSource({ conversationId: 1000, threadId: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `threadId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`threads.list`
+
+List all threads in a conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.helpscout.api.threads.list({ conversationId: 1000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_embedded` | `object` | Yes | — |
+| `_links` | `object` | No | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_embedded full type">
+
+```ts
+{
+  threads: {
+    id: number,
+    type?: string,
+    status?: string,
+    state?: string,
+    action?: {
+      type?: string,
+      text?: string
+    },
+    body?: string,
+    source?: {
+      type?: string,
+      via?: string
+    },
+    customer?: {
+      id?: number,
+      first?: string,
+      last?: string,
+      email?: string
+    } | null,
+    createdBy?: {
+      id?: number,
+      type?: string,
+      first?: string,
+      last?: string,
+      email?: string
+    } | null,
+    assignedTo?: {
+      id?: number,
+      type?: string,
+      first?: string,
+      last?: string,
+      email?: string
+    } | null,
+    createdAt?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  self?: {
+    href: string
+  },
+  first?: {
+    href: string
+  },
+  last?: {
+    href: string
+  },
+  next?: {
+    href: string
+  },
+  previous?: {
+    href: string
+  },
+  page?: {
+    href: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number,
+  totalElements?: number,
+  totalPages?: number,
+  number?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`threads.update`
+
+Update thread text or visibility
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpscout.api.threads.update({ conversationId: 1000, threadId: 50, op: 'replace', path: '/text', value: 'Updated thread content' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `number \| string` | Yes | — |
+| `threadId` | `number \| string` | Yes | — |
+| `op` | `replace` | Yes | — |
+| `path` | `/text \| /hidden` | Yes | — |
+| `value` | `string \| boolean` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
