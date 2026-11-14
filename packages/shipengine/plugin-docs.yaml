@@ -1,0 +1,216 @@
+displayName: "ShipStation API (formerly ShipEngine)"
+description: "Access the ShipEngine REST API, now branded ShipStation API, with strict request and response validation for shipping operations."
+overviewNote: "ShipEngine is now branded ShipStation API; the provider explicitly states the ShipEngine endpoints remain unchanged. This Corsair plugin keeps the shipengine slug. Store a server-side API key in the tenant key store (API-Key header), and choose apiRegion eu only for accounts using the official EU service host."
+apiNotes:
+  "account.deleteAccountImageById": "Delete Account Image By Id deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "batches.deleteBatch": "Delete Batch By Id deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "batches.processBatch": "Process Batch ID Labels purchases one or more carrier labels and can incur shipping charges. ShipStation wallet-carrier costs are deducted from the account balance; merchant carrier accounts follow carrier billing terms. Verify the rate before using a production key."
+  "batches.createBatch": "The optional process_labels.create_batch_and_process_labels flag processes label purchases as part of batch creation and can incur carrier charges. This endpoint is marked destructive."
+  "carriers.disconnectCarrierById": "Disconnect Carrier by ID deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "carriers.addFundsToCarrier": "Add Funds To Carrier transfers money into a carrier or Shipsurance balance. Confirm the amount and funding account before using a production key."
+  "carrierAccounts.disconnectCarrier": "Disconnect a carrier deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "insurance.disconnectInsurer": "Disconnect a Shipsurance Account deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "insurance.addFundsToInsurance": "Add Funds To Insurance transfers money into a carrier or Shipsurance balance. Confirm the amount and funding account before using a production key."
+  "labels.createLabel": "Purchase Label purchases one or more carrier labels and can incur shipping charges. ShipStation wallet-carrier costs are deducted from the account balance; merchant carrier accounts follow carrier billing terms. Verify the rate before using a production key."
+  "labels.createLabelFromRate": "Purchase Label with Rate ID purchases one or more carrier labels and can incur shipping charges. ShipStation wallet-carrier costs are deducted from the account balance; merchant carrier accounts follow carrier billing terms. Verify the rate before using a production key."
+  "labels.createLabelFromRateShopper": "Purchase Label from Rate Shopper purchases one or more carrier labels and can incur shipping charges. ShipStation wallet-carrier costs are deducted from the account balance; merchant carrier accounts follow carrier billing terms. Verify the rate before using a production key."
+  "labels.createLabelFromShipment": "Purchase Label with Shipment ID purchases one or more carrier labels and can incur shipping charges. ShipStation wallet-carrier costs are deducted from the account balance; merchant carrier accounts follow carrier billing terms. Verify the rate before using a production key."
+  "labels.createReturnLabel": "Create a return label purchases one or more carrier labels and can incur shipping charges. ShipStation wallet-carrier costs are deducted from the account balance; merchant carrier accounts follow carrier billing terms. Verify the rate before using a production key."
+  "packageTypes.deletePackageType": "Delete A Custom Package By ID deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "packagePickups.schedulePickup": "Scheduling a carrier pickup may incur a carrier fee. Confirm pickup details and carrier charges before using a production key."
+  "packagePickups.deleteScheduledPickup": "Delete a Scheduled Pickup deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "shipments.cancelShipments": "Cancel a Shipment deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "shipments.untagShipment": "Remove Tag from Shipment deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "tags.deleteTag": "Delete Tag deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "warehouses.deleteWarehouse": "Delete Warehouse By ID deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
+  "account.createAccountImage": "The provider expects image_data as a Base64-encoded string in a JSON body (PNG or JPEG); this is not a multipart upload."
+  "downloads.downloadFile": "Binary download uses a custom byte-preserving transport because the shared Corsair JSON transport decodes binary bodies as text. The validated return value is Base64 with a 50 MiB safety limit."
+  "tracking.startTracking": "This starts provider tracking subscriptions. Webhook receiving/management remains out of scope; no incoming callback handler is registered by this plugin."
+  "tracking.stopTracking": "This stops provider tracking subscriptions. Webhook receiving/management remains out of scope; no incoming callback handler is registered by this plugin."
+  "tags.createTagByName": "This path-based tag creation operation is deprecated by ShipEngine; use POST /v1/tags (tags.createTag) instead."
+  "carriers.listCarrierServices": "The provider's List Carrier Services route example returns carrier_code values such as stamps_com. The OpenAPI se_id pattern on this field conflicts with that route example; the plugin validates it as a carrier code."
+apiExamples:
+  "account.listAccountSettings":
+    args: {}
+  "account.listAccountImages":
+    args: {}
+  "account.createAccountImage":
+    args: {"body":{"name":"example","image_content_type":"image/png","image_data":"iVBORw0KGgo="}}
+  "account.getAccountSettingsImagesById":
+    args: {"path":{"label_image_id":"img_DtBXupDBxREpHnwEXhTfgK"}}
+  "account.updateAccountSettingsImagesById":
+    args: {"path":{"label_image_id":"img_DtBXupDBxREpHnwEXhTfgK"},"body":{"is_default":false}}
+  "account.deleteAccountImageById":
+    args: {"path":{"label_image_id":"img_DtBXupDBxREpHnwEXhTfgK"}}
+  "addresses.parseAddress":
+    args: {"body":{"text":"Example shipment from 123 Example St, Example City, CA 94000"}}
+  "addresses.validateAddress":
+    args: {"body":[{"address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","country_code":"US"}]}
+  "batches.listBatches":
+    args: {}
+  "batches.createBatch":
+    args: {"body":{"external_batch_id":"se-28529731"}}
+  "batches.getBatchByExternalId":
+    args: {"path":{"external_batch_id":"example"}}
+  "batches.deleteBatch":
+    args: {"path":{"batch_id":"se-28529731"}}
+  "batches.getBatchById":
+    args: {"path":{"batch_id":"se-28529731"}}
+  "batches.updateBatch":
+    args: {"path":{"batch_id":"se-28529731"}}
+  "batches.addToBatch":
+    args: {"path":{"batch_id":"se-28529731"},"body":{}}
+  "batches.listBatchErrors":
+    args: {"path":{"batch_id":"se-28529731"}}
+  "batches.processBatch":
+    args: {"path":{"batch_id":"se-28529731"},"body":{}}
+  "batches.removeFromBatch":
+    args: {"path":{"batch_id":"se-28529731"},"body":{}}
+  "carriers.listCarriers":
+    args: {}
+  "carriers.getCarrierById":
+    args: {"path":{"carrier_id":"se-28529731"}}
+  "carriers.disconnectCarrierById":
+    args: {"path":{"carrier_id":"se-28529731"}}
+  "carriers.addFundsToCarrier":
+    args: {"path":{"carrier_id":"se-28529731"},"body":{"currency":"example","amount":0}}
+  "carriers.getCarrierOptions":
+    args: {"path":{"carrier_id":"se-28529731"}}
+  "carriers.listCarrierPackageTypes":
+    args: {"path":{"carrier_id":"se-28529731"}}
+  "carriers.listCarrierServices":
+    args: {"path":{"carrier_id":"se-28529731"}}
+  "carrierAccounts.connectCarrier":
+    args: {"path":{"carrier_name":"access_worldwide"},"body":{"nickname":"example","username":"x","password":"example-credential"}}
+  "carrierAccounts.disconnectCarrier":
+    args: {"path":{"carrier_name":"access_worldwide","carrier_id":"se-28529731"}}
+  "carrierAccounts.getCarrierSettings":
+    args: {"path":{"carrier_name":"dhl_express","carrier_id":"se-28529731"}}
+  "carrierAccounts.updateCarrierSettings":
+    args: {"path":{"carrier_name":"dhl_express","carrier_id":"se-28529731"},"body":{}}
+  "insurance.disconnectInsurer":
+    args: {}
+  "insurance.connectInsurer":
+    args: {"body":{"email":"customer@example.com","policy_id":"x"}}
+  "labels.createCombinedLabelDocument":
+    args: {"body":{}}
+  "downloads.downloadFile":
+    args: {"path":{"subdir":"example","filename":"example","dir":"example"}}
+  "insurance.addFundsToInsurance":
+    args: {"body":{"currency":"example","amount":0}}
+  "insurance.getInsuranceBalance":
+    args: {}
+  "labels.listLabels":
+    args: {}
+  "labels.createLabel":
+    args: {"body":{"shipment":{"carrier_id":"se-28529731","service_code":"usps_first_class_mail","ship_to":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"},"packages":[{"weight":{"value":0,"unit":"pound"}}]}}}
+  "labels.getLabelByExternalShipmentId":
+    args: {"path":{"external_shipment_id":"example"}}
+  "labels.createLabelFromRate":
+    args: {"path":{"rate_id":"se-28529731"},"body":{}}
+  "labels.createLabelFromRateShopper":
+    args: {"path":{"rate_shopper_id":"best_value"},"body":{"shipment":{}}}
+  "labels.createLabelFromShipment":
+    args: {"path":{"shipment_id":"se-28529731"},"body":{}}
+  "labels.getLabelById":
+    args: {"path":{"label_id":"se-28529731"}}
+  "labels.createReturnLabel":
+    args: {"path":{"label_id":"se-28529731"},"body":{}}
+  "labels.getTrackingLogFromLabel":
+    args: {"path":{"label_id":"se-28529731"}}
+  "labels.voidLabel":
+    args: {"path":{"label_id":"se-28529731"}}
+  "labels.cancelLabelRefund":
+    args: {"path":{"label_id":"se-28529731"}}
+  "manifests.listManifests":
+    args: {}
+  "manifests.createManifest":
+    args: {"body":{"carrier_id":"se-28529731","warehouse_id":"se-28529731","ship_date":"2018-09-23T15:00:00.000Z"}}
+  "manifests.getManifestById":
+    args: {"path":{"manifest_id":"se-28529731"}}
+  "manifests.getManifestRequestById":
+    args: {"path":{"manifest_request_id":"se-28529731"}}
+  "packageTypes.listPackageTypes":
+    args: {}
+  "packageTypes.createPackageType":
+    args: {"body":{"name":"example","package_code":"small_flat_rate_box"}}
+  "packageTypes.getPackageTypeById":
+    args: {"path":{"package_id":"se-28529731"}}
+  "packageTypes.updatePackageType":
+    args: {"path":{"package_id":"se-28529731"},"body":{"name":"example","package_code":"small_flat_rate_box"}}
+  "packageTypes.deletePackageType":
+    args: {"path":{"package_id":"se-28529731"}}
+  "packagePickups.listScheduledPickups":
+    args: {}
+  "packagePickups.schedulePickup":
+    args: {"body":{"contact_details":{"name":"example","email":"customer@example.com","phone":"+1 555 0100"},"label_ids":["se-28529731"],"pickup_window":{"start_at":"2018-09-23T15:00:00.000Z","end_at":"2018-09-23T15:00:00.000Z"}}}
+  "packagePickups.getPickupById":
+    args: {"path":{"pickup_id":"pik_3YcKU5zdtJuCqoeNwyqqbW"}}
+  "packagePickups.deleteScheduledPickup":
+    args: {"path":{"pickup_id":"pik_3YcKU5zdtJuCqoeNwyqqbW"}}
+  "rates.calculateRates":
+    args: {"body":{"shipment_id":"se-28529731"}}
+  "rates.compareBulkRates":
+    args: {"body":{"rate_options":{"carrier_ids":["se-28529731"]},"shipment_ids":["se-28529731"]}}
+  "rates.estimateRates":
+    args: {"body":{"from_country_code":"CA","from_postal_code":"78756-3717","from_city_locality":"Austin","from_state_province":"Austin","to_country_code":"CA","to_postal_code":"78756-3717","to_city_locality":"Austin","to_state_province":"Houston","weight":{"value":0,"unit":"pound"},"ship_date":"2018-09-23T15:00:00.000Z","carrier_id":"se-28529731"}}
+  "rates.getRateById":
+    args: {"path":{"rate_id":"se-28529731"}}
+  "servicePoints.servicePointsList":
+    args: {"body":{"providers":[{}]}}
+  "servicePoints.servicePointsGetById":
+    args: {"path":{"carrier_code":"x","country_code":"US","service_point_id":"example"}}
+  "shipments.listShipments":
+    args: {}
+  "shipments.createShipments":
+    args: {"body":{"shipments":[{"carrier_id":"se-28529731","service_code":"usps_first_class_mail","ship_to":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"},"ship_from":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"}}]}}
+  "shipments.getShipmentByExternalId":
+    args: {"path":{"external_shipment_id":"example"}}
+  "shipments.parseShipment":
+    args: {"body":{"text":"Example shipment from 123 Example St, Example City, CA 94000"}}
+  "shipments.getShipmentById":
+    args: {"path":{"shipment_id":"se-28529731"}}
+  "shipments.updateShipment":
+    args: {"path":{"shipment_id":"se-28529731"},"body":{"ship_to":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"},"ship_from":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"}}}
+  "shipments.cancelShipments":
+    args: {"path":{"shipment_id":"se-28529731"}}
+  "shipments.listShipmentRates":
+    args: {"path":{"shipment_id":"se-28529731"}}
+  "shipments.shipmentsUpdateTags":
+    args: {"body":{}}
+  "shipments.shipmentsListTags":
+    args: {"path":{"shipment_id":"se-28529731"}}
+  "shipments.tagShipment":
+    args: {"path":{"shipment_id":"se-28529731","tag_name":"example"}}
+  "shipments.untagShipment":
+    args: {"path":{"shipment_id":"se-28529731","tag_name":"example"}}
+  "tags.listTags":
+    args: {}
+  "tags.createTag":
+    args: {"body":{"name":"example"}}
+  "tags.createTagByName":
+    args: {"path":{"tag_name":"example"}}
+  "tags.deleteTag":
+    args: {"path":{"tag_name":"example"}}
+  "tags.renameTag":
+    args: {"path":{"tag_name":"example","new_tag_name":"example"}}
+  "tokens.tokensGetEphemeralToken":
+    args: {}
+  "tracking.getTrackingLog":
+    args: {}
+  "tracking.startTracking":
+    args: {}
+  "tracking.stopTracking":
+    args: {}
+  "warehouses.listWarehouses":
+    args: {}
+  "warehouses.createWarehouse":
+    args: {"body":{"name":"example","origin_address":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"}}}
+  "warehouses.getWarehouseById":
+    args: {"path":{"warehouse_id":"se-28529731"}}
+  "warehouses.updateWarehouse":
+    args: {"path":{"warehouse_id":"se-28529731"},"body":{"name":"example","origin_address":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"}}}
+  "warehouses.deleteWarehouse":
+    args: {"path":{"warehouse_id":"se-28529731"}}
+  "warehouses.updateWarehouseSettings":
+    args: {"path":{"warehouse_id":"se-28529731"},"body":{}}
