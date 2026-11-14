@@ -19,10 +19,15 @@ import { ApiError, request } from 'corsair/http';
 export const PRISMIC_CONTENT_HOST_SUFFIX = '.cdn.prismic.io';
 export const PRISMIC_MIGRATION_BASE = 'https://migration.prismic.io';
 
-/** The Content API allows 200 requests per second per repository. */
+/**
+ * The Content API allows 200 requests per second per repository and the
+ * Migration API one write per second. A 429 means Prismic did nothing, so core's
+ * request() retries it up to three times after Retry-After; the plugin's
+ * RATE_LIMIT_ERROR handler then adds no second round.
+ */
 const PRISMIC_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },

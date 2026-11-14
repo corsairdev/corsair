@@ -178,7 +178,7 @@ const listQueryFields = {
 		.min(1)
 		.optional()
 		.describe(
-			'Continues after a cursor Prismic returned on the previous page, which is more reliable than `page` for a changing dataset.',
+			'The `id` of the last document on the previous page; returns the documents after it, with the same `q`, `orderings` and other filters. More reliable than `page` for a changing dataset.',
 		),
 	ref: z
 		.string()

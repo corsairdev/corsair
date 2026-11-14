@@ -282,6 +282,19 @@ describe('makePrismicRequest', () => {
 		expect(JSON.stringify(error)).not.toContain('write-token');
 	});
 
+	it("lets core's request() retry a 429 three times after Retry-After", async () => {
+		mockRequest.mockResolvedValue({});
+		await makePrismicRequest(CREDENTIALS, {
+			method: 'POST',
+			api: 'migration',
+			url: '/documents',
+			body: {},
+		});
+		expect(mockRequest.mock.calls.at(-1)?.[2]).toMatchObject({
+			rateLimitConfig: { enabled: true, maxRetries: 3 },
+		});
+	});
+
 	it('keeps a 429 and its Retry-After on the ApiError', async () => {
 		const rateLimited = new ApiError(
 			{ method: 'POST', url: '/documents' },

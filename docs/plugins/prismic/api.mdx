@@ -90,7 +90,7 @@ await corsair.prismic.api.documents.search({ pageSize: 20, orderings: '[my.page.
 | `q` | `string` | No | A Prismic predicate expression such as `[[at(document.type, "page")]]`. |
 | `lang` | `string` | No | Only documents in this locale, such as `en-us`. Also accepts `*`. |
 | `tags` | `string[]` | No | Only documents carrying every one of these tags. Sent as an `at(document.tags, [...])` predicate added to `q`. |
-| `after` | `string` | No | Continues after a cursor Prismic returned on the previous page, which is more reliable than `page` for a changing dataset. |
+| `after` | `string` | No | The `id` of the last document on the previous page; returns the documents after it, with the same `q`, `orderings` and other filters. More reliable than `page` for a changing dataset. |
 | `ref` | `string` | No | Pins the query to a ref, such as a release preview. Defaults to the repository's master ref, which the plugin reads from the repository metadata first. |
 | `nextPage` | `string` | No | The previous answer's `next_page`. It already carries the ref and every filter, so the other fields are ignored when it is set. |
 
