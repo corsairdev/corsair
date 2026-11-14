@@ -1,7 +1,13 @@
 import { z } from 'zod';
 
 // Shared ID schema
-export const FeltIdSchema = z.string().min(1);
+// `.` and `..` are refused: encodeURIComponent keeps them and URL parsing drops them from the path.
+export const FeltIdSchema = z
+	.string()
+	.min(1)
+	.refine((id) => id !== '.' && id !== '..', {
+		message: 'An id cannot be "." or "..".',
+	});
 
 // Felt documents timestamps on sources and credentials as unix integers; a string is accepted too so a format change does not break parsing.
 const FeltTimestampSchema = z.union([z.number(), z.string()]);
@@ -1265,7 +1271,8 @@ export const SourceSchema = z
 		owner_id: z.string().optional(),
 		workspace_id: z.string().optional(),
 		// `unknown` because connection settings vary widely per database/warehouse provider.
-		connection: z.record(z.string(), z.unknown()).optional(),
+		// Felt documents it as nullable.
+		connection: z.record(z.string(), z.unknown()).nullable().optional(),
 		datasets: z.array(SourceDatasetSchema).optional(),
 	})
 	.passthrough();

@@ -104,6 +104,13 @@ describe('Felt output shapes from the API reference', () => {
 			],
 		};
 		expect(FeltEndpointOutputSchemas.sourcesGet.parse(source).id).toBe('s_1');
+		// Felt documents Source.connection as nullable.
+		expect(
+			FeltEndpointOutputSchemas.sourcesGet.parse({
+				...source,
+				connection: null,
+			}).datasets,
+		).toHaveLength(1);
 		const credential = {
 			id: 'c_1',
 			source_id: 's_1',

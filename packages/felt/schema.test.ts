@@ -4,6 +4,7 @@ import { parse as parseYaml } from 'yaml';
 import {
 	FeltEndpointInputSchemas,
 	FeltEndpointOutputSchemas,
+	FeltIdSchema,
 } from './endpoints/types';
 import { FeltSchema } from './schema';
 
@@ -456,5 +457,20 @@ describe('plugin-docs.yaml examples', () => {
 				expect(() => schema.parse(writeExample.args ?? {})).not.toThrow();
 			}
 		}
+	});
+});
+
+describe('FeltIdSchema', () => {
+	it('rejects dot segments that URL parsing would remove from a path', () => {
+		expect(FeltIdSchema.safeParse('.').success).toBe(false);
+		expect(FeltIdSchema.safeParse('..').success).toBe(false);
+		expect(FeltIdSchema.safeParse('').success).toBe(false);
+		expect(FeltIdSchema.parse('l_1..2')).toBe('l_1..2');
+		expect(
+			FeltEndpointInputSchemas.layersDelete.safeParse({
+				map_id: 'm_1',
+				layer_id: '..',
+			}).success,
+		).toBe(false);
 	});
 });
