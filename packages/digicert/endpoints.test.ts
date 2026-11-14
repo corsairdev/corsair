@@ -638,6 +638,48 @@ describe('DigiCert endpoint requests', () => {
 		},
 	);
 
+	// Top-level fields DigiCert's own examples always send stay required, so a
+	// call without them fails before it reaches DigiCert.
+	it.each(['sendInvite', 'addUserAddUser', 'changeDcvMethod'] as const)(
+		'rejects %s without its required fields',
+		async (operation) => {
+			await expect(
+				generatedDocEndpoints.certcentralApi[operation](
+					ctx,
+					// @ts-expect-error the required body fields are left out on purpose
+					{ body: {} },
+				),
+			).rejects.toThrow();
+			expect(call).not.toHaveBeenCalled();
+		},
+	);
+
+	// DigiCert's Swiss order examples send `requester` as an object (name, email,
+	// telephone, job title, type), even though the parameter table says string.
+	it.each([
+		'orderSwissQualifiedCertificateForIndividualInOrganisation',
+		'orderSwissQualifiedCertificateForIndividual',
+		'orderSwissRegulatedCertificateForIndividualInOrganisation',
+		'orderSwissRegulatedCertificateForIndividual',
+		'orderSwissRegulatedCertificateForOrganisation',
+	] as const)('accepts an object requester on %s', async (operation) => {
+		call.mockResolvedValueOnce({ id: 1 });
+		await expect(
+			generatedDocEndpoints.certcentralApi[operation](ctx, {
+				body: {
+					requester: {
+						first_name: 'Valentina',
+						last_name: 'Franklin',
+						email: 'requester@example.com',
+						telephone: '+41 848 888 888',
+						job_title: 'Certificate Requester',
+						type: 'existing_contact',
+					},
+				},
+			}),
+		).resolves.toEqual({ id: 1 });
+	});
+
 	// The reference tables list child fields (credit card, certificate, address)
 	// next to their parents. A correctly nested order without a card must pass.
 	it('accepts a nested CertCentral order without a credit card', async () => {

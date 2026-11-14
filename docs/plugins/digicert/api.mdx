@@ -3748,15 +3748,15 @@ await corsair.digicert.api.certcentralApi.addUserAddUser({
 
 ```ts
 {
-  username?: string,
-  first_name?: string,
-  last_name?: string,
-  email?: string,
+  username: string,
+  first_name: string,
+  last_name: string,
+  email: string,
   job_title?: string,
   telephone?: string,
   container?: JsonValue,
   id?: number,
-  access_roles?: JsonValue[],
+  access_roles: JsonValue[],
   container_id_assignments?: JsonValue[],
   is_saml_sso_only?: boolean
 }
@@ -4629,7 +4629,7 @@ await corsair.digicert.api.certcentralApi.changeDcvMethod({
 
 ```ts
 {
-  dcv_method?: string,
+  dcv_method: string,
   locale?: string,
   send_dcv_email_flag?: boolean,
   email_array?: JsonValue[]
@@ -20472,7 +20472,7 @@ await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndiv
   zip?: string,
   country?: string,
   method?: string,
-  requester?: string,
+  requester?: JsonValue,
   first_name?: string,
   last_name?: string,
   email?: string,
@@ -20618,7 +20618,7 @@ await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndiv
   zip?: string,
   country?: string,
   method?: string,
-  requester?: string,
+  requester?: JsonValue,
   first_name?: string,
   last_name?: string,
   email?: string,
@@ -20765,7 +20765,7 @@ await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndiv
   zip?: string,
   country?: string,
   method?: string,
-  requester?: string,
+  requester?: JsonValue,
   first_name?: string,
   last_name?: string,
   email?: string,
@@ -20914,7 +20914,7 @@ await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndiv
   zip?: string,
   country?: string,
   method?: string,
-  requester?: string,
+  requester?: JsonValue,
   first_name?: string,
   last_name?: string,
   email?: string,
@@ -21063,7 +21063,7 @@ await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForOrgan
   zip?: string,
   country?: string,
   method?: string,
-  requester?: string,
+  requester?: JsonValue,
   first_name?: string,
   last_name?: string,
   email?: string,
@@ -23700,8 +23700,8 @@ await corsair.digicert.api.certcentralApi.sendInvite({
 
 ```ts
 {
-  emails?: JsonValue[],
-  subaccount_type?: string,
+  emails: JsonValue[],
+  subaccount_type: string,
   invite_note?: string
 }
 ```
