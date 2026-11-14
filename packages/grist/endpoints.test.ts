@@ -393,6 +393,7 @@ describe('Docs endpoints', () => {
 	});
 
 	it('docs.createInWorkspace requires a name, as Grist does', async () => {
+		// unknown: the input deliberately breaks the type (no `name`) to check the schema rejects it.
 		const noName = { workspaceId: 97 } as unknown as Parameters<
 			typeof Docs.createInWorkspace
 		>[1];
