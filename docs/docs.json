@@ -3147,6 +3147,14 @@
                 ]
               },
               {
+                "group": "Motion",
+                "pages": [
+                  "plugins/motion/overview",
+                  "plugins/motion/api",
+                  "plugins/motion/database"
+                ]
+              },
+              {
                 "group": "MrScraper",
                 "pages": [
                   "plugins/mrscraper/overview",

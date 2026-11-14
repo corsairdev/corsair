@@ -1,0 +1,1598 @@
+---
+title: "Motion API reference"
+sidebarTitle: "API"
+description: "API reference for the Motion plugin in Corsair: every `motion.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### create
+
+`comments.create`
+
+Create a comment on a task.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.motion.api.comments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | The task on which to place a comment. |
+| `content` | `string` | No | Github Flavored Markdown representing the comment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `taskId` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments on a task.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | The task for which all comments should be returned. |
+| `cursor` | `string` | No | Use if a previous request returned a cursor. Will page through results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  pageSize?: number
+}
+```
+</Accordion>
+
+<Accordion title="comments full type">
+
+```ts
+{
+  id: string,
+  taskId?: string | null,
+  content?: string | null,
+  createdAt?: string | null,
+  creator?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Create a custom field in a workspace (beta endpoint).
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.customFields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | The workspace in which the custom field is created. |
+| `type` | `text \| url \| date \| person \| multiPerson \| phone \| select \| multiSelect \| number \| email \| checkbox \| relatedTo` | Yes | The type of custom field to create. |
+| `name` | `string` | Yes | The name of the custom field. |
+| `metadata` | `object` | No | Configuration object used for advanced custom fields, like single-select, multi-select, checkboxes, and numbers. |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `text \| url \| date \| person \| multiPerson \| phone \| select \| multiSelect \| number \| email \| checkbox \| relatedTo \| string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Delete a custom field from a workspace (beta endpoint).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.motion.api.customFields.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | The workspace for which a custom field should be deleted. |
+| `id` | `string \| number` | Yes | The id of the custom field to be deleted. |
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`customFields.list`
+
+List the custom fields of a workspace (beta endpoint).
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.customFields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | The workspace for which custom fields should be returned. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  field?: text | url | date | person | multiPerson | phone | select | multiSelect | number | email | checkbox | relatedTo | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Custom Field Values
+
+### addToProject
+
+`customFieldValues.addToProject`
+
+Set a custom field value on a project (beta endpoint).
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.customFieldValues.addToProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string \| number` | Yes | The project on which the custom field value is set. |
+| `customFieldInstanceId` | `string` | Yes | The custom field that is being set on the project. |
+| `value` | `object` | Yes | The value of the custom field on the project that is being set. |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  type: text | url | date | person | multiPerson | phone | select | multiSelect | number | email | checkbox | relatedTo,
+  value: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `value` | `string \| number \| boolean \| any[] \| object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+string | number | boolean | any[] | {
+  id?: string,
+  name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addToTask
+
+`customFieldValues.addToTask`
+
+Set a custom field value on a task (beta endpoint).
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.customFieldValues.addToTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string \| number` | Yes | The task on which the custom field value is set. |
+| `customFieldInstanceId` | `string` | Yes | The custom field on the workspace that is being set on the task. |
+| `value` | `object` | Yes | The value of the custom field on the workspace that is being set. |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  type: text | url | date | person | multiPerson | phone | select | multiSelect | number | email | checkbox | relatedTo,
+  value: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `value` | `string \| number \| boolean \| any[] \| object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+string | number | boolean | any[] | {
+  id?: string,
+  name?: string,
+  email?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteFromProject
+
+`customFieldValues.deleteFromProject`
+
+Delete a custom field value from a project (beta endpoint).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.motion.api.customFieldValues.deleteFromProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string \| number` | Yes | The project from which a custom field value will be deleted. |
+| `valueId` | `string \| number` | Yes | The ID of the custom field value that will be deleted. |
+
+
+
+**Output:** `void`
+
+
+---
+
+### deleteFromTask
+
+`customFieldValues.deleteFromTask`
+
+Delete a custom field value from a task (beta endpoint).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.motion.api.customFieldValues.deleteFromTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string \| number` | Yes | The task from which a custom field value will be deleted. |
+| `valueId` | `string \| number` | Yes | The ID of the custom field value that will be deleted. |
+
+
+
+**Output:** `void`
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project.
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the project. |
+| `workspaceId` | `string` | Yes | The workspace to which the project belongs. |
+| `dueDate` | `string` | No | ISO 8601 due date on the project. |
+| `description` | `string` | No | The description of the project. HTML input accepted. |
+| `labels` | `string[]` | No | The list of labels by name the project should have. |
+| `priority` | `ASAP \| HIGH \| MEDIUM \| LOW` | No | Defaults to MEDIUM. Options are ASAP, HIGH, MEDIUM, and LOW. |
+| `projectDefinitionId` | `string` | No | Optional ID of the project definition (template) to use. If provided, stages must also be included. |
+| `stages` | `object[]` | No | Optional array of stage objects, required if projectDefinitionId is provided. |
+
+<AccordionGroup>
+<Accordion title="stages full type">
+
+```ts
+{
+  stageDefinitionId: string,
+  dueDate: string,
+  variableInstances?: {
+    variableName: string,
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `customFieldValues` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  name?: string | null,
+  isDefaultStatus?: boolean | null,
+  isResolvedStatus?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customFieldValues full type">
+
+```ts
+Record<string, {
+  type: string,
+  value?: string | number | boolean | any[] | {
+    id?: string,
+    name?: string,
+    email?: string
+  } | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `customFieldValues` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  name?: string | null,
+  isDefaultStatus?: boolean | null,
+  isResolvedStatus?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customFieldValues full type">
+
+```ts
+Record<string, {
+  type: string,
+  value?: string | number | boolean | any[] | {
+    id?: string,
+    name?: string,
+    email?: string
+  } | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Use if a previous request returned a cursor. Will page through results. |
+| `workspaceId` | `string` | No | The workspace for which all projects should be returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `projects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  pageSize?: number
+}
+```
+</Accordion>
+
+<Accordion title="projects full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  workspaceId?: string | null,
+  status?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  } | null,
+  createdTime?: string | null,
+  updatedTime?: string | null,
+  dueDate?: string | null,
+  customFieldValues?: Record<string, {
+    type: string,
+    value?: string | number | boolean | any[] | {
+      id?: string,
+      name?: string,
+      email?: string
+    } | null
+  }> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recurring Tasks
+
+### create
+
+`recurringTasks.create`
+
+Create a recurring task.
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.recurringTasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the recurring task. |
+| `workspaceId` | `string` | Yes | The workspace in which to create the recurring task. |
+| `frequency` | `string` | Yes | Frequency in which the task should be scheduled. |
+| `assigneeId` | `string` | Yes | To whom the recurring task should be assigned. |
+| `deadlineType` | `HARD \| SOFT` | No | "HARD" or "SOFT" are the two values allowed. |
+| `duration` | `REMINDER \| number` | No | An integer greater than 0 or "REMINDER" for a reminder task. |
+| `startingOn` | `string` | No | ISO 8601 date trimmed to the start of the day passed, like 2024-03-12 or 2024-03-12T06:00:00.000Z. |
+| `idealTime` | `string` | No | If possible, schedule at the ideal time if free (HH:mm). |
+| `schedule` | `string` | No | Schedule the task must adhere to (defaults to "Work Hours"). |
+| `description` | `string` | No | The description of the task. |
+| `priority` | `HIGH \| MEDIUM` | No | "HIGH" or "MEDIUM" (which is the default). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `workspace` | `object \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  teamId?: string | null,
+  type?: string | null,
+  labels?: {
+    name?: string
+  }[] | null,
+  statuses?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`recurringTasks.delete`
+
+Delete a recurring task.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.motion.api.recurringTasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`recurringTasks.list`
+
+List recurring tasks for a workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.recurringTasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace for which all recurring tasks should be returned. |
+| `cursor` | `string` | No | Use if a previous request returned a cursor. Will page through results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `tasks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  pageSize?: number
+}
+```
+</Accordion>
+
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  workspace?: {
+    id: string,
+    name?: string | null,
+    teamId?: string | null,
+    type?: string | null,
+    labels?: {
+      name?: string
+    }[] | null,
+    statuses?: {
+      name?: string | null,
+      isDefaultStatus?: boolean | null,
+      isResolvedStatus?: boolean | null
+    }[] | null
+  } | null,
+  creator?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  assignee?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  project?: {
+    id: string,
+    name?: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schedules
+
+### list
+
+`schedules.list`
+
+List the schedules available to the workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.schedules.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  isDefaultTimezone?: boolean | null,
+  timezone?: string | null,
+  schedule?: Record<string, {
+    start?: string,
+    end?: string
+  }[]> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Statuses
+
+### list
+
+`statuses.list`
+
+List the statuses of a workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.statuses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | Get statuses for a particular workspace. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task.
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Title of the task. |
+| `workspaceId` | `string` | Yes | The workspace ID the task should be associated with. |
+| `dueDate` | `string` | No | ISO 8601 due date on the task. Required by Motion for scheduled tasks. |
+| `duration` | `NONE \| REMINDER \| number` | No | "NONE", "REMINDER", or an integer greater than 0 representing minutes. |
+| `status` | `string` | No | Defaults to the workspace default status. |
+| `autoScheduled` | `object \| null` | No | Set values to turn auto scheduling on, or null to turn auto scheduling off. |
+| `projectId` | `string` | No | The project ID the task should be associated with. |
+| `description` | `string` | No | Github Flavored Markdown for the input. |
+| `priority` | `ASAP \| HIGH \| MEDIUM \| LOW` | No | ASAP, HIGH, MEDIUM, and LOW are valid values. |
+| `labels` | `string[]` | No | The names of the labels to be added to the task. |
+| `assigneeId` | `string` | No | The user id the task should be assigned to. |
+
+<AccordionGroup>
+<Accordion title="autoScheduled full type">
+
+```ts
+{
+  startDate?: string,
+  deadlineType?: HARD | SOFT | NONE,
+  schedule?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `duration` | `string \| number \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `deadlineType` | `string \| null` | No | — |
+| `parentRecurringTaskId` | `string \| null` | No | — |
+| `completed` | `boolean \| null` | No | — |
+| `completedTime` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `startOn` | `string \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  workspaceId?: string | null,
+  status?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  } | null,
+  createdTime?: string | null,
+  updatedTime?: string | null,
+  dueDate?: string | null,
+  customFieldValues?: Record<string, {
+    type: string,
+    value?: string | number | boolean | any[] | {
+      id?: string,
+      name?: string,
+      email?: string
+    } | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.motion.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `duration` | `string \| number \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `deadlineType` | `string \| null` | No | — |
+| `parentRecurringTaskId` | `string \| null` | No | — |
+| `completed` | `boolean \| null` | No | — |
+| `completedTime` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `startOn` | `string \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  workspaceId?: string | null,
+  status?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  } | null,
+  createdTime?: string | null,
+  updatedTime?: string | null,
+  dueDate?: string | null,
+  customFieldValues?: Record<string, {
+    type: string,
+    value?: string | number | boolean | any[] | {
+      id?: string,
+      name?: string,
+      email?: string
+    } | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks with optional filters and cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assigneeId` | `string` | No | Limit tasks returned to a specific assignee. |
+| `cursor` | `string` | No | Use if a previous request returned a cursor. Will page through results. |
+| `includeAllStatuses` | `boolean` | No | Limit tasks returned by statuses that exist on tasks. Cannot be combined with status. |
+| `label` | `string` | No | Limit tasks returned by label on the task. |
+| `name` | `string` | No | Limit tasks returned to those that contain this string. Case in-sensitive. |
+| `projectId` | `string` | No | Limit tasks returned to a given project. |
+| `status` | `string[]` | No | Limit tasks returned by statuses that exist on tasks. Cannot be combined with includeAllStatuses. |
+| `workspaceId` | `string` | No | The id of the workspace you want tasks from. If not provided, tasks from all workspaces are returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `tasks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  pageSize?: number
+}
+```
+</Accordion>
+
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  duration?: string | number | null,
+  dueDate?: string | null,
+  deadlineType?: string | null,
+  parentRecurringTaskId?: string | null,
+  completed?: boolean | null,
+  completedTime?: string | null,
+  updatedTime?: string | null,
+  startOn?: string | null,
+  creator?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  project?: {
+    id: string,
+    name?: string | null,
+    description?: string | null,
+    workspaceId?: string | null,
+    status?: {
+      name?: string | null,
+      isDefaultStatus?: boolean | null,
+      isResolvedStatus?: boolean | null
+    } | null,
+    createdTime?: string | null,
+    updatedTime?: string | null,
+    dueDate?: string | null,
+    customFieldValues?: Record<string, {
+      type: string,
+      value?: string | number | boolean | any[] | {
+        id?: string,
+        name?: string,
+        email?: string
+      } | null
+    }> | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`tasks.move`
+
+Move a task to another workspace.
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.tasks.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `workspaceId` | `string` | Yes | The id of the workspace to which you want the task moved. |
+| `assigneeId` | `string` | No | The user id the task should be assigned to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `duration` | `string \| number \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `deadlineType` | `string \| null` | No | — |
+| `parentRecurringTaskId` | `string \| null` | No | — |
+| `completed` | `boolean \| null` | No | — |
+| `completedTime` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `startOn` | `string \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  workspaceId?: string | null,
+  status?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  } | null,
+  createdTime?: string | null,
+  updatedTime?: string | null,
+  dueDate?: string | null,
+  customFieldValues?: Record<string, {
+    type: string,
+    value?: string | number | boolean | any[] | {
+      id?: string,
+      name?: string,
+      email?: string
+    } | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unassign
+
+`tasks.unassign`
+
+Remove the assignee from a task.
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.tasks.unassign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task.
+
+**Risk:** `write`
+
+```ts
+await corsair.motion.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | Title of the task. |
+| `workspaceId` | `string` | Yes | The workspace ID the task should be associated with. |
+| `dueDate` | `string` | No | ISO 8601 due date on the task. Required by Motion for scheduled tasks. |
+| `duration` | `NONE \| REMINDER \| number` | No | "NONE", "REMINDER", or an integer greater than 0 representing minutes. |
+| `status` | `string` | No | Defaults to the workspace default status. |
+| `autoScheduled` | `object \| null` | No | Set values to turn auto scheduling on, or null to turn auto scheduling off. |
+| `projectId` | `string` | No | The project ID the task should be associated with. |
+| `description` | `string` | No | Github Flavored Markdown for the input. |
+| `priority` | `ASAP \| HIGH \| MEDIUM \| LOW` | No | ASAP, HIGH, MEDIUM, and LOW are valid values. |
+| `labels` | `string[]` | No | The names of the labels to be added to the task. |
+| `assigneeId` | `string` | No | The user id the task should be assigned to. |
+
+<AccordionGroup>
+<Accordion title="autoScheduled full type">
+
+```ts
+{
+  startDate?: string,
+  deadlineType?: HARD | SOFT | NONE,
+  schedule?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `duration` | `string \| number \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `deadlineType` | `string \| null` | No | — |
+| `parentRecurringTaskId` | `string \| null` | No | — |
+| `completed` | `boolean \| null` | No | — |
+| `completedTime` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `startOn` | `string \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  workspaceId?: string | null,
+  status?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  } | null,
+  createdTime?: string | null,
+  updatedTime?: string | null,
+  dueDate?: string | null,
+  customFieldValues?: Record<string, {
+    type: string,
+    value?: string | number | boolean | any[] | {
+      id?: string,
+      name?: string,
+      email?: string
+    } | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List workspace or team members.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Use if a previous request returned a cursor. Will page through results. |
+| `teamId` | `string` | No | The ID of the team for which all members will be returned. |
+| `workspaceId` | `string` | No | The ID of the workspace for which all members will be returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  pageSize?: number
+}
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### me
+
+`users.me`
+
+Get the authenticated user.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.users.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+
+
+
+---
+
+## Workspaces
+
+### list
+
+`workspaces.list`
+
+List workspaces.
+
+**Risk:** `read`
+
+```ts
+await corsair.motion.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Use if a previous request returned a cursor. Will page through results. |
+| `ids` | `string[]` | No | Expand details of specific workspaces, instead of getting all of them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `workspaces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  pageSize?: number
+}
+```
+</Accordion>
+
+<Accordion title="workspaces full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  teamId?: string | null,
+  type?: string | null,
+  labels?: {
+    name?: string
+  }[] | null,
+  statuses?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
