@@ -280,7 +280,7 @@ export const AssetsListInputSchema = z
 			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
 			.optional()
 			.describe(
-				'Asset field filters, sent as filter[<field>]=<value> and ANDed, e.g. { origin_path: "photos/", file_type: "image", colors: "8ca091" }',
+				'Asset field filters, sent as filter[<field>]=<value> and ANDed, e.g. { origin_path: "photos/", media_kind: "IMAGE" }',
 			),
 		sort: z.string().optional(),
 		fields: z

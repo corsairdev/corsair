@@ -8,6 +8,7 @@ import {
 	Sources,
 	UploadSessions,
 } from './endpoints';
+import { AssetsListInputSchema } from './endpoints/types';
 import type { ImgixContext } from './index';
 import { imgixEndpointMeta } from './index';
 
@@ -240,6 +241,7 @@ describe('Imgix endpoints', () => {
 
 			const deployments = mockedRequest.mock.calls.map(
 				(call) =>
+					// `unknown` because deployment attributes differ per source type; toEqual checks them.
 					(
 						call[1]?.body as {
 							data: { attributes: { deployment: Record<string, unknown> } };
@@ -1051,5 +1053,15 @@ describe('Imgix risk levels', () => {
 			.map(([op]) => op)
 			.sort();
 		expect(destructive).toContain('assets.upload');
+	});
+});
+
+describe('Imgix asset filter docs', () => {
+	it('uses a filter field imgix applies', () => {
+		// Live 11-15: filter[file_type] is ignored (all assets come back),
+		// filter[media_kind]=IMAGE returns only images.
+		const description = AssetsListInputSchema.shape.filter.description;
+		expect(description).toContain('media_kind: "IMAGE"');
+		expect(description).not.toContain('file_type');
 	});
 });

@@ -155,7 +155,7 @@ await corsair.imgix.api.assets.list({ source_id: 'src_1234567890abcdef', page_si
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `source_id` | `string` | Yes | — |
-| `filter` | `Record<string, string \| number \| boolean>` | No | Asset field filters, sent as filter[&lt;field&gt;]=&lt;value&gt; and ANDed, e.g. &#123; origin_path: "photos/", file_type: "image", colors: "8ca091" &#125; |
+| `filter` | `Record<string, string \| number \| boolean>` | No | Asset field filters, sent as filter[&lt;field&gt;]=&lt;value&gt; and ANDed, e.g. &#123; origin_path: "photos/", media_kind: "IMAGE" &#125; |
 | `sort` | `string` | No | — |
 | `fields` | `string` | No | Comma-separated asset fields to return, sent as fields[assets] |
 | `page_cursor` | `string` | No | — |
