@@ -537,7 +537,7 @@ await corsair.keyword.api.keywords.list({ projectName: 'Disney', page: 1, per_pa
 
 Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.keyword.api.keywords.refresh({ keywordIds: ['267540882', '267540883'] });

@@ -19,7 +19,7 @@ pnpm add @corsair-dev/keyword
 | `keywords.delete` | `keyword.api.keywords.delete` | `destructive` | Delete one keyword and its ranking history; it cannot be restored |
 | `keywords.get` | `keyword.api.keywords.get` | `read` | One keyword with its rank, metrics and rank history |
 | `keywords.list` | `keyword.api.keywords.list` | `read` | Every keyword in a project or group with its rank, best rank, search volume and trend, read as of a given day |
-| `keywords.refresh` | `keyword.api.keywords.refresh` | `write` | Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded |
+| `keywords.refresh` | `keyword.api.keywords.refresh` | `destructive` | Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded |
 | `keywords.update` | `keyword.api.keywords.update` | `write` | Change a keyword’s domain, region, tags, status, baseline or favourite flag |
 | `metrics.competitors` | `keyword.api.metrics.competitors` | `read` | The top competing URLs for one keyword in a date window, with each result’s type and position |
 | `metrics.get` | `keyword.api.metrics.get` | `read` | Keyword movement for a project, group or tag: how many sit in each top-N bucket and how that changed day over day |

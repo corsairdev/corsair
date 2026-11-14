@@ -300,8 +300,9 @@ const keywordEndpointMeta = {
 		description:
 			'Apply the same domain, region, tags or status to many keywords in one project',
 	},
+	// Spends the plan's daily refresh quota, which R8 marks destructive.
 	'keywords.refresh': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded',
 	},
