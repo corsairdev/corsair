@@ -102,6 +102,7 @@ export class KrakenAPIError extends Error {
  * Kraken refused the key or secret. The optimize routes say 401;
  * `/user_status` says 404 "User not found" (seen live on 11-14).
  */
+// unknown: callers pass whatever they caught; `instanceof ApiError` narrows it.
 export function isKrakenAuthFailure(error: unknown): boolean {
 	if (!(error instanceof ApiError)) return false;
 	return (
@@ -187,6 +188,7 @@ export async function makeKrakenRequest(
 			};
 
 	try {
+		// unknown: the caller parses the response with the endpoint's output schema.
 		const raw = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: KRAKEN_RATE_LIMIT_CONFIG,
 		});
