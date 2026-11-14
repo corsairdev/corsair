@@ -194,6 +194,16 @@ describe('leads.list', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it.each([{ order_by: 'updated_at' }, { order_direction: 'asc' }])(
+		'refuses half an ordering (%o) before calling Kommo',
+		async (input) => {
+			await expect(invoke(Leads.list, input)).rejects.toMatchObject({
+				name: 'ZodError',
+			});
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
 	it('reads a 204 No Content as an empty last page', async () => {
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
 

@@ -160,8 +160,14 @@ const LeadsListInputSchema = PaginationInputSchema.extend({
 	created_to: UnixSecondsFilterSchema.optional(),
 	updated_from: UnixSecondsFilterSchema.optional(),
 	updated_to: UnixSecondsFilterSchema.optional(),
-	order_by: z.enum(['created_at', 'updated_at', 'id']).optional(),
-	order_direction: z.enum(['asc', 'desc']).optional(),
+	order_by: z
+		.enum(['created_at', 'updated_at', 'id'])
+		.optional()
+		.describe('Sort field. Needs `order_direction`.'),
+	order_direction: z
+		.enum(['asc', 'desc'])
+		.optional()
+		.describe('Sort direction. Needs `order_by`.'),
 }).superRefine((value, ctx) => {
 	// Kommo filters a stage as a pipeline and stage pair.
 	if (value.status_id !== undefined && value.pipeline_id === undefined) {
@@ -169,6 +175,18 @@ const LeadsListInputSchema = PaginationInputSchema.extend({
 			code: 'custom',
 			path: ['pipeline_id'],
 			message: 'Filtering by `status_id` needs the stage’s `pipeline_id`.',
+		});
+	}
+	// Kommo sorts by order[<field>]=<direction>, so one without the other does nothing.
+	if (
+		(value.order_by === undefined) !==
+		(value.order_direction === undefined)
+	) {
+		ctx.addIssue({
+			code: 'custom',
+			path: [value.order_by === undefined ? 'order_by' : 'order_direction'],
+			message:
+				'`order_by` and `order_direction` go together: set both or neither.',
 		});
 	}
 });
