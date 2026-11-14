@@ -39,7 +39,7 @@ apiExamples:
   sessions.stop:
     call: "{ id: 'sess_example_123' }"
   sessions.update:
-    call: "{ id: 'sess_example_123', type: 'solveCaptchas', params: { solveCaptchas: true } }"
+    call: "{ id: 'sess_example_123', type: 'solveCaptchas', params: { enabled: true } }"
   sessions.evaluateCaptcha:
     call: "{ id: 'sess_example_123' }"
   sessions.getRecordingUrl:

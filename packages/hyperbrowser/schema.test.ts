@@ -223,7 +223,7 @@ describe('Hyperbrowser endpoint schemas', () => {
 				UpdateSessionInputSchema.safeParse({
 					id: 'sess_123',
 					type: 'solveCaptchas',
-					params: { solveCaptchas: true },
+					params: { enabled: true },
 				}).success,
 			).toBe(true);
 			// `unknown` because this test asserts runtime rejection of invalid enum values.
@@ -235,6 +235,28 @@ describe('Hyperbrowser endpoint schemas', () => {
 			expect(
 				UpdateSessionInputSchema.safeParse(inputWithInvalidType).success,
 			).toBe(false);
+			// The old record accepted any params; the API reads `enabled`, not `solveCaptchas`.
+			expect(
+				UpdateSessionInputSchema.safeParse({
+					id: 'sess_123',
+					type: 'solveCaptchas',
+					params: { solveCaptchas: true },
+				}).success,
+			).toBe(false);
+			expect(
+				UpdateSessionInputSchema.safeParse({
+					id: 'sess_123',
+					type: 'screen',
+					params: { width: 1280, height: 720 },
+				}).success,
+			).toBe(true);
+			expect(
+				UpdateSessionInputSchema.safeParse({
+					id: 'sess_123',
+					type: 'proxy',
+					params: { enabled: true, location: { country: 'US' } },
+				}).success,
+			).toBe(true);
 
 			expect(
 				UpdateSessionOutputSchema.safeParse({

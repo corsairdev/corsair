@@ -167,14 +167,65 @@ export const StopSessionOutputSchema = z.object({
 	success: z.boolean().optional(),
 });
 
-export const UpdateSessionInputSchema = z
-	.object({
-		id: z.string(),
-		type: z.enum(['profile', 'proxy', 'screen', 'solveCaptchas']),
-		// `unknown` because update params are polymorphic based on the discriminated type.
-		params: z.record(z.string(), z.unknown()),
-	})
-	.strict();
+// One variant per update type, matching PUT /api/session/{id}/update in the API reference.
+export const UpdateSessionInputSchema = z.discriminatedUnion('type', [
+	z
+		.object({
+			id: z.string(),
+			type: z.literal('profile'),
+			params: z
+				.object({
+					persistChanges: z.boolean().optional(),
+					persistNetworkCache: z.boolean().optional(),
+				})
+				.strict(),
+		})
+		.strict(),
+	z
+		.object({
+			id: z.string(),
+			type: z.literal('proxy'),
+			params: z
+				.object({
+					enabled: z.boolean(),
+					staticIpId: z.string().optional(),
+					location: z
+						.object({
+							country: z.string().optional(),
+							state: z.string().optional(),
+							city: z.string().optional(),
+						})
+						.strict()
+						.optional(),
+				})
+				.strict(),
+		})
+		.strict(),
+	z
+		.object({
+			id: z.string(),
+			type: z.literal('screen'),
+			params: z
+				.object({
+					width: z.number().int(),
+					height: z.number().int(),
+				})
+				.strict(),
+		})
+		.strict(),
+	z
+		.object({
+			id: z.string(),
+			type: z.literal('solveCaptchas'),
+			params: z
+				.object({
+					enabled: z.boolean(),
+					solverType: z.enum(['visual']).optional(),
+				})
+				.strict(),
+		})
+		.strict(),
+]);
 
 export const UpdateSessionOutputSchema = z.object({
 	success: z.boolean().optional(),

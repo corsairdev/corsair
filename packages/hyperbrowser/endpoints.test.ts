@@ -256,7 +256,7 @@ describe('Sessions endpoints', () => {
 		const result = await Sessions.update(ctx, {
 			id: 'sess_123',
 			type: 'solveCaptchas',
-			params: { solveCaptchas: true },
+			params: { enabled: true },
 		});
 		expect(result).toEqual(mockResponse);
 		expect(mockedRequest).toHaveBeenCalledWith(
@@ -264,7 +264,7 @@ describe('Sessions endpoints', () => {
 			'hb_test_api_key_123',
 			{
 				method: 'PUT',
-				body: { type: 'solveCaptchas', params: { solveCaptchas: true } },
+				body: { type: 'solveCaptchas', params: { enabled: true } },
 			},
 		);
 	});
