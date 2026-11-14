@@ -1,0 +1,1246 @@
+---
+title: "Fireberry API reference"
+sidebarTitle: "API"
+description: "API reference for the Fireberry plugin in Corsair: every `fireberry.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Batch
+
+### create
+
+`batch.create`
+
+Create multiple Fireberry records in one request
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.batch.create({ objectCode: '1', data: [{ accountname: 'Example Company' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectCode` | `account \| activitylog \| article \| accountproduct \| businessunit \| campaign \| competitor \| contact \| contract \| invoicecredit \| invoicedelivery \| invoicedraft \| invoiceno \| invoicereno \| activity \| note \| opportunity \| crmorder \| crmorderitem \| calllog \| product \| project \| invoicereceipt \| task \| cases \| string` | Yes | — |
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+
+Batch create accepts 1–20 records under data. Invalid items may fail while valid records in the same request are still created.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`batch.delete`
+
+Delete up to 20 Fireberry records in one request
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fireberry.api.batch.delete({ objectCode: '1', ids: ['00000000-0000-0000-0000-000000000001'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectCode` | `account \| activitylog \| article \| accountproduct \| businessunit \| campaign \| competitor \| contact \| contract \| activity \| note \| opportunity \| crmorderitem \| calllog \| product \| project \| task \| cases \| string` | Yes | — |
+| `ids` | `string[]` | Yes | — |
+
+Pass 1–20 record GUIDs in ids; the plugin sends them to Fireberry as data. Batch API availability depends on the Fireberry license.
+
+
+
+**Output:** `object \| undefined \| ""`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined | ""
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`batch.update`
+
+Update multiple Fireberry records in one request
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.batch.update({ objectCode: '1', data: [{ id: '00000000-0000-0000-0000-000000000001', record: { accountname: 'Updated Example Company' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectCode` | `account \| activitylog \| article \| accountproduct \| businessunit \| campaign \| competitor \| contact \| contract \| invoicecredit \| invoicedelivery \| invoicedraft \| invoiceno \| invoicereno \| activity \| opportunity \| crmorder \| crmorderitem \| calllog \| product \| project \| invoicereceipt \| task \| cases \| crmuser \| string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+Batch update accepts 1–20 items; each item requires an id and a record field map. Invalid items may fail while valid records continue.
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Create a tenant-defined Fireberry field
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.customFields.create({ objectType: 1, fieldType: 'text', data: { fieldName: 'pcfdisplay', label: 'Display' } });
+```
+
+**Input:** `object`
+
+Custom field names must begin with pcf. Picklist option values must be unique within the field.
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  objectType: number,
+  fieldType: text,
+  data: {
+    fieldName: string,
+    label: string,
+    autoComplete?: boolean,
+    defaultValue?: string,
+    follow?: boolean,
+    maxLength?: number,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: emailaddress,
+  data: {
+    fieldName: string,
+    label: string,
+    autoComplete?: boolean,
+    defaultValue?: string,
+    follow?: boolean,
+    maxLength?: number,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: url,
+  data: {
+    fieldName: string,
+    label: string,
+    autoComplete?: boolean,
+    defaultValue?: string,
+    follow?: boolean,
+    maxLength?: number,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: phonenumber,
+  data: {
+    fieldName: string,
+    label: string,
+    autoComplete?: boolean,
+    defaultValue?: string,
+    follow?: boolean,
+    maxLength?: number,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: number,
+  data: {
+    fieldName: string,
+    label: string,
+    precision: number,
+    defaultValue?: string | number,
+    follow?: boolean,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: textarea,
+  data: {
+    fieldName: string,
+    label: string,
+    defaultValue?: string,
+    follow?: boolean,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: html,
+  data: {
+    fieldName: string,
+    label: string,
+    follow?: boolean,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: date,
+  data: {
+    fieldName: string,
+    label: string,
+    defaultValue?: string,
+    follow?: boolean,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: datetime,
+  data: {
+    fieldName: string,
+    label: string,
+    defaultValue?: string,
+    follow?: boolean,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: lookup,
+  data: {
+    fieldName: string,
+    label: string,
+    relatedObjectType: number,
+    filterBy?: string,
+    defaultValue?: string,
+    follow?: boolean,
+    additionalProperty?: required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: summary,
+  data: {
+    fieldName: string,
+    label: string,
+    summarizedObjectType: number,
+    summarizedObjectField: string,
+    summarizedField?: string,
+    summaryType: max | min | count | sum,
+    summarizedUserId: string,
+    precision?: number,
+    follow?: boolean,
+    filter?: JsonValue[]
+  }
+} | {
+  objectType: number,
+  fieldType: formula,
+  data: {
+    fieldname?: string,
+    fieldName?: string,
+    label: string,
+    formula: string,
+    fieldType: string,
+    precision?: number
+  }
+} | {
+  objectType: number,
+  fieldType: picklist,
+  data: {
+    fieldName: string,
+    label: string,
+    defaultValue?: number,
+    follow?: boolean,
+    additionalProperty?: required | readonly,
+    options: {
+      order?: number,
+      color?: string,
+      label: string,
+      value: number
+    }[],
+    controllerField?: {
+      fieldName: string,
+      values?: {
+        optionValue: number,
+        controllerValues: number[]
+      }[]
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Delete a tenant-defined Fireberry field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fireberry.api.customFields.delete({ objectType: 1, fieldType: 'text', fieldName: 'pcfdisplay' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectType` | `number` | Yes | — |
+| `fieldType` | `text \| emailaddress \| url \| phonenumber \| number \| textarea \| html \| date \| datetime \| lookup \| summary \| formula \| picklist` | Yes | — |
+| `fieldName` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`customFields.update`
+
+Update a tenant-defined Fireberry field
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.customFields.update({ objectType: 1, fieldType: 'text', fieldName: 'pcfdisplay', data: { label: 'Display name' } });
+```
+
+**Input:** `object`
+
+The documented Date & Time update OpenAPI path ends with the literal segment `fieldName` while also declaring a required fieldName path parameter. That contradictory route is not exposed until Fireberry clarifies it.
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  objectType: number,
+  fieldType: text,
+  fieldName: string,
+  data: {
+    label?: string,
+    autoComplete?: boolean,
+    defaultValue?: string,
+    follow?: boolean,
+    maxLength?: number,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: emailaddress,
+  fieldName: string,
+  data: {
+    label?: string,
+    autoComplete?: boolean,
+    defaultValue?: string,
+    follow?: boolean,
+    maxLength?: number,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: url,
+  fieldName: string,
+  data: {
+    label?: string,
+    autoComplete?: boolean,
+    defaultValue?: string,
+    follow?: boolean,
+    maxLength?: number,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: phonenumber,
+  fieldName: string,
+  data: {
+    label?: string,
+    autoComplete?: boolean,
+    defaultValue?: string,
+    follow?: boolean,
+    maxLength?: number,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: number,
+  fieldName: string,
+  data: {
+    label?: string,
+    precision?: number,
+    defaultValue?: string | number,
+    follow?: boolean,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: textarea,
+  fieldName: string,
+  data: {
+    label?: string,
+    defaultValue?: string,
+    follow?: boolean,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: html,
+  fieldName: string,
+  data: {
+    label?: string,
+    follow?: boolean,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: date,
+  fieldName: string,
+  data: {
+    label?: string,
+    defaultValue?: string,
+    follow?: boolean,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: lookup,
+  fieldName: string,
+  data: {
+    label?: string,
+    filterBy?: string,
+    defaultValue?: string,
+    follow?: boolean,
+    additionalProperty?: none | required | readonly
+  }
+} | {
+  objectType: number,
+  fieldType: summary,
+  fieldName: string,
+  data: {
+    label?: string,
+    summarizedObjectType?: number,
+    summarizedObjectField?: string,
+    summarizedField?: string,
+    summaryType?: max | min | count | sum,
+    summarizedUserId?: string,
+    filter?: JsonValue[],
+    precision?: number,
+    follow?: boolean
+  }
+} | {
+  objectType: number,
+  fieldType: formula,
+  fieldName: string,
+  data: {
+    label?: string,
+    formula?: string,
+    fieldType?: string,
+    precision?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** _empty object_
+
+
+---
+
+## Custom Objects
+
+### create
+
+`customObjects.create`
+
+Create a custom Fireberry object
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.customObjects.create({ name: 'Asset', collectionname: 'Assets' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `collectionname` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`customObjects.delete`
+
+Delete a custom Fireberry object and its record definition
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fireberry.api.customObjects.delete({ id: '58' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`customObjects.update`
+
+Update a custom Fireberry object
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.customObjects.update({ id: '58', name: 'Asset' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `collectionname` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Files
+
+### create
+
+`files.create`
+
+Upload a file attachment to a Fireberry record
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.files.create({ objectId: '1', recordId: '00000000-0000-0000-0000-000000000001', fileName: 'readme.txt', fileBase64: 'SGVsbG8=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectId` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `fileBase64` | `string` | Yes | — |
+
+The input base64 string is converted to the provider-required multipart `file` field. Fireberry encodes uploaded filenames; use alphanumeric names to avoid encoded punctuation.
+
+
+
+**Output:** `boolean \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+boolean | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Metadata
+
+### field
+
+`metadata.field`
+
+Retrieve details for a Fireberry field
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.metadata.field({ id: 1, fieldName: 'accountname' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `fieldName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  label: string,
+  fieldName: string,
+  systemFieldTypeId: string,
+  fieldObjectType: string,
+  systemName: string,
+  values?: {
+    name: string,
+    value: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fields
+
+`metadata.fields`
+
+List fields for a Fireberry object
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.metadata.fields({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `any` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### object
+
+`metadata.object`
+
+Retrieve Fireberry object metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.metadata.object({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `any` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### objects
+
+`metadata.objects`
+
+List Fireberry object metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.metadata.objects({});
+```
+
+**Input:** _empty object_
+
+Metadata responses identify system object names and numeric object types for metadata and batch routes.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `message` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  systemName: string,
+  objectType: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### picklist
+
+`metadata.picklist`
+
+List values for a Fireberry picklist field
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.metadata.picklist({ id: 1, fieldName: 'industrycode' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `fieldName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  label: string,
+  fieldName: string,
+  systemFieldTypeId: string,
+  fieldObjectType: string,
+  systemName: string,
+  values?: {
+    name: string,
+    value: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### create
+
+`records.create`
+
+Create a Fireberry record
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.records.create({ object: 'account', data: { accountname: 'Example Company' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `account \| activitylog \| asset \| article \| businessunit \| campaign \| contact \| competitor \| contract \| creditInvoice \| deliveryInvoice \| draftInvoice \| invoice \| invoiceReceipt \| meeting \| note \| opportunity \| order \| orderItem \| phoneCall \| product \| project \| receipt \| task \| ticket \| string` | Yes | — |
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Record: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Permanently delete a Fireberry record
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fireberry.api.records.delete({ object: 'account', id: '00000000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `account \| activitylog \| asset \| article \| businessunit \| campaign \| contact \| competitor \| contract \| meeting \| note \| opportunity \| orderItem \| phoneCall \| product \| project \| task \| ticket \| string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `any` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`records.get`
+
+Retrieve a Fireberry record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.records.get({ object: 'account', id: '00000000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `account \| activitylog \| asset \| article \| businessunit \| campaign \| contact \| competitor \| contract \| creditInvoice \| deliveryInvoice \| draftInvoice \| invoice \| invoiceReceipt \| meeting \| note \| opportunity \| order \| orderItem \| phoneCall \| product \| project \| receipt \| task \| transaction \| transactionItem \| ticket \| user \| string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Record: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### items
+
+`records.items`
+
+Retrieve line items associated with a Fireberry order, invoice, or receipt
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.records.items({ itemType: 'order', id: '00000000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemType` | `creditInvoice \| invoice \| order \| receipt \| invoiceReceiptItems \| invoiceReceiptReceipts` | Yes | — |
+| `id` | `string` | Yes | — |
+
+itemType selects the documented invoice, credit invoice, order, receipt, and invoice-receipt item routes. Fireberry documents no response schema beyond an empty object for these routes.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### legacyQuery
+
+`records.legacyQuery`
+
+Search and paginate Fireberry records using the legacy query API
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.records.legacyQuery({ objecttype: 1, fields: 'accountname', page_size: 50, page_number: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objecttype` | `number` | Yes | — |
+| `fields` | `string` | No | — |
+| `query` | `string` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_type` | `asc \| desc` | No | — |
+| `page_size` | `number` | No | — |
+| `page_number` | `number` | No | — |
+
+The legacy query API uses objecttype, fields, query, sort_by, sort_type, page_size (maximum 50), and page_number (maximum 10).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `any` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`records.list`
+
+List records for a documented Fireberry object
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.records.list({ object: 'account', pageSize: 50, pageNumber: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `account \| activitylog \| asset \| article \| businessunit \| campaign \| contact \| competitor \| contract \| creditInvoice \| deliveryInvoice \| draftInvoice \| invoice \| invoiceReceipt \| meeting \| note \| opportunity \| order \| orderItem \| phoneCall \| product \| project \| receipt \| task \| transaction \| transactionItem \| ticket \| user \| string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageNumber` | `number` | No | — |
+
+Use pageSize 1–50 and pageNumber 1–10; Fireberry spells the wire parameters pagesize and pagenumber.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  PrimaryKey: string,
+  PrimaryField: string,
+  Total_Records: number,
+  Page_Size: number,
+  Page_Number: number,
+  Records: Record<string, JsonValue>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`records.query`
+
+Filter, sort, group, and paginate Fireberry records
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.records.query({ objectType: 1, fields: [{ name: 'accountname' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectType` | `number` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `filter` | `object[]` | No | — |
+| `orderBy` | `object[]` | No | — |
+| `groupBy` | `object[]` | No | — |
+| `pageNumber` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+Query v3 supports pageSize up to 500. Aggregation requires groupBy; consult the query guide for the full structured filter semantics.
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  name: string,
+  alias?: string,
+  aggrFunc?: SUM | COUNT | MIN | MAX
+}[]
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  type: AND | OR,
+  conditions: {
+    fieldName: string,
+    operator: eq | ne | lt | gt | le | ge | start-with | not-start-with | is-null | is-not-null | eq-in | not-in | between | userid,
+    value?: string | number | boolean | (string | number)[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="orderBy full type">
+
+```ts
+{
+  name: string,
+  order?: asc | desc
+}[]
+```
+</Accordion>
+
+<Accordion title="groupBy full type">
+
+```ts
+{
+  name: string,
+  datePeriod?: HOUR | DAY | WEEK | MONTH | QUARTER | YEAR | HOUR_PART | DAY_PART | WEEK_PART | MONTH_PART | QUARTER_PART | DAY_OF_WEEK
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `message` | `string` | Yes | — |
+| `pageNumber` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `isLastPage` | `boolean` | Yes | — |
+
+
+
+---
+
+### related
+
+`records.related`
+
+List records related to a Fireberry record
+
+**Risk:** `read`
+
+```ts
+await corsair.fireberry.api.records.related({ objectType: 1, id: '00000000-0000-0000-0000-000000000001', relatedObjectType: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectType` | `number` | Yes | — |
+| `id` | `string` | Yes | — |
+| `relatedObjectType` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageNumber` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  PrimaryKey: string,
+  PrimaryField: string,
+  Total_Records: number,
+  Page_Size: number,
+  Page_Number: number,
+  Records: Record<string, JsonValue>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update a Fireberry record
+
+**Risk:** `write`
+
+```ts
+await corsair.fireberry.api.records.update({ object: 'account', id: '00000000-0000-0000-0000-000000000001', data: { accountname: 'Updated Example Company' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `account \| activitylog \| asset \| article \| businessunit \| campaign \| contact \| competitor \| contract \| creditInvoice \| deliveryInvoice \| draftInvoice \| invoice \| invoiceReceipt \| meeting \| opportunity \| order \| orderItem \| phoneCall \| product \| project \| receipt \| task \| ticket \| user \| string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `record` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+

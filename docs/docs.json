@@ -2056,6 +2056,14 @@
                 ]
               },
               {
+                "group": "Fireberry",
+                "pages": [
+                  "plugins/fireberry/overview",
+                  "plugins/fireberry/api",
+                  "plugins/fireberry/database"
+                ]
+              },
+              {
                 "group": "Firecrawl",
                 "pages": [
                   "plugins/firecrawl/overview",

@@ -1,0 +1,85 @@
+displayName: Fireberry
+description: Operate Fireberry CRM records, metadata, custom fields and objects, attachments, queries, and batch actions through typed Corsair endpoints.
+examples:
+  read:
+    path: metadata.field
+    title: Inspect an account field
+    args:
+      id: 1
+      fieldName: accountname
+  write:
+    path: batch.create
+    title: Create an account with the Batch API
+    args:
+      objectCode: account
+      data:
+        - accountname: Example Company
+apiExamples:
+  records.list:
+    call: "{ object: 'account', pageSize: 50, pageNumber: 1 }"
+  records.get:
+    call: "{ object: 'account', id: '00000000-0000-0000-0000-000000000001' }"
+  records.create:
+    call: "{ object: 'account', data: { accountname: 'Example Company' } }"
+  records.update:
+    call: "{ object: 'account', id: '00000000-0000-0000-0000-000000000001', data: { accountname: 'Updated Example Company' } }"
+  records.delete:
+    call: "{ object: 'account', id: '00000000-0000-0000-0000-000000000001' }"
+  records.query:
+    call: "{ objectType: 1, fields: [{ name: 'accountname' }] }"
+  records.legacyQuery:
+    call: "{ objecttype: 1, fields: 'accountname', page_size: 50, page_number: 1 }"
+  records.related:
+    call: "{ objectType: 1, id: '00000000-0000-0000-0000-000000000001', relatedObjectType: 2 }"
+  records.items:
+    call: "{ itemType: 'order', id: '00000000-0000-0000-0000-000000000001' }"
+  metadata.objects:
+    call: "{}"
+  metadata.object:
+    call: "{ id: 1 }"
+  metadata.fields:
+    call: "{ id: 1 }"
+  metadata.field:
+    call: "{ id: 1, fieldName: 'accountname' }"
+  metadata.picklist:
+    call: "{ id: 1, fieldName: 'industrycode' }"
+  customFields.create:
+    call: "{ objectType: 1, fieldType: 'text', data: { fieldName: 'pcfdisplay', label: 'Display' } }"
+  customFields.update:
+    call: "{ objectType: 1, fieldType: 'text', fieldName: 'pcfdisplay', data: { label: 'Display name' } }"
+  customFields.delete:
+    call: "{ objectType: 1, fieldType: 'text', fieldName: 'pcfdisplay' }"
+  customObjects.create:
+    call: "{ name: 'Asset', collectionname: 'Assets' }"
+  customObjects.update:
+    call: "{ id: '58', name: 'Asset' }"
+  customObjects.delete:
+    call: "{ id: '58' }"
+  files.create:
+    call: "{ objectId: '1', recordId: '00000000-0000-0000-0000-000000000001', fileName: 'readme.txt', fileBase64: 'SGVsbG8=' }"
+  batch.create:
+    call: "{ objectCode: '1', data: [{ accountname: 'Example Company' }] }"
+  batch.update:
+    call: "{ objectCode: '1', data: [{ id: '00000000-0000-0000-0000-000000000001', record: { accountname: 'Updated Example Company' } }] }"
+  batch.delete:
+    call: "{ objectCode: '1', ids: ['00000000-0000-0000-0000-000000000001'] }"
+apiNotes:
+  records.list: 'Use pageSize 1–50 and pageNumber 1–10; Fireberry spells the wire parameters pagesize and pagenumber.'
+  records.query: 'Query v3 supports pageSize up to 500. Aggregation requires groupBy; consult the query guide for the full structured filter semantics.'
+  records.legacyQuery: 'The legacy query API uses objecttype, fields, query, sort_by, sort_type, page_size (maximum 50), and page_number (maximum 10).'
+  records.items: 'itemType selects the documented invoice, credit invoice, order, receipt, and invoice-receipt item routes. Fireberry documents no response schema beyond an empty object for these routes.'
+  metadata.objects: 'Metadata responses identify system object names and numeric object types for metadata and batch routes.'
+  batch.create: 'Batch create accepts 1–20 records under data. Invalid items may fail while valid records in the same request are still created.'
+  batch.update: 'Batch update accepts 1–20 items; each item requires an id and a record field map. Invalid items may fail while valid records continue.'
+  batch.delete: 'Pass 1–20 record GUIDs in ids; the plugin sends them to Fireberry as data. Batch API availability depends on the Fireberry license.'
+  customFields.create: 'Custom field names must begin with pcf. Picklist option values must be unique within the field.'
+  customFields.update: 'The documented Date & Time update OpenAPI path ends with the literal segment `fieldName` while also declaring a required fieldName path parameter. That contradictory route is not exposed until Fireberry clarifies it.'
+  files.create: 'The input base64 string is converted to the provider-required multipart `file` field. Fireberry encodes uploaded filenames; use alphanumeric names to avoid encoded punctuation.'
+overviewNote: >-
+  Configure an API key in Corsair. Fireberry REST and Batch endpoints send it
+  as the tokenid header; Metadata API calls follow the documented tokenid
+  query parameter. API route inventory: 244 documented method/path operations
+  across REST, Metadata, and Batch; 243 are dispatched by the generic typed
+  Corsair operations. The Date & Time custom field update route is excluded
+  because its published path and parameter contradict one another. No inbound
+  webhook contract is published in the API index, so webhooks are not exposed.
