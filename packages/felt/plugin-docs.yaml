@@ -1,0 +1,276 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Felt"
+description: "Collaborative mapping and geospatial visualization platform for creating maps, layers, components, and spatial analysis."
+domain: "felt.com"
+recommendedAuth: "api_key"
+overviewNote: |-
+  Felt authenticates via Personal Access Tokens provided as a Bearer token in the
+  `Authorization: Bearer <token>` HTTP header. Generate a token in your Felt user
+  account settings under Integrations & API (felt.com/settings). Provide this token
+  as the `key` option when initializing the plugin or through Corsair's key manager.
+  Calls without a token throw `AuthMissingError('felt', 'api_key')`.
+
+  Key concepts in Felt v2 API:
+  - **Maps**: Maps are the central container in Felt. Every layer, element, comment,
+    and print layout belongs to a map.
+  - **Layers & Sources**: Layers visualize spatial vector or raster data from URLs,
+    files, or database sources.
+  - **Elements**: Freestanding annotations, pins, and GeoJSON features drawn directly
+    on the map canvas.
+  - **Layer Components**: Reusable legends, filters, and UI controls bound to map layers.
+  - **Rate Limits**: Felt enforces a rate limit of 300 requests per minute per IP.
+    When a rate limit is exceeded, Felt returns HTTP 429 with standard `Retry-After`.
+    The plugin transport handles retries automatically.
+  - **Privacy**: Sensitive database connection credentials provided when creating or
+    updating data sources are strictly redacted from errors and event logs.
+examples:
+  read:
+    path: users.getCurrent
+    title: Get the authenticated Felt user profile
+    args: {}
+  write:
+    path: maps.create
+    title: Create a new map
+    args:
+      title: "Field Operations Map"
+      lat: 37.7749
+      lon: -122.4194
+      zoom: 12
+apiExamples:
+  users.getCurrent: {}
+  maps.create:
+    title: "San Francisco Landmarks"
+    lat: 37.7749
+    lon: -122.4194
+    zoom: 12
+  maps.get:
+    map_id: "a1b2c3d4e5"
+  maps.update:
+    map_id: "a1b2c3d4e5"
+    title: "Updated SF Landmarks Map"
+  maps.delete:
+    map_id: "a1b2c3d4e5"
+  maps.duplicate:
+    map_id: "a1b2c3d4e5"
+    title: "Duplicate SF Landmarks"
+  maps.move:
+    map_id: "a1b2c3d4e5"
+    project_id: "proj_123"
+  maps.exportImage:
+    map_id: "a1b2c3d4e5"
+    output:
+      format: "png"
+      width_px: 800
+      height_px: 600
+  maps.createEmbedToken:
+    map_id: "a1b2c3d4e5"
+    user_email: "user@example.com"
+  layers.list:
+    map_id: "a1b2c3d4e5"
+  layers.get:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+  layers.delete:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+  layers.upload:
+    map_id: "a1b2c3d4e5"
+    import_url: "https://example.com/data.geojson"
+    name: "Points of Interest"
+  layers.addFromSource:
+    map_id: "a1b2c3d4e5"
+    from: "dataset"
+    dataset_id: "dataset_123"
+  layers.refresh:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+  layers.publish:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+  layers.duplicate:
+    layers:
+      - destination_map_id: "a1b2c3d4e5"
+        source_layer_id: "layer_123"
+  layers.listLibrary: {}
+  layers.update:
+    map_id: "a1b2c3d4e5"
+    layers:
+      - id: "layer_123"
+        name: "Updated Points of Interest"
+  layers.updateStyle:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    style:
+      color: "#ff0000"
+  layers.createCustomExport:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    output_format: "geojson"
+  layers.pollCustomExport:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    export_id: "exp_123"
+  layers.getExportLink:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+  layerGroups.list:
+    map_id: "a1b2c3d4e5"
+  layerGroups.get:
+    map_id: "a1b2c3d4e5"
+    layer_group_id: "grp_123"
+  layerGroups.update:
+    map_id: "a1b2c3d4e5"
+    layer_group_id: "grp_123"
+    name: "Updated Base Layers"
+  layerGroups.updateBulk:
+    map_id: "a1b2c3d4e5"
+    layer_groups:
+      - id: "grp_123"
+        name: "Base Layers"
+  layerGroups.delete:
+    map_id: "a1b2c3d4e5"
+    layer_group_id: "grp_123"
+  layerGroups.publish:
+    map_id: "a1b2c3d4e5"
+    layer_group_id: "grp_123"
+  layerComponents.list:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+  layerComponents.create:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    component:
+      type: "legend"
+  layerComponents.get:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    component_id: "comp_123"
+  layerComponents.update:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    component_id: "comp_123"
+    component:
+      type: "legend"
+  layerComponents.delete:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    component_id: "comp_123"
+  elements.list:
+    map_id: "a1b2c3d4e5"
+  elements.upsert:
+    map_id: "a1b2c3d4e5"
+    features:
+      - type: "Feature"
+        geometry:
+          type: "Point"
+          coordinates: [-122.4194, 37.7749]
+        properties:
+          title: "San Francisco Marker"
+  elements.delete:
+    map_id: "a1b2c3d4e5"
+    element_id: "elem_123"
+  elements.listGroups:
+    map_id: "a1b2c3d4e5"
+  elements.getGroup:
+    map_id: "a1b2c3d4e5"
+    group_id: "grp_123"
+  elements.upsertGroups:
+    map_id: "a1b2c3d4e5"
+    groups:
+      - name: "Key Points"
+  comments.export:
+    map_id: "a1b2c3d4e5"
+  comments.resolve:
+    map_id: "a1b2c3d4e5"
+    comment_id: "comm_123"
+  comments.delete:
+    map_id: "a1b2c3d4e5"
+    comment_id: "comm_123"
+  projects.list: {}
+  projects.create:
+    name: "Regional Planning"
+    visibility: "workspace"
+  projects.get:
+    project_id: "proj_123"
+  projects.update:
+    project_id: "proj_123"
+    name: "Statewide Planning"
+  projects.delete:
+    project_id: "proj_123"
+  sources.list: {}
+  sources.create:
+    name: "Enterprise PostGIS"
+    connection:
+      type: "postgresql"
+      host: "db.example.com"
+      port: 5432
+      database: "gis"
+      user: "felt_reader"
+      password: "<password>"
+  sources.get:
+    source_id: "src_123"
+  sources.update:
+    source_id: "src_123"
+    name: "Updated PostGIS"
+  sources.delete:
+    source_id: "src_123"
+  sources.sync:
+    source_id: "src_123"
+  sources.createCredential:
+    source_id: "src_123"
+    name: "Snowflake token"
+    use_case: "source_authentication"
+    credential:
+      type: "snowflake_pat"
+      token: "<snowflake-token>"
+  sources.updateCredential:
+    source_id: "src_123"
+    credential_id: "cred_123"
+    name: "Snowflake token (rotated)"
+  sources.deleteCredential:
+    source_id: "src_123"
+    credential_id: "cred_123"
+  printPages.listLayouts:
+    map_id: "a1b2c3d4e5"
+  printPages.createLayout:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+    name: "Landscape Layout"
+  printPages.updateLayout:
+    map_id: "a1b2c3d4e5"
+    layout_id: "layout_123"
+    name: "Updated Layout"
+  printPages.deleteLayout:
+    map_id: "a1b2c3d4e5"
+    layout_id: "layout_123"
+  printPages.listPages:
+    map_id: "a1b2c3d4e5"
+  printPages.createPage:
+    map_id: "a1b2c3d4e5"
+    name: "Overview Page"
+  printPages.getPage:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+  printPages.updatePage:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+    name: "Updated Overview Page"
+  printPages.deletePage:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+  printPages.exportPage:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+  printPages.upsertItems:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+    items:
+      - id: "item_123"
+  printPages.deleteItem:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+    item_id: "item_123"
+apiNotes:
+  maps.create: "Creates a new Felt map. You can optionally supply initial coordinates and zoom level."
+  layers.upload: "Imports spatial data into a Felt map from a publicly accessible URL or pre-signed upload URL."
+  sources.createCredential: "Adds a credential a source uses to authenticate (AWS role, Azure connection string, custom headers, GCP service account, key pair or Snowflake token). Secret values are redacted from errors and event logs."

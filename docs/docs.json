@@ -2006,6 +2006,14 @@
                 ]
               },
               {
+                "group": "Felt",
+                "pages": [
+                  "plugins/felt/overview",
+                  "plugins/felt/api",
+                  "plugins/felt/database"
+                ]
+              },
+              {
                 "group": "Fidel",
                 "pages": [
                   "plugins/fidel/overview",
