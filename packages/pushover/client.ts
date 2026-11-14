@@ -31,6 +31,10 @@ export function resolvePushoverUser(key: string, user?: string): string {
 	return target;
 }
 
+function redactTag(url: string): string {
+	return url.replace(/(cancel_by_tag\/)[^/?#]+?(\.json)/, '$1[REDACTED]$2');
+}
+
 export async function makePushoverRequest<T>(
 	key: string,
 	method: 'GET' | 'POST',
@@ -72,9 +76,14 @@ export async function makePushoverRequest<T>(
 		);
 		return schema.parse(response);
 	} catch (error) {
-		if (error instanceof ApiError && method === 'POST') {
-			// Retained request bodies can contain credentials and private data.
-			Object.assign(error.request, { body: '[REDACTED]' });
+		if (error instanceof ApiError) {
+			if (method === 'POST') {
+				// Retained request bodies can contain credentials and private data.
+				Object.assign(error.request, { body: '[REDACTED]' });
+			}
+			// Cancel tags are caller-chosen text (often a customer id or email).
+			Object.assign(error, { url: redactTag(error.url) });
+			Object.assign(error.request, { url: redactTag(error.request.url) });
 		}
 		throw error;
 	}

@@ -1,5 +1,5 @@
 import { ApiError } from 'corsair/http';
-import { Messages, Sounds, Teams } from './endpoints';
+import { Messages, Receipts, Sounds, Teams } from './endpoints';
 import { errorHandlers } from './error-handlers';
 
 const ctx = { key: 'secret-token' } as never;
@@ -124,4 +124,26 @@ test('redacts failed write bodies while preserving the provider error', async ()
 	expect(JSON.stringify(caught)).not.toContain('private-password');
 	expect(JSON.stringify(caught)).not.toContain('user@example.test');
 	expect(fetchMock).toHaveBeenCalledTimes(1);
+});
+
+test('drops a cancel tag (customer data) from a failed request URL', async () => {
+	global.fetch = jest.fn().mockResolvedValue(
+		new Response(JSON.stringify({ status: 0, errors: ['x'], request: 'r' }), {
+			status: 400,
+			headers: { 'Content-Type': 'application/json' },
+		}),
+	);
+	// JavaScript may throw any value; narrow it to ApiError before inspecting it.
+	let caught: unknown;
+	try {
+		await Receipts.cancelByTag(ctx, { tag: 'customer=alice@example.com' });
+	} catch (error) {
+		caught = error;
+	}
+	expect(caught).toBeInstanceOf(ApiError);
+	if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
+	expect(caught.status).toBe(400);
+	expect(caught.url).toContain('receipts/cancel_by_tag/[REDACTED].json');
+	expect(caught.request.url).toBe('receipts/cancel_by_tag/[REDACTED].json');
+	expect(JSON.stringify(caught)).not.toContain('alice');
 });
