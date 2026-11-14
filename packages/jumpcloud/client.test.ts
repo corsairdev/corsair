@@ -114,7 +114,7 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 		expect(result).toBeUndefined();
 	});
 
-	it('resolves a non-JSON 2xx response to undefined', async () => {
+	it('resolves a non-JSON 2xx response to its text (JumpCloud answers text/plain "OK")', async () => {
 		fetchMock.mockImplementationOnce(() =>
 			Promise.resolve(
 				new Response('ok', {
@@ -131,7 +131,7 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 			'/systemusers',
 		);
 
-		expect(result).toBeUndefined();
+		expect(result).toBe('ok');
 	});
 
 	it('maps HTTP 429 with a retry-after header onto the error in milliseconds', async () => {

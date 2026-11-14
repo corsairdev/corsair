@@ -75,6 +75,8 @@ describe('live JumpCloud response shapes', () => {
 					active: false,
 					name: 'saml2',
 					displayLabel: 'Custom SAML App',
+					ssoUrl: 'https://sso.jumpcloud.com/saml2/saml2',
+					config: {},
 					sso: { beta: false, type: 'saml', hidden: false },
 					parentApp: null,
 					aiReady: false,
