@@ -492,7 +492,7 @@ await corsair.conversiontools.api.files.uploadToSession({ upload_url: 'https://a
 
 Create an asynchronous conversion task. https://conversiontools.io/api-documentation#run-conversion-task
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.conversiontools.api.tasks.create({ type: 'convert.xml_to_json', options: { file_id: '0123456789abcdef0123456789abcdef' } });

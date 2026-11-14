@@ -258,7 +258,7 @@ const conversiontoolsEndpointMeta = {
 			'Upload raw file bytes to a one-time session URL. https://conversiontools.io/llms-full.txt',
 	},
 	'tasks.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create an asynchronous conversion task. https://conversiontools.io/api-documentation#run-conversion-task',
 	},

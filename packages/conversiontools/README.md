@@ -26,7 +26,7 @@ The plugin exposes the documented JSON-compatible operations below. Task creatio
 | `files.downloadFromLink` | `GET /v1/files/{download_id}/download` | read | [Full API reference](https://conversiontools.io/llms-full.txt) |
 | `files.createUploadSession` | `POST /v1/upload-sessions` | write | [Full API reference §5](https://conversiontools.io/llms-full.txt) |
 | `files.uploadToSession` | `PUT /v1/upload-sessions/{session_id}` | write | [Full API reference §5](https://conversiontools.io/llms-full.txt) |
-| `tasks.create` | `POST /v1/tasks` | write | [API docs: create task](https://conversiontools.io/api-documentation#run-conversion-task) |
+| `tasks.create` | `POST /v1/tasks` | destructive | [API docs: create task](https://conversiontools.io/api-documentation#run-conversion-task) |
 | `tasks.list` | `GET /v1/tasks` | read | [OpenAPI](https://api.conversiontools.io/openapi.yaml) |
 | `tasks.get` | `GET /v1/tasks/{task_id}` | read | [API docs: task status](https://conversiontools.io/api-documentation#get-task-status) |
 | `tasks.updateRetention` | `PATCH /v1/tasks/{task_id}/retention` | write | [OpenAPI](https://api.conversiontools.io/openapi.yaml) |
