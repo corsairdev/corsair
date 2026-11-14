@@ -1080,7 +1080,7 @@ await corsair.trustpilot.api.consumerProfiles.bulk({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `consumers` | `object` | Yes | — |
-| `notFoundConsumerIds` | `string[]` | Yes | — |
+| `notFoundConsumerIds` | `(string \| null)[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="consumers full type">
@@ -1981,9 +1981,9 @@ await corsair.trustpilot.api.productReviews.batchSummaries({
 
 `productReviews.createComment`
 
-Add a business comment to a product review conversation
+Publish a business comment on a product review conversation (public, seen by the reviewer)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.trustpilot.api.productReviews.createComment({ conversationId: '507f191e810c19729de860ea', content: 'Thank you', integrationId: 'corsair' });
@@ -2827,9 +2827,9 @@ await corsair.trustpilot.api.productReviews.summary({
 
 `productReviews.updateComment`
 
-Edit a business comment in a product review conversation
+Replace the text of a published business comment on a product review conversation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.trustpilot.api.productReviews.updateComment({
@@ -3294,3 +3294,4 @@ await corsair.trustpilot.api.reviews.webLinks({ reviewId: '507f191e810c19729de86
 
 
 ---
+

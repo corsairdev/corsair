@@ -6,7 +6,7 @@ description: "Read Trustpilot business, service review, product review, invitati
 
 Use **Trustpilot** through Corsair: one client, typed API calls.
 
-Public API operations need a Trustpilot API key. Private business and invitation operations need an OAuth 2.0 access token; select oauth_2 for these calls and provide apiKey in plugin options when public calls must be made from that same configuration. Trustpilot documents authorization-code and client-credentials grants, but does not publish per-operation scopes in these references.
+Public API operations need a Trustpilot API key. Private business and invitation operations need an OAuth 2.0 access token; select oauth_2 for these calls. With oauth_2, public operations send the OAuth app's client id as the API key (Trustpilot's API key is the client id), or apiKey from plugin options when it is set. Trustpilot documents authorization-code and client-credentials grants, but does not publish per-operation scopes in these references.
 
 **What you get:**
 
