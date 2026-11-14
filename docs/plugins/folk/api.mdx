@@ -861,7 +861,7 @@ Delete an existing interaction
 **Risk:** `destructive`
 
 ```ts
-await corsair.folk.api.interactions.delete({ interactionId: 'lit_b049db09-c03d-4f32-96d6-d314760add5d' });
+await corsair.folk.api.interactions.delete({ interactionId: 'lit_b049db09-c03d-4f32-96d6-d314760add5d', entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
 ```
 
 **Input**
@@ -905,7 +905,7 @@ Retrieve a specific past or upcoming interaction by ID
 **Risk:** `read`
 
 ```ts
-await corsair.folk.api.interactions.get({ interactionId: 'lit_b049db09-c03d-4f32-96d6-d314760add5d' });
+await corsair.folk.api.interactions.get({ interactionId: 'lit_b049db09-c03d-4f32-96d6-d314760add5d', entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
 ```
 
 **Input**
@@ -981,7 +981,7 @@ Retrieve interactions linked to people or companies
 **Risk:** `read`
 
 ```ts
-await corsair.folk.api.interactions.list({ limit: 10 });
+await corsair.folk.api.interactions.list({ entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810', timeframe: 'past' });
 ```
 
 **Input**
@@ -1063,7 +1063,7 @@ Retrieve past interactions in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.folk.api.interactions.listPast({ limit: 10 });
+await corsair.folk.api.interactions.listPast({ entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
 ```
 
 **Input**
@@ -1144,7 +1144,7 @@ Retrieve upcoming interactions in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.folk.api.interactions.listUpcoming({ limit: 10 });
+await corsair.folk.api.interactions.listUpcoming({ entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
 ```
 
 **Input**
