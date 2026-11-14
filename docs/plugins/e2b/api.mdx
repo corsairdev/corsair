@@ -303,7 +303,7 @@ MakeDir
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.filesystem.createDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.createDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}});
 ```
 
 **Input**
@@ -520,7 +520,7 @@ ListDir
 **Risk:** `read`
 
 ```ts
-await corsair.e2b.api.filesystem.listDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.listDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}});
 ```
 
 **Input**
@@ -598,7 +598,7 @@ Move
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.filesystem.move({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.move({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"source":"/tmp/corsair-e2b/a.txt","destination":"/tmp/corsair-e2b/b.txt"}});
 ```
 
 **Input**
@@ -676,7 +676,7 @@ Remove
 **Risk:** `destructive`
 
 ```ts
-await corsair.e2b.api.filesystem.remove({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.remove({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}});
 ```
 
 **Input**
@@ -774,7 +774,7 @@ Stat
 **Risk:** `read`
 
 ```ts
-await corsair.e2b.api.filesystem.stat({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.stat({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}});
 ```
 
 **Input**
@@ -853,7 +853,7 @@ CloseStdin
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.process.closeStdin({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.process.closeStdin({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101}}});
 ```
 
 **Input**
@@ -1035,10 +1035,10 @@ stdin and pty bytes use the Connect JSON base64 representation; encode the bytes
 
 SendSignal
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.e2b.api.process.sendSignal({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.process.sendSignal({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"signal":"SIGNAL_SIGTERM"}});
 ```
 
 **Input**
@@ -1092,7 +1092,7 @@ Update
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.process.update({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.process.update({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"pty":{"size":{"cols":80,"rows":24}}}});
 ```
 
 **Input**
@@ -1150,7 +1150,7 @@ await corsair.e2b.api.process.update({"headers":{"e2bSandboxId":"test","e2bSandb
 
 Connect sandbox (v2)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.e2b.api.sandboxes.connect({"path":{"sandboxID":"test"},"body":{}});
@@ -1209,7 +1209,7 @@ await corsair.e2b.api.sandboxes.connect({"path":{"sandboxID":"test"},"body":{}})
 
 Create sandbox (v2)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.e2b.api.sandboxes.create({"headers":{"idempotencyKey":"test"},"body":{"templateID":"test"}});
@@ -1374,7 +1374,7 @@ await corsair.e2b.api.sandboxes.createSnapshot({"path":{"sandboxID":"test"},"hea
 
 Fork sandbox
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.e2b.api.sandboxes.fork({"path":{"sandboxID":"test"},"body":{}});
@@ -1970,7 +1970,7 @@ await corsair.e2b.api.sandboxes.pause({"path":{"sandboxID":"test"},"body":{}});
 
 Refresh sandbox
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.e2b.api.sandboxes.refresh({"path":{"sandboxID":"test"},"body":{}});
@@ -2016,7 +2016,7 @@ await corsair.e2b.api.sandboxes.refresh({"path":{"sandboxID":"test"},"body":{}})
 
 Set sandbox timeout
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.e2b.api.sandboxes.setTimeout({"path":{"sandboxID":"test"},"body":{"timeout":0}});
