@@ -156,6 +156,8 @@ function isBlockedV6(ip: string): boolean {
 	if ((groups[0]! & 0xfe00) === 0xfc00) return true;
 	// Link-local (fe80::/10).
 	if ((groups[0]! & 0xffc0) === 0xfe80) return true;
+	// Site-local (fec0::/10), deprecated but still routed privately on some networks.
+	if ((groups[0]! & 0xffc0) === 0xfec0) return true;
 	// Multicast (ff00::/8).
 	if ((groups[0]! & 0xff00) === 0xff00) return true;
 	// 6to4 (2002::/16) can embed an arbitrary v4 address.
@@ -288,6 +290,9 @@ const httpTransport: NonNullable<DownloadDeps['transport']> = (
 		// Connect to the vetted address while keeping the hostname for TLS SNI
 		// and the Host header.
 		lookup: pinnedLookup(addresses),
+		// A fresh connection every time: a pooled socket from the global agent is
+		// keyed without the lookup, so it could reach an address this check never saw.
+		agent: false,
 		signal,
 	};
 	if (isHttps) options.servername = hostname;

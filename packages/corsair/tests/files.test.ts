@@ -13,6 +13,7 @@ import type {
 import {
 	downloadPublicFile,
 	filenameFromDisposition,
+	isBlockedAddress,
 	UnsafeUrlError,
 } from '../async-core/public-download';
 import { request } from '../async-core/request';
@@ -72,6 +73,11 @@ describe('downloadPublicFile', () => {
 		expect(got.url).toBe('https://files.example.com/a/b.pdf?sig=1');
 		// The socket is pinned to the address that was checked.
 		expect(asked[0]!.addresses).toEqual(['93.184.216.34']);
+	});
+
+	it('treats the old IPv6 site-local range as private', () => {
+		expect(isBlockedAddress('fec0::1')).toBe(true);
+		expect(isBlockedAddress('2606:4700::1111')).toBe(false);
 	});
 
 	it('refuses a host that resolves to a private address, before any request', async () => {
@@ -298,7 +304,39 @@ describe('resolveFileInput', () => {
 			deps,
 		);
 		expect(new TextDecoder().decode(text.bytes)).toBe('hello there');
+
+		// Media-type parameters are allowed, and percent escapes are bytes, not text.
+		const withParams = await resolveFileInput(
+			'data:text/plain;charset=utf-8;base64,aGk=',
+			{},
+			deps,
+		);
+		expect(withParams.contentType).toBe('text/plain');
+		expect(new TextDecoder().decode(withParams.bytes)).toBe('hi');
+		const binary = await resolveFileInput(
+			'data:application/octet-stream,%FF%00',
+			{},
+			deps,
+		);
+		expect(Array.from(binary.bytes)).toEqual([255, 0]);
 		expect(asked).toEqual([]);
+	});
+
+	it('holds every kind of input to the size limit, not only base64 and downloads', async () => {
+		const { deps } = serving({ body: PDF });
+		await expect(
+			resolveFileInput('data:text/plain,ab', { maxBytes: 1 }, deps),
+		).rejects.toThrow('limit');
+		await expect(
+			resolveFileInput(
+				new Blob([new Uint8Array([1, 2])]),
+				{ maxBytes: 1 },
+				deps,
+			),
+		).rejects.toThrow('limit');
+		await expect(
+			resolveFileInput({ base64: 'AQI=' }, { maxBytes: 1 }, deps),
+		).rejects.toThrow('limit');
 	});
 
 	it('refuses base64 that is not, that is empty, or that is over the limit', async () => {
@@ -402,6 +440,17 @@ describe("request with responseType 'binary'", () => {
 		expect(Array.from(new TextEncoder().encode(got))).not.toEqual(
 			Array.from(PDF),
 		);
+	});
+
+	it('returns an empty file for a 204, not undefined', async () => {
+		globalThis.fetch = (async () =>
+			new Response(null, { status: 204 })) as typeof fetch;
+		const got = await request<{ bytes: Uint8Array }>(config, {
+			method: 'GET',
+			url: '/files/empty/content',
+			responseType: 'binary',
+		});
+		expect(got.bytes.byteLength).toBe(0);
 	});
 
 	it('still reads an error response for its message', async () => {

@@ -260,6 +260,13 @@ const getResponseBody = async (
 	response: Response,
 	options?: ApiRequestOptions,
 ): Promise<any> => {
+	// A binary caller always gets a file back; a 204 is an empty one.
+	if (options?.responseType === 'binary' && response.status === 204) {
+		return {
+			bytes: new Uint8Array(0),
+			contentType: response.headers.get('Content-Type'),
+		};
+	}
 	if (response.status !== 204) {
 		// A file is kept as bytes: reading it as text replaces every byte that
 		// is not valid UTF-8. An error is still parsed below for its message.

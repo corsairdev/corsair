@@ -59,6 +59,7 @@ export type ResolveFileOptions = DownloadOptions & {
 	fallbackName?: string;
 };
 
+// `unknown` because this guard is what narrows a caller's input before it is trusted as a Blob.
 function isBlob(value: unknown): value is Blob {
 	return typeof Blob !== 'undefined' && value instanceof Blob;
 }
@@ -76,21 +77,53 @@ function build(
 	};
 }
 
-const DATA_URL = /^data:([^;,]*)(;base64)?,(.*)$/s;
+// The media type, any parameters (`;charset=utf-8`), then `;base64` when the body is base64.
+const DATA_URL = /^data:([^;,]*)((?:;[^;,=]+=[^;,]*)*)(;base64)?,(.*)$/is;
+
+const tooLarge = (maxBytes: number) =>
+	new Error(
+		`The file is larger than the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`,
+	);
+
+/** Holds bytes from any input to the caller's limit, the way a download is held. */
+function withinLimit(
+	bytes: Uint8Array,
+	maxBytes: number | undefined,
+): Uint8Array {
+	if (bytes.byteLength === 0) throw new Error('The file is empty.');
+	if (maxBytes !== undefined && bytes.byteLength > maxBytes)
+		throw tooLarge(maxBytes);
+	return bytes;
+}
+
+/** A data URL's percent-encoded body as the bytes it encodes; `%FF` is byte 255, not text. */
+function fromPercentEncoded(body: string): Uint8Array {
+	const out: number[] = [];
+	const raw = new TextEncoder().encode(body);
+	for (let i = 0; i < raw.length; i++) {
+		const hex = raw[i] === 0x25 ? body.slice(i + 1, i + 3) : '';
+		if (/^[0-9a-fA-F]{2}$/.test(hex)) {
+			out.push(Number.parseInt(hex, 16));
+			i += 2;
+		} else {
+			out.push(raw[i] as number);
+		}
+	}
+	return new Uint8Array(out);
+}
 
 function fromBase64(text: string, maxBytes: number | undefined): Uint8Array {
 	const clean = text.replace(/\s+/g, '');
 	if (!/^[A-Za-z0-9+/_-]*={0,2}$/.test(clean) || clean.length === 0) {
 		throw new Error('The file is not valid base64.');
 	}
-	const bytes = Buffer.from(clean, 'base64');
-	if (bytes.byteLength === 0) throw new Error('The file is empty.');
-	if (maxBytes !== undefined && bytes.byteLength > maxBytes) {
-		throw new Error(
-			`The file is larger than the ${Math.round(maxBytes / (1024 * 1024))} MB limit.`,
-		);
-	}
-	return new Uint8Array(bytes);
+	// Refused before decoding when even the smallest decode would be over the limit.
+	if (
+		maxBytes !== undefined &&
+		Math.floor((clean.length * 3) / 4) - 2 > maxBytes
+	)
+		throw tooLarge(maxBytes);
+	return withinLimit(new Uint8Array(Buffer.from(clean, 'base64')), maxBytes);
 }
 
 /**
@@ -112,8 +145,10 @@ export async function resolveFileInput(
 			typeof File !== 'undefined' && input instanceof File && input.name
 				? input.name
 				: fallback;
+		if (options.maxBytes !== undefined && input.size > options.maxBytes)
+			throw tooLarge(options.maxBytes);
 		return build(
-			new Uint8Array(await input.arrayBuffer()),
+			withinLimit(new Uint8Array(await input.arrayBuffer()), options.maxBytes),
 			name,
 			input.type || 'application/octet-stream',
 		);
@@ -131,10 +166,10 @@ export async function resolveFileInput(
 
 	const data = DATA_URL.exec(given.url);
 	if (data) {
-		const [, type, isBase64, body] = data;
+		const [, type, , isBase64, body] = data;
 		const bytes = isBase64
 			? fromBase64(body ?? '', options.maxBytes)
-			: new TextEncoder().encode(decodeURIComponent(body ?? ''));
+			: withinLimit(fromPercentEncoded(body ?? ''), options.maxBytes);
 		return build(
 			bytes,
 			given.filename ?? fallback,
