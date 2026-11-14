@@ -52,14 +52,11 @@ export const errorHandlers = {
 			retryStrategy: 'linear_3s' as const,
 		}),
 	},
-	// Postmark publishes X-RateLimit-* headers rather than a Retry-After, so the
-	// strategy is the only delay available.
+	// Core's request() has already retried a 429 three times, honouring any
+	// Retry-After, so the handler does not retry it again (R8).
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async () => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff_jitter' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A request Postmark refused as written: a validation error (300), invalid
 	// JSON (402), an invalid field (403), a bad template (601/1100-1131), an

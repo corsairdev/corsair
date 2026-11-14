@@ -23,7 +23,7 @@ function apiError(
 	status: number,
 	options: { errorCode?: number; method?: 'GET' | 'POST' } = {},
 ) {
-	const body: Record<string, unknown> =
+	const body: { ErrorCode?: number } =
 		options.errorCode === undefined ? {} : { ErrorCode: options.errorCode };
 	return new ApiError(
 		{ method: options.method ?? 'GET', url: '/server' },
@@ -87,16 +87,13 @@ describe('Postmark errorHandlers', () => {
 		).resolves.toMatchObject({ maxRetries: 0 });
 	});
 
-	it('routes a 429 to RATE_LIMIT_ERROR, which has no Retry-After to read', async () => {
+	it('routes a 429 to RATE_LIMIT_ERROR, which leaves the retries to core', async () => {
 		const error = apiError(429);
 
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(
 			HANDLERS.RATE_LIMIT_ERROR?.handler(error, CONTEXT),
-		).resolves.toEqual({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff_jitter',
-		});
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('routes 400, 404, 413, 415 and 422 to VALIDATION_ERROR with no retry', async () => {

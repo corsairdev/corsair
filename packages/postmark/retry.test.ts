@@ -173,6 +173,30 @@ describe('Postmark plugin through createCorsair', () => {
 		}
 	});
 
+	it('waits for the Retry-After a 429 carries before retrying', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({ key: 'inline-token' });
+		try {
+			respond({ ErrorCode: 0, Message: 'Rate limit' }, 429, {
+				'Retry-After': '30',
+			});
+			respond({ ID: 1234 });
+
+			const pending = corsair.postmark.api.server.get({});
+			await jest.advanceTimersByTimeAsync(5000);
+			// Still inside the 30 seconds Postmark asked for.
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			await jest.advanceTimersByTimeAsync(30_000);
+			const result = await pending;
+
+			expect(result.ID).toBe(1234);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			jest.useRealTimers();
+			testDb.cleanup();
+		}
+	});
+
 	it('retries a 429 on a read', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({ key: 'inline-token' });

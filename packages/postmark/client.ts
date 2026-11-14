@@ -9,13 +9,13 @@ import { ApiError, request } from 'corsair/http';
 export const POSTMARK_API_BASE = 'https://api.postmarkapp.com';
 
 /**
- * Postmark publishes its own rate-limit headers (`X-RateLimit-Limit`,
- * `X-RateLimit-Remaining` and `X-RateLimit-Reset`) rather than a Retry-After, so
- * no header delay is read here and the handlers fall back to their strategy.
+ * Core's `request()` retries a 429 three times and waits for a `Retry-After`
+ * when Postmark sends one, falling back to its own backoff otherwise. The
+ * plugin's 429 handler therefore does not retry again (R8).
  */
 const POSTMARK_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
