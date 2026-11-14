@@ -1,0 +1,3433 @@
+---
+title: "Hub Planner API reference"
+sidebarTitle: "API"
+description: "API reference for the Hub Planner plugin in Corsair: every `hubplanner.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bookings
+
+### create
+
+`bookings.create`
+
+Create a new resource schedule booking
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.bookings.create({
+	resource: '5ba09b645ff58f149a2c2222',
+	project: '5ba09b645ff58f149a2cf521',
+	start: '2026-12-01',
+	end: '2026-12-05',
+	title: 'Sprint Planning',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `stateValue` | `number` | No | — |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+| `allDay` | `boolean` | No | — |
+| `allowOverschedule` | `boolean` | No | — |
+| `repeat` | `boolean` | No | — |
+| `interval` | `string` | No | — |
+| `repeatEndsAfterTimes` | `number` | No | — |
+| `repeatEndsOnDate` | `string` | No | — |
+
+Requires `resource`, `project`, `start`, and `end` dates (YYYY-MM-DD). Use `allowOverschedule: true` to bypass schedule warning thresholds.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `state` | `string` | No | — |
+| `allDay` | `boolean` | No | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `stateValue` | `number` | No | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `type` | `string` | No | — |
+| `categoryTemplateId` | `string` | No | — |
+| `categoryName` | `string` | No | — |
+| `bookingCreatorId` | `string` | No | — |
+| `customFields` | `any[]` | No | — |
+
+
+
+---
+
+### delete
+
+`bookings.delete`
+
+Delete a specific booking by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.bookings.delete({ bookingId: '5b1977ade02d407011112222' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### deleteBulk
+
+`bookings.deleteBulk`
+
+Bulk delete bookings by IDs or filter parameters
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.bookings.deleteBulk({
+	ids: ['5b1977ade02d407011112222'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+| `resourceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`bookings.get`
+
+Get booking details by booking ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.bookings.get({ bookingId: '5b1977ade02d407011112222' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `state` | `string` | No | — |
+| `allDay` | `boolean` | No | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `stateValue` | `number` | No | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `type` | `string` | No | — |
+| `categoryTemplateId` | `string` | No | — |
+| `categoryName` | `string` | No | — |
+| `bookingCreatorId` | `string` | No | — |
+| `customFields` | `any[]` | No | — |
+
+
+
+---
+
+### list
+
+`bookings.list`
+
+List scheduled bookings with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.bookings.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `deleted` | `boolean` | No | — |
+| `dependencies` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  title?: string,
+  state?: string,
+  allDay?: boolean,
+  start: string,
+  end: string,
+  stateValue?: number,
+  resource: string,
+  project: string,
+  note?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string,
+  type?: string,
+  categoryTemplateId?: string,
+  categoryName?: string,
+  bookingCreatorId?: string,
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`bookings.patch`
+
+Patch specific properties of a booking or approve/reject booking requests
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.bookings.patch({ bookingId: '5b1977ade02d407011112222', type: 'APPROVED' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookingId` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `approvalInfo` | `Record<string, any>` | No | — |
+| `allowOverschedule` | `boolean` | No | — |
+| `state` | `string` | No | — |
+| `stateValue` | `number` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+
+Used for partial updates or for approving/rejecting booking requests with `type: 'APPROVED'` or `'REJECTED'`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `state` | `string` | No | — |
+| `allDay` | `boolean` | No | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `stateValue` | `number` | No | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `type` | `string` | No | — |
+| `categoryTemplateId` | `string` | No | — |
+| `categoryName` | `string` | No | — |
+| `bookingCreatorId` | `string` | No | — |
+| `customFields` | `any[]` | No | — |
+
+
+
+---
+
+### search
+
+`bookings.search`
+
+Search bookings matching criteria such as date range or project
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.bookings.search({
+	query: { project: '5ba09b645ff58f149a2cf521' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, any>` | No | — |
+| `dependencies` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  title?: string,
+  state?: string,
+  allDay?: boolean,
+  start: string,
+  end: string,
+  stateValue?: number,
+  resource: string,
+  project: string,
+  note?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string,
+  type?: string,
+  categoryTemplateId?: string,
+  categoryName?: string,
+  bookingCreatorId?: string,
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`bookings.update`
+
+Update all properties of an existing booking
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.bookings.update({
+	bookingId: '5b1977ade02d407011112222',
+	resource: '5ba09b645ff58f149a2c2222',
+	project: '5ba09b645ff58f149a2cf521',
+	start: '2026-12-01',
+	end: '2026-12-06',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookingId` | `string` | Yes | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `stateValue` | `number` | No | — |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+| `allDay` | `boolean` | No | — |
+| `allowOverschedule` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `state` | `string` | No | — |
+| `allDay` | `boolean` | No | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `stateValue` | `number` | No | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `type` | `string` | No | — |
+| `categoryTemplateId` | `string` | No | — |
+| `categoryName` | `string` | No | — |
+| `bookingCreatorId` | `string` | No | — |
+| `customFields` | `any[]` | No | — |
+
+
+
+---
+
+## Categories
+
+### create
+
+`categories.create`
+
+Create a new booking category in a group
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.categories.create({ groupId: '66e81d231d512707a7266d32', name: 'Design Review' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `gridColor` | `string` | No | — |
+| `type` | `NON_OPTIONAL \| CUSTOM` | No | — |
+
+Requires `groupId` and `name`. Setting `type: 'NON_OPTIONAL'` sets the category as default for that group.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `gridColor` | `string` | No | — |
+| `type` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `categoryGroupId` | `string` | No | — |
+| `categoryGroupName` | `string` | No | — |
+
+
+
+---
+
+### createCostCategory
+
+`categories.createCostCategory`
+
+Create a new project cost category
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.categories.createCostCategory({ name: 'Travel Expenses' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+
+
+
+---
+
+### deleteCostCategory
+
+`categories.deleteCostCategory`
+
+Delete a project cost category by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.categories.deleteCostCategory({ costCategoryId: '5f057949f338cd432a794a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `costCategoryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`categories.get`
+
+Get booking category details by category ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.categories.get({ categoryId: '5f057949f338cd432a794a12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categoryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `gridColor` | `string` | No | — |
+| `type` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `categoryGroupId` | `string` | No | — |
+| `categoryGroupName` | `string` | No | — |
+
+
+
+---
+
+### getCostCategory
+
+`categories.getCostCategory`
+
+Get project cost category by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.categories.getCostCategory({ costCategoryId: '5f057949f338cd432a794a13' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `costCategoryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`categories.list`
+
+List all booking categories
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.categories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  gridColor?: string,
+  type?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  categoryGroupId?: string,
+  categoryGroupName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCostCategories
+
+`categories.listCostCategories`
+
+List all project cost categories
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.categories.listCostCategories({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listGroups
+
+`categories.listGroups`
+
+List booking category groups
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.categories.listGroups({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`categories.search`
+
+Search booking categories by name or group
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.categories.search({
+	query: { name: 'Design' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, any>` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  gridColor?: string,
+  type?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  categoryGroupId?: string,
+  categoryGroupName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchCostCategories
+
+`categories.searchCostCategories`
+
+Search project cost categories by name
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.categories.searchCostCategories({
+	query: { name: 'Travel' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, any>` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`categories.update`
+
+Update an existing booking category
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.categories.update({ categoryId: '5f057949f338cd432a794a12', name: 'Design Sprint' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categoryId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `gridColor` | `string` | No | — |
+| `type` | `NON_OPTIONAL \| CUSTOM` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `gridColor` | `string` | No | — |
+| `type` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `categoryGroupId` | `string` | No | — |
+| `categoryGroupName` | `string` | No | — |
+
+
+
+---
+
+### updateCostCategory
+
+`categories.updateCostCategory`
+
+Update an existing project cost category
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.categories.updateCostCategory({ costCategoryId: '5f057949f338cd432a794a13', name: 'Domestic Travel' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `costCategoryId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+
+
+
+---
+
+## Custom Fields
+
+### addChoices
+
+`customFields.addChoices`
+
+Add options to dropdown or selection custom field templates
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.customFields.addChoices({
+	entityType: 'project',
+	id: '669554d27dc15b5590a1b831',
+	choices: [{ value: 'Tier 1' }, { value: 'Tier 2' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityType` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `placeholderText` | `string` | No | — |
+| `status` | `string` | No | — |
+| `allowMultipleValues` | `boolean \| string` | No | — |
+| `isRequired` | `boolean \| string` | No | — |
+| `canResourceEdit` | `boolean \| string` | No | — |
+| `characterLimit` | `string` | No | — |
+| `isChoicesSortedAlphabetically` | `boolean \| string` | No | — |
+| `choices` | `object[]` | No | — |
+| `defaultValue` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  _id?: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`customFields.create`
+
+Create a new custom field template for projects or resources
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.customFields.create({ entityType: 'project', type: 'TEXT', label: 'Purchase Order' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityType` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `placeholderText` | `string` | No | — |
+| `status` | `string` | No | — |
+| `allowMultipleValues` | `boolean` | No | — |
+| `isRequired` | `boolean` | No | — |
+| `canResourceEdit` | `boolean` | No | — |
+| `characterLimit` | `string` | No | — |
+| `isChoicesSortedAlphabetically` | `boolean` | No | — |
+| `choices` | `object[]` | No | — |
+| `defaultValue` | `string` | No | — |
+
+`entityType` must be either `'project'` or `'resource'`. Requires `type` (e.g., `'TEXT'`, `'select'`) and `label`.
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `placeholderText` | `string` | No | — |
+| `status` | `string` | No | — |
+| `allowMultipleValues` | `boolean \| string` | No | — |
+| `isRequired` | `boolean \| string` | No | — |
+| `canResourceEdit` | `boolean \| string` | No | — |
+| `characterLimit` | `string` | No | — |
+| `isChoicesSortedAlphabetically` | `boolean \| string` | No | — |
+| `choices` | `object[]` | No | — |
+| `defaultValue` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  _id?: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Delete a custom field template by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.customFields.delete({ entityType: 'project', id: '669554d27dc15b5590a1b831' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityType` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`customFields.get`
+
+Get custom field template details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.customFields.get({ entityType: 'project', id: '669554d27dc15b5590a1b831' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityType` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `placeholderText` | `string` | No | — |
+| `status` | `string` | No | — |
+| `allowMultipleValues` | `boolean \| string` | No | — |
+| `isRequired` | `boolean \| string` | No | — |
+| `canResourceEdit` | `boolean \| string` | No | — |
+| `characterLimit` | `string` | No | — |
+| `isChoicesSortedAlphabetically` | `boolean \| string` | No | — |
+| `choices` | `object[]` | No | — |
+| `defaultValue` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  _id?: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customFields.list`
+
+List custom field templates for projects or resources
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.customFields.list({ entityType: 'project' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityType` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  type: string,
+  label: string,
+  instructions?: string,
+  placeholderText?: string,
+  status?: string,
+  allowMultipleValues?: boolean | string,
+  isRequired?: boolean | string,
+  canResourceEdit?: boolean | string,
+  characterLimit?: string,
+  isChoicesSortedAlphabetically?: boolean | string,
+  choices?: {
+    _id?: string,
+    value: string
+  }[],
+  defaultValue?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`customFields.search`
+
+Search custom field templates matching filter parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.customFields.search({
+	entityType: 'resource',
+	query: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityType` | `string` | Yes | — |
+| `query` | `Record<string, any>` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  type: string,
+  label: string,
+  instructions?: string,
+  placeholderText?: string,
+  status?: string,
+  allowMultipleValues?: boolean | string,
+  isRequired?: boolean | string,
+  canResourceEdit?: boolean | string,
+  characterLimit?: string,
+  isChoicesSortedAlphabetically?: boolean | string,
+  choices?: {
+    _id?: string,
+    value: string
+  }[],
+  defaultValue?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`customFields.update`
+
+Update a custom field template and its configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.customFields.update({
+	entityType: 'project',
+	id: '669554d27dc15b5590a1b831',
+	type: 'TEXT',
+	label: 'Purchase Order Number',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityType` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `placeholderText` | `string` | No | — |
+| `status` | `string` | No | — |
+| `allowMultipleValues` | `boolean` | No | — |
+| `isRequired` | `boolean` | No | — |
+| `canResourceEdit` | `boolean` | No | — |
+| `characterLimit` | `string` | No | — |
+| `isChoicesSortedAlphabetically` | `boolean` | No | — |
+| `choices` | `object[]` | No | — |
+| `defaultValue` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  _id?: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `placeholderText` | `string` | No | — |
+| `status` | `string` | No | — |
+| `allowMultipleValues` | `boolean \| string` | No | — |
+| `isRequired` | `boolean \| string` | No | — |
+| `canResourceEdit` | `boolean \| string` | No | — |
+| `characterLimit` | `string` | No | — |
+| `isChoicesSortedAlphabetically` | `boolean \| string` | No | — |
+| `choices` | `object[]` | No | — |
+| `defaultValue` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  _id?: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Create a new company event
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.events.create({ name: 'Quarterly Planning', eventCode: 'QPLAN' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `eventCode` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `metadata` | `string` | No | — |
+
+Requires event `name`. Color and metadata custom fields are optional.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `eventCode` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`events.delete`
+
+Delete a company event by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.events.delete({ eventId: '53a168304cc0f1bb16a898ca' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`events.get`
+
+Get company event details by event ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.events.get({ eventId: '53a168304cc0f1bb16a898ca' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `eventCode` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`events.list`
+
+List company events with pagination and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.events.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  eventCode?: string,
+  backgroundColor?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`events.search`
+
+Search events by name or event code
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.events.search({
+	query: { name: 'Planning' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, any>` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  eventCode?: string,
+  backgroundColor?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`events.update`
+
+Update an existing company event
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.events.update({ eventId: '53a168304cc0f1bb16a898ca', name: 'Q1 Planning' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `eventCode` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `metadata` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `eventCode` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+
+
+
+---
+
+## Milestones
+
+### create
+
+`milestones.create`
+
+Create a new project milestone date
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.milestones.create({ name: 'Alpha Release', date: '2026-12-15', project: '5ba09b645ff58f149a2cf521' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `metadata` | `string` | No | — |
+
+Requires `name`, `date` (YYYY-MM-DD), and `project`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `metadata` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`milestones.delete`
+
+Delete a project milestone by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.milestones.delete({ milestoneId: '54785431e91e5ead13e8d841' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `milestoneId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`milestones.get`
+
+Get milestone details by milestone ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.milestones.get({ milestoneId: '54785431e91e5ead13e8d841' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `milestoneId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `metadata` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`milestones.list`
+
+List milestones with pagination and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.milestones.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  date: string,
+  project: string,
+  metadata?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`milestones.search`
+
+Search milestones by project or date range
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.milestones.search({
+	query: { project: '5ba09b645ff58f149a2cf521' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, any>` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  date: string,
+  project: string,
+  metadata?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`milestones.update`
+
+Update an existing project milestone
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.milestones.update({
+	milestoneId: '54785431e91e5ead13e8d841',
+	name: 'Alpha Release v1.0',
+	date: '2026-12-18',
+	project: '5ba09b645ff58f149a2cf521',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `milestoneId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `metadata` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `metadata` | `string` | No | — |
+
+
+
+---
+
+## Projects
+
+### addClients
+
+`projects.addClients`
+
+Associate client organizations with a project
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.projects.addClients({
+	projectId: '5ba09b645ff58f149a2cf521',
+	clientIds: ['65ca012029601f211c2864b0'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `clientIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### addResources
+
+`projects.addResources`
+
+Assign resources to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.projects.addResources({
+	projectId: '5ba09b645ff58f149a2cf521',
+	resourceIds: ['5ba09b645ff58f149a2c2222'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `resourceIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### addTags
+
+`projects.addTags`
+
+Add tags to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.projects.addTags({
+	projectId: '5ba09b645ff58f149a2cf521',
+	tags: ['5bb1e49065e0555544443333'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `links` | `Record<string, string>` | No | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `timeEntryEnabled` | `boolean` | No | — |
+| `timeEntryLocked` | `boolean` | No | — |
+| `timeEntryApproval` | `boolean` | No | — |
+| `projectCode` | `string` | No | — |
+| `timeEntryNoteRequired` | `boolean` | No | — |
+| `budgetHours` | `number` | No | — |
+| `budgetCashAmount` | `number` | No | — |
+| `budgetCurrency` | `string` | No | — |
+| `useStatusColor` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `useProjectDuration` | `boolean` | No | — |
+| `start` | `string \| null` | No | — |
+| `end` | `string \| null` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `projectManagers` | `string[]` | No | — |
+| `resources` | `string[]` | No | — |
+| `tags` | `object[]` | No | — |
+| `customers` | `Record<string, any>[]` | No | — |
+| `customFields` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.projects.create({ name: 'Website Redesign', budgetHours: 120 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `projectCode` | `string` | No | — |
+| `timeEntryEnabled` | `boolean` | No | — |
+| `timeEntryLocked` | `boolean` | No | — |
+| `timeEntryApproval` | `boolean` | No | — |
+| `timeEntryNoteRequired` | `boolean` | No | — |
+| `budgetHours` | `number` | No | — |
+| `budgetCashAmount` | `number` | No | — |
+| `budgetCurrency` | `string` | No | — |
+| `useStatusColor` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `useProjectDuration` | `boolean` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `projectManagers` | `string[]` | No | — |
+| `resources` | `string[]` | No | — |
+| `customFields` | `Record<string, any>[]` | No | — |
+
+Project `name` is required. Optional properties like `budgetHours` and `budgetCashAmount` configure budget limits.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `links` | `Record<string, string>` | No | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `timeEntryEnabled` | `boolean` | No | — |
+| `timeEntryLocked` | `boolean` | No | — |
+| `timeEntryApproval` | `boolean` | No | — |
+| `projectCode` | `string` | No | — |
+| `timeEntryNoteRequired` | `boolean` | No | — |
+| `budgetHours` | `number` | No | — |
+| `budgetCashAmount` | `number` | No | — |
+| `budgetCurrency` | `string` | No | — |
+| `useStatusColor` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `useProjectDuration` | `boolean` | No | — |
+| `start` | `string \| null` | No | — |
+| `end` | `string \| null` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `projectManagers` | `string[]` | No | — |
+| `resources` | `string[]` | No | — |
+| `tags` | `object[]` | No | — |
+| `customers` | `Record<string, any>[]` | No | — |
+| `customFields` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a specific project by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.projects.delete({ projectId: '5ba09b645ff58f149a2cf521' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### deleteBulk
+
+`projects.deleteBulk`
+
+Delete multiple projects by their IDs
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.projects.deleteBulk({
+	projectIds: ['5ba09b645ff58f149a2cf521'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get project details by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.projects.get({ projectId: '5ba09b645ff58f149a2cf521' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `links` | `Record<string, string>` | No | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `timeEntryEnabled` | `boolean` | No | — |
+| `timeEntryLocked` | `boolean` | No | — |
+| `timeEntryApproval` | `boolean` | No | — |
+| `projectCode` | `string` | No | — |
+| `timeEntryNoteRequired` | `boolean` | No | — |
+| `budgetHours` | `number` | No | — |
+| `budgetCashAmount` | `number` | No | — |
+| `budgetCurrency` | `string` | No | — |
+| `useStatusColor` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `useProjectDuration` | `boolean` | No | — |
+| `start` | `string \| null` | No | — |
+| `end` | `string \| null` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `projectManagers` | `string[]` | No | — |
+| `resources` | `string[]` | No | — |
+| `tags` | `object[]` | No | — |
+| `customers` | `Record<string, any>[]` | No | — |
+| `customFields` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTags
+
+`projects.getTags`
+
+List tags associated with a project
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.projects.getTags({ projectId: '5ba09b645ff58f149a2cf521' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`projects.list`
+
+List all projects with pagination and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.projects.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  links?: Record<string, string>,
+  note?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  timeEntryEnabled?: boolean,
+  timeEntryLocked?: boolean,
+  timeEntryApproval?: boolean,
+  projectCode?: string,
+  timeEntryNoteRequired?: boolean,
+  budgetHours?: number,
+  budgetCashAmount?: number,
+  budgetCurrency?: string,
+  useStatusColor?: boolean,
+  status?: string,
+  useProjectDuration?: boolean,
+  start?: string | null,
+  end?: string | null,
+  backgroundColor?: string,
+  metadata?: string,
+  projectManagers?: string[],
+  resources?: string[],
+  tags?: {
+    tagId: string,
+    value: string,
+    _id?: string
+  }[],
+  customers?: Record<string, any>[],
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeClient
+
+`projects.removeClient`
+
+Dissociate a client organization from projects
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.projects.removeClient({
+	clientId: '65ca012029601f211c2864b0',
+	projectIds: ['5ba09b645ff58f149a2cf521'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `projectIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### removeResource
+
+`projects.removeResource`
+
+Remove a resource from multiple projects
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.projects.removeResource({
+	resourceId: '5ba09b645ff58f149a2c2222',
+	projectIds: ['5ba09b645ff58f149a2cf521'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+| `projectIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### removeTag
+
+`projects.removeTag`
+
+Remove a tag from a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.projects.removeTag({ projectId: '5ba09b645ff58f149a2cf521', tagId: '5bbcaa1ae9fcfa1a87cd5f0e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### search
+
+`projects.search`
+
+Search projects matching custom criteria
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.projects.search({
+	query: { status: 'STATUS_ACTIVE' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, any>` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  links?: Record<string, string>,
+  note?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  timeEntryEnabled?: boolean,
+  timeEntryLocked?: boolean,
+  timeEntryApproval?: boolean,
+  projectCode?: string,
+  timeEntryNoteRequired?: boolean,
+  budgetHours?: number,
+  budgetCashAmount?: number,
+  budgetCurrency?: string,
+  useStatusColor?: boolean,
+  status?: string,
+  useProjectDuration?: boolean,
+  start?: string | null,
+  end?: string | null,
+  backgroundColor?: string,
+  metadata?: string,
+  projectManagers?: string[],
+  resources?: string[],
+  tags?: {
+    tagId: string,
+    value: string,
+    _id?: string
+  }[],
+  customers?: Record<string, any>[],
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### setProjectManagers
+
+`projects.setProjectManagers`
+
+Set designated project managers for a project
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.projects.setProjectManagers({
+	projectId: '5ba09b645ff58f149a2cf521',
+	managerIds: ['5ba09fc85ff58f149a2c2222'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `managerIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `links` | `Record<string, string>` | No | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `timeEntryEnabled` | `boolean` | No | — |
+| `timeEntryLocked` | `boolean` | No | — |
+| `timeEntryApproval` | `boolean` | No | — |
+| `projectCode` | `string` | No | — |
+| `timeEntryNoteRequired` | `boolean` | No | — |
+| `budgetHours` | `number` | No | — |
+| `budgetCashAmount` | `number` | No | — |
+| `budgetCurrency` | `string` | No | — |
+| `useStatusColor` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `useProjectDuration` | `boolean` | No | — |
+| `start` | `string \| null` | No | — |
+| `end` | `string \| null` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `projectManagers` | `string[]` | No | — |
+| `resources` | `string[]` | No | — |
+| `tags` | `object[]` | No | — |
+| `customers` | `Record<string, any>[]` | No | — |
+| `customFields` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Bulk update projects with modified attributes
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.projects.update({
+	projects: [{ _id: '5ba09b645ff58f149a2cf521', name: 'Website Redesign v2' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+
+Bulk update accepts an array of project objects, each requiring `_id` and the attributes to be modified.
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  note?: string,
+  projectCode?: string,
+  budgetCashAmount?: number,
+  budgetHours?: number,
+  budgetCurrency?: string,
+  status?: string,
+  backgroundColor?: string,
+  metadata?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  links?: Record<string, string>,
+  note?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  timeEntryEnabled?: boolean,
+  timeEntryLocked?: boolean,
+  timeEntryApproval?: boolean,
+  projectCode?: string,
+  timeEntryNoteRequired?: boolean,
+  budgetHours?: number,
+  budgetCashAmount?: number,
+  budgetCurrency?: string,
+  useStatusColor?: boolean,
+  status?: string,
+  useProjectDuration?: boolean,
+  start?: string | null,
+  end?: string | null,
+  backgroundColor?: string,
+  metadata?: string,
+  projectManagers?: string[],
+  resources?: string[],
+  tags?: {
+    tagId: string,
+    value: string,
+    _id?: string
+  }[],
+  customers?: Record<string, any>[],
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Resources
+
+### addTags
+
+`resources.addTags`
+
+Add tags to a resource
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.resources.addTags({
+	resourceId: '5ba09b645ff58f149a2c2222',
+	tags: ['5bb1e49065e0555544443333'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `status` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+| `customFields` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`resources.create`
+
+Create a new resource member
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.resources.create({ firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | Yes | — |
+| `lastName` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `status` | `string` | No | — |
+| `autoInvite` | `boolean` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `customFields` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `status` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+| `customFields` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`resources.delete`
+
+Delete a specific resource by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.resources.delete({ resourceId: '5ba09b645ff58f149a2c2222' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### deleteBulk
+
+`resources.deleteBulk`
+
+Delete multiple resources by their IDs
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.resources.deleteBulk({
+	resourceIds: ['5ba09b645ff58f149a2c2222'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`resources.get`
+
+Get resource details by resource ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.resources.get({ resourceId: '5ba09b645ff58f149a2c2222' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `status` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+| `customFields` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTags
+
+`resources.getTags`
+
+List tags associated with a resource
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.resources.getTags({ resourceId: '5ba09b645ff58f149a2c2222' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  tagId: string,
+  value: string,
+  _id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`resources.list`
+
+List all resources with pagination and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.resources.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  firstName?: string,
+  lastName?: string,
+  email?: string,
+  role?: string,
+  status?: string,
+  backgroundColor?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string,
+  tags?: {
+    tagId: string,
+    value: string,
+    _id?: string
+  }[],
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeTag
+
+`resources.removeTag`
+
+Remove a tag from a resource
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.resources.removeTag({ resourceId: '5ba09b645ff58f149a2c2222', tagId: '5bbcaa1ae9fcfa1a87cd5f0e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### search
+
+`resources.search`
+
+Search resources matching custom criteria
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.resources.search({
+	query: { status: 'ACTIVE' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, any>` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  firstName?: string,
+  lastName?: string,
+  email?: string,
+  role?: string,
+  status?: string,
+  backgroundColor?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string,
+  tags?: {
+    tagId: string,
+    value: string,
+    _id?: string
+  }[],
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`resources.update`
+
+Bulk update resources with modified attributes
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.resources.update({
+	resources: [{ _id: '5ba09b645ff58f149a2c2222', firstName: 'Janet' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  _id: string,
+  firstName?: string,
+  lastName?: string,
+  email?: string,
+  role?: string,
+  status?: string,
+  backgroundColor?: string,
+  metadata?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  firstName?: string,
+  lastName?: string,
+  email?: string,
+  role?: string,
+  status?: string,
+  backgroundColor?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string,
+  tags?: {
+    tagId: string,
+    value: string,
+    _id?: string
+  }[],
+  customFields?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Time Entries
+
+### create
+
+`timeEntries.create`
+
+Log new time entry on a project for a resource
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.timeEntries.create({
+	resource: '5ba09b645ff58f149a2c2222',
+	project: '5ba09b645ff58f149a2cf521',
+	date: '2026-11-20',
+	minutes: 480,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `minutes` | `number` | Yes | — |
+| `note` | `string` | No | — |
+
+Requires `resource`, `project`, `date` (YYYY-MM-DD), and `minutes`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `projectName` | `string` | No | — |
+| `projectType` | `string` | No | — |
+| `projectStatus` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `minutes` | `number` | Yes | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `status` | `string` | No | — |
+| `locked` | `boolean` | No | — |
+| `creator` | `string` | No | — |
+| `categoryTemplateId` | `string` | No | — |
+| `categoryName` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`timeEntries.delete`
+
+Delete a timesheet entry by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.timeEntries.delete({ timeEntryId: '5ae1d7a2d61e560c4916aaaa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeEntryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### deleteBulk
+
+`timeEntries.deleteBulk`
+
+Delete multiple timesheet entries by their IDs
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hubplanner.api.timeEntries.deleteBulk({
+	ids: ['5ae1d7a2d61e560c4916aaaa'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`timeEntries.get`
+
+Get timesheet entry details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.timeEntries.get({ timeEntryId: '5ae1d7a2d61e560c4916aaaa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeEntryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `projectName` | `string` | No | — |
+| `projectType` | `string` | No | — |
+| `projectStatus` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `minutes` | `number` | Yes | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `status` | `string` | No | — |
+| `locked` | `boolean` | No | — |
+| `creator` | `string` | No | — |
+| `categoryTemplateId` | `string` | No | — |
+| `categoryName` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`timeEntries.list`
+
+List recorded timesheet entries with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.timeEntries.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `project` | `string` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  resource: string,
+  project: string,
+  projectName?: string,
+  projectType?: string,
+  projectStatus?: string,
+  date: string,
+  minutes: number,
+  note?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string,
+  status?: string,
+  locked?: boolean,
+  creator?: string,
+  categoryTemplateId?: string,
+  categoryName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`timeEntries.search`
+
+Search time entries matching date ranges and resource/project filters
+
+**Risk:** `read`
+
+```ts
+await corsair.hubplanner.api.timeEntries.search({
+	query: { resource: '5ba09b645ff58f149a2c2222' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, any>` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  resource: string,
+  project: string,
+  projectName?: string,
+  projectType?: string,
+  projectStatus?: string,
+  date: string,
+  minutes: number,
+  note?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  metadata?: string,
+  status?: string,
+  locked?: boolean,
+  creator?: string,
+  categoryTemplateId?: string,
+  categoryName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`timeEntries.update`
+
+Update an existing timesheet entry
+
+**Risk:** `write`
+
+```ts
+await corsair.hubplanner.api.timeEntries.update({
+	timeEntryId: '5ae1d7a2d61e560c4916aaaa',
+	resource: '5ba09b645ff58f149a2c2222',
+	project: '5ba09b645ff58f149a2cf521',
+	date: '2026-11-20',
+	minutes: 360,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeEntryId` | `string` | Yes | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `minutes` | `number` | Yes | — |
+| `note` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `resource` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `projectName` | `string` | No | — |
+| `projectType` | `string` | No | — |
+| `projectStatus` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `minutes` | `number` | Yes | — |
+| `note` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `status` | `string` | No | — |
+| `locked` | `boolean` | No | — |
+| `creator` | `string` | No | — |
+| `categoryTemplateId` | `string` | No | — |
+| `categoryName` | `string` | No | — |
+
+
+
+---
+

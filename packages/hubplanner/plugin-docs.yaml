@@ -1,4 +1,237 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "HubPlanner"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Hub Planner
+description: "Resource scheduling, project planning, timesheet tracking, and team capacity management."
+domain: hubplanner.com
+recommendedAuth: api_key
+overviewNote: |
+  Hub Planner API access is available to account administrators. Generate an API key from **Settings → API** in your Hub Planner account.
+  Authentication uses an HTTP `Authorization` header containing the raw API key without any prefix (no `Bearer` keyword).
+apiNotes:
+  projects.create: "Project `name` is required. Optional properties like `budgetHours` and `budgetCashAmount` configure budget limits."
+  projects.update: "Bulk update accepts an array of project objects, each requiring `_id` and the attributes to be modified."
+  bookings.create: "Requires `resource`, `project`, `start`, and `end` dates (YYYY-MM-DD). Use `allowOverschedule: true` to bypass schedule warning thresholds."
+  bookings.patch: "Used for partial updates or for approving/rejecting booking requests with `type: 'APPROVED'` or `'REJECTED'`."
+  timeEntries.create: "Requires `resource`, `project`, `date` (YYYY-MM-DD), and `minutes`."
+  categories.create: "Requires `groupId` and `name`. Setting `type: 'NON_OPTIONAL'` sets the category as default for that group."
+  customFields.create: "`entityType` must be either `'project'` or `'resource'`. Requires `type` (e.g., `'TEXT'`, `'select'`) and `label`."
+  milestones.create: "Requires `name`, `date` (YYYY-MM-DD), and `project`."
+  events.create: "Requires event `name`. Color and metadata custom fields are optional."
+apiExamples:
+  projects.list:
+    limit: 20
+  projects.get:
+    projectId: "5ba09b645ff58f149a2cf521"
+  projects.create:
+    name: "Website Redesign"
+    budgetHours: 120
+  projects.update:
+    projects:
+      - _id: "5ba09b645ff58f149a2cf521"
+        name: "Website Redesign v2"
+  projects.delete:
+    projectId: "5ba09b645ff58f149a2cf521"
+  projects.deleteBulk:
+    projectIds:
+      - "5ba09b645ff58f149a2cf521"
+  projects.search:
+    query:
+      status: "STATUS_ACTIVE"
+  projects.addResources:
+    projectId: "5ba09b645ff58f149a2cf521"
+    resourceIds:
+      - "5ba09b645ff58f149a2c2222"
+  projects.removeResource:
+    resourceId: "5ba09b645ff58f149a2c2222"
+    projectIds:
+      - "5ba09b645ff58f149a2cf521"
+  projects.addClients:
+    projectId: "5ba09b645ff58f149a2cf521"
+    clientIds:
+      - "65ca012029601f211c2864b0"
+  projects.removeClient:
+    clientId: "65ca012029601f211c2864b0"
+    projectIds:
+      - "5ba09b645ff58f149a2cf521"
+  projects.setProjectManagers:
+    projectId: "5ba09b645ff58f149a2cf521"
+    managerIds:
+      - "5ba09fc85ff58f149a2c2222"
+  projects.getTags:
+    projectId: "5ba09b645ff58f149a2cf521"
+  projects.addTags:
+    projectId: "5ba09b645ff58f149a2cf521"
+    tags:
+      - "5bb1e49065e0555544443333"
+  projects.removeTag:
+    projectId: "5ba09b645ff58f149a2cf521"
+    tagId: "5bbcaa1ae9fcfa1a87cd5f0e"
+
+  resources.list:
+    limit: 20
+  resources.get:
+    resourceId: "5ba09b645ff58f149a2c2222"
+  resources.create:
+    firstName: "Jane"
+    lastName: "Doe"
+    email: "jane.doe@example.com"
+  resources.update:
+    resources:
+      - _id: "5ba09b645ff58f149a2c2222"
+        firstName: "Janet"
+  resources.delete:
+    resourceId: "5ba09b645ff58f149a2c2222"
+  resources.deleteBulk:
+    resourceIds:
+      - "5ba09b645ff58f149a2c2222"
+  resources.search:
+    query:
+      status: "ACTIVE"
+  resources.getTags:
+    resourceId: "5ba09b645ff58f149a2c2222"
+  resources.addTags:
+    resourceId: "5ba09b645ff58f149a2c2222"
+    tags:
+      - "5bb1e49065e0555544443333"
+  resources.removeTag:
+    resourceId: "5ba09b645ff58f149a2c2222"
+    tagId: "5bbcaa1ae9fcfa1a87cd5f0e"
+
+  bookings.list:
+    limit: 20
+  bookings.get:
+    bookingId: "5b1977ade02d407011112222"
+  bookings.create:
+    resource: "5ba09b645ff58f149a2c2222"
+    project: "5ba09b645ff58f149a2cf521"
+    start: "2026-12-01"
+    end: "2026-12-05"
+    title: "Sprint Planning"
+  bookings.update:
+    bookingId: "5b1977ade02d407011112222"
+    resource: "5ba09b645ff58f149a2c2222"
+    project: "5ba09b645ff58f149a2cf521"
+    start: "2026-12-01"
+    end: "2026-12-06"
+  bookings.patch:
+    bookingId: "5b1977ade02d407011112222"
+    type: "APPROVED"
+  bookings.search:
+    query:
+      project: "5ba09b645ff58f149a2cf521"
+  bookings.delete:
+    bookingId: "5b1977ade02d407011112222"
+  bookings.deleteBulk:
+    ids:
+      - "5b1977ade02d407011112222"
+
+  timeEntries.list:
+    limit: 20
+  timeEntries.get:
+    timeEntryId: "5ae1d7a2d61e560c4916aaaa"
+  timeEntries.create:
+    resource: "5ba09b645ff58f149a2c2222"
+    project: "5ba09b645ff58f149a2cf521"
+    date: "2026-11-20"
+    minutes: 480
+  timeEntries.search:
+    query:
+      resource: "5ba09b645ff58f149a2c2222"
+  timeEntries.update:
+    timeEntryId: "5ae1d7a2d61e560c4916aaaa"
+    resource: "5ba09b645ff58f149a2c2222"
+    project: "5ba09b645ff58f149a2cf521"
+    date: "2026-11-20"
+    minutes: 360
+  timeEntries.delete:
+    timeEntryId: "5ae1d7a2d61e560c4916aaaa"
+  timeEntries.deleteBulk:
+    ids:
+      - "5ae1d7a2d61e560c4916aaaa"
+
+  categories.list: {}
+  categories.get:
+    categoryId: "5f057949f338cd432a794a12"
+  categories.create:
+    groupId: "66e81d231d512707a7266d32"
+    name: "Design Review"
+  categories.update:
+    categoryId: "5f057949f338cd432a794a12"
+    name: "Design Sprint"
+  categories.search:
+    query:
+      name: "Design"
+  categories.listGroups: {}
+  categories.listCostCategories: {}
+  categories.getCostCategory:
+    costCategoryId: "5f057949f338cd432a794a13"
+  categories.createCostCategory:
+    name: "Travel Expenses"
+  categories.updateCostCategory:
+    costCategoryId: "5f057949f338cd432a794a13"
+    name: "Domestic Travel"
+  categories.searchCostCategories:
+    query:
+      name: "Travel"
+  categories.deleteCostCategory:
+    costCategoryId: "5f057949f338cd432a794a13"
+
+  customFields.list:
+    entityType: "project"
+  customFields.get:
+    entityType: "project"
+    id: "669554d27dc15b5590a1b831"
+  customFields.create:
+    entityType: "project"
+    type: "TEXT"
+    label: "Purchase Order"
+  customFields.update:
+    entityType: "project"
+    id: "669554d27dc15b5590a1b831"
+    type: "TEXT"
+    label: "Purchase Order Number"
+  customFields.delete:
+    entityType: "project"
+    id: "669554d27dc15b5590a1b831"
+  customFields.search:
+    entityType: "resource"
+    query: {}
+  customFields.addChoices:
+    entityType: "project"
+    id: "669554d27dc15b5590a1b831"
+    choices:
+      - value: "Tier 1"
+      - value: "Tier 2"
+
+  milestones.list:
+    limit: 10
+  milestones.get:
+    milestoneId: "54785431e91e5ead13e8d841"
+  milestones.create:
+    name: "Alpha Release"
+    date: "2026-12-15"
+    project: "5ba09b645ff58f149a2cf521"
+  milestones.update:
+    milestoneId: "54785431e91e5ead13e8d841"
+    name: "Alpha Release v1.0"
+    date: "2026-12-18"
+    project: "5ba09b645ff58f149a2cf521"
+  milestones.delete:
+    milestoneId: "54785431e91e5ead13e8d841"
+  milestones.search:
+    query:
+      project: "5ba09b645ff58f149a2cf521"
+
+  events.list:
+    limit: 10
+  events.get:
+    eventId: "53a168304cc0f1bb16a898ca"
+  events.create:
+    name: "Quarterly Planning"
+    eventCode: "QPLAN"
+  events.update:
+    eventId: "53a168304cc0f1bb16a898ca"
+    name: "Q1 Planning"
+  events.delete:
+    eventId: "53a168304cc0f1bb16a898ca"
+  events.search:
+    query:
+      name: "Planning"
