@@ -14,7 +14,7 @@ description: "API reference for the Imgix plugin in Corsair: every `imgix.api.*`
 
 `assets.addFromOrigin`
 
-Queue an existing origin asset to be indexed into the Imgix Asset Manager
+Queue an existing origin asset to be indexed into the Imgix Asset Manager (imgix answers 202 with no body, returned as &#123;&#125;)
 
 **Risk:** `write`
 
@@ -101,19 +101,24 @@ await corsair.imgix.api.assets.get({ source_id: 'src_1234567890abcdef', origin_p
   id: string,
   type: assets | string,
   attributes: {
-    origin_path?: string,
-    content_type?: string,
-    file_size?: number,
-    width?: number,
-    height?: number,
-    dpi_width?: number,
-    dpi_height?: number,
-    color_model?: string,
-    color_profile?: string,
-    has_alpha?: boolean,
-    custom_fields?: Record<string, any>,
-    created_at?: number | string,
-    updated_at?: number | string
+    origin_path?: string | null,
+    source_id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    content_type?: string | null,
+    media_kind?: string | null,
+    file_size?: number | null,
+    media_width?: number | null,
+    media_height?: number | null,
+    dpi_width?: number | null,
+    dpi_height?: number | null,
+    color_model?: string | null,
+    color_profile?: string | null,
+    has_frames?: boolean | null,
+    categories?: string[] | null,
+    custom_fields?: Record<string, any> | null,
+    date_created?: number | null,
+    date_modified?: number | null
   }
 }
 ```
@@ -154,7 +159,6 @@ await corsair.imgix.api.assets.list({ source_id: 'src_1234567890abcdef', page_si
 | `sort` | `string` | No | — |
 | `fields` | `string` | No | — |
 | `page_cursor` | `string` | No | — |
-| `page_number` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
 
@@ -175,19 +179,24 @@ await corsair.imgix.api.assets.list({ source_id: 'src_1234567890abcdef', page_si
   id: string,
   type: assets | string,
   attributes: {
-    origin_path?: string,
-    content_type?: string,
-    file_size?: number,
-    width?: number,
-    height?: number,
-    dpi_width?: number,
-    dpi_height?: number,
-    color_model?: string,
-    color_profile?: string,
-    has_alpha?: boolean,
-    custom_fields?: Record<string, any>,
-    created_at?: number | string,
-    updated_at?: number | string
+    origin_path?: string | null,
+    source_id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    content_type?: string | null,
+    media_kind?: string | null,
+    file_size?: number | null,
+    media_width?: number | null,
+    media_height?: number | null,
+    dpi_width?: number | null,
+    dpi_height?: number | null,
+    color_model?: string | null,
+    color_profile?: string | null,
+    has_frames?: boolean | null,
+    categories?: string[] | null,
+    custom_fields?: Record<string, any> | null,
+    date_created?: number | null,
+    date_modified?: number | null
   }
 }[]
 ```
@@ -201,7 +210,16 @@ await corsair.imgix.api.assets.list({ source_id: 'src_1234567890abcdef', page_si
   cursor?: {
     current?: string | null,
     next?: string | null,
-    has_next?: boolean
+    hasMore?: boolean | null,
+    totalRecords?: string | number | null
+  },
+  pagination?: {
+    currentPage?: number | null,
+    hasNextPage?: boolean | null,
+    nextPage?: number | null,
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalRecords?: number | null
   },
   page?: {
     current?: number,
@@ -267,19 +285,24 @@ await corsair.imgix.api.assets.update({
   id: string,
   type: assets | string,
   attributes: {
-    origin_path?: string,
-    content_type?: string,
-    file_size?: number,
-    width?: number,
-    height?: number,
-    dpi_width?: number,
-    dpi_height?: number,
-    color_model?: string,
-    color_profile?: string,
-    has_alpha?: boolean,
-    custom_fields?: Record<string, any>,
-    created_at?: number | string,
-    updated_at?: number | string
+    origin_path?: string | null,
+    source_id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    content_type?: string | null,
+    media_kind?: string | null,
+    file_size?: number | null,
+    media_width?: number | null,
+    media_height?: number | null,
+    dpi_width?: number | null,
+    dpi_height?: number | null,
+    color_model?: string | null,
+    color_profile?: string | null,
+    has_frames?: boolean | null,
+    categories?: string[] | null,
+    custom_fields?: Record<string, any> | null,
+    date_created?: number | null,
+    date_modified?: number | null
   }
 }
 ```
@@ -338,19 +361,24 @@ await corsair.imgix.api.assets.upload({ source_id: 'src_1234567890abcdef', origi
   id: string,
   type: assets | string,
   attributes: {
-    origin_path?: string,
-    content_type?: string,
-    file_size?: number,
-    width?: number,
-    height?: number,
-    dpi_width?: number,
-    dpi_height?: number,
-    color_model?: string,
-    color_profile?: string,
-    has_alpha?: boolean,
-    custom_fields?: Record<string, any>,
-    created_at?: number | string,
-    updated_at?: number | string
+    origin_path?: string | null,
+    source_id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    content_type?: string | null,
+    media_kind?: string | null,
+    file_size?: number | null,
+    media_width?: number | null,
+    media_height?: number | null,
+    dpi_width?: number | null,
+    dpi_height?: number | null,
+    color_model?: string | null,
+    color_profile?: string | null,
+    has_frames?: boolean | null,
+    categories?: string[] | null,
+    custom_fields?: Record<string, any> | null,
+    date_created?: number | null,
+    date_modified?: number | null
   }
 }
 ```
@@ -381,19 +409,20 @@ Transform a static image into a video using AI motion generation (consumes AI cr
 **Risk:** `destructive`
 
 ```ts
-await corsair.imgix.api.generations.createVideo({ prompt: 'Slow cinematic pan across a mountain vista', source: 'https://images.example.com/mountain.jpg' });
+await corsair.imgix.api.generations.createVideo({ url: 'https://your-subdomain.imgix.net/mountain.jpg', prompt: 'Slow cinematic pan across a mountain vista' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `prompt` | `string` | Yes | — |
-| `source` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `model` | `auto \| klingai \| veo3.1 \| veo3.1-fast` | No | — |
+| `prompt` | `string` | No | — |
 | `duration` | `number` | No | — |
-| `aspect_ratio` | `string` | No | — |
+| `aspect_ratio` | `16:9 \| 9:16` | No | — |
 
-Asynchronously transforms an image into a video using AI motion generation. Poll generations.getVideoJob with the returned job_id until status is ready.
+Asynchronously transforms an image into a video using AI motion generation. The image must be on an imgix Source with Image to Video enabled. Poll generations.getVideoJob with the returned data.id every 5 to 10 seconds until data.attributes.status is ready (video at data.attributes.result.url) or errored.
 
 
 
@@ -401,9 +430,31 @@ Asynchronously transforms an image into a video using AI motion generation. Poll
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `job_id` | `string` | Yes | — |
-| `status` | `pending \| processing \| ready \| errored \| string` | Yes | — |
-| `created_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes: {
+    status: string,
+    created_at?: number | null,
+    updated_at?: number | null,
+    result?: {
+      url?: string | null
+    } | null,
+    error?: {
+      code?: number | null,
+      message?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -413,9 +464,9 @@ Asynchronously transforms an image into a video using AI motion generation. Poll
 
 `generations.getAltText`
 
-Generate or retrieve AI-generated alt text for an image
+Generate or retrieve AI alt text for an image (new languages consume AI credits; regenerate replaces stored text and overrides)
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.imgix.api.generations.getAltText({ url: 'https://images.example.com/mountain.jpg', language: 'en' });
@@ -437,6 +488,8 @@ await corsair.imgix.api.generations.getAltText({ url: 'https://images.example.co
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `alt_text` | `Record<string, string>` | Yes | — |
+| `failed_languages` | `string[] \| null` | No | — |
+| `overridden_languages` | `string[] \| null` | No | — |
 
 
 
@@ -466,10 +519,31 @@ await corsair.imgix.api.generations.getVideoJob({ job_id: 'job_1234567890abcdef'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `job_id` | `string` | Yes | — |
-| `status` | `pending \| processing \| ready \| errored \| string` | Yes | — |
-| `url` | `string \| null` | No | — |
-| `error` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes: {
+    status: string,
+    created_at?: number | null,
+    updated_at?: number | null,
+    result?: {
+      url?: string | null
+    } | null,
+    error?: {
+      code?: number | null,
+      message?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -496,7 +570,7 @@ await corsair.imgix.api.generations.overrideAltText({
 |------|------|----------|-------------|
 | `url` | `string` | No | — |
 | `url64` | `string` | No | — |
-| `alt_text` | `Record<string, string>` | Yes | — |
+| `alt_text` | `Record<string, string \| null>` | Yes | — |
 
 
 
@@ -505,6 +579,7 @@ await corsair.imgix.api.generations.overrideAltText({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `alt_text` | `Record<string, string>` | Yes | — |
+| `removed_languages` | `string[] \| null` | No | — |
 
 
 
@@ -609,12 +684,12 @@ await corsair.imgix.api.reports.get({ report_id: 'rep_1234567890abcdef' });
   id: string,
   type: reports | string,
   attributes: {
-    completed: boolean,
-    files: string[],
-    period_start: number,
-    period_end: number,
-    report_key: string,
-    report_type: string
+    completed?: boolean | null,
+    files?: string[] | null,
+    period_start?: number | null,
+    period_end?: number | null,
+    report_key?: string | null,
+    report_type?: string | null
   }
 }
 ```
@@ -674,12 +749,12 @@ await corsair.imgix.api.reports.list({ page_size: 10 });
   id: string,
   type: reports | string,
   attributes: {
-    completed: boolean,
-    files: string[],
-    period_start: number,
-    period_end: number,
-    report_key: string,
-    report_type: string
+    completed?: boolean | null,
+    files?: string[] | null,
+    period_start?: number | null,
+    period_end?: number | null,
+    report_key?: string | null,
+    report_type?: string | null
   }
 }[]
 ```
@@ -693,7 +768,16 @@ await corsair.imgix.api.reports.list({ page_size: 10 });
   cursor?: {
     current?: string | null,
     next?: string | null,
-    has_next?: boolean
+    hasMore?: boolean | null,
+    totalRecords?: string | number | null
+  },
+  pagination?: {
+    currentPage?: number | null,
+    hasNextPage?: boolean | null,
+    nextPage?: number | null,
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalRecords?: number | null
   },
   page?: {
     current?: number,
@@ -729,7 +813,7 @@ Create and deploy a new Imgix storage or web folder source
 **Risk:** `destructive`
 
 ```ts
-await corsair.imgix.api.sources.create({ name: "Production Image Store", deployment_type: "webfolder", webfolder_base_url: "https://images.example.com" });
+await corsair.imgix.api.sources.create({ name: "Production Image Store", deployment_type: "webfolder", webfolder_base_url: "https://images.example.com/", imgix_subdomains: ["production-images"] });
 ```
 
 **Input**
@@ -738,6 +822,7 @@ await corsair.imgix.api.sources.create({ name: "Production Image Store", deploym
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `deployment_type` | `s3 \| webfolder \| gcs \| azure \| webproxy \| s3_compatible` | Yes | — |
+| `imgix_subdomains` | `string[]` | Yes | — |
 | `s3_bucket` | `string` | No | — |
 | `s3_prefix` | `string` | No | — |
 | `s3_access_key` | `string` | No | — |
@@ -745,21 +830,26 @@ await corsair.imgix.api.sources.create({ name: "Production Image Store", deploym
 | `webfolder_base_url` | `string` | No | — |
 | `gcs_bucket` | `string` | No | — |
 | `gcs_prefix` | `string` | No | — |
-| `gcs_project_id` | `string` | No | — |
-| `gcs_client_email` | `string` | No | — |
-| `gcs_private_key` | `string` | No | — |
-| `azure_account_name` | `string` | No | — |
-| `azure_container_name` | `string` | No | — |
-| `azure_access_key` | `string` | No | — |
-| `webproxy_base_url` | `string` | No | — |
-| `imgix_subdomains` | `string[]` | No | — |
+| `gcs_access_key` | `string` | No | — |
+| `gcs_secret_key` | `string` | No | — |
+| `azure_account` | `string` | No | — |
+| `azure_bucket` | `string` | No | — |
+| `azure_prefix` | `string` | No | — |
+| `azure_sas_string` | `string` | No | — |
+| `azure_service_type` | `blob \| file` | No | — |
+| `access_key_id` | `string` | No | — |
+| `bucket_name` | `string` | No | — |
+| `endpoint_url` | `string` | No | — |
+| `region` | `string` | No | — |
+| `secret_key` | `string` | No | — |
+| `storage_provider` | `DigitalOcean \| Linode \| Wasabi \| R2` | No | — |
 | `custom_domains` | `string[]` | No | — |
-| `default_params` | `string` | No | — |
-| `secure_url_token` | `string` | No | — |
+| `default_params` | `Record<string, string \| number \| boolean>` | No | — |
+| `secure_url_enabled` | `boolean` | No | — |
 | `cache_ttl_value` | `number` | No | — |
 | `cache_ttl_error` | `number` | No | — |
 
-Creates and deploys a new Imgix source for cloud storage (S3, GCS, Azure) or web folder origin.
+Creates and deploys a new Imgix source for cloud storage (S3, GCS, Azure, S3-compatible) or a web folder origin. imgix_subdomains needs at least one *.imgix.net subdomain, given without the domain. The API cannot delete a source: disable it with sources.update (enabled false) or delete it in the dashboard.
 
 
 
@@ -778,34 +868,36 @@ Creates and deploys a new Imgix source for cloud storage (S3, GCS, Azure) or web
   id: string,
   type: sources,
   attributes: {
-    name?: string,
-    deployment_status?: string,
-    enabled?: boolean,
+    name?: string | null,
+    deployment_status?: string | null,
+    enabled?: boolean | null,
     deployment?: {
-      type?: s3 | webfolder | gcs | azure | webproxy | s3_compatible,
-      s3_bucket?: string,
-      s3_prefix?: string,
-      s3_access_key?: string,
-      s3_secret_key?: string,
-      webfolder_base_url?: string,
-      gcs_bucket?: string,
-      gcs_prefix?: string,
-      gcs_project_id?: string,
-      gcs_client_email?: string,
-      gcs_private_key?: string,
-      azure_account_name?: string,
-      azure_container_name?: string,
-      azure_access_key?: string,
-      webproxy_base_url?: string,
-      imgix_subdomains?: string[],
-      custom_domains?: string[],
-      default_params?: string,
-      secure_url_token?: string,
-      cache_ttl_value?: number,
-      cache_ttl_error?: number
-    },
-    created_at?: number | string,
-    updated_at?: number | string
+      type?: string | null,
+      s3_bucket?: string | null,
+      s3_prefix?: string | null,
+      s3_access_key?: string | null,
+      webfolder_base_url?: string | null,
+      gcs_bucket?: string | null,
+      gcs_prefix?: string | null,
+      gcs_access_key?: string | null,
+      azure_account?: string | null,
+      azure_bucket?: string | null,
+      azure_prefix?: string | null,
+      azure_service_type?: string | null,
+      access_key_id?: string | null,
+      bucket_name?: string | null,
+      endpoint_url?: string | null,
+      region?: string | null,
+      storage_provider?: string | null,
+      imgix_subdomains?: string[] | null,
+      custom_domains?: string[] | null,
+      default_params?: Record<string, any> | null,
+      secure_url_enabled?: boolean | null,
+      cache_ttl_behavior?: string | null,
+      cache_ttl_value?: number | null,
+      cache_ttl_error?: number | null
+    } | null,
+    date_deployed?: number | null
   }
 }
 ```
@@ -861,34 +953,36 @@ await corsair.imgix.api.sources.get({ source_id: 'src_1234567890abcdef' });
   id: string,
   type: sources,
   attributes: {
-    name?: string,
-    deployment_status?: string,
-    enabled?: boolean,
+    name?: string | null,
+    deployment_status?: string | null,
+    enabled?: boolean | null,
     deployment?: {
-      type?: s3 | webfolder | gcs | azure | webproxy | s3_compatible,
-      s3_bucket?: string,
-      s3_prefix?: string,
-      s3_access_key?: string,
-      s3_secret_key?: string,
-      webfolder_base_url?: string,
-      gcs_bucket?: string,
-      gcs_prefix?: string,
-      gcs_project_id?: string,
-      gcs_client_email?: string,
-      gcs_private_key?: string,
-      azure_account_name?: string,
-      azure_container_name?: string,
-      azure_access_key?: string,
-      webproxy_base_url?: string,
-      imgix_subdomains?: string[],
-      custom_domains?: string[],
-      default_params?: string,
-      secure_url_token?: string,
-      cache_ttl_value?: number,
-      cache_ttl_error?: number
-    },
-    created_at?: number | string,
-    updated_at?: number | string
+      type?: string | null,
+      s3_bucket?: string | null,
+      s3_prefix?: string | null,
+      s3_access_key?: string | null,
+      webfolder_base_url?: string | null,
+      gcs_bucket?: string | null,
+      gcs_prefix?: string | null,
+      gcs_access_key?: string | null,
+      azure_account?: string | null,
+      azure_bucket?: string | null,
+      azure_prefix?: string | null,
+      azure_service_type?: string | null,
+      access_key_id?: string | null,
+      bucket_name?: string | null,
+      endpoint_url?: string | null,
+      region?: string | null,
+      storage_provider?: string | null,
+      imgix_subdomains?: string[] | null,
+      custom_domains?: string[] | null,
+      default_params?: Record<string, any> | null,
+      secure_url_enabled?: boolean | null,
+      cache_ttl_behavior?: string | null,
+      cache_ttl_value?: number | null,
+      cache_ttl_error?: number | null
+    } | null,
+    date_deployed?: number | null
   }
 }
 ```
@@ -925,7 +1019,7 @@ await corsair.imgix.api.sources.list({ page_size: 10 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `filter_name` | `string` | No | — |
-| `filter_deployment_type` | `s3 \| webfolder \| gcs \| azure \| webproxy \| s3_compatible` | No | — |
+| `filter_deployment_type` | `s3 \| webfolder \| gcs \| azure \| webproxy \| s3_compatible \| imgix_storage` | No | — |
 | `filter_enabled` | `boolean` | No | — |
 | `sort` | `string` | No | — |
 | `fields` | `string` | No | — |
@@ -950,34 +1044,36 @@ await corsair.imgix.api.sources.list({ page_size: 10 });
   id: string,
   type: sources,
   attributes: {
-    name?: string,
-    deployment_status?: string,
-    enabled?: boolean,
+    name?: string | null,
+    deployment_status?: string | null,
+    enabled?: boolean | null,
     deployment?: {
-      type?: s3 | webfolder | gcs | azure | webproxy | s3_compatible,
-      s3_bucket?: string,
-      s3_prefix?: string,
-      s3_access_key?: string,
-      s3_secret_key?: string,
-      webfolder_base_url?: string,
-      gcs_bucket?: string,
-      gcs_prefix?: string,
-      gcs_project_id?: string,
-      gcs_client_email?: string,
-      gcs_private_key?: string,
-      azure_account_name?: string,
-      azure_container_name?: string,
-      azure_access_key?: string,
-      webproxy_base_url?: string,
-      imgix_subdomains?: string[],
-      custom_domains?: string[],
-      default_params?: string,
-      secure_url_token?: string,
-      cache_ttl_value?: number,
-      cache_ttl_error?: number
-    },
-    created_at?: number | string,
-    updated_at?: number | string
+      type?: string | null,
+      s3_bucket?: string | null,
+      s3_prefix?: string | null,
+      s3_access_key?: string | null,
+      webfolder_base_url?: string | null,
+      gcs_bucket?: string | null,
+      gcs_prefix?: string | null,
+      gcs_access_key?: string | null,
+      azure_account?: string | null,
+      azure_bucket?: string | null,
+      azure_prefix?: string | null,
+      azure_service_type?: string | null,
+      access_key_id?: string | null,
+      bucket_name?: string | null,
+      endpoint_url?: string | null,
+      region?: string | null,
+      storage_provider?: string | null,
+      imgix_subdomains?: string[] | null,
+      custom_domains?: string[] | null,
+      default_params?: Record<string, any> | null,
+      secure_url_enabled?: boolean | null,
+      cache_ttl_behavior?: string | null,
+      cache_ttl_value?: number | null,
+      cache_ttl_error?: number | null
+    } | null,
+    date_deployed?: number | null
   }
 }[]
 ```
@@ -991,7 +1087,16 @@ await corsair.imgix.api.sources.list({ page_size: 10 });
   cursor?: {
     current?: string | null,
     next?: string | null,
-    has_next?: boolean
+    hasMore?: boolean | null,
+    totalRecords?: string | number | null
+  },
+  pagination?: {
+    currentPage?: number | null,
+    hasNextPage?: boolean | null,
+    nextPage?: number | null,
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalRecords?: number | null
   },
   page?: {
     current?: number,
@@ -1035,11 +1140,11 @@ await corsair.imgix.api.sources.update({ source_id: 'src_1234567890abcdef', name
 | `source_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
-| `default_params` | `string` | No | — |
+| `default_params` | `Record<string, string \| number \| boolean>` | No | — |
 | `custom_domains` | `string[]` | No | — |
 | `cache_ttl_value` | `number` | No | — |
 | `cache_ttl_error` | `number` | No | — |
-| `secure_url_token` | `string` | No | — |
+| `secure_url_enabled` | `boolean` | No | — |
 
 
 
@@ -1058,34 +1163,36 @@ await corsair.imgix.api.sources.update({ source_id: 'src_1234567890abcdef', name
   id: string,
   type: sources,
   attributes: {
-    name?: string,
-    deployment_status?: string,
-    enabled?: boolean,
+    name?: string | null,
+    deployment_status?: string | null,
+    enabled?: boolean | null,
     deployment?: {
-      type?: s3 | webfolder | gcs | azure | webproxy | s3_compatible,
-      s3_bucket?: string,
-      s3_prefix?: string,
-      s3_access_key?: string,
-      s3_secret_key?: string,
-      webfolder_base_url?: string,
-      gcs_bucket?: string,
-      gcs_prefix?: string,
-      gcs_project_id?: string,
-      gcs_client_email?: string,
-      gcs_private_key?: string,
-      azure_account_name?: string,
-      azure_container_name?: string,
-      azure_access_key?: string,
-      webproxy_base_url?: string,
-      imgix_subdomains?: string[],
-      custom_domains?: string[],
-      default_params?: string,
-      secure_url_token?: string,
-      cache_ttl_value?: number,
-      cache_ttl_error?: number
-    },
-    created_at?: number | string,
-    updated_at?: number | string
+      type?: string | null,
+      s3_bucket?: string | null,
+      s3_prefix?: string | null,
+      s3_access_key?: string | null,
+      webfolder_base_url?: string | null,
+      gcs_bucket?: string | null,
+      gcs_prefix?: string | null,
+      gcs_access_key?: string | null,
+      azure_account?: string | null,
+      azure_bucket?: string | null,
+      azure_prefix?: string | null,
+      azure_service_type?: string | null,
+      access_key_id?: string | null,
+      bucket_name?: string | null,
+      endpoint_url?: string | null,
+      region?: string | null,
+      storage_provider?: string | null,
+      imgix_subdomains?: string[] | null,
+      custom_domains?: string[] | null,
+      default_params?: Record<string, any> | null,
+      secure_url_enabled?: boolean | null,
+      cache_ttl_behavior?: string | null,
+      cache_ttl_value?: number | null,
+      cache_ttl_error?: number | null
+    } | null,
+    date_deployed?: number | null
   }
 }
 ```
