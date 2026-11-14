@@ -35,6 +35,8 @@ export async function makeShortcutRequest(
 		VERSION: '3',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// Path ids are caller input: keep each one inside a single URL segment.
+		ENCODE_PATH: encodeURIComponent,
 		HEADERS: {
 			'Shortcut-Token': apiKey,
 			...(options.formData ? {} : { 'Content-Type': 'application/json' }),

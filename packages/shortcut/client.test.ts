@@ -37,6 +37,23 @@ describe('Shortcut HTTP client', () => {
 		expect(String(url)).not.toContain('token=');
 	});
 
+	it('keeps a string path id inside one URL segment', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response(null, { status: 204 }));
+
+		await makeShortcutRequest(
+			'/api/v3/documents/{doc-public-id}',
+			'safe-test-token',
+			{ method: 'DELETE', path: { 'doc-public-id': '../stories/123' } },
+		);
+
+		const [url] = fetchMock.mock.calls[0] ?? [];
+		expect(String(url)).toBe(
+			`${SHORTCUT_API_BASE}/api/v3/documents/..%2Fstories%2F123`,
+		);
+	});
+
 	it('fails before network I/O when the API key is empty', async () => {
 		const fetchMock = jest.spyOn(globalThis, 'fetch');
 		await expect(makeShortcutRequest('/api/v3/categories', '')).rejects.toThrow(
