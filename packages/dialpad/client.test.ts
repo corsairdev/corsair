@@ -500,6 +500,7 @@ describe('Dialpad HTTP request behavior', () => {
 				},
 			},
 			{ apiKey: 'safe-test-token' },
+			// `unknown` because a rejected request can contain any thrown value.
 		).catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		if (!(error instanceof ApiError)) {
@@ -508,5 +509,39 @@ describe('Dialpad HTTP request behavior', () => {
 		expect(error.request.body).toBeUndefined();
 		expect(JSON.stringify(error)).not.toContain('jane.customer@example.com');
 		expect(String(error.stack)).not.toContain('jane.customer@example.com');
+	});
+
+	// contacts.search sends the person's email, phone and name as query values, so
+	// the propagated error leaves the query and the URL's query string out.
+	it('keeps contacts.search query values out of the error', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(JSON.stringify({ error: { message: 'Bad request' } }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+
+		const error = await makeDialpadRequest(
+			DialpadOperationDefinitions['contacts.search'],
+			{
+				query: {
+					email: 'jane.customer@example.com',
+					phone: '+14155550123',
+					name: 'Jane Customer',
+				},
+			},
+			{ apiKey: 'safe-test-token' },
+			// `unknown` because a rejected request can contain any thrown value.
+		).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) {
+			throw new Error('Expected a Dialpad ApiError');
+		}
+		expect(error.status).toBe(400);
+		expect(error.request.query).toBeUndefined();
+		const serialized = `${JSON.stringify(error)} ${error.url} ${error.message} ${String(error.stack)}`;
+		for (const value of ['jane.customer', '4155550123', 'Jane']) {
+			expect(serialized).not.toContain(value);
+		}
 	});
 });

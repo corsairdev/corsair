@@ -428,13 +428,18 @@ export async function makeDialpadRequest(
 				...(options.apiKey ? [options.apiKey] : []),
 			];
 			const sanitizedBody = sanitizeErrorBody(error.body, secrets);
-			// The request body can hold customer data (emails, names, phone
-			// numbers, message text), so the propagated error leaves it out.
-			const sanitizedRequest = { ...error.request, body: undefined };
+			// The request body and query can hold customer data (emails, names,
+			// phone numbers, message text, contacts.search values), so the
+			// propagated error leaves both out, along with the URL's query string.
+			const sanitizedRequest = {
+				...error.request,
+				body: undefined,
+				query: undefined,
+			};
 			const sanitizedError = new ApiError(
 				sanitizedRequest,
 				{
-					url: error.url,
+					url: error.url.split('?')[0] ?? error.url,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
