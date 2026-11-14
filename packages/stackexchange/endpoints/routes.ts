@@ -10,7 +10,8 @@ export type StackExchangeRoute = {
 	readonly method: 'GET' | 'POST';
 	readonly methods: readonly ('GET' | 'POST')[];
 	readonly site: boolean;
-	readonly scope: StackExchangeScope;
+	// One scope, or every scope a method needs (tag-preference edits need two).
+	readonly scope: StackExchangeScope | readonly StackExchangeScope[];
 	readonly riskLevel: 'read' | 'destructive';
 	readonly docs: string;
 };
@@ -57,7 +58,7 @@ const SITE_READ = {
 	'no-answer-questions': ['questions/no-answers', 'none'],
 	'unanswered-questions': ['questions/unanswered', 'none'],
 	'unanswered-questions-my-tags': ['questions/unanswered/my-tags', 'user'],
-	revisions: ['revisions/{ids}', 'none'],
+	'revisions-by-guids': ['revisions/{ids}', 'none'],
 	search: ['search', 'none'],
 	'advanced-search': ['search/advanced', 'none'],
 	similar: ['similar', 'none'],
@@ -90,7 +91,7 @@ const SITE_READ = {
 	'me-favorites': ['me/favorites', 'user'],
 	'mentions-on-users': ['users/{ids}/mentioned', 'none'],
 	'me-mentioned': ['me/mentioned', 'user'],
-	'users-network-activity': ['users/{id}/network-activity', 'user'],
+	'users-network-activity': ['users/{id}/network-activity', 'none'],
 	'me-network-activity': ['me/network-activity', 'user'],
 	'user-notifications': ['users/{id}/notifications', 'read_inbox'],
 	'user-unread-notifications': [
@@ -133,8 +134,8 @@ const SITE_READ = {
 		'none',
 	],
 	'me-tags-top-questions': ['me/tags/{tags}/top-questions', 'user'],
-	'tag-prefs-on-user': ['users/{id}/tag-preferences', 'user'],
-	'me-tag-preferences': ['me/tag-preferences', 'user'],
+	'tag-prefs-on-user': ['users/{id}/tag-preferences', 'private_info'],
+	'me-tag-prefs': ['me/tag-preferences', 'private_info'],
 	'timeline-on-users': ['users/{ids}/timeline', 'none'],
 	'me-timeline': ['me/timeline', 'user'],
 	'top-answer-tags-on-users': ['users/{id}/top-answer-tags', 'none'],
@@ -173,9 +174,10 @@ const SITE_WRITE = {
 	'upvote-comment': ['comments/{id}/upvote', 'write_access'],
 	'undo-upvote-comment': ['comments/{id}/upvote/undo', 'write_access'],
 	'create-comment': ['posts/{id}/comments/add', 'write_access'],
-	'render-comment': ['posts/{id}/comments/render', 'write_access'],
+	// Previews: the docs make the access token optional (it only sets the owner).
+	'render-comment': ['posts/{id}/comments/render', 'none'],
 	'create-answer': ['questions/{id}/answers/add', 'write_access'],
-	'render-answer': ['questions/{id}/answers/render', 'write_access'],
+	'render-answer': ['questions/{id}/answers/render', 'none'],
 	'delete-question': ['questions/{id}/delete', 'write_access'],
 	'downvote-question': ['questions/{id}/downvote', 'write_access'],
 	'undo-downvote-question': ['questions/{id}/downvote/undo', 'write_access'],
@@ -190,13 +192,19 @@ const SITE_WRITE = {
 	'upvote-question': ['questions/{id}/upvote', 'write_access'],
 	'undo-upvote-question': ['questions/{id}/upvote/undo', 'write_access'],
 	'create-question': ['questions/add', 'write_access'],
-	'render-question': ['questions/render', 'write_access'],
-	'edit-tag-prefs-on-user': ['users/{id}/tag-preferences/edit', 'write_access'],
-	'edit-me-tag-preferences': ['me/tag-preferences/edit', 'write_access'],
+	'render-question': ['questions/render', 'none'],
+	'edit-tag-prefs-on-user': [
+		'users/{id}/tag-preferences/edit',
+		['write_access', 'private_info'],
+	],
+	'me-edit-tag-prefs': [
+		'me/tag-preferences/edit',
+		['write_access', 'private_info'],
+	],
 } as const;
 
 const NETWORK_READ = {
-	'achievements-on-user': ['users/{id}/achievements', 'user'],
+	'achievements-on-user': ['users/{id}/achievements', 'private_info'],
 	errors: ['errors', 'none'],
 	'simulate-error': ['errors/{id}', 'none'],
 	'read-filter': ['filters/{filters}', 'none'],
@@ -207,13 +215,16 @@ const NETWORK_READ = {
 	sites: ['sites', 'none'],
 	'associated-users': ['users/{ids}/associated', 'none'],
 	'merge-history': ['users/{ids}/merges', 'none'],
-	'me-achievements': ['me/achievements', 'user'],
+	'me-achievements': ['me/achievements', 'private_info'],
 	'me-associated-users': ['me/associated', 'user'],
 	'me-merge-history': ['me/merges', 'user'],
 	'create-filter': ['filters/create', 'none'],
 } as const;
 
-type RouteTuple = readonly [path: string, scope: StackExchangeScope];
+type RouteTuple = readonly [
+	path: string,
+	scope: StackExchangeScope | readonly StackExchangeScope[],
+];
 
 function makeRouteList<const T extends Record<string, RouteTuple>>(
 	entries: T,
