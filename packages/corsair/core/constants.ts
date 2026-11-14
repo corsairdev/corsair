@@ -206,6 +206,7 @@ export const BaseProviders = [
 	'datarobot',
 	'deepseek',
 	'demio',
+	'deployhq',
 	'desktime',
 	'devinmcp',
 	'diffbot',
@@ -748,6 +749,7 @@ export const ProviderDisplayNames = {
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	demio: 'Demio',
+	deployhq: 'DeployHQ',
 	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
@@ -1297,6 +1299,7 @@ export type AllProviders =
 	| 'datarobot'
 	| 'deepseek'
 	| 'demio'
+	| 'deployhq'
 	| 'desktime'
 	| 'devinmcp'
 	| 'diffbot'

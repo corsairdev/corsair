@@ -1739,6 +1739,14 @@
                 ]
               },
               {
+                "group": "DeployHQ",
+                "pages": [
+                  "plugins/deployhq/overview",
+                  "plugins/deployhq/api",
+                  "plugins/deployhq/database"
+                ]
+              },
+              {
                 "group": "DeskTime",
                 "pages": [
                   "plugins/desktime/overview",
