@@ -544,4 +544,33 @@ describe('Dialpad HTTP request behavior', () => {
 			expect(serialized).not.toContain(value);
 		}
 	});
+
+	// blockednumbers.get puts the phone number in the path, so both error URLs
+	// carry the route template and the provider's echo of the number is redacted.
+	it('keeps a path phone number out of a failed blockednumbers.get error', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(
+				JSON.stringify({ error: { message: 'Number +14155550123 not found' } }),
+				{ status: 404, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+
+		const error = await makeDialpadRequest(
+			DialpadOperationDefinitions['blockednumbers.get'],
+			{ path: { number: '+14155550123' } },
+			{ apiKey: 'safe-test-token' },
+			// `unknown` because a rejected request can contain any thrown value.
+		).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) {
+			throw new Error('Expected a Dialpad ApiError');
+		}
+		expect(error.status).toBe(404);
+		expect(error.url).toBe(
+			'https://dialpad.com/api/v2/blockednumbers/{number}',
+		);
+		expect(error.request.url).toBe('/api/v2/blockednumbers/{number}');
+		const serialized = `${JSON.stringify(error)} ${error.url} ${error.request.url} ${error.message} ${String(error.stack)}`;
+		expect(serialized).not.toContain('4155550123');
+	});
 });

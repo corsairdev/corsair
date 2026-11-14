@@ -423,23 +423,37 @@ export async function makeDialpadRequest(
 	} catch (error: unknown) {
 		// `unknown` because rejected values have no static type and need runtime narrowing.
 		if (error instanceof ApiError) {
+			// Path values can be personal too (`blockednumbers.get` puts a phone
+			// number in the path), so the provider's echo of them is redacted.
+			const pathSecrets = Object.values(pathValues)
+				.filter(
+					(value): value is string | number =>
+						typeof value === 'string' || typeof value === 'number',
+				)
+				.map(String)
+				.filter((value) => value.length >= 5)
+				.flatMap((value) => [value, encodeURIComponent(value)]);
 			const secrets = [
 				...sensitiveValues(input.body),
+				...pathSecrets,
 				...(options.apiKey ? [options.apiKey] : []),
 			];
 			const sanitizedBody = sanitizeErrorBody(error.body, secrets);
-			// The request body and query can hold customer data (emails, names,
-			// phone numbers, message text, contacts.search values), so the
-			// propagated error leaves both out, along with the URL's query string.
+			// The request body, query and path can hold customer data (emails,
+			// names, phone numbers, message text, contacts.search values), so the
+			// propagated error leaves out the body and query, and both URLs carry
+			// the route template (`/api/v2/blockednumbers/{number}`) instead of
+			// the filled-in path and query string.
 			const sanitizedRequest = {
 				...error.request,
+				url: definition.path,
 				body: undefined,
 				query: undefined,
 			};
 			const sanitizedError = new ApiError(
 				sanitizedRequest,
 				{
-					url: error.url.split('?')[0] ?? error.url,
+					url: `${config.BASE.replace(/\/$/, '')}${definition.path}`,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
