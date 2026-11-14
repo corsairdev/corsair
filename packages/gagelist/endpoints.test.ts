@@ -1,6 +1,12 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { clearGagelistToken, GagelistAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	clearGagelistToken,
+	GagelistAPIError,
+	isReplayableGagelistError,
+} from './client';
 import { Account, Calibrations, Gages } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import {
 	accountStatus,
 	calibrationDetail,
@@ -143,8 +149,11 @@ describe('the token', () => {
 		respond(invalidClient, 400);
 
 		await expect(invoke(Gages.list, {})).rejects.toMatchObject({
+			name: 'ApiError',
 			status: 400,
-			message: 'GageList 400: invalid_client',
+			body: { error: 'invalid_client' },
+			message:
+				'GageList 400: GageList refused a field in the request (invalid_client)',
 		});
 	});
 
@@ -183,7 +192,7 @@ describe('the token', () => {
 				contextFor(CLIENT_ID, 'someone-elses-guess') as never,
 				{} as never,
 			),
-		).rejects.toBeInstanceOf(GagelistAPIError);
+		).rejects.toBeInstanceOf(ApiError);
 		expect(lastRequest().path).toBe('/api/token');
 	});
 
@@ -256,11 +265,8 @@ describe('gages.list', () => {
 		respond({ Message: 'Server error' }, 503);
 
 		const error = await caught(invoke(Gages.list, {}));
-		expect(error).toMatchObject({
-			status: 503,
-			method: 'POST',
-			replayable: true,
-		});
+		expect(error).toMatchObject({ status: 503, request: { method: 'POST' } });
+		expect(isReplayableGagelistError(error as Error)).toBe(true);
 	});
 
 	it('rejects a negative start before calling', async () => {
@@ -298,7 +304,7 @@ describe('gages.get', () => {
 
 		await expect(invoke(Gages.get, { id: 999 })).rejects.toMatchObject({
 			status: 404,
-			message: 'GageList 404: Record not found',
+			message: 'GageList 404: no record with that ID',
 		});
 	});
 });
@@ -347,9 +353,27 @@ describe('gages.create', () => {
 			invoke(Gages.create, { SerialNumber: '' }),
 		).rejects.toMatchObject({
 			status: 400,
-			isValidationError: true,
-			message: 'GageList 400: Serial number is required',
+			message: 'GageList 400: GageList refused a field in the request',
 		});
+	});
+
+	it('keeps the record GageList echoes out of the error', async () => {
+		respondToken();
+		respond(
+			{
+				Message: 'Invalid ResponsibleUser: person@example.test, serial SN-4471',
+			},
+			400,
+		);
+
+		const error = await caught(
+			invoke(Gages.create, { SerialNumber: 'SN-4471' }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const text = `${(error as Error).message} ${JSON.stringify(error)}`;
+		expect(text).not.toContain('person@example.test');
+		expect(text).not.toContain('SN-4471');
 	});
 
 	it('rejects a negative interval before calling', async () => {
@@ -599,9 +623,32 @@ describe('calibrations', () => {
 		respond(notFound, 404);
 
 		const error = await caught(invoke(Calibrations.certificate, { id: 9 }));
-		expect(error).toBeInstanceOf(GagelistAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error).toMatchObject({ status: 404 });
-		expect((error as Error).message).toBe('GageList 404: Record not found');
+		expect((error as Error).message).toBe(
+			'GageList 404: no record with that ID',
+		);
+	});
+
+	it('maps a connection that drops while the PDF downloads to a retried transport failure', async () => {
+		respondToken();
+		const dropped = new TypeError('terminated');
+		fetchMock.mockResolvedValueOnce({
+			ok: true,
+			status: 200,
+			statusText: 'OK',
+			headers: new Headers({ 'Content-Type': 'application/pdf' }),
+			arrayBuffer: () => Promise.reject(dropped),
+		} as unknown as Response);
+
+		const error = await caught(invoke(Calibrations.certificate, { id: 500 }));
+
+		expect(error).toBeInstanceOf(GagelistAPIError);
+		expect(error).toMatchObject({ transport: true, method: 'GET' });
+		expect(errorHandlers.NETWORK_ERROR.match(error as Error)).toBe(true);
+		await expect(
+			errorHandlers.NETWORK_ERROR.handler(error as Error),
+		).resolves.toMatchObject({ maxRetries: 2 });
 	});
 });
 
@@ -737,19 +784,34 @@ describe('error envelopes', () => {
 		respond(unauthorized, 401);
 
 		await expect(invoke(Gages.list, {})).rejects.toMatchObject({
+			name: 'ApiError',
 			status: 401,
-			isAuthError: true,
-			message: 'GageList 401: Authorization has been denied for this request.',
+			message:
+				'GageList 401: GageList refused the token or the client credentials',
 		});
 	});
 
-	it('keeps no body on the error, so an echoed record cannot follow it into a log', async () => {
+	it('keeps no response or request body on the error, so an echoed record cannot follow it into a log', async () => {
 		respondToken();
 		respond(refused, 400);
 
-		const error = await caught(invoke(Gages.list, {}));
+		const error = (await caught(invoke(Gages.list, {}))) as ApiError;
 
-		expect(error).not.toHaveProperty('body');
+		expect(error.body).toBeUndefined();
+		expect(error.request).not.toHaveProperty('body');
+	});
+
+	it('marks a 5xx on a POST list route as replayable and a 5xx create as not', async () => {
+		respondToken();
+		respond({ Message: 'boom' }, 503);
+		const listError = await caught(invoke(Gages.list, {}));
+		expect(errorHandlers.SERVER_ERROR.match(listError as Error)).toBe(true);
+
+		respond({ Message: 'boom' }, 503);
+		const createError = await caught(
+			invoke(Gages.create, { SerialNumber: 'SN-1' }),
+		);
+		expect(errorHandlers.SERVER_ERROR.match(createError as Error)).toBe(false);
 	});
 
 	it('marks a transport failure and keeps the method', async () => {
@@ -769,7 +831,7 @@ describe('error envelopes', () => {
 
 		const error = await caught(invoke(Gages.get, { id: 1 }));
 
-		expect(error).toBeInstanceOf(GagelistAPIError);
-		expect(error).toMatchObject({ status: 404, isNotFound: true });
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 404 });
 	});
 });

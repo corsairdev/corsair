@@ -11,6 +11,8 @@ type LogFields = Record<string, string | number | boolean | undefined>;
  * The key builder resolves both and passes them as `ctx.key`, a JSON pair.
  */
 export function resolveCredentials(ctx: GagelistContext): GagelistCredentials {
+	// unknown: stored JSON that has not been checked yet; its fields are
+	// narrowed below.
 	let pair: Record<string, unknown> | undefined;
 	try {
 		pair = asRecord(JSON.parse(ctx.key)) ?? undefined;

@@ -1,8 +1,11 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { GagelistAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { GagelistAPIError, isReplayableGagelistError } from './client';
 
+// An HTTP error from GageList is core's ApiError; GagelistAPIError is a
+// request that got no answer.
 function statusOf(error: Error): number | undefined {
-	return error instanceof GagelistAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // GageList answers 400, 401, 403 and 404, and its token endpoint answers
@@ -11,12 +14,11 @@ export const errorHandlers = {
 	// A 429 is a throughput limit. GageList publishes no Retry-After, so the
 	// handler's own backoff is the only delay.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GagelistAPIError && error.isRateLimit,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 2,
 			headersRetryAfterMs:
-				error instanceof GagelistAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -35,8 +37,7 @@ export const errorHandlers = {
 	// retry mints nothing new.
 	CLIENT_CREDENTIALS_ERROR: {
 		match: (error: Error) =>
-			error instanceof GagelistAPIError &&
-			error.message.includes('invalid_client'),
+			error instanceof ApiError && error.body?.error === 'invalid_client',
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403 is a client that may read but not write this record.
@@ -62,9 +63,7 @@ export const errorHandlers = {
 	// would create a second one.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof GagelistAPIError &&
-			error.replayable &&
-			(error.status ?? 0) >= 500,
+			isReplayableGagelistError(error) && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

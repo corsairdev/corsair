@@ -75,16 +75,14 @@ const GAGELIST_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A GageList failure.
+ * A GageList request that got no answer (a reset, DNS failure, abort or
+ * timeout), or a token answer without an `access_token`.
  *
- * The cause is dropped on a provider failure. A create echoes the submitted
- * record back in its validation message, and that record carries the serial
- * number and the assigned user.
+ * An HTTP error stays core's `ApiError`, rebuilt by `sanitizeApiError` without
+ * the request body or query and without GageList's message text, so its
+ * status, Retry-After and rate-limit fields reach core and the handlers.
  */
 export class GagelistAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from a Retry-After header, when GageList sent one. */
-	readonly retryAfter?: number;
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
@@ -95,8 +93,6 @@ export class GagelistAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -105,50 +101,112 @@ export class GagelistAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'GagelistAPIError';
-		this.status = options.status;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 		this.replayable = options.replayable ?? options.method === 'GET';
 	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** No token, or one the API refused. Both read as "authenticate again". */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	/** The client can do this, but not to this record. */
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
-
-	/** An unknown record ID. */
-	get isNotFound(): boolean {
-		return this.status === 404;
-	}
-
-	/** A field GageList refused. */
-	get isValidationError(): boolean {
-		return this.status === 400 || this.status === 422;
-	}
 }
 
-/** The message GageList sent, with the status in front. */
-// unknown: an error body is untyped: one of the three envelopes above, or an
-// HTML page from the front end.
-export function describeGagelistError(
-	status: number | undefined,
-	body: unknown,
-	fallback: string,
-): string {
-	const fields = readFailure(body);
-	const text = fields.message ?? fields.error ?? fallback;
-	return status === undefined ? text : `GageList ${status}: ${text}`;
+// The HTTP errors that came from a read (any GET, and the list routes sent as
+// POST), which the 5xx handler may replay. ApiError has no field for it.
+const replayableErrors = new WeakSet<Error>();
+
+/** True when the failed request was a read, safe to send again. */
+export function isReplayableGagelistError(error: Error): boolean {
+	if (error instanceof GagelistAPIError) return error.replayable;
+	if (error instanceof ApiError && error.request.method === 'GET') return true;
+	return replayableErrors.has(error);
+}
+
+// GageList's validation messages echo the submitted record (serial number,
+// assigned user), so none of its message text reaches an error. The status
+// says what kind of failure it was; an OAuth error code such as
+// `invalid_client` from the token route is kept, since it names no record.
+const STATUS_TEXT: Record<number, string> = {
+	400: 'GageList refused a field in the request',
+	401: 'GageList refused the token or the client credentials',
+	403: 'the client may not make this change to the record',
+	404: 'no record with that ID',
+	422: 'GageList refused a field in the request',
+	429: 'too many requests',
+};
+
+// unknown: an error body is one of the envelopes readFailure handles, or HTML.
+function errorCode(body: unknown): string | undefined {
+	const code = readFailure(body).error;
+	return code && /^[a-z_]{1,64}$/.test(code) ? code : undefined;
+}
+
+/** A message that names the status and never quotes GageList's text. */
+// unknown: see errorCode.
+export function describeGagelistError(status: number, body: unknown): string {
+	const text =
+		STATUS_TEXT[status] ??
+		(status >= 500
+			? 'GageList failed to handle the request'
+			: 'request failed');
+	const code = errorCode(body);
+	return `GageList ${status}: ${text}${code ? ` (${code})` : ''}`;
+}
+
+/**
+ * Core's `ApiError` keeps `request.body` (the record, or the client secret on
+ * the token route) and the response body (which can echo the record). The
+ * error is rebuilt as an `ApiError` with the same method, route, status and
+ * rate-limit fields, no request body or query, and a body that holds only an
+ * OAuth error code when GageList sent one.
+ */
+function sanitizeApiError(error: ApiError, replayable: boolean): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const code = errorCode(error.body);
+	const rebuilt = new ApiError(
+		request,
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: code ? { error: code } : undefined,
+		},
+		describeGagelistError(error.status, error.body),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	if (replayable) replayableErrors.add(rebuilt);
+	return rebuilt;
+}
+
+// DOMException (fetch timeouts) can fail instanceof Error across realms.
+function transportError(
+	error: unknown,
+	method: string,
+	replayable: boolean | undefined,
+): GagelistAPIError {
+	if (error instanceof Error || error instanceof DOMException) {
+		// A transport failure never had a response body, so its cause is safe.
+		return new GagelistAPIError(error.message, {
+			cause: error,
+			method,
+			transport: true,
+			timedOut: error.name === 'TimeoutError',
+			replayable,
+		});
+	}
+	return new GagelistAPIError('Unknown GageList error', {
+		method,
+		transport: true,
+		replayable,
+	});
 }
 
 export type GagelistQueryValue = string | number | boolean;
@@ -263,25 +321,10 @@ async function mintToken(
 		};
 	} catch (error) {
 		if (error instanceof GagelistAPIError) throw error;
-		if (error instanceof ApiError) {
-			// The token body carries the client secret, so no cause is kept.
-			throw new GagelistAPIError(
-				describeGagelistError(error.status, error.body, error.message),
-				{ status: error.status, retryAfter: error.retryAfter, method: 'POST' },
-			);
-		}
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new GagelistAPIError(error.message, {
-				cause: error,
-				method: 'POST',
-				transport: true,
-				timedOut: error.name === 'TimeoutError',
-			});
-		}
-		throw new GagelistAPIError('Unknown GageList error', {
-			method: 'POST',
-			transport: true,
-		});
+		// The token body carries the client secret, which the rebuilt error
+		// drops.
+		if (error instanceof ApiError) throw sanitizeApiError(error, false);
+		throw transportError(error, 'POST', false);
 	}
 }
 
@@ -300,6 +343,7 @@ async function fetchDocument(
 	credentials: GagelistCredentials,
 	token: string,
 	path: string,
+	replayable: boolean | undefined,
 ): Promise<GagelistDocument> {
 	let response: Response;
 	try {
@@ -312,19 +356,7 @@ async function fetchDocument(
 			signal: AbortSignal.timeout(GAGELIST_TIMEOUT_MS),
 		});
 	} catch (error) {
-		// A transport failure never had a response body, so its cause is safe.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new GagelistAPIError(error.message, {
-				cause: error,
-				method: 'GET',
-				transport: true,
-				timedOut: error.name === 'TimeoutError',
-			});
-		}
-		throw new GagelistAPIError('Unknown GageList error', {
-			method: 'GET',
-			transport: true,
-		});
+		throw transportError(error, 'GET', replayable);
 	}
 
 	const contentType =
@@ -332,24 +364,43 @@ async function fetchDocument(
 		'application/octet-stream';
 	const isJson = contentType.toLowerCase().includes('json');
 
+	// The body arrives after the headers, so a drop or the timeout can still
+	// hit while reading it. The text is read under the transport guard and
+	// parsed outside it, so a malformed body is not taken for a dropped one.
+	let bytes: ArrayBuffer;
+	try {
+		bytes = await response.arrayBuffer();
+	} catch (error) {
+		throw transportError(error, 'GET', replayable);
+	}
+	// unknown: a JSON answer from a file route has no documented shape.
+	const parseJson = (): unknown => JSON.parse(Buffer.from(bytes).toString());
+
 	if (!response.ok) {
 		if (response.status === 401) clearGagelistToken(credentials);
-		// unknown: an error body is one of the envelopes readFailure handles.
-		const errorBody: unknown = isJson
-			? await response.json().catch(() => undefined)
-			: undefined;
-		throw new GagelistAPIError(
-			describeGagelistError(
-				response.status,
-				errorBody,
+		let errorBody: unknown;
+		try {
+			errorBody = isJson ? parseJson() : undefined;
+		} catch {
+			errorBody = undefined;
+		}
+		throw sanitizeApiError(
+			new ApiError(
+				{ method: 'GET', url: path },
+				{
+					url: `${GAGELIST_API_BASE}${path}`,
+					ok: false,
+					status: response.status,
+					statusText: response.statusText,
+					body: errorBody,
+				},
 				response.statusText || 'Request failed',
 			),
-			{ status: response.status, method: 'GET' },
+			replayable ?? true,
 		);
 	}
 
-	if (isJson) return { contentType, json: await response.json() };
-	const bytes = await response.arrayBuffer();
+	if (isJson) return { contentType, json: parseJson() };
 	return {
 		contentType,
 		base64: Buffer.from(bytes).toString('base64'),
@@ -365,7 +416,7 @@ export async function makeGagelistRequest(
 	// unknown: see the note above the signature.
 ): Promise<unknown> {
 	const token = await tokenFor(credentials);
-	if (binary) return fetchDocument(credentials, token, path);
+	if (binary) return fetchDocument(credentials, token, path, replayable);
 
 	const config: OpenAPIConfig = {
 		BASE: GAGELIST_API_BASE,
@@ -393,32 +444,9 @@ export async function makeGagelistRequest(
 			// A 401 can also mean the token was revoked early, so the cache is
 			// cleared and the next call mints a fresh one.
 			if (error.status === 401) clearGagelistToken(credentials);
-			throw new GagelistAPIError(
-				describeGagelistError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					retryAfter: error.retryAfter,
-					method,
-					replayable,
-				},
-			);
+			throw sanitizeApiError(error, replayable ?? method === 'GET');
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			// A transport failure never had a response body, so its cause is safe.
-			throw new GagelistAPIError(error.message, {
-				cause: error,
-				method,
-				transport: true,
-				timedOut: error.name === 'TimeoutError',
-				replayable,
-			});
-		}
-		throw new GagelistAPIError('Unknown GageList error', {
-			method,
-			transport: true,
-			replayable,
-		});
+		throw transportError(error, method, replayable);
 	}
 }
 

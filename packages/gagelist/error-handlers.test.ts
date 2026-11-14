@@ -1,17 +1,35 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GagelistAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An answered request fails as core's ApiError (a read is marked replayable
+// through a real request, so the 5xx cases go through makeApiError below); one
+// that got no answer as GagelistAPIError.
 function apiError(options: {
 	status?: number;
 	method?: string;
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-	message?: string;
+	code?: string;
 	replayable?: boolean;
-}) {
-	return new GagelistAPIError(options.message ?? 'failed', options);
+}): Error {
+	if (options.status === undefined) {
+		return new GagelistAPIError('failed', options);
+	}
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/api/test' },
+		{
+			url: 'https://api.gagelist.net/api/test',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: options.code ? { error: options.code } : undefined,
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -65,9 +83,7 @@ describe('error handler selection', () => {
 
 	it('does not retry a refused client pair', async () => {
 		await expect(
-			resolve(
-				apiError({ status: 400, message: 'GageList 400: invalid_client' }),
-			),
+			resolve(apiError({ status: 400, code: 'invalid_client' })),
 		).resolves.toEqual({ maxRetries: 0 });
 	});
 
@@ -97,10 +113,13 @@ describe('error handler selection', () => {
 		).resolves.toEqual({ maxRetries: 2, retryStrategy: 'exponential_backoff' });
 	});
 
-	it('retries a 5xx and a dropped connection on a POST list read', async () => {
+	it('does not replay a 5xx on a POST that is not marked as a read', async () => {
 		await expect(
-			resolve(apiError({ status: 503, method: 'POST', replayable: true })),
-		).resolves.toMatchObject({ maxRetries: 2 });
+			resolve(apiError({ status: 503, method: 'POST' })),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('retries a dropped connection on a POST list read', async () => {
 		await expect(
 			resolve(apiError({ method: 'POST', transport: true, replayable: true })),
 		).resolves.toMatchObject({ maxRetries: 2 });
