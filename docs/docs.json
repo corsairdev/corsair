@@ -3778,6 +3778,14 @@
                 ]
               },
               {
+                "group": "sevdesk",
+                "pages": [
+                  "plugins/sevdesk/overview",
+                  "plugins/sevdesk/api",
+                  "plugins/sevdesk/database"
+                ]
+              },
+              {
                 "group": "SharePoint",
                 "pages": [
                   "plugins/sharepoint/overview",

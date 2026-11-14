@@ -452,6 +452,7 @@ export const BaseProviders = [
 	'sentry',
 	'serpapi',
 	'servicenow',
+	'sevdesk',
 	'sharepoint',
 	'shippo',
 	'slack',
@@ -949,10 +950,10 @@ export const ProviderDisplayNames = {
 	ragic: 'Ragic',
 	raisely: 'Raisely',
 	ramp: 'Ramp',
-	route4me: 'Route4Me',
 	razorpay: 'Razorpay',
 	realphonevalidation: 'RealPhoneValidation',
 	reamaze: 'Re:amaze',
+	route4me: 'Route4Me',
 	recallai: 'Recall.ai',
 	recruitee: 'Recruitee',
 	redcircle: 'RedCircle API',
@@ -1004,6 +1005,7 @@ export const ProviderDisplayNames = {
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	servicenow: 'ServiceNow',
+	sevdesk: 'Sevdesk',
 	sharepoint: 'SharePoint',
 	shippo: 'Shippo',
 	slack: 'Slack',
@@ -1563,6 +1565,7 @@ export type AllProviders =
 	| 'sentry'
 	| 'serpapi'
 	| 'servicenow'
+	| 'sevdesk'
 	| 'sharepoint'
 	| 'shippo'
 	| 'slack'

@@ -1,0 +1,113 @@
+import { createSevdeskEndpoint } from './operation';
+import {
+	SevdeskEndpointInputSchemas,
+	SevdeskEndpointOutputSchemas,
+} from './types';
+
+export const CreditNote = {
+	getCreditNotes: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.getCreditNotes'],
+		SevdeskEndpointOutputSchemas['creditNote.getCreditNotes'],
+		'creditNote.getCreditNotes',
+		'GET',
+		'/CreditNote',
+	),
+	createcreditNote: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.createcreditNote'],
+		SevdeskEndpointOutputSchemas['creditNote.createcreditNote'],
+		'creditNote.createcreditNote',
+		'POST',
+		'/CreditNote/Factory/saveCreditNote',
+	),
+	createCreditNoteFromInvoice: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.createCreditNoteFromInvoice'],
+		SevdeskEndpointOutputSchemas['creditNote.createCreditNoteFromInvoice'],
+		'creditNote.createCreditNoteFromInvoice',
+		'POST',
+		'/CreditNote/Factory/createFromInvoice',
+	),
+	createCreditNoteFromVoucher: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.createCreditNoteFromVoucher'],
+		SevdeskEndpointOutputSchemas['creditNote.createCreditNoteFromVoucher'],
+		'creditNote.createCreditNoteFromVoucher',
+		'POST',
+		'/CreditNote/Factory/createFromVoucher',
+	),
+	getcreditNoteById: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.getcreditNoteById'],
+		SevdeskEndpointOutputSchemas['creditNote.getcreditNoteById'],
+		'creditNote.getcreditNoteById',
+		'GET',
+		'/CreditNote/{creditNoteId}',
+	),
+	updatecreditNote: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.updatecreditNote'],
+		SevdeskEndpointOutputSchemas['creditNote.updatecreditNote'],
+		'creditNote.updatecreditNote',
+		'PUT',
+		'/CreditNote/{creditNoteId}',
+	),
+	deletecreditNote: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.deletecreditNote'],
+		SevdeskEndpointOutputSchemas['creditNote.deletecreditNote'],
+		'creditNote.deletecreditNote',
+		'DELETE',
+		'/CreditNote/{creditNoteId}',
+	),
+	sendCreditNoteByPrinting: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.sendCreditNoteByPrinting'],
+		SevdeskEndpointOutputSchemas['creditNote.sendCreditNoteByPrinting'],
+		'creditNote.sendCreditNoteByPrinting',
+		'GET',
+		'/CreditNote/{creditNoteId}/sendByWithRender',
+	),
+	creditNoteSendBy: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.creditNoteSendBy'],
+		SevdeskEndpointOutputSchemas['creditNote.creditNoteSendBy'],
+		'creditNote.creditNoteSendBy',
+		'PUT',
+		'/CreditNote/{creditNoteId}/sendBy',
+	),
+	creditNoteEnshrine: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.creditNoteEnshrine'],
+		SevdeskEndpointOutputSchemas['creditNote.creditNoteEnshrine'],
+		'creditNote.creditNoteEnshrine',
+		'PUT',
+		'/CreditNote/{creditNoteId}/enshrine',
+	),
+	creditNoteGetPdf: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.creditNoteGetPdf'],
+		SevdeskEndpointOutputSchemas['creditNote.creditNoteGetPdf'],
+		'creditNote.creditNoteGetPdf',
+		'GET',
+		'/CreditNote/{creditNoteId}/getPdf',
+	),
+	sendCreditNoteViaEMail: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.sendCreditNoteViaEMail'],
+		SevdeskEndpointOutputSchemas['creditNote.sendCreditNoteViaEMail'],
+		'creditNote.sendCreditNoteViaEMail',
+		'POST',
+		'/CreditNote/{creditNoteId}/sendViaEmail',
+	),
+	bookCreditNote: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.bookCreditNote'],
+		SevdeskEndpointOutputSchemas['creditNote.bookCreditNote'],
+		'creditNote.bookCreditNote',
+		'PUT',
+		'/CreditNote/{creditNoteId}/bookAmount',
+	),
+	creditNoteResetToOpen: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.creditNoteResetToOpen'],
+		SevdeskEndpointOutputSchemas['creditNote.creditNoteResetToOpen'],
+		'creditNote.creditNoteResetToOpen',
+		'PUT',
+		'/CreditNote/{creditNoteId}/resetToOpen',
+	),
+	creditNoteResetToDraft: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['creditNote.creditNoteResetToDraft'],
+		SevdeskEndpointOutputSchemas['creditNote.creditNoteResetToDraft'],
+		'creditNote.creditNoteResetToDraft',
+		'PUT',
+		'/CreditNote/{creditNoteId}/resetToDraft',
+	),
+} as const;

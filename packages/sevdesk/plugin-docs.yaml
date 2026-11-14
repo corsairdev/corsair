@@ -1,0 +1,38 @@
+# Copy used by the docs, integration catalog, and hosted product.
+displayName: "sevdesk"
+description: "Access sevdesk contacts, bookkeeping, invoices, orders, vouchers, exports, and related REST resources through validated JSON operations."
+domain: "sevdesk.de"
+recommendedAuth: api_key
+overviewNote: >-
+  This plugin uses the API token as a raw 32-character hexadecimal Authorization
+  header. Calls use JSON only. X-Version is optional through the per-call
+  resourceVersion input or plugin-level fallback. List responses use the
+  documented objects array and optional total count; list routes document
+  limit (1–1000), offset, and countAll pagination. For
+  Update 2.0 accounting, prefer taxRule and verify allowed tax rates through
+  ReceiptGuidance. Enshrinement is legally irreversible. Webhook receiving is
+  excluded because the official OpenAPI inventory defines no callback/webhook
+  routes. Multipart voucher upload and invoice XML retrieval are excluded from
+  this JSON-only plugin.
+examples:
+  read: contact.getContacts
+  write:
+    path: contact.createContact
+    args:
+      body:
+        name: Corsair sample contact
+        category:
+          id: 3
+          objectName: Category
+apiNotes:
+  basics.bookkeepingSystemVersion: "Check before constructing accounting documents. Sevdesk Update 2.0 replaces taxType/taxSet with taxRule; custom taxType/taxSet is not supported on Update 2.0 accounts."
+  invoice.createInvoiceByFactory: "For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidance. New invoices are created as DRAFT; do not set status manually. Advanced and partial invoices accept only taxRule 1 or 11; AR/TR/ER require the account's default currency."
+  invoicePos.getInvoicePos: "The OpenAPI declares invoice-position quantity as boolean, inconsistent with the numeric request schema and sibling position models. The response schema accepts numbers or numeric strings and rejects booleans."
+  invoice.getInvoicePositionsById: "The OpenAPI declares invoice-position quantity as boolean, inconsistent with the numeric request schema and sibling position models. The response schema accepts numbers or numeric strings and rejects booleans."
+  creditNote.createcreditNote: "For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidance. New credit notes are created as DRAFT; enshrining is separate and irreversible. Update 2.0 does not support ACCOUNTING_TYPE bookingCategory or credit notes from vouchers; delivery dates must agree with the source invoice."
+  creditNote.createCreditNoteFromVoucher: "This documented legacy route is unavailable on Sevdesk Update 2.0; use only with accounts still on bookkeeping system 1.0."
+  voucher.voucherFactorySaveVoucher: "Update 2.0 requires ReceiptGuidance-compatible tax rules/rates. Voucher taxRule supports the documented revenue rules 1, 2, 3, 4, 5, 11 and expense rules 8, 9, 10, 12, 13, 14. Only DRAFT (50) and UNPAID/DUE (100) can be created; use bookVoucher to register payment. Asset accounts require an asset, and enshrinement is a separate irreversible action."
+  invoice.invoiceEnshrine: "Enshrining cannot be undone for legal reasons; confirm the target invoice before execution."
+  creditNote.creditNoteEnshrine: "Enshrining cannot be undone for legal reasons; confirm the target credit note before execution."
+  voucher.voucherEnshrine: "Enshrining cannot be undone for legal reasons; confirm the target voucher before execution."
+  checkAccountTransaction.checkAccountTransactionEnshrine: "Enshrining cannot be undone for legal reasons; confirm the target transaction before execution."
