@@ -292,3 +292,13 @@ describe('Fibery schema and endpoint schemas', () => {
 		).toBe(false);
 	});
 });
+
+describe('Fibery entity write results', () => {
+	it.each([false, 'ok', [], null])(
+		'rejects %p as an entity create or update result',
+		(value) => {
+			expect(Outputs.entityCreate.safeParse(value).success).toBe(false);
+			expect(Outputs.entityUpdate.safeParse(value).success).toBe(false);
+		},
+	);
+});

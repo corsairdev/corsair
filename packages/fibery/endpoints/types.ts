@@ -249,8 +249,9 @@ export const FiberyEndpointOutputSchemas = {
 	fieldSetMeta: FiberyJsonSchema,
 	installMixins: FiberyJsonSchema,
 	entityQuery: z.union([z.array(FiberyRecordSchema), z.number()]),
-	entityCreate: FiberyJsonSchema,
-	entityUpdate: FiberyJsonSchema,
+	// Fibery answers create and update with the entity object (fibery/id and the written fields).
+	entityCreate: FiberyRecordSchema,
+	entityUpdate: FiberyRecordSchema,
 	entityDelete: FiberyJsonSchema,
 	entityUpsert: z.array(FiberyJsonSchema),
 	collectionAdd: FiberyJsonSchema,
