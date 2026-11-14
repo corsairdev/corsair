@@ -7012,7 +7012,7 @@ Returns a list of courses that the requesting user is permitted to view, restric
 **Risk:** `read`
 
 ```ts
-await corsair.googleclassroom.api.courses.list({ pathParams: {}, query: {"courseStates":["ACTIVE"],"pageSize":1,"teacherId":"teacher-123","studentId":"student-123"} });
+await corsair.googleclassroom.api.courses.list({ pathParams: {}, query: {"courseStates":["ACTIVE"],"pageSize":1,"teacherId":"me"} });
 ```
 
 **Input**

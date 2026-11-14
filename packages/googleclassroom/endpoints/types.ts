@@ -3988,7 +3988,12 @@ export const GoogleClassroomEndpointInputSchemas = {
 							'JSON response format; media and protobuf formats are not supported.',
 						),
 				})
-				.strict(),
+				.strict()
+				.refine(
+					(query) =>
+						query.teacherId === undefined || query.studentId === undefined,
+					'Google Classroom accepts teacherId or studentId on courses.list, not both.',
+				),
 			body: z.never().optional(),
 		})
 		.strict(),

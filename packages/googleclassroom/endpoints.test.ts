@@ -2143,7 +2143,6 @@ describe('Google Classroom operations', () => {
 					pageSize: 1,
 					teacherId: 'sample-query',
 					pageToken: 'sample-query',
-					studentId: 'sample-query',
 				},
 			},
 		);
@@ -2156,7 +2155,6 @@ describe('Google Classroom operations', () => {
 				pageSize: 1,
 				teacherId: 'sample-query',
 				pageToken: 'sample-query',
-				studentId: 'sample-query',
 			},
 			body: undefined,
 		});

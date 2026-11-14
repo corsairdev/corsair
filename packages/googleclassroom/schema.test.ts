@@ -1740,10 +1740,22 @@ describe('Google Classroom endpoint schemas', () => {
 					pageSize: 1,
 					teacherId: 'sample-query',
 					pageToken: 'sample-query',
-					studentId: 'sample-query',
 				},
 			}).success,
 		).toBe(true);
+		expect(
+			GoogleClassroomEndpointInputSchemas['courses.list'].safeParse({
+				pathParams: {},
+				query: { studentId: 'me' },
+			}).success,
+		).toBe(true);
+		// Google: "If specified, student_id must be empty" (and the reverse).
+		expect(
+			GoogleClassroomEndpointInputSchemas['courses.list'].safeParse({
+				pathParams: {},
+				query: { teacherId: 'me', studentId: 'student-123' },
+			}).success,
+		).toBe(false);
 		expect(
 			GoogleClassroomEndpointInputSchemas['courses.list'].safeParse({
 				pathParams: {},
@@ -2997,5 +3009,25 @@ describe('Google Classroom provider contract details', () => {
 			const source = readFileSync(join(__dirname, file), 'utf8');
 			expect(source.match(/\]\(\/[^)]*\)/g) ?? []).toEqual([]);
 		}
+	});
+
+	it('accepts every apiExamples call in plugin-docs.yaml', () => {
+		const yaml = readFileSync(join(__dirname, 'plugin-docs.yaml'), 'utf8');
+		const examples = [
+			...yaml.matchAll(/^ {2}"([A-Za-z.]+)":\n {4}call: (".*")$/gm),
+		];
+		expect(examples).toHaveLength(Object.keys(GOOGLE_CLASSROOM_ROUTES).length);
+		const failing = examples
+			.filter(([, operation, quoted]) => {
+				// `unknown` because the example is a JS object literal read from YAML; the schema checks it.
+				const call: unknown = new Function(
+					`return (${JSON.parse(quoted ?? '""')});`,
+				)();
+				return !GoogleClassroomEndpointInputSchemas[
+					operation as keyof typeof GoogleClassroomEndpointInputSchemas
+				].safeParse(call).success;
+			})
+			.map(([, operation]) => operation);
+		expect(failing).toEqual([]);
 	});
 });

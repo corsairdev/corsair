@@ -149,7 +149,7 @@ apiExamples:
   "courses.getGradingPeriodSettings":
     call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {} }"
   "courses.list":
-    call: "{ pathParams: {}, query: {\"courseStates\":[\"ACTIVE\"],\"pageSize\":1,\"teacherId\":\"teacher-123\",\"studentId\":\"student-123\"} }"
+    call: "{ pathParams: {}, query: {\"courseStates\":[\"ACTIVE\"],\"pageSize\":1,\"teacherId\":\"me\"} }"
   "courses.patch":
     call: "{ pathParams: {\"id\":\"id-123\"}, query: {\"updateMask\":\"name\"}, body: {\"name\":\"Biology\"} }"
   "courses.posts.addOnAttachments.create":
