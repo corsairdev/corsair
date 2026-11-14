@@ -22,8 +22,7 @@ export const list: PolygonEndpoints['customersList'] = (ctx, input) =>
 			createdAfter,
 			createdBefore,
 			limit,
-			startingAfter,
-			endingBefore,
+			cursor,
 		}) => ({
 			method: 'GET',
 			path: '/customers',
@@ -34,8 +33,7 @@ export const list: PolygonEndpoints['customersList'] = (ctx, input) =>
 				createdAfter,
 				createdBefore,
 				limit,
-				startingAfter,
-				endingBefore,
+				cursor,
 			},
 		}),
 		{

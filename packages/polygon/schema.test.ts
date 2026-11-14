@@ -33,7 +33,7 @@ describe('customer schemas', () => {
 				hold: null,
 				failure: null,
 				signedAgreement: true,
-				endorsements: ['basic'],
+				endorsements: [{ type: 'basic', status: 'active' }],
 				createdAt: '2026-01-01T00:00:00Z',
 			}).success,
 		).toBe(true);
@@ -44,9 +44,33 @@ describe('customer schemas', () => {
 			CustomerSchema.safeParse({
 				id: 'cst_1',
 				status: 'actionRequired',
-				hold: { code: 'kycDocumentNeeded', reason: 'Upload an ID' },
+				hold: { code: 'kycDocumentNeeded', message: 'Upload an ID' },
 			}).success,
 		).toBe(true);
+	});
+
+	it('parses endorsements as the objects v0.13 returns, with hold and failure messages', () => {
+		// Shape from the v0.13 OpenAPI Customer and CustomerEndorsement components.
+		const parsed = CustomerSchema.parse({
+			id: 'cst_1',
+			status: 'actionRequired',
+			hold: { code: 'verificationRequired', message: 'Verify identity' },
+			endorsements: [
+				{ type: 'basic', status: 'active' },
+				{
+					type: 'usd',
+					status: 'rejected',
+					requirements: { missing: ['proofOfAddress'] },
+					failure: {
+						code: 'onboardingRejected',
+						message: 'Rejected',
+						retryable: false,
+					},
+				},
+			],
+		});
+		expect(parsed.hold?.message).toBe('Verify identity');
+		expect(parsed.endorsements?.[1]?.failure?.retryable).toBe(false);
 	});
 
 	it('keeps the status a string so an unseen value cannot fail a read', () => {

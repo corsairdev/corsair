@@ -82,14 +82,26 @@ export const POLYGON_CUSTOMER_STATUSES = [
 export const CustomerHoldSchema = z
 	.object({
 		code: z.string().nullish(),
-		reason: z.string().nullish(),
+		message: z.string().nullish(),
 	})
 	.loose();
 
 export const CustomerFailureSchema = z
 	.object({
 		code: z.string().nullish(),
-		reason: z.string().nullish(),
+		message: z.string().nullish(),
+		retryable: z.boolean().nullish(),
+	})
+	.loose();
+
+/** One endorsement and where it stands; OMS returns these as objects. */
+export const CustomerEndorsementSchema = z
+	.object({
+		type: z.string().nullish().describe('`basic`, `cryptoCustody` or `usd`.'),
+		status: z.string().nullish(),
+		// unknown: the requirement lists differ per endorsement and KYC policy.
+		requirements: z.object({}).loose().nullish(),
+		failure: CustomerFailureSchema.nullish(),
 	})
 	.loose();
 
@@ -119,7 +131,7 @@ export const CustomerSchema = z
 		hold: CustomerHoldSchema.nullish(),
 		failure: CustomerFailureSchema.nullish(),
 		signedAgreement: z.boolean().nullish(),
-		endorsements: z.array(z.string()).nullish(),
+		endorsements: z.array(CustomerEndorsementSchema).nullish(),
 		// unknown: the metadata map is the caller's own key-value data.
 		metadata: z.record(z.string(), z.string()).nullish(),
 		createdAt: TimestampSchema,
@@ -154,7 +166,14 @@ const CustomersListInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('Only customers created before this ISO 8601 timestamp.'),
-	...listQueryFields,
+	// /customers pages with one `cursor`, not the starting/ending pair the
+	// other list routes take.
+	limit: listQueryFields.limit,
+	cursor: z
+		.string()
+		.min(1)
+		.optional()
+		.describe("The previous page's `cursor`."),
 });
 
 export type CustomersListInput = z.infer<typeof CustomersListInputSchema>;
@@ -166,7 +185,7 @@ const CustomersListOutputSchema = z.object({
 		.string()
 		.nullish()
 		.describe(
-			'The next page cursor. While `hasMore` is true, pass it as `startingAfter`; it is absent on the last page.',
+			'The next page cursor. While `hasMore` is true, pass it back as `cursor`; it is absent on the last page.',
 		),
 });
 

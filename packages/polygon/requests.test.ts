@@ -53,9 +53,10 @@ describe('customers endpoints', () => {
 			status: 'active',
 			email: 'jane@example.com',
 			limit: 10,
-			startingAfter: 'cst_cursor',
+			cursor: 'cst_cursor',
 		});
 
+		// GET /customers documents a single `cursor` query parameter.
 		expect(sentRequest()).toEqual({
 			method: 'GET',
 			path: '/customers',
@@ -66,8 +67,7 @@ describe('customers endpoints', () => {
 				createdAfter: undefined,
 				createdBefore: undefined,
 				limit: 10,
-				startingAfter: 'cst_cursor',
-				endingBefore: undefined,
+				cursor: 'cst_cursor',
 			},
 		});
 	});
