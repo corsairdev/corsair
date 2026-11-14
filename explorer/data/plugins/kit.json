@@ -1,0 +1,725 @@
+{
+  "id": "kit",
+  "displayName": "Kit",
+  "description": "Email marketing with Kit (formerly ConvertKit) - manage subscribers, tags, custom fields and forms, subscribe an address through a form, unsubscribe a subscriber, and read the account with its plan and sending addresses.",
+  "npmPackageName": "@corsair-dev/kit",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kit.api.account.get",
+      "shortPath": "account.get",
+      "description": "The account and its user: plan, primary address, timezone and the sending addresses with their verification and DMARC status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, email?: string | null } | null"
+          },
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, plan_type?: string | null, primary_email_address?: string | null, created_at?: string | null, timezone?: { name?: string | null, friendly_name?: string | null, utc_offset?: string | null } | null, sending_addresses?: { email_address?: string | null, from_name?: string | null, status?: string | null, is_default?: boolean | null, is_verified?: boolean | null, is_dmarc_configured?: boolean | null }[] | null, plan?: { plan_type?: string | null, interval?: string | null, subscriber_limit?: number | null, on_trial?: boolean | null, trial_lapse_date?: string | null, renews_at?: string | null, cancels_at?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Create a custom field; Kit derives its `key` from the label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string",
+            "description": "The field label. Kit derives its `key` from this."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_field",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, key?: string | null, label?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.customFields.list",
+      "shortPath": "customFields.list",
+      "description": "Every custom field with the `key` a subscriber’s `fields` map uses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "The `end_cursor` of the page before, for the next page."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "The `start_cursor` of the page after, for the previous page."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000. Kit’s default is 500."
+          },
+          {
+            "key": "include_total_count",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_fields",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, key?: string | null, label?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ has_previous_page?: boolean | null, has_next_page?: boolean | null, start_cursor?: string | null, end_cursor?: string | null, per_page?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.customFields.update",
+      "shortPath": "customFields.update",
+      "description": "Change a custom field’s label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customFieldId",
+            "optional": false,
+            "type": "number",
+            "description": "The custom field ID."
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_field",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, key?: string | null, label?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "Forms by status, cursor-paged, optionally with each one’s subscriber count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "The `end_cursor` of the page before, for the next page."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "The `start_cursor` of the page after, for the previous page."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000. Kit’s default is 500."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "subscriber_count[]",
+            "description": "Also return each form’s active subscriber count."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | archived | trashed | all",
+            "description": "Defaults to `active`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forms",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, created_at?: string | null, type?: string | null, format?: string | null, embed_js?: string | null, embed_url?: string | null, archived?: boolean | null, uid?: string | null, subscriber_count?: number | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ has_previous_page?: boolean | null, has_next_page?: boolean | null, start_cursor?: string | null, end_cursor?: string | null, per_page?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.forms.subscribe",
+      "shortPath": "forms.subscribe",
+      "description": "Add an existing subscriber to a form, which applies the form’s incentive and records when they were added. Create the subscriber first",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "number",
+            "description": "The form ID."
+          },
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string",
+            "description": "An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate."
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string",
+            "description": "Where the signup came from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriber",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, email_address: string, state?: string | null, created_at?: string | null, canceled_at?: string | null, fields?: Record<string, string | null> | null, attribution?: { referrer?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, source_type?: string | null, source_name?: string | null, source_mechanism?: string | null, source_mechanism_id?: number | null } | null, location?: { city?: string | null, state?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null, timezone?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null, added_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.subscribers.create",
+      "shortPath": "subscribers.create",
+      "description": "Create a subscriber, or return the existing one for an address already on the list. Unknown custom field keys are ignored and named in `warnings`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string",
+            "description": "An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate."
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | cancelled | bounced | complained | inactive",
+            "description": "Defaults to `active`."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Custom field values keyed by the field’s `key`, such as `last_name`. An unknown key is ignored and named in `warnings`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriber",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, email_address: string, state?: string | null, created_at?: string | null, canceled_at?: string | null, fields?: Record<string, string | null> | null, attribution?: { referrer?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, source_type?: string | null, source_name?: string | null, source_mechanism?: string | null, source_mechanism_id?: number | null } | null, location?: { city?: string | null, state?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null, timezone?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Custom field keys Kit ignored because it did not recognise them."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.subscribers.get",
+      "shortPath": "subscribers.get",
+      "description": "One subscriber with their custom field values and location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberId",
+            "optional": false,
+            "type": "number",
+            "description": "The subscriber ID, from `subscribers.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriber",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, email_address: string, state?: string | null, created_at?: string | null, canceled_at?: string | null, fields?: Record<string, string | null> | null, attribution?: { referrer?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, source_type?: string | null, source_name?: string | null, source_mechanism?: string | null, source_mechanism_id?: number | null } | null, location?: { city?: string | null, state?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null, timezone?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.subscribers.list",
+      "shortPath": "subscribers.list",
+      "description": "Subscribers by state, address or date, cursor-paged, with optional attribution, tags and location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "The `end_cursor` of the page before, for the next page."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "The `start_cursor` of the page after, for the previous page."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000. Kit’s default is 500."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | cancelled | bounced | complained | inactive | all",
+            "description": "Defaults to `active`. `all` widens it to every state."
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string",
+            "description": "Only the subscriber with this exact address."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(attribution | tags | location | canceled_at)[]",
+            "description": "Embed these extra fields on each subscriber. `canceled_at` needs `status: \"cancelled\"`."
+          },
+          {
+            "key": "include_total_count",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the total number of matching subscribers."
+          },
+          {
+            "key": "slim",
+            "optional": true,
+            "type": "boolean",
+            "description": "Omit the `fields` object for a smaller, faster response."
+          },
+          {
+            "key": "sort_field",
+            "optional": true,
+            "type": "id | created_at | updated_at | cancelled_at | canceled_at | engagement__sent | engagement__opens | engagement__clicks | engagement__open_rate | engagement__click_rate",
+            "description": "Field to order by. `cancelled_at` needs `status: \"cancelled\"`. An `engagement__<metric>` sort orders by the trailing 90 days and cannot be combined with `email_address`."
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string",
+            "description": "A date, `yyyy-mm-dd`."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string",
+            "description": "A date, `yyyy-mm-dd`."
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "A date, `yyyy-mm-dd`."
+          },
+          {
+            "key": "updated_before",
+            "optional": true,
+            "type": "string",
+            "description": "A date, `yyyy-mm-dd`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, email_address: string, state?: string | null, created_at?: string | null, canceled_at?: string | null, fields?: Record<string, string | null> | null, attribution?: { referrer?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, source_type?: string | null, source_name?: string | null, source_mechanism?: string | null, source_mechanism_id?: number | null } | null, location?: { city?: string | null, state?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null, timezone?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ has_previous_page?: boolean | null, has_next_page?: boolean | null, start_cursor?: string | null, end_cursor?: string | null, per_page?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.subscribers.unsubscribe",
+      "shortPath": "subscribers.unsubscribe",
+      "description": "Unsubscribe a subscriber, which stops every future send to them; re-subscribing takes their own action, not a call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberId",
+            "optional": false,
+            "type": "number",
+            "description": "The subscriber ID, from `subscribers.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "subscriber_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.subscribers.update",
+      "shortPath": "subscribers.update",
+      "description": "Change a subscriber’s address, first name or custom field values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberId",
+            "optional": false,
+            "type": "number",
+            "description": "The subscriber ID, from `subscribers.list`."
+          },
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string",
+            "description": "An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate."
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriber",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, email_address: string, state?: string | null, created_at?: string | null, canceled_at?: string | null, fields?: Record<string, string | null> | null, attribution?: { referrer?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, source_type?: string | null, source_name?: string | null, source_mechanism?: string | null, source_mechanism_id?: number | null } | null, location?: { city?: string | null, state?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null, timezone?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Custom field keys Kit ignored because it did not recognise them."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag, or return the existing one when the name is taken",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The tag name. Kit returns the existing tag if the name is taken."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "{ id: number, name: string, created_at?: string | null, subscriber_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "Every tag, optionally with its active subscriber count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "The `end_cursor` of the page before, for the next page."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "The `start_cursor` of the page after, for the previous page."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000. Kit’s default is 500."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "subscriber_count[]",
+            "description": "Also return each tag’s active subscriber count."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ id: number, name: string, created_at?: string | null, subscriber_count?: number | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ has_previous_page?: boolean | null, has_next_page?: boolean | null, start_cursor?: string | null, end_cursor?: string | null, per_page?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.tags.tagSubscriber",
+      "shortPath": "tags.tagSubscriber",
+      "description": "Add a tag to an existing subscriber, found by email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "number",
+            "description": "The tag ID."
+          },
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string",
+            "description": "An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscriber_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.tags.untagSubscriber",
+      "shortPath": "tags.untagSubscriber",
+      "description": "Remove a tag from a subscriber, found by email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "number",
+            "description": "The tag ID."
+          },
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string",
+            "description": "An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscriber_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kit.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Rename a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "number",
+            "description": "The tag ID."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "{ id: number, name: string, created_at?: string | null, subscriber_count?: number | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
