@@ -972,7 +972,7 @@ export const ProviderDisplayNames = {
 	serpapi: 'Serpapi',
 	servicenow: 'ServiceNow',
 	sharepoint: 'SharePoint',
-	shipengine: 'ShipEngine',
+	shipengine: 'ShipStation API (formerly ShipEngine)',
 	shippo: 'Shippo',
 	slack: 'Slack',
 	slackbot: 'Slackbot',

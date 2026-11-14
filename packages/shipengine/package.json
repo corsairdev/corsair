@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
@@ -36,7 +37,13 @@
     "shipengine",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corsairdev/corsair.git",
+    "directory": "packages/shipengine"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/shipengine",
   "license": "Apache-2.0",
   "files": [
     "dist"

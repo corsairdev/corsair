@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -3168,19 +3175,19 @@
                 ]
               },
               {
-                "group": "Raisely",
-                "pages": [
-                  "plugins/raisely/overview",
-                  "plugins/raisely/api",
-                  "plugins/raisely/database"
-                ]
-              },
-              {
                 "group": "Ragic",
                 "pages": [
                   "plugins/ragic/overview",
                   "plugins/ragic/api",
                   "plugins/ragic/database"
+                ]
+              },
+              {
+                "group": "Raisely",
+                "pages": [
+                  "plugins/raisely/overview",
+                  "plugins/raisely/api",
+                  "plugins/raisely/database"
                 ]
               },
               {
@@ -3412,11 +3419,27 @@
                 ]
               },
               {
+                "group": "RiteKit",
+                "pages": [
+                  "plugins/ritekit/overview",
+                  "plugins/ritekit/api",
+                  "plugins/ritekit/database"
+                ]
+              },
+              {
                 "group": "Roam HQ",
                 "pages": [
                   "plugins/roam/overview",
                   "plugins/roam/api",
                   "plugins/roam/database"
+                ]
+              },
+              {
+                "group": "Roboflow",
+                "pages": [
+                  "plugins/roboflow/overview",
+                  "plugins/roboflow/api",
+                  "plugins/roboflow/database"
                 ]
               },
               {
@@ -3428,22 +3451,6 @@
                 ]
               },
               {
-                "group": "Rollbar",
-                "pages": [
-                  "plugins/rollbar/overview",
-                  "plugins/rollbar/api",
-                  "plugins/rollbar/database"
-                ]
-              },
-              {
-                "group": "RiteKit",
-                "pages": [
-                  "plugins/ritekit/overview",
-                  "plugins/ritekit/api",
-                  "plugins/ritekit/database"
-                ]
-              },
-              {
                 "group": "RocketReach",
                 "pages": [
                   "plugins/rocketreach/overview",
@@ -3452,11 +3459,11 @@
                 ]
               },
               {
-                "group": "Roboflow",
+                "group": "Rollbar",
                 "pages": [
-                  "plugins/roboflow/overview",
-                  "plugins/roboflow/api",
-                  "plugins/roboflow/database"
+                  "plugins/rollbar/overview",
+                  "plugins/rollbar/api",
+                  "plugins/rollbar/database"
                 ]
               },
               {
@@ -3656,6 +3663,14 @@
                   "plugins/shippo/api",
                   "plugins/shippo/database",
                   "plugins/shippo/webhooks"
+                ]
+              },
+              {
+                "group": "ShipStation API (formerly ShipEngine)",
+                "pages": [
+                  "plugins/shipengine/overview",
+                  "plugins/shipengine/api",
+                  "plugins/shipengine/database"
                 ]
               },
               {
@@ -4250,19 +4265,19 @@
                 ]
               },
               {
-                "group": "Webex",
-                "pages": [
-                  "plugins/webex/overview",
-                  "plugins/webex/api",
-                  "plugins/webex/database"
-                ]
-              },
-              {
                 "group": "Web Scraper Cloud",
                 "pages": [
                   "plugins/webscraperio/overview",
                   "plugins/webscraperio/api",
                   "plugins/webscraperio/database"
+                ]
+              },
+              {
+                "group": "Webex",
+                "pages": [
+                  "plugins/webex/overview",
+                  "plugins/webex/api",
+                  "plugins/webex/database"
                 ]
               },
               {
@@ -4570,7 +4585,9 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": ["changelog"]
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       }

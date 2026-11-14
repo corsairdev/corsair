@@ -1,0 +1,129 @@
+---
+title: "ShipStation API (formerly ShipEngine) plugin"
+sidebarTitle: "Overview"
+description: "Access the ShipEngine REST API, now branded ShipStation API, with strict request and response validation for shipping operations."
+---
+
+Use **ShipStation API (formerly ShipEngine)** through Corsair: one client, typed API calls.
+
+ShipEngine is now branded ShipStation API; the provider explicitly states the ShipEngine endpoints remain unchanged. This Corsair plugin keeps the shipengine slug. Store a server-side API key in the tenant key store (API-Key header), and choose apiRegion eu only for accounts using the official EU service host.
+
+**What you get:**
+
+- 92 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/shipengine better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/shipengine better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/shipengine better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/shipengine better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { shipengine } from '@corsair-dev/shipengine';
+
+export const corsair = createCorsair({
+	plugins: [
+		shipengine(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the ShipStation API (formerly ShipEngine) API key before the first call: `pnpm corsair setup --plugin=shipengine --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+shipengine()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'shipengine',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.getAccountSettingsImagesById`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.shipengine.api.account.getAccountSettingsImagesById({});
+```
+
+
+**`account.createAccountImage`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.shipengine.api.account.createAccountImage({});
+```
+
+
+See the full list on the [API](/plugins/shipengine/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/shipengine/api">
+    Every `shipengine.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

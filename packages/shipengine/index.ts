@@ -1,42 +1,38 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { ShipEngineEndpointInputs, ShipEngineEndpointOutputs } from './endpoints/types';
-import { ShipEngineEndpointInputSchemas, ShipEngineEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import type { ShipEngineRegion } from './client';
+import type { ShipEngineNestedEndpoints } from './endpoints';
+import { ShipEngine } from './endpoints';
+import {
+	shipEngineEndpointMeta,
+	shipEngineEndpointSchemas,
+} from './endpoints/config';
 import type {
-	ShipEngineWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { ShipEngineSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	ShipEngineEndpointInputs,
+	ShipEngineEndpointOutputs,
+	ShipEngineOperationName,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchShipEngineTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveShipEngineOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { ShipEngineSchema } from './schema';
 
 export type ShipEnginePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
+	apiRegion?: ShipEngineRegion;
 	hooks?: InternalShipEnginePlugin['hooks'];
-	webhookHooks?: InternalShipEnginePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof shipEngineEndpointsNested>;
+	permissions?: PluginPermissionsConfig<ShipEngineNestedEndpoints>;
 };
 
 export type ShipEngineContext = CorsairPluginContext<
@@ -44,159 +40,79 @@ export type ShipEngineContext = CorsairPluginContext<
 	ShipEnginePluginOptions
 >;
 
-export type ShipEngineKeyBuilderContext = KeyBuilderContext<ShipEnginePluginOptions>;
+export type ShipEngineKeyBuilderContext =
+	KeyBuilderContext<ShipEnginePluginOptions>;
+export type ShipEngineBoundEndpoints = BindEndpoints<ShipEngineNestedEndpoints>;
+export type ShipEngineEndpoints = ShipEngineNestedEndpoints;
 
-export type ShipEngineBoundEndpoints = BindEndpoints<typeof shipEngineEndpointsNested>;
-
-type ShipEngineEndpoint<
-	K extends keyof ShipEngineEndpointOutputs,
-> = CorsairEndpoint<
-	ShipEngineContext,
-	ShipEngineEndpointInputs[K],
-	ShipEngineEndpointOutputs[K]
->;
-
-export type ShipEngineEndpoints = {
-	exampleGet: ShipEngineEndpoint<'exampleGet'>;
-};
-
-type ShipEngineWebhook<
-	K extends keyof ShipEngineWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ShipEngineContext, TEvent, ShipEngineWebhookOutputs[K]>;
-
-export type ShipEngineWebhooks = {
-	example: ShipEngineWebhook<'example', ExampleEvent>;
-};
-
-export type ShipEngineBoundWebhooks = BindWebhooks<ShipEngineWebhooks>;
-
-const shipEngineEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const shipEngineWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
-
-export const shipEngineEndpointSchemas = {
-	'example.get': {
-		input: ShipEngineEndpointInputSchemas.exampleGet,
-		output: ShipEngineEndpointOutputSchemas.exampleGet,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof shipEngineEndpointsNested>;
-
-const shipEngineWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof shipEngineWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const shipEngineEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof shipEngineEndpointsNested>;
+const defaultAuthType: AuthTypes = 'api_key';
 
 export const shipEngineAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseShipEnginePlugin<T extends ShipEnginePluginOptions> = CorsairPlugin<
-	'shipengine',
-	typeof ShipEngineSchema,
-	typeof shipEngineEndpointsNested,
-	typeof shipEngineWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseShipEnginePlugin<T extends ShipEnginePluginOptions> =
+	CorsairPlugin<
+		'shipengine',
+		typeof ShipEngineSchema,
+		typeof ShipEngine,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalShipEnginePlugin = BaseShipEnginePlugin<ShipEnginePluginOptions>;
-
+export type InternalShipEnginePlugin =
+	BaseShipEnginePlugin<ShipEnginePluginOptions>;
 export type ExternalShipEnginePlugin<T extends ShipEnginePluginOptions> =
 	BaseShipEnginePlugin<T>;
 
+const endpointMeta =
+	shipEngineEndpointMeta satisfies RequiredPluginEndpointMeta<
+		typeof ShipEngine
+	>;
+
 export function shipengine<const T extends ShipEnginePluginOptions>(
-	incomingOptions: ShipEnginePluginOptions & T = {} as ShipEnginePluginOptions & T,
+	incomingOptions: ShipEnginePluginOptions & T = {} as ShipEnginePluginOptions &
+		T,
 ): ExternalShipEnginePlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
+		apiRegion: incomingOptions.apiRegion ?? 'us',
 	};
 	return {
 		id: 'shipengine',
 		authConfig: shipEngineAuthConfig,
 		schema: ShipEngineSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
-		endpoints: shipEngineEndpointsNested,
-		webhooks: shipEngineWebhooksNested,
-		endpointMeta: shipEngineEndpointMeta,
+		endpoints: ShipEngine,
+		webhooks: {},
+		endpointMeta,
 		endpointSchemas: shipEngineEndpointSchemas,
-		webhookSchemas: shipEngineWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-shipengine-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchShipEngineTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveShipEngineOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ShipEngineKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
+			if (source !== 'endpoint') return '';
+			if (options.key !== undefined) {
+				if (!options.key) throw new AuthMissingError('shipengine', 'api_key');
 				return options.key;
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			if (!ctx.keys) throw new AuthMissingError('shipengine', 'api_key');
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey) throw new AuthMissingError('shipengine', 'api_key');
+			return apiKey;
 		},
 	} satisfies InternalShipEnginePlugin;
 }
 
 export type {
-	ExampleEvent,
-	ShipEngineWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	ShipEngineEndpointInputs,
 	ShipEngineEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
-} from './endpoints/types';
+	ShipEngineOperationName,
+	ShipEngineRegion,
+};
