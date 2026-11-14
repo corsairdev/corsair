@@ -1,0 +1,864 @@
+---
+title: "Memberstack API reference"
+sidebarTitle: "API"
+description: "API reference for the Memberstack plugin in Corsair: every `memberstack.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Members
+
+### addPlan
+
+`members.addPlan`
+
+Add a free plan to a member
+
+**Risk:** `write`
+
+```ts
+await corsair.memberstack.api.members.addPlan({ id: 'mem_example', planId: 'pln_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `planId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### create
+
+`members.create`
+
+Create a member with optional free plans and custom data
+
+**Risk:** `write`
+
+```ts
+await corsair.memberstack.api.members.create({ email: 'member@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `customFields` | `Record<string, any>` | No | — |
+| `metaData` | `Record<string, any>` | No | — |
+| `json` | `Record<string, any>` | No | — |
+| `loginRedirect` | `string` | No | — |
+| `password` | `string` | No | — |
+| `plans` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="plans full type">
+
+```ts
+{
+  planId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  auth?: {
+    email?: string
+  },
+  createdAt?: string,
+  lastLogin?: string | null,
+  verified?: boolean,
+  customFields?: Record<string, any> | null,
+  metaData?: Record<string, any> | null,
+  json?: Record<string, any> | null,
+  loginRedirect?: string | null,
+  stripeCustomerId?: string | null,
+  profileImage?: string | null,
+  permissions?: string[],
+  planConnections?: {
+    id?: string,
+    active?: boolean,
+    status?: string,
+    planId?: string,
+    planName?: string,
+    type?: string,
+    payment?: Record<string, any> | null
+  }[],
+  teams?: {
+    id: string,
+    role: string,
+    createdAt: string,
+    inviteToken: string,
+    currentTeamMemberCount: number,
+    maxTeamMembers: number | null,
+    plan: {
+      id: string,
+      name: string,
+      teamAccountInviteSignupLink: string,
+      teamAccountUpgradeLink: string
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`members.delete`
+
+Permanently delete a member and optionally cancel subscriptions
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.memberstack.api.members.delete({ id: 'mem_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleteStripeCustomer` | `boolean` | No | — |
+| `cancelStripeSubscriptions` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`members.get`
+
+Get a member by ID or email; returns null when absent
+
+**Risk:** `read`
+
+```ts
+await corsair.memberstack.api.members.get({ id_or_email: 'mem_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id_or_email` | `string` | Yes | — |
+| `include` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  auth?: {
+    email?: string
+  },
+  createdAt?: string,
+  lastLogin?: string | null,
+  verified?: boolean,
+  customFields?: Record<string, any> | null,
+  metaData?: Record<string, any> | null,
+  json?: Record<string, any> | null,
+  loginRedirect?: string | null,
+  stripeCustomerId?: string | null,
+  profileImage?: string | null,
+  permissions?: string[],
+  planConnections?: {
+    id?: string,
+    active?: boolean,
+    status?: string,
+    planId?: string,
+    planName?: string,
+    type?: string,
+    payment?: Record<string, any> | null
+  }[],
+  teams?: {
+    id: string,
+    role: string,
+    createdAt: string,
+    inviteToken: string,
+    currentTeamMemberCount: number,
+    maxTeamMembers: number | null,
+    plan: {
+      id: string,
+      name: string,
+      teamAccountInviteSignupLink: string,
+      teamAccountUpgradeLink: string
+    } | null
+  }[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`members.list`
+
+List members with cursor pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.memberstack.api.members.list({ limit: 25, after: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `number` | No | — |
+| `order` | `ASC \| DESC` | No | — |
+| `first` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `includeJSON` | `true` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+| `endCursor` | `number \| null` | Yes | — |
+| `hasNextPage` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  auth?: {
+    email?: string
+  },
+  createdAt?: string,
+  lastLogin?: string | null,
+  verified?: boolean,
+  customFields?: Record<string, any> | null,
+  metaData?: Record<string, any> | null,
+  json?: Record<string, any> | null,
+  loginRedirect?: string | null,
+  stripeCustomerId?: string | null,
+  profileImage?: string | null,
+  permissions?: string[],
+  planConnections?: {
+    id?: string,
+    active?: boolean,
+    status?: string,
+    planId?: string,
+    planName?: string,
+    type?: string,
+    payment?: Record<string, any> | null
+  }[],
+  teams?: {
+    id: string,
+    role: string,
+    createdAt: string,
+    inviteToken: string,
+    currentTeamMemberCount: number,
+    maxTeamMembers: number | null,
+    plan: {
+      id: string,
+      name: string,
+      teamAccountInviteSignupLink: string,
+      teamAccountUpgradeLink: string
+    } | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removePlan
+
+`members.removePlan`
+
+Remove a free plan and revoke its access
+
+**Risk:** `write`
+
+```ts
+await corsair.memberstack.api.members.removePlan({ id: 'mem_example', planId: 'pln_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `planId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`members.update`
+
+Update a member; JSON is replaced, not merged
+
+**Risk:** `write`
+
+```ts
+await corsair.memberstack.api.members.update({ id: 'mem_example', customFields: { city: 'Paris' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `customFields` | `Record<string, any>` | No | — |
+| `metaData` | `Record<string, any>` | No | — |
+| `json` | `Record<string, any>` | No | — |
+| `loginRedirect` | `string` | No | — |
+| `verified` | `boolean` | No | — |
+| `profileImage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  auth?: {
+    email?: string
+  },
+  createdAt?: string,
+  lastLogin?: string | null,
+  verified?: boolean,
+  customFields?: Record<string, any> | null,
+  metaData?: Record<string, any> | null,
+  json?: Record<string, any> | null,
+  loginRedirect?: string | null,
+  stripeCustomerId?: string | null,
+  profileImage?: string | null,
+  permissions?: string[],
+  planConnections?: {
+    id?: string,
+    active?: boolean,
+    status?: string,
+    planId?: string,
+    planName?: string,
+    type?: string,
+    payment?: Record<string, any> | null
+  }[],
+  teams?: {
+    id: string,
+    role: string,
+    createdAt: string,
+    inviteToken: string,
+    currentTeamMemberCount: number,
+    maxTeamMembers: number | null,
+    plan: {
+      id: string,
+      name: string,
+      teamAccountInviteSignupLink: string,
+      teamAccountUpgradeLink: string
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verifyToken
+
+`members.verifyToken`
+
+Verify a member JWT and return its decoded payload
+
+**Risk:** `read`
+
+```ts
+await corsair.memberstack.api.members.verifyToken({ token: 'member-jwt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  iat: number,
+  exp: number,
+  aud: string,
+  iss: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### create
+
+`records.create`
+
+Create a data table record
+
+**Risk:** `write`
+
+```ts
+await corsair.memberstack.api.records.create({ tableKey: 'products', data: { name: 'Widget' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableKey` | `string` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `memberId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tableKey?: string,
+  data: Record<string, any>,
+  createdAt: string,
+  updatedAt: string,
+  internalOrder: number,
+  createdByMemberId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Permanently delete a data table record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.memberstack.api.records.delete({ tableKey: 'products', recordId: 'record_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableKey` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tableKey?: string,
+  data: Record<string, any>,
+  createdAt: string,
+  updatedAt: string,
+  internalOrder: number,
+  createdByMemberId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`records.query`
+
+Query data records with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.memberstack.api.records.query({ tableKey: 'products', query: { findMany: { take: 20, after: 123, orderBy: { internalOrder: 'asc' } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableKey` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  findMany: {
+    where?: Record<string, any>,
+    include?: Record<string, any>,
+    select?: Record<string, any>,
+    orderBy?: Record<string, any> | Record<string, any>[],
+    take?: number,
+    skip?: number,
+    after?: string | number,
+    _count?: boolean
+  },
+  findUnique?: never
+} | {
+  findUnique: {
+    where: {
+      id: string
+    },
+    include?: Record<string, any>,
+    select?: Record<string, any>
+  },
+  findMany?: never
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  records: {
+    id: string,
+    tableKey?: string,
+    data: Record<string, any>,
+    createdAt: string,
+    updatedAt: string,
+    internalOrder: number,
+    createdByMemberId?: string | null
+  }[],
+  pagination: {
+    hasMore: boolean,
+    limit: number,
+    endCursor: number | string | null
+  }
+} | {
+  record: {
+    id: string,
+    tableKey?: string,
+    data: Record<string, any>,
+    createdAt: string,
+    updatedAt: string,
+    internalOrder: number,
+    createdByMemberId?: string | null
+  }
+} | {
+  _count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update fields on a data table record
+
+**Risk:** `write`
+
+```ts
+await corsair.memberstack.api.records.update({ tableKey: 'products', recordId: 'record_example', data: { name: 'Updated' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableKey` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tableKey?: string,
+  data: Record<string, any>,
+  createdAt: string,
+  updatedAt: string,
+  internalOrder: number,
+  createdByMemberId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tables
+
+### get
+
+`tables.get`
+
+Get a data table by key or ID
+
+**Risk:** `read`
+
+```ts
+await corsair.memberstack.api.tables.get({ tableKey: 'products' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  key: string,
+  name: string,
+  createRule: string,
+  readRule: string,
+  updateRule: string,
+  deleteRule: string,
+  createdAt: string,
+  updatedAt: string,
+  fields: {
+    id: string,
+    key: string,
+    name: string,
+    type: string,
+    required: boolean,
+    defaultValue: any,
+    tableOrder: number,
+    referencedTableId: string | null,
+    referencedTable?: {
+      id: string,
+      key: string,
+      name: string
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tables.list`
+
+List data tables and their fields
+
+**Risk:** `read`
+
+```ts
+await corsair.memberstack.api.tables.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tables: {
+    id: string,
+    key: string,
+    name: string,
+    createRule: string,
+    readRule: string,
+    updateRule: string,
+    deleteRule: string,
+    createdAt: string,
+    updatedAt: string,
+    fields: {
+      id: string,
+      key: string,
+      name: string,
+      type: string,
+      required: boolean,
+      defaultValue: any,
+      tableOrder: number,
+      referencedTableId: string | null,
+      referencedTable?: {
+        id: string,
+        key: string,
+        name: string
+      } | null
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
