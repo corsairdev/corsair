@@ -1,0 +1,123 @@
+displayName: Kanbanize
+description: Kanban boards with Kanbanize (now Businessmap) - manage boards, workflows, columns and lanes, create and move cards with their custom fields, subtasks and comments, and read tags, users and the account's request limits.
+domain: kanbanize.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Businessmap under My Account, API, then Show API key. It acts as the user who owns it, with exactly their board permissions. Generating a new key deletes the current one permanently.
+
+  Two things are needed before the first call:
+
+  - **The account subdomain.** Every account is served from its own host: `acme` for `acme.kanbanize.com`. Connect delivers it as the `subdomain` credential; the plugin option of the same name overrides it. A call with neither throws before any request is sent.
+  - **A board's structure.** Cards live in a column on a lane, inside a workflow. `workflows.list`, `columns.list` and `lanes.list` read the IDs a card needs; a board with no workflow cannot take cards.
+
+  Things to know before you call:
+
+  - **Booleans are `0` and `1`.** Businessmap validates `is_archived`, `is_enabled`, `is_blocked` and friends as integers, so the plugin takes `0` or `1` rather than `true` or `false`. Passing a boolean is rejected before the request.
+  - **A column is a main column or a subcolumn.** A main column takes `workflow_id` and a `section` (`1` backlog, `2` requested, `3` progress, `4` done). A subcolumn takes `parent_column_id` and no section. Sending both, or neither, is rejected locally.
+  - **A lane sits on a workflow or under another lane.** Same rule: `workflow_id` or `parent_lane_id`, never both.
+  - **Lists are comma-joined.** `card_ids`, `board_ids` and the rest travel as one comma-separated value, which is how the API documents them. Pass an array and the plugin joins it.
+  - **Paging.** Only `cards.list` pages, with `page` and `per_page` (200 by default, 1000 at most). It returns `next_page`, which is null on the last page.
+  - **Deletes answer 204.** `boards.delete`, `workflows.delete`, `columns.delete`, `lanes.delete`, `cards.delete`, `subtasks.delete` and `webhooks.delete` return `{ success: true }` once the API answers, and throw on a 404 or 403.
+  - **Rate limits.** The account has an hourly and a minutely ceiling, 600 and 30 by default; read them with `limits.get`. A limit answer carries the seconds to wait, which the plugin turns into the retry delay, and a bare 429 from a gateway is treated the same. Only reads are replayed after a 5xx, because a retried card create would leave a duplicate.
+  - **Webhooks.** `webhooks.create` registers a URL with Businessmap, which then posts that board's events to it. The plugin does not handle the deliveries itself; point the URL at your own endpoint.
+examples:
+  read:
+    path: cards.list
+    title: List the cards on a board
+    args:
+      board_ids:
+        - 1075
+      expand:
+        - custom_fields
+  write:
+    path: cards.create
+    title: Create a card in a column
+    args:
+      title: Ship the pricing page
+      column_id: 15876
+      lane_id: 9838
+      description: The page is written; it needs the new plan table.
+apiExamples:
+  boards.list:
+    call: "{ workspace_ids: [3], is_archived: 0, fields: ['board_id', 'name'] }"
+  boards.get:
+    call: "{ board_id: 1075 }"
+  boards.create:
+    call: "{ workspace_id: 3, name: 'Product delivery', description: 'Everything the team ships', type: 1 }"
+  boards.update:
+    call: "{ board_id: 1075, name: 'Delivery', is_archived: 0 }"
+  boards.delete:
+    call: "{ board_id: 1075 }"
+  workflows.list:
+    call: "{ board_id: 1075 }"
+  workflows.get:
+    call: "{ board_id: 1075, workflow_id: 1695 }"
+  workflows.create:
+    call: "{ board_id: 1075, type: 0, name: 'Software development', position: 0 }"
+  workflows.update:
+    call: "{ board_id: 1075, workflow_id: 1695, name: 'Delivery', is_enabled: 1 }"
+  workflows.delete:
+    call: "{ board_id: 1075, workflow_id: 1695 }"
+  columns.list:
+    call: "{ board_id: 1075 }"
+  columns.get:
+    call: "{ board_id: 1075, column_id: 15876 }"
+  columns.create:
+    call: "{ board_id: 1075, name: 'In progress', position: 1, workflow_id: 1695, section: 3 }"
+  columns.update:
+    call: "{ board_id: 1075, column_id: 15876, name: 'Doing', limit: 8 }"
+  columns.delete:
+    call: "{ board_id: 1075, column_id: 15876 }"
+  lanes.list:
+    call: "{ board_id: 1075 }"
+  lanes.get:
+    call: "{ board_id: 1075, lane_id: 9838 }"
+  lanes.create:
+    call: "{ board_id: 1075, name: 'Expedite', position: 0, workflow_id: 1695 }"
+  lanes.update:
+    call: "{ board_id: 1075, lane_id: 9838, name: 'Urgent' }"
+  lanes.delete:
+    call: "{ board_id: 1075, lane_id: 9838 }"
+  cards.list:
+    call: "{ board_ids: [1075], state: 'active', page: 1, per_page: 50, expand: ['custom_fields'] }"
+  cards.get:
+    call: "{ card_id: 539522 }"
+  cards.create:
+    call: "{ title: 'Ship the pricing page', column_id: 15876, lane_id: 9838, owner_user_id: 12, priority: 2, tag_ids_to_add: [31] }"
+  cards.update:
+    call: "{ card_id: 539522, column_id: 15877, priority: 1, tag_ids_to_add: [33] }"
+  cards.delete:
+    call: "{ card_id: 539522 }"
+  comments.list:
+    call: "{ card_id: 539522 }"
+  comments.create:
+    call: "{ card_id: 539522, text: 'Blocked on the plan table copy.' }"
+  subtasks.list:
+    call: "{ card_id: 539522 }"
+  subtasks.create:
+    call: "{ card_id: 539522, description: 'Get the plan table from finance', owner_user_id: 12 }"
+  subtasks.update:
+    call: "{ card_id: 539522, subtask_id: 4401, is_finished: 1 }"
+  subtasks.delete:
+    call: "{ card_id: 539522, subtask_id: 4401 }"
+  tags.list: {}
+  users.list:
+    call: "{ fields: ['user_id', 'email', 'realname'] }"
+  me.get: {}
+  limits.get: {}
+  webhooks.list: {}
+  webhooks.create:
+    call: "{ url: 'https://corsair.example/hooks/kanbanize', board_id: 1075 }"
+  webhooks.update:
+    call: "{ webhook_id: 77, is_enabled: 0 }"
+  webhooks.delete:
+    call: "{ webhook_id: 77 }"
+apiNotes:
+  boards.list: 'A list such as `board_ids` goes as one comma-separated value, which is how the API documents it.'
+  cards.list: 'The only paginated read. `next_page` is null on the last page; `per_page` defaults to 200 and tops out at 1000.'
+  cards.create: '`title`, `column_id` and `lane_id` are required: Businessmap places every new card in a column and a lane. Businessmap answers with a one-card array; the plugin returns that card as the `data` object, the same shape `cards.get` returns.'
+  cards.update: 'Moving into a column whose WIP limit is reached answers 409 with code `L001`, which is not retried.'
+  columns.create: 'A main column takes `workflow_id` and `section`; a subcolumn takes `parent_column_id` and no section.'
+  lanes.create: 'A lane sits on a `workflow_id` or under a `parent_lane_id`, never both.'
+  webhooks.create: 'Registers a URL with Businessmap. The plugin does not handle the deliveries itself.'
+  workflows.create: 'Type `0` is cards, `1` is initiative, `2` is timeline.'
