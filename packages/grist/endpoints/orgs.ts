@@ -5,7 +5,7 @@ import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['orgs.list'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['orgs.list'].parse(input);
-	const response = await makeGristRequest<unknown>('/orgs', ctx.key, {
+	const response = await makeGristRequest('/orgs', ctx.key, {
 		method: 'GET',
 		baseUrl: ctx.options?.baseUrl,
 	});
@@ -22,14 +22,10 @@ export const list: GristEndpoints['orgs.list'] = async (ctx, input) => {
 export const get: GristEndpoints['orgs.get'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['orgs.get'].parse(input);
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
-	const response = await makeGristRequest<unknown>(
-		`/orgs/${orgIdStr}`,
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/orgs/${orgIdStr}`, ctx.key, {
+		method: 'GET',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['orgs.get'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -43,15 +39,11 @@ export const get: GristEndpoints['orgs.get'] = async (ctx, input) => {
 export const update: GristEndpoints['orgs.update'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['orgs.update'].parse(input);
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
-	const response = await makeGristRequest<unknown>(
-		`/orgs/${orgIdStr}`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: parsedInput.name !== undefined ? { name: parsedInput.name } : {},
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/orgs/${orgIdStr}`, ctx.key, {
+		method: 'PATCH',
+		body: parsedInput.name !== undefined ? { name: parsedInput.name } : {},
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['orgs.update'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -66,7 +58,7 @@ export const deleteOrg: GristEndpoints['orgs.delete'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['orgs.delete'].parse(input);
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
 	const nameStr = encodeURIComponent(parsedInput.name);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/orgs/${orgIdStr}/${nameStr}`,
 		ctx.key,
 		{
@@ -90,14 +82,10 @@ export const listAccess: GristEndpoints['orgs.listAccess'] = async (
 ) => {
 	const parsedInput = GristEndpointInputSchemas['orgs.listAccess'].parse(input);
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
-	const response = await makeGristRequest<unknown>(
-		`/orgs/${orgIdStr}/access`,
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/orgs/${orgIdStr}/access`, ctx.key, {
+		method: 'GET',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['orgs.listAccess'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -115,15 +103,11 @@ export const modifyAccess: GristEndpoints['orgs.modifyAccess'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['orgs.modifyAccess'].parse(input);
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
-	const response = await makeGristRequest<unknown>(
-		`/orgs/${orgIdStr}/access`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: { users: parsedInput.users },
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/orgs/${orgIdStr}/access`, ctx.key, {
+		method: 'PATCH',
+		body: { users: parsedInput.users },
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed =
 		GristEndpointOutputSchemas['orgs.modifyAccess'].parse(response);
 	await logEventFromContext(
@@ -138,14 +122,10 @@ export const modifyAccess: GristEndpoints['orgs.modifyAccess'] = async (
 export const getUsage: GristEndpoints['orgs.getUsage'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['orgs.getUsage'].parse(input);
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
-	const response = await makeGristRequest<unknown>(
-		`/orgs/${orgIdStr}/usage`,
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/orgs/${orgIdStr}/usage`, ctx.key, {
+		method: 'GET',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['orgs.getUsage'].parse(response);
 	await logEventFromContext(
 		ctx,

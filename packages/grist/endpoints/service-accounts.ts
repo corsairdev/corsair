@@ -8,14 +8,10 @@ export const list: GristEndpoints['serviceAccounts.list'] = async (
 	input,
 ) => {
 	GristEndpointInputSchemas['serviceAccounts.list'].parse(input);
-	const response = await makeGristRequest<unknown>(
-		'/service-accounts',
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest('/service-accounts', ctx.key, {
+		method: 'GET',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed =
 		GristEndpointOutputSchemas['serviceAccounts.list'].parse(response);
 	await logEventFromContext(
@@ -33,20 +29,14 @@ export const create: GristEndpoints['serviceAccounts.create'] = async (
 ) => {
 	const parsedInput =
 		GristEndpointInputSchemas['serviceAccounts.create'].parse(input);
-	const response = await makeGristRequest<unknown>(
-		'/service-accounts',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				name: parsedInput.name,
-				...(parsedInput.label !== undefined
-					? { label: parsedInput.label }
-					: {}),
-			},
-			baseUrl: ctx.options?.baseUrl,
+	const response = await makeGristRequest('/service-accounts', ctx.key, {
+		method: 'POST',
+		body: {
+			name: parsedInput.name,
+			...(parsedInput.label !== undefined ? { label: parsedInput.label } : {}),
 		},
-	);
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed =
 		GristEndpointOutputSchemas['serviceAccounts.create'].parse(response);
 	// Never log API key
@@ -66,7 +56,7 @@ export const get: GristEndpoints['serviceAccounts.get'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['serviceAccounts.get'].parse(input);
 	const saIdStr = encodeURIComponent(String(parsedInput.saId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/service-accounts/${saIdStr}`,
 		ctx.key,
 		{
@@ -92,7 +82,7 @@ export const update: GristEndpoints['serviceAccounts.update'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['serviceAccounts.update'].parse(input);
 	const saIdStr = encodeURIComponent(String(parsedInput.saId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/service-accounts/${saIdStr}`,
 		ctx.key,
 		{
@@ -122,7 +112,7 @@ export const deleteServiceAccount: GristEndpoints['serviceAccounts.delete'] =
 		const parsedInput =
 			GristEndpointInputSchemas['serviceAccounts.delete'].parse(input);
 		const saIdStr = encodeURIComponent(String(parsedInput.saId));
-		const response = await makeGristRequest<unknown>(
+		const response = await makeGristRequest(
 			`/service-accounts/${saIdStr}`,
 			ctx.key,
 			{
@@ -148,7 +138,7 @@ export const regenerateApiKey: GristEndpoints['serviceAccounts.regenerateApiKey'
 				input,
 			);
 		const saIdStr = encodeURIComponent(String(parsedInput.saId));
-		const response = await makeGristRequest<unknown>(
+		const response = await makeGristRequest(
 			`/service-accounts/${saIdStr}/apikey`,
 			ctx.key,
 			{
@@ -175,7 +165,7 @@ export const deleteApiKey: GristEndpoints['serviceAccounts.deleteApiKey'] =
 		const parsedInput =
 			GristEndpointInputSchemas['serviceAccounts.deleteApiKey'].parse(input);
 		const saIdStr = encodeURIComponent(String(parsedInput.saId));
-		const response = await makeGristRequest<unknown>(
+		const response = await makeGristRequest(
 			`/service-accounts/${saIdStr}/apikey`,
 			ctx.key,
 			{

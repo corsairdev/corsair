@@ -76,7 +76,8 @@ export function redactValue(value: unknown, secrets: string[]): unknown {
 	return value;
 }
 
-export async function makeGristRequest<T>(
+// unknown because HTTP response payload must be validated by callers via Zod schema before use
+export async function makeGristRequest<T = unknown>(
 	endpoint: string,
 	apiKey?: string,
 	options: {

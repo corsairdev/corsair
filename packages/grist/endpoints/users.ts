@@ -6,7 +6,7 @@ import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 export const disable: GristEndpoints['users.disable'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['users.disable'].parse(input);
 	const userIdStr = encodeURIComponent(String(parsedInput.userId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/users/${userIdStr}/disable`,
 		ctx.key,
 		{
@@ -27,7 +27,7 @@ export const disable: GristEndpoints['users.disable'] = async (ctx, input) => {
 export const enable: GristEndpoints['users.enable'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['users.enable'].parse(input);
 	const userIdStr = encodeURIComponent(String(parsedInput.userId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/users/${userIdStr}/enable`,
 		ctx.key,
 		{
@@ -51,14 +51,10 @@ export const deleteUser: GristEndpoints['users.delete'] = async (
 ) => {
 	const parsedInput = GristEndpointInputSchemas['users.delete'].parse(input);
 	const userIdStr = encodeURIComponent(String(parsedInput.userId));
-	const response = await makeGristRequest<unknown>(
-		`/users/${userIdStr}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/users/${userIdStr}`, ctx.key, {
+		method: 'DELETE',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['users.delete'].parse(response);
 	await logEventFromContext(
 		ctx,

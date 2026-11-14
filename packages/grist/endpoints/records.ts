@@ -15,7 +15,7 @@ export const list: GristEndpoints['records.list'] = async (ctx, input) => {
 	if (parsedInput.cellFormat !== undefined)
 		query.cellFormat = parsedInput.cellFormat;
 
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/records`,
 		ctx.key,
 		{
@@ -45,7 +45,7 @@ export const add: GristEndpoints['records.add'] = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (parsedInput.noparse !== undefined) query.noparse = parsedInput.noparse;
 
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/records`,
 		ctx.key,
 		{
@@ -76,7 +76,7 @@ export const update: GristEndpoints['records.update'] = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (parsedInput.noparse !== undefined) query.noparse = parsedInput.noparse;
 
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/records`,
 		ctx.key,
 		{
@@ -115,7 +115,7 @@ export const replace: GristEndpoints['records.replace'] = async (
 	if (parsedInput.allow_empty_require !== undefined)
 		query.allow_empty_require = parsedInput.allow_empty_require;
 
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/records`,
 		ctx.key,
 		{
@@ -146,7 +146,7 @@ export const deleteRecords: GristEndpoints['records.delete'] = async (
 	const parsedInput = GristEndpointInputSchemas['records.delete'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const tableIdStr = encodeURIComponent(parsedInput.tableId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/records/delete`,
 		ctx.key,
 		{

@@ -5,7 +5,7 @@ import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['widgets.list'] = async (ctx, input) => {
 	GristEndpointInputSchemas['widgets.list'].parse(input);
-	const response = await makeGristRequest<unknown>('/widgets', ctx.key, {
+	const response = await makeGristRequest('/widgets', ctx.key, {
 		method: 'GET',
 		baseUrl: ctx.options?.baseUrl,
 	});

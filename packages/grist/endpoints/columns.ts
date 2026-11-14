@@ -7,7 +7,7 @@ export const list: GristEndpoints['columns.list'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['columns.list'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const tableIdStr = encodeURIComponent(parsedInput.tableId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/columns`,
 		ctx.key,
 		{
@@ -33,7 +33,7 @@ export const add: GristEndpoints['columns.add'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['columns.add'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const tableIdStr = encodeURIComponent(parsedInput.tableId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/columns`,
 		ctx.key,
 		{
@@ -60,7 +60,7 @@ export const update: GristEndpoints['columns.update'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['columns.update'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const tableIdStr = encodeURIComponent(parsedInput.tableId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/columns`,
 		ctx.key,
 		{
@@ -90,7 +90,7 @@ export const replace: GristEndpoints['columns.replace'] = async (
 	const parsedInput = GristEndpointInputSchemas['columns.replace'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const tableIdStr = encodeURIComponent(parsedInput.tableId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/columns`,
 		ctx.key,
 		{
@@ -121,7 +121,7 @@ export const deleteColumn: GristEndpoints['columns.delete'] = async (
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const tableIdStr = encodeURIComponent(parsedInput.tableId);
 	const colIdStr = encodeURIComponent(parsedInput.colId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/tables/${tableIdStr}/columns/${colIdStr}`,
 		ctx.key,
 		{

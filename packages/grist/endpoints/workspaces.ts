@@ -6,7 +6,7 @@ import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 export const list: GristEndpoints['workspaces.list'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['workspaces.list'].parse(input);
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/orgs/${orgIdStr}/workspaces`,
 		ctx.key,
 		{
@@ -31,7 +31,7 @@ export const create: GristEndpoints['workspaces.create'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['workspaces.create'].parse(input);
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/orgs/${orgIdStr}/workspaces`,
 		ctx.key,
 		{
@@ -54,14 +54,10 @@ export const create: GristEndpoints['workspaces.create'] = async (
 export const get: GristEndpoints['workspaces.get'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['workspaces.get'].parse(input);
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
-	const response = await makeGristRequest<unknown>(
-		`/workspaces/${wsIdStr}`,
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/workspaces/${wsIdStr}`, ctx.key, {
+		method: 'GET',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['workspaces.get'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -79,15 +75,11 @@ export const update: GristEndpoints['workspaces.update'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['workspaces.update'].parse(input);
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
-	const response = await makeGristRequest<unknown>(
-		`/workspaces/${wsIdStr}`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: { name: parsedInput.name },
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/workspaces/${wsIdStr}`, ctx.key, {
+		method: 'PATCH',
+		body: { name: parsedInput.name },
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed =
 		GristEndpointOutputSchemas['workspaces.update'].parse(response);
 	await logEventFromContext(
@@ -106,14 +98,10 @@ export const deleteWorkspace: GristEndpoints['workspaces.delete'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['workspaces.delete'].parse(input);
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
-	const response = await makeGristRequest<unknown>(
-		`/workspaces/${wsIdStr}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/workspaces/${wsIdStr}`, ctx.key, {
+		method: 'DELETE',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed =
 		GristEndpointOutputSchemas['workspaces.delete'].parse(response);
 	await logEventFromContext(
@@ -132,7 +120,7 @@ export const remove: GristEndpoints['workspaces.remove'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['workspaces.remove'].parse(input);
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/workspaces/${wsIdStr}/remove`,
 		ctx.key,
 		{
@@ -158,7 +146,7 @@ export const unremove: GristEndpoints['workspaces.unremove'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['workspaces.unremove'].parse(input);
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/workspaces/${wsIdStr}/unremove`,
 		ctx.key,
 		{
@@ -184,7 +172,7 @@ export const listAccess: GristEndpoints['workspaces.listAccess'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['workspaces.listAccess'].parse(input);
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/workspaces/${wsIdStr}/access`,
 		ctx.key,
 		{
@@ -210,7 +198,7 @@ export const modifyAccess: GristEndpoints['workspaces.modifyAccess'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['workspaces.modifyAccess'].parse(input);
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/workspaces/${wsIdStr}/access`,
 		ctx.key,
 		{

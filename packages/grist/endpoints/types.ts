@@ -1078,8 +1078,7 @@ export type ServiceAccountsDeleteApiKeyResponse = z.infer<
 
 export const TemplatesListInputSchema = z.object({}).strict();
 export type TemplatesListInput = z.infer<typeof TemplatesListInputSchema>;
-// unknown because template catalog items have varied community metadata
-export const TemplatesListOutputSchema = z.unknown();
+export const TemplatesListOutputSchema = z.array(WorkspaceSchema.passthrough());
 export type TemplatesListResponse = z.infer<typeof TemplatesListOutputSchema>;
 
 export const TemplatesGetInputSchema = z
@@ -1088,14 +1087,20 @@ export const TemplatesGetInputSchema = z
 	})
 	.strict();
 export type TemplatesGetInput = z.infer<typeof TemplatesGetInputSchema>;
-// unknown because template structural definition varies per template
-export const TemplatesGetOutputSchema = z.unknown();
+export const TemplatesGetOutputSchema = DocSchema.passthrough();
 export type TemplatesGetResponse = z.infer<typeof TemplatesGetOutputSchema>;
 
 export const WidgetsListInputSchema = z.object({}).strict();
 export type WidgetsListInput = z.infer<typeof WidgetsListInputSchema>;
-// unknown because custom widget registry JSON is community-authored dynamic metadata
-export const WidgetsListOutputSchema = z.unknown();
+export const WidgetsListOutputSchema = z.array(
+	z
+		.object({
+			name: z.string().optional(),
+			url: z.string().optional(),
+			widgetId: z.string().optional(),
+		})
+		.passthrough(),
+);
 export type WidgetsListResponse = z.infer<typeof WidgetsListOutputSchema>;
 
 // ==========================================
@@ -1150,8 +1155,12 @@ export type SessionGetActiveResponse = z.infer<
 
 export const SessionGetAllInputSchema = z.object({}).strict();
 export type SessionGetAllInput = z.infer<typeof SessionGetAllInputSchema>;
-// unknown because active session map contains arbitrary multi-account user records
-export const SessionGetAllOutputSchema = z.unknown();
+export const SessionGetAllOutputSchema = z
+	.object({
+		users: z.array(UserSchema).optional(),
+		orgs: z.array(OrgSchema).optional(),
+	})
+	.passthrough();
 export type SessionGetAllResponse = z.infer<typeof SessionGetAllOutputSchema>;
 
 export const SessionSetActiveInputSchema = z

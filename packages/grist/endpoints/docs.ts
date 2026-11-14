@@ -5,7 +5,7 @@ import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const create: GristEndpoints['docs.create'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.create'].parse(input);
-	const response = await makeGristRequest<unknown>('/docs', ctx.key, {
+	const response = await makeGristRequest('/docs', ctx.key, {
 		method: 'POST',
 		body: {
 			...(parsedInput.workspaceId !== undefined
@@ -41,7 +41,7 @@ export const createInWorkspace: GristEndpoints['docs.createInWorkspace'] =
 		const parsedInput =
 			GristEndpointInputSchemas['docs.createInWorkspace'].parse(input);
 		const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
-		const response = await makeGristRequest<unknown>(
+		const response = await makeGristRequest(
 			`/workspaces/${wsIdStr}/docs`,
 			ctx.key,
 			{
@@ -69,14 +69,10 @@ export const createInWorkspace: GristEndpoints['docs.createInWorkspace'] =
 export const get: GristEndpoints['docs.get'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.get'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}`,
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/docs/${docIdStr}`, ctx.key, {
+		method: 'GET',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.get'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -90,20 +86,16 @@ export const get: GristEndpoints['docs.get'] = async (ctx, input) => {
 export const update: GristEndpoints['docs.update'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.update'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: {
-				...(parsedInput.name !== undefined ? { name: parsedInput.name } : {}),
-				...(parsedInput.isPinned !== undefined
-					? { isPinned: parsedInput.isPinned }
-					: {}),
-			},
-			baseUrl: ctx.options?.baseUrl,
+	const response = await makeGristRequest(`/docs/${docIdStr}`, ctx.key, {
+		method: 'PATCH',
+		body: {
+			...(parsedInput.name !== undefined ? { name: parsedInput.name } : {}),
+			...(parsedInput.isPinned !== undefined
+				? { isPinned: parsedInput.isPinned }
+				: {}),
 		},
-	);
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.update'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -117,14 +109,10 @@ export const update: GristEndpoints['docs.update'] = async (ctx, input) => {
 export const deleteDoc: GristEndpoints['docs.delete'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.delete'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/docs/${docIdStr}`, ctx.key, {
+		method: 'DELETE',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.delete'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -138,14 +126,10 @@ export const deleteDoc: GristEndpoints['docs.delete'] = async (ctx, input) => {
 export const remove: GristEndpoints['docs.remove'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.remove'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}/remove`,
-		ctx.key,
-		{
-			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/docs/${docIdStr}/remove`, ctx.key, {
+		method: 'POST',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.remove'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -159,7 +143,7 @@ export const remove: GristEndpoints['docs.remove'] = async (ctx, input) => {
 export const unremove: GristEndpoints['docs.unremove'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.unremove'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/unremove`,
 		ctx.key,
 		{
@@ -180,15 +164,11 @@ export const unremove: GristEndpoints['docs.unremove'] = async (ctx, input) => {
 export const move: GristEndpoints['docs.move'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.move'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}/move`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: { workspace: parsedInput.workspace },
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/docs/${docIdStr}/move`, ctx.key, {
+		method: 'PATCH',
+		body: { workspace: parsedInput.workspace },
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.move'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -202,14 +182,10 @@ export const move: GristEndpoints['docs.move'] = async (ctx, input) => {
 export const pin: GristEndpoints['docs.pin'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.pin'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}/pin`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/docs/${docIdStr}/pin`, ctx.key, {
+		method: 'PATCH',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.pin'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -223,14 +199,10 @@ export const pin: GristEndpoints['docs.pin'] = async (ctx, input) => {
 export const unpin: GristEndpoints['docs.unpin'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.unpin'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}/unpin`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/docs/${docIdStr}/unpin`, ctx.key, {
+		method: 'PATCH',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.unpin'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -244,25 +216,21 @@ export const unpin: GristEndpoints['docs.unpin'] = async (ctx, input) => {
 export const copy: GristEndpoints['docs.copy'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.copy'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}/copy`,
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				...(parsedInput.workspaceId !== undefined
-					? { workspaceId: parsedInput.workspaceId }
-					: {}),
-				...(parsedInput.documentName !== undefined
-					? { documentName: parsedInput.documentName }
-					: {}),
-				...(parsedInput.asTemplate !== undefined
-					? { asTemplate: parsedInput.asTemplate }
-					: {}),
-			},
-			baseUrl: ctx.options?.baseUrl,
+	const response = await makeGristRequest(`/docs/${docIdStr}/copy`, ctx.key, {
+		method: 'POST',
+		body: {
+			...(parsedInput.workspaceId !== undefined
+				? { workspaceId: parsedInput.workspaceId }
+				: {}),
+			...(parsedInput.documentName !== undefined
+				? { documentName: parsedInput.documentName }
+				: {}),
+			...(parsedInput.asTemplate !== undefined
+				? { asTemplate: parsedInput.asTemplate }
+				: {}),
 		},
-	);
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.copy'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -276,14 +244,10 @@ export const copy: GristEndpoints['docs.copy'] = async (ctx, input) => {
 export const fork: GristEndpoints['docs.fork'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['docs.fork'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}/fork`,
-		ctx.key,
-		{
-			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/docs/${docIdStr}/fork`, ctx.key, {
+		method: 'POST',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.fork'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -300,14 +264,10 @@ export const listAccess: GristEndpoints['docs.listAccess'] = async (
 ) => {
 	const parsedInput = GristEndpointInputSchemas['docs.listAccess'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}/access`,
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGristRequest(`/docs/${docIdStr}/access`, ctx.key, {
+		method: 'GET',
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed = GristEndpointOutputSchemas['docs.listAccess'].parse(response);
 	await logEventFromContext(
 		ctx,
@@ -325,20 +285,16 @@ export const modifyAccess: GristEndpoints['docs.modifyAccess'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['docs.modifyAccess'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
-		`/docs/${docIdStr}/access`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body: {
-				...(parsedInput.maxInheritedRole
-					? { maxInheritedRole: parsedInput.maxInheritedRole }
-					: {}),
-				users: parsedInput.users,
-			},
-			baseUrl: ctx.options?.baseUrl,
+	const response = await makeGristRequest(`/docs/${docIdStr}/access`, ctx.key, {
+		method: 'PATCH',
+		body: {
+			...(parsedInput.maxInheritedRole
+				? { maxInheritedRole: parsedInput.maxInheritedRole }
+				: {}),
+			users: parsedInput.users,
 		},
-	);
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const parsed =
 		GristEndpointOutputSchemas['docs.modifyAccess'].parse(response);
 	await logEventFromContext(
@@ -357,7 +313,7 @@ export const listSnapshots: GristEndpoints['docs.listSnapshots'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['docs.listSnapshots'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/snapshots`,
 		ctx.key,
 		{
@@ -385,7 +341,7 @@ export const removeSnapshots: GristEndpoints['docs.removeSnapshots'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['docs.removeSnapshots'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/snapshots/remove`,
 		ctx.key,
 		{

@@ -7,7 +7,7 @@ export const list: GristEndpoints['attachments.list'] = async (ctx, input) => {
 	const parsedInput =
 		GristEndpointInputSchemas['attachments.list'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/attachments`,
 		ctx.key,
 		{
@@ -29,7 +29,7 @@ export const get: GristEndpoints['attachments.get'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['attachments.get'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const attIdStr = encodeURIComponent(String(parsedInput.attachmentId));
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/attachments/${attIdStr}`,
 		ctx.key,
 		{
@@ -54,7 +54,7 @@ export const removeUnused: GristEndpoints['attachments.removeUnused'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['attachments.removeUnused'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/attachments/removeUnused`,
 		ctx.key,
 		{
@@ -84,7 +84,7 @@ export const updateUsed: GristEndpoints['attachments.updateUsed'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['attachments.updateUsed'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/attachments/updateUsed`,
 		ctx.key,
 		{
@@ -110,7 +110,7 @@ export const verifyFiles: GristEndpoints['attachments.verifyFiles'] = async (
 	const parsedInput =
 		GristEndpointInputSchemas['attachments.verifyFiles'].parse(input);
 	const docIdStr = encodeURIComponent(parsedInput.docId);
-	const response = await makeGristRequest<unknown>(
+	const response = await makeGristRequest(
 		`/docs/${docIdStr}/attachments/verifyFiles`,
 		ctx.key,
 		{
@@ -134,7 +134,7 @@ export const getTransferStatus: GristEndpoints['attachments.getTransferStatus'] 
 		const parsedInput =
 			GristEndpointInputSchemas['attachments.getTransferStatus'].parse(input);
 		const docIdStr = encodeURIComponent(parsedInput.docId);
-		const response = await makeGristRequest<unknown>(
+		const response = await makeGristRequest(
 			`/docs/${docIdStr}/attachments/transferStatus`,
 			ctx.key,
 			{
