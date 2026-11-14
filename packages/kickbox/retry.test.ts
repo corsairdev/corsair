@@ -99,6 +99,7 @@ describe('retry behaviour', () => {
 				// narrows it to the fields it checks.
 				corsair.kickbox.api.verify
 					.verify({ email: 'test@example.com' })
+					// unknown: a rejected request can carry any thrown value.
 					.catch((caught: unknown) => caught),
 			);
 

@@ -149,6 +149,7 @@ export class KickboxAPIError extends Error {
  * The status and Kickbox's code on an error of either kind, for handlers and
  * callers.
  */
+// unknown: handlers pass whatever was thrown; only the two error classes carry a status.
 export function kickboxErrorStatus(error: unknown): number | undefined {
 	if (error instanceof ApiError || error instanceof KickboxAPIError) {
 		return error.status;
@@ -156,6 +157,7 @@ export function kickboxErrorStatus(error: unknown): number | undefined {
 	return undefined;
 }
 
+// unknown: any thrown value; the code is read only from the two error classes.
 export function kickboxErrorCode(error: unknown): string | undefined {
 	if (error instanceof ApiError) return readFailure(error.body).code;
 	if (error instanceof KickboxAPIError) return error.code;
@@ -163,11 +165,13 @@ export function kickboxErrorCode(error: unknown): string | undefined {
 }
 
 /** The account has run out of verification credits, which no retry fixes. */
+// unknown: error handlers pass the raw thrown value.
 export function isKickboxQuotaError(error: unknown): boolean {
 	return kickboxErrorCode(error) === 'INSUFFICIENT_BALANCE';
 }
 
 /** A refused or missing key. A spent balance is also a 403, but not this. */
+// unknown: error handlers pass the raw thrown value.
 export function isKickboxAuthError(error: unknown): boolean {
 	if (isKickboxQuotaError(error)) return false;
 	const status = kickboxErrorStatus(error);
@@ -180,6 +184,7 @@ export function isKickboxAuthError(error: unknown): boolean {
  * True when the request went to the paid verification host. A paid request
  * that failed may still have been charged, so it is never replayed.
  */
+// unknown: error handlers pass the raw thrown value.
 export function isPaidKickboxRequest(error: unknown): boolean {
 	if (error instanceof KickboxAPIError) return error.paid;
 	// The open host serves only the free disposable check; every other path
@@ -301,6 +306,7 @@ export async function makeKickboxRequest(
 	};
 
 	try {
+		// unknown: the endpoint's zod output schema parses the body.
 		const body = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: KICKBOX_RATE_LIMIT_CONFIG,
 		});

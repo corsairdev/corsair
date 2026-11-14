@@ -188,6 +188,7 @@ describe('verify.verify', () => {
 
 		const error = await invoke(Verify.verify, {
 			email: 'test@example.com',
+			// unknown: a rejected request can carry any thrown value.
 		}).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);

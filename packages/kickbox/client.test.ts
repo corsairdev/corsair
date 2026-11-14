@@ -223,6 +223,7 @@ describe('makeKickboxRequest', () => {
 			base: 'https://api.kickbox.com',
 			path: '/v2/verify',
 			query: { email: 'person@private.example', apikey: API_KEY },
+			// unknown: a rejected request can carry any thrown value.
 		}).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
