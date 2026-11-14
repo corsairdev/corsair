@@ -1,0 +1,154 @@
+---
+title: "Square plugin"
+sidebarTitle: "Overview"
+description: "Square's commerce API. Take and refund payments, create orders, payment links and invoices, manage customers, cards, disputes, catalog and inventory, and read locations and merchant settings, in the Square sandbox or in production."
+---
+
+Use **Square** through Corsair: one client, typed API calls.
+
+Authentication is a Square access token, sent as a Bearer token: a personal access token or an OAuth token. An OAuth token is refreshed when it expires, and once more after Square answers a request with a 401; a missing token fails with a clear error instead of an empty Bearer. Square runs production and a sandbox as separate worlds, and a token only works in the one it came from. The plugin calls production by default; pass `square({ environment: 'sandbox' })` to call `connect.squareupsandbox.com` with a sandbox token. Every request sends `Square-Version: 2026-09-16`. Inputs and answers use Square's own snake_case field names, and a money amount is `{ amount, currency }` with the amount in the currency's smallest unit (cents for USD).
+
+**Idempotency.** Calls that create or change money, or that Square lets you repeat safely, take an `idempotency_key`: eight operations require one (`payments.create`, `payments.update`, `payments.refund`, `payments.cancelByIdempotencyKey`, `orders.pay`, `cards.create`, `catalog.upsert` and `disputes.createEvidenceText`), and many more accept one. Input keys a schema does not list are dropped, so a misspelled optional `idempotency_key` (for example `idempotencyKey`) sends the call without a key: it is then not deduplicated and not retried after a server error. You supply the key; the plugin sends it unchanged and never makes one up. Reuse the same key to retry the same call: Square then returns the first result instead of acting twice, so a timed-out charge cannot charge a card twice. A new key is a new payment. If the response to `payments.create` was lost and you cannot tell whether it ran, `payments.cancelByIdempotencyKey` voids it by the same key.
+
+**Operations that move money:** `payments.create`, `payments.update`, `payments.complete`, `payments.cancel`, `payments.cancelByIdempotencyKey`, `payments.refund`, `orders.pay`, `invoices.publish` (it may charge the card on file) and `disputes.accept`. Their descriptions say so. `payments.refund`, `payments.cancel`, `payments.cancelByIdempotencyKey` and `disputes.accept` cannot be undone.
+
+**Retries.** A 429 is retried for every operation: Square rejected the request without running it. After a 5xx or a timeout the first attempt may have run, so only reads, `PUT`, `DELETE`, read-only searches and `POST` calls that carry an `idempotency_key` are retried, with the same key. A write without a key is never retried after a server error. A declined card (`PAYMENT_METHOD_ERROR`) is Square's answer and is never retried.
+
+**Pagination.** List and search operations take `cursor` and `limit` and return the next `cursor`; pass it back for the next page. It goes in the query string for `GET` lists and in the body for the `POST` searches.
+
+**Files.** `disputes.createEvidenceFile` and `invoices.createAttachment` take the file as base64 in `file_base64`, with an optional `filename` (default: `attachment` plus the extension of its type); the plugin sends it to Square as multipart.
+
+**Not included yet:** Square's GraphQL endpoint, webhook triggers, and the other API families (bookings beyond the business profile, loyalty, gift cards, payouts, team, labor, terminal, subscriptions).
+
+**What you get:**
+
+- 123 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/square better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/square better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/square better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/square better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { square } from '@corsair-dev/square';
+
+export const corsair = createCorsair({
+	plugins: [
+		square(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+square()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Square OAuth app.
+
+```ts
+square({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'square',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the seller's locations**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.square.api.locations.list({});
+```
+
+
+**Create a customer**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.square.api.customers.create({ given_name: 'Ada', family_name: 'Lovelace', email_address: 'ada@example.com' });
+```
+
+
+See the full list on the [API](/plugins/square/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/square/api">
+    Every `square.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

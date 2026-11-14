@@ -3719,6 +3719,14 @@
                 ]
               },
               {
+                "group": "Square",
+                "pages": [
+                  "plugins/square/overview",
+                  "plugins/square/api",
+                  "plugins/square/database"
+                ]
+              },
+              {
                 "group": "Starton",
                 "pages": [
                   "plugins/starton/overview",

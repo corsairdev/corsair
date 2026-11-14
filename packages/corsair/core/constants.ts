@@ -444,6 +444,7 @@ export const BaseProviders = [
 	'sourcegraph',
 	'spoki',
 	'spotify',
+	'square',
 	'starton',
 	'strava',
 	'streamtime',
@@ -979,6 +980,7 @@ export const ProviderDisplayNames = {
 	sourcegraph: 'Sourcegraph',
 	spoki: 'Spoki',
 	spotify: 'Spotify',
+	square: 'Square',
 	starton: 'Starton',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
@@ -1521,6 +1523,7 @@ export type AllProviders =
 	| 'sourcegraph'
 	| 'spoki'
 	| 'spotify'
+	| 'square'
 	| 'starton'
 	| 'strava'
 	| 'streamtime'
