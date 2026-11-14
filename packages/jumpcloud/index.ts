@@ -324,24 +324,28 @@ export const jumpCloudEndpointMeta = {
 		description: 'Delete a JumpCloud system user',
 	},
 	'users.setPassword': {
-		riskLevel: 'write',
-		description: 'Set a system user password',
+		riskLevel: 'destructive',
+		description:
+			"Force-set a system user's password, replacing the current one",
 	},
 	'users.unlock': {
 		riskLevel: 'write',
 		description: 'Unlock a locked system user',
 	},
 	'users.expirePassword': {
-		riskLevel: 'write',
-		description: 'Expire a system user password',
+		riskLevel: 'destructive',
+		description:
+			"Expire a system user's password so they must reset it at next login",
 	},
 	'users.resetMfa': {
-		riskLevel: 'write',
-		description: 'Reset a system user MFA',
+		riskLevel: 'destructive',
+		description:
+			"Reset a system user's MFA (TOTP key) and start a new enrollment period",
 	},
 	'users.enforceMfa': {
-		riskLevel: 'write',
-		description: 'Enforce MFA on a system user',
+		riskLevel: 'destructive',
+		description:
+			"Update a system user's MFA requirement; an unenrolled user is locked out of MFA-protected resources once any exclusion ends",
 	},
 	'users.syncMfa': {
 		riskLevel: 'write',

@@ -1,10 +1,11 @@
 // Event payloads are persisted to event history. Repository rules (R8) require
 // secrets and customer content to stay out of event payloads, so handlers log
-// only allowlisted operation identifiers: IDs, actions, modes, queries and
-// pagination — never passwords, command text, document content, answers or
-// prompts. Values must be scalars or arrays of scalars to keep payloads small.
+// only allowlisted operation identifiers: IDs, actions, modes and pagination.
+// Never passwords, command text, search text (it can hold an email address),
+// document content, answers or prompts. Values must be scalars or arrays of
+// scalars to keep payloads small.
 const SAFE_EVENT_KEY =
-	/(Ids?$)|(_ids?$)|(^ids?$)|^(action|type|kind|mode|query|searchTerm|term|limit|page|cursor|order_by|operationType)$/;
+	/(Ids?$)|(_ids?$)|(^ids?$)|^(action|type|kind|mode|limit|page|cursor|order_by|operationType)$/;
 
 const SAFE_SCALARS = new Set(['string', 'number', 'boolean']);
 

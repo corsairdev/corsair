@@ -43,7 +43,7 @@ describe('jumpcloud plugin registry', () => {
 		}
 	});
 
-	it('marks exactly the delete-style and command-run endpoints destructive', () => {
+	it('marks deletes, command runs, password and MFA resets destructive', () => {
 		const destructiveOps = paths
 			.filter((op) => meta[op]?.riskLevel === 'destructive')
 			.sort();
@@ -54,6 +54,10 @@ describe('jumpcloud plugin registry', () => {
 			'systems.delete',
 			'userGroups.delete',
 			'users.delete',
+			'users.enforceMfa',
+			'users.expirePassword',
+			'users.resetMfa',
+			'users.setPassword',
 		]);
 	});
 
@@ -173,14 +177,17 @@ describe('safeEventPayload allowlist', () => {
 		).toEqual({});
 	});
 
-	it('keeps pagination and search-term keys and drops non-allowlisted keys', () => {
-		expect(safeEventPayload({ limit: 25, page: 2, searchTerm: 'vpn' })).toEqual(
-			{
+	it('keeps pagination keys and drops search text and non-allowlisted keys', () => {
+		// Search text can be an email address, so it never reaches event history.
+		expect(
+			safeEventPayload({
 				limit: 25,
 				page: 2,
-				searchTerm: 'vpn',
-			},
-		);
+				searchTerm: 'person@example.com',
+				query: 'person@example.com',
+				term: 'vpn',
+			}),
+		).toEqual({ limit: 25, page: 2 });
 		expect(safeEventPayload({ sort: 'name', description: 'd' })).toEqual({});
 	});
 });
