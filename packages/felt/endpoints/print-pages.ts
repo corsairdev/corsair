@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeFeltRequest } from '../client';
+import { FELT_SYNC_EXPORT_TIMEOUT_MS, makeFeltRequest } from '../client';
 import type { FeltEndpoints } from '../index';
 import type {
 	PrintLayout,
@@ -212,6 +212,7 @@ export const PrintPages = {
 			ctx.key,
 			{
 				method: 'POST',
+				timeoutMs: FELT_SYNC_EXPORT_TIMEOUT_MS,
 			},
 		);
 		const parsed =

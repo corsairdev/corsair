@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeFeltRequest } from '../client';
+import { FELT_SYNC_EXPORT_TIMEOUT_MS, makeFeltRequest } from '../client';
 import type { FeltEndpoints } from '../index';
 import type { EmbedToken, FeltMap, MapImageExport } from './types';
 import { FeltEndpointInputSchemas, FeltEndpointOutputSchemas } from './types';
@@ -134,6 +134,7 @@ export const Maps = {
 			{
 				method: 'POST',
 				body,
+				timeoutMs: FELT_SYNC_EXPORT_TIMEOUT_MS,
 			},
 		);
 		const parsed = FeltEndpointOutputSchemas.mapsExportImage.parse(response);

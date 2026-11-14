@@ -235,6 +235,8 @@ describe('Maps endpoints', () => {
 					legend: { visible: true },
 					output: { width_px: 800, height_px: 600 },
 				},
+				// Felt holds a synchronous export open for up to 55 s.
+				timeoutMs: 70_000,
 			},
 		);
 	});
@@ -1041,6 +1043,7 @@ describe('PrintPages endpoints', () => {
 			'test-token',
 			{
 				method: 'POST',
+				timeoutMs: 70_000,
 			},
 		);
 

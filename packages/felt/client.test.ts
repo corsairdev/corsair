@@ -120,7 +120,7 @@ describe('makeFeltRequest client', () => {
 		expect(arrayData[1]?.label).toBe('normal');
 	});
 
-	it('sanitizes ApiError by wrapping in FeltAPIError, redacting credential fields, and omitting unredacted cause', async () => {
+	it('passes core ApiError through with credential fields redacted and the sent body dropped', async () => {
 		const rawError = new ApiError(
 			{
 				method: 'POST',
@@ -152,10 +152,13 @@ describe('makeFeltRequest client', () => {
 			body: { password: 'submitted-secret-password' },
 		}).catch((err: unknown) => err);
 
-		expect(caught).toBeInstanceOf(FeltAPIError);
-		const feltErr = caught as FeltAPIError;
+		expect(caught).toBeInstanceOf(ApiError);
+		const feltErr = caught as ApiError;
 		expect(feltErr.status).toBe(422);
 		expect(feltErr.message).toBe('Unprocessable Entity: password=[REDACTED]');
+		expect(feltErr.request.body).toBeUndefined();
+		expect(JSON.stringify(feltErr)).not.toContain('submitted-secret-password');
+		expect(JSON.stringify(feltErr)).not.toContain('felt_user');
 		// Verify password in error body was redacted
 		const body = feltErr.body as { errors: Array<Record<string, unknown>> };
 		expect(body.errors[0]?.password).toBe('[REDACTED]');
@@ -208,9 +211,10 @@ describe('makeFeltRequest client', () => {
 			},
 		).catch((err: unknown) => err);
 
-		expect(caught).toBeInstanceOf(FeltAPIError);
-		const feltErr = caught as FeltAPIError;
+		expect(caught).toBeInstanceOf(ApiError);
+		const feltErr = caught as ApiError;
 		expect(feltErr.status).toBe(422);
+		expect(JSON.stringify(feltErr)).not.toContain(secretPassword);
 		expect(feltErr.message).not.toContain(secretPassword);
 		expect(feltErr.message).toContain('[REDACTED]');
 		expect(feltErr.statusText).not.toContain(secretPassword);
@@ -267,7 +271,7 @@ describe('makeFeltRequest client', () => {
 					credential: { type: 'snowflake_pat', token },
 				},
 			},
-		).catch((err: unknown) => err)) as FeltAPIError;
+		).catch((err: unknown) => err)) as ApiError;
 		const detail = (caught.body as { errors: Array<{ detail: string }> })
 			.errors[0]?.detail;
 		expect(detail).toContain('snowflake_pat is not allowed on feature_server');
@@ -304,6 +308,9 @@ describe('makeFeltRequest client', () => {
 		expect(cause).toBeDefined();
 		expect(JSON.stringify(cause)).not.toContain(secretPassword);
 		expect(cause?.request?.body?.credential).toBe('[REDACTED]');
+		const causeError = (error as Error).cause as Error;
+		expect(causeError.message).not.toContain(secretPassword);
+		expect(causeError.stack ?? '').not.toContain(secretPassword);
 	});
 
 	it('preserves retryAfter on 429 rate limit error', async () => {
@@ -315,10 +322,11 @@ describe('makeFeltRequest client', () => {
 			method: 'GET',
 		}).catch((err: unknown) => err);
 
-		expect(caught).toBeInstanceOf(FeltAPIError);
-		const err = caught as FeltAPIError;
+		expect(caught).toBeInstanceOf(ApiError);
+		const err = caught as ApiError;
 		expect(err.status).toBe(429);
 		expect(err.retryAfter).toBe(4000);
+		expect(err.isRateLimitError()).toBe(true);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
 	});
 
@@ -370,5 +378,28 @@ describe('makeFeltRequest client', () => {
 		} finally {
 			global.fetch = originalFetch;
 		}
+	});
+});
+
+describe('makeFeltRequest paths and timeouts', () => {
+	it('rejects a path with a dot segment before sending', async () => {
+		await expect(
+			makeFeltRequest('/maps/m_1/layers/..', 'token', { method: 'DELETE' }),
+		).rejects.toThrow(/dot segment/);
+		await expect(
+			makeFeltRequest('/maps/m_1/layers/.', 'token', { method: 'DELETE' }),
+		).rejects.toThrow(/dot segment/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('passes a per-request timeout to the transport and keeps the default otherwise', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeFeltRequest('/maps/m_1/image_exports', 'token', {
+			method: 'POST',
+			timeoutMs: 70_000,
+		});
+		await makeFeltRequest('/maps/m_1', 'token');
+		expect(mockRequest.mock.calls[0]?.[0].TIMEOUT).toBe(70_000);
+		expect(mockRequest.mock.calls[1]?.[0].TIMEOUT).toBeUndefined();
 	});
 });

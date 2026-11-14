@@ -4,6 +4,9 @@ import { ApiError, request } from 'corsair/http';
 
 export const FELT_API_BASE = 'https://felt.com/api/v2';
 
+/** Felt holds a synchronous image or print export open for up to 55 s; this leaves a network margin. */
+export const FELT_SYNC_EXPORT_TIMEOUT_MS = 70_000;
+
 const SENSITIVE_KEY_NAMES = new Set([
 	'accesskeyid',
 	'apikey',
@@ -184,11 +187,20 @@ function sanitizeCause(
 	if (cause instanceof Error) {
 		// `unknown` because inspecting custom error properties requires untyped record access.
 		const causeRecord = cause as unknown as Record<string, unknown>;
+		// The cause's own sent body can hold secrets the caller did not pass in.
+		const causeRequest = causeRecord.request as { body?: unknown } | undefined;
+		const allSecrets = [
+			...(typeof secrets === 'string' ? [secrets] : (secrets ?? [])),
+			...extractSecretStrings(causeRequest?.body),
+			...extractSecretStrings(causeRecord.body),
+		];
 		const sanitizedCause = new Error(
-			sanitizeErrorMessage(cause.message, secrets),
+			sanitizeErrorMessage(cause.message, allSecrets),
 		);
 		sanitizedCause.name = cause.name;
-		sanitizedCause.stack = cause.stack;
+		sanitizedCause.stack = cause.stack
+			? sanitizeErrorMessage(cause.stack, allSecrets)
+			: undefined;
 		// `unknown` because augmenting an Error instance with custom metadata requires untyped record access.
 		const sanitizedRecord = sanitizedCause as unknown as Record<
 			string,
@@ -199,11 +211,11 @@ function sanitizeCause(
 			if (k === 'request' && v && typeof v === 'object') {
 				const req = { ...(v as Record<string, unknown>) };
 				if ('body' in req && req.body !== undefined) {
-					req.body = sanitizeSensitiveValues(req.body, secrets);
+					req.body = sanitizeSensitiveValues(req.body, allSecrets);
 				}
 				sanitizedRecord[k] = req;
 			} else if (k === 'body') {
-				sanitizedRecord[k] = sanitizeSensitiveValues(v, secrets);
+				sanitizedRecord[k] = sanitizeSensitiveValues(v, allSecrets);
 			} else if (k !== 'message') {
 				sanitizedRecord[k] = v;
 			}
@@ -252,9 +264,19 @@ export async function makeFeltRequest<T>(
 		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
 		headers?: Record<string, string>;
+		/** Transport timeout for this call; core's 20 s default applies when unset. */
+		timeoutMs?: number;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers = {} } = options;
+	const { method = 'GET', body, query, headers = {}, timeoutMs } = options;
+
+	// encodeURIComponent leaves `.` and `..` alone and URL parsing removes them, so a
+	// layer id of `..` would turn a layer delete into a call on the map.
+	if (
+		endpoint.split('/').some((segment) => segment === '.' || segment === '..')
+	) {
+		throw new FeltAPIError('Felt path ids cannot be a dot segment.');
+	}
 
 	// Fail fast on empty key: throws AuthMissingError so tenant connect links work as expected.
 	if (apiKey !== undefined && apiKey.length === 0) {
@@ -270,6 +292,7 @@ export async function makeFeltRequest<T>(
 		VERSION: '2.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		...(timeoutMs === undefined ? {} : { TIMEOUT: timeoutMs }),
 		HEADERS: {
 			'Content-Type': 'application/json',
 			...authHeaders,
@@ -302,12 +325,28 @@ export async function makeFeltRequest<T>(
 			const safeStatusText = error.statusText
 				? sanitizeErrorMessage(error.statusText, extractedSecrets)
 				: undefined;
-			throw new FeltAPIError(safeMessage, String(error.status), {
-				status: error.status,
-				statusText: safeStatusText,
-				body: sanitizedBody,
-				retryAfter: error.retryAfter,
-			});
+			// Core's ApiError goes through (R8) so status, retryAfter and isRateLimitError()
+			// keep working. It is rebuilt without the sent body and query, which can carry
+			// source credentials, and with secrets cut from the message and Felt's body.
+			const url = new URL(error.url, FELT_API_BASE);
+			url.search = '';
+			throw new ApiError(
+				{ ...error.request, body: undefined, query: undefined },
+				{
+					url: url.toString(),
+					ok: false,
+					status: error.status,
+					statusText: safeStatusText ?? '',
+					body: sanitizedBody,
+				},
+				safeMessage,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
 		if (error instanceof Error) {
 			const safeMessage = sanitizeErrorMessage(error.message, extractedSecrets);
