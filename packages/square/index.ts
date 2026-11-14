@@ -1317,6 +1317,9 @@ export function square<const T extends SquarePluginOptions>(
 		pluginTenantWebhookMatcher: () => null,
 		oauthWebhookTenantLinkResolver: () => null,
 		errorHandlers: mergeErrorHandlers(options.errorHandlers),
+		// client.ts refreshes once after a 401 and resends only the request
+		// that failed, for reads and writes, so core does not run it again.
+		refreshOnUnauthorized: false,
 		keyBuilder: async (ctx: SquareKeyBuilderContext, source) => {
 			// No webhooks are declared yet, so there is no signature key to build.
 			if (source !== 'endpoint') return '';

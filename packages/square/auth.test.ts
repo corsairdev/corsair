@@ -277,25 +277,111 @@ describe('Square auth: OAuth refresh', () => {
 		}
 	});
 
-	it('surfaces the refresh failure when Square refuses the refresh token', async () => {
+	it('makes a read that stays unauthorized after the refresh 2 Square requests and 1 refresh', async () => {
 		const { corsair, testDb } = await createOAuthClient();
 		try {
 			fetchMock
 				.mockResolvedValueOnce(jsonResponse(unauthorized, 401))
-				.mockResolvedValueOnce(
-					jsonResponse(
-						{ errors: [{ category: 'AUTHENTICATION_ERROR', code: 'X' }] },
-						400,
-					),
-				);
+				.mockResolvedValueOnce(jsonResponse(refreshed(NEW)))
+				.mockResolvedValueOnce(jsonResponse(unauthorized, 401))
+				// Core running the endpoint again would take these.
+				.mockResolvedValueOnce(jsonResponse(refreshed(NEXT)))
+				.mockResolvedValueOnce(jsonResponse({ locations: [] }));
 
-			await expect(corsair.square.api.locations.list({})).rejects.toThrow(
-				/OAuth token refresh failed \(400\)/,
+			await expect(corsair.square.api.locations.list({})).rejects.toMatchObject(
+				{ name: 'SquareAPIError', status: 401 },
 			);
-			expect(sent()).toHaveLength(2);
+
+			const calls = sent();
+			expect(calls.filter((r) => !isTokenCall(r))).toHaveLength(2);
+			expect(calls.filter(isTokenCall)).toHaveLength(1);
 		} finally {
 			testDb.cleanup();
 		}
+	});
+
+	it('opts out of core’s endpoint-level 401 retry', () => {
+		expect(square({ authType: 'oauth_2' }).refreshOnUnauthorized).toBe(false);
+		expect(square({ authType: 'api_key' }).refreshOnUnauthorized).toBe(false);
+	});
+});
+
+describe('Square auth: a refused refresh', () => {
+	/** A 401 from the API, then the token endpoint answers `refusal`. */
+	async function refuseRefresh(refusal: Response) {
+		const { corsair, testDb } = await createOAuthClient();
+		fetchMock
+			.mockResolvedValueOnce(jsonResponse(unauthorized, 401))
+			.mockResolvedValueOnce(refusal)
+			// A second Square request would take this.
+			.mockResolvedValueOnce(jsonResponse({ locations: [] }));
+		try {
+			const error: unknown = await corsair.square.api.locations.list({}).then(
+				() => undefined,
+				(e: unknown) => e,
+			);
+			return { error, calls: sent() };
+		} finally {
+			testDb.cleanup();
+		}
+	}
+
+	it('asks for a reconnect when Square refuses the refresh token (invalid_grant)', async () => {
+		const { error, calls } = await refuseRefresh(
+			jsonResponse({ error: 'invalid_grant' }, 400),
+		);
+
+		expect(error).toMatchObject({
+			name: 'AuthMissingError',
+			pluginId: 'square',
+			authType: 'oauth_2',
+			reason: 'revoked',
+		});
+		expect(calls.filter(isTokenCall)).toHaveLength(1);
+		expect(calls.filter((r) => !isTokenCall(r))).toHaveLength(1);
+	});
+
+	it('treats a refusal in Square’s errors[] shape as revoked too', async () => {
+		const { error, calls } = await refuseRefresh(
+			jsonResponse(
+				{
+					errors: [{ category: 'AUTHENTICATION_ERROR', code: 'UNAUTHORIZED' }],
+				},
+				401,
+			),
+		);
+
+		expect(error).toMatchObject({
+			name: 'AuthMissingError',
+			reason: 'revoked',
+		});
+		expect(calls).toHaveLength(2);
+	});
+
+	it('says the OAuth app is misconfigured when Square rejects its credentials', async () => {
+		const { error, calls } = await refuseRefresh(
+			jsonResponse({ error: 'invalid_client' }, 401),
+		);
+
+		expect(error).toBeInstanceOf(Error);
+		expect(error).not.toMatchObject({ name: 'AuthMissingError' });
+		expect((error as Error).message).toContain(
+			'OAuth token refresh failed (401 invalid_client)',
+		);
+		expect(calls).toHaveLength(2);
+	});
+
+	it('rethrows a 503 from the token endpoint as is, not as a missing credential', async () => {
+		const { error, calls } = await refuseRefresh(
+			jsonResponse({ message: 'unavailable' }, 503),
+		);
+
+		expect(error).toMatchObject({
+			name: 'OAuthRefreshError',
+			status: 503,
+			kind: 'transient',
+		});
+		expect(calls).toHaveLength(2);
 	});
 });
 
