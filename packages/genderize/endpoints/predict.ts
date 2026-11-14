@@ -78,8 +78,8 @@ export const batch: GenderizeEndpoints['batch']['names'] = async (
 		'genderize.batch.names',
 		{
 			count: result.length,
-			// A batch is charged per name, and the ones with no match are the useful
-			// number when reconciling.
+			// Each name in a batch counts against the monthly quota, and the ones
+			// with no match are the useful number when reconciling.
 			unknown: result.filter((row) => row.gender === null).length,
 		},
 		'completed',

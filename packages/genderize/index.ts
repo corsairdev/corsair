@@ -96,7 +96,7 @@ const genderizeEndpointMeta = {
 	'batch.names': {
 		riskLevel: 'read',
 		description:
-			'Predict gender for several names at once, answered in the same order. A batch is charged per name, and `country_id` applies to every name in it',
+			'Predict gender for several names at once, answered in the same order. A batch counts each name against the monthly quota, and `country_id` applies to every name in it',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof genderizeEndpointsNested

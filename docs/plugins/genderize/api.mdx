@@ -14,7 +14,7 @@ description: "API reference for the Genderize plugin in Corsair: every `genderiz
 
 `batch.names`
 
-Predict gender for several names at once, answered in the same order. A batch is charged per name, and `country_id` applies to every name in it
+Predict gender for several names at once, answered in the same order. A batch counts each name against the monthly quota, and `country_id` applies to every name in it
 
 **Risk:** `read`
 
@@ -26,10 +26,10 @@ await corsair.genderize.api.batch.names({ names: ['peter', 'lois', 'stewie'] });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `names` | `string[]` | Yes | Up to 100 names to predict, answered in the same order. A batch is charged per name |
+| `names` | `string[]` | Yes | Up to 100 names to predict, answered in the same order. A batch counts each name against the monthly quota |
 | `country_id` | `string` | No | Applies to every name in the batch, not one of them |
 
-Charged per name; `country_id` applies to every name in the batch.
+Each name counts against the monthly quota; `country_id` applies to every name in the batch.
 
 
 

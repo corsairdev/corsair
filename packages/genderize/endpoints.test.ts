@@ -350,7 +350,7 @@ describe('genderize.batch.names', () => {
 		);
 	});
 
-	it('counts the unmatched names, because a batch is charged per name', async () => {
+	it('counts the unmatched names, because each name in a batch counts against the quota', async () => {
 		respond([prediction, unknownPrediction]);
 		await invoke(batch, { names: ['Alice', 'Xyzzyplugh'] });
 

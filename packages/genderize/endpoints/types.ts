@@ -4,7 +4,7 @@ import { z } from 'zod';
  * Genderize names a prediction by the name that was sent and scores it with a
  * probability between 0 and 1 plus the number of records behind it. `gender` is
  * `null` when nothing in the data set matched, which is a result rather than an
- * error: the request still costs a credit.
+ * error: the name still counts against the monthly quota.
  */
 const PredictionSchema = z.object({
 	/** The name from the request, echoed exactly as sent. */
@@ -47,7 +47,7 @@ const BatchInputSchema = z.object({
 		.min(1, 'Send at least one name')
 		.max(100, 'Genderize takes at most 100 names per request')
 		.describe(
-			'Up to 100 names to predict, answered in the same order. A batch is charged per name',
+			'Up to 100 names to predict, answered in the same order. A batch counts each name against the monthly quota',
 		),
 	country_id: CountryCodeSchema.optional().describe(
 		'Applies to every name in the batch, not one of them',
