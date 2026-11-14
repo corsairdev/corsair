@@ -135,8 +135,9 @@ export const SessionDetailSchema = z.object({
 	id: z.string().optional(),
 	teamId: z.string().optional(),
 	status: openEnum(['active', 'closed', 'error', 'close-error']).optional(),
-	startTime: z.string().nullable().optional(),
-	endTime: z.string().nullable().optional(),
+	// The API reference says string; live responses send epoch milliseconds (number).
+	startTime: z.union([z.string(), z.number()]).nullable().optional(),
+	endTime: z.union([z.string(), z.number()]).nullable().optional(),
 	createdAt: z.string().optional(),
 	updatedAt: z.string().optional(),
 	creditsUsed: z.number().nullable().optional(),

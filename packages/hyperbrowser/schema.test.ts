@@ -691,3 +691,32 @@ describe('Hyperbrowser web fetch and web crawl request options', () => {
 		expect(parsed.data?.branding).toEqual({ colorScheme: 'dark' });
 	});
 });
+
+describe('Hyperbrowser live response fixtures', () => {
+	it('parses a real POST /api/session response (startTime in epoch ms, endTime null)', () => {
+		// Trimmed from a live free-plan response on 2026-11-15; ids and tokens replaced.
+		const live = {
+			id: 'sess_live',
+			teamId: 'team_live',
+			status: 'active',
+			endTime: null,
+			startTime: 1794689976574,
+			createdAt: '2026-11-14T20:59:36.573Z',
+			updatedAt: '2026-11-14T20:59:36.573Z',
+			closeReason: null,
+			sessionType: null,
+			jobId: null,
+			launchState: { useStealth: false, screen: { width: 1280, height: 720 } },
+			creditsUsed: null,
+			creditBreakdown: {},
+			sessionUrl: 'https://app.hyperbrowser.ai/features/sessions/sess_live',
+			liveUrl: 'https://example.invalid/live',
+			wsEndpoint: 'wss://example.invalid/ws',
+			token: 'redacted',
+		};
+		const parsed = CreateSessionOutputSchema.parse(live);
+		expect(parsed.id).toBe('sess_live');
+		expect(parsed.startTime).toBe(1794689976574);
+		expect(GetSessionOutputSchema.safeParse(live).success).toBe(true);
+	});
+});
