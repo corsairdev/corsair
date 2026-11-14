@@ -1,6 +1,7 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "Cloudflare Browser Run"
 description: Render and inspect pages, capture screenshots and PDFs, crawl sites, and manage Browser Rendering sessions and targets through REST.
+domain: cloudflare.com
 recommendedAuth: api_key
 factory:
   options:
