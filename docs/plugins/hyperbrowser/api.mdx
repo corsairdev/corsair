@@ -933,7 +933,7 @@ Get results and page data of a batch scrape job by job ID
 **Risk:** `read`
 
 ```ts
-await corsair.hyperbrowser.api.scrape.getBatch({ id: 'batch_example_123' });
+await corsair.hyperbrowser.api.scrape.getBatch({ id: 'batch_example_123', page: 1, batchSize: 10 });
 ```
 
 **Input**
@@ -941,6 +941,8 @@ await corsair.hyperbrowser.api.scrape.getBatch({ id: 'batch_example_123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `batchSize` | `number` | No | — |
 
 
 

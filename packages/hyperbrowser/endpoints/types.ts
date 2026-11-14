@@ -344,6 +344,8 @@ export const CreateBatchScrapeJobOutputSchema = z.object({
 export const GetBatchScrapeJobInputSchema = z
 	.object({
 		id: z.string(),
+		page: z.number().int().positive().optional(),
+		batchSize: z.number().int().positive().optional(),
 	})
 	.strict();
 

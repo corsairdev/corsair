@@ -57,7 +57,7 @@ apiExamples:
   scrape.createBatch:
     call: "{ urls: ['https://example.com'] }"
   scrape.getBatch:
-    call: "{ id: 'batch_example_123' }"
+    call: "{ id: 'batch_example_123', page: 1, batchSize: 10 }"
   scrape.getBatchStatus:
     call: "{ id: 'batch_example_123' }"
   crawl.create:

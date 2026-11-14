@@ -105,11 +105,17 @@ export const Scrape = {
 
 	getBatch: (async (ctx, input) => {
 		const parsedInput = GetBatchScrapeJobInputSchema.parse(input);
+		const query: Record<string, string | number> = {};
+		if (parsedInput.page !== undefined) query.page = parsedInput.page;
+		if (parsedInput.batchSize !== undefined)
+			query.batchSize = parsedInput.batchSize;
+
 		const response = await makeHyperbrowserRequest<GetBatchScrapeJobOutput>(
 			`/api/scrape/batch/${encodeURIComponent(parsedInput.id)}`,
 			ctx.key,
 			{
 				method: 'GET',
+				query,
 			},
 		);
 		const parsed = GetBatchScrapeJobOutputSchema.parse(response);
@@ -120,6 +126,7 @@ export const Scrape = {
 				jobId: parsed.jobId,
 				status: parsed.status,
 				totalScrapedPages: parsed.totalScrapedPages,
+				page: parsedInput.page,
 			},
 			'completed',
 		);

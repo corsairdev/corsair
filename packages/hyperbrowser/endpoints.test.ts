@@ -363,8 +363,20 @@ describe('Scrape endpoints', () => {
 			jobId: 'batch_123',
 			status: 'completed',
 		});
-		const getRes = await Scrape.getBatch(ctx, { id: 'batch_123' });
+		const getRes = await Scrape.getBatch(ctx, {
+			id: 'batch_123',
+			page: 2,
+			batchSize: 20,
+		});
 		expect(getRes.jobId).toBe('batch_123');
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/api/scrape/batch/batch_123',
+			'hb_test_api_key_123',
+			{
+				method: 'GET',
+				query: { page: 2, batchSize: 20 },
+			},
+		);
 
 		mockedRequest.mockResolvedValueOnce({ status: 'completed' });
 		const statRes = await Scrape.getBatchStatus(ctx, { id: 'batch_123' });

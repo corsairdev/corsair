@@ -379,7 +379,11 @@ describe('Hyperbrowser endpoint schemas', () => {
 			).toBe(true);
 
 			expect(
-				GetBatchScrapeJobInputSchema.safeParse({ id: 'batch_123' }).success,
+				GetBatchScrapeJobInputSchema.safeParse({
+					id: 'batch_123',
+					page: 2,
+					batchSize: 20,
+				}).success,
 			).toBe(true);
 			expect(
 				GetBatchScrapeJobOutputSchema.safeParse({

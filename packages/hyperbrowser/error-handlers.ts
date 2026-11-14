@@ -3,22 +3,23 @@ import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	// First match wins. Check credit/quota exhaustion first: billing or credit
-	// depletion cannot succeed on retry, so we fail fast.
+	// depletion cannot succeed on retry, so we fail fast with 0 retries per R8.
 	INSUFFICIENT_CREDITS_ERROR: {
 		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 402) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('insufficient credits') ||
 				msg.includes('insufficient_credits') ||
 				msg.includes('credits exhausted') ||
-				msg.includes('quota exceeded')
+				msg.includes('quota exceeded') ||
+				msg.includes('402')
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Core request transport already owns rate-limit retries (retries 3 times
-	// with exponential backoff and honours Retry-After). Returning maxRetries: 0
-	// avoids duplicate retry loops across transport and handler.
+	// Transport passes RateLimitConfig with maxRetries: 0 so the handler owns
+	// transient rate-limit retries while parsing Retry-After headers from the transport.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
@@ -30,7 +31,15 @@ export const errorHandlers = {
 				msg.includes('429')
 			);
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (error?: Error) => {
+			const retryAfter =
+				error instanceof ApiError ? error.retryAfter : undefined;
+			return {
+				maxRetries: 2,
+				headersRetryAfterMs: retryAfter,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {

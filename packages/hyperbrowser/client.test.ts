@@ -3,6 +3,7 @@ import { ApiError, request } from 'corsair/http';
 import {
 	HYPERBROWSER_API_BASE,
 	makeHyperbrowserRequest,
+	RATE_LIMIT_CONFIG,
 	redactApiErrorInPlace,
 	redactCredentials,
 } from './client';
@@ -171,6 +172,21 @@ describe('redaction helpers', () => {
 		expect(error.body).toEqual({ message: 'Key [redacted] is unauthorized' });
 		expect(error.request.body).toEqual({ token: '[redacted]' });
 	});
+
+	it('redacts proxyServerPassword and sensitive fields from error.message when echoed in transport errors', () => {
+		const error = apiError(
+			422,
+			'Validation failed for {"proxyServerPassword":"super_secret_proxy_pass","url":"https://example.com"}',
+			undefined,
+			{ error: 'Unprocessable Entity' },
+			{ proxyServerPassword: 'super_secret_proxy_pass' },
+		);
+
+		redactApiErrorInPlace(error, 'some_api_key');
+		expect(error.message).not.toContain('super_secret_proxy_pass');
+		expect(error.message).toContain('[redacted]');
+		expect(error.request.body).toEqual({ proxyServerPassword: '[redacted]' });
+	});
 });
 
 describe('real-transport rate-limiting with Retry-After', () => {
@@ -213,6 +229,9 @@ describe('real-transport rate-limiting with Retry-After', () => {
 					method: 'GET',
 					url: '/api/sessions',
 				},
+				{
+					rateLimitConfig: RATE_LIMIT_CONFIG,
+				},
 			)
 			.catch((err: unknown) => err);
 
@@ -221,8 +240,10 @@ describe('real-transport rate-limiting with Retry-After', () => {
 		expect(err.status).toBe(429);
 		expect(err.retryAfter).toBe(4000);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
-		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
-			maxRetries: 0,
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler(err)).resolves.toEqual({
+			maxRetries: 2,
+			headersRetryAfterMs: 4000,
+			retryStrategy: 'exponential_backoff',
 		});
 	});
 });

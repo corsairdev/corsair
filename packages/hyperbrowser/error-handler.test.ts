@@ -25,20 +25,26 @@ function route(error: Error): string {
 }
 
 describe('Hyperbrowser errorHandlers', () => {
-	it('routes 429 to RATE_LIMIT_ERROR and returns maxRetries: 0 for single-owner rate limiting', async () => {
+	it('routes 429 to RATE_LIMIT_ERROR and returns maxRetries: 2 with retryAfter from transport', async () => {
 		const error = apiError(429, 'Too Many Requests', 2000);
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
-		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
-			maxRetries: 0,
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
+			maxRetries: 2,
+			headersRetryAfterMs: 2000,
+			retryStrategy: 'exponential_backoff',
 		});
 	});
 
-	it('routes rate limit text errors to RATE_LIMIT_ERROR with no retries', async () => {
+	it('routes rate limit text errors to RATE_LIMIT_ERROR with retry configuration', async () => {
 		expect(route(new Error('too many requests'))).toBe('RATE_LIMIT_ERROR');
 		expect(route(new Error('rate_limited'))).toBe('RATE_LIMIT_ERROR');
 		expect(route(new Error('hit rate limit'))).toBe('RATE_LIMIT_ERROR');
 		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
-			maxRetries: 0,
+			maxRetries: 2,
+			headersRetryAfterMs: undefined,
+			retryStrategy: 'exponential_backoff',
 		});
 	});
 
