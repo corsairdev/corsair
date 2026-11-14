@@ -2834,6 +2834,14 @@
                 ]
               },
               {
+                "group": "MoonClerk",
+                "pages": [
+                  "plugins/moonclerk/overview",
+                  "plugins/moonclerk/api",
+                  "plugins/moonclerk/database"
+                ]
+              },
+              {
                 "group": "MrScraper",
                 "pages": [
                   "plugins/mrscraper/overview",

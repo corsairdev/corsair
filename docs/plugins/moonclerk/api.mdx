@@ -1,0 +1,557 @@
+---
+title: "MoonClerk API reference"
+sidebarTitle: "API"
+description: "API reference for the MoonClerk plugin in Corsair: every `moonclerk.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Customers
+
+### get
+
+`customers.get`
+
+Get a customer and subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.moonclerk.api.customers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number,
+  account_balance?: number,
+  name?: string,
+  email?: string,
+  payment_method?: {
+    type?: string,
+    last4?: string,
+    exp_month?: number | null,
+    exp_year?: number | null,
+    brand?: string
+  },
+  custom_id?: string | null,
+  customer_reference?: string | null,
+  discount?: {
+    coupon?: {
+      code?: string,
+      duration?: string,
+      amount_off?: number | null,
+      currency?: string | null,
+      percent_off?: number | null,
+      duration_in_months?: number | null,
+      max_redemptions?: number | null,
+      redeem_by?: string | null
+    },
+    starts_at?: string | null,
+    ends_at?: string | null
+  } | null,
+  delinquent?: boolean,
+  management_url?: string,
+  custom_fields?: Record<string, {
+    id?: number,
+    type?: string,
+    response?: string | number | boolean | null | {
+      line1?: string | null,
+      line2?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postal_code?: string | null,
+      country?: string | null
+    }
+  }>,
+  form_id?: number,
+  checkout?: {
+    amount_due?: number,
+    coupon_amount?: number | null,
+    coupon_code?: string | null,
+    date?: string,
+    fee?: number,
+    subtotal?: number,
+    token?: string,
+    total?: number,
+    trial_period_days?: number | null,
+    upfront_amount?: number | null
+  },
+  subscription?: {
+    id?: number,
+    subscription_reference?: string | null,
+    status?: active | canceled | expired | past_due | pending | unpaid,
+    start?: string | null,
+    first_payment_attempt?: string | null,
+    next_payment_attempt?: string | null,
+    current_period_start?: string | null,
+    current_period_end?: string | null,
+    trial_start?: string | null,
+    trial_end?: string | null,
+    trial_period_days?: number | null,
+    expires_at?: string | null,
+    canceled_at?: string | null,
+    ended_at?: string | null,
+    plan?: {
+      id?: number,
+      plan_reference?: string | null,
+      amount?: number,
+      amount_description?: string | null,
+      currency?: string,
+      interval?: string,
+      interval_count?: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers and subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.moonclerk.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `form_id` | `number` | No | — |
+| `checkout_from` | `string` | No | — |
+| `checkout_to` | `string` | No | — |
+| `next_payment_from` | `string` | No | — |
+| `next_payment_to` | `string` | No | — |
+| `status` | `active \| canceled \| expired \| past_due \| pending \| unpaid` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customers full type">
+
+```ts
+{
+  id?: number,
+  account_balance?: number,
+  name?: string,
+  email?: string,
+  payment_method?: {
+    type?: string,
+    last4?: string,
+    exp_month?: number | null,
+    exp_year?: number | null,
+    brand?: string
+  },
+  custom_id?: string | null,
+  customer_reference?: string | null,
+  discount?: {
+    coupon?: {
+      code?: string,
+      duration?: string,
+      amount_off?: number | null,
+      currency?: string | null,
+      percent_off?: number | null,
+      duration_in_months?: number | null,
+      max_redemptions?: number | null,
+      redeem_by?: string | null
+    },
+    starts_at?: string | null,
+    ends_at?: string | null
+  } | null,
+  delinquent?: boolean,
+  management_url?: string,
+  custom_fields?: Record<string, {
+    id?: number,
+    type?: string,
+    response?: string | number | boolean | null | {
+      line1?: string | null,
+      line2?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postal_code?: string | null,
+      country?: string | null
+    }
+  }>,
+  form_id?: number,
+  checkout?: {
+    amount_due?: number,
+    coupon_amount?: number | null,
+    coupon_code?: string | null,
+    date?: string,
+    fee?: number,
+    subtotal?: number,
+    token?: string,
+    total?: number,
+    trial_period_days?: number | null,
+    upfront_amount?: number | null
+  },
+  subscription?: {
+    id?: number,
+    subscription_reference?: string | null,
+    status?: active | canceled | expired | past_due | pending | unpaid,
+    start?: string | null,
+    first_payment_attempt?: string | null,
+    next_payment_attempt?: string | null,
+    current_period_start?: string | null,
+    current_period_end?: string | null,
+    trial_start?: string | null,
+    trial_end?: string | null,
+    trial_period_days?: number | null,
+    expires_at?: string | null,
+    canceled_at?: string | null,
+    ended_at?: string | null,
+    plan?: {
+      id?: number,
+      plan_reference?: string | null,
+      amount?: number,
+      amount_description?: string | null,
+      currency?: string,
+      interval?: string,
+      interval_count?: number
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### get
+
+`forms.get`
+
+Get a payment form
+
+**Risk:** `read`
+
+```ts
+await corsair.moonclerk.api.forms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="form full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  access_token?: string,
+  currency?: string,
+  payment_volume?: number,
+  successful_checkout_count?: number,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`forms.list`
+
+List payment forms
+
+**Risk:** `read`
+
+```ts
+await corsair.moonclerk.api.forms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forms` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  access_token?: string,
+  currency?: string,
+  payment_volume?: number,
+  successful_checkout_count?: number,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### get
+
+`payments.get`
+
+Get a payment
+
+**Risk:** `read`
+
+```ts
+await corsair.moonclerk.api.payments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payment full type">
+
+```ts
+{
+  id?: number,
+  date?: string,
+  status?: successful | refunded | failed,
+  currency?: string,
+  amount?: number,
+  fee?: number,
+  amount_refunded?: number,
+  amount_description?: string | null,
+  name?: string,
+  email?: string,
+  payment_method?: {
+    type?: string,
+    last4?: string,
+    exp_month?: number | null,
+    exp_year?: number | null,
+    brand?: string
+  },
+  charge_reference?: string | null,
+  customer_id?: number | null,
+  customer_reference?: string | null,
+  invoice_reference?: string | null,
+  custom_fields?: Record<string, {
+    id?: number,
+    type?: string,
+    response?: string | number | boolean | null | {
+      line1?: string | null,
+      line2?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postal_code?: string | null,
+      country?: string | null
+    }
+  }>,
+  form_id?: number,
+  custom_id?: string | null,
+  checkout?: {
+    amount_due?: number,
+    coupon_amount?: number | null,
+    coupon_code?: string | null,
+    date?: string,
+    fee?: number,
+    subtotal?: number,
+    token?: string,
+    total?: number,
+    trial_period_days?: number | null,
+    upfront_amount?: number | null
+  } | null,
+  coupon?: {
+    code?: string,
+    duration?: string,
+    amount_off?: number | null,
+    currency?: string | null,
+    percent_off?: number | null,
+    duration_in_months?: number | null,
+    max_redemptions?: number | null,
+    redeem_by?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payments.list`
+
+List payments
+
+**Risk:** `read`
+
+```ts
+await corsair.moonclerk.api.payments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `form_id` | `number` | No | — |
+| `customer_id` | `number` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `status` | `successful \| refunded \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payments full type">
+
+```ts
+{
+  id?: number,
+  date?: string,
+  status?: successful | refunded | failed,
+  currency?: string,
+  amount?: number,
+  fee?: number,
+  amount_refunded?: number,
+  amount_description?: string | null,
+  name?: string,
+  email?: string,
+  payment_method?: {
+    type?: string,
+    last4?: string,
+    exp_month?: number | null,
+    exp_year?: number | null,
+    brand?: string
+  },
+  charge_reference?: string | null,
+  customer_id?: number | null,
+  customer_reference?: string | null,
+  invoice_reference?: string | null,
+  custom_fields?: Record<string, {
+    id?: number,
+    type?: string,
+    response?: string | number | boolean | null | {
+      line1?: string | null,
+      line2?: string | null,
+      city?: string | null,
+      state?: string | null,
+      postal_code?: string | null,
+      country?: string | null
+    }
+  }>,
+  form_id?: number,
+  custom_id?: string | null,
+  checkout?: {
+    amount_due?: number,
+    coupon_amount?: number | null,
+    coupon_code?: string | null,
+    date?: string,
+    fee?: number,
+    subtotal?: number,
+    token?: string,
+    total?: number,
+    trial_period_days?: number | null,
+    upfront_amount?: number | null
+  } | null,
+  coupon?: {
+    code?: string,
+    duration?: string,
+    amount_off?: number | null,
+    currency?: string | null,
+    percent_off?: number | null,
+    duration_in_months?: number | null,
+    max_redemptions?: number | null,
+    redeem_by?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
