@@ -367,6 +367,33 @@ describe('docs family — conditional input requirements', () => {
 		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
 	});
 
+	it('docsUpdate accepts a document targeted by object_id alone', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+
+		await docsUpdate(mockCtx, {
+			object_id: '9876543210',
+			operations: [{ operation_type: 'replace_content', content: '# hi' }],
+		});
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as { params: { name: string; arguments: Record<string, unknown> } };
+		expect(callBody.params.arguments).toEqual({
+			object_id: '9876543210',
+			operations: [{ operation_type: 'replace_content', content: '# hi' }],
+		});
+	});
+
+	it('docsUpdate rejects an update with neither doc_id nor object_id', async () => {
+		await expect(
+			docsUpdate(mockCtx, {
+				operations: [{ operation_type: 'replace_content', content: '# hi' }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('docsRead accepts version_history calls without type', async () => {
 		stubSession();
 		stubToolResult({ content: [{ type: 'text', text: '{}' }] });

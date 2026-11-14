@@ -3147,14 +3147,6 @@
                 ]
               },
               {
-                "group": "Monday MCP",
-                "pages": [
-                  "plugins/mondaymcp/overview",
-                  "plugins/mondaymcp/api",
-                  "plugins/mondaymcp/database"
-                ]
-              },
-              {
                 "group": "MrScraper",
                 "pages": [
                   "plugins/mrscraper/overview",

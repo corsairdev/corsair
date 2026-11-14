@@ -405,7 +405,7 @@ await corsair.mondaymcp.api.automations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `userPrompt` | `string` | Yes | Structured description of the automation to create (see the format below). |
+| `userPrompt` | `string` | Yes | Structured description of the automation to create, in the format the description of monday's `create_automation` MCP tool gives. |
 | `boardId` | `string` | Yes | The numeric board ID as a string. |
 
 
@@ -1118,7 +1118,7 @@ await corsair.mondaymcp.api.docs.update({});
 |------|------|----------|-------------|
 | `doc_id` | `string` | No | The document ID returned by `read_docs` (`id` field). Takes priority over `object_id` if both are provided. |
 | `object_id` | `string` | No | The document object ID visible in the document URL. Resolved to `doc_id` internally. |
-| `operations` | `any[]` | Yes | Ordered list of operations to perform (1–25). Each operation requires an `operation_type` and type-specific fields. See operation types below. |
+| `operations` | `any[]` | Yes | Ordered list of operations to perform (1–25). Each operation requires an `operation_type` and type-specific fields; monday's `update_doc` MCP tool description lists the operation types. |
 
 
 
@@ -1368,7 +1368,7 @@ await corsair.mondaymcp.api.forms.createSubmission({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `form_token` | `string` | Yes | The form token, a full WorkForm URL, or a shortened wkf.ms URL. Shortened URLs are automatically resolved. |
-| `answers` | `any[]` | Yes | Array of answer objects. Each object must include question_id and exactly one answer field matching the question type. See answer type fields below. |
+| `answers` | `any[]` | Yes | Array of answer objects. Each object must include question_id and exactly one answer field matching the question type; monday's `create_form_submission` MCP tool description lists the answer fields per type. |
 | `form_timezone_offset` | `number` | Yes | The submitter's timezone offset in minutes (e.g., -120 for UTC−2, 0 for UTC, 120 for UTC+2). |
 | `password` | `string` | No | Required only if the form has password protection enabled (check features.password.enabled from get_form). |
 | `tags` | `any[]` | No | Routing tags to attach to the submission. Each tag maps a column_id to a value. |
@@ -1417,7 +1417,7 @@ await corsair.mondaymcp.api.forms.editQuestions({});
 | `action` | `string` | Yes | The operation to perform: create, update, or delete. |
 | `formToken` | `string` | Yes | The unique token identifying the form. |
 | `questionId` | `string` | No | ID of the question to update or delete. Required for update and delete. |
-| `question` | `Record<string, any>` | No | The question definition. Required for create. For update, required with type always included. See sub-fields below. |
+| `question` | `Record<string, any>` | No | The question definition. Required for create. For update, required with type always included. monday's `form_questions_editor` MCP tool description lists its sub-fields. |
 
 
 
@@ -1504,7 +1504,7 @@ await corsair.mondaymcp.api.forms.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `formToken` | `string` | Yes | The unique token identifying the form. |
-| `action` | `string` | Yes | The operation to perform. See the table below for all supported actions and their required fields. |
+| `action` | `string` | Yes | The operation to perform; monday's `update_form` MCP tool description lists the supported actions and their required fields. |
 | `form` | `Record<string, any>` | No | Form data to update. Required for updateFormHeader, updateAppearance, updateAccessibility, updateFeatures, and updateQuestionOrder. Patch semantics — only include the fields you want to change. |
 | `formPassword` | `string` | No | Required for the setFormPassword action. |
 | `tag` | `Record<string, any>` | No | Required for createTag, updateTag, and deleteTag. For create: provide name and value. For update: provide id and new value. For delete: provide id only. |
@@ -2344,7 +2344,7 @@ await corsair.mondaymcp.api.views.createTable({});
 | `filter` | `Record<string, any>` | No | Filter configuration. Contains rules (an array of &#123; column_id, compare_value, operator &#125;) and an optional operator (logical operator between rules, defaults to and). |
 | `sort` | `any[]` | No | Sort configuration. Array of &#123; column_id, direction &#125; objects. direction defaults to asc. |
 | `tags` | `any[]` | No | Tags to apply to the view. |
-| `settings` | `Record<string, any>` | No | Table-specific settings: columns (visibility/order) and group_by. See the settings reference below. |
+| `settings` | `Record<string, any>` | No | Table-specific settings: columns (visibility/order) and group_by, as described in monday's `create_view_table` MCP tool. |
 
 
 

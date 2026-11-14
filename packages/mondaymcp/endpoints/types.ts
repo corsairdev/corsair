@@ -147,7 +147,7 @@ export const AutomationsCreateInputSchema = z
 		userPrompt: z
 			.string()
 			.describe(
-				'Structured description of the automation to create (see the format below).',
+				"Structured description of the automation to create, in the format the description of monday's `create_automation` MCP tool gives.",
 			),
 		boardId: z.string().describe('The numeric board ID as a string.'),
 	})
@@ -404,7 +404,7 @@ export const FormsCreateSubmissionInputSchema = z
 		answers: z
 			.array(LooseArrayItem)
 			.describe(
-				'Array of answer objects. Each object must include question_id and exactly one answer field matching the question type. See answer type fields below.',
+				"Array of answer objects. Each object must include question_id and exactly one answer field matching the question type; monday's `create_form_submission` MCP tool description lists the answer fields per type.",
 			),
 		form_timezone_offset: z
 			.number()
@@ -589,7 +589,7 @@ export const ViewsCreateTableInputSchema = z
 			.describe('Tags to apply to the view.')
 			.optional(),
 		settings: LooseRecord.describe(
-			'Table-specific settings: columns (visibility/order) and group_by. See the settings reference below.',
+			"Table-specific settings: columns (visibility/order) and group_by, as described in monday's `create_view_table` MCP tool.",
 		).optional(),
 	})
 	.loose();
@@ -721,7 +721,7 @@ export const FormsEditQuestionsInputSchema = z
 			)
 			.optional(),
 		question: LooseRecord.describe(
-			'The question definition. Required for create. For update, required with type always included. See sub-fields below.',
+			"The question definition. Required for create. For update, required with type always included. monday's `form_questions_editor` MCP tool description lists its sub-fields.",
 		).optional(),
 	})
 	.loose();
@@ -1598,7 +1598,7 @@ export const DocsUpdateInputSchema = z
 		operations: z
 			.array(LooseArrayItem)
 			.describe(
-				'Ordered list of operations to perform (1–25). Each operation requires an `operation_type` and type-specific fields. See operation types below.',
+				"Ordered list of operations to perform (1–25). Each operation requires an `operation_type` and type-specific fields; monday's `update_doc` MCP tool description lists the operation types.",
 			),
 	})
 	.loose()
@@ -1682,7 +1682,7 @@ export const FormsUpdateInputSchema = z
 		action: z
 			.string()
 			.describe(
-				'The operation to perform. See the table below for all supported actions and their required fields.',
+				"The operation to perform; monday's `update_form` MCP tool description lists the supported actions and their required fields.",
 			),
 		form: LooseRecord.describe(
 			'Form data to update. Required for updateFormHeader, updateAppearance, updateAccessibility, updateFeatures, and updateQuestionOrder. Patch semantics — only include the fields you want to change.',
