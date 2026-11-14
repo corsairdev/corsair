@@ -102,6 +102,7 @@ await corsair.postgrid.api.contacts.delete({ id: 'contact_nA8mdzveShFEmFraaChaDn
 |------|------|----------|-------------|
 | `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
 | `object` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
 | `live` | `boolean \| null` | No | — |
 
 
@@ -272,7 +273,7 @@ await corsair.postgrid.api.letters.cancel({ id: 'letter_cS61RTPrSvBKVyT7kenpjn' 
 | `addressPlacement` | `string \| null` | No | — |
 | `color` | `boolean \| null` | No | — |
 | `doubleSided` | `boolean \| null` | No | — |
-| `envelopeType` | `string \| null` | No | — |
+| `envelope` | `string \| null` | No | — |
 | `mailingClass` | `string \| null` | No | — |
 
 <AccordionGroup>
@@ -362,29 +363,28 @@ Print and mail a letter, which costs postage and cannot be recalled once it leav
 **Risk:** `destructive`
 
 ```ts
-await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, html: '<b>Hello</b>', color: true, doubleSided: true, size: 'us_letter', mailingClass: 'usps_first_class' });
+await corsair.postgrid.api.letters.create({ to: { firstName: 'Kevin', addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { companyName: 'Corsair', addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, html: '<b>Hello</b>', color: true, doubleSided: true, size: 'us_letter', mailingClass: 'usps_first_class' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `to` | `object` | Yes | The recipient: a contact id or the address fields. |
+| `to` | `string \| object` | Yes | The recipient: a contact id or the address fields. |
 | `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
 | `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
 | `description` | `string` | No | — |
 | `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
 | `mergeVariables` | `Record<string, JsonValue>` | No | — |
 | `metadata` | `Record<string, JsonValue>` | No | — |
-| `from` | `object` | Yes | The sender: a contact id or the address fields. |
+| `from` | `string \| object` | No | The sender: a contact id or the address fields. |
 | `html` | `string` | No | The letter body. Supply this or a template. |
 | `template` | `string` | No | A `template_` id to render instead of raw html. |
-| `size` | `us_letter \| us_legal \| a4` | No | — |
+| `size` | `us_letter \| a4` | No | — |
 | `color` | `boolean` | No | Print in colour. |
 | `doubleSided` | `boolean` | No | — |
 | `addressPlacement` | `top_first_page \| insert_blank_page` | No | — |
-| `envelopeType` | `standard_double_window \| flat` | No | — |
-| `express` | `boolean` | No | Send by express postage. |
+| `envelope` | `string` | No | A custom envelope id, or `standard` for the default envelope. Express postage is `mailingClass: express`. |
 | `perforatedPage` | `1` | No | The page to perforate, for a tear-off return slip. PostGrid accepts only 1, the first page. |
 | `returnEnvelope` | `string` | No | A `return_envelope_` id to include. |
 
@@ -392,7 +392,7 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
 <Accordion title="to full type">
 
 ```ts
-{
+string | {
   id?: string,
   firstName?: string,
   lastName?: string,
@@ -415,7 +415,7 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
 <Accordion title="from full type">
 
 ```ts
-{
+string | {
   id?: string,
   firstName?: string,
   lastName?: string,
@@ -463,7 +463,7 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
 | `addressPlacement` | `string \| null` | No | — |
 | `color` | `boolean \| null` | No | — |
 | `doubleSided` | `boolean \| null` | No | — |
-| `envelopeType` | `string \| null` | No | — |
+| `envelope` | `string \| null` | No | — |
 | `mailingClass` | `string \| null` | No | — |
 
 <AccordionGroup>
@@ -590,7 +590,7 @@ await corsair.postgrid.api.letters.get({ id: 'letter_oNrxnVvpyKwbcHtJinF5cm', ex
 | `addressPlacement` | `string \| null` | No | — |
 | `color` | `boolean \| null` | No | — |
 | `doubleSided` | `boolean \| null` | No | — |
-| `envelopeType` | `string \| null` | No | — |
+| `envelope` | `string \| null` | No | — |
 | `mailingClass` | `string \| null` | No | — |
 
 <AccordionGroup>
@@ -780,7 +780,7 @@ await corsair.postgrid.api.letters.list({ limit: 10 });
   addressPlacement?: string | null,
   color?: boolean | null,
   doubleSided?: boolean | null,
-  envelopeType?: string | null,
+  envelope?: string | null,
   mailingClass?: string | null
 }[]
 ```
@@ -912,21 +912,21 @@ Print and mail a postcard with a front and a back face, which costs postage and 
 **Risk:** `destructive`
 
 ```ts
-await corsair.postgrid.api.postcards.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '6x4', frontHTML: '<b>Front</b>', backHTML: '<b>Back</b>' });
+await corsair.postgrid.api.postcards.create({ to: { firstName: 'Kevin', addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { companyName: 'Corsair', addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '6x4', frontHTML: '<b>Front</b>', backHTML: '<b>Back</b>' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `to` | `object` | Yes | The recipient: a contact id or the address fields. |
+| `to` | `string \| object` | Yes | The recipient: a contact id or the address fields. |
 | `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
 | `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
 | `description` | `string` | No | — |
 | `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
 | `mergeVariables` | `Record<string, JsonValue>` | No | — |
 | `metadata` | `Record<string, JsonValue>` | No | — |
-| `from` | `object` | No | The sender: a contact id or the address fields. |
+| `from` | `string \| object` | No | The sender: a contact id or the address fields. |
 | `size` | `6x4 \| 9x6 \| 11x6` | Yes | Which postcard stock to print. |
 | `frontHTML` | `string` | No | The front face. Supply this or `frontTemplate`. |
 | `backHTML` | `string` | No | The back face. Supply this or `backTemplate`. |
@@ -937,7 +937,7 @@ await corsair.postgrid.api.postcards.create({ to: { addressLine1: '145 Mulberry 
 <Accordion title="to full type">
 
 ```ts
-{
+string | {
   id?: string,
   firstName?: string,
   lastName?: string,
@@ -960,7 +960,7 @@ await corsair.postgrid.api.postcards.create({ to: { addressLine1: '145 Mulberry 
 <Accordion title="from full type">
 
 ```ts
-{
+string | {
   id?: string,
   firstName?: string,
   lastName?: string,
@@ -1306,22 +1306,22 @@ Print and mail a folded self mailer with inside and outside panels, which costs 
 **Risk:** `destructive`
 
 ```ts
-await corsair.postgrid.api.selfMailers.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '8.5x11_bifold', insideHTML: '<b>Inside</b>', outsideHTML: '<b>Outside</b>' });
+await corsair.postgrid.api.selfMailers.create({ to: { firstName: 'Kevin', addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { companyName: 'Corsair', addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '8.5x11_bifold', insideHTML: '<b>Inside</b>', outsideHTML: '<b>Outside</b>' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `to` | `object` | Yes | The recipient: a contact id or the address fields. |
+| `to` | `string \| object` | Yes | The recipient: a contact id or the address fields. |
 | `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
 | `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
 | `description` | `string` | No | — |
 | `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
 | `mergeVariables` | `Record<string, JsonValue>` | No | — |
 | `metadata` | `Record<string, JsonValue>` | No | — |
-| `from` | `object` | Yes | The sender: a contact id or the address fields. |
-| `size` | `8.5x11_bifold \| 8.5x11_trifold` | Yes | Which fold to print and finish. |
+| `from` | `string \| object` | No | The sender: a contact id or the address fields. |
+| `size` | `8.5x11_bifold \| 8.5x11_trifold \| 9.5x16_trifold` | Yes | Which fold to print and finish. |
 | `insideHTML` | `string` | No | The inside panel. Supply this or `insideTemplate`. |
 | `outsideHTML` | `string` | No | The outside panel. Supply this or `outsideTemplate`. |
 | `insideTemplate` | `string` | No | — |
@@ -1331,7 +1331,7 @@ await corsair.postgrid.api.selfMailers.create({ to: { addressLine1: '145 Mulberr
 <Accordion title="to full type">
 
 ```ts
-{
+string | {
   id?: string,
   firstName?: string,
   lastName?: string,
@@ -1354,7 +1354,7 @@ await corsair.postgrid.api.selfMailers.create({ to: { addressLine1: '145 Mulberr
 <Accordion title="from full type">
 
 ```ts
-{
+string | {
   id?: string,
   firstName?: string,
   lastName?: string,
@@ -1754,6 +1754,7 @@ await corsair.postgrid.api.templates.delete({ id: 'template_c6HSqnsD1h2zoeHJ6Z9E
 |------|------|----------|-------------|
 | `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
 | `object` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
 | `live` | `boolean \| null` | No | — |
 
 
@@ -1916,7 +1917,7 @@ await corsair.postgrid.api.trackers.get({ id: 'tracker_oNrxnVvpyKwbcHtJinF5cm' }
 | `description` | `string \| null` | No | — |
 | `live` | `boolean \| null` | No | — |
 | `redirectURLTemplate` | `string \| null` | No | The base template for the URLs this tracker generates. |
-| `urlExpireAfterDays` | `number \| null` | No | How long a generated URL stays valid: 30, 60 or 90 days. |
+| `urlExpireAfterDays` | `number \| null` | No | How long a generated URL stays valid: 30, 60, 90, 180 or 365 days. |
 | `visitCount` | `number \| null` | No | The total number of interactions this tracker recorded. |
 | `uniqueVisitCount` | `number \| null` | No | The number of distinct interactions this tracker recorded. |
 | `metadata` | `Record<string, JsonValue> \| null` | No | — |
