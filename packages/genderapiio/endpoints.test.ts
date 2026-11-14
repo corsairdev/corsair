@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { GenderApiIoAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { GenderApiIoAPIError, genderApiIoErrorInfo } from './client';
 import {
 	capabilities,
 	errorCatalog,
@@ -89,15 +90,25 @@ function lastRequest() {
  * Runs a call that must fail and returns what it threw.
  */
 // unknown: the rejection value is untyped by definition.
-async function failure(
-	run: Promise<unknown>,
-): Promise<GenderApiIoAPIError & Error> {
+async function thrown(run: Promise<unknown>): Promise<Error> {
 	try {
 		await run;
 	} catch (error) {
-		return error as GenderApiIoAPIError & Error;
+		return error as Error;
 	}
 	throw new Error('expected the call to fail, but it resolved');
+}
+
+/**
+ * Runs a call that must fail and returns the GenderAPI.io fields of what it
+ * threw: the problem document of core's ApiError, or the transport error.
+ */
+// unknown: the rejection value is untyped by definition.
+async function failure(
+	run: Promise<unknown>,
+): Promise<GenderApiIoAPIError & Error> {
+	const error = await thrown(run);
+	return (genderApiIoErrorInfo(error) ?? error) as GenderApiIoAPIError & Error;
 }
 
 beforeEach(() => {
@@ -155,6 +166,7 @@ describe('GenderAPI.io client', () => {
 
 		expect(error).toBeInstanceOf(GenderApiIoAPIError);
 		expect(error.status).toBe(422);
+		expect(error.method).toBe('POST');
 		expect(error.code).toBe('validation_error');
 		expect(error.action).toBe('correct_request');
 		expect(error.fieldErrors).toEqual([
@@ -164,6 +176,22 @@ describe('GenderAPI.io client', () => {
 			},
 		]);
 		expect(error.isValidationError).toBe(true);
+	});
+
+	it('passes core ApiError through without the names or emails it sent', async () => {
+		respond(validationProblem, 422);
+		const error = await thrown(
+			invoke(gender, { type: 'email', value: 'jane.doe@example.com' }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (error instanceof ApiError) {
+			expect(error.status).toBe(422);
+			expect(error.request.method).toBe('POST');
+			expect(JSON.stringify(error.request)).not.toContain('jane.doe');
+			expect(error.message).not.toContain('jane.doe');
+			expect(error.body).toMatchObject({ code: 'validation_error' });
+		}
 	});
 
 	it('tells an insufficient balance apart from a generic 403', async () => {
@@ -284,6 +312,7 @@ describe('genderapiio.gender.infer', () => {
 		});
 
 		// The v2 POST schema refuses a top-level ai_mode with a 422.
+		// unknown: the sent JSON body is only inspected for a few keys here.
 		const body = lastRequest().body as Record<string, unknown>;
 		expect(body).toMatchObject({
 			options: { ai_mode: 'fallback' },
@@ -377,6 +406,7 @@ describe('genderapiio.gender.batch', () => {
 		});
 
 		// The batch schema has no top-level ai_mode; each item takes options.ai_mode.
+		// unknown: each sent item is only inspected for a few keys here.
 		const body = lastRequest().body as {
 			items: Array<Record<string, unknown>>;
 		};
@@ -394,6 +424,7 @@ describe('genderapiio.gender.batch', () => {
 		respond(batch);
 		await invoke(genderBatch, { items: [{ type: 'name', value: 'Sophia' }] });
 
+		// unknown: each sent item is only inspected for a few keys here.
 		const body = lastRequest().body as {
 			items: Array<Record<string, unknown>>;
 		};

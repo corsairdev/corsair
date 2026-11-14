@@ -1,7 +1,12 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GENDERAPIIO_ERROR_CODES, GenderApiIoAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/**
+ * An HTTP failure arrives as core's ApiError carrying the problem document; a
+ * request that got no answer arrives as GenderApiIoAPIError.
+ */
 function apiError(options: {
 	status?: number;
 	code?: string;
@@ -10,8 +15,20 @@ function apiError(options: {
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new GenderApiIoAPIError('failed', options);
+}): Error {
+	if (options.transport) return new GenderApiIoAPIError('failed', options);
+	return new ApiError(
+		{ method: (options.method ?? 'POST') as 'POST', url: '/api/v2/gender' },
+		{
+			url: 'https://api.genderapi.io/api/v2/gender',
+			ok: false,
+			status: options.status ?? 500,
+			statusText: '',
+			body: { code: options.code, action: options.action },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**

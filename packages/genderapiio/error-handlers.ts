@@ -1,9 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { GENDERAPIIO_ERROR_CODES, GenderApiIoAPIError } from './client';
+import { GENDERAPIIO_ERROR_CODES, genderApiIoErrorInfo } from './client';
 
-function statusOf(error: Error): number | undefined {
-	return error instanceof GenderApiIoAPIError ? error.status : undefined;
-}
+/** HTTP failures arrive as core's ApiError, transport failures as GenderApiIoAPIError. */
+const info = genderApiIoErrorInfo;
 
 /**
  * GenderAPI.io publishes a machine-readable error catalog at
@@ -17,43 +16,33 @@ export const errorHandlers = {
 	// respect Retry-After, so the handler does. A retry is a new billed operation,
 	// which is why the attempt count stays low.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError && error.isRateLimit,
+		match: (error: Error) => info(error)?.isRateLimit === true,
 		handler: async (error: Error) => ({
 			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof GenderApiIoAPIError ? error.retryAfter : undefined,
+			headersRetryAfterMs: info(error)?.retryAfter,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// A key the API refused, or a missing header where the route needs one.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError && error.isAuthError,
+		match: (error: Error) => info(error)?.isAuthError === true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A key that exists but cannot be used. The catalog says these do not fall
 	// back to an IP trial, so there is nothing to retry.
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError && error.isPermissionError,
+		match: (error: Error) => info(error)?.isPermissionError === true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A 422 body, a 400 query, or a value a zod schema refused.
 	VALIDATION_ERROR: {
-		match: (error: Error) => {
-			const status = statusOf(error);
-			return (
-				error.name === 'ZodError' ||
-				(error instanceof GenderApiIoAPIError && error.isValidationError)
-			);
-		},
+		match: (error: Error) =>
+			error.name === 'ZodError' || info(error)?.isValidationError === true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// An unknown route. A retry asks for the same route.
 	NOT_FOUND: {
-		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError && error.isNotFound,
+		match: (error: Error) => info(error)?.isNotFound === true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A billed POST that failed with a 5xx, a timeout or a dropped connection may
@@ -62,8 +51,7 @@ export const errorHandlers = {
 	// billed operation. This sits above SERVER, TIMEOUT and NETWORK so those only
 	// retry the free GET routes.
 	BILLING_CHECK_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError && error.needsBillingCheck,
+		match: (error: Error) => info(error)?.needsBillingCheck === true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// AI is unavailable on this deployment. The catalog says a dataset-only
@@ -71,14 +59,12 @@ export const errorHandlers = {
 	// retried as-is.
 	AI_UNAVAILABLE_ERROR: {
 		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError &&
-			error.code === GENDERAPIIO_ERROR_CODES.AI_UNAVAILABLE,
+			info(error)?.code === GENDERAPIIO_ERROR_CODES.AI_UNAVAILABLE,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Their internal failure, or a 5xx the catalog does not name.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError && (error.status ?? 0) >= 500,
+		match: (error: Error) => (info(error)?.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
@@ -86,16 +72,14 @@ export const errorHandlers = {
 	},
 	// A timeout is also a transport failure, so it is matched first.
 	TIMEOUT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError && error.timedOut,
+		match: (error: Error) => info(error)?.timedOut === true,
 		handler: async () => ({
 			maxRetries: 1,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
 	NETWORK_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiIoAPIError && error.transport,
+		match: (error: Error) => info(error)?.transport === true,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

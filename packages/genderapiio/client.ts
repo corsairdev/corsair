@@ -209,6 +209,54 @@ export class GenderApiIoAPIError extends Error {
 	}
 }
 
+/**
+ * The GenderAPI.io fields of a thrown error. An HTTP failure reaches callers as
+ * core's ApiError (R8) carrying the problem document; this reads it into the
+ * same shape a transport failure has, so the handlers can treat both alike.
+ */
+// unknown: a caught rejection has no static type.
+export function genderApiIoErrorInfo(
+	error: unknown,
+): GenderApiIoAPIError | undefined {
+	if (error instanceof GenderApiIoAPIError) return error;
+	if (!(error instanceof ApiError)) return undefined;
+	const problem = readProblem(error.body);
+	const requestId = asRecord(error.body)?.request_id;
+	return new GenderApiIoAPIError(error.message, {
+		status: error.status,
+		code: problem.code,
+		action: problem.action,
+		fieldErrors: problem.fieldErrors,
+		billingStatus: problem.billingStatus,
+		retryAfter: error.retryAfter,
+		requestId: typeof requestId === 'string' ? requestId : undefined,
+		method: error.request.method,
+	});
+}
+
+/**
+ * The problem document without anything a caller sent. The catalog's fields are
+ * fixed text, but `errors[].value` or an unknown field could echo a name, an
+ * email or a phone number.
+ */
+// unknown: the error body is untrusted JSON.
+function safeProblem(body: unknown): Record<string, unknown> | undefined {
+	const record = asRecord(body);
+	if (!record) return undefined;
+	const problem = readProblem(body);
+	const kept: Record<string, unknown> = {};
+	for (const key of ['type', 'title', 'status', 'detail', 'code', 'action']) {
+		if (record[key] !== undefined) kept[key] = record[key];
+	}
+	if (typeof record.request_id === 'string')
+		kept.request_id = record.request_id;
+	if (problem.fieldErrors) kept.errors = problem.fieldErrors;
+	if (problem.billingStatus) {
+		kept.meta = { usage: { billing_status: problem.billingStatus } };
+	}
+	return kept;
+}
+
 /** A readable message from the problem document. */
 // unknown: an error body is untyped: a problem document, or text from a proxy
 // that never reached GenderAPI.io.
@@ -280,21 +328,29 @@ export async function makeGenderApiIoRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const problem = readProblem(error.body);
-			const record = asRecord(error.body);
-			const requestId =
-				typeof record?.request_id === 'string' ? record.request_id : undefined;
-			throw new GenderApiIoAPIError(
-				describeGenderApiIoError(error.status, error.body, error.message),
+			// Core's ApiError goes through (R8), minus the names, emails and phone
+			// numbers that were sent, and the query of the GET routes.
+			const url = new URL(error.url);
+			url.search = '';
+			throw new ApiError(
+				{ ...error.request, body: undefined, query: undefined },
 				{
+					url: url.toString(),
+					ok: false,
 					status: error.status,
-					code: problem.code,
-					action: problem.action,
-					fieldErrors: problem.fieldErrors,
-					billingStatus: problem.billingStatus,
+					statusText: error.statusText,
+					body: safeProblem(error.body),
+				},
+				describeGenderApiIoError(
+					error.status,
+					safeProblem(error.body),
+					`HTTP ${error.status}`,
+				),
+				{
 					retryAfter: error.retryAfter,
-					requestId,
-					method,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}
