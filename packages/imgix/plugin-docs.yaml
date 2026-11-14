@@ -13,7 +13,7 @@ apiExamples:
   sources.create:
     call: >-
       { name: "Production Image Store", deployment_type: "webfolder",
-      webfolder_base_url: "https://images.example.com" }
+      webfolder_base_url: "https://images.example.com/", imgix_subdomains: ["production-images"] }
   sources.get:
     source_id: "src_1234567890abcdef"
   sources.update:
@@ -56,8 +56,8 @@ apiExamples:
   reports.get:
     report_id: "rep_1234567890abcdef"
   generations.createVideo:
+    url: "https://your-subdomain.imgix.net/mountain.jpg"
     prompt: "Slow cinematic pan across a mountain vista"
-    source: "https://images.example.com/mountain.jpg"
   generations.getVideoJob:
     job_id: "job_1234567890abcdef"
   generations.getAltText:
@@ -69,8 +69,8 @@ apiExamples:
       en: "Snow-covered peaks at sunrise"
 apiNotes:
   sources.create: >-
-    Creates and deploys a new Imgix source for cloud storage (S3, GCS, Azure) or web folder origin.
+    Creates and deploys a new Imgix source for cloud storage (S3, GCS, Azure, S3-compatible) or a web folder origin. imgix_subdomains needs at least one *.imgix.net subdomain, given without the domain. The API cannot delete a source: disable it with sources.update (enabled false) or delete it in the dashboard.
   generations.createVideo: >-
-    Asynchronously transforms an image into a video using AI motion generation. Poll generations.getVideoJob with the returned job_id until status is ready.
+    Asynchronously transforms an image into a video using AI motion generation. The image must be on an imgix Source with Image to Video enabled. Poll generations.getVideoJob with the returned data.id every 5 to 10 seconds until data.attributes.status is ready (video at data.attributes.result.url) or errored.
   purges.create: >-
     Purges an asset URL and all its derived variants globally from the Imgix CDN edge cache.

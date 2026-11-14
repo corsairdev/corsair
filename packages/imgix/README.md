@@ -19,7 +19,7 @@ pnpm add @corsair-dev/imgix
 | `assets.list` | `imgix.api.assets.list` | `read` | List indexed assets for a specific Imgix source |
 | `assets.get` | `imgix.api.assets.get` | `read` | Retrieve details, technical metadata, and custom fields for an asset |
 | `assets.update` | `imgix.api.assets.update` | `write` | Update custom fields or metadata for an asset in the Asset Manager |
-| `assets.addFromOrigin` | `imgix.api.assets.addFromOrigin` | `write` | Queue an existing origin asset to be indexed into the Imgix Asset Manager |
+| `assets.addFromOrigin` | `imgix.api.assets.addFromOrigin` | `write` | Queue an existing origin asset to be indexed into the Imgix Asset Manager (imgix answers 202 with no body, returned as {}) |
 | `assets.upload` | `imgix.api.assets.upload` | `write` | Upload a file directly to the origin via Imgix Asset Manager |
 | `uploadSessions.create` | `imgix.api.uploadSessions.create` | `write` | Initialize an upload session and receive a presigned URL for large asset upload |
 | `uploadSessions.getStatus` | `imgix.api.uploadSessions.getStatus` | `read` | Retrieve the status of an ongoing or finalized asset upload session |
@@ -30,7 +30,7 @@ pnpm add @corsair-dev/imgix
 | `reports.get` | `imgix.api.reports.get` | `read` | Retrieve details, metadata, and downloadable segment URLs for a report |
 | `generations.createVideo` | `imgix.api.generations.createVideo` | `destructive` | Transform a static image into a video using AI motion generation (consumes AI credits) |
 | `generations.getVideoJob` | `imgix.api.generations.getVideoJob` | `read` | Poll the status and retrieve result URL of an asynchronous video generation job |
-| `generations.getAltText` | `imgix.api.generations.getAltText` | `read` | Generate or retrieve AI-generated alt text for an image |
+| `generations.getAltText` | `imgix.api.generations.getAltText` | `destructive` | Generate or retrieve AI alt text for an image (new languages consume AI credits; regenerate replaces stored text and overrides) |
 | `generations.overrideAltText` | `imgix.api.generations.overrideAltText` | `write` | Set or remove manual alt-text overrides per language for an image |
 
 ## Auth
