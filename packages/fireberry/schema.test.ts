@@ -181,6 +181,28 @@ describe('Fireberry endpoint schemas', () => {
 		).toBe(false);
 	});
 
+	it('requires exactly two values for between and any count for eq-in', () => {
+		const querySchema = fireberryEndpointSchemas['records.query'].input;
+		const withValue = (operator: string, value: Array<number>) => ({
+			objectType: 1,
+			fields: [{ name: 'revenue' }],
+			filter: [
+				{ type: 'AND', conditions: [{ fieldName: 'revenue', operator, value }] },
+			],
+		});
+		for (const value of [[], [100], [1, 2, 3]]) {
+			expect(querySchema.safeParse(withValue('between', value)).success).toBe(
+				false,
+			);
+		}
+		expect(querySchema.safeParse(withValue('between', [1, 2])).success).toBe(
+			true,
+		);
+		expect(querySchema.safeParse(withValue('eq-in', [1, 2, 3])).success).toBe(
+			true,
+		);
+	});
+
 	it('enforces Query v3 aggregation and filter operator dependencies', () => {
 		const querySchema = fireberryEndpointSchemas['records.query'].input;
 		expect(

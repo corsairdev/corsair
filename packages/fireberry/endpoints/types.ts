@@ -286,6 +286,17 @@ const QueryConditionSchema = z
 			});
 		}
 		if (
+			condition.operator === 'between' &&
+			Array.isArray(condition.value) &&
+			condition.value.length !== 2
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['value'],
+				message: 'between requires exactly two values',
+			});
+		}
+		if (
 			arrayValue &&
 			condition.value !== undefined &&
 			!Array.isArray(condition.value)
