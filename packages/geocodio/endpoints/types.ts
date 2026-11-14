@@ -80,13 +80,18 @@ const GeocodeResponseSchema = z.object({
 
 /**
  * A batch answers one entry per input, in input order: the query as sent and
- * the single-lookup answer for it under `response`.
+ * the single-lookup answer for it under `response`. An entry Geocodio could
+ * not use answers an empty `results` list with the reason in `error`, such as
+ * `Could not geocode address. No matches found.`, rather than failing the batch.
  */
 const BatchGeocodeResponseSchema = z.object({
 	results: z.array(
 		z.object({
 			query: z.string(),
-			response: GeocodeResponseSchema,
+			response: GeocodeResponseSchema.extend({
+				error: z.string().optional(),
+				reference: z.string().optional(),
+			}),
 		}),
 	),
 	_warnings: z.array(z.string()).optional(),

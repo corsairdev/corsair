@@ -204,7 +204,7 @@ describe('geocodio schemas', () => {
 		expect(parsed.success).toBe(true);
 	});
 
-	it('accepts an empty result list, which is how "no match" answers', () => {
+	it('accepts an empty result list', () => {
 		const parsed = geocodioEndpointSchemas['geocode.forward'].output.safeParse({
 			results: [],
 		});

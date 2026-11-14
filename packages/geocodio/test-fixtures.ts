@@ -13,6 +13,11 @@ export const oldVersionWarning = [
 	'There is a newer API version available, please consider upgrading to v2.1. See changelog here: https://www.geocod.io/docs/#changelog',
 ];
 
+/** What the live API answered (HTTP 422) for an address with no match. */
+export const noMatch = {
+	error: 'Could not geocode address. No matches found.',
+};
+
 export const unprocessableAddress = {
 	error: 'Could not parse address',
 	reference: 'https://www.geocod.io/geocodio-422-unprocessable-entity-error/',
@@ -207,7 +212,7 @@ export const listsResponse = {
 /**
  * A batch answers one entry per input, in input order, each with the query
  * and the single-lookup answer under `response`. An unmatched entry answers
- * an empty `results` list.
+ * an empty `results` list and the reason, as the live API did.
  */
 export const batchResponse = {
 	results: [
@@ -215,6 +220,13 @@ export const batchResponse = {
 			query: '1109 N Highland St, Arlington, VA 22201',
 			response: geocodeResponse,
 		},
-		{ query: 'nowhere at all', response: { results: [] } },
+		{
+			query: 'nowhere at all',
+			response: {
+				error: 'Could not geocode address. No matches found.',
+				reference: 'https://www.geocod.io/geocodio-422-unprocessable-entity/',
+				results: [],
+			},
+		},
 	],
 };

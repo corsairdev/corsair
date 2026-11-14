@@ -16,6 +16,7 @@ import {
 	parse,
 	reverseGeocode,
 } from './endpoints';
+import type { GeocodioBatchGeocodeResponse } from './endpoints/types';
 import {
 	approximateResponse,
 	batchResponse,
@@ -30,6 +31,7 @@ import {
 	listItem,
 	listsResponse,
 	matrixResponse,
+	noMatch,
 	oldVersionWarning,
 	parseResponse,
 	unprocessableAddress,
@@ -283,7 +285,20 @@ describe('geocodio.geocode.forward', () => {
 		});
 	});
 
-	it('returns an empty result list rather than throwing when nothing matches', async () => {
+	it('surfaces an address with no match as a 422, as the live API answers it', async () => {
+		respond(noMatch, 422);
+		const error = (await failure(
+			invoke(forwardGeocode, { q: 'zzzz qqqq xxxx' }),
+		)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(422);
+		expect(error.message).toBe(
+			'Geocodio 422: Could not geocode address. No matches found.',
+		);
+	});
+
+	it('parses an empty result list', async () => {
 		respond(emptyResponse);
 		const result = (await invoke(forwardGeocode, {
 			q: 'nowhere at all',
@@ -393,12 +408,16 @@ describe('geocodio.geocode.batch', () => {
 		respond(batchResponse);
 		const result = (await invoke(batchGeocode, {
 			addresses: ['1109 N Highland St, Arlington, VA 22201', 'nowhere at all'],
-		})) as typeof batchResponse;
+		})) as GeocodioBatchGeocodeResponse;
 
 		expect(result.results).toHaveLength(2);
 		expect(result.results[0]?.query).toContain('Highland');
 		expect(result.results[0]?.response.results[0]?.accuracy).toBe(1);
 		expect(result.results[1]?.response.results).toEqual([]);
+		// The per-entry reason survives parsing, so a caller can report it.
+		expect(result.results[1]?.response.error).toBe(
+			'Could not geocode address. No matches found.',
+		);
 	});
 
 	it('logs how many were sent against how many matched', async () => {
