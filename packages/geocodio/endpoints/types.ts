@@ -14,7 +14,7 @@ const AddressComponentsSchema = z.object({
 	postdirectional: z.string().optional(),
 	unit_type: z.string().optional(),
 	unit_number: z.string().optional(),
-	/** The street line as Geoapify normalized it, including the number. */
+	/** The street line as Geocodio normalized it, including the number. */
 	formatted_street: z.string().optional(),
 	city: z.string().optional(),
 	county: z.string().optional(),
@@ -33,19 +33,26 @@ const LocationSchema = z.object({
 	lng: z.number(),
 });
 
-/** One distance cell, which a destination in a geocode answer also uses. */
+/**
+ * One distance cell, which a destination in a geocode answer also uses. The
+ * spec documents `id: null` for a destination sent without an ID and
+ * `duration_seconds: null` for a straight-line distance.
+ */
 const DistanceCellSchema = z.object({
 	query: z.string().optional(),
 	location: z.array(z.number()).optional(),
-	id: z.string().optional(),
+	id: z.string().nullable().optional(),
 	distance_miles: z.number().optional(),
 	distance_km: z.number().optional(),
-	duration_seconds: z.number().optional(),
+	duration_seconds: z.number().nullable().optional(),
+	// unknown: the geocode of this point has the full result shape, data
+	// appends included; a caller that needs it reads it as a record.
+	geocode: z.record(z.string(), z.unknown()).optional(),
 });
 
 const GeocodeResultSchema = z.object({
-	/** A key stable across lookups, which other APIs accept as input. */
-	stable_address_key: z.string().optional(),
+	/** A key stable across lookups, or null when Geocodio has none for the match. */
+	stable_address_key: z.string().nullable().optional(),
 	address_components: AddressComponentsSchema,
 	/** The address split into lines, ready to print. */
 	address_lines: z.array(z.string()).optional(),
@@ -55,10 +62,12 @@ const GeocodeResultSchema = z.object({
 	accuracy: z.number(),
 	/** `rooftop`, `range_interpolation`, `nearest_street`, `place` and so on. */
 	accuracy_type: z.string(),
-	/** `exact` or `non_exact`, or null when Geoapify could not tell. */
+	/** How the match was made, or null when Geocodio could not tell. */
 	match_type: z.string().nullable().optional(),
 	source: z.string().optional(),
-	/** The data appends that were requested, keyed by their name. */
+	// unknown: each data append (timezone, census, cd, acs-*, school and so on)
+	// has its own nested shape and Geocodio adds appends over time, so the
+	// values stay untyped and are keyed by the append's name.
 	fields: z.record(z.string(), z.unknown()).optional(),
 	/** Present when the request also asked for distances. */
 	destinations: z.array(DistanceCellSchema).optional(),
@@ -69,12 +78,27 @@ const GeocodeResponseSchema = z.object({
 	_warnings: z.array(z.string()).optional(),
 });
 
+/**
+ * A batch answers one entry per input, in input order: the query as sent and
+ * the single-lookup answer for it under `response`.
+ */
+const BatchGeocodeResponseSchema = z.object({
+	results: z.array(
+		z.object({
+			query: z.string(),
+			response: GeocodeResponseSchema,
+		}),
+	),
+	_warnings: z.array(z.string()).optional(),
+});
+
 const ParseResponseSchema = z.object({
 	address_components: AddressComponentsSchema,
 	formatted_address: z.string().optional(),
 });
 
 const DistanceResponseSchema = z.object({
+	// unknown: the origin's `location` pair and its full geocode result.
 	origin: z.record(z.string(), z.unknown()).optional(),
 	mode: z.string().optional(),
 	/** One entry per destination, in the order they were sent. */
@@ -83,6 +107,7 @@ const DistanceResponseSchema = z.object({
 });
 
 const DistanceMatrixRowSchema = z.object({
+	// unknown: the origin's query, `location` pair and full geocode result.
 	origin: z.record(z.string(), z.unknown()).optional(),
 	destinations: z.array(DistanceCellSchema),
 });
@@ -96,34 +121,82 @@ const DistanceMatrixResponseSchema = z.object({
 const DistanceJobSchema = z.object({
 	identifier: z.string(),
 	name: z.string().optional(),
-	status: z.string().optional(),
-	/** The URL to poll for the result once the job finishes. */
-	download_url: z.string().optional(),
-	expires_at: z.string().optional(),
 	created_at: z.string().optional(),
-	completed_at: z.string().optional(),
-	callback_url: z.string().optional(),
+	origins_type: z.string().optional(),
+	origins_count: z.number().optional(),
+	destinations_type: z.string().optional(),
+	destinations_count: z.number().optional(),
+	distance_mode: z.string().optional(),
+	calculation_type: z.string().optional(),
+	/** Such as `PROCESSING` or `COMPLETED`; kept a string so a new state parses. */
+	status: z.string().optional(),
+	/** Null until the job finishes, then the URL to download the result. */
+	download_url: z.string().nullable().optional(),
+	total_calculations: z.number().optional(),
+	calculations_completed: z.number().optional(),
+	progress: z.number().optional(),
+	status_message: z.string().nullable().optional(),
+	time_left: z.string().nullable().optional(),
+	is_expired: z.boolean().optional(),
+});
+
+/** `GET /distance-jobs/{identifier}` wraps the job in `data`. */
+const JobResponseSchema = z.object({
+	data: DistanceJobSchema,
+	_warnings: z.array(z.string()).optional(),
+});
+
+/** Deleting a job answers a confirmation message, not the job. */
+const JobDeleteResponseSchema = z.object({
+	message: z.string().optional(),
+	_warnings: z.array(z.string()).optional(),
 });
 
 const JobListResponseSchema = z.object({
 	data: z.array(DistanceJobSchema),
+	// unknown: Laravel's pagination links (`first`, `last`, `prev`, `next`).
 	links: z.record(z.string(), z.unknown()).optional(),
+	// unknown: Laravel's pagination meta (`current_page`, `last_page`, `total`
+	// and a `links` array), which only paging reads.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	_warnings: z.array(z.string()).optional(),
 });
 
+const ListStatusSchema = z.object({
+	/** Such as `PROCESSING` or `COMPLETED`; kept a string so a new state parses. */
+	state: z.string().optional(),
+	progress: z.number().optional(),
+	message: z.string().nullable().optional(),
+	time_left_description: z.string().nullable().optional(),
+	time_left_seconds: z.union([z.string(), z.number()]).nullable().optional(),
+});
+
 const ListSchema = z.object({
-	id: z.string(),
-	status: z.string().optional(),
-	file: z.record(z.string(), z.unknown()).optional(),
+	/** A number, such as `148`. */
+	id: z.number(),
+	status: ListStatusSchema.optional(),
+	file: z
+		.object({
+			estimated_rows_count: z.number().nullable().optional(),
+			filename: z.string().nullable().optional(),
+		})
+		.optional(),
 	fields: z.array(z.string()).optional(),
-	download_url: z.string().optional(),
-	expires_at: z.string().optional(),
+	/** Null while the list is still processing. */
+	download_url: z.string().nullable().optional(),
+	expires_at: z.string().nullable().optional(),
+	_warnings: z.array(z.string()).optional(),
+});
+
+/** Deleting a list answers `{ success: true }`, not the list. */
+const ListDeleteResponseSchema = z.object({
+	success: z.boolean(),
 	_warnings: z.array(z.string()).optional(),
 });
 
 const ListCollectionSchema = z.object({
 	current_page: z.number().optional(),
+	current_page_url: z.string().nullable().optional(),
 	per_page: z.number().optional(),
 	from: z.number().optional(),
 	to: z.number().optional(),
@@ -136,8 +209,9 @@ const ListCollectionSchema = z.object({
 });
 
 /**
- * The fields a geocode can append. Each name is one of Geoapify's data
- * appends, and asking for it adds a key under the result's `fields`.
+ * The fields a geocode can append. Each name is one of Geocodio's data
+ * appends, and asking for it adds a key under the result's `fields`. They
+ * travel as one comma-separated `fields` parameter.
  */
 const FieldsSchema = z
 	.array(z.string().min(1))
@@ -152,13 +226,6 @@ const CountrySchema = z
 	.optional()
 	.describe(
 		'Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed',
-	);
-
-const DistanceModeSchema = z
-	.enum(['driving', 'straightline'])
-	.optional()
-	.describe(
-		'`driving` follows roads and gives a duration; `straightline` is the as-the-crow-flies distance',
 	);
 
 const DistanceUnitsSchema = z
@@ -217,9 +284,6 @@ const ReverseGeocodeInputSchema = z.object({
 		.min(1, 'A coordinate pair is required')
 		.describe('A `lat,lng` pair, such as `38.886665,-77.094733`'),
 	fields: FieldsSchema,
-	country: CountrySchema.optional().describe(
-		'Restricts the lookup to one country, which sharpens a border case',
-	),
 	enterprise: z.boolean().optional().describe('Uses the enterprise host'),
 });
 
@@ -227,7 +291,7 @@ const BatchGeocodeInputSchema = z.object({
 	addresses: z
 		.array(z.string().min(1))
 		.min(1, 'Send at least one address')
-		.max(10_000, 'Geoapify accepts at most 10,000 addresses in a batch')
+		.max(10_000, 'Geocodio accepts at most 10,000 addresses in a batch')
 		.describe('The addresses to geocode in one request'),
 	fields: FieldsSchema,
 	country: CountrySchema,
@@ -238,7 +302,7 @@ const BatchReverseInputSchema = z.object({
 	coordinates: z
 		.array(z.string().min(1))
 		.min(1, 'Send at least one coordinate pair')
-		.max(10_000, 'Geoapify accepts at most 10,000 coordinates in a batch')
+		.max(10_000, 'Geocodio accepts at most 10,000 coordinates in a batch')
 		.describe('The `lat,lng` pairs to reverse geocode in one request'),
 	fields: FieldsSchema,
 	country: CountrySchema,
@@ -314,12 +378,17 @@ const DistanceMatrixInputSchema = z.object({
 		.min(1, 'At least one destination is required')
 		.describe('The addresses or `lat,lng` pairs, one column each'),
 	calculation_type: z
-		.enum(['matrix', 'one-to-one'])
+		.enum(['matrix', 'pairs'])
 		.optional()
 		.describe(
-			'`matrix` measures every origin against every destination; `one-to-one` pairs each origin with one destination',
+			'`matrix` measures every origin against every destination; `pairs` pairs each origin with the destination at the same position',
 		),
-	mode: DistanceModeSchema,
+	mode: z
+		.enum(['driving', 'haversine', 'straightline'])
+		.optional()
+		.describe(
+			'`driving` follows roads and gives a duration; `haversine` and `straightline` are the as-the-crow-flies distance',
+		),
 	units: DistanceUnitsSchema,
 	max_results: z
 		.number()
@@ -344,12 +413,15 @@ const DistanceMatrixInputSchema = z.object({
 		.optional()
 		.describe('Which figure to sort by'),
 	sort_order: z.enum(['asc', 'desc']).optional().describe('Sort direction'),
-	country: CountrySchema,
 });
 
 const JobListInputSchema = z.object({
 	page: z.number().int().min(1).optional().describe('The page of jobs to read'),
 });
+
+const ListIdSchema = z
+	.union([z.number().int().min(1), z.string().min(1, 'A list ID is required')])
+	.describe('The list ID, as `lists.all` returns it');
 
 const JobGetInputSchema = z.object({
 	identifier: z
@@ -366,11 +438,11 @@ const JobDeleteInputSchema = z.object({
 });
 
 const ListGetInputSchema = z.object({
-	id: z.string().min(1, 'A list ID is required').describe('The list ID'),
+	id: ListIdSchema,
 });
 
 const ListDeleteInputSchema = z.object({
-	id: z.string().min(1, 'A list ID is required').describe('The list ID'),
+	id: ListIdSchema,
 });
 
 const ListAllInputSchema = z.object({
@@ -403,6 +475,14 @@ export type GeocodioListDeleteInput = z.infer<typeof ListDeleteInputSchema>;
 export type GeocodioListAllInput = z.infer<typeof ListAllInputSchema>;
 
 export type GeocodioGeocodeResponse = z.infer<typeof GeocodeResponseSchema>;
+export type GeocodioBatchGeocodeResponse = z.infer<
+	typeof BatchGeocodeResponseSchema
+>;
+export type GeocodioJobResponse = z.infer<typeof JobResponseSchema>;
+export type GeocodioJobDeleteResponse = z.infer<typeof JobDeleteResponseSchema>;
+export type GeocodioListDeleteResponse = z.infer<
+	typeof ListDeleteResponseSchema
+>;
 export type GeocodioParseResponse = z.infer<typeof ParseResponseSchema>;
 export type GeocodioDistanceResponse = z.infer<typeof DistanceResponseSchema>;
 export type GeocodioDistanceMatrixResponse = z.infer<
@@ -435,17 +515,17 @@ export type GeocodioEndpointInputs = {
 export type GeocodioEndpointOutputs = {
 	forwardGeocode: GeocodioGeocodeResponse;
 	reverseGeocode: GeocodioGeocodeResponse;
-	batchGeocode: GeocodioGeocodeResponse;
-	batchReverse: GeocodioGeocodeResponse;
+	batchGeocode: GeocodioBatchGeocodeResponse;
+	batchReverse: GeocodioBatchGeocodeResponse;
 	parse: GeocodioParseResponse;
 	distance: GeocodioDistanceResponse;
 	distanceMatrix: GeocodioDistanceMatrixResponse;
 	jobsList: GeocodioJobListResponse;
-	jobGet: GeocodioJob;
-	jobDelete: GeocodioJob;
+	jobGet: GeocodioJobResponse;
+	jobDelete: GeocodioJobDeleteResponse;
 	listsAll: GeocodioListResponse;
 	listGet: GeocodioList;
-	listDelete: GeocodioList;
+	listDelete: GeocodioListDeleteResponse;
 };
 
 export const GeocodioEndpointInputSchemas = {
@@ -467,15 +547,15 @@ export const GeocodioEndpointInputSchemas = {
 export const GeocodioEndpointOutputSchemas = {
 	forwardGeocode: GeocodeResponseSchema,
 	reverseGeocode: GeocodeResponseSchema,
-	batchGeocode: GeocodeResponseSchema,
-	batchReverse: GeocodeResponseSchema,
+	batchGeocode: BatchGeocodeResponseSchema,
+	batchReverse: BatchGeocodeResponseSchema,
 	parse: ParseResponseSchema,
 	distance: DistanceResponseSchema,
 	distanceMatrix: DistanceMatrixResponseSchema,
 	jobsList: JobListResponseSchema,
-	jobGet: DistanceJobSchema,
-	jobDelete: DistanceJobSchema,
+	jobGet: JobResponseSchema,
+	jobDelete: JobDeleteResponseSchema,
 	listsAll: ListCollectionSchema,
 	listGet: ListSchema,
-	listDelete: ListSchema,
+	listDelete: ListDeleteResponseSchema,
 } as const;

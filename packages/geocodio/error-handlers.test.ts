@@ -1,16 +1,31 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GeocodioAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(options: {
-	status?: number;
-	reason?: string;
-	method?: string;
-	transport?: boolean;
-	timedOut?: boolean;
-	retryAfter?: number;
-}) {
-	return new GeocodioAPIError('failed', options);
+/** An HTTP failure as core's request() throws it. */
+function httpError(
+	status: number,
+	method: 'GET' | 'POST' | 'DELETE' = 'GET',
+	retryAfter?: number,
+) {
+	return new ApiError(
+		{ method, url: '/geocode' },
+		{
+			url: 'https://api.geocod.io/v2.1/geocode',
+			ok: false,
+			status,
+			statusText: '',
+			body: { error: 'failed' },
+		},
+		`Geocodio ${status}: failed`,
+		{ retryAfter },
+	);
+}
+
+/** A request that got no answer. */
+function transportError(method: 'GET' | 'POST' | 'DELETE', timedOut = false) {
+	return new GeocodioAPIError('failed', { method, transport: true, timedOut });
 }
 
 /**
@@ -39,33 +54,22 @@ async function resolve(
 }
 
 describe('error handler selection', () => {
-	it('retries a 429 with backoff and honours Retry-After', async () => {
-		await expect(
-			resolve(apiError({ status: 429, retryAfter: 30_000 })),
-		).resolves.toEqual({
-			maxRetries: 2,
-			headersRetryAfterMs: 30_000,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('does not retry an invalid key, which answers 403 not 401', async () => {
-		await expect(resolve(apiError({ status: 403 }))).resolves.toEqual({
+	it("does not retry a 429 again, since core's request() already did", async () => {
+		await expect(resolve(httpError(429, 'GET', 30_000))).resolves.toEqual({
 			maxRetries: 0,
 		});
 	});
 
-	it('treats 401 as unclassified, since v2.1 does not use it', async () => {
-		// AUTH_ERROR only matches 403, so a stray 401 falls to DEFAULT.
-		await expect(resolve(apiError({ status: 401 }))).resolves.toEqual({
-			maxRetries: 0,
-		});
+	it('does not retry an invalid key, which answers 403', async () => {
+		await expect(resolve(httpError(403))).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('does not retry a 401 either', async () => {
+		await expect(resolve(httpError(401))).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry an address the API could not use', async () => {
-		await expect(resolve(apiError({ status: 422 }))).resolves.toEqual({
-			maxRetries: 0,
-		});
+		await expect(resolve(httpError(422))).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a Zod failure', async () => {
@@ -76,30 +80,51 @@ describe('error handler selection', () => {
 	});
 
 	it('does not retry a missing list or job', async () => {
-		await expect(resolve(apiError({ status: 404 }))).resolves.toEqual({
-			maxRetries: 0,
-		});
+		await expect(resolve(httpError(404))).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('retries a 5xx, since every call here is a read', async () => {
-		await expect(resolve(apiError({ status: 500 }))).resolves.toMatchObject({
+	it('retries a 5xx on a single GET lookup', async () => {
+		await expect(resolve(httpError(500, 'GET'))).resolves.toMatchObject({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
 
-	it('retries a timeout once, and a timeout outranks the transport match', async () => {
-		await expect(
-			resolve(apiError({ transport: true, timedOut: true })),
-		).resolves.toEqual({ maxRetries: 1, retryStrategy: 'linear_2s' });
+	it('does not replay a batch POST after a 5xx, since its lookups may be billed', async () => {
+		await expect(resolve(httpError(502, 'POST'))).resolves.toMatchObject({
+			maxRetries: 0,
+		});
 	});
 
-	it('retries a dropped connection twice', async () => {
-		await expect(resolve(apiError({ transport: true }))).resolves.toMatchObject(
-			{
-				maxRetries: 2,
-			},
-		);
+	it('does not replay a DELETE after a 5xx, since it may have landed', async () => {
+		await expect(resolve(httpError(500, 'DELETE'))).resolves.toMatchObject({
+			maxRetries: 0,
+		});
+	});
+
+	it('retries a GET timeout once, and a timeout outranks the transport match', async () => {
+		await expect(resolve(transportError('GET', true))).resolves.toEqual({
+			maxRetries: 1,
+			retryStrategy: 'linear_2s',
+		});
+	});
+
+	it('does not replay a batch that timed out', async () => {
+		await expect(resolve(transportError('POST', true))).resolves.toMatchObject({
+			maxRetries: 0,
+		});
+	});
+
+	it('retries a dropped GET twice', async () => {
+		await expect(resolve(transportError('GET'))).resolves.toMatchObject({
+			maxRetries: 2,
+		});
+	});
+
+	it('does not replay a dropped DELETE', async () => {
+		await expect(resolve(transportError('DELETE'))).resolves.toMatchObject({
+			maxRetries: 0,
+		});
 	});
 
 	it('leaves an unclassified error alone, through DEFAULT', async () => {

@@ -7,12 +7,20 @@ import type {
 import { ApiError, request } from 'corsair/http';
 
 /**
- * Geoapify reports version `v2.1` as current and warns on older ones, so this
+ * Geocodio reports version `v2.1` as current and warns on older ones, so this
  * plugin targets it. Two hosts serve it: the self-serve one below, and an
  * enterprise host for accounts that have one.
  */
 export const GEOCODIO_BASE = 'https://api.geocod.io/v2.1';
 export const GEOCODIO_ENTERPRISE_BASE = 'https://api.enterprise.geocod.io/v2.1';
+
+/** A single lookup answers in well under a minute. */
+const DEFAULT_TIMEOUT_MS = 60_000;
+/**
+ * Geocodio processes a synchronous batch of up to 10,000 entries in one
+ * request, which can run for minutes, so batch POSTs get ten minutes.
+ */
+export const BATCH_TIMEOUT_MS = 600_000;
 
 /**
  * The key travels as the `api_key` query parameter, or as a bearer token in the
@@ -60,19 +68,12 @@ export function readError(body: unknown): {
 	};
 }
 
+/**
+ * Only for a request that got no answer (DNS, reset, timeout). An HTTP error
+ * reaches the handlers as core's `ApiError`, with its status and `retryAfter`.
+ */
 export class GeocodioAPIError extends Error {
-	readonly status?: number;
-	/** Geoapify's own message, such as `Invalid API key`. */
-	readonly reason?: string;
-	/** A documentation link for this class of error. */
-	readonly reference?: string;
-	/**
-	 * Non-fatal warnings. An older API version answers one here rather than
-	 * failing, so they are kept and surfaced.
-	 */
-	readonly warnings?: string[];
-	/** Milliseconds from `Retry-After`, when Geocodio sent one. */
-	readonly retryAfter?: number;
+	/** The request method, so the handlers replay only a GET. */
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
@@ -81,11 +82,6 @@ export class GeocodioAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			reason?: string;
-			reference?: string;
-			warnings?: string[];
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -93,41 +89,13 @@ export class GeocodioAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'GeocodioAPIError';
-		this.status = options.status;
-		this.reason = options.reason;
-		this.reference = options.reference;
-		this.warnings = options.warnings;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
-
-	/**
-	 * 429 is the documented rate limit. Geocodio bills per lookup rather than
-	 * per request, so a batch that is too large is a 422 instead.
-	 */
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** A missing or invalid key, which answers 403 rather than 401. */
-	get isAuthError(): boolean {
-		return this.status === 403;
-	}
-
-	/** A query the API refused, such as an address it could not parse. */
-	get isValidationError(): boolean {
-		return this.status === 422 || this.status === 400;
-	}
-
-	/** The list or job does not exist. */
-	get isNotFound(): boolean {
-		return this.status === 404;
-	}
 }
 
-/** Geoapify's message, with the status in front. */
+/** Geocodio's message, with the status in front. */
 // unknown: an error body is untyped: the `{ error, reference }` envelope, or
 // text from a proxy that never reached Geocodio.
 export function describeGeocodioError(
@@ -154,15 +122,17 @@ export type GeocodioRequest = {
 	// unknown: the endpoint's input schema has already validated the body, and
 	// each route has its own shape.
 	body?: unknown;
+	/** Overrides the one-minute timeout, for batches. */
+	timeoutMs?: number;
 };
 
 /**
- * Geocodio's limit is per plan, and a burst answers 429. The client does not
- * retry on its own because the handlers decide, and because a lookup is billed.
+ * Geocodio's limit is per plan, and a burst answers 429. A 429 is refused
+ * before any lookup runs, so core retries it, honouring `Retry-After`.
  */
 const GEOCODIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -172,14 +142,14 @@ const GEOCODIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 export async function makeGeocodioRequest(
 	credentials: GeocodioCredentials,
 	enterprise: boolean,
-	{ method, path, query, body }: GeocodioRequest,
+	{ method, path, query, body, timeoutMs }: GeocodioRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: enterprise ? GEOCODIO_ENTERPRISE_BASE : GEOCODIO_BASE,
 		VERSION: '2.1.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TIMEOUT: 60_000,
+		TIMEOUT: timeoutMs ?? DEFAULT_TIMEOUT_MS,
 		HEADERS: {
 			Accept: 'application/json',
 		},
@@ -199,16 +169,30 @@ export async function makeGeocodioRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Core's ApiError goes through (R8), minus the addresses and
+			// coordinates that were sent in the query or body. Only the error
+			// envelope's fixed fields are kept from the response.
 			const fields = readError(error.body);
-			throw new GeocodioAPIError(
-				describeGeocodioError(error.status, error.body, error.message),
+			const safeBody = {
+				error: fields.error,
+				reference: fields.reference,
+				_warnings: fields.warnings,
+			};
+			throw new ApiError(
+				{ ...error.request, query: undefined, body: undefined },
 				{
+					url: withoutQuery(error.url),
+					ok: false,
 					status: error.status,
-					reason: fields.error,
-					reference: fields.reference,
-					warnings: fields.warnings,
+					statusText: error.statusText,
+					body: safeBody,
+				},
+				describeGeocodioError(error.status, safeBody, `HTTP ${error.status}`),
+				{
 					retryAfter: error.retryAfter,
-					method,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}
@@ -226,6 +210,20 @@ export async function makeGeocodioRequest(
 			transport: true,
 		});
 	}
+}
+
+/** The URL without its query string, which carries the address sent. */
+function withoutQuery(url: string): string {
+	const index = url.indexOf('?');
+	return index === -1 ? url : url.slice(0, index);
+}
+
+/**
+ * Geocodio reads `fields` as one comma-separated parameter. Repeated
+ * `fields=a&fields=b` keys keep only the last one.
+ */
+export function fieldsParam(fields: string[] | undefined): string | undefined {
+	return fields && fields.length > 0 ? fields.join(',') : undefined;
 }
 
 /** Drops keys whose value is undefined, so a query carries only what was asked for. */

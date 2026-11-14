@@ -1,22 +1,25 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GeocodioContext, GeocodioEndpoints } from '..';
 import type { GeocodioCredentials } from '../client';
-import { definedQuery, makeGeocodioRequest } from '../client';
+import {
+	BATCH_TIMEOUT_MS,
+	definedQuery,
+	fieldsParam,
+	makeGeocodioRequest,
+} from '../client';
 import {
 	GeocodioEndpointInputSchemas,
 	GeocodioEndpointOutputSchemas,
 } from './types';
 
 /**
- * The key is a query parameter here, and Geocodio has no keyless mode, so a
- * call with neither an option nor a stored key is refused by the key builder.
+ * The key builder resolves the key (option, hooks, then the stored key) and
+ * refuses a call with none, so the endpoints send the `ctx.key` it resolved.
  */
 async function resolveCredentials(
 	ctx: GeocodioContext,
 ): Promise<GeocodioCredentials> {
-	if (ctx.options.key) return { apiKey: ctx.options.key };
-	const stored = await ctx.keys.get_api_key();
-	return { apiKey: stored ?? undefined };
+	return { apiKey: ctx.key };
 }
 
 /** The enterprise host is a per-call option, not a separate plugin. */
@@ -46,7 +49,7 @@ export const forwardGeocode: GeocodioEndpoints['geocode']['forward'] = async (
 				postal_code: parsed.postal_code,
 				country: parsed.country,
 				limit: parsed.limit,
-				fields: parsed.fields,
+				fields: fieldsParam(parsed.fields),
 			}),
 		},
 	);
@@ -86,8 +89,7 @@ export const reverseGeocode: GeocodioEndpoints['geocode']['reverse'] = async (
 			path: '/reverse',
 			query: definedQuery({
 				q: parsed.q,
-				fields: parsed.fields,
-				country: parsed.country,
+				fields: fieldsParam(parsed.fields),
 			}),
 		},
 	);
@@ -101,8 +103,7 @@ export const reverseGeocode: GeocodioEndpoints['geocode']['reverse'] = async (
 			count: result.results.length,
 			accuracy: result.results[0]?.accuracy,
 			accuracy_type: result.results[0]?.accuracy_type,
-			// The coordinates were the caller's own input, so they are safe.
-			query: parsed.q,
+			// Exact coordinates can locate a person, so they stay out of the log.
 			fields: parsed.fields?.length ?? 0,
 		},
 		'completed',
@@ -111,8 +112,9 @@ export const reverseGeocode: GeocodioEndpoints['geocode']['reverse'] = async (
 };
 
 /**
- * A batch is one POST with a JSON array of addresses. Geoapify answers a
- * `results` array in the same order, so a caller can zip it back to the input.
+ * A batch is one POST with a JSON array of addresses. Geocodio answers a
+ * `results` array in the same order, each entry holding the query and its own
+ * `response`, so a caller can zip it back to the input.
  */
 export const batchGeocode: GeocodioEndpoints['geocode']['batch'] = async (
 	ctx,
@@ -129,8 +131,9 @@ export const batchGeocode: GeocodioEndpoints['geocode']['batch'] = async (
 			body: parsed.addresses,
 			query: definedQuery({
 				country: parsed.country,
-				fields: parsed.fields,
+				fields: fieldsParam(parsed.fields),
 			}),
+			timeoutMs: BATCH_TIMEOUT_MS,
 		},
 	);
 
@@ -141,9 +144,10 @@ export const batchGeocode: GeocodioEndpoints['geocode']['batch'] = async (
 		'geocodio.geocode.batch',
 		{
 			sent: parsed.addresses.length,
-			// A batch can answer fewer results than it was sent, which is the useful
-			// number when reconciling a bill.
 			results: result.results.length,
+			// An entry with no match still answers, with an empty result list.
+			matched: result.results.filter((entry) => entry.response.results.length)
+				.length,
 			warnings: result._warnings?.length ?? 0,
 		},
 		'completed',
@@ -164,8 +168,9 @@ export const batchReverse: GeocodioEndpoints['geocode']['batchReverse'] =
 				body: parsed.coordinates,
 				query: definedQuery({
 					country: parsed.country,
-					fields: parsed.fields,
+					fields: fieldsParam(parsed.fields),
 				}),
+				timeoutMs: BATCH_TIMEOUT_MS,
 			},
 		);
 
@@ -177,6 +182,8 @@ export const batchReverse: GeocodioEndpoints['geocode']['batchReverse'] =
 			{
 				sent: parsed.coordinates.length,
 				results: result.results.length,
+				matched: result.results.filter((entry) => entry.response.results.length)
+					.length,
 				warnings: result._warnings?.length ?? 0,
 			},
 			'completed',
@@ -285,7 +292,6 @@ export const distanceMatrix: GeocodioEndpoints['distance']['matrix'] = async (
 			min_duration: parsed.min_duration,
 			order_by: parsed.order_by,
 			sort_order: parsed.sort_order,
-			country: parsed.country,
 		},
 	});
 
@@ -341,7 +347,7 @@ export const jobGet: GeocodioEndpoints['jobs']['get'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'geocodio.jobs.get',
-		{ identifier: parsed.identifier, status: result.status },
+		{ identifier: parsed.identifier, status: result.data.status },
 		'completed',
 	);
 	return result;
@@ -363,7 +369,7 @@ export const jobDelete: GeocodioEndpoints['jobs']['delete'] = async (
 	await logEventFromContext(
 		ctx,
 		'geocodio.jobs.delete',
-		{ identifier: parsed.identifier, status: result.status },
+		{ identifier: parsed.identifier },
 		'completed',
 	);
 	return result;
@@ -400,7 +406,7 @@ export const listGet: GeocodioEndpoints['lists']['get'] = async (
 
 	const raw = await makeGeocodioRequest(await resolveCredentials(ctx), false, {
 		method: 'GET',
-		path: `/lists/${encodeURIComponent(parsed.id)}`,
+		path: `/lists/${encodeURIComponent(String(parsed.id))}`,
 	});
 
 	const result = GeocodioEndpointOutputSchemas.listGet.parse(raw);
@@ -408,7 +414,7 @@ export const listGet: GeocodioEndpoints['lists']['get'] = async (
 	await logEventFromContext(
 		ctx,
 		'geocodio.lists.get',
-		{ id: parsed.id, status: result.status },
+		{ id: parsed.id, state: result.status?.state },
 		'completed',
 	);
 	return result;
@@ -422,7 +428,7 @@ export const listDelete: GeocodioEndpoints['lists']['delete'] = async (
 
 	const raw = await makeGeocodioRequest(await resolveCredentials(ctx), false, {
 		method: 'DELETE',
-		path: `/lists/${encodeURIComponent(parsed.id)}`,
+		path: `/lists/${encodeURIComponent(String(parsed.id))}`,
 	});
 
 	const result = GeocodioEndpointOutputSchemas.listDelete.parse(raw);
@@ -430,7 +436,7 @@ export const listDelete: GeocodioEndpoints['lists']['delete'] = async (
 	await logEventFromContext(
 		ctx,
 		'geocodio.lists.delete',
-		{ id: parsed.id, status: result.status },
+		{ id: parsed.id, success: result.success },
 		'completed',
 	);
 	return result;

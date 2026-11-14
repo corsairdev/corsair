@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GeocodioAPIError } from './client';
 import {
 	batchGeocode,
@@ -17,12 +18,15 @@ import {
 } from './endpoints';
 import {
 	approximateResponse,
+	batchResponse,
 	distanceResponse,
 	emptyResponse,
 	geocodeResponse,
 	invalidKey,
-	job,
+	jobDeleted,
 	jobList,
+	jobResponse,
+	listDeleted,
 	listItem,
 	listsResponse,
 	matrixResponse,
@@ -91,13 +95,11 @@ function lastRequest() {
  * Runs a call that must fail and returns what it threw.
  */
 // unknown: the rejection value is untyped by definition.
-async function failure(
-	run: Promise<unknown>,
-): Promise<GeocodioAPIError & Error> {
+async function failure(run: Promise<unknown>): Promise<Error> {
 	try {
 		await run;
 	} catch (error) {
-		return error as GeocodioAPIError & Error;
+		return error as Error;
 	}
 	throw new Error('expected the call to fail, but it resolved');
 }
@@ -130,39 +132,65 @@ describe('Geocodio client', () => {
 		expect(lastRequest().path).toBe('/v2.1/geocode');
 	});
 
-	it('wraps a 403 as an auth error, since v2.1 does not answer 401', async () => {
+	it("lets core's ApiError through on a 403, since v2.1 does not answer 401", async () => {
 		respond(invalidKey, 403);
 		const error = await failure(
 			invoke(forwardGeocode, { q: '1109 N Highland St' }),
 		);
 
-		expect(error).toBeInstanceOf(GeocodioAPIError);
-		expect(error.status).toBe(403);
-		expect(error.isAuthError).toBe(true);
-		expect(error.reason).toBe('Invalid API key');
-		expect(error.reference).toBe(
-			'https://www.geocod.io/geocodio-403-forbidden-error/',
-		);
-		expect(error.message).toContain('Geocodio 403: Invalid API key');
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(403);
+		expect(apiError.body).toEqual({
+			error: 'Invalid API key',
+			reference: 'https://www.geocod.io/geocodio-403-forbidden-error/',
+		});
+		expect(apiError.message).toContain('Geocodio 403: Invalid API key');
+	});
+
+	it('keeps the address and the key out of the error', async () => {
+		respond(unprocessableAddress, 422);
+		const error = (await failure(
+			invoke(forwardGeocode, { q: '1109 N Highland St, Arlington' }),
+		)) as ApiError;
+
+		const dump = JSON.stringify({
+			message: error.message,
+			url: error.url,
+			request: error.request,
+			body: error.body,
+		});
+		expect(dump).not.toContain('Highland');
+		expect(dump).not.toContain(API_KEY);
 	});
 
 	it('keeps a version warning, which is not a failure', async () => {
 		respond({ ...invalidKey, _warnings: oldVersionWarning }, 403);
-		const error = await failure(
+		const error = (await failure(
 			invoke(forwardGeocode, { q: '1109 N Highland St' }),
-		);
+		)) as ApiError;
 
-		expect(error.warnings).toEqual(oldVersionWarning);
+		expect(error.body._warnings).toEqual(oldVersionWarning);
 	});
 
-	it('reads Retry-After off a 429', async () => {
-		respond({ error: 'Rate limit exceeded' }, 429, { 'Retry-After': '30' });
-		const error = await failure(
-			invoke(forwardGeocode, { q: '1109 N Highland St' }),
-		);
+	it('lets core retry a 429 and keeps Retry-After on the final error', async () => {
+		jest.useFakeTimers();
+		try {
+			for (let attempt = 0; attempt < 4; attempt++) {
+				respond({ error: 'Rate limit exceeded' }, 429, { 'Retry-After': '30' });
+			}
+			const pending = failure(
+				invoke(forwardGeocode, { q: '1109 N Highland St' }),
+			);
+			await jest.advanceTimersByTimeAsync(120_000);
+			const error = (await pending) as ApiError;
 
-		expect(error.isRateLimit).toBe(true);
-		expect(error.retryAfter).toBe(30_000);
+			expect(fetchMock).toHaveBeenCalledTimes(4);
+			expect(error.status).toBe(429);
+			expect(error.retryAfter).toBe(30_000);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
 	it('marks a dropped connection as a transport failure', async () => {
@@ -171,8 +199,21 @@ describe('Geocodio client', () => {
 			invoke(forwardGeocode, { q: '1109 N Highland St' }),
 		);
 
-		expect(error.transport).toBe(true);
-		expect(error.status).toBeUndefined();
+		expect(error).toBeInstanceOf(GeocodioAPIError);
+		expect((error as GeocodioAPIError).transport).toBe(true);
+		expect((error as GeocodioAPIError).method).toBe('GET');
+	});
+
+	it('sends the key the binder resolved as ctx.key, not a stored copy', async () => {
+		respond(geocodeResponse);
+		const ctx = {
+			key: 'managed-key',
+			options: {},
+			keys: { get_api_key: jest.fn().mockResolvedValue(null) },
+		};
+		await forwardGeocode(ctx as never, { q: '1109 N Highland St' } as never);
+
+		expect(lastRequest().query.api_key).toBe('managed-key');
 	});
 });
 
@@ -207,7 +248,7 @@ describe('geocodio.geocode.forward', () => {
 		expect(sent.query.state_province).toBe('VA');
 	});
 
-	it('repeats the field list so several appends can be asked for', async () => {
+	it('sends the field list as one comma-separated parameter', async () => {
 		respond(geocodeResponse);
 		await invoke(forwardGeocode, {
 			q: '1109 N Highland St',
@@ -215,9 +256,19 @@ describe('geocodio.geocode.forward', () => {
 		});
 
 		expect(lastRequest().params('fields')).toEqual([
-			'timezone',
-			'congressional_district',
+			'timezone,congressional_district',
 		]);
+	});
+
+	it('accepts a null stable_address_key', async () => {
+		respond({
+			results: [{ ...geocodeResponse.results[0], stable_address_key: null }],
+		});
+		const result = (await invoke(forwardGeocode, {
+			q: '1109 N Highland St',
+		})) as typeof geocodeResponse;
+
+		expect(result.results).toHaveLength(1);
 	});
 
 	it('keeps the appended data under fields', async () => {
@@ -286,6 +337,15 @@ describe('geocodio.geocode.reverse', () => {
 		expect(result.results[0]?.formatted_address).toContain('Highland');
 	});
 
+	it('keeps the exact coordinates out of the log', async () => {
+		respond(geocodeResponse);
+		await invoke(reverseGeocode, { q: '38.886665,-77.094733' });
+
+		const payload = JSON.stringify(mockLog.mock.calls.at(-1)?.[2]);
+		expect(payload).not.toContain('38.886665');
+		expect(payload).not.toContain('-77.094733');
+	});
+
 	it('rejects a missing coordinate pair', async () => {
 		const error = await failure(invoke(reverseGeocode, { q: '' }));
 
@@ -296,7 +356,7 @@ describe('geocodio.geocode.reverse', () => {
 
 describe('geocodio.geocode.batch', () => {
 	it('posts the addresses as a bare array, which is the documented body', async () => {
-		respond(geocodeResponse);
+		respond(batchResponse);
 		await invoke(batchGeocode, {
 			addresses: ['1109 N Highland St', '1600 Pennsylvania Ave NW'],
 		});
@@ -310,7 +370,7 @@ describe('geocodio.geocode.batch', () => {
 	});
 
 	it('sends the fields and country as query parameters, not in the body', async () => {
-		respond(geocodeResponse);
+		respond(batchResponse);
 		await invoke(batchGeocode, {
 			addresses: ['x'],
 			fields: ['timezone'],
@@ -329,20 +389,33 @@ describe('geocodio.geocode.batch', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('logs how many were sent against how many came back', async () => {
-		respond(geocodeResponse);
-		await invoke(batchGeocode, { addresses: ['a', 'b', 'c'] });
+	it('returns each query with its own response, in input order', async () => {
+		respond(batchResponse);
+		const result = (await invoke(batchGeocode, {
+			addresses: ['1109 N Highland St, Arlington, VA 22201', 'nowhere at all'],
+		})) as typeof batchResponse;
+
+		expect(result.results).toHaveLength(2);
+		expect(result.results[0]?.query).toContain('Highland');
+		expect(result.results[0]?.response.results[0]?.accuracy).toBe(1);
+		expect(result.results[1]?.response.results).toEqual([]);
+	});
+
+	it('logs how many were sent against how many matched', async () => {
+		respond(batchResponse);
+		await invoke(batchGeocode, { addresses: ['a', 'b'] });
 
 		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
-			sent: 3,
-			results: 1,
+			sent: 2,
+			results: 2,
+			matched: 1,
 		});
 	});
 });
 
 describe('geocodio.geocode.batchReverse', () => {
 	it('posts the coordinate pairs', async () => {
-		respond(geocodeResponse);
+		respond(batchResponse);
 		await invoke(batchReverse, {
 			coordinates: ['38.886665,-77.094733'],
 		});
@@ -402,6 +475,27 @@ describe('geocodio.distance.fromOrigin', () => {
 			'1 Infinite Loop',
 		]);
 		expect(lastRequest().query.destinations).toBeUndefined();
+	});
+
+	it('accepts a null id and a null duration on a straight-line answer', async () => {
+		respond({
+			...distanceResponse,
+			mode: 'straightline',
+			destinations: [
+				{
+					...distanceResponse.destinations[0],
+					id: null,
+					duration_seconds: null,
+				},
+			],
+		});
+		const result = (await invoke(distance, {
+			origin: 'a',
+			destinations: ['b'],
+			mode: 'straightline',
+		})) as typeof distanceResponse;
+
+		expect(result.destinations).toHaveLength(1);
 	});
 
 	it('returns the distance and duration for the driving mode', async () => {
@@ -488,17 +582,28 @@ describe('geocodio.distance.matrix', () => {
 		expect(result.results[0]?.destinations[0]?.distance_miles).toBe(5.42);
 	});
 
-	it('accepts the one-to-one calculation type', async () => {
+	it('sends pairs, the documented one-to-one calculation type', async () => {
 		respond(matrixResponse);
 		await invoke(distanceMatrix, {
 			origins: ['a'],
 			destinations: ['b'],
-			calculation_type: 'one-to-one',
+			calculation_type: 'pairs',
 		});
 
-		expect(lastRequest().body).toMatchObject({
-			calculation_type: 'one-to-one',
-		});
+		expect(lastRequest().body).toMatchObject({ calculation_type: 'pairs' });
+	});
+
+	it('rejects one-to-one, which Geocodio does not accept', async () => {
+		const error = await failure(
+			invoke(distanceMatrix, {
+				origins: ['a'],
+				destinations: ['b'],
+				calculation_type: 'one-to-one',
+			}),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an empty origin list', async () => {
@@ -531,26 +636,31 @@ describe('geocodio.jobs', () => {
 		expect(result.data).toHaveLength(1);
 	});
 
-	it('reads one job by identifier', async () => {
-		respond(job);
+	it('reads one job by identifier from its data envelope', async () => {
+		respond(jobResponse);
 		const result = (await invoke(jobGet, {
 			identifier: 'abc123',
-		})) as typeof job;
+		})) as typeof jobResponse;
 
 		expect(lastRequest().path).toBe('/v2.1/distance-jobs/abc123');
-		expect(result.status).toBe('completed');
+		expect(result.data.status).toBe('PROCESSING');
+		expect(result.data.download_url).toBeNull();
 	});
 
 	it('encodes an identifier that needs it', async () => {
-		respond(job);
+		respond(jobResponse);
 		await invoke(jobGet, { identifier: 'a/b' });
 
 		expect(lastRequest().path).toBe('/v2.1/distance-jobs/a%2Fb');
 	});
 
-	it('deletes a job with DELETE', async () => {
-		respond(job);
-		await invoke(jobDelete, { identifier: 'abc123' });
+	it('deletes a job with DELETE and returns the confirmation', async () => {
+		respond(jobDeleted);
+		const result = (await invoke(jobDelete, {
+			identifier: 'abc123',
+		})) as typeof jobDeleted;
+
+		expect(result.message).toBe('Job deleted');
 
 		expect(lastRequest().method).toBe('DELETE');
 		expect(lastRequest().path).toBe('/v2.1/distance-jobs/abc123');
@@ -571,25 +681,28 @@ describe('geocodio.lists', () => {
 
 		expect(lastRequest().path).toBe('/v2.1/lists');
 		expect(result.data).toHaveLength(1);
-		expect(result.data[0]?.status).toBe('completed');
+		expect(result.data[0]?.status?.state).toBe('PROCESSING');
 	});
 
-	it('reads one list by ID', async () => {
+	it('reads one list by the numeric ID lists.all returns', async () => {
 		respond(listItem);
 		const result = (await invoke(listGet, {
-			id: 'list-abc123',
+			id: listItem.id,
 		})) as typeof listItem;
 
-		expect(lastRequest().path).toBe('/v2.1/lists/list-abc123');
-		expect(result.download_url).toBeDefined();
+		expect(lastRequest().path).toBe('/v2.1/lists/148');
+		expect(result.download_url).toBeNull();
 	});
 
-	it('deletes a list with DELETE', async () => {
-		respond(listItem);
-		await invoke(listDelete, { id: 'list-abc123' });
+	it('deletes a list with DELETE and returns the confirmation', async () => {
+		respond(listDeleted);
+		const result = (await invoke(listDelete, {
+			id: '148',
+		})) as typeof listDeleted;
 
 		expect(lastRequest().method).toBe('DELETE');
-		expect(lastRequest().path).toBe('/v2.1/lists/list-abc123');
+		expect(lastRequest().path).toBe('/v2.1/lists/148');
+		expect(result.success).toBe(true);
 	});
 
 	it('requires an ID', async () => {
@@ -601,19 +714,21 @@ describe('geocodio.lists', () => {
 });
 
 describe('geocodio failures', () => {
-	it('surfaces an unparseable address as a validation error', async () => {
+	it('surfaces an unparseable address as a 422', async () => {
 		respond(unprocessableAddress, 422);
-		const error = await failure(invoke(forwardGeocode, { q: '!!!' }));
+		const error = (await failure(
+			invoke(forwardGeocode, { q: '!!!' }),
+		)) as ApiError;
 
-		expect(error.isValidationError).toBe(true);
 		expect(error.status).toBe(422);
+		expect(error.body.error).toBe('Could not parse address');
 	});
 
-	it('surfaces a missing list as not found', async () => {
+	it('surfaces a missing list as a 404', async () => {
 		respond({ error: 'Not found' }, 404);
-		const error = await failure(invoke(listGet, { id: 'nope' }));
+		const error = (await failure(invoke(listGet, { id: 'nope' }))) as ApiError;
 
-		expect(error.isNotFound).toBe(true);
+		expect(error.status).toBe(404);
 	});
 });
 
@@ -638,13 +753,13 @@ describe('geocodio event names', () => {
 			'geocodio.geocode.batch',
 			batchGeocode,
 			{ addresses: ['a'] },
-			geocodeResponse,
+			batchResponse,
 		] as const,
 		[
 			'geocodio.geocode.batchReverse',
 			batchReverse,
 			{ coordinates: ['1,2'] },
-			geocodeResponse,
+			batchResponse,
 		] as const,
 		['geocodio.geocode.parse', parse, { q: 'a' }, parseResponse] as const,
 		[
@@ -660,11 +775,16 @@ describe('geocodio event names', () => {
 			matrixResponse,
 		] as const,
 		['geocodio.jobs.list', jobsList, {}, jobList] as const,
-		['geocodio.jobs.get', jobGet, { identifier: 'x' }, job] as const,
-		['geocodio.jobs.delete', jobDelete, { identifier: 'x' }, job] as const,
+		['geocodio.jobs.get', jobGet, { identifier: 'x' }, jobResponse] as const,
+		[
+			'geocodio.jobs.delete',
+			jobDelete,
+			{ identifier: 'x' },
+			jobDeleted,
+		] as const,
 		['geocodio.lists.all', listsAll, {}, listsResponse] as const,
 		['geocodio.lists.get', listGet, { id: 'x' }, listItem] as const,
-		['geocodio.lists.delete', listDelete, { id: 'x' }, listItem] as const,
+		['geocodio.lists.delete', listDelete, { id: 'x' }, listDeleted] as const,
 	])('emits %s', async (expected, endpoint, args, fixture) => {
 		respond(fixture);
 		await invoke(endpoint as never, args as never);

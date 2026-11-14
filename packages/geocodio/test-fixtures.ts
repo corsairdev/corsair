@@ -18,7 +18,7 @@ export const unprocessableAddress = {
 	reference: 'https://www.geocod.io/geocodio-422-unprocessable-entity-error/',
 };
 
-/** One geocoded result, with the components Geoapify parsed. */
+/** One geocoded result, with the components Geocodio parsed. */
 export const geocodeResponse = {
 	results: [
 		{
@@ -127,33 +127,73 @@ export const matrixResponse = {
 	],
 };
 
+/** A job still processing: `download_url` and `time_left` are null until it ends. */
 export const job = {
-	identifier: 'abc123',
+	identifier: 'cb88c50a256e30b32c7c44e7bede3d5a27657d8f',
 	name: 'Q4 stores',
-	status: 'completed',
-	download_url: 'https://api.geocod.io/v2.1/distance-jobs/abc123/download',
-	expires_at: '2026-12-12T00:00:00Z',
-	created_at: '2026-11-12T09:00:00Z',
-	completed_at: '2026-11-12T09:02:00Z',
+	created_at: '2026-11-12T09:00:00.000000Z',
+	origins_type: 'coordinates',
+	origins_count: 1,
+	destinations_type: 'coordinates',
+	destinations_count: 1,
+	distance_mode: 'driving',
+	calculation_type: 'matrix',
+	status: 'PROCESSING',
+	download_url: null,
+	total_calculations: 1,
+	calculations_completed: 0,
+	progress: 0,
+	status_message: 'Processing',
+	time_left: null,
+	is_expired: false,
 };
+
+/** `GET /distance-jobs/{identifier}` wraps the job in `data`. */
+export const jobResponse = { data: job };
+
+/** Deleting a job answers a message, not the job. */
+export const jobDeleted = { message: 'Job deleted' };
 
 export const jobList = {
 	data: [job],
-	links: { first: 'https://api.geocod.io/v2.1/distance-jobs?page=1' },
-	meta: { current_page: 1, per_page: 15, total: 1 },
+	links: {
+		first: 'https://api.geocod.io/v2.1/distance-jobs?page=1',
+		last: 'https://api.geocod.io/v2.1/distance-jobs?page=1',
+		prev: null,
+		next: null,
+	},
+	meta: {
+		current_page: 1,
+		from: 1,
+		last_page: 1,
+		per_page: 15,
+		to: 1,
+		total: 1,
+	},
 };
 
+/** A list as the spec documents it: a numeric id and a status object. */
 export const listItem = {
-	id: 'list-abc123',
-	status: 'completed',
-	file: { name: 'stores.csv', size: 12345 },
+	id: 148,
 	fields: ['timezone'],
-	download_url: 'https://api.geocod.io/v2.1/lists/list-abc123/download',
-	expires_at: '2026-12-12T00:00:00Z',
+	file: { estimated_rows_count: 2, filename: 'stores.csv' },
+	status: {
+		state: 'PROCESSING',
+		progress: 0,
+		message: 'Processing',
+		time_left_description: null,
+		time_left_seconds: null,
+	},
+	download_url: null,
+	expires_at: '2026-12-12T00:00:00.000000Z',
 };
+
+/** Deleting a list answers `{ success: true }`. */
+export const listDeleted = { success: true };
 
 export const listsResponse = {
 	current_page: 1,
+	current_page_url: 'https://api.geocod.io/v2.1/lists?page=1',
 	per_page: 15,
 	from: 1,
 	to: 1,
@@ -162,4 +202,19 @@ export const listsResponse = {
 	prev_page_url: null,
 	first_page_url: 'https://api.geocod.io/v2.1/lists?page=1',
 	path: 'https://api.geocod.io/v2.1/lists',
+};
+
+/**
+ * A batch answers one entry per input, in input order, each with the query
+ * and the single-lookup answer under `response`. An unmatched entry answers
+ * an empty `results` list.
+ */
+export const batchResponse = {
+	results: [
+		{
+			query: '1109 N Highland St, Arlington, VA 22201',
+			response: geocodeResponse,
+		},
+		{ query: 'nowhere at all', response: { results: [] } },
+	],
 };
