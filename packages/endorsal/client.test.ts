@@ -140,15 +140,17 @@ describe('makeEndorsalRequest', () => {
 				statusText: 'Unprocessable',
 				body: { email: 'private@example.com' },
 			},
-			'HTTP 422: {\n  "email": "private@example.com",\n  "phone": "+14172618261"\n}',
+			'HTTP 422: {\n  "email": "private@example.com",\n  "phone": "+14172618261"\n    at private-frame@example.com\n}',
 		);
 		mockedRequest.mockRejectedValue(original);
+		// `unknown` because a rejected promise can carry any thrown value; the checks below narrow it.
 		const result = await makeEndorsalRequest('/v1/contacts', 'test-key', {
 			method: 'POST',
 		}).catch((caught: unknown) => caught);
 		if (!(result instanceof ApiError)) throw new Error('Expected ApiError');
 		expect(result.stack).not.toContain('private@example.com');
 		expect(result.stack).not.toContain('+14172618261');
+		expect(result.stack).not.toContain('private-frame@example.com');
 		expect(result.stack?.split('\n').slice(1).length).toBeGreaterThan(0);
 		for (const line of result.stack?.split('\n').slice(1) ?? []) {
 			expect(line).toMatch(/^\s+at /);

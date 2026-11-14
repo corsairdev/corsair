@@ -84,16 +84,23 @@ export async function makeEndorsalRequest<T>(
 					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
-			// Keep only the frames of the request that failed, under the new
-			// message line. The original message can span several lines (core
-			// pretty-prints the response body for unmapped statuses), so every
-			// non-frame line is dropped.
-			if (error.stack && sanitized.stack) {
+			// Keep the frames of the request that failed under the new message
+			// line. The original stack starts with `<name>: message`, and the message
+			// can span several lines (core pretty-prints the response body for
+			// unmapped statuses), so that exact prefix is cut off. If the stack
+			// does not start with it, the new stack is kept as is.
+			const header = `: ${error.message}\n`;
+			const end = error.stack?.indexOf(header) ?? -1;
+			const prefix = end >= 0 ? (error.stack?.slice(0, end) ?? '') : '';
+			if (
+				end >= 0 &&
+				!prefix.includes('\n') &&
+				error.stack &&
+				sanitized.stack
+			) {
 				const [headline] = sanitized.stack.split('\n');
-				const frames = error.stack
-					.split('\n')
-					.filter((line) => /^\s+at /.test(line));
-				sanitized.stack = [headline, ...frames].join('\n');
+				const frames = error.stack.slice(end + header.length);
+				sanitized.stack = `${headline}\n${frames}`;
 			}
 			throw sanitized;
 		}
