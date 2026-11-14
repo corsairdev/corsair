@@ -3,6 +3,7 @@ import {
 	DatasetsAddDatapointsInputSchema,
 	DatasetsCreateInputSchema,
 	DatasetsUpdateLegacyInputSchema,
+	EventSearchInputSchema,
 	EventUpdateInputSchema,
 	ExperimentsCompareResponseSchema,
 	ExperimentsCreateRunInputSchema,
@@ -83,6 +84,17 @@ describe('HoneyHive request shapes match the API', () => {
 				provider: 'openai',
 				parameters: {},
 				env: ['dev', 'prod'],
+			}).success,
+		).toBe(true);
+	});
+
+	it('takes the filter value type on event search (live run, 11-15)', () => {
+		expect(
+			EventSearchInputSchema.safeParse({
+				project_id: 'p',
+				filters: [
+					{ field: 'session_id', operator: 'is', value: 's-1', type: 'string' },
+				],
 			}).success,
 		).toBe(true);
 	});

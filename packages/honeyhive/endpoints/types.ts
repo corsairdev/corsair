@@ -176,6 +176,8 @@ export const EventFilterSchema = z.strictObject({
 	field: z.string(),
 	operator: z.string(),
 	value: JsonUnknownSchema,
+	// How HoneyHive compares `value` (the field's data type).
+	type: z.enum(['string', 'number', 'boolean', 'datetime']).optional(),
 });
 
 export const EventSearchInputSchema = z.strictObject({
