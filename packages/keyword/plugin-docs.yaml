@@ -1,0 +1,87 @@
+displayName: Keyword
+description: Rank tracking with Keyword.com - manage projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages and Share of Voice history.
+domain: keyword.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token in Keyword.com under Settings, API. It is sent as a bearer token and acts as the user who owns it.
+
+  Things to know before you call:
+
+  - **Most routes are scoped by project name, a few by project ID.** `keywords.list`, `metrics.get` and the rest take the project name exactly as `projects.list` returns it, which may be a subproject written `Parent[sub]Child`. The bulk routes and `mindshare.history` take the numeric `project_id` instead.
+  - **A group is a project.** Keyword calls them groups in its API and projects in its app, and `projects.list` returns both projects and subprojects, told apart by the `[sub]` marker in the id.
+  - **The project's own auth key is never returned.** Keyword includes a per-project `auth` key in every project and keyword resource. The plugin removes it before a result reaches a caller, so it never lands in a log or a response body.
+  - **Adding a keyword that already exists** returns the existing one rather than an error, so a bulk add is safe to repeat.
+  - **A refresh spends the plan's daily quota.** `keywords.refresh` queues keywords for an on-demand check. The whole request is refused when the quota would be exceeded, and the answer names how many refreshes remain.
+  - **A full plan is a 402, not a rate limit.** Keyword enforces the plan's keyword allowance, and that failure is permanent, so it is not retried. A 429 is a throughput limit and is retried twice.
+  - **Rank history is bounded.** `rankChart.get` refuses a call covering more than 400,000 keyword-days, so a large group needs a shorter `limit` or fewer keywords.
+  - **Paging.** `keywords.list` takes `page` and `per_page` and returns a `meta` block; Keyword does not publish a total-count cursor, so read `meta` for what it does send.
+  - **Webhooks.** The plugin does not receive Keyword webhooks; none are configured here.
+examples:
+  read:
+    path: keywords.list
+    title: List a project's keywords
+    args:
+      projectName: Disney
+      per_page: 50
+  write:
+    path: keywords.add
+    title: Add a keyword to a project
+    args:
+      projectName: Disney
+      keywords:
+        - kw: jungle book
+          url: disney.com
+          region: google.com
+          language: en
+apiExamples:
+  projects.list: {}
+  projects.get:
+    call: "{ projectName: 'Disney' }"
+  projects.create:
+    call: "{ category: 'Disney', currency_code: 'USD', url: 'disney.com' }"
+  projects.archive:
+    call: "{ projectName: 'Disney' }"
+  projects.delete:
+    call: "{ projectName: 'Disney' }"
+  projects.restore:
+    call: "{ projectName: 'Disney' }"
+  sharing.get:
+    call: "{ projectId: 3057417 }"
+  sharing.update:
+    call: "{ projectId: 3057417, is_active: true }"
+  keywords.list:
+    call: "{ projectName: 'Disney', page: 1, per_page: 250 }"
+  keywords.get:
+    call: "{ projectName: 'Disney', keywordId: '272678916', date: '2026-11-01' }"
+  keywords.add:
+    call: "{ projectName: 'Disney', keywords: [{ kw: 'Jungle Book', url: 'disney.com', region: 'google.com', language: 'en', url_tracking_method: 'broad' }] }"
+  keywords.update:
+    call: "{ projectName: 'Disney', keywordId: '272678916', url: 'disney.com', tags: ['Brand', 'Priority'] }"
+  keywords.delete:
+    call: "{ projectName: 'Disney', keywordId: '272678916' }"
+  keywords.bulkDelete:
+    call: "{ projectId: 3057417, keywordIds: ['272678916', '272678917'] }"
+  keywords.bulkUpdate:
+    call: "{ projectId: 3057417, keywordIds: ['267540882'], changes: { url: 'dell.com', region: 'google.ca', language: 'en-ca' } }"
+  keywords.refresh:
+    call: "{ keywordIds: ['267540882', '267540883'] }"
+  metrics.get:
+    call: "{ projectName: 'Disney', tagId: 27727, timeframe: 30 }"
+  metrics.competitors:
+    call: "{ projectName: 'Disney', keywordId: '272678916', dateRange: '2026-11-01.2026-11-12' }"
+  rankChart.get:
+    call: "{ keywordIds: ['272678916'], limit: 30 }"
+  regions.list:
+    call: "{ projectName: 'Disney' }"
+  rankingUrls.list:
+    call: "{ projectName: 'Disney', page: 1 }"
+  mindshare.history:
+    call: "{ projectId: 3057417, start_date: '2026-11-01', end_date: '2026-11-12' }"
+  account.get: {}
+apiNotes:
+  projects.list: 'Returns projects and subprojects together; a subproject is written `Parent[sub]Child` in its id.'
+  keywords.add: 'Adding a keyword the project already tracks returns the existing one rather than an error.'
+  keywords.refresh: 'Spends the plan’s daily on-demand refresh quota. The whole request is refused when it would be exceeded.'
+  rankChart.get: 'Keyword refuses a call covering more than 400,000 keyword-days, so shorten `limit` or send fewer keywords.'
+  keywords.bulkDelete: 'Scoped by numeric `projectId`, where the single-keyword routes take the project name.'
+  mindshare.history: 'Scoped by numeric `projectId`, and read from Keyword’s cache.'

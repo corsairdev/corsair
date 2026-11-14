@@ -1,0 +1,149 @@
+---
+title: "Keyword plugin"
+sidebarTitle: "Overview"
+description: "Rank tracking with Keyword.com - manage projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages and Share of Voice history."
+---
+
+Use **Keyword** through Corsair: one client, typed API calls.
+
+Create an API token in Keyword.com under Settings, API. It is sent as a bearer token and acts as the user who owns it.
+
+Things to know before you call:
+
+- **Most routes are scoped by project name, a few by project ID.** `keywords.list`, `metrics.get` and the rest take the project name exactly as `projects.list` returns it, which may be a subproject written `Parent[sub]Child`. The bulk routes and `mindshare.history` take the numeric `project_id` instead.
+- **A group is a project.** Keyword calls them groups in its API and projects in its app, and `projects.list` returns both projects and subprojects, told apart by the `[sub]` marker in the id.
+- **The project's own auth key is never returned.** Keyword includes a per-project `auth` key in every project and keyword resource. The plugin removes it before a result reaches a caller, so it never lands in a log or a response body.
+- **Adding a keyword that already exists** returns the existing one rather than an error, so a bulk add is safe to repeat.
+- **A refresh spends the plan's daily quota.** `keywords.refresh` queues keywords for an on-demand check. The whole request is refused when the quota would be exceeded, and the answer names how many refreshes remain.
+- **A full plan is a 402, not a rate limit.** Keyword enforces the plan's keyword allowance, and that failure is permanent, so it is not retried. A 429 is a throughput limit and is retried twice.
+- **Rank history is bounded.** `rankChart.get` refuses a call covering more than 400,000 keyword-days, so a large group needs a shorter `limit` or fewer keywords.
+- **Paging.** `keywords.list` takes `page` and `per_page` and returns a `meta` block; Keyword does not publish a total-count cursor, so read `meta` for what it does send.
+- **Webhooks.** The plugin does not receive Keyword webhooks; none are configured here.
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/keyword better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/keyword better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/keyword better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/keyword better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { keyword } from '@corsair-dev/keyword';
+
+export const corsair = createCorsair({
+	plugins: [
+		keyword(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Keyword API key before the first call: `pnpm corsair setup --plugin=keyword --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+keyword()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'keyword',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List a project's keywords**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.keyword.api.keywords.list({ projectName: 'Disney', per_page: 50 });
+```
+
+
+**Add a keyword to a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.keyword.api.keywords.add({
+	projectName: 'Disney',
+	keywords: [{
+		kw: 'jungle book',
+		url: 'disney.com',
+		region: 'google.com',
+		language: 'en',
+	}],
+});
+```
+
+
+See the full list on the [API](/plugins/keyword/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/keyword/api">
+    Every `keyword.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

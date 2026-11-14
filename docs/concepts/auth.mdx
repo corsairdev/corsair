@@ -76,8 +76,9 @@ When using OAuth, tokens expire. Corsair handles this automatically:
 1. Before making a request, checks if the token is expired
 2. If expired, uses the refresh token to get a new access token
 3. Stores the new token and continues with the request
+4. If a read still comes back 401 (some providers revoke tokens early), refreshes once more and repeats the read
 
-You never have to think about token rotation.
+You don't handle token rotation yourself. What can reach your code is a refresh the provider refuses. If the user removed access or the grant expired, the call throws `AuthMissingError` with `reason: 'revoked'` and a reconnect link. If the provider rejected your OAuth app's credentials, or the token endpoint failed, it throws `OAuthRefreshError` instead, and reconnecting won't help. See [Expired OAuth tokens](/concepts/error-handling#expired-oauth-tokens).
 
 ## Envelope encryption
 
