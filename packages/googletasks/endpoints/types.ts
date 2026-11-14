@@ -2,7 +2,9 @@ import { z } from 'zod';
 
 const Rfc3339DateTimeSchema = z.iso.datetime({ offset: true });
 
-const TaskListSchema = z.strictObject({
+// Response schemas are non-strict: Google adds read-only fields over time (webViewLink,
+// assignmentInfo), and a new field must not break reads. Inputs stay strict.
+const TaskListSchema = z.object({
 	id: z.string().optional(),
 	title: z.string().max(1024).optional(),
 	updated: Rfc3339DateTimeSchema.optional(),
@@ -11,7 +13,7 @@ const TaskListSchema = z.strictObject({
 	etag: z.string().optional(),
 });
 
-const TaskSchema = z.strictObject({
+const TaskSchema = z.object({
 	id: z.string().optional(),
 	title: z.string().max(1024).optional(),
 	updated: Rfc3339DateTimeSchema.optional(),
@@ -19,7 +21,10 @@ const TaskSchema = z.strictObject({
 	webViewLink: z.string().optional(),
 	kind: z.string().optional(),
 	etag: z.string().optional(),
-	status: z.enum(['needsAction', 'completed']).optional(),
+	// Documented values are needsAction and completed; a value Google adds later still parses.
+	status: z
+		.union([z.enum(['needsAction', 'completed']), z.string()])
+		.optional(),
 	due: Rfc3339DateTimeSchema.optional(),
 	completed: Rfc3339DateTimeSchema.optional(),
 	parent: z.string().optional(),
@@ -29,7 +34,7 @@ const TaskSchema = z.strictObject({
 	deleted: z.boolean().optional(),
 	links: z
 		.array(
-			z.strictObject({
+			z.object({
 				type: z.string().optional(),
 				link: z.string().optional(),
 				description: z.string().optional(),
@@ -39,7 +44,10 @@ const TaskSchema = z.strictObject({
 	assignmentInfo: z
 		.strictObject({
 			surfaceType: z
-				.enum(['CONTEXT_TYPE_UNSPECIFIED', 'GMAIL', 'DOCUMENT', 'SPACE'])
+				.union([
+					z.enum(['CONTEXT_TYPE_UNSPECIFIED', 'GMAIL', 'DOCUMENT', 'SPACE']),
+					z.string(),
+				])
 				.optional(),
 			linkToTask: z.string().optional(),
 			driveResourceInfo: z
@@ -48,7 +56,7 @@ const TaskSchema = z.strictObject({
 					resourceKey: z.string().optional(),
 				})
 				.optional(),
-			spaceInfo: z.strictObject({ space: z.string().optional() }).optional(),
+			spaceInfo: z.object({ space: z.string().optional() }).optional(),
 		})
 		.optional(),
 });
@@ -80,16 +88,19 @@ const TaskReplaceSchema = z.strictObject({
 	due: Rfc3339DateTimeSchema.optional(),
 	completed: Rfc3339DateTimeSchema.optional(),
 	status: z.enum(['needsAction', 'completed']).optional(),
-	deleted: z.boolean().optional(),
+	// Deleting goes through tasks.delete, which is destructive and needs approval.
+	deleted: z.literal(false).optional(),
 	etag: z.string().optional(),
 });
 const TaskPatchSchema = z.strictObject({
 	title: z.string().max(1024).optional(),
 	notes: z.string().max(8192).optional(),
-	due: Rfc3339DateTimeSchema.optional(),
+	// null removes the due date; an omitted field keeps it.
+	due: Rfc3339DateTimeSchema.nullable().optional(),
 	completed: Rfc3339DateTimeSchema.optional(),
 	status: z.enum(['needsAction', 'completed']).optional(),
-	deleted: z.boolean().optional(),
+	// Deleting goes through tasks.delete, which is destructive and needs approval.
+	deleted: z.literal(false).optional(),
 	etag: z.string().optional(),
 });
 
@@ -162,7 +173,7 @@ export const GoogleTasksEndpointInputSchemas = {
 } as const;
 
 export const GoogleTasksEndpointOutputSchemas = {
-	taskListsList: z.strictObject({
+	taskListsList: z.object({
 		kind: z.string().optional(),
 		etag: z.string().optional(),
 		nextPageToken: z.string().optional(),
@@ -173,7 +184,7 @@ export const GoogleTasksEndpointOutputSchemas = {
 	taskListsUpdate: TaskListSchema,
 	taskListsPatch: TaskListSchema,
 	taskListsDelete: z.undefined(),
-	tasksList: z.strictObject({
+	tasksList: z.object({
 		kind: z.string().optional(),
 		etag: z.string().optional(),
 		nextPageToken: z.string().optional(),

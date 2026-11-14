@@ -107,7 +107,7 @@ describe('Google Tasks endpoint schemas', () => {
 		expect(
 			GoogleTasksEndpointOutputSchemas.tasksGet.safeParse({
 				id: 'task-1',
-				status: 'unknown',
+				status: 42,
 			}).success,
 		).toBe(false);
 		expect(GoogleTasksEndpointOutputSchemas.tasksDelete.parse(undefined)).toBe(
@@ -125,5 +125,70 @@ describe('Google Tasks endpoint schemas', () => {
 		expect(googletasks({ scopeMode: 'readonly' }).oauthConfig?.scopes).toEqual([
 			'https://www.googleapis.com/auth/tasks.readonly',
 		]);
+	});
+});
+
+describe('Google Tasks output schemas tolerate provider additions', () => {
+	it('keeps parsing a task with a new field and a new status value', () => {
+		const parsed = GoogleTasksEndpointOutputSchemas.tasksGet.parse({
+			kind: 'tasks#task',
+			id: 'task-1',
+			status: 'archived',
+			someNewField: { a: 1 },
+			assignmentInfo: { surfaceType: 'NEW_SURFACE' },
+		});
+		expect(parsed.id).toBe('task-1');
+		expect(parsed.status).toBe('archived');
+	});
+
+	it('keeps parsing list envelopes with new fields', () => {
+		expect(
+			GoogleTasksEndpointOutputSchemas.taskListsList.parse({
+				kind: 'tasks#taskLists',
+				items: [{ id: 'l1', title: 't', newField: true }],
+				newEnvelopeField: 1,
+			}).items?.[0]?.id,
+		).toBe('l1');
+	});
+});
+
+describe('Google Tasks write inputs', () => {
+	it('lets tasks.patch clear a due date with null', () => {
+		expect(
+			GoogleTasksEndpointInputSchemas.tasksPatch.safeParse({
+				taskListId: 'l',
+				taskId: 't',
+				task: { due: null },
+			}).success,
+		).toBe(true);
+		expect(
+			GoogleTasksEndpointInputSchemas.tasksPatch.safeParse({
+				taskListId: 'l',
+				taskId: 't',
+				task: { due: 'tomorrow' },
+			}).success,
+		).toBe(false);
+	});
+
+	it('keeps deletion behind tasks.delete: update and patch refuse deleted: true', () => {
+		for (const schema of [
+			GoogleTasksEndpointInputSchemas.tasksPatch,
+			GoogleTasksEndpointInputSchemas.tasksUpdate,
+		]) {
+			expect(
+				schema.safeParse({
+					taskListId: 'l',
+					taskId: 't',
+					task: { deleted: true },
+				}).success,
+			).toBe(false);
+			expect(
+				schema.safeParse({
+					taskListId: 'l',
+					taskId: 't',
+					task: { deleted: false },
+				}).success,
+			).toBe(true);
+		}
 	});
 });
