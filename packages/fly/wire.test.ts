@@ -350,6 +350,19 @@ describe('Fly GraphQL public request seam', () => {
 		);
 		await expect(api.account.userOnlyToken({})).rejects.toThrow();
 	});
+	it('accepts enum values Fly adds later in results', async () => {
+		jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					data: { personalOrganization: { ...org, type: 'ENTERPRISE' } },
+				}),
+				{ status: 200, headers: { 'content-type': 'application/json' } },
+			),
+		);
+		await expect(api.organizations.personal({})).resolves.toMatchObject({
+			type: 'ENTERPRISE',
+		});
+	});
 	it('reports GraphQL errors even when HTTP succeeds', async () => {
 		jest
 			.spyOn(global, 'fetch')

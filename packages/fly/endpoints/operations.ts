@@ -45,7 +45,8 @@ const org = z.object({
 	id: z.string(),
 	name: z.string(),
 	slug: z.string(),
-	type: z.enum(['PERSONAL', 'SHARED']),
+	// Output enums accept values Fly adds later; inputs stay strict.
+	type: z.enum(['PERSONAL', 'SHARED']).or(z.string()),
 });
 const addOn = z.object({
 	id: z.string(),
@@ -70,7 +71,10 @@ const checkJob = z.object({
 	schedule: z.string().nullable(),
 	nextRunAt: z.string().nullable(),
 	httpOptions: z
-		.object({ verb: z.enum(['GET', 'HEAD']), headers: z.array(z.string()) })
+		.object({
+			verb: z.enum(['GET', 'HEAD']).or(z.string()),
+			headers: z.array(z.string()),
+		})
 		.nullable(),
 });
 const checkRun = z.object({
@@ -104,13 +108,14 @@ const level = z.enum([
 	'OPT_IN',
 	'REQUIRED',
 ]);
+const levelOutput = level.or(z.string());
 const thirdParty = z.object({
 	id: z.string(),
 	name: z.string(),
 	location: z.string(),
-	customLevel: level,
-	flyctlLevel: level,
-	uiexLevel: level,
+	customLevel: levelOutput,
+	flyctlLevel: levelOutput,
+	uiexLevel: levelOutput,
 	createdAt: z.string(),
 	updatedAt: z.string(),
 });
