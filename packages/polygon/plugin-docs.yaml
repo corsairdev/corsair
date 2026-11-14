@@ -1,5 +1,5 @@
-displayName: Polygon
-description: OMS payments API for moving money between crypto and fiat, with quotes, transfers, wallets, customers and webhooks.
+displayName: Polygon OMS
+description: Polygon Open Money Stack (OMS) payments API for moving money between crypto and fiat, with quotes, transfers, wallets, customers and webhooks.
 domain: polygon.technology
 recommendedAuth: api_key
 overviewNote: |

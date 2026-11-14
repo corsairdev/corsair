@@ -984,7 +984,7 @@ export const ProviderDisplayNames = {
 	placid: 'Placid',
 	plain: 'Plain',
 	ploid: 'Ploid',
-	polygon: 'Polygon',
+	polygon: 'Polygon OMS',
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
