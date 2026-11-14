@@ -197,7 +197,7 @@ export function sanitizeErrorMessage(
 }
 
 // `unknown` because caught exceptions in JavaScript have no static type.
-function wrapError(error: unknown, apiKey?: string): FinmeiAPIError {
+function wrapError(error: unknown, apiKey?: string): Error {
 	if (error instanceof FinmeiAPIError) {
 		const knownCredentials = collectSensitiveValues(error.details);
 		if (apiKey) knownCredentials.push(apiKey);
@@ -231,12 +231,37 @@ function wrapError(error: unknown, apiKey?: string): FinmeiAPIError {
 			apiKey,
 			knownCredentials,
 		);
-		return new FinmeiAPIError(
+		// Core's ApiError goes through (R8) so status, retryAfter and isRateLimitError()
+		// keep working. It is rebuilt without the sent body, form data and query, which
+		// carry buyers' names, emails and addresses, and with credentials cut from the
+		// message and Finmei's body.
+		const url = new URL(error.url, FINMEI_API_BASE);
+		url.search = '';
+		return new ApiError(
+			{
+				...error.request,
+				body: undefined,
+				formData: undefined,
+				query: undefined,
+			},
+			{
+				url: url.toString(),
+				ok: false,
+				status: error.status,
+				statusText: sanitizeErrorMessage(
+					error.statusText,
+					apiKey,
+					knownCredentials,
+				),
+				body: safeDetails,
+			},
 			safeMessage,
-			error.status,
-			typeof error.status === 'number' ? `HTTP_${error.status}` : undefined,
-			error.retryAfter,
-			safeDetails,
+			{
+				retryAfter: error.retryAfter,
+				rateLimitReset: error.rateLimitReset,
+				rateLimitRemaining: error.rateLimitRemaining,
+				rateLimitLimit: error.rateLimitLimit,
+			},
 		);
 	}
 	if (error instanceof Error) {
@@ -359,7 +384,10 @@ export async function makeFinmeiBinaryRequest(
 					rawError = '';
 				}
 				await response.body?.cancel().catch(() => undefined);
-				const safeError = redactSensitiveData(rawError);
+				// Collect named secrets before redacting, so a copy elsewhere in the body goes too.
+				const knownCredentials = collectSensitiveValues(rawError);
+				if (apiKey) knownCredentials.push(apiKey);
+				const safeError = redactSensitiveData(rawError, knownCredentials);
 				throw new FinmeiAPIError(
 					sanitizeErrorMessage(
 						`Failed to download binary file: HTTP ${response.status}`,

@@ -131,7 +131,7 @@ describe('makeFinmeiRequest', () => {
 		);
 	});
 
-	it('rethrows ApiError wrapped as FinmeiAPIError with sanitized credentials in details', async () => {
+	it('passes core ApiError through with credentials redacted from its body', async () => {
 		const sensitiveBody = {
 			error: 'Invalid key provided',
 			apiKey: 'secret_live_key_9999',
@@ -150,11 +150,11 @@ describe('makeFinmeiRequest', () => {
 			'bad-token',
 		).catch((err: unknown) => err);
 
-		expect(caught).toBeInstanceOf(FinmeiAPIError);
-		const apiErr = caught as FinmeiAPIError;
+		expect(caught).toBeInstanceOf(ApiError);
+		const apiErr = caught as ApiError;
 		expect(apiErr.status).toBe(401);
-		// `unknown` because apiErr.details is sanitized untrusted record.
-		const details = apiErr.details as Record<string, unknown>;
+		// `unknown` because apiErr.body is sanitized untrusted record.
+		const details = apiErr.body as Record<string, unknown>;
 		expect(details.apiKey).toBe('[REDACTED]');
 		expect(details.token).toBe('[REDACTED]');
 		// `unknown` because nested details must be narrowed to record.
@@ -337,8 +337,8 @@ describe('makeFinmeiBinaryRequest', () => {
 			'custom-api-key',
 		).catch((err: unknown) => err);
 
-		expect(caught).toBeInstanceOf(FinmeiAPIError);
-		const err = caught as FinmeiAPIError;
+		expect(caught).toBeInstanceOf(ApiError);
+		const err = caught as ApiError;
 		expect(err.message).not.toContain('secret-123');
 		expect(err.message).not.toContain('my-secret-token');
 		expect(err.message).not.toContain('super-secret');
@@ -363,13 +363,70 @@ describe('makeFinmeiBinaryRequest', () => {
 			(err: unknown) => err,
 		);
 
-		expect(caught).toBeInstanceOf(FinmeiAPIError);
-		const err = caught as FinmeiAPIError;
+		expect(caught).toBeInstanceOf(ApiError);
+		const err = caught as ApiError;
 		expect(err.status).toBe(422);
 		expect(err.retryAfter).toBe(2500);
+		expect(err.isRateLimitError()).toBe(false);
 		expect(err.message).not.toContain(credential);
-		expect(JSON.stringify(err.details)).not.toContain(credential);
-		expect(err.details).toMatchObject({ api_key: '[REDACTED]' });
+		expect(JSON.stringify(err)).not.toContain(credential);
+		expect(err.body).toMatchObject({ api_key: '[REDACTED]' });
+	});
+
+	it('leaves the sent invoice body and query off the ApiError', async () => {
+		mockRequest.mockImplementation(async (_config, options) => {
+			throw new ApiError(
+				options,
+				{
+					url: `${FINMEI_API_BASE}/invoices?search=Jane`,
+					ok: false,
+					status: 422,
+					statusText: 'Unprocessable Content',
+					body: { message: 'The products.0.units field is required.' },
+				},
+				'Unprocessable Content',
+			);
+		});
+
+		// `unknown` because rejection from makeFinmeiRequest has no static type.
+		const caught: unknown = await makeFinmeiRequest('/invoices', 'key-1', {
+			method: 'POST',
+			body: { buyer: { name: 'Jane Customer', email: 'jane@example.com' } },
+			query: { search: 'Jane' },
+		}).catch((err: unknown) => err);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		const err = caught as ApiError;
+		expect(err.request.body).toBeUndefined();
+		expect(err.request.query).toBeUndefined();
+		expect(JSON.stringify(err)).not.toContain('Jane');
+		expect(JSON.stringify(err)).not.toContain('jane@example.com');
+		expect(err.body).toEqual({
+			message: 'The products.0.units field is required.',
+		});
+	});
+
+	it('redacts every copy of a secret named in a download error body', async () => {
+		jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					token: 'secondary-secret',
+					message: 'bad secondary-secret',
+				}),
+				{ status: 400, headers: { 'content-type': 'application/json' } },
+			),
+		);
+
+		// `unknown` because rejection has no static type.
+		const caught: unknown = await makeFinmeiBinaryRequest(
+			'/invoices/123/download',
+			'test-token',
+		).catch((err: unknown) => err);
+
+		expect(caught).toBeInstanceOf(FinmeiAPIError);
+		expect(JSON.stringify((caught as FinmeiAPIError).details)).not.toContain(
+			'secondary-secret',
+		);
 	});
 
 	it('parseRetryAfterMs converts retry-after header to milliseconds', () => {
