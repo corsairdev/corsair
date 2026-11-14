@@ -1,0 +1,133 @@
+---
+title: "DeployHQ plugin"
+sidebarTitle: "Overview"
+description: "Manage DeployHQ accounts, projects, servers, deployments, configuration, users, and deployment resources through its documented REST API."
+---
+
+Use **DeployHQ** through Corsair: one client, typed API calls.
+
+Configure the account permalink with the api_key account field account_subdomain or the accountSubdomain plugin option. Authenticated calls use HTTP Basic with the DeployHQ email/username and API key; save the key as Corsair api_key auth and set username in the api_key account fields or plugin option. The API key alone is insufficient. For clients without a database or KEK, provide key, username, and accountSubdomain directly in plugin options and keep credentials in a secret manager. The API guide documents a 40-character API key but no OAuth 2 flow. The OpenAPI document enumerates 216 REST operations, all linked in the package README. Public routes do not send credentials. Writes are not retried; safe GETs use the shared HTTP transport and honor numeric-seconds Retry-After values. The shared transport does not parse HTTP-date Retry-After on JSON routes; fixing that requires shared-core scope. Invoice downloads parse both forms locally. No undocumented pagination or rate limits are assumed. The signup operation posts to `https://api.deployhq.com/api/v1/signup`, so it does not require an existing account subdomain. The [signup guide](https://www.deployhq.com/support/api/signup) shows `https://deployhq.com/api/v1/signup`, but that host answers 301 to www.deployhq.com, which returns 404. SVG status badges are returned as text strings. No inbound webhook contract is documented or implemented.
+
+**What you get:**
+
+- 216 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/deployhq better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/deployhq better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/deployhq better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/deployhq better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { deployhq } from '@corsair-dev/deployhq';
+
+export const corsair = createCorsair({
+	plugins: [
+		deployhq(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the DeployHQ API key before the first call: `pnpm corsair setup --plugin=deployhq --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+deployhq()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'deployhq',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.billingStatusAccountBillingStatus`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.deployhq.api.account.billingStatusAccountBillingStatus({});
+```
+
+
+**Update account settings**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.deployhq.api.account.replaceAccount({
+	body: {
+		account: {},
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/deployhq/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/deployhq/api">
+    Every `deployhq.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

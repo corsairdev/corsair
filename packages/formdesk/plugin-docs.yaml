@@ -1,0 +1,123 @@
+displayName: Formdesk
+description: Connect to Formdesk REST v1 to manage forms, submissions, users, visitors, and uploaded files with validated requests and responses.
+domain: formdesk.com
+recommendedAuth: api_key
+overviewNote: Formdesk Connect returns the account host; pass that host and the account domain to subsequent operations. API keys use the Authorization Bearer scheme. Credential-based Connect returns an API key, so treat its output as a secret.
+examples:
+  read:
+    path: forms.list
+    title: List forms
+    args:
+      host: fd7.formdesk.com
+      domain: apitest
+  write:
+    path: forms.park
+    title: Create a prefill ticket
+    args:
+      host: fd7.formdesk.com
+      domain: apitest
+      data:
+        name: Ada
+      expires: 3600
+apiNotes:
+  connect.credentials: >-
+    This call sends Formdesk username/password credentials and returns an API key;
+    treat its output as a secret. Connect is exempt from the API credit charge.
+  results.export: >-
+    Credits equal the number of completed forms downloaded. The published format
+    list and request sample conflict: the list has `excel`, while the sample uses
+    `excel2007`; both spellings are accepted.
+  results.list: >-
+    Filter parameters are supported, but the collection documents no page or
+    cursor pagination. The response is the full matching collection.
+  results.add: >-
+    A single entry or an array of up to 10 entries may be sent. Form fields are
+    account-defined, so their identifiers are preserved as JSON keys.
+  results.markProcessed: >-
+    Marking a result processed is explicitly documented as free and is used by
+    Formdesk's synchronization workflow.
+  results.pdf: >-
+    Returns binary data as `{ kind: 'binary', contentType, base64, filename?,
+    byteLength }`. Responses over 25 MiB are rejected by this plugin.
+  files.content: >-
+    Returns binary data as `{ kind: 'binary', contentType, base64, filename?,
+    byteLength }`. Responses over 25 MiB are rejected by this plugin.
+apiExamples:
+  connect.apiKey:
+    call: "{ domain: 'apitest' }"
+  connect.credentials:
+    call: "{ domain: 'apitest', username: 'automation-user', password: 'not-a-real-password' }"
+  forms.list:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest' }"
+  forms.park:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', data: { name: 'Ada' }, expires: 3600 }"
+  forms.items:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people' }"
+  forms.filters:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people' }"
+  results.export:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people', format: 'csv' }"
+  results.list:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people', query: { status: 'DONE', sync_status: 'N,C' } }"
+  results.get:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 }"
+  results.add:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people', data: { name: 'Ada' } }"
+  results.update:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850, data: { name: 'Ada' } }"
+  results.remove:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 }"
+  results.increment:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850, identifier: 'counter', count: 1 }"
+  results.markProcessed:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 }"
+  results.pdf:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850, settings: { papersize: 'A4' } }"
+  results.workflows:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 }"
+  results.files:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 }"
+  results.allFiles:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people' }"
+  results.deleteFiles:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', entryId: 93755850 }"
+  results.deleteAllFiles:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people' }"
+  users.list:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest' }"
+  users.get:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', userId: 71262 }"
+  users.getExternal:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', externalUserId: 'external-user-1' }"
+  users.add:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', user: { name: 'Ada', email: 'ada@formdesk.invalid', username: 'ada', password: 'not-a-real-password' } }"
+  users.update:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', userId: 71262, user: { name: 'Ada Lovelace' } }"
+  users.remove:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', userId: 71262 }"
+  users.signOn:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', credentials: { username: 'ada' } }"
+  visitors.list:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest' }"
+  visitors.get:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', visitorId: 3732966 }"
+  visitors.getExternal:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', externalUserId: 'external-visitor-1' }"
+  visitors.results:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', visitorId: 3732966 }"
+  visitors.add:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', visitor: { name: 'Ada', email: 'ada@formdesk.invalid', username: 'ada' } }"
+  visitors.update:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', visitorId: 3732966, visitor: { name: 'Ada Lovelace' } }"
+  visitors.remove:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', visitorId: 3732966 }"
+  visitors.signOn:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', form: 'people', credentials: { username: 'ada' } }"
+  files.list:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', type: 'all' }"
+  files.get:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', fileId: 8702600 }"
+  files.content:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', fileId: 8702600 }"
+  files.remove:
+    call: "{ host: 'fd7.formdesk.com', domain: 'apitest', fileId: 8702600 }"
