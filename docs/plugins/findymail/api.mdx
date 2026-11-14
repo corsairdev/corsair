@@ -19,7 +19,7 @@ Get contacts saved
 **Risk:** `read`
 
 ```ts
-await corsair.findymail.api.contacts.list({ id: 0 });
+await corsair.findymail.api.contacts.list({});
 ```
 
 **Input**
@@ -44,7 +44,7 @@ await corsair.findymail.api.contacts.list({ id: 0 });
 
 ```ts
 {
-  id?: number,
+  id?: number | null,
   name?: string | null,
   email?: string | null,
   linkedin_url?: string | null,
@@ -70,7 +70,7 @@ Add excluded domains
 **Risk:** `write`
 
 ```ts
-await corsair.findymail.api.excludedDomains.add({ domains: ['example.com'] });
+await corsair.findymail.api.excludedDomains.add({});
 ```
 
 **Input**
@@ -86,11 +86,11 @@ await corsair.findymail.api.excludedDomains.add({ domains: ['example.com'] });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `total` | `number` | No | — |
-| `processed_immediately` | `number` | No | — |
-| `queued` | `number` | No | — |
-| `list_id` | `number` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `processed_immediately` | `number \| null` | No | — |
+| `queued` | `number \| null` | No | — |
+| `list_id` | `number \| null` | No | — |
 
 
 
@@ -123,20 +123,20 @@ await corsair.findymail.api.excludedDomains.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
-| `current_page` | `number` | No | — |
-| `per_page` | `number` | No | — |
-| `total` | `number` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `current_page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  domain?: string,
+  id?: number | null,
+  domain?: string | null,
   excluded_domain_list_id?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -154,7 +154,7 @@ Remove excluded domains
 **Risk:** `destructive`
 
 ```ts
-await corsair.findymail.api.excludedDomains.remove({ ids: [1] });
+await corsair.findymail.api.excludedDomains.remove({});
 ```
 
 **Input**
@@ -172,11 +172,11 @@ await corsair.findymail.api.excludedDomains.remove({ ids: [1] });
 
 ```ts
 {
-  success?: boolean,
-  deleted_count?: number
+  success?: boolean | null,
+  deleted_count?: number | null
 } | {
-  success?: boolean,
-  deleted_count?: number
+  success?: boolean | null,
+  deleted_count?: number | null
 }
 ```
 </Accordion>
@@ -196,7 +196,7 @@ Create a new exclusion list
 **Risk:** `write`
 
 ```ts
-await corsair.findymail.api.exclusionLists.create({ name: 'Competitors' });
+await corsair.findymail.api.exclusionLists.create({});
 ```
 
 **Input**
@@ -212,10 +212,10 @@ await corsair.findymail.api.exclusionLists.create({ name: 'Competitors' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `name` | `string` | No | — |
-| `is_shared` | `boolean` | No | — |
-| `is_owner` | `boolean` | No | — |
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_shared` | `boolean \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
 
 
 
@@ -230,7 +230,7 @@ Delete an exclusion list
 **Risk:** `destructive`
 
 ```ts
-await corsair.findymail.api.exclusionLists.delete({ excludedDomainList_id: 1 });
+await corsair.findymail.api.exclusionLists.delete({});
 ```
 
 **Input**
@@ -245,7 +245,7 @@ await corsair.findymail.api.exclusionLists.delete({ excludedDomainList_id: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
+| `success` | `boolean \| null` | No | — |
 
 
 
@@ -260,7 +260,7 @@ Get exclusion list details
 **Risk:** `read`
 
 ```ts
-await corsair.findymail.api.exclusionLists.get({ excludedDomainList_id: 1 });
+await corsair.findymail.api.exclusionLists.get({});
 ```
 
 **Input**
@@ -275,12 +275,12 @@ await corsair.findymail.api.exclusionLists.get({ excludedDomainList_id: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `name` | `string` | No | — |
-| `is_shared` | `boolean` | No | — |
-| `is_owner` | `boolean` | No | — |
-| `user_id` | `number` | No | — |
-| `owner_name` | `string` | No | — |
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_shared` | `boolean \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `owner_name` | `string \| null` | No | — |
 
 
 
@@ -305,20 +305,20 @@ await corsair.findymail.api.exclusionLists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `lists` | `object[]` | No | — |
+| `lists` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="lists full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  is_shared?: boolean,
-  is_owner?: boolean,
-  user_id?: number,
-  owner_name?: string
-}[]
+  id?: number | null,
+  name?: string | null,
+  is_shared?: boolean | null,
+  is_owner?: boolean | null,
+  user_id?: number | null,
+  owner_name?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -336,7 +336,7 @@ Update an exclusion list
 **Risk:** `write`
 
 ```ts
-await corsair.findymail.api.exclusionLists.update({ excludedDomainList_id: 1, name: 'Updated' });
+await corsair.findymail.api.exclusionLists.update({});
 ```
 
 **Input**
@@ -353,19 +353,19 @@ await corsair.findymail.api.exclusionLists.update({ excludedDomainList_id: 1, na
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `list` | `object` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `list` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="list full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  is_shared?: boolean,
-  is_owner?: boolean
-}
+  id?: number | null,
+  name?: string | null,
+  is_shared?: boolean | null,
+  is_owner?: boolean | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -382,10 +382,10 @@ await corsair.findymail.api.exclusionLists.update({ excludedDomainList_id: 1, na
 
 Search lookalike companies
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.intellimatch.lookalikes({ seed: 'example.com' });
+await corsair.findymail.api.intellimatch.lookalikes({});
 ```
 
 **Input**
@@ -404,22 +404,22 @@ await corsair.findymail.api.intellimatch.lookalikes({ seed: 'example.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `companies` | `object[]` | No | — |
-| `total` | `number` | No | — |
-| `credits_used` | `number` | No | — |
-| `message` | `string` | No | — |
+| `companies` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `credits_used` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="companies full type">
 
 ```ts
 {
-  domain?: string,
-  name?: string,
-  linkedin_url?: string,
-  company_size?: string,
-  country?: string
-}[]
+  domain?: string | null,
+  name?: string | null,
+  linkedin_url?: string | null,
+  company_size?: string | null,
+  country?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -437,7 +437,7 @@ Get results
 **Risk:** `read`
 
 ```ts
-await corsair.findymail.api.intellimatch.results({ hash: 'export-hash' });
+await corsair.findymail.api.intellimatch.results({});
 ```
 
 **Input**
@@ -454,28 +454,28 @@ await corsair.findymail.api.intellimatch.results({ hash: 'export-hash' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
-| `meta` | `object` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  domain?: string,
-  description?: string,
-  employee_count_range?: string,
-  industries?: string[],
-  country?: string,
-  match_score?: number,
-  contact_name?: string,
-  contact_email?: string,
-  contact_job_title?: string,
-  contact_phone?: string,
-  contact_linkedin_url?: string
-}[]
+  id?: number | null,
+  name?: string | null,
+  domain?: string | null,
+  description?: string | null,
+  employee_count_range?: string | null,
+  industries?: string[] | null,
+  country?: string | null,
+  match_score?: number | null,
+  contact_name?: string | null,
+  contact_email?: string | null,
+  contact_job_title?: string | null,
+  contact_phone?: string | null,
+  contact_linkedin_url?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -483,13 +483,13 @@ await corsair.findymail.api.intellimatch.results({ hash: 'export-hash' });
 
 ```ts
 {
-  current_page?: number,
-  per_page?: number,
-  total?: number,
-  last_page?: number,
-  from?: number,
-  to?: number
-}
+  current_page?: number | null,
+  per_page?: number | null,
+  total?: number | null,
+  last_page?: number | null,
+  from?: number | null,
+  to?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -504,10 +504,10 @@ await corsair.findymail.api.intellimatch.results({ hash: 'export-hash' });
 
 Search leads
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.findymail.api.intellimatch.search({ query: 'SaaS companies in US' });
+await corsair.findymail.api.intellimatch.search({});
 ```
 
 **Input**
@@ -544,7 +544,7 @@ await corsair.findymail.api.intellimatch.search({ query: 'SaaS companies in US' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `hash` | `string` | No | — |
+| `hash` | `string \| null` | No | — |
 
 
 
@@ -559,7 +559,7 @@ Get export status
 **Risk:** `read`
 
 ```ts
-await corsair.findymail.api.intellimatch.status({ hash: 'export-hash' });
+await corsair.findymail.api.intellimatch.status({});
 ```
 
 **Input**
@@ -574,12 +574,12 @@ await corsair.findymail.api.intellimatch.status({ hash: 'export-hash' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | No | — |
-| `progress` | `number` | No | — |
-| `total_jobs` | `number` | No | — |
-| `processed_jobs` | `number` | No | — |
-| `pending_jobs` | `number` | No | — |
-| `failed_jobs` | `number` | No | — |
+| `status` | `string \| null` | No | — |
+| `progress` | `number \| null` | No | — |
+| `total_jobs` | `number \| null` | No | — |
+| `processed_jobs` | `number \| null` | No | — |
+| `pending_jobs` | `number \| null` | No | — |
+| `failed_jobs` | `number \| null` | No | — |
 
 
 
@@ -596,7 +596,7 @@ Create a new list
 **Risk:** `write`
 
 ```ts
-await corsair.findymail.api.lists.create({ name: 'Prospects' });
+await corsair.findymail.api.lists.create({});
 ```
 
 **Input**
@@ -611,20 +611,20 @@ await corsair.findymail.api.lists.create({ name: 'Prospects' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `list` | `object` | No | — |
+| `list` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="list full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  created_at?: string,
-  updated_at?: string,
-  shared_with_team?: boolean,
-  is_owner?: boolean
-}
+  id?: number | null,
+  name?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  shared_with_team?: boolean | null,
+  is_owner?: boolean | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -642,7 +642,7 @@ Delete a given list
 **Risk:** `destructive`
 
 ```ts
-await corsair.findymail.api.lists.delete({ id: 1 });
+await corsair.findymail.api.lists.delete({});
 ```
 
 **Input**
@@ -677,20 +677,20 @@ await corsair.findymail.api.lists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `lists` | `object[]` | No | — |
+| `lists` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="lists full type">
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  created_at?: string,
-  updated_at?: string,
-  shared_with_team?: boolean,
-  is_owner?: boolean
-}[]
+  id?: number | null,
+  name?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  shared_with_team?: boolean | null,
+  is_owner?: boolean | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -708,7 +708,7 @@ Update a contact list
 **Risk:** `write`
 
 ```ts
-await corsair.findymail.api.lists.replace({ id: 1, name: 'Prospects', isShared: false });
+await corsair.findymail.api.lists.replace({});
 ```
 
 **Input**
@@ -725,12 +725,12 @@ await corsair.findymail.api.lists.replace({ id: 1, name: 'Prospects', isShared: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `name` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `shared_with_team` | `boolean` | No | — |
-| `is_owner` | `boolean` | No | — |
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `shared_with_team` | `boolean \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
 
 
 
@@ -745,7 +745,7 @@ Update a contact list (PATCH)
 **Risk:** `write`
 
 ```ts
-await corsair.findymail.api.lists.update({ id: 1, name: 'Prospects', isShared: false });
+await corsair.findymail.api.lists.update({});
 ```
 
 **Input**
@@ -762,12 +762,12 @@ await corsair.findymail.api.lists.update({ id: 1, name: 'Prospects', isShared: f
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `name` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `shared_with_team` | `boolean` | No | — |
-| `is_owner` | `boolean` | No | — |
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `shared_with_team` | `boolean \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
 
 
 
@@ -781,10 +781,10 @@ await corsair.findymail.api.lists.update({ id: 1, name: 'Prospects', isShared: f
 
 Create a monitor
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.findymail.api.monitors.create({ name: 'Hiring', signal_type: 'keyword_mention', keywords: ['hiring'] });
+await corsair.findymail.api.monitors.create({});
 ```
 
 **Input**
@@ -828,32 +828,47 @@ await corsair.findymail.api.monitors.create({ name: 'Hiring', signal_type: 'keyw
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `name` | `string` | No | — |
-| `signal_type` | `string` | No | — |
-| `signal_type_label` | `string` | No | — |
-| `signal_level` | `string` | No | — |
-| `status` | `string` | No | — |
-| `keywords` | `string[]` | No | — |
-| `icp_filters` | `string \| null` | No | — |
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `signal_type` | `string \| null` | No | — |
+| `signal_type_label` | `string \| null` | No | — |
+| `signal_level` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `keywords` | `string[] \| null` | No | — |
+| `icp_filters` | `object \| null` | No | — |
 | `webhook_url` | `string \| null` | No | — |
 | `webhook_paused_at` | `string \| null` | No | — |
 | `post_url` | `string \| null` | No | — |
 | `profile_url` | `string \| null` | No | — |
-| `engagement_types` | `string \| null` | No | — |
+| `engagement_types` | `string[] \| string \| null` | No | — |
 | `enrichment_level` | `string \| null` | No | — |
-| `lead_list_id` | `string \| null` | No | — |
+| `lead_list_id` | `number \| string \| null` | No | — |
 | `ai_relevance_prompt` | `string \| null` | No | — |
-| `target_companies` | `string \| null` | No | — |
+| `target_companies` | `string[] \| string \| null` | No | — |
 | `max_matches` | `number \| null` | No | — |
-| `match_count` | `number` | No | — |
-| `is_shared` | `boolean` | No | — |
-| `is_owner` | `boolean` | No | — |
-| `is_team_owner` | `boolean` | No | — |
-| `uses_current_users_monitor_cap` | `boolean` | No | — |
-| `user_id` | `number` | No | — |
-| `owner_name` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `match_count` | `number \| null` | No | — |
+| `is_shared` | `boolean \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
+| `is_team_owner` | `boolean \| null` | No | — |
+| `uses_current_users_monitor_cap` | `boolean \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `owner_name` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="icp_filters full type">
+
+```ts
+{
+  industries?: string[] | null,
+  employee_count_ranges?: string[] | null,
+  countries?: string[] | null,
+  job_title_keywords?: string[] | null,
+  seniority_levels?: number[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -868,7 +883,7 @@ Delete a monitor
 **Risk:** `destructive`
 
 ```ts
-await corsair.findymail.api.monitors.delete({ id: 1 });
+await corsair.findymail.api.monitors.delete({});
 ```
 
 **Input**
@@ -911,35 +926,38 @@ await corsair.findymail.api.monitors.list({});
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  signal_type?: string,
-  signal_type_label?: string,
-  signal_level?: string,
-  status?: string,
-  keywords?: string[],
+  id?: number | null,
+  name?: string | null,
+  signal_type?: string | null,
+  signal_type_label?: string | null,
+  signal_level?: string | null,
+  status?: string | null,
+  keywords?: string[] | null,
   icp_filters?: {
-    industries?: string[],
-    countries?: string[]
+    industries?: string[] | null,
+    employee_count_ranges?: string[] | null,
+    countries?: string[] | null,
+    job_title_keywords?: string[] | null,
+    seniority_levels?: number[] | null
   } | null,
   webhook_url?: string | null,
   webhook_paused_at?: string | null,
   post_url?: string | null,
   profile_url?: string | null,
-  engagement_types?: string | null,
+  engagement_types?: string[] | string | null,
   enrichment_level?: string | null,
-  lead_list_id?: string | null,
+  lead_list_id?: number | string | null,
   ai_relevance_prompt?: string | null,
-  target_companies?: string | null,
+  target_companies?: string[] | string | null,
   max_matches?: number | null,
-  match_count?: number,
-  is_shared?: boolean,
-  is_owner?: boolean,
-  is_team_owner?: boolean,
-  uses_current_users_monitor_cap?: boolean,
-  user_id?: number,
-  owner_name?: string,
-  created_at?: string
+  match_count?: number | null,
+  is_shared?: boolean | null,
+  is_owner?: boolean | null,
+  is_team_owner?: boolean | null,
+  uses_current_users_monitor_cap?: boolean | null,
+  user_id?: number | null,
+  owner_name?: string | null,
+  created_at?: string | null
 }[]
 ```
 </Accordion>
@@ -957,7 +975,7 @@ Update a monitor
 **Risk:** `write`
 
 ```ts
-await corsair.findymail.api.monitors.update({ id: 1, name: 'Hiring' });
+await corsair.findymail.api.monitors.update({});
 ```
 
 **Input**
@@ -999,31 +1017,46 @@ await corsair.findymail.api.monitors.update({ id: 1, name: 'Hiring' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `name` | `string` | No | — |
-| `signal_type` | `string` | No | — |
-| `signal_type_label` | `string` | No | — |
-| `signal_level` | `string` | No | — |
-| `status` | `string` | No | — |
-| `keywords` | `string[]` | No | — |
-| `icp_filters` | `string \| null` | No | — |
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `signal_type` | `string \| null` | No | — |
+| `signal_type_label` | `string \| null` | No | — |
+| `signal_level` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `keywords` | `string[] \| null` | No | — |
+| `icp_filters` | `object \| null` | No | — |
 | `webhook_url` | `string \| null` | No | — |
 | `webhook_paused_at` | `string \| null` | No | — |
 | `post_url` | `string \| null` | No | — |
 | `profile_url` | `string \| null` | No | — |
-| `engagement_types` | `string \| null` | No | — |
+| `engagement_types` | `string[] \| string \| null` | No | — |
 | `enrichment_level` | `string \| null` | No | — |
-| `lead_list_id` | `string \| null` | No | — |
+| `lead_list_id` | `number \| string \| null` | No | — |
 | `ai_relevance_prompt` | `string \| null` | No | — |
-| `target_companies` | `string \| null` | No | — |
+| `target_companies` | `string[] \| string \| null` | No | — |
 | `max_matches` | `number \| null` | No | — |
-| `match_count` | `number` | No | — |
-| `is_shared` | `boolean` | No | — |
-| `is_owner` | `boolean` | No | — |
-| `is_team_owner` | `boolean` | No | — |
-| `user_id` | `number` | No | — |
-| `owner_name` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `match_count` | `number \| null` | No | — |
+| `is_shared` | `boolean \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
+| `is_team_owner` | `boolean \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `owner_name` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="icp_filters full type">
+
+```ts
+{
+  industries?: string[] | null,
+  employee_count_ranges?: string[] | null,
+  countries?: string[] | null,
+  job_title_keywords?: string[] | null,
+  seniority_levels?: number[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1037,10 +1070,10 @@ await corsair.findymail.api.monitors.update({ id: 1, name: 'Hiring' });
 
 Find from business profile
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.search.businessProfile({ linkedin_url: 'johndoe' });
+await corsair.findymail.api.search.businessProfile({});
 ```
 
 **Input**
@@ -1056,18 +1089,18 @@ await corsair.findymail.api.search.businessProfile({ linkedin_url: 'johndoe' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contact` | `object` | No | — |
-| `payload` | `object` | No | — |
+| `contact` | `object \| null` | No | — |
+| `payload` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contact full type">
 
 ```ts
 {
-  name?: string,
-  domain?: string,
-  email?: string
-}
+  name?: string | null,
+  domain?: string | null,
+  email?: string | null
+} | null
 ```
 </Accordion>
 
@@ -1076,11 +1109,11 @@ await corsair.findymail.api.search.businessProfile({ linkedin_url: 'johndoe' });
 ```ts
 {
   contact?: {
-    name?: string,
-    domain?: string,
-    email?: string
-  }
-}
+    name?: string | null,
+    domain?: string | null,
+    email?: string | null
+  } | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1095,10 +1128,10 @@ await corsair.findymail.api.search.businessProfile({ linkedin_url: 'johndoe' });
 
 Get company information
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.search.company({ domain: 'example.com' });
+await corsair.findymail.api.search.company({});
 ```
 
 **Input**
@@ -1115,12 +1148,12 @@ await corsair.findymail.api.search.company({ domain: 'example.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `domain` | `string` | No | — |
-| `company_size` | `string` | No | — |
-| `industry` | `string` | No | — |
-| `linkedin_url` | `string` | No | — |
-| `description` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `company_size` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
+| `linkedin_url` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -1132,10 +1165,10 @@ await corsair.findymail.api.search.company({ domain: 'example.com' });
 
 Find employees
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.search.employees({ website: 'example.com', job_titles: ['CEO'] });
+await corsair.findymail.api.search.employees({});
 ```
 
 **Input**
@@ -1155,11 +1188,11 @@ await corsair.findymail.api.search.employees({ website: 'example.com', job_title
 
 ```ts
 {
-  name?: string,
-  linkedinUrl?: string,
-  companyWebsite?: string,
-  companyName?: string,
-  jobTitle?: string
+  name?: string | null,
+  linkedinUrl?: string | null,
+  companyWebsite?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null
 }[]
 ```
 </Accordion>
@@ -1174,10 +1207,10 @@ await corsair.findymail.api.search.employees({ website: 'example.com', job_title
 
 Find from name
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.search.name({ name: 'John Doe', domain: 'example.com' });
+await corsair.findymail.api.search.name({});
 ```
 
 **Input**
@@ -1194,18 +1227,18 @@ await corsair.findymail.api.search.name({ name: 'John Doe', domain: 'example.com
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contact` | `object` | No | — |
-| `payload` | `object` | No | — |
+| `contact` | `object \| null` | No | — |
+| `payload` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contact full type">
 
 ```ts
 {
-  name?: string,
-  domain?: string,
-  email?: string
-}
+  name?: string | null,
+  domain?: string | null,
+  email?: string | null
+} | null
 ```
 </Accordion>
 
@@ -1214,11 +1247,11 @@ await corsair.findymail.api.search.name({ name: 'John Doe', domain: 'example.com
 ```ts
 {
   contact?: {
-    name?: string,
-    domain?: string,
-    email?: string
-  }
-}
+    name?: string | null,
+    domain?: string | null,
+    email?: string | null
+  } | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1233,10 +1266,10 @@ await corsair.findymail.api.search.name({ name: 'John Doe', domain: 'example.com
 
 Find phone
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.search.phone({ linkedin_url: 'johndoe' });
+await corsair.findymail.api.search.phone({});
 ```
 
 **Input**
@@ -1273,10 +1306,10 @@ await corsair.findymail.api.search.phone({ linkedin_url: 'johndoe' });
 
 Reverse email lookup
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.search.reverseEmail({ email: 'john@example.com' });
+await corsair.findymail.api.search.reverseEmail({});
 ```
 
 **Input**
@@ -1293,35 +1326,35 @@ await corsair.findymail.api.search.reverseEmail({ email: 'john@example.com' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `linkedin_url` | `string \| null` | No | — |
-| `fullName` | `string` | No | — |
-| `username` | `string` | No | — |
-| `headline` | `string` | No | — |
-| `jobTitle` | `string` | No | — |
-| `summary` | `string` | No | — |
-| `city` | `string` | No | — |
-| `region` | `string` | No | — |
-| `country` | `string` | No | — |
-| `companyLinkedinUrl` | `string` | No | — |
-| `companyName` | `string` | No | — |
-| `companyWebsite` | `string` | No | — |
-| `isPremium` | `boolean` | No | — |
-| `isOpenProfile` | `boolean` | No | — |
-| `skills` | `any[]` | No | — |
-| `jobs` | `any[]` | No | — |
-| `educations` | `object[]` | No | — |
-| `certificates` | `object[]` | No | — |
+| `fullName` | `string \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `headline` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `companyLinkedinUrl` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `companyWebsite` | `string \| null` | No | — |
+| `isPremium` | `boolean \| null` | No | — |
+| `isOpenProfile` | `boolean \| null` | No | — |
+| `skills` | `any[] \| null` | No | — |
+| `jobs` | `any[] \| null` | No | — |
+| `educations` | `object[] \| null` | No | — |
+| `certificates` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="educations full type">
 
 ```ts
 {
-  school?: string,
-  degree?: string,
-  fieldOfStudy?: string,
-  startDate?: string,
-  endDate?: string
-}[]
+  school?: string | null,
+  degree?: string | null,
+  fieldOfStudy?: string | null,
+  startDate?: string | null,
+  endDate?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -1329,11 +1362,11 @@ await corsair.findymail.api.search.reverseEmail({ email: 'john@example.com' });
 
 ```ts
 {
-  name?: string,
-  issuingOrganization?: string,
-  issueDate?: string,
-  expirationDate?: string
-}[]
+  name?: string | null,
+  issuingOrganization?: string | null,
+  issueDate?: string | null,
+  expirationDate?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1353,7 +1386,7 @@ Get a signal
 **Risk:** `read`
 
 ```ts
-await corsair.findymail.api.signals.get({ id: 1 });
+await corsair.findymail.api.signals.get({});
 ```
 
 **Input**
@@ -1368,24 +1401,24 @@ await corsair.findymail.api.signals.get({ id: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `type` | `string` | No | — |
-| `category` | `string` | No | — |
-| `payload` | `object` | No | — |
-| `detected_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `company` | `object` | No | — |
-| `monitors` | `object[]` | No | — |
+| `id` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `payload` | `object \| null` | No | — |
+| `detected_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `monitors` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="payload full type">
 
 ```ts
 {
-  matched_keyword?: string,
-  snippet?: string
-}
+  matched_keyword?: string | null,
+  snippet?: string | null
+} | null
 ```
 </Accordion>
 
@@ -1393,11 +1426,11 @@ await corsair.findymail.api.signals.get({ id: 1 });
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  job_title?: string,
-  linkedin_url?: string
-}
+  id?: number | null,
+  name?: string | null,
+  job_title?: string | null,
+  linkedin_url?: string | null
+} | null
 ```
 </Accordion>
 
@@ -1405,13 +1438,13 @@ await corsair.findymail.api.signals.get({ id: 1 });
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  domain?: string,
-  industry?: string,
-  employee_count_range?: string,
-  country?: string
-}
+  id?: number | null,
+  name?: string | null,
+  domain?: string | null,
+  industry?: string | null,
+  employee_count_range?: string | null,
+  country?: string | null
+} | null
 ```
 </Accordion>
 
@@ -1419,11 +1452,11 @@ await corsair.findymail.api.signals.get({ id: 1 });
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  keywords?: string[],
-  enrichment_level?: string
-}[]
+  id?: number | null,
+  name?: string | null,
+  keywords?: string[] | null,
+  enrichment_level?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1462,46 +1495,46 @@ await corsair.findymail.api.signals.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
-| `meta` | `object` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  id?: number,
-  type?: string,
-  category?: string,
+  id?: number | null,
+  type?: string | null,
+  category?: string | null,
   payload?: {
-    matched_keyword?: string,
-    snippet?: string
-  },
-  detected_at?: string,
-  expires_at?: string,
+    matched_keyword?: string | null,
+    snippet?: string | null
+  } | null,
+  detected_at?: string | null,
+  expires_at?: string | null,
   contact?: {
-    id?: number,
-    name?: string,
-    job_title?: string,
-    linkedin_url?: string
-  },
+    id?: number | null,
+    name?: string | null,
+    job_title?: string | null,
+    linkedin_url?: string | null
+  } | null,
   company?: {
-    id?: number,
-    name?: string,
-    domain?: string,
-    industry?: string,
-    employee_count_range?: string,
-    country?: string
-  },
+    id?: number | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null,
+    employee_count_range?: string | null,
+    country?: string | null
+  } | null,
   monitors?: {
-    id?: number,
-    name?: string,
-    keywords?: string[],
-    enrichment_level?: string,
-    relevance_score?: number,
-    relevance_reasoning?: string
-  }[]
-}[]
+    id?: number | null,
+    name?: string | null,
+    keywords?: string[] | null,
+    enrichment_level?: string | null,
+    relevance_score?: number | null,
+    relevance_reasoning?: string | null
+  }[] | null
+}[] | null
 ```
 </Accordion>
 
@@ -1509,13 +1542,13 @@ await corsair.findymail.api.signals.list({});
 
 ```ts
 {
-  current_page?: number,
-  per_page?: number,
-  total?: number,
-  last_page?: number,
-  from?: number,
-  to?: number
-}
+  current_page?: number | null,
+  per_page?: number | null,
+  total?: number | null,
+  last_page?: number | null,
+  from?: number | null,
+  to?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1532,10 +1565,10 @@ await corsair.findymail.api.signals.list({});
 
 Lookup technologies by domain
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.technologies.lookup({ domain: 'example.com' });
+await corsair.findymail.api.technologies.lookup({});
 ```
 
 **Input**
@@ -1551,19 +1584,19 @@ await corsair.findymail.api.technologies.lookup({ domain: 'example.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain` | `string` | No | — |
-| `technologies` | `object[]` | No | — |
+| `domain` | `string \| null` | No | — |
+| `technologies` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="technologies full type">
 
 ```ts
 {
-  name?: string,
+  name?: string | null,
   category?: string | null,
   subcategory?: string | null,
-  last_detected_at?: string
-}[]
+  last_detected_at?: string | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1581,7 +1614,7 @@ Search technologies
 **Risk:** `read`
 
 ```ts
-await corsair.findymail.api.technologies.search({ q: 'CRM' });
+await corsair.findymail.api.technologies.search({});
 ```
 
 **Input**
@@ -1596,17 +1629,17 @@ await corsair.findymail.api.technologies.search({ q: 'CRM' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
+| `data` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  name?: string,
+  name?: string | null,
   category?: string | null,
   subcategory?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1644,15 +1677,15 @@ await corsair.findymail.api.usage.credits({});
 
 ```ts
 {
-  credits?: number,
-  email?: string,
+  credits?: number | null,
+  email?: string | null,
   has_capacity?: boolean | null,
-  verifier_credits?: number
+  verifier_credits?: number | null
 } | {
-  credits?: number,
-  email?: string,
+  credits?: number | null,
+  email?: string | null,
   has_capacity?: boolean | null,
-  verifier_credits?: number
+  verifier_credits?: number | null
 }
 ```
 </Accordion>
@@ -1686,19 +1719,19 @@ await corsair.findymail.api.usage.summary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `from` | `string` | No | — |
-| `to` | `string` | No | — |
-| `total` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `total` | `object \| null` | No | — |
+| `items` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="total full type">
 
 ```ts
 {
-  finder?: number,
-  verifier?: number
-}
+  finder?: number | null,
+  verifier?: number | null
+} | null
 ```
 </Accordion>
 
@@ -1706,10 +1739,10 @@ await corsair.findymail.api.usage.summary({});
 
 ```ts
 {
-  date?: string,
-  finder?: number,
-  verifier?: number
-}[]
+  date?: string | null,
+  finder?: number | null,
+  verifier?: number | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1743,19 +1776,19 @@ await corsair.findymail.api.usage.teamSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `from` | `string` | No | — |
-| `to` | `string` | No | — |
-| `total` | `object` | No | — |
-| `members` | `object[]` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `total` | `object \| null` | No | — |
+| `members` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="total full type">
 
 ```ts
 {
-  finder?: number,
-  verifier?: number
-}
+  finder?: number | null,
+  verifier?: number | null
+} | null
 ```
 </Accordion>
 
@@ -1763,10 +1796,10 @@ await corsair.findymail.api.usage.teamSummary({});
 
 ```ts
 {
-  name?: string,
-  finder?: number,
-  verifier?: number
-}[]
+  name?: string | null,
+  finder?: number | null,
+  verifier?: number | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1783,10 +1816,10 @@ await corsair.findymail.api.usage.teamSummary({});
 
 Verify an email
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.findymail.api.verification.verify({ email: 'john@example.com' });
+await corsair.findymail.api.verification.verify({});
 ```
 
 **Input**
@@ -1808,3 +1841,4 @@ await corsair.findymail.api.verification.verify({ email: 'john@example.com' });
 
 
 ---
+
