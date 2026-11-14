@@ -2220,6 +2220,14 @@
                 ]
               },
               {
+                "group": "Genderize",
+                "pages": [
+                  "plugins/genderize/overview",
+                  "plugins/genderize/api",
+                  "plugins/genderize/database"
+                ]
+              },
+              {
                 "group": "GIPHY",
                 "pages": [
                   "plugins/giphy/overview",
