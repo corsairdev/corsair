@@ -7226,8 +7226,8 @@ export const SevdeskEndpointInputSchemas = {
 				.strict(),
 			query: z
 				.object({
-					limit: z.number().int().optional(),
-					offset: z.number().int().optional(),
+					limit: z.number().int().min(1).max(1000).optional(),
+					offset: z.number().int().min(0).optional(),
 					embed: z.array(z.string()).optional(),
 					countAll: z.boolean().optional(),
 				})
@@ -7693,8 +7693,8 @@ export const SevdeskEndpointInputSchemas = {
 				.strict(),
 			query: z
 				.object({
-					limit: z.number().int().optional(),
-					offset: z.number().int().optional(),
+					limit: z.number().int().min(1).max(1000).optional(),
+					offset: z.number().int().min(0).optional(),
 					embed: z.array(z.string()).optional(),
 					countAll: z.boolean().optional(),
 				})
@@ -7716,8 +7716,8 @@ export const SevdeskEndpointInputSchemas = {
 				.strict(),
 			query: z
 				.object({
-					limit: z.number().int().optional(),
-					offset: z.number().int().optional(),
+					limit: z.number().int().min(1).max(1000).optional(),
+					offset: z.number().int().min(0).optional(),
 					embed: z.array(z.string()).optional(),
 					countAll: z.boolean().optional(),
 				})

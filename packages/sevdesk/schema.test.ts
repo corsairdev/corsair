@@ -31,6 +31,31 @@ describe('Sevdesk OpenAPI schemas', () => {
 				query: { limit: 1001 },
 			}).success,
 		).toBe(false);
+		const pathPaginationCases = [
+			{
+				key: 'invoice.getInvoicePositionsById',
+				path: { invoiceId: 1 },
+			},
+			{
+				key: 'order.getOrderPositionsById',
+				path: { orderId: 1 },
+			},
+			{ key: 'order.getDiscounts', path: { orderId: 1 } },
+		] as const;
+		for (const operation of pathPaginationCases) {
+			expect(
+				SevdeskEndpointInputSchemas[operation.key].safeParse({
+					path: operation.path,
+					query: { limit: 1001 },
+				}).success,
+			).toBe(false);
+			expect(
+				SevdeskEndpointInputSchemas[operation.key].safeParse({
+					path: operation.path,
+					query: { offset: -1 },
+				}).success,
+			).toBe(false);
+		}
 		expect(
 			SevdeskEndpointInputSchemas['contact.getContacts'].safeParse({
 				resourceVersion: 'latest',
