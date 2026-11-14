@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { makeFlyRequest } from '../client';
 import type { FlyContext } from '../index';
 
-// GraphQL contract: superfly/fly-go schema.graphql at 494ae940b5bdaf7ed50d53ce01ed973915e268ce.
+// GraphQL contract: the schema api.fly.io serves (fly-schema.graphql.txt, from introspection on 2026-11-15).
 const optionalString = z.string().nullable().optional();
 const optionalBoolean = z.boolean().nullable().optional();
 const optionalInt = z.number().int().nullable().optional();
@@ -52,7 +52,6 @@ const addOn = z.object({
 	name: z.string().nullable(),
 	status: z.string().nullable(),
 	primaryRegion: z.string().nullable(),
-	hostname: z.string().nullable(),
 	publicUrl: z.string().nullable(),
 	createdAt: z.string(),
 	updatedAt: z.string(),
@@ -98,7 +97,6 @@ const peer = z.object({
 	pubkey: z.string(),
 	region: z.string(),
 });
-const delegatedToken = z.object({ id: z.string(), name: z.string() });
 const level = z.enum([
 	'ADMIN_OPT_OUT',
 	'DISABLED',
@@ -122,7 +120,6 @@ const addOnType = z.enum([
 	'fly_mysql',
 	'kubernetes',
 	'redis',
-	'sentry',
 	'supabase',
 	'tigris',
 	'upstash_kafka',
@@ -136,7 +133,7 @@ const appFields =
 	'id name status hostname appUrl createdAt organization { id slug name }';
 const orgFields = 'id name slug type';
 const addOnFields =
-	'id name status primaryRegion hostname publicUrl createdAt updatedAt organization { id name slug }';
+	'id name status primaryRegion publicUrl createdAt updatedAt organization { id name slug }';
 const planFields = 'id name displayName description pricePerMonth';
 const jobFields = 'id url schedule nextRunAt httpOptions { verb headers }';
 const runFields = 'id url state createdAt completedAt tests';
@@ -350,16 +347,6 @@ export const operations = {
 			'read',
 			'Get a WireGuard peer',
 		),
-		listTokens: operation(
-			z.object({ ...orgSelector, ...pagination }),
-			z
-				.object({ delegatedWireGuardTokens: connection(delegatedToken) })
-				.nullable(),
-			`query (${orgDecl}, ${pagesDecl}) { organization(${orgArgs}) { delegatedWireGuardTokens(${pagesArgs}) { nodes { id name } ${pageSelection} } } }`,
-			'organization',
-			'read',
-			'List delegated WireGuard tokens',
-		),
 		addPeer: mutation(
 			'addWireGuardPeer',
 			'AddWireGuardPeerInput',
@@ -405,29 +392,6 @@ export const operations = {
 			'invalidPeerIps validPeerIps clientMutationId',
 			'write',
 			'Validate WireGuard peer addresses',
-		),
-		createToken: mutation(
-			'createDelegatedWireGuardToken',
-			'CreateDelegatedWireGuardTokenInput',
-			z.object({ organizationId: id, name: optionalString, clientMutationId }),
-			z.object({ token: z.string(), clientMutationId: z.string().nullable() }),
-			'token clientMutationId',
-			'write',
-			'Create a delegated WireGuard token',
-		),
-		deleteToken: mutation(
-			'deleteDelegatedWireGuardToken',
-			'DeleteDelegatedWireGuardTokenInput',
-			z.object({
-				organizationId: id,
-				name: optionalString,
-				token: optionalString,
-				clientMutationId,
-			}),
-			z.object({ token: z.string(), clientMutationId: z.string().nullable() }),
-			'token clientMutationId',
-			'destructive',
-			'Revoke a delegated WireGuard token',
 		),
 	},
 	addOns: {

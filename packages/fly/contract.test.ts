@@ -2,8 +2,9 @@ import { readFileSync } from 'node:fs';
 import { buildSchema, parse, validate } from 'graphql';
 import { operations } from './endpoints/operations';
 
-// Unmodified Apache-2.0 schema from:
-// https://github.com/superfly/fly-go/blob/494ae940b5bdaf7ed50d53ce01ed973915e268ce/schema.graphql
+// Schema printed from an unauthenticated introspection of https://api.fly.io/graphql
+// on 2026-11-15. fly-go's checked-in schema.graphql lags the live API (it still lists
+// delegated WireGuard tokens and AddOn.hostname, which api.fly.io no longer serves).
 const schema = buildSchema(
 	readFileSync(`${__dirname}/fly-schema.graphql.txt`, 'utf8'),
 );
@@ -15,17 +16,14 @@ const documents = Object.entries(operations).flatMap(([group, entries]) =>
 );
 
 describe('Fly GraphQL contract', () => {
-	it('covers all 34 registered documents', () => {
-		expect(documents).toHaveLength(34);
+	it('covers all 31 registered documents', () => {
+		expect(documents).toHaveLength(31);
 	});
-	it.each(documents)(
-		'$path validates against the pinned schema',
-		({ query }) => {
-			expect(
-				validate(schema, parse(query)).map((error) => error.message),
-			).toEqual([]);
-		},
-	);
+	it.each(documents)('$path validates against the live schema', ({ query }) => {
+		expect(
+			validate(schema, parse(query)).map((error) => error.message),
+		).toEqual([]);
+	});
 	it('rejects a misspelled field and an invalid variable type', () => {
 		expect(
 			validate(schema, parse('query { userOnlyTokenn }')),

@@ -25,7 +25,6 @@ const addOn = {
 	name: 'cache',
 	status: null,
 	primaryRegion: null,
-	hostname: null,
 	publicUrl: null,
 	createdAt: '2026-01-01',
 	updatedAt: '2026-01-01',
@@ -147,12 +146,6 @@ const cases: Case[] = [
 		call: () => api.wireguard.getPeer({ slug: 'org', peerName: 'peer' }),
 	},
 	{
-		path: 'wireguard.listTokens',
-		args: { slug: 'org' },
-		result: { delegatedWireGuardTokens: connection },
-		call: () => api.wireguard.listTokens({ slug: 'org' }),
-	},
-	{
 		path: 'wireguard.addPeer',
 		args: { input: { name: 'peer', organizationId: 'org-id', pubkey: 'key' } },
 		result: {
@@ -181,22 +174,6 @@ const cases: Case[] = [
 		args: { input: { peerIps: ['::1'] } },
 		result: { ...mutationPayload, invalidPeerIps: [], validPeerIps: ['::1'] },
 		call: () => api.wireguard.validatePeers({ input: { peerIps: ['::1'] } }),
-	},
-	{
-		path: 'wireguard.createToken',
-		args: { input: { organizationId: 'org-id' } },
-		result: { ...mutationPayload, token: 'secret' },
-		call: () =>
-			api.wireguard.createToken({ input: { organizationId: 'org-id' } }),
-	},
-	{
-		path: 'wireguard.deleteToken',
-		args: { input: { organizationId: 'org-id', name: 'token' } },
-		result: { ...mutationPayload, token: 'secret' },
-		call: () =>
-			api.wireguard.deleteToken({
-				input: { organizationId: 'org-id', name: 'token' },
-			}),
 	},
 	{
 		path: 'addOns.list',

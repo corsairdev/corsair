@@ -1,9 +1,10 @@
 # @corsair-dev/fly
 
-Fly.io GraphQL plugin for Corsair. It implements 34 selected operations;
+Fly.io GraphQL plugin for Corsair. It implements 31 selected operations;
 it does not implement the separate Machines REST API or the complete GraphQL API.
-Fly warns that its GraphQL interface can change without notice; the operation
-documents were checked against the [Fly-maintained schema](https://github.com/superfly/fly-go/blob/494ae940b5bdaf7ed50d53ce01ed973915e268ce/schema.graphql).
+Fly calls its GraphQL API an internal interface used by flyctl with no stability
+guarantees, so it can change without notice. The operation documents are checked
+against the schema `https://api.fly.io/graphql` served on 2026-11-15 (`fly-schema.graphql.txt`).
 
 ## Install
 
@@ -42,11 +43,8 @@ pnpm add @corsair-dev/fly
 | `thirdParty.list` | `fly.api.thirdParty.list` | `read` | List third-party configurations |
 | `thirdParty.update` | `fly.api.thirdParty.update` | `write` | Update a third-party configuration |
 | `wireguard.addPeer` | `fly.api.wireguard.addPeer` | `write` | Add a WireGuard peer |
-| `wireguard.createToken` | `fly.api.wireguard.createToken` | `write` | Create a delegated WireGuard token |
-| `wireguard.deleteToken` | `fly.api.wireguard.deleteToken` | `destructive` | Revoke a delegated WireGuard token |
 | `wireguard.getPeer` | `fly.api.wireguard.getPeer` | `read` | Get a WireGuard peer |
 | `wireguard.listPeers` | `fly.api.wireguard.listPeers` | `read` | List organization WireGuard peers |
-| `wireguard.listTokens` | `fly.api.wireguard.listTokens` | `read` | List delegated WireGuard tokens |
 | `wireguard.removePeer` | `fly.api.wireguard.removePeer` | `destructive` | Remove a WireGuard peer |
 | `wireguard.validatePeers` | `fly.api.wireguard.validatePeers` | `write` | Validate WireGuard peer addresses |
 
