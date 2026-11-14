@@ -1,0 +1,138 @@
+---
+title: "Folk plugin"
+sidebarTitle: "Overview"
+description: "Manage people, companies, groups, interactions, notes, users, and credits with Folk's relationship management API."
+---
+
+Use **Folk** through Corsair: one client, typed API calls.
+
+Folk provides a public REST API at `https://api.folk.app/v1` to manage relationships for service businesses and high-touch teams.
+
+- **Authentication:** Use an API key from workspace settings under API. Pass it as a Bearer token (`Authorization: Bearer <key>`).
+- **Rate limits:** Folk applies rate limits per user across two concurrent windows: a default limit of 600 requests per minute, and a burst limit of 20 requests per 2 seconds. The plugin automatically reads standard `Retry-After` headers on 429 responses.
+- **Idempotency:** Modifying endpoints (`POST`, `PATCH`, `DELETE`) accept an optional `idempotencyKey` parameter that passes an `Idempotency-Key` header to safely retry requests without duplication.
+- **Custom fields:** People and companies support `customFieldValues` mapped by group ID and custom field name.
+
+**What you get:**
+
+- 33 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/folk better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/folk better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/folk better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/folk better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { folk } from '@corsair-dev/folk';
+
+export const corsair = createCorsair({
+	plugins: [
+		folk(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Folk API key before the first call: `pnpm corsair setup --plugin=folk --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+folk()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'folk',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List workspace contacts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.folk.api.people.list({ limit: 10 });
+```
+
+
+**Create a person contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.folk.api.people.create({
+	firstName: 'Jane',
+	lastName: 'Doe',
+	emails: ['jane.doe@example.com'],
+});
+```
+
+
+See the full list on the [API](/plugins/folk/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/folk/api">
+    Every `folk.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

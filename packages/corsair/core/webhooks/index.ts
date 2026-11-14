@@ -54,7 +54,12 @@ export type WebhookResponse<TData = unknown> = {
 	data?: TData;
 	/** Optional error message if processing failed */
 	error?: string;
-	/** HTTP status code to return (defaults to 200 on success, 500 on error) */
+	/**
+	 * HTTP status code to return. Defaults to 200 on success. A handler that
+	 * returns `success: false` without one has refused the delivery (a bad
+	 * signature, a wrong secret): it is not retried. Set a 5xx for a failure on
+	 * your side that the sender should retry; a handler that throws gets 500.
+	 */
 	statusCode?: number;
 	/** HTTP response headers to set on the outgoing response. Used for header-based handshakes (e.g. Asana X-Hook-Secret). */
 	responseHeaders?: Record<string, string>;

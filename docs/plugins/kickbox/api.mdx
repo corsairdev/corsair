@@ -1,0 +1,89 @@
+---
+title: "Kickbox API reference"
+sidebarTitle: "API"
+description: "API reference for the Kickbox plugin in Corsair: every `kickbox.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Verify
+
+### disposable
+
+`verify.disposable`
+
+Check whether an address or domain is a known disposable one. Free, and answered by Kickbox’s open service
+
+**Risk:** `read`
+
+```ts
+await corsair.kickbox.api.verify.disposable({ address: 'mailinator.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | An email address or a bare domain, such as `mailinator.com`. It is URL-encoded for you. |
+
+Free, on Kickbox’s open host, which takes no key. Pass an address or a bare domain.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `disposable` | `boolean` | Yes | True when the domain is a known disposable one. |
+
+
+
+---
+
+### verify
+
+`verify.verify`
+
+Verify one address and get its verdict (deliverable, undeliverable, risky, unknown), the reason, role and free flags, a typo suggestion and a Sendex quality score. Spends one verification credit
+
+**Risk:** `read`
+
+```ts
+await corsair.kickbox.api.verify.verify({ email: 'bill.lumbergh@gamil.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The address to verify. It is URL-encoded for you. Send a syntactically bad one to have Kickbox report `invalid_email` rather than rejecting it here. |
+| `timeout` | `number` | No | How long Kickbox may spend on the SMTP check, in milliseconds. Defaults to 6000, and 30000 is the ceiling. |
+
+Spends one credit. Answers `result`, `reason`, the role, free and disposable flags, a `did_you_mean` suggestion and a `sendex` score from 0 to 1.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `deliverable \| undeliverable \| risky \| unknown \| string` | Yes | `deliverable`, `undeliverable`, `risky` or `unknown`. |
+| `reason` | `string \| null` | No | Why the result came out as it did, such as `accepted_email` or `rejected_email`. |
+| `role` | `boolean \| null` | No | True for a role address such as `support@example.com`. |
+| `free` | `boolean \| null` | No | True for a free provider such as gmail.com. |
+| `disposable` | `boolean \| null` | No | True when the domain is a known disposable one. |
+| `accept_all` | `boolean \| null` | No | True when the domain accepts every address it is offered. |
+| `did_you_mean` | `string \| null` | No | A suggested spelling when Kickbox spotted a likely typo. |
+| `sendex` | `number \| null` | No | A quality score from 0 (no quality) to 1 (perfect). |
+| `email` | `string \| null` | No | The address in normalized lower case. |
+| `user` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+

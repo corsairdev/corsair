@@ -1,0 +1,462 @@
+{
+  "id": "scrapingant",
+  "displayName": "ScrapingAnt",
+  "description": "Web scraping with ScrapingAnt - fetch a page as rendered HTML, as Markdown or as structured AI-extracted JSON, read the extended page data (cookies, headers, XHRs, iframes), and check credit usage.",
+  "npmPackageName": "@corsair-dev/scrapingant",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "scrapingant.api.account.usage",
+      "shortPath": "account.usage",
+      "description": "Read the active plan, its period and the credits left in it; costs nothing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan_name",
+            "optional": false,
+            "type": "string",
+            "description": "Active subscription plan name."
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the active period. The provider sends `2022-01-11T00:00:00`, without a time zone, so this stays a string."
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string",
+            "description": "End of the active period, in the same form."
+          },
+          {
+            "key": "plan_total_credits",
+            "optional": false,
+            "type": "number",
+            "description": "Credits the active subscription holds."
+          },
+          {
+            "key": "remained_credits",
+            "optional": false,
+            "type": "number",
+            "description": "Credits left in the active period."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapingant.api.extract.data",
+      "shortPath": "extract.data",
+      "description": "Fetch a page and have an AI model extract the requested properties as a JSON object; spends the scrape cost plus 1 credit per 30 characters of page and output text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to extract data from."
+          },
+          {
+            "key": "extract_properties",
+            "optional": false,
+            "type": "string",
+            "description": "What to extract, as a comma-separated list: `product title, price(number), full description`. Append a type in parentheses to steer the JSON value, and nest with `reviews(list: review title, review content)`. Property names in the answer come back camelCased from this text, and a property the model cannot find comes back null."
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use a headless browser. Defaults to true on the provider side, which costs 10 credits per request against 1 without it."
+          },
+          {
+            "key": "return_page_source",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the server HTML unrendered by the browser, so no JavaScript runs. Defaults to false and needs `browser`."
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "string",
+            "description": "Cookies to send to the target, as `name1=value1;name2=value2`. Chain requests with the `cookies` field of `scrape.extended` to keep a session."
+          },
+          {
+            "key": "js_snippet",
+            "optional": true,
+            "type": "string",
+            "description": "Base64-encoded JavaScript to run once the page has loaded. Needs `browser`."
+          },
+          {
+            "key": "proxy_type",
+            "optional": true,
+            "type": "datacenter | residential",
+            "description": "Proxy pool. Defaults to datacenter; residential costs 25 credits without a browser and 125 with one, against 1 and 10 for datacenter."
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code of the proxy country, as the provider documents it in capitals: AE, BR, CA, CN, CZ, DE, ES, FR, GB, HK, ID, IL, IN, IT, JP, KR, NL, PL, RU, SA, SG, TR, US or VN. Sent unchanged. When omitted the provider picks a random country. It adds countries over time and answers `422` with the permitted list for an unsupported one, so new codes work without a plugin change."
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to wait for before answering. Needs `browser`."
+          },
+          {
+            "key": "block_resource",
+            "optional": true,
+            "type": "(document | stylesheet | image | media | font | script | texttrack | xhr | fetch | eventsource | websocket | manifest | other)[]",
+            "description": "Resource types the browser must not load, which speeds the request up. Needs `browser`."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds the provider may spend on the request, from 5 to 60. Defaults to 60. A lower value answers faster and fails more often; the bounds can differ by request type and the provider names them in its error."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "scrapingant.api.scrape.extended",
+      "shortPath": "scrape.extended",
+      "description": "Fetch a page and return HTML, text, cookies, headers, status code, XHRs and iframes as JSON; spends 1 to 125 credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to scrape."
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use a headless browser. Defaults to true on the provider side, which costs 10 credits per request against 1 without it."
+          },
+          {
+            "key": "return_page_source",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the server HTML unrendered by the browser, so no JavaScript runs. Defaults to false and needs `browser`."
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "string",
+            "description": "Cookies to send to the target, as `name1=value1;name2=value2`. Chain requests with the `cookies` field of `scrape.extended` to keep a session."
+          },
+          {
+            "key": "js_snippet",
+            "optional": true,
+            "type": "string",
+            "description": "Base64-encoded JavaScript to run once the page has loaded. Needs `browser`."
+          },
+          {
+            "key": "proxy_type",
+            "optional": true,
+            "type": "datacenter | residential",
+            "description": "Proxy pool. Defaults to datacenter; residential costs 25 credits without a browser and 125 with one, against 1 and 10 for datacenter."
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code of the proxy country, as the provider documents it in capitals: AE, BR, CA, CN, CZ, DE, ES, FR, GB, HK, ID, IL, IN, IT, JP, KR, NL, PL, RU, SA, SG, TR, US or VN. Sent unchanged. When omitted the provider picks a random country. It adds countries over time and answers `422` with the permitted list for an unsupported one, so new codes work without a plugin change."
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to wait for before answering. Needs `browser`."
+          },
+          {
+            "key": "block_resource",
+            "optional": true,
+            "type": "(document | stylesheet | image | media | font | script | texttrack | xhr | fetch | eventsource | websocket | manifest | other)[]",
+            "description": "Resource types the browser must not load, which speeds the request up. Needs `browser`."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds the provider may spend on the request, from 5 to 60. Defaults to 60. A lower value answers faster and fails more often; the bounds can differ by request type and the provider names them in its error."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "Content from the scraped page."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Text content from the scraped page."
+          },
+          {
+            "key": "cookies",
+            "optional": false,
+            "type": "string",
+            "description": "The page cookies, in `name=value;` form, ready to pass to another call as `cookies`."
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number",
+            "description": "The target page's own HTTP status. The API answers 200 whatever the page did, so read this before trusting the content."
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ name: string, value: string }[] | null",
+            "description": "Response headers from the scraped page."
+          },
+          {
+            "key": "xhrs",
+            "optional": true,
+            "type": "{ url?: string | null, status?: number | null, method?: string | null, headers?: { name: string, value: string }[] | null, request_body?: string | null, body?: string | null }[] | null",
+            "description": "The XHR and fetch requests the page made. Empty or absent without the headless browser."
+          },
+          {
+            "key": "iframes",
+            "optional": true,
+            "type": "{ src?: string | null, html?: string | null }[] | null",
+            "description": "The page iframes with their own HTML. Empty or absent without the headless browser."
+          },
+          {
+            "key": "credits_cost",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits spent on the request, from the `Ant-credits-cost` header."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapingant.api.scrape.html",
+      "shortPath": "scrape.html",
+      "description": "Fetch a page and return its HTML, with the target page status and credit cost; spends 1 to 125 credits depending on browser and proxy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to scrape."
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use a headless browser. Defaults to true on the provider side, which costs 10 credits per request against 1 without it."
+          },
+          {
+            "key": "return_page_source",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the server HTML unrendered by the browser, so no JavaScript runs. Defaults to false and needs `browser`."
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "string",
+            "description": "Cookies to send to the target, as `name1=value1;name2=value2`. Chain requests with the `cookies` field of `scrape.extended` to keep a session."
+          },
+          {
+            "key": "js_snippet",
+            "optional": true,
+            "type": "string",
+            "description": "Base64-encoded JavaScript to run once the page has loaded. Needs `browser`."
+          },
+          {
+            "key": "proxy_type",
+            "optional": true,
+            "type": "datacenter | residential",
+            "description": "Proxy pool. Defaults to datacenter; residential costs 25 credits without a browser and 125 with one, against 1 and 10 for datacenter."
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code of the proxy country, as the provider documents it in capitals: AE, BR, CA, CN, CZ, DE, ES, FR, GB, HK, ID, IL, IN, IT, JP, KR, NL, PL, RU, SA, SG, TR, US or VN. Sent unchanged. When omitted the provider picks a random country. It adds countries over time and answers `422` with the permitted list for an unsupported one, so new codes work without a plugin change."
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to wait for before answering. Needs `browser`."
+          },
+          {
+            "key": "block_resource",
+            "optional": true,
+            "type": "(document | stylesheet | image | media | font | script | texttrack | xhr | fetch | eventsource | websocket | manifest | other)[]",
+            "description": "Resource types the browser must not load, which speeds the request up. Needs `browser`."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds the provider may spend on the request, from 5 to 60. Defaults to 60. A lower value answers faster and fails more often; the bounds can differ by request type and the provider names them in its error."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "The page as returned: rendered HTML, or the raw source with `return_page_source`."
+          },
+          {
+            "key": "page_status",
+            "optional": true,
+            "type": "number | null",
+            "description": "The target page's own HTTP status, from the `Ant-page-status-code` header. The API answers 200 even when the page was a 404, so read this before trusting the content."
+          },
+          {
+            "key": "credits_cost",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits spent on the request, from the `Ant-credits-cost` header."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapingant.api.scrape.markdown",
+      "shortPath": "scrape.markdown",
+      "description": "Fetch a page and return the whole thing as Markdown, ready for an LLM; spends 1 to 125 credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to scrape and convert."
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use a headless browser. Defaults to true on the provider side, which costs 10 credits per request against 1 without it."
+          },
+          {
+            "key": "return_page_source",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the server HTML unrendered by the browser, so no JavaScript runs. Defaults to false and needs `browser`."
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "string",
+            "description": "Cookies to send to the target, as `name1=value1;name2=value2`. Chain requests with the `cookies` field of `scrape.extended` to keep a session."
+          },
+          {
+            "key": "js_snippet",
+            "optional": true,
+            "type": "string",
+            "description": "Base64-encoded JavaScript to run once the page has loaded. Needs `browser`."
+          },
+          {
+            "key": "proxy_type",
+            "optional": true,
+            "type": "datacenter | residential",
+            "description": "Proxy pool. Defaults to datacenter; residential costs 25 credits without a browser and 125 with one, against 1 and 10 for datacenter."
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code of the proxy country, as the provider documents it in capitals: AE, BR, CA, CN, CZ, DE, ES, FR, GB, HK, ID, IL, IN, IT, JP, KR, NL, PL, RU, SA, SG, TR, US or VN. Sent unchanged. When omitted the provider picks a random country. It adds countries over time and answers `422` with the permitted list for an unsupported one, so new codes work without a plugin change."
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to wait for before answering. Needs `browser`."
+          },
+          {
+            "key": "block_resource",
+            "optional": true,
+            "type": "(document | stylesheet | image | media | font | script | texttrack | xhr | fetch | eventsource | websocket | manifest | other)[]",
+            "description": "Resource types the browser must not load, which speeds the request up. Needs `browser`."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds the provider may spend on the request, from 5 to 60. Defaults to 60. A lower value answers faster and fails more often; the bounds can differ by request type and the provider names them in its error."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL that was scraped."
+          },
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string",
+            "description": "The whole page as Markdown, with `script` and `noscript` removed and no other element filtered: navigation, footers, cookie banners and ads all stay in."
+          },
+          {
+            "key": "credits_cost",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits spent on the request, from the `Ant-credits-cost` header."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

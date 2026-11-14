@@ -159,9 +159,12 @@ export const BaseProviders = [
 	'cloro',
 	'close',
 	'cloudcart',
+	'cloudconvert',
 	'cloudflare',
 	'cloudflareapikey',
+	'cloudflarebrowserrendering',
 	'cloudinary',
+	'cloudlayer',
 	'coassemble',
 	'coda',
 	'codacy',
@@ -173,6 +176,7 @@ export const BaseProviders = [
 	'coinmarketcap',
 	'collegefootballdata',
 	'commcare',
+	'companyenrich',
 	'composio',
 	'confluence',
 	'connecteam',
@@ -180,6 +184,7 @@ export const BaseProviders = [
 	'contentfulgraphql',
 	'contextdev',
 	'contextsevenmcp',
+	'conversiontools',
 	'convex',
 	'convoloai',
 	'cosmic',
@@ -190,6 +195,7 @@ export const BaseProviders = [
 	'cursor',
 	'customerio',
 	'customgpt',
+	'customjs',
 	'cuttly',
 	'dadataru',
 	'daffy',
@@ -200,15 +206,19 @@ export const BaseProviders = [
 	'datarobot',
 	'deepseek',
 	'demio',
+	'deployhq',
 	'desktime',
 	'devinmcp',
+	'dialpad',
 	'diffbot',
+	'digicert',
 	'digitalocean',
 	'discord',
 	'dnsfilter',
 	'dockerhub',
 	'docmosis',
 	'docsumo',
+	'documenso',
 	'docupost',
 	'docusign',
 	'dodopayments',
@@ -220,15 +230,20 @@ export const BaseProviders = [
 	'dropboxsign',
 	'dropcontact',
 	'dynapictures',
+	'e2b',
 	'elevenlabs',
+	'elorus',
 	'emailoctopus',
 	'emelia',
+	'encodian',
+	'endorsal',
 	'enginemailer',
 	'enigma',
 	'epicgames',
 	'esignatures',
 	'esputnik',
 	'eventbrite',
+	'eventee',
 	'eventzilla',
 	'everhour',
 	'exa',
@@ -238,23 +253,38 @@ export const BaseProviders = [
 	'facebook',
 	'fal',
 	'faraday',
+	'fathom',
+	'felt',
+	'fibery',
 	'fidel',
 	'figma',
 	'filevine',
 	'filloutforms',
 	'finage',
 	'finerworks',
+	'finmei',
+	'fireberry',
 	'firecrawl',
 	'fireflies',
 	'fixer',
 	'flexisign',
 	'flutterwave',
 	'fluxguard',
+	'folk',
 	'followupboss',
+	'fomo',
 	'formbricks',
+	'formdesk',
 	'foursquare',
 	'fundable',
 	'gemini',
+	'gagelist',
+	'gamma',
+	'gatherup',
+	'genderapi',
+	'genderapiio',
+	'genderize',
+	'geoapify',
 	'giphy',
 	'github',
 	'gitlab',
@@ -303,13 +333,22 @@ export const BaseProviders = [
 	'intercom',
 	'jigsawstack',
 	'jira',
+	'kadoa',
 	'kaggle',
+	'kanbanize',
+	'keen',
 	'keenable',
+	'keyword',
 	'kibana',
+	'kickbox',
+	'kit',
 	'klaviyo',
 	'klazify',
 	'kling',
 	'knack',
+	'kofi',
+	'kontentai',
+	'krakenio',
 	'leexi',
 	'leiga',
 	'lemonsqueezy',
@@ -376,20 +415,27 @@ export const BaseProviders = [
 	'pushbullet',
 	'qdrant',
 	'quaderno',
+	'radar',
+	'ragic',
 	'raisely',
+	'ramp',
 	'razorpay',
 	'realphonevalidation',
 	'reamaze',
 	'route4me',
 	'recallai',
+	'recruitee',
 	'redcircle',
 	'reddit',
 	'reducto',
 	'referralrock',
+	'refiner',
+	'remarkety',
 	'remoet',
 	'remoteretrieval',
 	'removebg',
 	'render',
+	'renderform',
 	'rentman',
 	'repairshopr',
 	'replicate',
@@ -400,9 +446,16 @@ export const BaseProviders = [
 	'retellai',
 	'retently',
 	'revai',
+	'revolt',
+	'ritekit',
 	'roam',
+	'roboflow',
 	'rocketlane',
+	'rocketreach',
+	'rollbar',
 	'rootly',
+	'rosette',
+	'rudderstacktransform',
 	'runpod',
 	'salesflare',
 	'salesforce',
@@ -482,6 +535,9 @@ export const BaseProviders = [
 	'updownio',
 	'uploadcare',
 	'u301',
+	'uptimerobot',
+	'userflow',
+	'userlist',
 	'vapi',
 	'vaquill',
 	'vectorshift',
@@ -491,9 +547,12 @@ export const BaseProviders = [
 	'virustotal',
 	'waboxapp',
 	'wachete',
+	'waiverfile',
 	'wakatime',
 	'wati',
+	'webex',
 	'webflow',
+	'webscraperio',
 	'webscrapingai',
 	'webvizio',
 	'whatsapp',
@@ -514,6 +573,7 @@ export const BaseProviders = [
 	'xero',
 	'xquik',
 	'yandex',
+	'ynab',
 	'youcom',
 	'youtube',
 	'zendesk',
@@ -674,9 +734,12 @@ export const ProviderDisplayNames = {
 	cloro: 'cloro',
 	close: 'Close',
 	cloudcart: 'CloudCart',
+	cloudconvert: 'CloudConvert',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
+	cloudflarebrowserrendering: 'Cloudflare Browser Run',
 	cloudinary: 'Cloudinary',
+	cloudlayer: 'Cloudlayer',
 	coassemble: 'Coassemble',
 	coda: 'Coda',
 	codacy: 'Codacy',
@@ -688,6 +751,7 @@ export const ProviderDisplayNames = {
 	coinmarketcap: 'CoinMarketCap',
 	collegefootballdata: 'College Football Data',
 	commcare: 'CommCare',
+	companyenrich: 'CompanyEnrich',
 	composio: 'Composio',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -695,6 +759,7 @@ export const ProviderDisplayNames = {
 	contentfulgraphql: 'Contentful GraphQL',
 	contextdev: 'Context.dev',
 	contextsevenmcp: 'Context7',
+	conversiontools: 'Conversion Tools',
 	convex: 'Convex',
 	convoloai: 'ConvoloAi',
 	cosmic: 'Cosmic',
@@ -705,6 +770,7 @@ export const ProviderDisplayNames = {
 	cursor: 'Cursor',
 	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
+	customjs: 'CustomJS',
 	cuttly: 'Cutt.ly',
 	dadataru: 'Dadataru',
 	daffy: 'Daffy',
@@ -715,15 +781,19 @@ export const ProviderDisplayNames = {
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	demio: 'Demio',
+	deployhq: 'DeployHQ',
 	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
+	dialpad: 'Dialpad',
 	diffbot: 'Diffbot',
+	digicert: 'DigiCert',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
 	docsumo: 'Docsumo',
+	documenso: 'Documenso',
 	docupost: 'Docupost',
 	docusign: 'DocuSign',
 	dodopayments: 'Dodo Payments',
@@ -735,15 +805,20 @@ export const ProviderDisplayNames = {
 	dropboxsign: 'Dropbox Sign',
 	dropcontact: 'Dropcontact',
 	dynapictures: 'Dynapictures',
+	e2b: 'E2B',
 	elevenlabs: 'ElevenLabs',
+	elorus: 'Elorus',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	encodian: 'Encodian',
+	endorsal: 'Endorsal',
 	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
 	esputnik: 'eSputnik',
 	eventbrite: 'Eventbrite',
+	eventee: 'Eventee',
 	eventzilla: 'Eventzilla',
 	everhour: 'Everhour',
 	exa: 'Exa',
@@ -753,23 +828,38 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	fal: 'fal',
 	faraday: 'Faraday',
+	fathom: 'Fathom',
+	felt: 'Felt',
+	fibery: 'Fibery',
 	fidel: 'Fidel',
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
 	finage: 'Finage',
 	finerworks: 'FinerWorks',
+	finmei: 'Finmei',
+	fireberry: 'Fireberry',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	fixer: 'Fixer',
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
 	fluxguard: 'Fluxguard',
+	folk: 'Folk',
 	followupboss: 'Follow Up Boss',
+	fomo: 'Fomo',
 	formbricks: 'Formbricks',
+	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
+	gagelist: 'Gagelist',
+	gamma: 'Gamma',
+	gatherup: 'GatherUp',
+	genderapi: 'Gender API',
+	genderapiio: 'GenderAPI.io',
+	genderize: 'Genderize',
+	geoapify: 'Geoapify',
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
@@ -818,13 +908,22 @@ export const ProviderDisplayNames = {
 	intercom: 'Intercom',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
+	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
+	kanbanize: 'Kanbanize',
+	keen: 'Keen',
 	keenable: 'Keenable',
+	keyword: 'Keyword',
 	kibana: 'Kibana',
+	kickbox: 'Kickbox',
+	kit: 'Kit',
 	klaviyo: 'Klaviyo',
 	klazify: 'Klazify',
 	kling: 'Kling',
 	knack: 'Knack',
+	kofi: 'Ko-fi',
+	kontentai: 'Kontent.ai',
+	krakenio: 'Kraken.io',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
 	lemonsqueezy: 'Lemon Squeezy',
@@ -891,20 +990,27 @@ export const ProviderDisplayNames = {
 	pushbullet: 'Pushbullet',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
+	radar: 'Radar',
+	ragic: 'Ragic',
 	raisely: 'Raisely',
+	ramp: 'Ramp',
 	route4me: 'Route4Me',
 	razorpay: 'Razorpay',
 	realphonevalidation: 'RealPhoneValidation',
 	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
+	recruitee: 'Recruitee',
 	redcircle: 'RedCircle API',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	referralrock: 'Referral Rock',
+	refiner: 'Refiner',
+	remarkety: 'Remarkety',
 	remoet: 'Remoet',
 	remoteretrieval: 'Remote Retrieval',
 	removebg: 'remove.bg',
 	render: 'Render',
+	renderform: 'Renderform',
 	rentman: 'Rentman',
 	repairshopr: 'RepairShopr',
 	replicate: 'Replicate',
@@ -915,9 +1021,16 @@ export const ProviderDisplayNames = {
 	retellai: 'Retell AI',
 	retently: 'Retently',
 	revai: 'RevAI',
+	revolt: 'Revolt (Stoat)',
+	ritekit: 'RiteKit',
 	roam: 'Roam HQ',
+	roboflow: 'Roboflow',
 	rocketlane: 'Rocketlane',
+	rocketreach: 'RocketReach',
+	rollbar: 'Rollbar',
 	rootly: 'Rootly',
+	rosette: 'Rosette',
+	rudderstacktransform: 'RudderStack Transformations',
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
 	salesforce: 'Salesforce',
@@ -997,6 +1110,9 @@ export const ProviderDisplayNames = {
 	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
 	u301: 'U301',
+	uptimerobot: 'UptimeRobot',
+	userflow: 'Userflow',
+	userlist: 'Userlist',
 	vapi: 'Vapi',
 	vaquill: 'Vaquill',
 	vectorshift: 'VectorShift',
@@ -1006,9 +1122,12 @@ export const ProviderDisplayNames = {
 	virustotal: 'VirusTotal',
 	waboxapp: 'Waboxapp',
 	wachete: 'Wachete',
+	waiverfile: 'WaiverFile',
 	wakatime: 'WakaTime',
 	wati: 'Wati',
+	webex: 'Webex',
 	webflow: 'Webflow',
+	webscraperio: 'WebScraper.io',
 	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
@@ -1029,6 +1148,7 @@ export const ProviderDisplayNames = {
 	xero: 'Xero',
 	xquik: 'XQuik',
 	yandex: 'Yandex',
+	ynab: 'YNAB',
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -1196,9 +1316,12 @@ export type AllProviders =
 	| 'cloro'
 	| 'close'
 	| 'cloudcart'
+	| 'cloudconvert'
 	| 'cloudflare'
 	| 'cloudflareapikey'
+	| 'cloudflarebrowserrendering'
 	| 'cloudinary'
+	| 'cloudlayer'
 	| 'coassemble'
 	| 'coda'
 	| 'codacy'
@@ -1210,6 +1333,7 @@ export type AllProviders =
 	| 'coinmarketcap'
 	| 'collegefootballdata'
 	| 'commcare'
+	| 'companyenrich'
 	| 'composio'
 	| 'confluence'
 	| 'connecteam'
@@ -1217,6 +1341,7 @@ export type AllProviders =
 	| 'contentfulgraphql'
 	| 'contextdev'
 	| 'contextsevenmcp'
+	| 'conversiontools'
 	| 'convex'
 	| 'convoloai'
 	| 'cosmic'
@@ -1227,6 +1352,7 @@ export type AllProviders =
 	| 'cursor'
 	| 'customerio'
 	| 'customgpt'
+	| 'customjs'
 	| 'cuttly'
 	| 'dadataru'
 	| 'daffy'
@@ -1237,15 +1363,19 @@ export type AllProviders =
 	| 'datarobot'
 	| 'deepseek'
 	| 'demio'
+	| 'deployhq'
 	| 'desktime'
 	| 'devinmcp'
+	| 'dialpad'
 	| 'diffbot'
+	| 'digicert'
 	| 'digitalocean'
 	| 'discord'
 	| 'dnsfilter'
 	| 'dockerhub'
 	| 'docmosis'
 	| 'docsumo'
+	| 'documenso'
 	| 'docupost'
 	| 'docusign'
 	| 'dodopayments'
@@ -1257,15 +1387,20 @@ export type AllProviders =
 	| 'dropboxsign'
 	| 'dropcontact'
 	| 'dynapictures'
+	| 'e2b'
 	| 'elevenlabs'
+	| 'elorus'
 	| 'emailoctopus'
 	| 'emelia'
+	| 'encodian'
+	| 'endorsal'
 	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
 	| 'esignatures'
 	| 'esputnik'
 	| 'eventbrite'
+	| 'eventee'
 	| 'eventzilla'
 	| 'everhour'
 	| 'exa'
@@ -1275,23 +1410,38 @@ export type AllProviders =
 	| 'facebook'
 	| 'fal'
 	| 'faraday'
+	| 'fathom'
+	| 'felt'
+	| 'fibery'
 	| 'fidel'
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
 	| 'finage'
 	| 'finerworks'
+	| 'finmei'
+	| 'fireberry'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'fixer'
 	| 'flexisign'
 	| 'flutterwave'
 	| 'fluxguard'
+	| 'folk'
 	| 'followupboss'
+	| 'fomo'
 	| 'formbricks'
+	| 'formdesk'
 	| 'foursquare'
 	| 'fundable'
 	| 'gemini'
+	| 'gagelist'
+	| 'gamma'
+	| 'gatherup'
+	| 'genderapi'
+	| 'genderapiio'
+	| 'genderize'
+	| 'geoapify'
 	| 'giphy'
 	| 'github'
 	| 'gitlab'
@@ -1340,13 +1490,22 @@ export type AllProviders =
 	| 'intercom'
 	| 'jigsawstack'
 	| 'jira'
+	| 'kadoa'
 	| 'kaggle'
+	| 'kanbanize'
+	| 'keen'
 	| 'keenable'
+	| 'keyword'
 	| 'kibana'
+	| 'kickbox'
+	| 'kit'
 	| 'klaviyo'
 	| 'klazify'
 	| 'kling'
 	| 'knack'
+	| 'kofi'
+	| 'kontentai'
+	| 'krakenio'
 	| 'leexi'
 	| 'leiga'
 	| 'lemonsqueezy'
@@ -1413,20 +1572,27 @@ export type AllProviders =
 	| 'pushbullet'
 	| 'qdrant'
 	| 'quaderno'
+	| 'radar'
+	| 'ragic'
 	| 'raisely'
+	| 'ramp'
 	| 'razorpay'
 	| 'realphonevalidation'
 	| 'reamaze'
 	| 'route4me'
 	| 'recallai'
+	| 'recruitee'
 	| 'redcircle'
 	| 'reddit'
 	| 'reducto'
 	| 'referralrock'
+	| 'refiner'
+	| 'remarkety'
 	| 'remoet'
 	| 'remoteretrieval'
 	| 'removebg'
 	| 'render'
+	| 'renderform'
 	| 'rentman'
 	| 'repairshopr'
 	| 'replicate'
@@ -1437,9 +1603,16 @@ export type AllProviders =
 	| 'retellai'
 	| 'retently'
 	| 'revai'
+	| 'revolt'
+	| 'ritekit'
 	| 'roam'
+	| 'roboflow'
 	| 'rocketlane'
+	| 'rocketreach'
+	| 'rollbar'
 	| 'rootly'
+	| 'rosette'
+	| 'rudderstacktransform'
 	| 'runpod'
 	| 'salesflare'
 	| 'salesforce'
@@ -1519,6 +1692,9 @@ export type AllProviders =
 	| 'updownio'
 	| 'uploadcare'
 	| 'u301'
+	| 'uptimerobot'
+	| 'userflow'
+	| 'userlist'
 	| 'vapi'
 	| 'vaquill'
 	| 'vectorshift'
@@ -1528,9 +1704,12 @@ export type AllProviders =
 	| 'virustotal'
 	| 'waboxapp'
 	| 'wachete'
+	| 'waiverfile'
 	| 'wakatime'
 	| 'wati'
+	| 'webex'
 	| 'webflow'
+	| 'webscraperio'
 	| 'webscrapingai'
 	| 'webvizio'
 	| 'whatsapp'
@@ -1551,6 +1730,7 @@ export type AllProviders =
 	| 'xero'
 	| 'xquik'
 	| 'yandex'
+	| 'ynab'
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'

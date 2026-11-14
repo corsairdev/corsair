@@ -1,0 +1,687 @@
+{
+  "id": "userlist",
+  "displayName": "Userlist",
+  "description": "Customer messaging with Userlist - push users, companies, relationships and events, send transactional email and in-app messages, and receive webhooks for user, company, relationship, form and message activity.",
+  "npmPackageName": "@corsair-dev/userlist",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 14,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "userlist.api.companies.delete",
+      "shortPath": "companies.delete",
+      "description": "Delete a company, leaving its users in place; only the relationships go",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queuedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userlist.api.companies.upsert",
+      "shortPath": "companies.upsert",
+      "description": "Create or update a company by identifier, with a name and custom properties",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "null clears it."
+          },
+          {
+            "key": "signed_up_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 / ISO 8601. null clears it."
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | number | Record<string, any>",
+            "description": "A single user, as a shortcut for one relationship."
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "(string | number | Record<string, any>)[]",
+            "description": "Several users, as a shortcut for relationships without properties."
+          },
+          {
+            "key": "relationships",
+            "optional": true,
+            "type": "{ user: string | number | Record<string, any>, properties?: Record<string, any> }[]",
+            "description": "Relationships to users, which can each hold their own properties."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queuedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userlist.api.events.create",
+      "shortPath": "events.create",
+      "description": "Record an event against a user, a company or both, with properties and an optional past timestamp",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The event name, such as `subscription_activated`."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | number | Record<string, any>",
+            "description": "Required unless a company is given."
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | number | Record<string, any>",
+            "description": "Required unless a user is given."
+          },
+          {
+            "key": "occurred_at",
+            "optional": true,
+            "type": "string",
+            "description": "When it happened, for importing historic events. Defaults to now."
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queuedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userlist.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Queue a transactional email or in-app message, from a template or with an inline subject and body",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "The template identifier. When set, subject, body and channel come from it."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | number | Record<string, any>",
+            "description": "Required unless `to` is given. Always required for a web message."
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | number | Record<string, any>",
+            "description": "A company identifier, or an embedded company object."
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Available in the template as `{{ event.<key> }}`."
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "email | web",
+            "description": "Defaults to email. A web message requires `user` and forbids `to`."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "The recipient address. Only for email; required unless `user` is set."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "The sender address. Email only."
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string",
+            "description": "The reply-to address. Email only."
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string",
+            "description": "Required when not using a template. Supports Liquid."
+          },
+          {
+            "key": "preheader",
+            "optional": true,
+            "type": "string",
+            "description": "Email preheader text."
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ type: html | text | multipart, content: string | { type: html | text, content: string }[] }",
+            "description": "Required when not using a template."
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "string",
+            "description": "A sender identifier from the account."
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "string | false",
+            "description": "A theme identifier, or false to disable theming."
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string",
+            "description": "A topic identifier from the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queuedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userlist.api.relationships.delete",
+      "shortPath": "relationships.delete",
+      "description": "Unlink one user from one company, leaving both objects in place; the relationship properties, such as a role, are lost",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string | number | Record<string, any>",
+            "description": "A user identifier, or an embedded user object."
+          },
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string | number | Record<string, any>",
+            "description": "A company identifier, or an embedded company object."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queuedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userlist.api.relationships.upsert",
+      "shortPath": "relationships.upsert",
+      "description": "Tie a user to a company, with properties on the relationship such as a role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string | number | Record<string, any>",
+            "description": "A user identifier, or an embedded user object."
+          },
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string | number | Record<string, any>",
+            "description": "A company identifier, or an embedded company object."
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queuedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userlist.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a user along with their relationships and events; queued, and not reversible",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queuedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "userlist.api.users.upsert",
+      "shortPath": "users.upsert",
+      "description": "Create or update a user by identifier or email, with properties, companies, relationships and topic preferences; queued, not applied at once",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | number",
+            "description": "Your id for the user. Required unless email is given."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The address. Required unless identifier is given. null clears it."
+          },
+          {
+            "key": "signed_up_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 / ISO 8601. null clears it."
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps."
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | number | Record<string, any>",
+            "description": "A single company, as a shortcut for one relationship."
+          },
+          {
+            "key": "companies",
+            "optional": true,
+            "type": "(string | number | Record<string, any>)[]",
+            "description": "Several companies, as a shortcut for relationships without properties."
+          },
+          {
+            "key": "relationships",
+            "optional": true,
+            "type": "{ company: string | number | Record<string, any>, properties?: Record<string, any> }[]",
+            "description": "Relationships to companies, which can each hold their own properties."
+          },
+          {
+            "key": "preferences",
+            "optional": true,
+            "type": "{ topic: string, subscribed: boolean }[]",
+            "description": "Subscription preferences. Only the topics sent are changed; the rest keep their value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queuedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "userlist.webhooks.companyCreated",
+      "shortPath": "companyCreated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        companyCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.companyUpdated",
+      "shortPath": "companyUpdated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        companyUpdated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.formSubmitted",
+      "shortPath": "formSubmitted",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        formSubmitted: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.messageBounced",
+      "shortPath": "messageBounced",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        messageBounced: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.messageClicked",
+      "shortPath": "messageClicked",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        messageClicked: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.messageEnqueued",
+      "shortPath": "messageEnqueued",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        messageEnqueued: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.messageOpened",
+      "shortPath": "messageOpened",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        messageOpened: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.messageReported",
+      "shortPath": "messageReported",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        messageReported: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.relationshipCreated",
+      "shortPath": "relationshipCreated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        relationshipCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.relationshipUpdated",
+      "shortPath": "relationshipUpdated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        relationshipUpdated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.userCreated",
+      "shortPath": "userCreated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        userCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.userSubscribed",
+      "shortPath": "userSubscribed",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        userSubscribed: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.userUnsubscribed",
+      "shortPath": "userUnsubscribed",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        userUnsubscribed: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "userlist.webhooks.userUpdated",
+      "shortPath": "userUpdated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "userlist({\n    webhookHooks: {\n        userUpdated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
