@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const query: GristEndpoints['sql.query'] = async (ctx, input) => {
@@ -15,7 +15,7 @@ export const query: GristEndpoints['sql.query'] = async (ctx, input) => {
 				? { timeout: parsedInput.timeout }
 				: {}),
 		},
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['sql.query'].parse(response);
 	await logEventFromContext(
@@ -33,7 +33,7 @@ export const queryGet: GristEndpoints['sql.queryGet'] = async (ctx, input) => {
 	const response = await makeGristRequest(`/docs/${docIdStr}/sql`, ctx.key, {
 		method: 'GET',
 		query: { q: parsedInput.q },
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['sql.queryGet'].parse(response);
 	await logEventFromContext(

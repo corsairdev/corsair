@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const create: GristEndpoints['docs.create'] = async (ctx, input) => {
@@ -24,7 +24,7 @@ export const create: GristEndpoints['docs.create'] = async (ctx, input) => {
 				? { timezone: parsedInput.timezone }
 				: {}),
 		},
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.create'].parse(response);
 	await logEventFromContext(
@@ -52,7 +52,7 @@ export const createInWorkspace: GristEndpoints['docs.createInWorkspace'] =
 						? { isPinned: parsedInput.isPinned }
 						: {}),
 				},
-				baseUrl: ctx.options?.baseUrl,
+				baseUrl: await resolveGristBaseUrl(ctx),
 			},
 		);
 		const parsed =
@@ -71,7 +71,7 @@ export const get: GristEndpoints['docs.get'] = async (ctx, input) => {
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const response = await makeGristRequest(`/docs/${docIdStr}`, ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.get'].parse(response);
 	await logEventFromContext(
@@ -94,7 +94,7 @@ export const update: GristEndpoints['docs.update'] = async (ctx, input) => {
 				? { isPinned: parsedInput.isPinned }
 				: {}),
 		},
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.update'].parse(response);
 	await logEventFromContext(
@@ -111,7 +111,7 @@ export const deleteDoc: GristEndpoints['docs.delete'] = async (ctx, input) => {
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const response = await makeGristRequest(`/docs/${docIdStr}`, ctx.key, {
 		method: 'DELETE',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.delete'].parse(response);
 	await logEventFromContext(
@@ -128,7 +128,7 @@ export const remove: GristEndpoints['docs.remove'] = async (ctx, input) => {
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const response = await makeGristRequest(`/docs/${docIdStr}/remove`, ctx.key, {
 		method: 'POST',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.remove'].parse(response);
 	await logEventFromContext(
@@ -148,7 +148,7 @@ export const unremove: GristEndpoints['docs.unremove'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['docs.unremove'].parse(response);
@@ -167,7 +167,7 @@ export const move: GristEndpoints['docs.move'] = async (ctx, input) => {
 	const response = await makeGristRequest(`/docs/${docIdStr}/move`, ctx.key, {
 		method: 'PATCH',
 		body: { workspace: parsedInput.workspace },
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.move'].parse(response);
 	await logEventFromContext(
@@ -184,7 +184,7 @@ export const pin: GristEndpoints['docs.pin'] = async (ctx, input) => {
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const response = await makeGristRequest(`/docs/${docIdStr}/pin`, ctx.key, {
 		method: 'PATCH',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.pin'].parse(response);
 	await logEventFromContext(
@@ -201,7 +201,7 @@ export const unpin: GristEndpoints['docs.unpin'] = async (ctx, input) => {
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const response = await makeGristRequest(`/docs/${docIdStr}/unpin`, ctx.key, {
 		method: 'PATCH',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.unpin'].parse(response);
 	await logEventFromContext(
@@ -229,7 +229,7 @@ export const copy: GristEndpoints['docs.copy'] = async (ctx, input) => {
 				? { asTemplate: parsedInput.asTemplate }
 				: {}),
 		},
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.copy'].parse(response);
 	await logEventFromContext(
@@ -246,13 +246,13 @@ export const fork: GristEndpoints['docs.fork'] = async (ctx, input) => {
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const response = await makeGristRequest(`/docs/${docIdStr}/fork`, ctx.key, {
 		method: 'POST',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.fork'].parse(response);
 	await logEventFromContext(
 		ctx,
 		'grist.docs.fork',
-		{ sourceDocId: parsedInput.docId, forkedDocId: parsed },
+		{ sourceDocId: parsedInput.docId, forkedDocId: parsed.docId },
 		'completed',
 	);
 	return parsed;
@@ -266,7 +266,7 @@ export const listAccess: GristEndpoints['docs.listAccess'] = async (
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const response = await makeGristRequest(`/docs/${docIdStr}/access`, ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['docs.listAccess'].parse(response);
 	await logEventFromContext(
@@ -288,12 +288,14 @@ export const modifyAccess: GristEndpoints['docs.modifyAccess'] = async (
 	const response = await makeGristRequest(`/docs/${docIdStr}/access`, ctx.key, {
 		method: 'PATCH',
 		body: {
-			...(parsedInput.maxInheritedRole
-				? { maxInheritedRole: parsedInput.maxInheritedRole }
-				: {}),
-			users: parsedInput.users,
+			delta: {
+				...(parsedInput.maxInheritedRole
+					? { maxInheritedRole: parsedInput.maxInheritedRole }
+					: {}),
+				users: parsedInput.users,
+			},
 		},
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['docs.modifyAccess'].parse(response);
@@ -320,7 +322,7 @@ export const listSnapshots: GristEndpoints['docs.listSnapshots'] = async (
 			method: 'GET',
 			query:
 				parsedInput.raw !== undefined ? { raw: parsedInput.raw } : undefined,
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -347,7 +349,7 @@ export const removeSnapshots: GristEndpoints['docs.removeSnapshots'] = async (
 		{
 			method: 'POST',
 			body: { snapshotIds: parsedInput.snapshotIds },
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =

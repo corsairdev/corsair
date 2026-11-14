@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['tables.list'] = async (ctx, input) => {
@@ -8,7 +8,7 @@ export const list: GristEndpoints['tables.list'] = async (ctx, input) => {
 	const docIdStr = encodeURIComponent(parsedInput.docId);
 	const response = await makeGristRequest(`/docs/${docIdStr}/tables`, ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['tables.list'].parse(response);
 	await logEventFromContext(
@@ -26,7 +26,7 @@ export const create: GristEndpoints['tables.create'] = async (ctx, input) => {
 	const response = await makeGristRequest(`/docs/${docIdStr}/tables`, ctx.key, {
 		method: 'POST',
 		body: { tables: parsedInput.tables },
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['tables.create'].parse(response);
 	await logEventFromContext(
@@ -44,7 +44,7 @@ export const update: GristEndpoints['tables.update'] = async (ctx, input) => {
 	const response = await makeGristRequest(`/docs/${docIdStr}/tables`, ctx.key, {
 		method: 'PATCH',
 		body: { tables: parsedInput.tables },
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['tables.update'].parse(response);
 	await logEventFromContext(

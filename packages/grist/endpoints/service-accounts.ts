@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['serviceAccounts.list'] = async (
@@ -10,7 +10,7 @@ export const list: GristEndpoints['serviceAccounts.list'] = async (
 	GristEndpointInputSchemas['serviceAccounts.list'].parse(input);
 	const response = await makeGristRequest('/service-accounts', ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['serviceAccounts.list'].parse(response);
@@ -32,10 +32,13 @@ export const create: GristEndpoints['serviceAccounts.create'] = async (
 	const response = await makeGristRequest('/service-accounts', ctx.key, {
 		method: 'POST',
 		body: {
-			name: parsedInput.name,
+			expiresAt: parsedInput.expiresAt,
 			...(parsedInput.label !== undefined ? { label: parsedInput.label } : {}),
+			...(parsedInput.description !== undefined
+				? { description: parsedInput.description }
+				: {}),
 		},
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['serviceAccounts.create'].parse(response);
@@ -61,7 +64,7 @@ export const get: GristEndpoints['serviceAccounts.get'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -88,12 +91,17 @@ export const update: GristEndpoints['serviceAccounts.update'] = async (
 		{
 			method: 'PATCH',
 			body: {
-				...(parsedInput.name !== undefined ? { name: parsedInput.name } : {}),
 				...(parsedInput.label !== undefined
 					? { label: parsedInput.label }
 					: {}),
+				...(parsedInput.description !== undefined
+					? { description: parsedInput.description }
+					: {}),
+				...(parsedInput.expiresAt !== undefined
+					? { expiresAt: parsedInput.expiresAt }
+					: {}),
 			},
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -117,7 +125,7 @@ export const deleteServiceAccount: GristEndpoints['serviceAccounts.delete'] =
 			ctx.key,
 			{
 				method: 'DELETE',
-				baseUrl: ctx.options?.baseUrl,
+				baseUrl: await resolveGristBaseUrl(ctx),
 			},
 		);
 		const parsed =
@@ -143,7 +151,7 @@ export const regenerateApiKey: GristEndpoints['serviceAccounts.regenerateApiKey'
 			ctx.key,
 			{
 				method: 'POST',
-				baseUrl: ctx.options?.baseUrl,
+				baseUrl: await resolveGristBaseUrl(ctx),
 			},
 		);
 		const parsed =
@@ -170,7 +178,7 @@ export const deleteApiKey: GristEndpoints['serviceAccounts.deleteApiKey'] =
 			ctx.key,
 			{
 				method: 'DELETE',
-				baseUrl: ctx.options?.baseUrl,
+				baseUrl: await resolveGristBaseUrl(ctx),
 			},
 		);
 		const parsed =

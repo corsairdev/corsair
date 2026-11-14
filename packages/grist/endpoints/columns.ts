@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['columns.list'] = async (ctx, input) => {
@@ -12,7 +12,11 @@ export const list: GristEndpoints['columns.list'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			query:
+				parsedInput.hidden !== undefined
+					? { hidden: parsedInput.hidden }
+					: undefined,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['columns.list'].parse(response);
@@ -39,7 +43,7 @@ export const add: GristEndpoints['columns.add'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body: { columns: parsedInput.columns },
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['columns.add'].parse(response);
@@ -66,7 +70,7 @@ export const update: GristEndpoints['columns.update'] = async (ctx, input) => {
 		{
 			method: 'PATCH',
 			body: { columns: parsedInput.columns },
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['columns.update'].parse(response);
@@ -96,7 +100,7 @@ export const replace: GristEndpoints['columns.replace'] = async (
 		{
 			method: 'PUT',
 			body: { columns: parsedInput.columns },
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['columns.replace'].parse(response);
@@ -126,7 +130,7 @@ export const deleteColumn: GristEndpoints['columns.delete'] = async (
 		ctx.key,
 		{
 			method: 'DELETE',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['columns.delete'].parse(response);

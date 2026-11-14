@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const getActive: GristEndpoints['session.getActive'] = async (
@@ -10,7 +10,7 @@ export const getActive: GristEndpoints['session.getActive'] = async (
 	GristEndpointInputSchemas['session.getActive'].parse(input);
 	const response = await makeGristRequest('/session/access/active', ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['session.getActive'].parse(response);
@@ -22,7 +22,7 @@ export const getAll: GristEndpoints['session.getAll'] = async (ctx, input) => {
 	GristEndpointInputSchemas['session.getAll'].parse(input);
 	const response = await makeGristRequest('/session/access/all', ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['session.getAll'].parse(response);
 	await logEventFromContext(ctx, 'grist.session.getAll', {}, 'completed');
@@ -41,7 +41,7 @@ export const setActive: GristEndpoints['session.setActive'] = async (
 			email: parsedInput.email,
 			...(parsedInput.org !== undefined ? { org: parsedInput.org } : {}),
 		},
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['session.setActive'].parse(response);

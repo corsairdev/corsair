@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import {
 	Attachments,
@@ -42,6 +42,8 @@ function buildCtx(): GristContext {
 			issue_new_dek: () => Promise.resolve('test-dek'),
 			get_api_key: () => Promise.resolve('test-api-key'),
 			set_api_key: () => Promise.resolve(),
+			get_base_url: () => Promise.resolve('https://docs.getgrist.com'),
+			set_base_url: () => Promise.resolve(),
 			get_webhook_signature: () => Promise.resolve(null),
 			set_webhook_signature: () => Promise.resolve(),
 		},
@@ -49,11 +51,42 @@ function buildCtx(): GristContext {
 	};
 }
 
+const BASE = 'https://docs.getgrist.com/api';
 const ctx = buildCtx();
 
 beforeEach(() => {
 	mockedRequest.mockReset();
 	mockedLogEvent.mockReset();
+});
+
+describe('base URL', () => {
+	it('uses the account base_url for team sites', async () => {
+		mockedRequest.mockResolvedValue([]);
+		const teamCtx = buildCtx();
+		teamCtx.keys.get_base_url = () =>
+			Promise.resolve('https://myteam.getgrist.com/');
+		await Orgs.list(teamCtx, {});
+		expect(mockedRequest).toHaveBeenCalledWith('/orgs', 'test-api-key', {
+			method: 'GET',
+			baseUrl: 'https://myteam.getgrist.com/api',
+		});
+	});
+
+	it('throws AuthMissingError when no base URL is stored', async () => {
+		const noUrlCtx = buildCtx();
+		noUrlCtx.keys.get_base_url = () => Promise.resolve(null);
+		await expect(Orgs.list(noUrlCtx, {})).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('refuses a non-https base URL before sending the key', async () => {
+		const httpCtx = buildCtx();
+		httpCtx.keys.get_base_url = () => Promise.resolve('http://grist.example');
+		await expect(Orgs.list(httpCtx, {})).rejects.toThrow('https');
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('Orgs endpoints', () => {
@@ -66,7 +99,7 @@ describe('Orgs endpoints', () => {
 		expect(result).toEqual(mockOrgs);
 		expect(mockedRequest).toHaveBeenCalledWith('/orgs', 'test-api-key', {
 			method: 'GET',
-			baseUrl: undefined,
+			baseUrl: BASE,
 		});
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
@@ -91,7 +124,7 @@ describe('Orgs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -102,7 +135,7 @@ describe('Orgs endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith('/orgs/10', 'test-api-key', {
 			method: 'PATCH',
 			body: { name: 'Renamed' },
-			baseUrl: undefined,
+			baseUrl: BASE,
 		});
 	});
 
@@ -114,7 +147,7 @@ describe('Orgs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'DELETE',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -133,7 +166,7 @@ describe('Orgs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -149,8 +182,8 @@ describe('Orgs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'PATCH',
-				body: { users: { 'user@example.com': 'editors' } },
-				baseUrl: undefined,
+				body: { delta: { users: { 'user@example.com': 'editors' } } },
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -165,7 +198,7 @@ describe('Orgs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -184,7 +217,7 @@ describe('Workspaces endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -202,7 +235,7 @@ describe('Workspaces endpoints', () => {
 			{
 				method: 'POST',
 				body: { name: 'New WS' },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -217,7 +250,7 @@ describe('Workspaces endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -231,7 +264,7 @@ describe('Workspaces endpoints', () => {
 			{
 				method: 'PATCH',
 				body: { name: 'Renamed WS' },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -244,7 +277,7 @@ describe('Workspaces endpoints', () => {
 			'test-api-key',
 			{
 				method: 'DELETE',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -257,7 +290,7 @@ describe('Workspaces endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -270,7 +303,7 @@ describe('Workspaces endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -285,7 +318,7 @@ describe('Workspaces endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -301,8 +334,8 @@ describe('Workspaces endpoints', () => {
 			'test-api-key',
 			{
 				method: 'PATCH',
-				body: { users: { 'user@example.com': 'viewers' } },
-				baseUrl: undefined,
+				body: { delta: { users: { 'user@example.com': 'viewers' } } },
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -319,7 +352,7 @@ describe('Docs endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith('/docs', 'test-api-key', {
 			method: 'POST',
 			body: { documentName: 'New Document', workspaceId: 97 },
-			baseUrl: undefined,
+			baseUrl: BASE,
 		});
 	});
 
@@ -336,7 +369,7 @@ describe('Docs endpoints', () => {
 			{
 				method: 'POST',
 				body: { name: 'Child Doc' },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -348,7 +381,7 @@ describe('Docs endpoints', () => {
 		expect(result).toEqual(mockDoc);
 		expect(mockedRequest).toHaveBeenCalledWith('/docs/doc123', 'test-api-key', {
 			method: 'GET',
-			baseUrl: undefined,
+			baseUrl: BASE,
 		});
 	});
 
@@ -358,7 +391,7 @@ describe('Docs endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith('/docs/doc123', 'test-api-key', {
 			method: 'PATCH',
 			body: { name: 'Renamed Doc' },
-			baseUrl: undefined,
+			baseUrl: BASE,
 		});
 	});
 
@@ -367,7 +400,7 @@ describe('Docs endpoints', () => {
 		await Docs.deleteDoc(ctx, { docId: 'doc123' });
 		expect(mockedRequest).toHaveBeenCalledWith('/docs/doc123', 'test-api-key', {
 			method: 'DELETE',
-			baseUrl: undefined,
+			baseUrl: BASE,
 		});
 	});
 
@@ -379,7 +412,7 @@ describe('Docs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -392,7 +425,7 @@ describe('Docs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -406,7 +439,7 @@ describe('Docs endpoints', () => {
 			{
 				method: 'PATCH',
 				body: { workspace: 99 },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -419,7 +452,7 @@ describe('Docs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'PATCH',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -432,7 +465,7 @@ describe('Docs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'PATCH',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -451,21 +484,26 @@ describe('Docs endpoints', () => {
 			{
 				method: 'POST',
 				body: { documentName: 'Copied Doc', workspaceId: 97 },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
 
 	it('docs.fork calls POST /docs/{docId}/fork', async () => {
-		mockedRequest.mockResolvedValue('doc_forked');
+		const forkResponse = {
+			forkId: 'f1',
+			docId: 'doc123~f1~1',
+			urlId: 'doc123~f1~1',
+		};
+		mockedRequest.mockResolvedValue(forkResponse);
 		const result = await Docs.fork(ctx, { docId: 'doc123' });
-		expect(result).toBe('doc_forked');
+		expect(result).toEqual(forkResponse);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/docs/doc123/fork',
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -480,7 +518,7 @@ describe('Docs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -496,8 +534,8 @@ describe('Docs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'PATCH',
-				body: { users: { 'user@example.com': 'owners' } },
-				baseUrl: undefined,
+				body: { delta: { users: { 'user@example.com': 'owners' } } },
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -505,7 +543,11 @@ describe('Docs endpoints', () => {
 	it('docs.listSnapshots calls GET /docs/{docId}/snapshots', async () => {
 		const mockSnapshots = {
 			snapshots: [
-				{ snapshotId: 'snap1', snapshotTime: '2026-01-01T00:00:00Z' },
+				{
+					snapshotId: 'snap1',
+					lastModified: '2026-01-01T00:00:00Z',
+					docId: 'doc123',
+				},
 			],
 		};
 		mockedRequest.mockResolvedValue(mockSnapshots);
@@ -516,7 +558,7 @@ describe('Docs endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -533,7 +575,7 @@ describe('Docs endpoints', () => {
 			{
 				method: 'POST',
 				body: { snapshotIds: ['snap1'] },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -552,7 +594,7 @@ describe('Tables endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -580,7 +622,7 @@ describe('Tables endpoints', () => {
 						},
 					],
 				},
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -597,7 +639,7 @@ describe('Tables endpoints', () => {
 			{
 				method: 'PATCH',
 				body: { tables: [{ id: 'Table1', fields: {} }] },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -625,7 +667,7 @@ describe('Records endpoints', () => {
 					filter: undefined,
 					hidden: undefined,
 				},
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -645,7 +687,7 @@ describe('Records endpoints', () => {
 			{
 				method: 'POST',
 				body: { records: [{ fields: { Name: 'Bob' } }] },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -663,7 +705,7 @@ describe('Records endpoints', () => {
 			{
 				method: 'PATCH',
 				body: { records: [{ id: 1, fields: { Name: 'Alice Updated' } }] },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -683,7 +725,7 @@ describe('Records endpoints', () => {
 				body: {
 					records: [{ require: { id: 1 }, fields: { Name: 'Alice Replaced' } }],
 				},
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -701,7 +743,7 @@ describe('Records endpoints', () => {
 			{
 				method: 'POST',
 				body: [1, 2, 3],
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -721,7 +763,7 @@ describe('Columns endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -741,7 +783,7 @@ describe('Columns endpoints', () => {
 			{
 				method: 'POST',
 				body: { columns: [{ id: 'col2', fields: { type: 'Numeric' } }] },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -759,7 +801,7 @@ describe('Columns endpoints', () => {
 			{
 				method: 'PATCH',
 				body: { columns: [{ id: 'col1', fields: { label: 'First Name' } }] },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -777,7 +819,7 @@ describe('Columns endpoints', () => {
 			{
 				method: 'PUT',
 				body: { columns: [{ id: 'col1', fields: { type: 'Text' } }] },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -794,7 +836,7 @@ describe('Columns endpoints', () => {
 			'test-api-key',
 			{
 				method: 'DELETE',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -818,7 +860,7 @@ describe('SQL endpoints', () => {
 			{
 				method: 'POST',
 				body: { sql: 'SELECT count(*) FROM Table1' },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -837,7 +879,7 @@ describe('SQL endpoints', () => {
 			{
 				method: 'GET',
 				query: { q: 'SELECT * FROM Table1' },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -856,7 +898,7 @@ describe('Attachments endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -874,7 +916,7 @@ describe('Attachments endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -887,7 +929,21 @@ describe('Attachments endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
+			},
+		);
+	});
+
+	it('attachments.removeUnused sends expiredOnly as a query parameter', async () => {
+		mockedRequest.mockResolvedValue(null);
+		await Attachments.removeUnused(ctx, { docId: 'doc123', expiredOnly: true });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/docs/doc123/attachments/removeUnused',
+			'test-api-key',
+			{
+				method: 'POST',
+				query: { expiredOnly: true },
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -900,7 +956,7 @@ describe('Attachments endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -913,7 +969,7 @@ describe('Attachments endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -930,7 +986,7 @@ describe('Attachments endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -947,7 +1003,7 @@ describe('Profile endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -961,7 +1017,7 @@ describe('Profile endpoints', () => {
 			{
 				method: 'POST',
 				body: { name: 'New Name' },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -975,7 +1031,7 @@ describe('Profile endpoints', () => {
 			{
 				method: 'POST',
 				body: { locale: 'en-US' },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -989,7 +1045,7 @@ describe('Profile endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1003,7 +1059,22 @@ describe('Profile endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				body: {},
+				baseUrl: BASE,
+			},
+		);
+	});
+
+	it('profile.createApiKey forwards force to replace an existing key', async () => {
+		mockedRequest.mockResolvedValue('key_new789');
+		await Profile.createApiKey(ctx, { force: true });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/profile/apikey',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: { force: true },
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1016,15 +1087,24 @@ describe('Profile endpoints', () => {
 			'test-api-key',
 			{
 				method: 'DELETE',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
 });
 
+const SERVICE_ACCOUNT = {
+	id: 7,
+	login: 'abc@serviceaccounts.invalid',
+	label: 'Bot',
+	description: '',
+	expiresAt: '2027-01-01T00:00:00.000Z',
+	hasValidKey: true,
+};
+
 describe('ServiceAccounts endpoints', () => {
 	it('serviceAccounts.list calls GET /service-accounts', async () => {
-		const mockList = [{ id: 'sa1', name: 'Bot', email: 'bot@example.com' }];
+		const mockList = [SERVICE_ACCOUNT];
 		mockedRequest.mockResolvedValue(mockList);
 		const result = await ServiceAccounts.list(ctx, {});
 		expect(result).toEqual(mockList);
@@ -1033,29 +1113,32 @@ describe('ServiceAccounts endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
 
 	it('serviceAccounts.create calls POST /service-accounts', async () => {
-		const mockCreated = { id: 'sa2', name: 'New Bot' };
+		const mockCreated = { ...SERVICE_ACCOUNT, key: 'sa_key_new' };
 		mockedRequest.mockResolvedValue(mockCreated);
-		const result = await ServiceAccounts.create(ctx, { name: 'New Bot' });
+		const result = await ServiceAccounts.create(ctx, {
+			label: 'Bot',
+			expiresAt: '2027-01-01',
+		});
 		expect(result).toEqual(mockCreated);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/service-accounts',
 			'test-api-key',
 			{
 				method: 'POST',
-				body: { name: 'New Bot' },
-				baseUrl: undefined,
+				body: { label: 'Bot', expiresAt: '2027-01-01' },
+				baseUrl: BASE,
 			},
 		);
 	});
 
 	it('serviceAccounts.get calls GET /service-accounts/{id}', async () => {
-		const mockSa = { id: 'sa1', name: 'Bot' };
+		const mockSa = SERVICE_ACCOUNT;
 		mockedRequest.mockResolvedValue(mockSa);
 		const result = await ServiceAccounts.get(ctx, { saId: 'sa1' });
 		expect(result).toEqual(mockSa);
@@ -1064,21 +1147,21 @@ describe('ServiceAccounts endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
 
 	it('serviceAccounts.update sends PATCH /service-accounts/{id}', async () => {
 		mockedRequest.mockResolvedValue(null);
-		await ServiceAccounts.update(ctx, { saId: 'sa1', name: 'Updated Bot' });
+		await ServiceAccounts.update(ctx, { saId: 'sa1', label: 'Updated Bot' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/service-accounts/sa1',
 			'test-api-key',
 			{
 				method: 'PATCH',
-				body: { name: 'Updated Bot' },
-				baseUrl: undefined,
+				body: { label: 'Updated Bot' },
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1091,21 +1174,22 @@ describe('ServiceAccounts endpoints', () => {
 			'test-api-key',
 			{
 				method: 'DELETE',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
 
 	it('serviceAccounts.regenerateApiKey calls POST /service-accounts/{id}/apikey', async () => {
-		mockedRequest.mockResolvedValue('sa_key_123');
+		const regenerated = { ...SERVICE_ACCOUNT, key: 'sa_key_123' };
+		mockedRequest.mockResolvedValue(regenerated);
 		const result = await ServiceAccounts.regenerateApiKey(ctx, { saId: 'sa1' });
-		expect(result).toBe('sa_key_123');
+		expect(result).toEqual(regenerated);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/service-accounts/sa1/apikey',
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1118,7 +1202,7 @@ describe('ServiceAccounts endpoints', () => {
 			'test-api-key',
 			{
 				method: 'DELETE',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1134,7 +1218,7 @@ describe('Templates endpoints', () => {
 		expect(result).toEqual(mockTemplates);
 		expect(mockedRequest).toHaveBeenCalledWith('/templates', 'test-api-key', {
 			method: 'GET',
-			baseUrl: undefined,
+			baseUrl: BASE,
 		});
 	});
 
@@ -1152,7 +1236,7 @@ describe('Templates endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1172,7 +1256,7 @@ describe('Widgets endpoints', () => {
 		expect(result).toEqual(mockWidgets);
 		expect(mockedRequest).toHaveBeenCalledWith('/widgets', 'test-api-key', {
 			method: 'GET',
-			baseUrl: undefined,
+			baseUrl: BASE,
 		});
 	});
 });
@@ -1186,7 +1270,7 @@ describe('Users endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1199,17 +1283,18 @@ describe('Users endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
 
 	it('users.deleteUser calls DELETE /users/{userId}', async () => {
 		mockedRequest.mockResolvedValue(null);
-		await Users.deleteUser(ctx, { userId: 5 });
+		await Users.deleteUser(ctx, { userId: 5, name: 'Jane Doe' });
 		expect(mockedRequest).toHaveBeenCalledWith('/users/5', 'test-api-key', {
 			method: 'DELETE',
-			baseUrl: undefined,
+			body: { name: 'Jane Doe' },
+			baseUrl: BASE,
 		});
 	});
 });
@@ -1225,7 +1310,7 @@ describe('Session endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1240,7 +1325,7 @@ describe('Session endpoints', () => {
 			'test-api-key',
 			{
 				method: 'GET',
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});
@@ -1259,7 +1344,7 @@ describe('Session endpoints', () => {
 			{
 				method: 'POST',
 				body: { email: 'user@example.com', org: 'myorg' },
-				baseUrl: undefined,
+				baseUrl: BASE,
 			},
 		);
 	});

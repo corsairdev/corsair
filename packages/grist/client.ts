@@ -15,20 +15,70 @@ export class GristAPIError extends Error {
 export const DEFAULT_GRIST_API_BASE = 'https://docs.getgrist.com/api';
 
 /**
- * Normalizes a Grist base URL, ensuring no trailing slash and an `/api` suffix
- * for custom subdomains, team sites, or self-hosted instances.
+ * Validates and normalizes a Grist site URL (`https://docs.getgrist.com`,
+ * `https://<team>.getgrist.com`, or a self-hosted origin, optionally with a
+ * path prefix such as `/o/<team>`) into its API base, ending in `/api`.
+ *
+ * The URL receives the API key as a Bearer token, so it must be HTTPS and may
+ * not carry credentials, a query string or a fragment. The base is rebuilt from
+ * the parsed origin and path, so the host is exactly what the URL parser sees.
  */
-export function normalizeGristBaseUrl(url?: string): string {
-	if (!url) return DEFAULT_GRIST_API_BASE;
-	let trimmed = url.trim();
-	while (trimmed.endsWith('/')) {
-		trimmed = trimmed.slice(0, -1);
+export function normalizeGristBaseUrl(url: string | undefined): string {
+	const trimmed = (url ?? '').trim();
+	if (!trimmed) {
+		throw new Error('[grist] base URL is required');
 	}
-	if (!trimmed) return DEFAULT_GRIST_API_BASE;
-	if (!trimmed.endsWith('/api')) {
-		trimmed = `${trimmed}/api`;
+	let parsed: URL;
+	try {
+		parsed = new URL(trimmed);
+	} catch {
+		throw new Error('[grist] base URL must be an absolute https:// URL');
 	}
-	return trimmed;
+	if (parsed.protocol !== 'https:') {
+		throw new Error('[grist] base URL must use https');
+	}
+	if (!parsed.hostname) {
+		throw new Error('[grist] base URL must include a host');
+	}
+	if (parsed.username || parsed.password) {
+		throw new Error('[grist] base URL must not include credentials');
+	}
+	if (
+		parsed.search ||
+		parsed.hash ||
+		trimmed.includes('?') ||
+		trimmed.includes('#')
+	) {
+		throw new Error('[grist] base URL must not include a query or fragment');
+	}
+	let path = parsed.pathname;
+	// avoid /\/+$/ — CodeQL flags it as ReDoS on long slash runs
+	while (path.endsWith('/')) {
+		path = path.slice(0, -1);
+	}
+	if (!path.endsWith('/api')) {
+		path = `${path}/api`;
+	}
+	return `${parsed.origin}${path}`;
+}
+
+/**
+ * Resolves the API base for a call: the `baseUrl` plugin option when set,
+ * otherwise the connected account's stored `base_url` field.
+ */
+export async function resolveGristBaseUrl(ctx: {
+	options?: { baseUrl?: string };
+	keys?: { get_base_url?: () => Promise<string | null | undefined> };
+}): Promise<string> {
+	const fromOptions = ctx.options?.baseUrl?.trim();
+	if (fromOptions) return normalizeGristBaseUrl(fromOptions);
+	const fromAccount = (await ctx.keys?.get_base_url?.())?.trim();
+	if (fromAccount) return normalizeGristBaseUrl(fromAccount);
+	throw new AuthMissingError(
+		'grist',
+		'api_key',
+		'[grist] base URL is not set: connect the account with its Grist site URL (for example https://docs.getgrist.com)',
+	);
 }
 
 const SENSITIVE_KEY_PATTERNS = [
@@ -113,10 +163,8 @@ export async function makeGristRequest<T = unknown>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		// Grist reads DELETE bodies too (DELETE /users/{userId} needs a `name` confirmation)
+		body: method === 'GET' ? undefined : body,
 		mediaType: 'application/json; charset=utf-8',
 		query,
 	};

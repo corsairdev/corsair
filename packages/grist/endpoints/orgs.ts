@@ -1,13 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['orgs.list'] = async (ctx, input) => {
 	const parsedInput = GristEndpointInputSchemas['orgs.list'].parse(input);
 	const response = await makeGristRequest('/orgs', ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['orgs.list'].parse(response);
 	await logEventFromContext(
@@ -24,7 +24,7 @@ export const get: GristEndpoints['orgs.get'] = async (ctx, input) => {
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
 	const response = await makeGristRequest(`/orgs/${orgIdStr}`, ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['orgs.get'].parse(response);
 	await logEventFromContext(
@@ -42,7 +42,7 @@ export const update: GristEndpoints['orgs.update'] = async (ctx, input) => {
 	const response = await makeGristRequest(`/orgs/${orgIdStr}`, ctx.key, {
 		method: 'PATCH',
 		body: parsedInput.name !== undefined ? { name: parsedInput.name } : {},
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['orgs.update'].parse(response);
 	await logEventFromContext(
@@ -63,7 +63,7 @@ export const deleteOrg: GristEndpoints['orgs.delete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['orgs.delete'].parse(response);
@@ -84,7 +84,7 @@ export const listAccess: GristEndpoints['orgs.listAccess'] = async (
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
 	const response = await makeGristRequest(`/orgs/${orgIdStr}/access`, ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['orgs.listAccess'].parse(response);
 	await logEventFromContext(
@@ -105,8 +105,8 @@ export const modifyAccess: GristEndpoints['orgs.modifyAccess'] = async (
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
 	const response = await makeGristRequest(`/orgs/${orgIdStr}/access`, ctx.key, {
 		method: 'PATCH',
-		body: { users: parsedInput.users },
-		baseUrl: ctx.options?.baseUrl,
+		body: { delta: { users: parsedInput.users } },
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['orgs.modifyAccess'].parse(response);
@@ -124,7 +124,7 @@ export const getUsage: GristEndpoints['orgs.getUsage'] = async (ctx, input) => {
 	const orgIdStr = encodeURIComponent(String(parsedInput.orgId));
 	const response = await makeGristRequest(`/orgs/${orgIdStr}/usage`, ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['orgs.getUsage'].parse(response);
 	await logEventFromContext(

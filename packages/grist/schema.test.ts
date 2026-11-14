@@ -145,9 +145,17 @@ describe('Grist endpoint input and output schemas', () => {
 				docId: 'doc123',
 				tableId: 'People',
 				limit: 10,
-				cellFormat: 'raw',
+				cellFormat: 'typed',
 			}).success,
 		).toBe(true);
+		// Grist documents cellFormat as normal | typed; 'raw' is not a value it accepts
+		expect(
+			RecordsListInputSchema.safeParse({
+				docId: 'doc123',
+				tableId: 'People',
+				cellFormat: 'raw',
+			}).success,
+		).toBe(false);
 
 		expect(
 			RecordsAddInputSchema.safeParse({

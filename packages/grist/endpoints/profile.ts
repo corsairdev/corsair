@@ -1,13 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const get: GristEndpoints['profile.get'] = async (ctx, input) => {
 	GristEndpointInputSchemas['profile.get'].parse(input);
 	const response = await makeGristRequest('/profile/user', ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['profile.get'].parse(response);
 	await logEventFromContext(
@@ -28,7 +28,7 @@ export const updateName: GristEndpoints['profile.updateName'] = async (
 	const response = await makeGristRequest('/profile/user/name', ctx.key, {
 		method: 'POST',
 		body: { name: parsedInput.name },
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['profile.updateName'].parse(response);
@@ -45,7 +45,7 @@ export const updateLocale: GristEndpoints['profile.updateLocale'] = async (
 	const response = await makeGristRequest('/profile/user/locale', ctx.key, {
 		method: 'POST',
 		body: { locale: parsedInput.locale },
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['profile.updateLocale'].parse(response);
@@ -60,7 +60,7 @@ export const getApiKey: GristEndpoints['profile.getApiKey'] = async (
 	GristEndpointInputSchemas['profile.getApiKey'].parse(input);
 	const response = await makeGristRequest('/profile/apikey', ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['profile.getApiKey'].parse(response);
@@ -73,10 +73,12 @@ export const createApiKey: GristEndpoints['profile.createApiKey'] = async (
 	ctx,
 	input,
 ) => {
-	GristEndpointInputSchemas['profile.createApiKey'].parse(input);
+	const parsedInput =
+		GristEndpointInputSchemas['profile.createApiKey'].parse(input);
 	const response = await makeGristRequest('/profile/apikey', ctx.key, {
 		method: 'POST',
-		baseUrl: ctx.options?.baseUrl,
+		body: parsedInput.force !== undefined ? { force: parsedInput.force } : {},
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['profile.createApiKey'].parse(response);
@@ -92,7 +94,7 @@ export const deleteApiKey: GristEndpoints['profile.deleteApiKey'] = async (
 	GristEndpointInputSchemas['profile.deleteApiKey'].parse(input);
 	const response = await makeGristRequest('/profile/apikey', ctx.key, {
 		method: 'DELETE',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['profile.deleteApiKey'].parse(response);

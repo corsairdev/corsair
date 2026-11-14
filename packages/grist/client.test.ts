@@ -47,10 +47,43 @@ beforeEach(() => {
 });
 
 describe('normalizeGristBaseUrl', () => {
-	it('returns default URL when undefined or empty', () => {
-		expect(normalizeGristBaseUrl()).toBe(DEFAULT_GRIST_API_BASE);
-		expect(normalizeGristBaseUrl('')).toBe(DEFAULT_GRIST_API_BASE);
-		expect(normalizeGristBaseUrl('   ')).toBe(DEFAULT_GRIST_API_BASE);
+	it('throws when the URL is missing or empty', () => {
+		expect(() => normalizeGristBaseUrl(undefined)).toThrow('required');
+		expect(() => normalizeGristBaseUrl('')).toThrow('required');
+		expect(() => normalizeGristBaseUrl('   ')).toThrow('required');
+	});
+
+	it('rejects URLs that could send the key somewhere unexpected', () => {
+		expect(() => normalizeGristBaseUrl('http://docs.getgrist.com')).toThrow(
+			'https',
+		);
+		expect(() => normalizeGristBaseUrl('docs.getgrist.com')).toThrow(
+			'absolute',
+		);
+		expect(() =>
+			normalizeGristBaseUrl('https://user:pass@docs.getgrist.com'),
+		).toThrow('credentials');
+		expect(() =>
+			normalizeGristBaseUrl(
+				'https://docs.getgrist.com/api?x=https://evil.test',
+			),
+		).toThrow('query');
+		expect(() =>
+			normalizeGristBaseUrl('https://docs.getgrist.com#@evil.test'),
+		).toThrow('fragment');
+		expect(() => normalizeGristBaseUrl('javascript:alert(1)')).toThrow('https');
+	});
+
+	it('keeps a path prefix and rebuilds the URL from the parsed host', () => {
+		expect(normalizeGristBaseUrl('https://docs.getgrist.com/o/myteam')).toBe(
+			'https://docs.getgrist.com/o/myteam/api',
+		);
+		expect(normalizeGristBaseUrl('https://grist.example.com/x/../grist/')).toBe(
+			'https://grist.example.com/grist/api',
+		);
+		expect(normalizeGristBaseUrl(DEFAULT_GRIST_API_BASE)).toBe(
+			DEFAULT_GRIST_API_BASE,
+		);
 	});
 
 	it('trims trailing slashes', () => {
@@ -125,6 +158,7 @@ describe('makeGristRequest', () => {
 		await makeGristRequest('/docs', 'my-api-key', {
 			method: 'POST',
 			body: { documentName: 'Test' },
+			baseUrl: 'https://docs.getgrist.com',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -152,6 +186,21 @@ describe('makeGristRequest', () => {
 
 		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
 			BASE: 'https://myteam.getgrist.com/api',
+		});
+	});
+
+	it('keeps a DELETE body (user deletion needs a name confirmation)', async () => {
+		mockRequest.mockResolvedValue(undefined);
+
+		await makeGristRequest('/users/5', 'my-api-key', {
+			method: 'DELETE',
+			body: { name: 'Jane Doe' },
+			baseUrl: 'https://docs.getgrist.com',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'DELETE',
+			body: { name: 'Jane Doe' },
 		});
 	});
 
@@ -190,6 +239,7 @@ describe('makeGristRequest', () => {
 		// unknown because rejection value has no static type; assertions narrow it
 		const caught = await makeGristRequest('/orgs', 'my-secret-token', {
 			method: 'GET',
+			baseUrl: 'https://docs.getgrist.com',
 		}).catch((err: unknown) => err);
 
 		// Preserves exact ApiError instance and prototype
@@ -226,6 +276,7 @@ describe('makeGristRequest', () => {
 		// unknown because rejection value has no static type; assertions narrow it
 		const caught = await makeGristRequest('/orgs', 'test-key-999', {
 			method: 'GET',
+			baseUrl: 'https://docs.getgrist.com',
 		}).catch((err: unknown) => err);
 
 		expect(caught).toBeInstanceOf(GristAPIError);

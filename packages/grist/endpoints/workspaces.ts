@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['workspaces.list'] = async (ctx, input) => {
@@ -11,7 +11,7 @@ export const list: GristEndpoints['workspaces.list'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['workspaces.list'].parse(response);
@@ -37,7 +37,7 @@ export const create: GristEndpoints['workspaces.create'] = async (
 		{
 			method: 'POST',
 			body: { name: parsedInput.name },
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -56,7 +56,7 @@ export const get: GristEndpoints['workspaces.get'] = async (ctx, input) => {
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
 	const response = await makeGristRequest(`/workspaces/${wsIdStr}`, ctx.key, {
 		method: 'GET',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['workspaces.get'].parse(response);
 	await logEventFromContext(
@@ -78,7 +78,7 @@ export const update: GristEndpoints['workspaces.update'] = async (
 	const response = await makeGristRequest(`/workspaces/${wsIdStr}`, ctx.key, {
 		method: 'PATCH',
 		body: { name: parsedInput.name },
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['workspaces.update'].parse(response);
@@ -100,7 +100,7 @@ export const deleteWorkspace: GristEndpoints['workspaces.delete'] = async (
 	const wsIdStr = encodeURIComponent(String(parsedInput.workspaceId));
 	const response = await makeGristRequest(`/workspaces/${wsIdStr}`, ctx.key, {
 		method: 'DELETE',
-		baseUrl: ctx.options?.baseUrl,
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed =
 		GristEndpointOutputSchemas['workspaces.delete'].parse(response);
@@ -125,7 +125,7 @@ export const remove: GristEndpoints['workspaces.remove'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -151,7 +151,7 @@ export const unremove: GristEndpoints['workspaces.unremove'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -177,7 +177,7 @@ export const listAccess: GristEndpoints['workspaces.listAccess'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -204,12 +204,14 @@ export const modifyAccess: GristEndpoints['workspaces.modifyAccess'] = async (
 		{
 			method: 'PATCH',
 			body: {
-				...(parsedInput.maxInheritedRole
-					? { maxInheritedRole: parsedInput.maxInheritedRole }
-					: {}),
-				users: parsedInput.users,
+				delta: {
+					...(parsedInput.maxInheritedRole
+						? { maxInheritedRole: parsedInput.maxInheritedRole }
+						: {}),
+					users: parsedInput.users,
+				},
 			},
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =

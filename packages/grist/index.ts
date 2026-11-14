@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { resolveGristBaseUrl } from './client';
 import {
 	Attachments,
 	Columns,
@@ -52,10 +53,15 @@ export type GristPluginOptions = {
 
 export type GristContext = CorsairPluginContext<
 	typeof GristSchema,
-	GristPluginOptions
+	GristPluginOptions,
+	undefined,
+	typeof gristAuthConfig
 >;
 
-export type GristKeyBuilderContext = KeyBuilderContext<GristPluginOptions>;
+export type GristKeyBuilderContext = KeyBuilderContext<
+	GristPluginOptions,
+	typeof gristAuthConfig
+>;
 
 export type GristBoundEndpoints = BindEndpoints<typeof gristEndpointsNested>;
 
@@ -732,8 +738,9 @@ const gristEndpointMeta = {
 		description: 'Get the current user API key',
 	},
 	'profile.createApiKey': {
-		riskLevel: 'write',
-		description: 'Create or regenerate user API key',
+		riskLevel: 'destructive',
+		description:
+			'Create a user API key; with force: true it replaces the current key, which stops working',
 	},
 	'profile.deleteApiKey': {
 		riskLevel: 'destructive',
@@ -761,8 +768,9 @@ const gristEndpointMeta = {
 		description: 'Delete a service account',
 	},
 	'serviceAccounts.regenerateApiKey': {
-		riskLevel: 'write',
-		description: 'Generate a new API key for a service account',
+		riskLevel: 'destructive',
+		description:
+			'Generate a new API key for a service account; the previous key stops working',
 	},
 	'serviceAccounts.deleteApiKey': {
 		riskLevel: 'destructive',
@@ -813,7 +821,10 @@ const gristEndpointMeta = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const gristAuthConfig = {
-	api_key: {},
+	api_key: {
+		// the Grist site the key belongs to: https://docs.getgrist.com, https://<team>.getgrist.com or a self-hosted URL
+		account: ['base_url'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseGristPlugin<T extends GristPluginOptions> = CorsairPlugin<
@@ -822,7 +833,8 @@ export type BaseGristPlugin<T extends GristPluginOptions> = CorsairPlugin<
 	typeof gristEndpointsNested,
 	Record<string, never>,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof gristAuthConfig
 >;
 
 export type InternalGristPlugin = BaseGristPlugin<GristPluginOptions>;
@@ -859,11 +871,15 @@ export function grist<const T extends GristPluginOptions>(
 		},
 		keyBuilder: async (ctx: GristKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
-			if (options.apiKey) return options.apiKey;
-			if (options.key) return options.key;
-			if (!ctx.keys) throw new AuthMissingError('grist', 'api_key');
-			const apiKey = await ctx.keys.get_api_key();
+			const apiKey =
+				options.apiKey ||
+				options.key ||
+				(ctx.keys ? await ctx.keys.get_api_key() : null);
 			if (!apiKey) throw new AuthMissingError('grist', 'api_key');
+			// A key without its Grist site can't be sent anywhere: throws AuthMissingError
+			// (so Corsair offers a connect link) when neither options.baseUrl nor the
+			// account's base_url is set, and rejects a non-https URL.
+			await resolveGristBaseUrl({ options, keys: ctx.keys });
 			return apiKey;
 		},
 	} satisfies InternalGristPlugin;

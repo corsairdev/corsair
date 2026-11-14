@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['attachments.list'] = async (ctx, input) => {
@@ -12,7 +12,17 @@ export const list: GristEndpoints['attachments.list'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			query:
+				parsedInput.filter !== undefined ||
+				parsedInput.sort !== undefined ||
+				parsedInput.limit !== undefined
+					? {
+							filter: parsedInput.filter,
+							sort: parsedInput.sort,
+							limit: parsedInput.limit,
+						}
+					: undefined,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['attachments.list'].parse(response);
@@ -34,7 +44,7 @@ export const get: GristEndpoints['attachments.get'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['attachments.get'].parse(response);
@@ -60,10 +70,10 @@ export const removeUnused: GristEndpoints['attachments.removeUnused'] = async (
 		{
 			method: 'POST',
 			query:
-				parsedInput.verify !== undefined
-					? { verify: parsedInput.verify }
+				parsedInput.expiredOnly !== undefined
+					? { expiredOnly: parsedInput.expiredOnly }
 					: undefined,
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -89,7 +99,7 @@ export const updateUsed: GristEndpoints['attachments.updateUsed'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -115,7 +125,7 @@ export const verifyFiles: GristEndpoints['attachments.verifyFiles'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed =
@@ -139,7 +149,7 @@ export const getTransferStatus: GristEndpoints['attachments.getTransferStatus'] 
 			ctx.key,
 			{
 				method: 'GET',
-				baseUrl: ctx.options?.baseUrl,
+				baseUrl: await resolveGristBaseUrl(ctx),
 			},
 		);
 		const parsed =

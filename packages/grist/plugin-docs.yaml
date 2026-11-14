@@ -3,7 +3,7 @@ description: Relational spreadsheet-database platform combining the flexibility 
 recommendedAuth: api_key
 overviewNote: |
   Grist API calls authenticate with an API key via the `Authorization: Bearer <api_key>` header.
-  By default requests target `https://docs.getgrist.com/api`. For team sites or self-hosted instances, configure `baseUrl` (e.g. `https://<team>.getgrist.com/api` or `https://<host>/api`).
+  Each connected account also stores `base_url`, the Grist site the key belongs to: `https://docs.getgrist.com` for a personal site, `https://<team>.getgrist.com` for a team site, or the HTTPS URL of a self-hosted instance. `/api` is added when missing. The URL must use https and may not contain credentials, a query string or a fragment. Calls fail with a connect prompt until it is set. SDK users can pass `baseUrl` in the plugin options instead.
 examples:
   read:
     path: orgs.list
@@ -137,17 +137,17 @@ apiExamples:
     call: "{ locale: 'en-US' }"
 
   serviceAccounts.create:
-    call: "{ name: 'CI Service Account' }"
+    call: "{ label: 'CI Service Account', expiresAt: '2027-01-01' }"
   serviceAccounts.get:
-    call: "{ saId: 'sa_1' }"
+    call: "{ saId: 1 }"
   serviceAccounts.update:
-    call: "{ saId: 'sa_1', name: 'Updated CI Service Account' }"
+    call: "{ saId: 1, label: 'Updated CI Service Account' }"
   serviceAccounts.delete:
-    call: "{ saId: 'sa_1' }"
+    call: "{ saId: 1 }"
   serviceAccounts.regenerateApiKey:
-    call: "{ saId: 'sa_1' }"
+    call: "{ saId: 1 }"
   serviceAccounts.deleteApiKey:
-    call: "{ saId: 'sa_1' }"
+    call: "{ saId: 1 }"
 
   templates.get:
     call: "{ templateId: 1 }"
@@ -157,7 +157,7 @@ apiExamples:
   users.enable:
     call: "{ userId: 1 }"
   users.delete:
-    call: "{ userId: 1 }"
+    call: "{ userId: 1, name: 'Jane Doe' }"
 
   session.setActive:
     call: "{ email: 'user@example.com' }"

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const disable: GristEndpoints['users.disable'] = async (ctx, input) => {
@@ -11,7 +11,7 @@ export const disable: GristEndpoints['users.disable'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['users.disable'].parse(response);
@@ -32,7 +32,7 @@ export const enable: GristEndpoints['users.enable'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['users.enable'].parse(response);
@@ -53,7 +53,9 @@ export const deleteUser: GristEndpoints['users.delete'] = async (
 	const userIdStr = encodeURIComponent(String(parsedInput.userId));
 	const response = await makeGristRequest(`/users/${userIdStr}`, ctx.key, {
 		method: 'DELETE',
-		baseUrl: ctx.options?.baseUrl,
+		// Grist refuses the deletion unless the body confirms the user's name
+		body: { name: parsedInput.name },
+		baseUrl: await resolveGristBaseUrl(ctx),
 	});
 	const parsed = GristEndpointOutputSchemas['users.delete'].parse(response);
 	await logEventFromContext(

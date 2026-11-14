@@ -4,11 +4,20 @@ import { z } from 'zod';
 export const AccessSchema = z.enum(['owners', 'editors', 'viewers']);
 export type Access = z.infer<typeof AccessSchema>;
 
+// Output side: Grist also returns 'members' and null (no direct access), and may add roles later
+const AccessOutputSchema = z
+	.union([
+		z.enum(['owners', 'editors', 'viewers', 'members', 'guests']),
+		z.string(),
+	])
+	.nullable();
+
 // Grist user representation
 export const UserSchema = z.object({
 	id: z.number(),
 	name: z.string(),
 	picture: z.string().nullable().optional(),
+	email: z.string().optional(),
 });
 export type User = z.infer<typeof UserSchema>;
 
@@ -18,7 +27,7 @@ export const OrgSchema = z.object({
 	name: z.string(),
 	domain: z.string().nullable().optional(),
 	owner: UserSchema.nullable().optional(),
-	access: AccessSchema.optional(),
+	access: AccessOutputSchema.optional(),
 	createdAt: z.string().optional(),
 	updatedAt: z.string().optional(),
 });
@@ -28,7 +37,7 @@ export type Org = z.infer<typeof OrgSchema>;
 export const WorkspaceSchema = z.object({
 	id: z.number(),
 	name: z.string(),
-	access: AccessSchema.optional(),
+	access: AccessOutputSchema.optional(),
 });
 export type Workspace = z.infer<typeof WorkspaceSchema>;
 
@@ -36,7 +45,7 @@ export type Workspace = z.infer<typeof WorkspaceSchema>;
 export const DocSchema = z.object({
 	id: z.string(),
 	name: z.string(),
-	access: AccessSchema.optional(),
+	access: AccessOutputSchema.optional(),
 	isPinned: z.boolean().optional(),
 	urlId: z.string().nullable().optional(),
 });
@@ -100,7 +109,7 @@ export const OrgsListAccessOutputSchema = z.object({
 			id: z.number(),
 			name: z.string(),
 			email: z.string().optional(),
-			access: AccessSchema.optional(),
+			access: AccessOutputSchema.optional(),
 		}),
 	),
 });
@@ -226,14 +235,14 @@ export type WorkspacesListAccessInput = z.infer<
 	typeof WorkspacesListAccessInputSchema
 >;
 export const WorkspacesListAccessOutputSchema = z.object({
-	maxInheritedRole: AccessSchema.optional(),
+	maxInheritedRole: AccessOutputSchema.optional(),
 	users: z.array(
 		z.object({
 			id: z.number(),
 			name: z.string(),
 			email: z.string().optional(),
-			access: AccessSchema.optional(),
-			parentAccess: AccessSchema.optional(),
+			access: AccessOutputSchema.optional(),
+			parentAccess: AccessOutputSchema.optional(),
 		}),
 	),
 });
@@ -379,8 +388,8 @@ export type DocsUnpinResponse = z.infer<typeof DocsUnpinOutputSchema>;
 export const DocsCopyInputSchema = z
 	.object({
 		docId: z.string().min(1),
-		workspaceId: z.number().optional(),
-		documentName: z.string().optional(),
+		workspaceId: z.number(),
+		documentName: z.string(),
 		asTemplate: z.boolean().optional(),
 	})
 	.strict();
@@ -394,7 +403,11 @@ export const DocsForkInputSchema = z
 	})
 	.strict();
 export type DocsForkInput = z.infer<typeof DocsForkInputSchema>;
-export const DocsForkOutputSchema = z.string();
+export const DocsForkOutputSchema = z.object({
+	forkId: z.string(),
+	docId: z.string(),
+	urlId: z.string(),
+});
 export type DocsForkResponse = z.infer<typeof DocsForkOutputSchema>;
 
 export const DocsListAccessInputSchema = z
@@ -404,14 +417,14 @@ export const DocsListAccessInputSchema = z
 	.strict();
 export type DocsListAccessInput = z.infer<typeof DocsListAccessInputSchema>;
 export const DocsListAccessOutputSchema = z.object({
-	maxInheritedRole: AccessSchema.optional(),
+	maxInheritedRole: AccessOutputSchema.optional(),
 	users: z.array(
 		z.object({
 			id: z.number(),
 			name: z.string(),
 			email: z.string().optional(),
-			access: AccessSchema.optional(),
-			parentAccess: AccessSchema.optional(),
+			access: AccessOutputSchema.optional(),
+			parentAccess: AccessOutputSchema.optional(),
 		}),
 	),
 });
@@ -447,8 +460,8 @@ export const DocsListSnapshotsOutputSchema = z.object({
 	snapshots: z.array(
 		z.object({
 			snapshotId: z.string(),
-			snapshotTime: z.string(),
-			docId: z.string().optional(),
+			lastModified: z.string(),
+			docId: z.string(),
 		}),
 	),
 });
@@ -558,7 +571,7 @@ export const RecordsListInputSchema = z
 		sort: z.string().optional(),
 		limit: z.number().optional(),
 		hidden: z.boolean().optional(),
-		cellFormat: z.enum(['raw', 'formatted']).optional(),
+		cellFormat: z.enum(['normal', 'typed']).optional(),
 	})
 	.strict();
 export type RecordsListInput = z.infer<typeof RecordsListInputSchema>;
@@ -631,7 +644,7 @@ export const RecordsReplaceInputSchema = z
 				// unknown because lookup criteria match user column values
 				require: z.record(z.string(), z.unknown()),
 				// unknown because update cell values are dynamic user data
-				fields: z.record(z.string(), z.unknown()),
+				fields: z.record(z.string(), z.unknown()).optional(),
 			}),
 		),
 	})
@@ -661,6 +674,8 @@ export const ColumnsListInputSchema = z
 	.object({
 		docId: z.string().min(1),
 		tableId: z.string(),
+		// include hidden columns such as manualSort
+		hidden: z.boolean().optional(),
 	})
 	.strict();
 export type ColumnsListInput = z.infer<typeof ColumnsListInputSchema>;
@@ -797,6 +812,10 @@ export type SqlQueryGetResponse = z.infer<typeof SqlQueryGetOutputSchema>;
 export const AttachmentsListInputSchema = z
 	.object({
 		docId: z.string().min(1),
+		// JSON filter, e.g. {"fileName": ["a.png"]}
+		filter: z.string().optional(),
+		sort: z.string().optional(),
+		limit: z.number().optional(),
 	})
 	.strict();
 export type AttachmentsListInput = z.infer<typeof AttachmentsListInputSchema>;
@@ -839,7 +858,8 @@ export type AttachmentsGetResponse = z.infer<typeof AttachmentsGetOutputSchema>;
 export const AttachmentsRemoveUnusedInputSchema = z
 	.object({
 		docId: z.string().min(1),
-		verify: z.boolean().optional(),
+		// only remove unused attachments that have passed their retention period
+		expiredOnly: z.boolean().optional(),
 	})
 	.strict();
 export type AttachmentsRemoveUnusedInput = z.infer<
@@ -942,7 +962,12 @@ export type ProfileGetApiKeyResponse = z.infer<
 	typeof ProfileGetApiKeyOutputSchema
 >;
 
-export const ProfileCreateApiKeyInputSchema = z.object({}).strict();
+export const ProfileCreateApiKeyInputSchema = z
+	.object({
+		// replace the current key if one already exists (the old key stops working)
+		force: z.boolean().optional(),
+	})
+	.strict();
 export type ProfileCreateApiKeyInput = z.infer<
 	typeof ProfileCreateApiKeyInputSchema
 >;
@@ -965,35 +990,41 @@ export type ProfileDeleteApiKeyResponse = z.infer<
 // Service Accounts
 // ==========================================
 
+// Service account as GET /service-accounts returns it (grist-core ApiServer)
+const ServiceAccountSchema = z.object({
+	id: z.number(),
+	login: z.string(),
+	label: z.string().nullable().optional(),
+	description: z.string().nullable().optional(),
+	expiresAt: z.string().nullable().optional(),
+	hasValidKey: z.boolean().optional(),
+});
+// Create and key regeneration also return the new key, once
+const ServiceAccountWithKeySchema = ServiceAccountSchema.extend({
+	key: z.string(),
+});
+
 export const ServiceAccountsListInputSchema = z.object({}).strict();
 export type ServiceAccountsListInput = z.infer<
 	typeof ServiceAccountsListInputSchema
 >;
-export const ServiceAccountsListOutputSchema = z.array(
-	z.object({
-		id: z.string(),
-		name: z.string(),
-		email: z.string().optional(),
-	}),
-);
+export const ServiceAccountsListOutputSchema = z.array(ServiceAccountSchema);
 export type ServiceAccountsListResponse = z.infer<
 	typeof ServiceAccountsListOutputSchema
 >;
 
 export const ServiceAccountsCreateInputSchema = z
 	.object({
-		name: z.string(),
 		label: z.string().optional(),
+		description: z.string().optional(),
+		// ISO date the service account and its key expire, e.g. 2027-01-01
+		expiresAt: z.string(),
 	})
 	.strict();
 export type ServiceAccountsCreateInput = z.infer<
 	typeof ServiceAccountsCreateInputSchema
 >;
-export const ServiceAccountsCreateOutputSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	apiKey: z.string().optional(),
-});
+export const ServiceAccountsCreateOutputSchema = ServiceAccountWithKeySchema;
 export type ServiceAccountsCreateResponse = z.infer<
 	typeof ServiceAccountsCreateOutputSchema
 >;
@@ -1006,11 +1037,7 @@ export const ServiceAccountsGetInputSchema = z
 export type ServiceAccountsGetInput = z.infer<
 	typeof ServiceAccountsGetInputSchema
 >;
-export const ServiceAccountsGetOutputSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	email: z.string().optional(),
-});
+export const ServiceAccountsGetOutputSchema = ServiceAccountSchema;
 export type ServiceAccountsGetResponse = z.infer<
 	typeof ServiceAccountsGetOutputSchema
 >;
@@ -1018,8 +1045,9 @@ export type ServiceAccountsGetResponse = z.infer<
 export const ServiceAccountsUpdateInputSchema = z
 	.object({
 		saId: z.union([z.string(), z.number()]),
-		name: z.string().optional(),
 		label: z.string().optional(),
+		description: z.string().optional(),
+		expiresAt: z.string().optional(),
 	})
 	.strict();
 export type ServiceAccountsUpdateInput = z.infer<
@@ -1053,7 +1081,8 @@ export const ServiceAccountsRegenerateApiKeyInputSchema = z
 export type ServiceAccountsRegenerateApiKeyInput = z.infer<
 	typeof ServiceAccountsRegenerateApiKeyInputSchema
 >;
-export const ServiceAccountsRegenerateApiKeyOutputSchema = z.string();
+export const ServiceAccountsRegenerateApiKeyOutputSchema =
+	ServiceAccountWithKeySchema;
 export type ServiceAccountsRegenerateApiKeyResponse = z.infer<
 	typeof ServiceAccountsRegenerateApiKeyOutputSchema
 >;
@@ -1078,7 +1107,9 @@ export type ServiceAccountsDeleteApiKeyResponse = z.infer<
 
 export const TemplatesListInputSchema = z.object({}).strict();
 export type TemplatesListInput = z.infer<typeof TemplatesListInputSchema>;
-export const TemplatesListOutputSchema = z.array(WorkspaceSchema.passthrough());
+export const TemplatesListOutputSchema = z.array(
+	WorkspaceWithDocsSchema.extend({ orgDomain: z.string().optional() }),
+);
 export type TemplatesListResponse = z.infer<typeof TemplatesListOutputSchema>;
 
 export const TemplatesGetInputSchema = z
@@ -1087,7 +1118,9 @@ export const TemplatesGetInputSchema = z
 	})
 	.strict();
 export type TemplatesGetInput = z.infer<typeof TemplatesGetInputSchema>;
-export const TemplatesGetOutputSchema = DocSchema.passthrough();
+export const TemplatesGetOutputSchema = DocSchema.extend({
+	workspace: WorkspaceSchema.extend({ org: OrgSchema.optional() }).optional(),
+});
 export type TemplatesGetResponse = z.infer<typeof TemplatesGetOutputSchema>;
 
 export const WidgetsListInputSchema = z.object({}).strict();
@@ -1130,6 +1163,8 @@ export type UsersEnableResponse = z.infer<typeof UsersEnableOutputSchema>;
 export const UsersDeleteInputSchema = z
 	.object({
 		userId: z.union([z.string(), z.number()]),
+		// the user's current name, which Grist requires to confirm the deletion
+		name: z.string(),
 	})
 	.strict();
 export type UsersDeleteInput = z.infer<typeof UsersDeleteInputSchema>;

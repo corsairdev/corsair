@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GristEndpoints } from '..';
-import { makeGristRequest } from '../client';
+import { makeGristRequest, resolveGristBaseUrl } from '../client';
 import { GristEndpointInputSchemas, GristEndpointOutputSchemas } from './types';
 
 export const list: GristEndpoints['records.list'] = async (ctx, input) => {
@@ -21,7 +21,7 @@ export const list: GristEndpoints['records.list'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query: Object.keys(query).length > 0 ? query : undefined,
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['records.list'].parse(response);
@@ -52,7 +52,7 @@ export const add: GristEndpoints['records.add'] = async (ctx, input) => {
 			method: 'POST',
 			body: { records: parsedInput.records },
 			query: Object.keys(query).length > 0 ? query : undefined,
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['records.add'].parse(response);
@@ -83,7 +83,7 @@ export const update: GristEndpoints['records.update'] = async (ctx, input) => {
 			method: 'PATCH',
 			body: { records: parsedInput.records },
 			query: Object.keys(query).length > 0 ? query : undefined,
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['records.update'].parse(response);
@@ -122,7 +122,7 @@ export const replace: GristEndpoints['records.replace'] = async (
 			method: 'PUT',
 			body: { records: parsedInput.records },
 			query: Object.keys(query).length > 0 ? query : undefined,
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['records.replace'].parse(response);
@@ -152,7 +152,7 @@ export const deleteRecords: GristEndpoints['records.delete'] = async (
 		{
 			method: 'POST',
 			body: parsedInput.recordIds,
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveGristBaseUrl(ctx),
 		},
 	);
 	const parsed = GristEndpointOutputSchemas['records.delete'].parse(response);
