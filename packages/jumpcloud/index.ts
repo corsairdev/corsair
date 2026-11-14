@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { JumpCloudRegion } from './client';
 import { jumpCloudEndpointsNested } from './endpoints';
 import type {
 	JumpCloudEndpointInputs,
@@ -28,18 +29,47 @@ import { JumpCloudSchema } from './schema';
 export type JumpCloudPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * The region the organization is hosted in: `us` (console.jumpcloud.com),
+	 * `eu` (console.eu.jumpcloud.com) or `in` (console.in.jumpcloud.com). An API
+	 * key only works on its own region's host. Overrides the `region` stored
+	 * with the connected account; without either, requests go to `us`.
+	 */
+	region?: JumpCloudRegion;
+	/**
+	 * The organization ID a multi-tenant (MSP) administrator acts on, sent as
+	 * the `x-org-id` header. Overrides the `org_id` stored with the connected
+	 * account; single-organization keys leave both unset.
+	 */
+	orgId?: string;
 	hooks?: InternalJumpCloudPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof jumpCloudEndpointsNested>;
 };
 
+/**
+ * `region` and `org_id` are stored with the connected account next to the key.
+ * Declaring them generates `ctx.keys.get_region()` and `ctx.keys.get_org_id()`,
+ * which the client reads when the plugin options leave them unset. Both are
+ * optional: no region means `us`, no organization ID means no `x-org-id`.
+ */
+export const jumpCloudAuthConfig = {
+	api_key: {
+		account: ['region', 'org_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type JumpCloudContext = CorsairPluginContext<
 	typeof JumpCloudSchema,
-	JumpCloudPluginOptions
+	JumpCloudPluginOptions,
+	undefined,
+	typeof jumpCloudAuthConfig
 >;
 
-export type JumpCloudKeyBuilderContext =
-	KeyBuilderContext<JumpCloudPluginOptions>;
+export type JumpCloudKeyBuilderContext = KeyBuilderContext<
+	JumpCloudPluginOptions,
+	typeof jumpCloudAuthConfig
+>;
 
 export type JumpCloudBoundEndpoints = BindEndpoints<
 	typeof jumpCloudEndpointsNested
@@ -503,12 +533,6 @@ export const jumpCloudEndpointMeta = {
 	typeof jumpCloudEndpointsNested
 >;
 
-export const jumpCloudAuthConfig = {
-	api_key: {
-		account: [] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
 export type BaseJumpCloudPlugin<T extends JumpCloudPluginOptions> =
 	CorsairPlugin<
 		'jumpcloud',
@@ -516,7 +540,8 @@ export type BaseJumpCloudPlugin<T extends JumpCloudPluginOptions> =
 		typeof jumpCloudEndpointsNested,
 		Record<string, never>,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof jumpCloudAuthConfig
 	>;
 
 export type InternalJumpCloudPlugin =

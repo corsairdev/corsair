@@ -15,7 +15,7 @@ export const organizationsList: JumpCloudEndpoints['organizations.list'] =
 		const requestPath = '/organizations';
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['organizations.list']
-		>(ctx.key, 1, 'GET', requestPath, {
+		>(ctx, 1, 'GET', requestPath, {
 			query: {
 				fields: parsed.fields,
 				filter: parsed.filter,
@@ -46,7 +46,7 @@ export const organizationsGet: JumpCloudEndpoints['organizations.get'] = async (
 	const requestPath = `/organizations/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['organizations.get']
-	>(ctx.key, 1, 'GET', requestPath, {
+	>(ctx, 1, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			filter: parsed.filter,

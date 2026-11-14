@@ -50,20 +50,25 @@ pnpm add @corsair-dev/jumpcloud
 | `userGroups.update` | `jumpcloud.api.userGroups.update` | `write` | Update a JumpCloud user group |
 | `users.create` | `jumpcloud.api.users.create` | `write` | Create a JumpCloud system user |
 | `users.delete` | `jumpcloud.api.users.delete` | `destructive` | Delete a JumpCloud system user |
-| `users.enforceMfa` | `jumpcloud.api.users.enforceMfa` | `write` | Enforce MFA on a system user |
-| `users.expirePassword` | `jumpcloud.api.users.expirePassword` | `write` | Expire a system user password |
+| `users.enforceMfa` | `jumpcloud.api.users.enforceMfa` | `destructive` | Update a system user's MFA requirement; an unenrolled user is locked out of MFA-protected resources once any exclusion ends |
+| `users.expirePassword` | `jumpcloud.api.users.expirePassword` | `destructive` | Expire a system user's password so they must reset it at next login |
 | `users.get` | `jumpcloud.api.users.get` | `read` | Get a JumpCloud system user by ID |
 | `users.list` | `jumpcloud.api.users.list` | `read` | List JumpCloud system users with limit/skip pagination |
 | `users.listSshKeys` | `jumpcloud.api.users.listSshKeys` | `read` | List SSH keys of a system user |
-| `users.resetMfa` | `jumpcloud.api.users.resetMfa` | `write` | Reset a system user MFA |
-| `users.setPassword` | `jumpcloud.api.users.setPassword` | `write` | Set a system user password |
+| `users.resetMfa` | `jumpcloud.api.users.resetMfa` | `destructive` | Reset a system user's MFA (TOTP key) and start a new enrollment period |
+| `users.setPassword` | `jumpcloud.api.users.setPassword` | `destructive` | Force-set a system user's password, replacing the current one |
 | `users.syncMfa` | `jumpcloud.api.users.syncMfa` | `write` | Sync system user MFA |
 | `users.unlock` | `jumpcloud.api.users.unlock` | `write` | Unlock a locked system user |
 | `users.update` | `jumpcloud.api.users.update` | `write` | Update a JumpCloud system user |
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: API key (an administrator's key from **My API Key** in the JumpCloud console). Corsair prompts your tenant for credentials on first use.
+
+Two optional settings are stored with the connected account, or passed as plugin options:
+
+- `region` (option `region`): `us` (default, console.jumpcloud.com), `eu` (console.eu.jumpcloud.com) or `in` (console.in.jumpcloud.com). A key only works in its organization's region.
+- `org_id` (option `orgId`): for multi-tenant (MSP) administrators, the organization each call acts on, sent as the `x-org-id` header. Leave it unset for a single-organization key.
 
 ## Webhooks
 

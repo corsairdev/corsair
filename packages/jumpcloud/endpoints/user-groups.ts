@@ -16,7 +16,7 @@ export const userGroupsList: JumpCloudEndpoints['userGroups.list'] = async (
 	const requestPath = '/usergroups';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['userGroups.list']
-	>(ctx.key, 2, 'GET', requestPath, {
+	>(ctx, 2, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			filter: parsed.filter,
@@ -45,7 +45,7 @@ export const userGroupsCreate: JumpCloudEndpoints['userGroups.create'] = async (
 	const requestPath = '/usergroups';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['userGroups.create']
-	>(ctx.key, 2, 'POST', requestPath, {
+	>(ctx, 2, 'POST', requestPath, {
 		body: parsed.body,
 	});
 	const output =
@@ -67,7 +67,7 @@ export const userGroupsGet: JumpCloudEndpoints['userGroups.get'] = async (
 	const requestPath = `/usergroups/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['userGroups.get']
-	>(ctx.key, 2, 'GET', requestPath, {});
+	>(ctx, 2, 'GET', requestPath, {});
 	const output = JumpCloudEndpointOutputSchemas['userGroups.get'].parse(result);
 	await logEventFromContext(
 		ctx,
@@ -87,7 +87,7 @@ export const userGroupsUpdate: JumpCloudEndpoints['userGroups.update'] = async (
 	const requestPath = `/usergroups/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['userGroups.update']
-	>(ctx.key, 2, 'PUT', requestPath, {
+	>(ctx, 2, 'PUT', requestPath, {
 		body: parsed.body,
 	});
 	const output =
@@ -110,7 +110,7 @@ export const userGroupsDelete: JumpCloudEndpoints['userGroups.delete'] = async (
 	const requestPath = `/usergroups/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['userGroups.delete']
-	>(ctx.key, 2, 'DELETE', requestPath, {});
+	>(ctx, 2, 'DELETE', requestPath, {});
 	const output =
 		JumpCloudEndpointOutputSchemas['userGroups.delete'].parse(result);
 	await logEventFromContext(
@@ -129,7 +129,7 @@ export const userGroupsListMembers: JumpCloudEndpoints['userGroups.listMembers']
 		const requestPath = `/usergroups/${encodeURIComponent(parsed.group_id)}/members`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['userGroups.listMembers']
-		>(ctx.key, 2, 'GET', requestPath, {
+		>(ctx, 2, 'GET', requestPath, {
 			query: {
 				limit: parsed.limit,
 				skip: parsed.skip,
@@ -153,7 +153,7 @@ export const userGroupsManageMembers: JumpCloudEndpoints['userGroups.manageMembe
 		const requestPath = `/usergroups/${encodeURIComponent(parsed.group_id)}/members`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['userGroups.manageMembers']
-		>(ctx.key, 2, 'POST', requestPath, {
+		>(ctx, 2, 'POST', requestPath, {
 			body: parsed.body,
 		});
 		const output =
@@ -174,7 +174,7 @@ export const userGroupsListMembership: JumpCloudEndpoints['userGroups.listMember
 		const requestPath = `/usergroups/${encodeURIComponent(parsed.group_id)}/membership`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['userGroups.listMembership']
-		>(ctx.key, 2, 'GET', requestPath, {
+		>(ctx, 2, 'GET', requestPath, {
 			query: {
 				filter: parsed.filter,
 				limit: parsed.limit,

@@ -16,7 +16,7 @@ export const usersList: JumpCloudEndpoints['users.list'] = async (
 	const requestPath = '/systemusers';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.list']
-	>(ctx.key, 1, 'GET', requestPath, {
+	>(ctx, 1, 'GET', requestPath, {
 		query: {
 			limit: parsed.limit,
 			skip: parsed.skip,
@@ -44,7 +44,7 @@ export const usersCreate: JumpCloudEndpoints['users.create'] = async (
 	const requestPath = '/systemusers';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.create']
-	>(ctx.key, 1, 'POST', requestPath, {
+	>(ctx, 1, 'POST', requestPath, {
 		query: {
 			fullValidationDetails: parsed.fullValidationDetails,
 		},
@@ -65,7 +65,7 @@ export const usersGet: JumpCloudEndpoints['users.get'] = async (ctx, input) => {
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.get']
-	>(ctx.key, 1, 'GET', requestPath, {
+	>(ctx, 1, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			filter: parsed.filter,
@@ -89,7 +89,7 @@ export const usersUpdate: JumpCloudEndpoints['users.update'] = async (
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.update']
-	>(ctx.key, 1, 'PUT', requestPath, {
+	>(ctx, 1, 'PUT', requestPath, {
 		query: {
 			fullValidationDetails: parsed.fullValidationDetails,
 		},
@@ -113,7 +113,7 @@ export const usersDelete: JumpCloudEndpoints['users.delete'] = async (
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.delete']
-	>(ctx.key, 1, 'DELETE', requestPath, {
+	>(ctx, 1, 'DELETE', requestPath, {
 		query: {
 			cascade_manager: parsed.cascade_manager,
 		},
@@ -137,7 +137,7 @@ export const usersSetPassword: JumpCloudEndpoints['users.setPassword'] = async (
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}/password`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.setPassword']
-	>(ctx.key, 1, 'POST', requestPath, {
+	>(ctx, 1, 'POST', requestPath, {
 		body: parsed.body,
 	});
 	const output =
@@ -159,7 +159,7 @@ export const usersUnlock: JumpCloudEndpoints['users.unlock'] = async (
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}/unlock`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.unlock']
-	>(ctx.key, 1, 'POST', requestPath, {});
+	>(ctx, 1, 'POST', requestPath, {});
 	const output = JumpCloudEndpointOutputSchemas['users.unlock'].parse(result);
 	await logEventFromContext(
 		ctx,
@@ -177,7 +177,7 @@ export const usersExpirePassword: JumpCloudEndpoints['users.expirePassword'] =
 		const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}/expire`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['users.expirePassword']
-		>(ctx.key, 1, 'POST', requestPath, {});
+		>(ctx, 1, 'POST', requestPath, {});
 		const output =
 			JumpCloudEndpointOutputSchemas['users.expirePassword'].parse(result);
 		await logEventFromContext(
@@ -197,7 +197,7 @@ export const usersResetMfa: JumpCloudEndpoints['users.resetMfa'] = async (
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}/resetmfa`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.resetMfa']
-	>(ctx.key, 1, 'POST', requestPath, {
+	>(ctx, 1, 'POST', requestPath, {
 		body: parsed.body,
 	});
 	const output = JumpCloudEndpointOutputSchemas['users.resetMfa'].parse(result);
@@ -218,7 +218,7 @@ export const usersEnforceMfa: JumpCloudEndpoints['users.enforceMfa'] = async (
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}/mfa/enforce`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.enforceMfa']
-	>(ctx.key, 1, 'POST', requestPath, {
+	>(ctx, 1, 'POST', requestPath, {
 		body: parsed.body,
 	});
 	const output =
@@ -240,7 +240,7 @@ export const usersSyncMfa: JumpCloudEndpoints['users.syncMfa'] = async (
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}/mfasync`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.syncMfa']
-	>(ctx.key, 1, 'POST', requestPath, {});
+	>(ctx, 1, 'POST', requestPath, {});
 	const output = JumpCloudEndpointOutputSchemas['users.syncMfa'].parse(result);
 	await logEventFromContext(
 		ctx,
@@ -260,7 +260,7 @@ export const usersListSshKeys: JumpCloudEndpoints['users.listSshKeys'] = async (
 	const requestPath = `/systemusers/${encodeURIComponent(parsed.id)}/sshkeys`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['users.listSshKeys']
-	>(ctx.key, 1, 'GET', requestPath, {});
+	>(ctx, 1, 'GET', requestPath, {});
 	const output =
 		JumpCloudEndpointOutputSchemas['users.listSshKeys'].parse(result);
 	await logEventFromContext(

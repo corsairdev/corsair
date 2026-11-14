@@ -15,7 +15,7 @@ export const searchSystemUsers: JumpCloudEndpoints['search.systemUsers'] =
 		const requestPath = '/search/systemusers';
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['search.systemUsers']
-		>(ctx.key, 1, 'POST', requestPath, {
+		>(ctx, 1, 'POST', requestPath, {
 			query: {
 				fields: parsed.fields,
 				filter: parsed.filter,
@@ -43,7 +43,7 @@ export const searchSystems: JumpCloudEndpoints['search.systems'] = async (
 	const requestPath = '/search/systems';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['search.systems']
-	>(ctx.key, 1, 'POST', requestPath, {
+	>(ctx, 1, 'POST', requestPath, {
 		query: {
 			fields: parsed.fields,
 			limit: parsed.limit,

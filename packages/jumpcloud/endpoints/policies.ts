@@ -16,7 +16,7 @@ export const policiesList: JumpCloudEndpoints['policies.list'] = async (
 	const requestPath = '/policies';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['policies.list']
-	>(ctx.key, 2, 'GET', requestPath, {
+	>(ctx, 2, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			filter: parsed.filter,
@@ -43,7 +43,7 @@ export const policiesCreate: JumpCloudEndpoints['policies.create'] = async (
 	const requestPath = '/policies';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['policies.create']
-	>(ctx.key, 2, 'POST', requestPath, {
+	>(ctx, 2, 'POST', requestPath, {
 		body: parsed.body,
 	});
 	const output =
@@ -65,7 +65,7 @@ export const policiesGet: JumpCloudEndpoints['policies.get'] = async (
 	const requestPath = `/policies/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['policies.get']
-	>(ctx.key, 2, 'GET', requestPath, {});
+	>(ctx, 2, 'GET', requestPath, {});
 	const output = JumpCloudEndpointOutputSchemas['policies.get'].parse(result);
 	await logEventFromContext(
 		ctx,
@@ -84,7 +84,7 @@ export const policiesUpdate: JumpCloudEndpoints['policies.update'] = async (
 	const requestPath = `/policies/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['policies.update']
-	>(ctx.key, 2, 'PUT', requestPath, {
+	>(ctx, 2, 'PUT', requestPath, {
 		body: parsed.body,
 	});
 	const output =
@@ -106,7 +106,7 @@ export const policiesDelete: JumpCloudEndpoints['policies.delete'] = async (
 	const requestPath = `/policies/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['policies.delete']
-	>(ctx.key, 2, 'DELETE', requestPath, {});
+	>(ctx, 2, 'DELETE', requestPath, {});
 	const output =
 		JumpCloudEndpointOutputSchemas['policies.delete'].parse(result);
 	await logEventFromContext(
@@ -125,7 +125,7 @@ export const policiesListStatuses: JumpCloudEndpoints['policies.listStatuses'] =
 		const requestPath = `/policies/${encodeURIComponent(parsed.policy_id)}/policystatuses`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['policies.listStatuses']
-		>(ctx.key, 2, 'GET', requestPath, {
+		>(ctx, 2, 'GET', requestPath, {
 			query: {
 				fields: parsed.fields,
 				filter: parsed.filter,

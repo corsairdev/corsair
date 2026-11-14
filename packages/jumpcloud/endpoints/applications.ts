@@ -17,7 +17,7 @@ export const applicationsList: JumpCloudEndpoints['applications.list'] = async (
 	const requestPath = '/applications';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['applications.list']
-	>(ctx.key, 1, 'GET', requestPath, {
+	>(ctx, 1, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			limit: parsed.limit,
@@ -45,7 +45,7 @@ export const applicationsGet: JumpCloudEndpoints['applications.get'] = async (
 	const requestPath = `/applications/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['applications.get']
-	>(ctx.key, 1, 'GET', requestPath, {});
+	>(ctx, 1, 'GET', requestPath, {});
 	const output =
 		JumpCloudEndpointOutputSchemas['applications.get'].parse(result);
 	await logEventFromContext(

@@ -16,7 +16,7 @@ export const commandsList: JumpCloudEndpoints['commands.list'] = async (
 	const requestPath = '/commands';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['commands.list']
-	>(ctx.key, 1, 'GET', requestPath, {
+	>(ctx, 1, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			filter: parsed.filter,
@@ -43,7 +43,7 @@ export const commandsCreate: JumpCloudEndpoints['commands.create'] = async (
 	const requestPath = '/commands';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['commands.create']
-	>(ctx.key, 1, 'POST', requestPath, {
+	>(ctx, 1, 'POST', requestPath, {
 		body: parsed.body,
 	});
 	const output =
@@ -65,7 +65,7 @@ export const commandsGet: JumpCloudEndpoints['commands.get'] = async (
 	const requestPath = `/commands/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['commands.get']
-	>(ctx.key, 1, 'GET', requestPath, {
+	>(ctx, 1, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 		},
@@ -88,7 +88,7 @@ export const commandsRun: JumpCloudEndpoints['commands.run'] = async (
 	const requestPath = '/runCommand';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['commands.run']
-	>(ctx.key, 1, 'POST', requestPath, {
+	>(ctx, 1, 'POST', requestPath, {
 		body: parsed.body,
 	});
 	const output = JumpCloudEndpointOutputSchemas['commands.run'].parse(result);

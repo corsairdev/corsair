@@ -17,7 +17,7 @@ export const systemGroupsList: JumpCloudEndpoints['systemGroups.list'] = async (
 	const requestPath = '/systemgroups';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['systemGroups.list']
-	>(ctx.key, 2, 'GET', requestPath, {
+	>(ctx, 2, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			filter: parsed.filter,
@@ -44,7 +44,7 @@ export const systemGroupsCreate: JumpCloudEndpoints['systemGroups.create'] =
 		const requestPath = '/systemgroups';
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['systemGroups.create']
-		>(ctx.key, 2, 'POST', requestPath, {
+		>(ctx, 2, 'POST', requestPath, {
 			body: parsed.body,
 		});
 		const output =
@@ -66,7 +66,7 @@ export const systemGroupsGet: JumpCloudEndpoints['systemGroups.get'] = async (
 	const requestPath = `/systemgroups/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['systemGroups.get']
-	>(ctx.key, 2, 'GET', requestPath, {});
+	>(ctx, 2, 'GET', requestPath, {});
 	const output =
 		JumpCloudEndpointOutputSchemas['systemGroups.get'].parse(result);
 	await logEventFromContext(
@@ -85,7 +85,7 @@ export const systemGroupsUpdate: JumpCloudEndpoints['systemGroups.update'] =
 		const requestPath = `/systemgroups/${encodeURIComponent(parsed.id)}`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['systemGroups.update']
-		>(ctx.key, 2, 'PUT', requestPath, {
+		>(ctx, 2, 'PUT', requestPath, {
 			body: parsed.body,
 		});
 		const output =
@@ -106,7 +106,7 @@ export const systemGroupsDelete: JumpCloudEndpoints['systemGroups.delete'] =
 		const requestPath = `/systemgroups/${encodeURIComponent(parsed.id)}`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['systemGroups.delete']
-		>(ctx.key, 2, 'DELETE', requestPath, {});
+		>(ctx, 2, 'DELETE', requestPath, {});
 		const output =
 			JumpCloudEndpointOutputSchemas['systemGroups.delete'].parse(result);
 		await logEventFromContext(
@@ -125,7 +125,7 @@ export const systemGroupsManageMembers: JumpCloudEndpoints['systemGroups.manageM
 		const requestPath = `/systemgroups/${encodeURIComponent(parsed.group_id)}/members`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['systemGroups.manageMembers']
-		>(ctx.key, 2, 'POST', requestPath, {
+		>(ctx, 2, 'POST', requestPath, {
 			body: parsed.body,
 		});
 		const output =

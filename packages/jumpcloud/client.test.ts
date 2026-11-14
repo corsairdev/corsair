@@ -250,3 +250,137 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 		}
 	});
 });
+
+describe('region and multi-tenant organization (account fields)', () => {
+	const ORG = '5f0c1b2a3d4e5f6a7b8c9d0e';
+
+	it('sends an EU-region organization to console.eu.jumpcloud.com', async () => {
+		fetchMock.mockImplementationOnce(() => Promise.resolve(jsonResponse({})));
+		await makeJumpCloudRequest(
+			{ key: 'jc-key', keys: { get_region: async () => 'eu' } },
+			2,
+			'GET',
+			'/usergroups',
+		);
+		expect(String(fetchMock.mock.calls[0]![0])).toBe(
+			'https://console.eu.jumpcloud.com/api/v2/usergroups',
+		);
+	});
+
+	it('reads a pasted console host as its region and lets the option win', async () => {
+		fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({})));
+		await makeJumpCloudRequest(
+			{
+				key: 'jc-key',
+				keys: { get_region: async () => 'https://console.in.jumpcloud.com/' },
+			},
+			1,
+			'GET',
+			'/systemusers',
+		);
+		await makeJumpCloudRequest(
+			{
+				key: 'jc-key',
+				options: { region: 'us' },
+				keys: { get_region: async () => 'eu' },
+			},
+			1,
+			'GET',
+			'/systemusers',
+		);
+		expect(String(fetchMock.mock.calls[0]![0])).toBe(
+			'https://console.in.jumpcloud.com/api/systemusers',
+		);
+		expect(String(fetchMock.mock.calls[1]![0])).toBe(
+			'https://console.jumpcloud.com/api/systemusers',
+		);
+	});
+
+	it('rejects an unknown region before any request, so input never picks the host', async () => {
+		await expect(
+			makeJumpCloudRequest(
+				{ key: 'jc-key', keys: { get_region: async () => 'evil.example.com' } },
+				1,
+				'GET',
+				'/systemusers',
+			),
+		).rejects.toThrow('Unsupported JumpCloud region');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('falls back to the US host when the tenant has no stored account yet', async () => {
+		fetchMock.mockImplementationOnce(() => Promise.resolve(jsonResponse({})));
+		await makeJumpCloudRequest(
+			{
+				key: 'jc-key',
+				keys: {
+					get_region: async () => {
+						throw new Error('No DEK found for account');
+					},
+				},
+			},
+			1,
+			'GET',
+			'/systemusers',
+		);
+		expect(String(fetchMock.mock.calls[0]![0])).toBe(
+			'https://console.jumpcloud.com/api/systemusers',
+		);
+	});
+
+	it('sends the stored org_id as x-org-id and omits the header without one', async () => {
+		fetchMock.mockImplementation(() => Promise.resolve(jsonResponse({})));
+		await makeJumpCloudRequest(
+			{ key: 'jc-key', keys: { get_org_id: async () => ORG } },
+			1,
+			'GET',
+			'/systemusers',
+		);
+		await makeJumpCloudRequest({ key: 'jc-key' }, 1, 'GET', '/systemusers');
+		expect(fetchMock.mock.calls[0]![1]?.headers).toMatchObject({
+			'x-org-id': ORG,
+		});
+		expect(fetchMock.mock.calls[1]![1]?.headers).not.toHaveProperty('x-org-id');
+	});
+
+	it('rejects an organization ID that is not a 24-character hex ID', async () => {
+		await expect(
+			makeJumpCloudRequest(
+				{ key: 'jc-key', options: { orgId: 'abc\r\nx-evil: 1' } },
+				1,
+				'GET',
+				'/systemusers',
+			),
+		).rejects.toThrow('24-character hex ID');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('response bodies', () => {
+	it('cancels an unread error body before throwing', async () => {
+		const response = new Response('{"message":"Bad Request"}', {
+			status: 400,
+			headers: { 'content-type': 'application/json' },
+		});
+		const cancel = jest.spyOn(response.body!, 'cancel');
+		fetchMock.mockImplementationOnce(() => Promise.resolve(response));
+		await expect(
+			makeJumpCloudRequest('jc-key', 1, 'POST', '/systemusers/u1/unlock'),
+		).rejects.toMatchObject({ status: 400 });
+		expect(cancel).toHaveBeenCalled();
+	});
+
+	it('returns a text/plain body as a string (unlock, resetmfa and mfasync answer "OK")', async () => {
+		fetchMock.mockImplementationOnce(() =>
+			Promise.resolve(
+				new Response('OK', {
+					status: 200,
+					headers: { 'content-type': 'text/plain; charset=utf-8' },
+				}),
+			),
+		);
+		await expect(
+			makeJumpCloudRequest('jc-key', 1, 'POST', '/systemusers/u1/unlock'),
+		).resolves.toBe('OK');
+	});
+});

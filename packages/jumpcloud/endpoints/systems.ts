@@ -16,7 +16,7 @@ export const systemsList: JumpCloudEndpoints['systems.list'] = async (
 	const requestPath = '/systems';
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['systems.list']
-	>(ctx.key, 1, 'GET', requestPath, {
+	>(ctx, 1, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			limit: parsed.limit,
@@ -44,7 +44,7 @@ export const systemsGet: JumpCloudEndpoints['systems.get'] = async (
 	const requestPath = `/systems/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['systems.get']
-	>(ctx.key, 1, 'GET', requestPath, {
+	>(ctx, 1, 'GET', requestPath, {
 		query: {
 			fields: parsed.fields,
 			filter: parsed.filter,
@@ -68,7 +68,7 @@ export const systemsDelete: JumpCloudEndpoints['systems.delete'] = async (
 	const requestPath = `/systems/${encodeURIComponent(parsed.id)}`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['systems.delete']
-	>(ctx.key, 1, 'DELETE', requestPath, {});
+	>(ctx, 1, 'DELETE', requestPath, {});
 	const output = JumpCloudEndpointOutputSchemas['systems.delete'].parse(result);
 	await logEventFromContext(
 		ctx,
@@ -88,7 +88,7 @@ export const systemsListUsers: JumpCloudEndpoints['systems.listUsers'] = async (
 	const requestPath = `/systems/${encodeURIComponent(parsed.system_id)}/users`;
 	const result = await makeJumpCloudRequest<
 		JumpCloudEndpointOutputs['systems.listUsers']
-	>(ctx.key, 2, 'GET', requestPath, {
+	>(ctx, 2, 'GET', requestPath, {
 		query: {
 			limit: parsed.limit,
 			skip: parsed.skip,
@@ -113,7 +113,7 @@ export const systemsListPolicyStatuses: JumpCloudEndpoints['systems.listPolicySt
 		const requestPath = `/systems/${encodeURIComponent(parsed.system_id)}/policystatuses`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['systems.listPolicyStatuses']
-		>(ctx.key, 2, 'GET', requestPath, {
+		>(ctx, 2, 'GET', requestPath, {
 			query: {
 				fields: parsed.fields,
 				filter: parsed.filter,
@@ -142,7 +142,7 @@ export const systemsListAssociations: JumpCloudEndpoints['systems.listAssociatio
 		const requestPath = `/systems/${encodeURIComponent(parsed.system_id)}/associations`;
 		const result = await makeJumpCloudRequest<
 			JumpCloudEndpointOutputs['systems.listAssociations']
-		>(ctx.key, 2, 'GET', requestPath, {
+		>(ctx, 2, 'GET', requestPath, {
 			query: {
 				targets: parsed.targets,
 				limit: parsed.limit,
