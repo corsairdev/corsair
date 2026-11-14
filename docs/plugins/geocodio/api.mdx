@@ -60,10 +60,11 @@ The route accepts `driving`, `haversine` and `straightline`; only `driving` retu
 {
   query?: string,
   location?: number[],
-  id?: string,
+  id?: string | null,
   distance_miles?: number,
   distance_km?: number,
-  duration_seconds?: number
+  duration_seconds?: number | null,
+  geocode?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -91,8 +92,8 @@ await corsair.geocodio.api.distance.matrix({ origins: ['38.886665,-77.094733'], 
 |------|------|----------|-------------|
 | `origins` | `string[]` | Yes | The starting addresses or `lat,lng` pairs, one row each |
 | `destinations` | `string[]` | Yes | The addresses or `lat,lng` pairs, one column each |
-| `calculation_type` | `matrix \| one-to-one` | No | `matrix` measures every origin against every destination; `one-to-one` pairs each origin with one destination |
-| `mode` | `driving \| straightline` | No | `driving` follows roads and gives a duration; `straightline` is the as-the-crow-flies distance |
+| `calculation_type` | `matrix \| pairs` | No | `matrix` measures every origin against every destination; `pairs` pairs each origin with the destination at the same position |
+| `mode` | `driving \| haversine \| straightline` | No | `driving` follows roads and gives a duration; `haversine` and `straightline` are the as-the-crow-flies distance |
 | `units` | `miles \| km` | No | Which distance figure to order and filter by |
 | `max_results` | `number` | No | Caps the cells returned |
 | `max_distance` | `number` | No | Drops cells farther than this |
@@ -101,9 +102,8 @@ await corsair.geocodio.api.distance.matrix({ origins: ['38.886665,-77.094733'], 
 | `min_duration` | `number` | No | Drops cells faster than this |
 | `order_by` | `distance \| duration` | No | Which figure to sort by |
 | `sort_order` | `asc \| desc` | No | Sort direction |
-| `country` | `string` | No | Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed |
 
-`calculation_type: one-to-one` pairs each origin with one destination instead of crossing them.
+`calculation_type: pairs` pairs each origin with the destination at the same position instead of crossing them.
 
 
 
@@ -124,10 +124,11 @@ await corsair.geocodio.api.distance.matrix({ origins: ['38.886665,-77.094733'], 
   destinations: {
     query?: string,
     location?: number[],
-    id?: string,
+    id?: string | null,
     distance_miles?: number,
     distance_km?: number,
-    duration_seconds?: number
+    duration_seconds?: number | null,
+    geocode?: Record<string, any>
   }[]
 }[]
 ```
@@ -161,7 +162,7 @@ await corsair.geocodio.api.geocode.batch({ addresses: ['1109 N Highland St, Arli
 | `country` | `string` | No | Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed |
 | `enterprise` | `boolean` | No | Uses the enterprise host |
 
-Up to 10,000 addresses in one POST, answered in order.
+Up to 10,000 addresses in one POST, answered in order as `{ query, response: { results } }` entries.
 
 
 
@@ -177,44 +178,51 @@ Up to 10,000 addresses in one POST, answered in order.
 
 ```ts
 {
-  stable_address_key?: string,
-  address_components: {
-    number?: string,
-    predirectional?: string,
-    street?: string,
-    suffix?: string,
-    postdirectional?: string,
-    unit_type?: string,
-    unit_number?: string,
-    formatted_street?: string,
-    city?: string,
-    county?: string,
-    state_province?: string,
-    postal_code?: string,
-    country?: string,
-    nation?: string,
-    building_name?: string,
-    sublocality?: string
-  },
-  address_lines?: string[],
-  formatted_address: string,
-  location: {
-    lat: number,
-    lng: number
-  },
-  accuracy: number,
-  accuracy_type: string,
-  match_type?: string | null,
-  source?: string,
-  fields?: Record<string, any>,
-  destinations?: {
-    query?: string,
-    location?: number[],
-    id?: string,
-    distance_miles?: number,
-    distance_km?: number,
-    duration_seconds?: number
-  }[]
+  query: string,
+  response: {
+    results: {
+      stable_address_key?: string | null,
+      address_components: {
+        number?: string,
+        predirectional?: string,
+        street?: string,
+        suffix?: string,
+        postdirectional?: string,
+        unit_type?: string,
+        unit_number?: string,
+        formatted_street?: string,
+        city?: string,
+        county?: string,
+        state_province?: string,
+        postal_code?: string,
+        country?: string,
+        nation?: string,
+        building_name?: string,
+        sublocality?: string
+      },
+      address_lines?: string[],
+      formatted_address: string,
+      location: {
+        lat: number,
+        lng: number
+      },
+      accuracy: number,
+      accuracy_type: string,
+      match_type?: string | null,
+      source?: string,
+      fields?: Record<string, any>,
+      destinations?: {
+        query?: string,
+        location?: number[],
+        id?: string | null,
+        distance_miles?: number,
+        distance_km?: number,
+        duration_seconds?: number | null,
+        geocode?: Record<string, any>
+      }[]
+    }[],
+    _warnings?: string[]
+  }
 }[]
 ```
 </Accordion>
@@ -259,44 +267,51 @@ await corsair.geocodio.api.geocode.batchReverse({ coordinates: ['38.886665,-77.0
 
 ```ts
 {
-  stable_address_key?: string,
-  address_components: {
-    number?: string,
-    predirectional?: string,
-    street?: string,
-    suffix?: string,
-    postdirectional?: string,
-    unit_type?: string,
-    unit_number?: string,
-    formatted_street?: string,
-    city?: string,
-    county?: string,
-    state_province?: string,
-    postal_code?: string,
-    country?: string,
-    nation?: string,
-    building_name?: string,
-    sublocality?: string
-  },
-  address_lines?: string[],
-  formatted_address: string,
-  location: {
-    lat: number,
-    lng: number
-  },
-  accuracy: number,
-  accuracy_type: string,
-  match_type?: string | null,
-  source?: string,
-  fields?: Record<string, any>,
-  destinations?: {
-    query?: string,
-    location?: number[],
-    id?: string,
-    distance_miles?: number,
-    distance_km?: number,
-    duration_seconds?: number
-  }[]
+  query: string,
+  response: {
+    results: {
+      stable_address_key?: string | null,
+      address_components: {
+        number?: string,
+        predirectional?: string,
+        street?: string,
+        suffix?: string,
+        postdirectional?: string,
+        unit_type?: string,
+        unit_number?: string,
+        formatted_street?: string,
+        city?: string,
+        county?: string,
+        state_province?: string,
+        postal_code?: string,
+        country?: string,
+        nation?: string,
+        building_name?: string,
+        sublocality?: string
+      },
+      address_lines?: string[],
+      formatted_address: string,
+      location: {
+        lat: number,
+        lng: number
+      },
+      accuracy: number,
+      accuracy_type: string,
+      match_type?: string | null,
+      source?: string,
+      fields?: Record<string, any>,
+      destinations?: {
+        query?: string,
+        location?: number[],
+        id?: string | null,
+        distance_miles?: number,
+        distance_km?: number,
+        duration_seconds?: number | null,
+        geocode?: Record<string, any>
+      }[]
+    }[],
+    _warnings?: string[]
+  }
 }[]
 ```
 </Accordion>
@@ -350,7 +365,7 @@ Send either `q` or the components; `fields` appends data such as `timezone` unde
 
 ```ts
 {
-  stable_address_key?: string,
+  stable_address_key?: string | null,
   address_components: {
     number?: string,
     predirectional?: string,
@@ -383,10 +398,11 @@ Send either `q` or the components; `fields` appends data such as `timezone` unde
   destinations?: {
     query?: string,
     location?: number[],
-    id?: string,
+    id?: string | null,
     distance_miles?: number,
     distance_km?: number,
-    duration_seconds?: number
+    duration_seconds?: number | null,
+    geocode?: Record<string, any>
   }[]
 }[]
 ```
@@ -474,7 +490,6 @@ await corsair.geocodio.api.geocode.reverse({ q: '38.886665,-77.094733' });
 |------|------|----------|-------------|
 | `q` | `string` | Yes | A `lat,lng` pair, such as `38.886665,-77.094733` |
 | `fields` | `string[]` | No | Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name |
-| `country` | `string` | No | Restricts the lookup to one country, which sharpens a border case |
 | `enterprise` | `boolean` | No | Uses the enterprise host |
 
 
@@ -491,7 +506,7 @@ await corsair.geocodio.api.geocode.reverse({ q: '38.886665,-77.094733' });
 
 ```ts
 {
-  stable_address_key?: string,
+  stable_address_key?: string | null,
   address_components: {
     number?: string,
     predirectional?: string,
@@ -524,10 +539,11 @@ await corsair.geocodio.api.geocode.reverse({ q: '38.886665,-77.094733' });
   destinations?: {
     query?: string,
     location?: number[],
-    id?: string,
+    id?: string | null,
     distance_miles?: number,
     distance_km?: number,
-    duration_seconds?: number
+    duration_seconds?: number | null,
+    geocode?: Record<string, any>
   }[]
 }[]
 ```
@@ -549,7 +565,7 @@ Delete a distance job and its stored result
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.geocodio.api.jobs.delete({});
+await corsair.geocodio.api.jobs.delete({ identifier: 'abc123' });
 ```
 
 **Input**
@@ -564,14 +580,8 @@ await corsair.geocodio.api.jobs.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `identifier` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `status` | `string` | No | — |
-| `download_url` | `string` | No | — |
-| `expires_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-| `callback_url` | `string` | No | — |
+| `message` | `string` | No | — |
+| `_warnings` | `string[]` | No | — |
 
 
 
@@ -601,14 +611,35 @@ await corsair.geocodio.api.jobs.get({ identifier: 'abc123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `identifier` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `status` | `string` | No | — |
-| `download_url` | `string` | No | — |
-| `expires_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-| `callback_url` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  identifier: string,
+  name?: string,
+  created_at?: string,
+  origins_type?: string,
+  origins_count?: number,
+  destinations_type?: string,
+  destinations_count?: number,
+  distance_mode?: string,
+  calculation_type?: string,
+  status?: string,
+  download_url?: string | null,
+  total_calculations?: number,
+  calculations_completed?: number,
+  progress?: number,
+  status_message?: string | null,
+  time_left?: string | null,
+  is_expired?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -650,12 +681,21 @@ await corsair.geocodio.api.jobs.list({});
 {
   identifier: string,
   name?: string,
-  status?: string,
-  download_url?: string,
-  expires_at?: string,
   created_at?: string,
-  completed_at?: string,
-  callback_url?: string
+  origins_type?: string,
+  origins_count?: number,
+  destinations_type?: string,
+  destinations_count?: number,
+  distance_mode?: string,
+  calculation_type?: string,
+  status?: string,
+  download_url?: string | null,
+  total_calculations?: number,
+  calculations_completed?: number,
+  progress?: number,
+  status_message?: string | null,
+  time_left?: string | null,
+  is_expired?: boolean
 }[]
 ```
 </Accordion>
@@ -694,6 +734,7 @@ There is no upload route here, so a new spreadsheet has to be uploaded from the 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `current_page` | `number` | No | — |
+| `current_page_url` | `string \| null` | No | — |
 | `per_page` | `number` | No | — |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
@@ -709,12 +750,21 @@ There is no upload route here, so a new spreadsheet has to be uploaded from the 
 
 ```ts
 {
-  id: string,
-  status?: string,
-  file?: Record<string, any>,
+  id: number,
+  status?: {
+    state?: string,
+    progress?: number,
+    message?: string | null,
+    time_left_description?: string | null,
+    time_left_seconds?: string | number | null
+  },
+  file?: {
+    estimated_rows_count?: number | null,
+    filename?: string | null
+  },
   fields?: string[],
-  download_url?: string,
-  expires_at?: string,
+  download_url?: string | null,
+  expires_at?: string | null,
   _warnings?: string[]
 }[]
 ```
@@ -734,14 +784,14 @@ Delete an uploaded spreadsheet and its results
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.geocodio.api.lists.delete({});
+await corsair.geocodio.api.lists.delete({ id: 148 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The list ID |
+| `id` | `number \| string` | Yes | The list ID, as `lists.all` returns it |
 
 
 
@@ -749,12 +799,7 @@ await corsair.geocodio.api.lists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
-| `file` | `Record<string, any>` | No | — |
-| `fields` | `string[]` | No | — |
-| `download_url` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `success` | `boolean` | Yes | — |
 | `_warnings` | `string[]` | No | — |
 
 
@@ -770,14 +815,14 @@ Read one spreadsheet list, whose status and download URL say when its results ar
 **Risk:** `read`
 
 ```ts
-await corsair.geocodio.api.lists.get({ id: 'abc123' });
+await corsair.geocodio.api.lists.get({ id: 148 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The list ID |
+| `id` | `number \| string` | Yes | The list ID, as `lists.all` returns it |
 
 
 
@@ -785,13 +830,38 @@ await corsair.geocodio.api.lists.get({ id: 'abc123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
-| `file` | `Record<string, any>` | No | — |
+| `id` | `number` | Yes | — |
+| `status` | `object` | No | — |
+| `file` | `object` | No | — |
 | `fields` | `string[]` | No | — |
-| `download_url` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `download_url` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 | `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  state?: string,
+  progress?: number,
+  message?: string | null,
+  time_left_description?: string | null,
+  time_left_seconds?: string | number | null
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  estimated_rows_count?: number | null,
+  filename?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
