@@ -34,9 +34,9 @@ const fixture = {
 
 describe('NeverBounce single.check', () => {
 	const originalFetch = global.fetch;
-	it('classifies credit-consuming verification as destructive', () => {
+	it('classifies verification as a metered read', () => {
 		expect(neverbounce().endpointMeta?.['single.check']?.riskLevel).toBe(
-			'destructive',
+			'read',
 		);
 	});
 	afterEach(() => {
@@ -92,7 +92,7 @@ describe('NeverBounce single.check', () => {
 		expect(global.fetch).not.toHaveBeenCalled();
 	});
 
-	it('preserves 429 and Retry-After without retrying or exposing the API key', async () => {
+	it('keeps 429 and Retry-After for core and the handler, without the API key or the address', async () => {
 		const fetchMock = jest.fn().mockResolvedValue(
 			new Response(JSON.stringify({ message: 'rate limited' }), {
 				status: 429,
@@ -100,6 +100,10 @@ describe('NeverBounce single.check', () => {
 			}),
 		);
 		global.fetch = fetchMock;
+		jest.spyOn(global, 'setTimeout').mockImplementation(((fn: () => void) => {
+			fn();
+			return 0;
+		}) as unknown as typeof setTimeout);
 		const plugin = neverbounce();
 		// JavaScript may throw any value, so narrow the caught value before
 		// inspecting ApiError properties instead of assuming its type.
@@ -112,8 +116,13 @@ describe('NeverBounce single.check', () => {
 		expect(caught).toBeInstanceOf(ApiError);
 		if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
 		expect(caught.retryAfter).toBe(3000);
-		expect(JSON.stringify(caught)).not.toContain('test-key');
-		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(caught.status).toBe(429);
+		const serialized = JSON.stringify(caught) + caught.message + caught.url;
+		expect(serialized).not.toContain('test-key');
+		expect(serialized).not.toContain('user@example.com');
+		expect(serialized).not.toContain('user%40example.com');
+		// Core's request() retried the 429 itself before giving up.
+		expect(fetchMock).toHaveBeenCalledTimes(4);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(caught)).toBe(true);
 		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(caught)).toMatchObject({
 			maxRetries: 0,
@@ -138,7 +147,7 @@ describe('NeverBounce single.check', () => {
 			new Response(
 				JSON.stringify({
 					status: 'auth_failure',
-					message: 'Invalid key test-key for user@example.com',
+					message: "Invalid API key 'test-key' for user@example.com",
 				}),
 				{ status: 200, headers: { 'content-type': 'application/json' } },
 			),
@@ -148,18 +157,59 @@ describe('NeverBounce single.check', () => {
 		).rejects.toMatchObject({
 			name: 'NeverBounceAPIError',
 			status: 'auth_failure',
-			message: 'NeverBounce returned an error',
+			message:
+				"NeverBounce auth_failure: Invalid API key '[REDACTED]' for [REDACTED]",
 		});
 		expect(
 			errorHandlers.AUTH_ERROR.match(
 				new NeverBounceAPIError('auth_failure', 'Invalid key'),
 			),
 		).toBe(true);
-		expect(
-			errorHandlers.RATE_LIMIT_ERROR.match(
-				new NeverBounceAPIError('throttle_triggered', 'Slow down'),
-			),
-		).toBe(true);
+		const throttled = new NeverBounceAPIError(
+			'throttle_triggered',
+			'Slow down',
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(throttled)).toBe(false);
+		expect(errorHandlers.THROTTLE_ERROR.match(throttled)).toBe(true);
+		expect(await errorHandlers.THROTTLE_ERROR.handler()).toMatchObject({
+			maxRetries: 2,
+		});
+	});
+
+	it('lets a long verification timeout outlast the default fetch deadline', async () => {
+		const fetchMock = jest.fn().mockResolvedValue(
+			new Response(JSON.stringify({ status: 'success', result: 'unknown' }), {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
+		global.fetch = fetchMock;
+		const timeoutSpy = jest.spyOn(AbortSignal, 'timeout');
+		await neverbounce().endpoints!.single.check(ctx, {
+			email: 'user@example.com',
+			timeout: 30,
+		});
+		expect(timeoutSpy).toHaveBeenCalledWith(35_000);
+	});
+
+	it('accepts nulls where NeverBounce leaves a field empty', async () => {
+		const response = {
+			status: 'success',
+			result: 'catchall',
+			flags: ['has_dns'],
+			suggested_correction: null,
+			credits_info: { free_credits_used: 1, paid_credits_remaining: null },
+			execution_time: 120,
+		};
+		global.fetch = jest.fn().mockResolvedValue(
+			new Response(JSON.stringify(response), {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
+		await expect(
+			neverbounce().endpoints!.single.check(ctx, { email: 'user@example.com' }),
+		).resolves.toEqual(response);
 	});
 
 	it('accepts the minimal documented response and optional query defaults', async () => {
