@@ -4532,5 +4532,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/deployhq",
+    "dir": "packages/deployhq",
+    "name": "deployhq",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/keyword",
+    "dir": "packages/keyword",
+    "name": "Keyword",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
