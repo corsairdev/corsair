@@ -5,6 +5,7 @@ overviewNote: >-
   Configure your organization’s Make zone and an API token with the required scopes.
   Scenario runs and replays can trigger external actions and consume credits.
   The client does not retry failed requests automatically, including quota-related 429 responses.
+  Buildtime variables are not available on Make's free plan, which answers those calls with 403 (SC403).
 factory:
   note: Select the Make zone for your organization; for example, `eu1`.
   options:
