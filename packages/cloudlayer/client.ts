@@ -328,6 +328,28 @@ export async function makeCloudlayerRequest<T>(
 		throwIfRefused(response, method, endpoint, config.BASE);
 		return response;
 	} catch (error) {
+		if (error instanceof ApiError) {
+			// The request body and form parts hold submitted HTML, template
+			// data, page passwords and storage credentials; keep them out of
+			// the error and keep status and retry timing for core's handlers.
+			throw new ApiError(
+				{ ...error.request, body: undefined, formData: undefined },
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
+		}
 		if (error instanceof Error) {
 			throw error;
 		}

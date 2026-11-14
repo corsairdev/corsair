@@ -198,13 +198,53 @@ describe('makeCloudlayerRequest', () => {
 		const rateLimited = apiError(429, 'Too Many Requests', 3000);
 		mockedRequest.mockRejectedValue(rateLimited);
 
-		await expect(makeCloudlayerRequest('/jobs', 'unit-test-key')).rejects.toBe(
-			rateLimited,
-		);
+		await expect(
+			makeCloudlayerRequest('/jobs', 'unit-test-key'),
+		).rejects.toMatchObject({ status: 429, retryAfter: 3000 });
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimited)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited),
 		).resolves.toEqual({ maxRetries: 2, headersRetryAfterMs: 3000 });
+	});
+
+	it('drops the submitted body and form data from a transport ApiError', async () => {
+		const failed = new ApiError(
+			{
+				method: 'POST',
+				url: '/storage',
+				body: {
+					title: 'bucket',
+					accessKeyId: 'private-access-key',
+					secretAccessKey: 'private-secret-key',
+				},
+				formData: { html: '<p>private-html</p>' },
+			},
+			{
+				url: 'https://api.cloudlayer.io/v2/storage',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { statusCode: 429, message: 'Too Many Requests' },
+			},
+			'Too Many Requests',
+			{ retryAfter: 2000 },
+		);
+		mockedRequest.mockRejectedValue(failed);
+
+		const error = await makeCloudlayerRequest('/storage', 'unit-test-key', {
+			method: 'POST',
+			body: { title: 'bucket' },
+			// `unknown` because a rejection value has no static type; the
+			// assertions below narrow it to ApiError.
+		}).catch((caught: unknown) => caught);
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
+		const serialized = JSON.stringify(error);
+		expect(serialized).not.toContain('private-secret-key');
+		expect(serialized).not.toContain('private-access-key');
+		expect(serialized).not.toContain('private-html');
+		expect(error).toMatchObject({ status: 429, retryAfter: 2000 });
+		expect(error.request).toMatchObject({ method: 'POST', url: '/storage' });
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 	});
 
 	it('uses the bounded sync timeout and parses the documented v2 job response', async () => {
