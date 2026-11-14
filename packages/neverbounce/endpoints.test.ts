@@ -176,6 +176,36 @@ describe('NeverBounce single.check', () => {
 		});
 	});
 
+	it('passes on why NeverBounce refused a check, such as a spent balance', async () => {
+		// Live response (11-15) once the free credits ran out: HTTP 200, general_failure.
+		const fetchMock = jest.fn().mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					status: 'general_failure',
+					message:
+						'Insufficient credit balance. This transaction requires 1 credits. The current available credit balance is 0.',
+					execution_time: 12,
+				}),
+				{ status: 200, headers: { 'content-type': 'application/json' } },
+			),
+		);
+		global.fetch = fetchMock;
+		let caught: unknown;
+		try {
+			await neverbounce().endpoints!.single.check(ctx, {
+				email: 'user@example.com',
+			});
+		} catch (error) {
+			caught = error;
+		}
+		expect(caught).toBeInstanceOf(NeverBounceAPIError);
+		expect((caught as Error).message).toBe(
+			'NeverBounce general_failure: Insufficient credit balance. This transaction requires 1 credits. The current available credit balance is 0.',
+		);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(errorHandlers.THROTTLE_ERROR.match(caught as Error)).toBe(false);
+	});
+
 	it('lets a long verification timeout outlast the default fetch deadline', async () => {
 		const fetchMock = jest.fn().mockResolvedValue(
 			new Response(JSON.stringify({ status: 'success', result: 'unknown' }), {
