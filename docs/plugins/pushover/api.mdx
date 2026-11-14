@@ -57,7 +57,7 @@ await corsair.pushover.api.glances.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `string` | Yes | — |
+| `user` | `string` | No | User or group key; defaults to the connected account's own user key |
 | `device` | `string` | No | — |
 | `title` | `string` | No | — |
 | `text` | `string` | No | — |
@@ -446,7 +446,7 @@ await corsair.pushover.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `string` | Yes | — |
+| `user` | `string` | No | User or group key; defaults to the connected account's own user key |
 | `message` | `string` | Yes | — |
 | `device` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -488,7 +488,7 @@ await corsair.pushover.api.messages.send({});
 
 Cancel retries for an emergency notification
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pushover.api.receipts.cancel({});
@@ -519,7 +519,7 @@ await corsair.pushover.api.receipts.cancel({});
 
 Cancel emergency notification retries by tag
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pushover.api.receipts.cancelByTag({});
@@ -817,7 +817,7 @@ await corsair.pushover.api.users.validate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `string` | Yes | — |
+| `user` | `string` | No | User or group key; defaults to the connected account's own user key |
 | `device` | `string` | No | — |
 
 
@@ -834,3 +834,4 @@ await corsair.pushover.api.users.validate({});
 
 
 ---
+
