@@ -4586,5 +4586,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/gamma",
+    "dir": "packages/gamma",
+    "name": "Gamma",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/krakenio",
+    "dir": "packages/krakenio",
+    "name": "Kraken.io",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
