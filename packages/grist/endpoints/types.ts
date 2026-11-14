@@ -289,7 +289,8 @@ export type DocsCreateResponse = z.infer<typeof DocsCreateOutputSchema>;
 export const DocsCreateInWorkspaceInputSchema = z
 	.object({
 		workspaceId: z.union([z.string(), z.number()]),
-		name: z.string().optional(),
+		// Grist answers 400 "name required" without it
+		name: z.string(),
 		isPinned: z.boolean().optional(),
 	})
 	.strict();

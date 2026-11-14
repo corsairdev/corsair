@@ -374,6 +374,14 @@ describe('Docs endpoints', () => {
 		);
 	});
 
+	it('docs.createInWorkspace requires a name, as Grist does', async () => {
+		const noName = { workspaceId: 97 } as unknown as Parameters<
+			typeof Docs.createInWorkspace
+		>[1];
+		await expect(Docs.createInWorkspace(ctx, noName)).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
 	it('docs.get calls GET /docs/{docId}', async () => {
 		const mockDoc = { id: 'doc123', name: 'Budget', access: 'owners' };
 		mockedRequest.mockResolvedValue(mockDoc);
