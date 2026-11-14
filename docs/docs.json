@@ -2792,6 +2792,14 @@
                 ]
               },
               {
+                "group": "Minerstat",
+                "pages": [
+                  "plugins/minerstat/overview",
+                  "plugins/minerstat/api",
+                  "plugins/minerstat/database"
+                ]
+              },
+              {
                 "group": "MiniMax",
                 "pages": [
                   "plugins/minimax/overview",

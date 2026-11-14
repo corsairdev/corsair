@@ -1,0 +1,25 @@
+displayName: Minerstat
+description: Access mining data, hardware, pools, and profitability from Minerstat.
+domain: minerstat.com
+overviewNote: The v3 Data API requires an API key. Profitability requires the Enterprise plan. List endpoints accept limit and offset; free-plan responses are capped at 20 results. Legacy v2 operations are deprecated and excluded.
+examples:
+  read:
+    path: coins.get
+    args:
+      slug: btc
+apiExamples:
+  algorithms.get:
+    slug: sha-256
+  coins.get:
+    slug: btc
+  coins.history:
+    slug: btc
+  hardware.get:
+    slug: nvidia-geforce-rtx-4090
+  pools.get:
+    slug: f2pool
+  profitability.rank:
+    hardware: nvidia-geforce-rtx-4090
+    electricity: 0.1
+apiNotes:
+  profitability.rank: Requires the Enterprise plan. Use hardware for preset mode, or hashrate and algorithm for manual mode.
