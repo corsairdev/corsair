@@ -428,6 +428,24 @@ describe('documented request and response shapes', () => {
 		expect(result.SuggestedTemplateModel).toEqual({ name: 'name_Value' });
 	});
 
+	it('templates.validate sends the template type, layout and CSS inlining choice', async () => {
+		mockedRequest.mockResolvedValue({ AllContentIsValid: true });
+
+		await Templates.validate(ctx, {
+			HtmlBody: '<p>{{{@content}}}</p>',
+			TemplateType: 'Layout',
+			LayoutTemplate: 'base-layout',
+			InlineCssForHtmlTestRender: false,
+		});
+
+		expect(sentRequest().body).toEqual({
+			HtmlBody: '<p>{{{@content}}}</p>',
+			TemplateType: 'Layout',
+			LayoutTemplate: 'base-layout',
+			InlineCssForHtmlTestRender: false,
+		});
+	});
+
 	it('streams.list filters broadcast streams with the documented Broadcasts value', async () => {
 		mockedRequest.mockResolvedValue({ MessageStreams: [], TotalCount: 0 });
 

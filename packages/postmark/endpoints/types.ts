@@ -369,6 +369,23 @@ const TemplatesValidateInputSchema = z.object({
 		.record(z.string(), PostmarkJsonValueSchema)
 		.optional()
 		.describe('The model to render the template content against.'),
+	InlineCssForHtmlTestRender: z
+		.boolean()
+		.optional()
+		.describe(
+			'Inline style blocks into the rendered HTML test output. Postmark defaults to true.',
+		),
+	TemplateType: z
+		.enum(POSTMARK_TEMPLATE_TYPES)
+		.optional()
+		.describe(
+			'Validate as a `Standard` or a `Layout` template. Postmark defaults to `Standard`.',
+		),
+	LayoutTemplate: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('The layout alias to validate a standard template with.'),
 });
 
 export type TemplatesValidateInput = z.infer<

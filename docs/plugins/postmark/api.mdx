@@ -949,6 +949,9 @@ await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', Tes
 | `HtmlBody` | `string` | No | — |
 | `TextBody` | `string` | No | — |
 | `TestRenderModel` | `Record<string, JsonValue>` | No | The model to render the template content against. |
+| `InlineCssForHtmlTestRender` | `boolean` | No | Inline style blocks into the rendered HTML test output. Postmark defaults to true. |
+| `TemplateType` | `Standard \| Layout` | No | Validate as a `Standard` or a `Layout` template. Postmark defaults to `Standard`. |
+| `LayoutTemplate` | `string` | No | The layout alias to validate a standard template with. |
 
 
 
