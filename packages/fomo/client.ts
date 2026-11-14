@@ -33,6 +33,50 @@ const SENSITIVE_KEY_NAMES = new Set([
 	'authtoken',
 ]);
 
+// Event customer fields (types.ts). Fomo can echo them in an error reply; their values never go on an error (R8).
+const CUSTOMER_KEY_NAMES = new Set([
+	'emailaddress',
+	'firstname',
+	'ipaddress',
+	'city',
+	'province',
+	'country',
+	'customeventfieldsattributes',
+]);
+
+const EMAIL_PATTERN = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+
+function maskEmails(text: string): string {
+	return text.replace(EMAIL_PATTERN, '[email]');
+}
+
+// `unknown` because error replies are arbitrary JSON. Customer-field values are dropped and email
+// addresses in any string are masked. Inside an `errors` object the customer keys stay with their
+// messages, so `errors.email_address: ['is invalid']` still names the bad field.
+function redactCustomerData(
+	value: unknown,
+	key?: string,
+	inErrors = false,
+): unknown {
+	if (
+		key !== undefined &&
+		!inErrors &&
+		CUSTOMER_KEY_NAMES.has(normalizeKey(key))
+	) {
+		return '[REDACTED]';
+	}
+	if (typeof value === 'string') return maskEmails(value);
+	if (Array.isArray(value))
+		return value.map((item) => redactCustomerData(item));
+	if (!isRecord(value)) return value;
+	// `unknown` because the sanitized object preserves untrusted JSON values.
+	const result: Record<string, unknown> = {};
+	for (const [k, v] of Object.entries(value)) {
+		result[k] = redactCustomerData(v, k, key === 'errors');
+	}
+	return result;
+}
+
 function normalizeKey(key: string): string {
 	return key.toLowerCase().replace(/[-_]/g, '');
 }
@@ -132,9 +176,11 @@ export async function makeFomoRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const sanitizedMessage = redactMessage(error.message, apiKey);
+			const sanitizedMessage = maskEmails(redactMessage(error.message, apiKey));
 			// `unknown` because error response body contains arbitrary JSON that must be sanitized.
-			const sanitizedResponseBody: unknown = redactValue(error.body, apiKey);
+			const sanitizedResponseBody: unknown = redactCustomerData(
+				redactValue(error.body, apiKey),
+			);
 			// The sent body (event customer fields: email, name, IP) and the query (search values)
 			// stay off the error (R8); status, retryAfter and Fomo's own reply are kept.
 			const url = new URL(error.url, FOMO_API_BASE);
@@ -151,7 +197,7 @@ export async function makeFomoRequest<T>(
 					url: url.toString(),
 					ok: false,
 					status: error.status,
-					statusText: redactMessage(error.statusText, apiKey),
+					statusText: maskEmails(redactMessage(error.statusText, apiKey)),
 					body: sanitizedResponseBody,
 				},
 				sanitizedMessage,

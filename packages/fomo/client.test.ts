@@ -248,6 +248,59 @@ describe('makeFomoRequest client', () => {
 		}
 	});
 
+	it('keeps customer data that Fomo echoes in its reply off the rebuilt ApiError', async () => {
+		const failed = new ApiError(
+			{ method: 'POST', url: '/applications/me/events' },
+			{
+				url: 'https://api.fomo.com/api/v1/applications/me/events',
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable Entity',
+				body: {
+					message: 'Email jane@example.com is already queued',
+					errors: { email_address: ['is invalid'] },
+					event: {
+						email_address: 'jane@example.com',
+						first_name: 'Jane',
+						ip_address: '203.0.113.7',
+						city: 'Springfield',
+						custom_event_fields_attributes: [{ key: 'plan', value: 'gold' }],
+					},
+				},
+			},
+			'HTTP 422: Email jane@example.com is already queued',
+		);
+		mockRequest.mockRejectedValue(failed);
+
+		// `unknown` because caught rejection value has no static type before runtime assertion.
+		const caught = await makeFomoRequest('/applications/me/events', 'k', {
+			method: 'POST',
+		}).catch((e: unknown) => e);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		if (caught instanceof ApiError) {
+			const serialized = JSON.stringify({
+				body: caught.body,
+				message: caught.message,
+				stack: caught.stack,
+			});
+			for (const value of [
+				'jane',
+				'Jane',
+				'203.0.113.7',
+				'Springfield',
+				'gold',
+			]) {
+				expect(serialized).not.toContain(value);
+			}
+			// Field names in validation errors stay, so an agent knows what to fix.
+			expect(caught.body).toMatchObject({
+				errors: { email_address: ['is invalid'] },
+			});
+			expect(caught.message).toContain('[email]');
+		}
+	});
+
 	it('redactValue handles primitives, arrays, and nested structures', () => {
 		expect(redactValue(null)).toBeNull();
 		expect(redactValue('simple string')).toBe('simple string');
