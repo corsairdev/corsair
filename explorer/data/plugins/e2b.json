@@ -1,0 +1,2117 @@
+{
+  "id": "e2b",
+  "displayName": "E2B",
+  "description": "Run isolated sandboxes and manage E2B sandbox, template, volume, secret, filesystem, process, and event APIs from Corsair.",
+  "npmPackageName": "@corsair-dev/e2b",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 62,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "e2b.api.envd.getEnvironmentVariables",
+      "shortPath": "envd.getEnvironmentVariables",
+      "description": "Environment variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, e2bAccessToken: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "e2b.api.envd.health",
+      "shortPath": "envd.health",
+      "description": "Check the health of the service",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.envd.metrics",
+      "shortPath": "envd.metrics",
+      "description": "Service stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, e2bAccessToken: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cpu_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cpu_possible",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cpu_target",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cpu_target_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cpu_write_pending_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cpu_used_pct",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mem_total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mem_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mem_cache",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "disk_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "disk_total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "oom_kills",
+            "optional": true,
+            "type": "{ seq: number, process: string }[]"
+          },
+          {
+            "key": "mem_used_mib",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mem_total_mib",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.events.list",
+      "shortPath": "events.list",
+      "description": "List events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ offset?: number, limit?: number, orderAsc?: boolean, types?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, version: string, type: string, eventCategory?: string, eventLabel?: string, eventData?: {} | null, timestamp: string, sandboxId: string, sandboxExecutionId: string, sandboxTemplateId: string, sandboxBuildId: string, sandboxTeamId: string }[]"
+      }
+    },
+    {
+      "path": "e2b.api.events.listBySandbox",
+      "shortPath": "events.listBySandbox",
+      "description": "List sandbox events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ offset?: number, limit?: number, orderAsc?: boolean, types?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, version: string, type: string, eventCategory?: string, eventLabel?: string, eventData?: {} | null, timestamp: string, sandboxId: string, sandboxExecutionId: string, sandboxTemplateId: string, sandboxBuildId: string, sandboxTeamId: string }[]"
+      }
+    },
+    {
+      "path": "e2b.api.filesystem.createDir",
+      "shortPath": "filesystem.createDir",
+      "description": "MakeDir",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ path?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entry",
+            "optional": true,
+            "type": "{ name?: string, type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string, path?: string, size?: number | string, mode?: number, permissions?: string, owner?: string, group?: string, modifiedTime?: string, symlinkTarget?: string | null, metadata?: {}, isSymlink?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.filesystem.createWatcher",
+      "shortPath": "filesystem.createWatcher",
+      "description": "CreateWatcher",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ path?: string, recursive?: boolean, includeEntry?: boolean, allowNetworkMounts?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watcherId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.filesystem.getWatcherEvents",
+      "shortPath": "filesystem.getWatcherEvents",
+      "description": "GetWatcherEvents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ watcherId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ name?: string, type?: EVENT_TYPE_UNSPECIFIED | EVENT_TYPE_CREATE | EVENT_TYPE_WRITE | EVENT_TYPE_REMOVE | EVENT_TYPE_RENAME | EVENT_TYPE_CHMOD | string, entry?: { name?: string, type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string, path?: string, size?: number | string, mode?: number, permissions?: string, owner?: string, group?: string, modifiedTime?: string, symlinkTarget?: string | null, metadata?: {}, isSymlink?: boolean } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.filesystem.listDir",
+      "shortPath": "filesystem.listDir",
+      "description": "ListDir",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ path?: string, depth?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": true,
+            "type": "{ name?: string, type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string, path?: string, size?: number | string, mode?: number, permissions?: string, owner?: string, group?: string, modifiedTime?: string, symlinkTarget?: string | null, metadata?: {}, isSymlink?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.filesystem.move",
+      "shortPath": "filesystem.move",
+      "description": "Move",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ source?: string, destination?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entry",
+            "optional": true,
+            "type": "{ name?: string, type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string, path?: string, size?: number | string, mode?: number, permissions?: string, owner?: string, group?: string, modifiedTime?: string, symlinkTarget?: string | null, metadata?: {}, isSymlink?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.filesystem.remove",
+      "shortPath": "filesystem.remove",
+      "description": "Remove",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ path?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "e2b.api.filesystem.removeWatcher",
+      "shortPath": "filesystem.removeWatcher",
+      "description": "RemoveWatcher",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ watcherId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "e2b.api.filesystem.stat",
+      "shortPath": "filesystem.stat",
+      "description": "Stat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ path?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entry",
+            "optional": true,
+            "type": "{ name?: string, type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string, path?: string, size?: number | string, mode?: number, permissions?: string, owner?: string, group?: string, modifiedTime?: string, symlinkTarget?: string | null, metadata?: {}, isSymlink?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.process.closeStdin",
+      "shortPath": "process.closeStdin",
+      "description": "CloseStdin",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ process?: { pid: number } | { tag: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "e2b.api.process.list",
+      "shortPath": "process.list",
+      "description": "List",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "processes",
+            "optional": true,
+            "type": "{ config?: { cmd?: string, args?: string[], envs?: {}, cwd?: string | null }, pid?: number, tag?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.process.sendInput",
+      "shortPath": "process.sendInput",
+      "description": "SendInput",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ process?: { pid: number } | { tag: string }, input?: { pty: string } | { stdin: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "e2b.api.process.sendSignal",
+      "shortPath": "process.sendSignal",
+      "description": "SendSignal",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ process?: { pid: number } | { tag: string }, signal?: SIGNAL_UNSPECIFIED | SIGNAL_SIGTERM | SIGNAL_SIGKILL }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "e2b.api.process.update",
+      "shortPath": "process.update",
+      "description": "Update",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": false,
+            "type": "{ e2bSandboxId: string, e2bSandboxPort: number, connectTimeoutMs?: number, e2bAccessToken: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ process?: { pid: number } | { tag: string }, pty?: { size?: { cols?: number, rows?: number } } | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.connect",
+      "shortPath": "sandboxes.connect",
+      "description": "Connect sandbox (v2)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ timeout?: number, memory?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sandboxID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "envdVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "envdAccessToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trafficAccessToken",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.create",
+      "shortPath": "sandboxes.create",
+      "description": "Create sandbox (v2)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ idempotencyKey?: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ templateID: string, timeout?: number, cpuCount?: number, autoPause?: boolean, autoPauseMemory?: boolean, autoResume?: { enabled: boolean }, allow_internet_access?: boolean, network?: { allowPublicTraffic?: boolean | null, allowOut?: string[], denyOut?: string[], dnsServers?: string[], egressProxy?: { address: string, username?: string, password?: string, tls?: { enabled: boolean, serverName?: string, caCert?: string } | null } | null, maskRequestHost?: string, httpsPorts?: number[], rules?: {} }, metadata?: {}, envVars?: {}, mcp?: {} | null, iam?: { tokens?: {} }, volumeMounts?: { name: string, path: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sandboxID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "envdVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "envdAccessToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trafficAccessToken",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.createSnapshot",
+      "shortPath": "sandboxes.createSnapshot",
+      "description": "Create snapshot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ idempotencyKey?: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name?: string, memory?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshotID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "names",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.fork",
+      "shortPath": "sandboxes.fork",
+      "description": "Fork sandbox",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ timeout?: number, count?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ sandbox?: { templateID: string, sandboxID: string, alias?: string, clientID: string, envdVersion: string, envdAccessToken?: string, trafficAccessToken?: string | null, domain?: string | null }, error?: { code: number, error_code?: string, message: string } }[]"
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.get",
+      "shortPath": "sandboxes.get",
+      "description": "Get sandbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sandboxID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "envdVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "envdUnresponsiveAtPause",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "envdAccessToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowInternetAccess",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cpuCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "memoryMB",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "diskSizeMB",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "running | paused | string"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "{ allowPublicTraffic?: boolean | null, allowOut?: string[], denyOut?: string[], dnsServers?: string[], egressProxy?: { address: string, username?: string, password?: string, tls?: { enabled: boolean, serverName?: string, caCert?: string } | null } | null, maskRequestHost?: string, httpsPorts?: number[], rules?: {} }"
+          },
+          {
+            "key": "lifecycle",
+            "optional": true,
+            "type": "{ autoResume: boolean, onTimeout: kill | pause | string }"
+          },
+          {
+            "key": "pauseMode",
+            "optional": true,
+            "type": "full | filesystem | string"
+          },
+          {
+            "key": "volumeMounts",
+            "optional": true,
+            "type": "{ name: string, path: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.getLogs",
+      "shortPath": "sandboxes.getLogs",
+      "description": "Get sandbox logs (v2)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ cursor?: number, limit?: number, direction?: forward | backward, level?: string, search?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "{ timestamp: string, message: string, level: string, fields: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.getMetrics",
+      "shortPath": "sandboxes.getMetrics",
+      "description": "Get sandbox metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ start?: number, end?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ timestamp: string, timestampUnix: number, cpuCount: number, cpuUsedPct: number, memUsed: number, memTotal: number, memCache: number, diskUsed: number, diskTotal: number }[]"
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.kill",
+      "shortPath": "sandboxes.kill",
+      "description": "Delete sandbox",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.list",
+      "shortPath": "sandboxes.list",
+      "description": "List sandboxes (v2)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ metadata?: string, state?: (running | paused)[], order?: asc | desc, startedAfter?: string, template?: string, nextToken?: string, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ templateID: string, alias?: string, sandboxID: string, clientID: string, startedAt: string, endAt: string, cpuCount: number, memoryMB: number, diskSizeMB: number, metadata?: {}, state: running | paused | string, envdVersion: string, envdUnresponsiveAtPause?: boolean, volumeMounts?: { name: string, path: string }[] }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalRunning",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.listMetrics",
+      "shortPath": "sandboxes.listMetrics",
+      "description": "List sandbox metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ sandbox_ids: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxes",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.listSnapshots",
+      "shortPath": "sandboxes.listSnapshots",
+      "description": "List snapshots",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ sandboxID?: string, name?: string, limit?: number, nextToken?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ snapshotID: string, names: string[] }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.pause",
+      "shortPath": "sandboxes.pause",
+      "description": "Pause sandbox",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ memory?: boolean, requireHealthyGuest?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.refresh",
+      "shortPath": "sandboxes.refresh",
+      "description": "Refresh sandbox",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ duration?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.setTimeout",
+      "shortPath": "sandboxes.setTimeout",
+      "description": "Set sandbox timeout",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ timeout: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.sandboxes.updateNetwork",
+      "shortPath": "sandboxes.updateNetwork",
+      "description": "Update sandbox network",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ sandboxID: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ allowOut?: string[], denyOut?: string[], dnsServers?: string[], egressProxy?: { address: string, username?: string, password?: string, tls?: { enabled: boolean, serverName?: string, caCert?: string } | null } | null, rules?: {}, allow_internet_access?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.secrets.create",
+      "shortPath": "secrets.create",
+      "description": "Create secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, value: string, metadata?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secretID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currentVersion",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.secrets.delete",
+      "shortPath": "secrets.delete",
+      "description": "Delete secret",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ secretID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.secrets.get",
+      "shortPath": "secrets.get",
+      "description": "Get secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ secretID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secretID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currentVersion",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.secrets.list",
+      "shortPath": "secrets.list",
+      "description": "List secrets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ nextToken?: string, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ secretID: string, name: string, currentVersion: number, metadata: {}, createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.secrets.update",
+      "shortPath": "secrets.update",
+      "description": "Update secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ secretID: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ value: string, metadata?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secretID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currentVersion",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.tags.assign",
+      "shortPath": "tags.assign",
+      "description": "Assign tags",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ target: string, tags: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "buildID",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.tags.count",
+      "shortPath": "tags.count",
+      "description": "Count template tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete tags",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, tags: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.tags.exists",
+      "shortPath": "tags.exists",
+      "description": "Check template tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string }"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ tag: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "normalizedTag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List template tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ tag: string, buildID: string, createdAt: string }[]"
+      }
+    },
+    {
+      "path": "e2b.api.tags.listAssignments",
+      "shortPath": "tags.listAssignments",
+      "description": "List template tag assignments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string, tag: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ cursor?: string, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ assignmentId: string, buildId: string, assignedAt: string, buildCreatedAt: string, buildFinishedAt: string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.tags.listGroups",
+      "shortPath": "tags.listGroups",
+      "description": "List template tag groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ assignmentLimit?: number, tagsLimit?: number, tagsCursor?: string, search?: string, sort?: latest_desc | latest_asc | name_asc | name_desc }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ tag: string, assignments: { assignmentId: string, buildId: string, assignedAt: string, buildCreatedAt: string, buildFinishedAt: string | null }[], hasMore: boolean }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.teams.getMaxMetrics",
+      "shortPath": "teams.getMaxMetrics",
+      "description": "Get team metrics max",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ teamID: string }"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ start?: number, end?: number, metric: concurrent_sandboxes | sandbox_start_rate }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestampUnix",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.teams.getMetrics",
+      "shortPath": "teams.getMetrics",
+      "description": "Get team metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ teamID: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ start?: number, end?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ timestamp: string, timestampUnix: number, concurrentSandboxes: number, sandboxStartRate: number }[]"
+      }
+    },
+    {
+      "path": "e2b.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create template (v3)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ idempotencyKey?: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name?: string, tags?: string[], alias?: string, teamID?: string, cpuCount?: number, maxCpuCount?: number, memoryMB?: number, minFreeDiskMb?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buildID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "names",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "aliases",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ nextToken?: string, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ templateID: string, buildID: string, cpuCount: number | 0, maxCpuCount?: number, memoryMB: number | 0, diskSizeMB: number, public: boolean, aliases: string[], names: string[], createdAt: string, updatedAt: string, createdBy: { id: string, email: string | null } | null, lastSpawnedAt: string | null, spawnCount: number, buildCount: number, envdVersion: string, buildStatus: building | waiting | ready | error | uploaded | string, isDefault?: boolean, description?: string } & { builds: { buildID: string, status: building | waiting | ready | error | uploaded | string, createdAt: string, updatedAt: string, finishedAt?: string, cpuCount: number, maxCpuCount?: number, memoryMB: number, diskSizeMB?: number, envdVersion?: string }[], nextToken?: string }"
+      }
+    },
+    {
+      "path": "e2b.api.templates.getBuildLogs",
+      "shortPath": "templates.getBuildLogs",
+      "description": "Get build logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string, buildID: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ cursor?: number, limit?: number, direction?: forward | backward, level?: string, source?: temporary | persistent }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "{ timestamp: string, message: string, level: string, step?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.templates.getBuildStatus",
+      "shortPath": "templates.getBuildStatus",
+      "description": "Get build status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string, buildID: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ logsOffset?: number, limit?: number, level?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "logEntries",
+            "optional": false,
+            "type": "{ timestamp: string, message: string, level: string, step?: string }[]"
+          },
+          {
+            "key": "templateID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buildID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "building | waiting | ready | error | uploaded | string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "{ message: string, step?: string, logEntries?: { timestamp: string, message: string, level: string, step?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.templates.getBuildUploadLink",
+      "shortPath": "templates.getBuildUploadLink",
+      "description": "Get build upload link",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string, hash: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "present",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.templates.getByAlias",
+      "shortPath": "templates.getByAlias",
+      "description": "Get template by alias",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ alias: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List templates (v2)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ teamID?: string, nextToken?: string, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ templateID: string, buildID: string, cpuCount: number | 0, maxCpuCount?: number, memoryMB: number | 0, diskSizeMB: number, public: boolean, aliases: string[], names: string[], createdAt: string, updatedAt: string, createdBy: { id: string, email: string | null } | null, lastSpawnedAt: string | null, spawnCount: number, buildCount: number, envdVersion: string, buildStatus: building | waiting | ready | error | uploaded | string, isDefault?: boolean, description?: string }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.templates.listDefault",
+      "shortPath": "templates.listDefault",
+      "description": "List default templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ templateID: string, buildID: string, cpuCount: number | 0, maxCpuCount?: number, memoryMB: number | 0, diskSizeMB: number, public: boolean, aliases: string[], names: string[], createdAt: string, updatedAt: string, createdBy: { id: string, email: string | null } | null, lastSpawnedAt: string | null, spawnCount: number, buildCount: number, envdVersion: string, buildStatus: building | waiting | ready | error | uploaded | string, isDefault?: boolean, description?: string }[]"
+      }
+    },
+    {
+      "path": "e2b.api.templates.startBuild",
+      "shortPath": "templates.startBuild",
+      "description": "Start build (v2)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string, buildID: string }"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ idempotencyKey?: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ fromImage?: string, fromTemplate?: string, fromImageRegistry?: { type: aws, awsAccessKeyId: string, awsSecretAccessKey: string, awsRegion: string } | { type: gcp, serviceAccountJson: string } | { type: registry, username: string, password: string }, force?: boolean, steps?: { type: string, args?: string[], filesHash?: string, force?: boolean }[], startCmd?: string, readyCmd?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update template (v2)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ templateID: string }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ public?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "names",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.volumes.create",
+      "shortPath": "volumes.create",
+      "description": "Create team volume",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volumeID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.volumes.delete",
+      "shortPath": "volumes.delete",
+      "description": "Delete team volume",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ volumeID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "e2b.api.volumes.get",
+      "shortPath": "volumes.get",
+      "description": "Team volume",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ volumeID: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volumeID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "e2b.api.volumes.list",
+      "shortPath": "volumes.list",
+      "description": "List team volumes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ volumeID: string, name: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

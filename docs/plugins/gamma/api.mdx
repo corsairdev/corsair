@@ -1,0 +1,793 @@
+---
+title: "Gamma API reference"
+sidebarTitle: "API"
+description: "API reference for the Gamma plugin in Corsair: every `gamma.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agent
+
+### generate
+
+`agent.generate`
+
+Start a Gamma 5 agent generation from one brief, with a theme, template, quality preset and up to 10 source URLs. Spends credits
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gamma.api.agent.generate({ prompt: 'A deck about solar power for a finance audience', format: 'presentation', quality: 'standard', sourceUrls: ['https://acme.example/report'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | The brief: what to generate. The only required field. |
+| `title` | `string` | No | — |
+| `format` | `presentation \| document \| social` | No | Defaults to `presentation`. A webpage needs `generations.create`. |
+| `numCards` | `number` | No | Target cards, capped by the plan’s maximum. |
+| `themeId` | `string` | No | — |
+| `templateId` | `string` | No | An accessible workspace template. |
+| `quality` | `lite \| standard \| max` | No | A quality preset; `max` spends more credits. |
+| `additionalInstructions` | `string` | No | — |
+| `exportAs` | `pdf \| pptx \| png` | No | — |
+| `folderId` | `string` | No | — |
+| `sourceUrls` | `string[]` | No | Up to 10 pages the agent reads as source material. |
+| `disableConnectors` | `boolean` | No | Opt this run out of the workspace’s connectors. |
+| `sharingOptions` | `object` | No | — |
+
+The Gamma 5 route for a new presentation, document or social post. `prompt` is the only required field.
+
+<AccordionGroup>
+<Accordion title="sharingOptions full type">
+
+```ts
+{
+  workspaceAccess?: comment | edit | fullAccess | noAccess | view,
+  externalAccess?: comment | edit | noAccess | view,
+  emailOptions?: {
+    access?: comment | edit | fullAccess | view,
+    recipients: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generationId` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `warnings` | `object[] \| null` | No | Options Gamma ignored or could not apply. Keep them: the status read does not always repeat them. |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`agent.get`
+
+Where an agent generation stands, with the same terminal states as a Classic one
+
+**Risk:** `read`
+
+```ts
+await corsair.gamma.api.agent.get({ generationId: 'gen_agent1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generationId` | `string` | Yes | The `generationId` a create returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generationId` | `string` | Yes | — |
+| `status` | `string` | Yes | `pending` is not final; `completed` and `failed` are. |
+| `gamma` | `object \| null` | No | The generated gamma. Can appear while pending, once the document exists. |
+| `result` | `object \| null` | No | The agent’s summary of what it made, once completed. |
+| `progress` | `object \| null` | No | — |
+| `error` | `object \| null` | No | — |
+| `exportUrl` | `string \| null` | No | A download link for the export, valid for about a week. Anyone holding it can download the file, so treat it as a secret and do not log it. |
+| `warnings` | `object[] \| null` | No | — |
+| `credits` | `object \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="gamma full type">
+
+```ts
+{
+  gammaId: string,
+  gammaUrl?: string | null,
+  title?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  summary?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="progress full type">
+
+```ts
+{
+  done?: number | null,
+  total?: number | null,
+  percent?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  message?: string | null,
+  statusCode?: number | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="credits full type">
+
+```ts
+{
+  deducted?: number | null,
+  remaining?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Exports
+
+### get
+
+`exports.get`
+
+Where an export stands. `completed` carries a download URL that works for anyone holding it, for about a week
+
+**Risk:** `read`
+
+```ts
+await corsair.gamma.api.exports.get({ exportId: 'exp_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exportId` | `string` | Yes | The `exportId` the export returned. |
+
+`completed` carries a download URL valid about a week. A `png` export is a zip of one image per card.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exportId` | `string \| null` | No | — |
+| `gammaId` | `string \| null` | No | — |
+| `exportAs` | `string \| null` | No | — |
+| `status` | `string` | Yes | `pending` is not final; `completed` and `failed` are. |
+| `exportUrl` | `string \| null` | No | A download link valid about a week. Anyone holding it can download the file, so treat it as a secret and do not log it. |
+| `error` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  message?: string | null,
+  statusCode?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`exports.start`
+
+Start an export of an existing gamma to PDF, PPTX or PNG, returning an `exportId`. A PNG export is a zip of one image per card
+
+**Risk:** `write`
+
+```ts
+await corsair.gamma.api.exports.start({ gammaId: 'gam_xyz789', format: 'pptx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gammaId` | `string` | Yes | The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL. |
+| `format` | `pdf \| pptx \| png` | Yes | Sent as Gamma’s `exportAs`, which is required. A `png` export is a zip of one image per card. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exportId` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+## Folders
+
+### list
+
+`folders.list`
+
+The folders the caller can see. Some are view-only, and placing a gamma with `folderId` needs edit access
+
+**Risk:** `read`
+
+```ts
+await corsair.gamma.api.folders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Filter by name. |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | The `nextCursor` of the page before. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasMore` | `boolean \| null` | No | — |
+| `nextCursor` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Gammas
+
+### archive
+
+`gammas.archive`
+
+Archive a gamma. Idempotent, and reversible from the Gamma app, so it is not destructive
+
+**Risk:** `write`
+
+```ts
+await corsair.gamma.api.gammas.archive({ gammaId: 'gam_xyz789' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gammaId` | `string` | Yes | The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL. |
+
+Idempotent and reversible, so it is a write rather than a destructive call.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `gamma_id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`gammas.delete`
+
+Delete a gamma permanently. Needs a workspace admin role
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gamma.api.gammas.delete({ gammaId: 'gam_xyz789' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gammaId` | `string` | Yes | The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL. |
+
+Permanent, and needs a workspace admin role.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | `deleted` once Gamma removed it. |
+| `gammaId` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`gammas.get`
+
+One gamma’s title, author, folder, theme, archive state and thumbnail
+
+**Risk:** `read`
+
+```ts
+await corsair.gamma.api.gammas.get({ gammaId: 'gam_xyz789' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gammaId` | `string` | Yes | The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `type` | `string \| null` | No | `regular` or `template`. |
+| `url` | `string \| null` | No | — |
+| `thumbnailUrl` | `string \| null` | No | Usually signed and valid about a week, so re-read rather than store it. |
+| `description` | `string \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `themeId` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `folderId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  avatarUrl?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`gammas.search`
+
+Full-text search over the gammas the caller can read. Needs `q` or a filter (`createdBy`, `updatedAfter`, `updatedBefore`)
+
+**Risk:** `read`
+
+```ts
+await corsair.gamma.api.gammas.search({ q: 'quarterly review', limit: 10, includeArchived: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Full-text query over titles and body text. Optional only when `createdBy`, `updatedAfter` or `updatedBefore` is set. |
+| `createdBy` | `string` | No | Only gammas this user created: `me`, an email address or a user ID. |
+| `updatedAfter` | `string` | No | ISO 8601. |
+| `updatedBefore` | `string` | No | ISO 8601. |
+| `includeArchived` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hits` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hits full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  url?: string | null,
+  highlight?: string | null,
+  createdBy?: string | null,
+  updatedTime?: string | null,
+  archived?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Generations
+
+### create
+
+`generations.create`
+
+Start a Classic generation from text or a `pages` array, at once returning a `generationId` to poll. Spends credits. Use it for webpages and multi-page gammas; the agent route covers a single new presentation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gamma.api.generations.create({ inputText: 'Create a presentation about renewable energy', textMode: 'generate', format: 'presentation', numCards: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inputText` | `string` | No | — |
+| `pages` | `object[]` | No | A multi-page gamma. Takes precedence over the per-page fields at the top level. |
+| `format` | `presentation \| document \| social \| webpage` | No | — |
+| `textMode` | `generate \| condense \| preserve` | No | — |
+| `cardSplit` | `auto \| inputTextBreaks` | No | — |
+| `exportAs` | `pdf \| pptx \| png` | No | Export automatically once the gamma is done. A `png` export is a zip of one image per card. |
+| `title` | `string` | No | — |
+| `additionalInstructions` | `string` | No | — |
+| `publish` | `boolean` | No | Publish a multi-page gamma as a site once every page succeeds. |
+| `numCards` | `number` | No | — |
+| `themeId` | `string` | No | An `id` from `themes.list`. |
+| `textOptions` | `object` | No | — |
+| `imageOptions` | `object` | No | — |
+| `cardOptions` | `object` | No | — |
+| `sharingOptions` | `object` | No | — |
+| `folderId` | `string` | No | The folder to place the gamma in. |
+
+Takes `inputText` or a `pages` array, never both. `publish` applies only to a multi-page generation.
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  inputText: string,
+  title?: string,
+  textMode?: generate | condense | preserve,
+  format?: presentation | document | social | webpage,
+  cardSplit?: auto | inputTextBreaks,
+  additionalInstructions?: string,
+  numCards?: number,
+  path?: string,
+  textOptions?: {
+    amount?: brief | medium | detailed | extensive,
+    language?: string,
+    tone?: string,
+    audience?: string
+  },
+  imageOptions?: {
+    source?: aiGenerated | giphy | noImages | pexels | pictographic | placeholder | themeAccent | webAllImages | webFreeToUse | webFreeToUseCommercially,
+    model?: string,
+    style?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="textOptions full type">
+
+```ts
+{
+  amount?: brief | medium | detailed | extensive,
+  language?: string,
+  tone?: string,
+  audience?: string
+}
+```
+</Accordion>
+
+<Accordion title="imageOptions full type">
+
+```ts
+{
+  source?: aiGenerated | giphy | noImages | pexels | pictographic | placeholder | themeAccent | webAllImages | webFreeToUse | webFreeToUseCommercially,
+  model?: string,
+  style?: string
+}
+```
+</Accordion>
+
+<Accordion title="cardOptions full type">
+
+```ts
+{
+  dimensions?: 16x9 | 1x1 | 4x3 | 4x5 | 9x16 | a4 | fluid | letter | pageless,
+  headerFooter?: {
+    topLeft?: {
+      type: cardNumber | image | text,
+      source?: custom | themeLogo,
+      src?: string,
+      value?: string,
+      size?: sm | md | lg | xl
+    },
+    topCenter?: {
+      type: cardNumber | image | text,
+      source?: custom | themeLogo,
+      src?: string,
+      value?: string,
+      size?: sm | md | lg | xl
+    },
+    topRight?: {
+      type: cardNumber | image | text,
+      source?: custom | themeLogo,
+      src?: string,
+      value?: string,
+      size?: sm | md | lg | xl
+    },
+    bottomLeft?: {
+      type: cardNumber | image | text,
+      source?: custom | themeLogo,
+      src?: string,
+      value?: string,
+      size?: sm | md | lg | xl
+    },
+    bottomCenter?: {
+      type: cardNumber | image | text,
+      source?: custom | themeLogo,
+      src?: string,
+      value?: string,
+      size?: sm | md | lg | xl
+    },
+    bottomRight?: {
+      type: cardNumber | image | text,
+      source?: custom | themeLogo,
+      src?: string,
+      value?: string,
+      size?: sm | md | lg | xl
+    },
+    hideFromFirstCard?: boolean,
+    hideFromLastCard?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="sharingOptions full type">
+
+```ts
+{
+  workspaceAccess?: comment | edit | fullAccess | noAccess | view,
+  externalAccess?: comment | edit | noAccess | view,
+  emailOptions?: {
+    access?: comment | edit | fullAccess | view,
+    recipients: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generationId` | `string` | Yes | — |
+| `warnings` | `string \| null` | No | File-level warnings, such as an option Gamma ignored. |
+| `pageWarnings` | `(string \| null)[] \| null` | No | One entry per requested page, index-aligned with `pages`. |
+
+
+
+---
+
+### get
+
+`generations.get`
+
+Where a Classic generation stands: `pending` is not final, `completed` carries the gamma ID, URL and any export URL, `failed` carries the error
+
+**Risk:** `read`
+
+```ts
+await corsair.gamma.api.generations.get({ generationId: 'gen_abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generationId` | `string` | Yes | The `generationId` a create returned. |
+
+Poll until `status` is `completed` or `failed`. The `exportUrl` it may carry is a download link that works for anyone holding it, so it is never logged.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generationId` | `string` | Yes | — |
+| `status` | `string` | Yes | `pending` is not final; `completed` and `failed` are. |
+| `gammaId` | `string \| null` | No | Set once the generation completes. |
+| `gammaUrl` | `string \| null` | No | — |
+| `error` | `object \| null` | No | — |
+| `exportUrl` | `string \| null` | No | A download link for the export, valid for about a week. Anyone holding it can download the file, so treat it as a secret and do not log it. |
+| `credits` | `object \| null` | No | — |
+| `pages` | `object[] \| null` | No | Per-page results, only for a multi-page generation. |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  message?: string | null,
+  statusCode?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="credits full type">
+
+```ts
+{
+  deducted?: number | null,
+  remaining?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  status?: string | null,
+  gammaId?: string | null,
+  gammaUrl?: string | null,
+  error?: {
+    message?: string | null,
+    statusCode?: number | null
+  } | null,
+  exportUrl?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Themes
+
+### list
+
+`themes.list`
+
+Workspace and official themes, with the ID a generation takes
+
+**Risk:** `read`
+
+```ts
+await corsair.gamma.api.themes.list({ type: 'standard', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Filter by name. |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | The `nextCursor` of the page before. |
+| `type` | `standard \| custom` | No | `standard` for Gamma’s own themes, `custom` for the workspace’s. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasMore` | `boolean \| null` | No | — |
+| `nextCursor` | `string \| null` | Yes | The `after` for the next page; null when there is none. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
