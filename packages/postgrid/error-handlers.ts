@@ -1,8 +1,15 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PostgridAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isCredentialRejection, PostgridAPIError } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PostgridAPIError ? error.status : undefined;
+	if (error instanceof PostgridAPIError) return error.status;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof PostgridAPIError) return error.method;
+	return error instanceof ApiError ? error.request.method : undefined;
 }
 
 // PostGrid's error codes are documented as stable, so handlers match those
@@ -11,8 +18,13 @@ export const errorHandlers = {
 	// A rejected or missing key: `missing_auth_error`, `invalid_api_key_error` or
 	// `invalid_oauth_token_error`. No retry sends a different key.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof PostgridAPIError && error.credentialsRejected,
+		match: (error: Error) => {
+			if (error instanceof PostgridAPIError) return error.credentialsRejected;
+			return (
+				error instanceof ApiError &&
+				isCredentialRejection(error.status, error.body)
+			);
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Any other 401 or 403: the key exists but PostGrid refused the request, and
@@ -32,7 +44,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof PostgridAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff_jitter' as const,
 		}),
 	},
@@ -58,17 +70,14 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof PostgridAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof PostgridAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// Only reads are replayed for the same reason.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PostgridAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

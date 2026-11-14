@@ -73,9 +73,12 @@ export const cancel: PostgridEndpoints['postcardsCancel'] = (ctx, input) =>
 			output: Outputs.postcardsCancel,
 		},
 		input,
+		// Cancelling without a reason is `DELETE`, which PostGrid documents as
+		// "Cancel Postcard". The POST `.../cancellation` route requires a `note` in
+		// its body, so an id-only call cannot use it.
 		({ id }) => ({
-			method: 'POST',
-			path: `/postcards/${segment(id)}/cancellation`,
+			method: 'DELETE',
+			path: `/postcards/${segment(id)}`,
 		}),
 		{
 			log: ({ id }, result) => ({

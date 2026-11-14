@@ -1,6 +1,7 @@
 import {
 	ContactSchema,
 	ContactsCreateInputSchema,
+	LetterSchema,
 	LettersCreateInputSchema,
 	POSTGRID_MAILING_CLASSES,
 	POSTGRID_ORDER_STATUSES,
@@ -37,14 +38,29 @@ describe('documented vocabularies', () => {
 		]);
 	});
 
-	it('pins every mailing class the docs list', () => {
-		// The docs call their table exhaustive, so the schema must not drop one.
-		expect(POSTGRID_MAILING_CLASSES).toHaveLength(26);
+	it('pins every mailing class the docs list, from both pages', () => {
+		// The API reference and the Core Concepts guide each list values the other
+		// omits, so the enum is their union and must not drop either side's.
 		expect(POSTGRID_MAILING_CLASSES).toContain('usps_first_class');
 		expect(POSTGRID_MAILING_CLASSES).toContain('ca_post_lettermail');
 		expect(POSTGRID_MAILING_CLASSES).toContain('royal_mail_first_class');
 		expect(POSTGRID_MAILING_CLASSES).toContain(
 			'ups_express_3_day_adult_signature_confirmation',
+		);
+		// Only the API reference lists these.
+		expect(POSTGRID_MAILING_CLASSES).toContain('usps_eddm');
+		expect(POSTGRID_MAILING_CLASSES).toContain('usps_express_2_day');
+		expect(POSTGRID_MAILING_CLASSES).toContain('usps_first_class_registered');
+		expect(POSTGRID_MAILING_CLASSES).toContain('royal_mail_second_class');
+		expect(POSTGRID_MAILING_CLASSES).toContain('au_post_second_class');
+		expect(POSTGRID_MAILING_CLASSES).toContain('ca_post_neighbourhood_mail');
+		// Only the guide lists these.
+		expect(POSTGRID_MAILING_CLASSES).toContain('royal_mail_standard_class');
+		expect(POSTGRID_MAILING_CLASSES).toContain('au_post_regular');
+		expect(POSTGRID_MAILING_CLASSES).toContain('ca_post_xpresspost');
+		// No duplicates crept in while merging the two lists.
+		expect(new Set(POSTGRID_MAILING_CLASSES).size).toBe(
+			POSTGRID_MAILING_CLASSES.length,
 		);
 	});
 });
@@ -149,6 +165,82 @@ describe('order schemas', () => {
 				template: 'template_1',
 			}).success,
 		).toBe(false);
+	});
+
+	it('accepts perforatedPage only as the number 1, as PostGrid documents', () => {
+		expect(
+			LettersCreateInputSchema.safeParse({
+				to,
+				from,
+				html: '<b>Hi</b>',
+				perforatedPage: 1,
+			}).success,
+		).toBe(true);
+		// The API's only valid value is the page number 1, not a page id.
+		expect(
+			LettersCreateInputSchema.safeParse({
+				to,
+				from,
+				html: '<b>Hi</b>',
+				perforatedPage: 2,
+			}).success,
+		).toBe(false);
+		expect(
+			LettersCreateInputSchema.safeParse({
+				to,
+				from,
+				html: '<b>Hi</b>',
+				perforatedPage: 'page_1',
+			}).success,
+		).toBe(false);
+	});
+
+	it('parses a letter whose expanded template came back as an object', () => {
+		// `letters.get` with expand: ['template'] returns the template resource in
+		// this field instead of its id, and both forms must parse.
+		const expanded = LetterSchema.parse({
+			id: 'letter_1',
+			template: {
+				id: 'template_1',
+				object: 'template',
+				html: '<b>Hi</b>',
+			},
+		});
+		expect(expanded.template).toMatchObject({ id: 'template_1' });
+		const unexpanded = LetterSchema.parse({
+			id: 'letter_1',
+			template: 'template_1',
+		});
+		expect(unexpanded.template).toBe('template_1');
+	});
+
+	it('runs a senderless postcard, which PostGrid allows', () => {
+		const postcard = PostcardsCreateInputSchema.safeParse({
+			to,
+			size: '6x4',
+			frontHTML: '<b>F</b>',
+			backHTML: '<b>B</b>',
+		});
+		expect(postcard.success).toBe(true);
+		// A letter still needs a sender, so the two are not interchangeable.
+		expect(
+			LettersCreateInputSchema.safeParse({
+				to,
+				html: '<b>Hi</b>',
+			}).success,
+		).toBe(false);
+	});
+
+	it('keeps secret on an inline contact instead of stripping it', () => {
+		const parsed = PostcardsCreateInputSchema.parse({
+			to: { ...to, firstName: 'Axl', secret: true },
+			size: '6x4',
+			frontHTML: '<b>F</b>',
+			backHTML: '<b>B</b>',
+		});
+		// Zod strips unknown keys, so an undeclared field would vanish here and
+		// the printed card's recipient would not be hidden.
+		expect(parsed.to).toMatchObject({ secret: true });
 	});
 
 	it('requires a size on a postcard, since the stock is not inferable', () => {

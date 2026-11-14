@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { PostgridAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { postgrid } from './index';
@@ -14,20 +15,32 @@ const CONTEXT = {
 // arguments they use. Typing it as the core map is what the runtime sees.
 const HANDLERS: CorsairErrorHandler = errorHandlers;
 
+/**
+ * A core ApiError carrying PostGrid's error body, which is the shape `request()`
+ * raises and the client now passes through unchanged.
+ */
 function apiError(
 	status: number,
-	options: {
-		transport?: boolean;
-		retryAfter?: number;
-		method?: string;
-		credentialsRejected?: boolean;
-	} = {},
+	options: { type?: string; method?: 'GET' | 'POST'; retryAfter?: number } = {},
 ) {
-	return new PostgridAPIError(`PostGrid ${status}`, {
-		status,
-		method: 'GET',
-		...options,
-	});
+	const body: Record<string, unknown> = { object: 'error' };
+	if (options.type !== undefined) {
+		body.error = { type: options.type, message: 'PostGrid said so' };
+	}
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: '/contacts' },
+		{
+			url: 'https://api.postgrid.com/print-mail/v1/contacts',
+			ok: false,
+			status,
+			statusText: `PostGrid ${status}`,
+			body,
+		},
+		`PostGrid ${status}`,
+		options.retryAfter === undefined
+			? undefined
+			: { retryAfter: options.retryAfter },
+	);
 }
 
 function route(error: Error): string {
@@ -40,7 +53,7 @@ function route(error: Error): string {
 
 describe('PostGrid errorHandlers', () => {
 	it('routes a rejected key to AUTH_ERROR without a retry', async () => {
-		const error = apiError(401, { credentialsRejected: true });
+		const error = apiError(401, { type: 'invalid_api_key_error' });
 
 		expect(route(error)).toBe('AUTH_ERROR');
 		await expect(HANDLERS.AUTH_ERROR?.handler(error, CONTEXT)).resolves.toEqual(
@@ -51,8 +64,11 @@ describe('PostGrid errorHandlers', () => {
 	});
 
 	it('routes any other 401 or 403 to PERMISSION_ERROR, not to DEFAULT', async () => {
+		// A bare 401 with no code is the missing-auth case, so AUTH_ERROR takes it.
+		// These carry a code that is not a credential one, which is the refusal the
+		// PERMISSION branch exists for.
 		for (const status of [401, 403]) {
-			const error = apiError(status);
+			const error = apiError(status, { type: 'forbidden_error' });
 			expect(route(error)).toBe('PERMISSION_ERROR');
 			await expect(
 				HANDLERS.PERMISSION_ERROR?.handler(error, CONTEXT),
@@ -119,10 +135,7 @@ describe('PostGrid errorHandlers', () => {
 
 	it('replays a 5xx on a read and refuses to on an order', async () => {
 		const read = apiError(503);
-		const order = new PostgridAPIError('PostGrid 503', {
-			status: 503,
-			method: 'POST',
-		});
+		const order = apiError(503, { method: 'POST' });
 
 		expect(route(read)).toBe('SERVER_ERROR');
 		await expect(

@@ -314,7 +314,7 @@ const postgridEndpointMeta = {
 	'trackers.get': {
 		riskLevel: 'read',
 		description:
-			"Read one order's position in its lifecycle, and on live US mail the USPS intelligent-mail stage",
+			'Read one tracker: the PURL and QR-code destination an order references, with its visit counts',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof postgridEndpointsNested>;
 

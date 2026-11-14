@@ -7,9 +7,9 @@ import {
 } from './types';
 
 /**
- * Reads one order's current position in its lifecycle. The route answers the
- * order itself, so the output accepts any order's fields and reports `status`
- * plus, on live US mail, the `imbStatus` USPS stage.
+ * Reads one tracker: the PURL and QR-code destination an order references, and
+ * how many times it was followed. A tracker is not an order, so delivery status
+ * comes from the letter, postcard or self-mailer route instead.
  */
 export const get: PostgridEndpoints['trackersGet'] = (ctx, input) =>
 	call(
@@ -23,9 +23,9 @@ export const get: PostgridEndpoints['trackersGet'] = (ctx, input) =>
 		({ id }) => ({ method: 'GET', path: `/trackers/${segment(id)}` }),
 		{
 			log: ({ id }, result) => ({
-				orderId: id,
-				status: result.status ?? undefined,
-				imbStatus: result.imbStatus ?? undefined,
+				trackerId: id,
+				visitCount: result.visitCount ?? undefined,
+				uniqueVisitCount: result.uniqueVisitCount ?? undefined,
 			}),
 		},
 	);

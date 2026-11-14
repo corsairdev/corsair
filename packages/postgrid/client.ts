@@ -130,17 +130,52 @@ export function isCredentialRejection(
 	return code === undefined || CREDENTIAL_CODES.has(code);
 }
 
+/**
+ * Builds the message from the code and PostGrid's own message, and removes any
+ * copy of the submitted API key from it first. PostGrid can echo the key it was
+ * given in an invalid-key message, and this text reaches `error.message` and
+ * `error.stack`, which MCP returns to the agent. `JSON.stringify` omits both, so
+ * removing the key here is what keeps it out.
+ */
 export function describePostgridError(
 	status: number | undefined,
 	body: Untyped,
 	fallback: string,
+	apiKey?: string,
 ): string {
 	// The same code `readErrorCode` reports, so the label and the field agree
 	// for both the usual `error.type` shape and the missing-route one.
 	const code = readErrorCode(body);
-	const message = readErrorMessage(body) ?? fallback;
+	const raw = readErrorMessage(body) ?? fallback;
+	const message = apiKey ? redactSecret(raw, apiKey) : raw;
 	const label = [status, code].filter((part) => part !== undefined).join(' ');
 	return label ? `PostGrid ${label}: ${message}` : message;
+}
+
+/** Replaces every copy of a secret in a string. */
+function redactSecret(text: string, secret: string): string {
+	if (secret.length === 0) return text;
+	return text.split(secret).join('[REDACTED]');
+}
+
+/**
+ * Replaces every copy of a secret anywhere in a JSON value. PostGrid's error
+ * body can repeat the key inside `error.message`, and the body travels on the
+ * error object, so the whole body is walked rather than just its message.
+ */
+function redactSecretIn(value: Untyped, secret: string): Untyped {
+	// unknown: the error body is arbitrary JSON, walked without narrowing it.
+	if (typeof value === 'string') return redactSecret(value, secret);
+	if (Array.isArray(value)) {
+		return value.map((item: Untyped) => redactSecretIn(item, secret));
+	}
+	const record = asRecord(value);
+	if (record === undefined) return value;
+	const redacted: Record<string, Untyped> = {};
+	for (const [key, item] of Object.entries(record)) {
+		redacted[key] = redactSecretIn(item, secret);
+	}
+	return redacted;
 }
 
 /** A query value; a list is sent as the repeated `key[]` form PostGrid expects. */
@@ -232,21 +267,38 @@ export async function makePostgridRequest(
 			rateLimitConfig: POSTGRID_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
+		// Core's ApiError goes through (R8) so status, retryAfter and
+		// isRateLimitError() keep working. PostGrid can echo the submitted key in
+		// an invalid-key message, and that message lands on `error.message` and
+		// `error.stack`, so the error is rebuilt with the key removed. Everything
+		// else core set is carried over unchanged.
 		if (error instanceof ApiError) {
-			throw new PostgridAPIError(
-				describePostgridError(error.status, error.body, error.statusText),
+			throw new ApiError(
+				error.request,
 				{
+					url: error.url,
+					ok: false,
 					status: error.status,
-					code: readErrorCode(error.body),
+					statusText: error.statusText,
+					body: redactSecretIn(error.body, apiKey),
+				},
+				describePostgridError(
+					error.status,
+					error.body,
+					error.statusText,
+					apiKey,
+				),
+				{
 					retryAfter: error.retryAfter,
-					method,
-					credentialsRejected: isCredentialRejection(error.status, error.body),
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new PostgridAPIError(error.message, {
+			throw new PostgridAPIError(redactSecret(error.message, apiKey), {
 				cause: error,
 				method,
 				transport: true,

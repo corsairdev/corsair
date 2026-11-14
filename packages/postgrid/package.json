@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/postgrid",
   "version": "0.1.0",
-  "description": "Print and mail API for sending letters, postcards, self mailers and cheques, exposed by Corsair.",
+  "description": "Print and mail API for sending letters, postcards and self mailers, exposed by Corsair.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

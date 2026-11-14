@@ -1,5 +1,5 @@
 displayName: PostGrid
-description: Print and mail API for sending letters, postcards, self mailers and cheques, with contact and template management.
+description: Print and mail API for sending letters, postcards and self mailers, with contact, template and tracker management.
 domain: postgrid.com
 recommendedAuth: api_key
 overviewNote: |
@@ -55,7 +55,7 @@ apiExamples:
   letters.get:
     call: "{ id: 'letter_oNrxnVvpyKwbcHtJinF5cm', expand: ['template'] }"
   letters.create:
-    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, html: '<b>Hello</b>', color: true, doubleSided: true, size: 'us_letter', mailingClass: 'usps_first_class' }"
+    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, html: '<b>Hello</b>', color: true, doubleSided: true, size: 'us_letter', mailingClass: 'usps_first_class' }"
   letters.cancel:
     call: "{ id: 'letter_cS61RTPrSvBKVyT7kenpjn' }"
   postcards.list:
@@ -63,7 +63,7 @@ apiExamples:
   postcards.get:
     call: "{ id: 'postcard_mWZGkpb16fcdGKnZUk2WQv' }"
   postcards.create:
-    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, size: '6x4', frontHTML: '<b>Front</b>', backHTML: '<b>Back</b>' }"
+    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '6x4', frontHTML: '<b>Front</b>', backHTML: '<b>Back</b>' }"
   postcards.cancel:
     call: "{ id: 'postcard_55yTG9Hjt7mg9UtkRDRNNz' }"
   selfMailers.list:
@@ -71,6 +71,6 @@ apiExamples:
   selfMailers.get:
     call: "{ id: 'self_mailer_wx97UGTC7H3UaSfhunWLjt' }"
   selfMailers.create:
-    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, size: '8.5x11_bifold', insideHTML: '<b>Inside</b>', outsideHTML: '<b>Outside</b>' }"
+    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '8.5x11_bifold', insideHTML: '<b>Inside</b>', outsideHTML: '<b>Outside</b>' }"
   trackers.get:
-    call: "{ id: 'letter_oNrxnVvpyKwbcHtJinF5cm' }"
+    call: "{ id: 'tracker_oNrxnVvpyKwbcHtJinF5cm' }"

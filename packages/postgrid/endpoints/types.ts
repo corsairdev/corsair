@@ -31,7 +31,17 @@ export const PostgridJsonValueSchema: z.ZodType<PostgridJsonValue> = z.lazy(
 		]),
 );
 
-/** The mailing classes PostGrid documents, across its carriers. */
+/**
+ * The mailing classes PostGrid documents. The API reference and the Core
+ * Concepts guide disagree at the edges: the reference adds `usps_eddm`,
+ * `usps_express_2_day`, `usps_first_class_registered`, the two
+ * `usps_express_3_day_certified*` values, `ca_post_neighbourhood_mail`,
+ * `royal_mail_second_class` and `au_post_second_class`, while the guide adds the
+ * Canada Post expedited and Xpresspost classes, `royal_mail_standard_class`,
+ * `au_post_regular` and `ups_express_3_day_adult_signature_confirmation`. This
+ * is the union, so neither document's value is rejected before the request; a
+ * value neither accepts still fails at PostGrid, with its own message.
+ */
 export const POSTGRID_MAILING_CLASSES = [
 	'first_class',
 	'standard_class',
@@ -41,11 +51,19 @@ export const POSTGRID_MAILING_CLASSES = [
 	'registered',
 	'usps_first_class',
 	'usps_standard_class',
+	'usps_eddm',
+	'usps_express_2_day',
 	'usps_express_3_day',
 	'usps_first_class_certified',
 	'usps_first_class_certified_return_receipt',
+	'usps_first_class_registered',
+	'usps_express_3_day_signature_confirmation',
+	'usps_express_3_day_certified',
+	'usps_express_3_day_certified_return_receipt',
+	'usps_express_3_day_adult_signature_confirmation',
 	'ca_post_lettermail',
 	'ca_post_personalized',
+	'ca_post_neighbourhood_mail',
 	'ca_post_registered',
 	'ca_post_expedited_with_signature',
 	'ca_post_expedited',
@@ -53,7 +71,9 @@ export const POSTGRID_MAILING_CLASSES = [
 	'ca_post_xpresspost',
 	'royal_mail_first_class',
 	'royal_mail_standard_class',
+	'royal_mail_second_class',
 	'au_post_regular',
+	'au_post_second_class',
 	'ups_express_overnight',
 	'ups_express_2_day',
 	'ups_express_3_day',
@@ -179,6 +199,15 @@ const contactInputFields = {
 	email: z.string().min(1).optional(),
 	phoneNumber: z.string().min(1).optional(),
 	jobTitle: z.string().min(1).optional(),
+	// Documented on an inline contact: hides the contact's details from API
+	// responses and the dashboard. Omitting the field here would silently drop a
+	// caller's `secret: true` before the request was built.
+	secret: z
+		.boolean()
+		.optional()
+		.describe(
+			'Hide this contact from the dashboard and from later API responses.',
+		),
 	metadata: z.record(z.string(), PostgridJsonValueSchema).optional(),
 };
 
@@ -358,9 +387,6 @@ const orderInputFields = {
 	to: contactInput.describe(
 		'The recipient: a contact id or the address fields.',
 	),
-	from: contactInput.describe(
-		'The sender: a contact id or the address fields.',
-	),
 	sendDate: z
 		.string()
 		.min(1)
@@ -401,6 +427,9 @@ export const POSTGRID_ENVELOPE_TYPES = [
 export const LettersCreateInputSchema = z
 	.object({
 		...orderInputFields,
+		from: contactInput.describe(
+			'The sender: a contact id or the address fields.',
+		),
 		html: z
 			.string()
 			.min(1)
@@ -418,10 +447,11 @@ export const LettersCreateInputSchema = z
 		envelopeType: z.enum(POSTGRID_ENVELOPE_TYPES).optional(),
 		express: z.boolean().optional().describe('Send by express postage.'),
 		perforatedPage: z
-			.string()
-			.min(1)
+			.literal(1)
 			.optional()
-			.describe('The id of a page to perforate, for a tear-off return slip.'),
+			.describe(
+				'The page to perforate, for a tear-off return slip. PostGrid accepts only 1, the first page.',
+			),
 		returnEnvelope: z
 			.string()
 			.min(1)
@@ -447,11 +477,13 @@ export const LettersCreateInputSchema = z
 
 export type LettersCreateInput = z.infer<typeof LettersCreateInputSchema>;
 
-const LetterSchema = z
+export const LetterSchema = z
 	.object({
 		...orderOutputFields,
 		html: z.string().nullish(),
-		template: z.string().nullish(),
+		// `letters.get` with `expand: ['template']` returns the template object
+		// here instead of its id, so both forms are accepted.
+		template: z.union([z.string(), TemplateSchema]).nullish(),
 		uploadedPDF: z.string().nullish(),
 		addressPlacement: z.string().nullish(),
 		color: z.boolean().nullish(),
@@ -498,6 +530,11 @@ export const POSTGRID_POSTCARD_SIZES = ['6x4', '9x6', '11x6'] as const;
 export const PostcardsCreateInputSchema = z
 	.object({
 		...orderInputFields,
+		// PostGrid documents the postcard sender as optional, unlike a letter's.
+		// Without one the card prints with the return address area blank.
+		from: contactInput
+			.describe('The sender: a contact id or the address fields.')
+			.optional(),
 		size: z
 			.enum(POSTGRID_POSTCARD_SIZES)
 			.describe('Which postcard stock to print.'),
@@ -586,6 +623,9 @@ export const POSTGRID_SELF_MAILER_SIZES = [
 export const SelfMailersCreateInputSchema = z
 	.object({
 		...orderInputFields,
+		from: contactInput.describe(
+			'The sender: a contact id or the address fields.',
+		),
 		size: z
 			.enum(POSTGRID_SELF_MAILER_SIZES)
 			.describe('Which fold to print and finish.'),
@@ -663,25 +703,42 @@ export type SelfMailersGetInput = z.infer<typeof SelfMailersGetInputSchema>;
 
 const TrackersGetInputSchema = z.object({
 	id: IdSchema.describe(
-		'The id PostGrid gave the order, such as `letter_…` or `postcard_…`.',
+		'The `tracker_` id. A tracker is the PURL and QR-code destination used in an order, not the order itself.',
 	),
 });
 
 export type TrackersGetInput = z.infer<typeof TrackersGetInputSchema>;
 
 /**
- * The tracker route answers the order it tracks, with its `status` and, on live
- * US mail, the `imbStatus` stage, so the output accepts any order's fields.
+ * The tracker resource: where a PURL or QR code points and how often it was
+ * followed. It is not an order, so it carries no delivery status; read
+ * `letters.get`, `postcards.get` or `selfMailers.get` for that.
  */
 const TrackerOutputSchema = z
 	.object({
 		id: IdSchema.nullish(),
-		object: z.string().nullish(),
-		status: z.string().nullish(),
-		imbStatus: z.string().nullish(),
-		imbDate: z.string().nullish(),
-		imbZIPCode: z.string().nullish(),
-		sendDate: z.string().nullish(),
+		object: z.string().nullish().describe('Always `tracker`.'),
+		description: z.string().nullish(),
+		live: z.boolean().nullish(),
+		redirectURLTemplate: z
+			.string()
+			.nullish()
+			.describe('The base template for the URLs this tracker generates.'),
+		urlExpireAfterDays: z
+			.number()
+			.nullish()
+			.describe('How long a generated URL stays valid: 30, 60 or 90 days.'),
+		visitCount: z
+			.number()
+			.nullish()
+			.describe('The total number of interactions this tracker recorded.'),
+		uniqueVisitCount: z
+			.number()
+			.nullish()
+			.describe('The number of distinct interactions this tracker recorded.'),
+		metadata: z.record(z.string(), PostgridJsonValueSchema).nullish(),
+		createdAt: z.string().nullish(),
+		updatedAt: z.string().nullish(),
 	})
 	.loose();
 

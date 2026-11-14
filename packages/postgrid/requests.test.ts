@@ -280,14 +280,16 @@ describe('letters endpoints', () => {
 		expect(sentRequest(-1)?.idempotencyKey).toBe('order-991-attempt-1');
 	});
 
-	it('letters.cancel posts to the cancellation sub-path', async () => {
+	it('letters.cancel deletes by id, the route that takes no note', async () => {
 		mockedRequest.mockResolvedValue({ id: 'letter_1', status: 'cancelled' });
 
 		const result = await Letters.cancel(ctx, { id: 'letter_1' });
 
+		// The POST .../cancellation route requires a `note`, so an id-only call
+		// uses DELETE, which PostGrid documents as "Cancel Letter".
 		expect(sentRequest()).toEqual({
-			method: 'POST',
-			path: '/letters/letter_1/cancellation',
+			method: 'DELETE',
+			path: '/letters/letter_1',
 		});
 		expect(result.status).toBe('cancelled');
 	});
@@ -344,14 +346,16 @@ describe('postcards endpoints', () => {
 		});
 	});
 
-	it('postcards.cancel posts to the cancellation sub-path', async () => {
+	it('postcards.cancel deletes by id, the route that takes no note', async () => {
 		mockedRequest.mockResolvedValue({ id: 'postcard_1', status: 'cancelled' });
 
 		await Postcards.cancel(ctx, { id: 'postcard_1' });
 
+		// The POST .../cancellation route requires a `note`, so an id-only call
+		// uses DELETE, which PostGrid documents as "Cancel Postcard".
 		expect(sentRequest()).toEqual({
-			method: 'POST',
-			path: '/postcards/postcard_1/cancellation',
+			method: 'DELETE',
+			path: '/postcards/postcard_1',
 		});
 	});
 });
@@ -412,19 +416,31 @@ describe('selfMailers endpoints', () => {
 });
 
 describe('trackers endpoints', () => {
-	it('trackers.get reads one order by id', async () => {
+	it('trackers.get reads a tracker, with its visit counts', async () => {
 		mockedRequest.mockResolvedValue({
-			id: 'letter_1',
-			status: 'processed_for_delivery',
-			imbStatus: 'entered_mail_stream',
+			id: 'tracker_1',
+			object: 'tracker',
+			redirectURLTemplate: 'https://example.com?name={{to.firstName}}',
+			urlExpireAfterDays: 30,
+			visitCount: 12,
+			uniqueVisitCount: 7,
 		});
 
-		const result = await Trackers.get(ctx, { id: 'letter_1' });
+		const result = await Trackers.get(ctx, { id: 'tracker_1' });
 
 		expect(sentRequest()).toEqual({
 			method: 'GET',
-			path: '/trackers/letter_1',
+			path: '/trackers/tracker_1',
 		});
-		expect(result.imbStatus).toBe('entered_mail_stream');
+		expect(result.visitCount).toBe(12);
+		expect(result.uniqueVisitCount).toBe(7);
+		expect(result.redirectURLTemplate).toContain('example.com');
+		// The event records the tracker's own numbers, not an order status.
+		expect(mockedLog).toHaveBeenCalledWith(
+			ctx,
+			'postgrid.trackers.get',
+			{ trackerId: 'tracker_1', visitCount: 12, uniqueVisitCount: 7 },
+			'completed',
+		);
 	});
 });

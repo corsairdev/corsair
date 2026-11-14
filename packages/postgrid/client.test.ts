@@ -157,6 +157,9 @@ describe('makePostgridRequest', () => {
 	});
 
 	it('reports a rejected key as a credential failure without echoing the key', async () => {
+		// PostGrid repeats the key it was given in this message, so the client has
+		// to remove it: the message reaches error.message and error.stack, which
+		// MCP hands back to the agent, and JSON.stringify omits both.
 		mockRequest.mockRejectedValue(
 			apiError(401, {
 				object: 'error',
@@ -171,13 +174,14 @@ describe('makePostgridRequest', () => {
 			makePostgridRequest('secret-key', { method: 'GET', path: '/contacts' }),
 		);
 
-		expect(error).toBeInstanceOf(PostgridAPIError);
-		if (!(error instanceof PostgridAPIError)) return;
+		// Core's ApiError passes through, so its status and body stay readable.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('invalid_api_key_error');
-		expect(error.credentialsRejected).toBe(true);
-		expect(error.method).toBe('GET');
-		// The key rides in a header, so nothing on the error may repeat it.
+		expect(error.request.method).toBe('GET');
+		expect(error.message).toContain('[REDACTED]');
+		expect(error.message).not.toContain('secret-key');
+		expect(String(error.stack)).not.toContain('secret-key');
 		expect(JSON.stringify(error)).not.toContain('secret-key');
 	});
 
@@ -200,8 +204,8 @@ describe('makePostgridRequest', () => {
 			makePostgridRequest('key', { method: 'GET', path: '/contacts' }),
 		);
 
-		expect(error).toBeInstanceOf(PostgridAPIError);
-		if (!(error instanceof PostgridAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2000);
 	});

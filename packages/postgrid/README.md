@@ -1,6 +1,6 @@
 # @corsair-dev/postgrid
 
-Print and mail API for sending letters, postcards, self mailers and cheques, exposed by Corsair.
+Print and mail API for sending letters, postcards and self mailers, exposed by Corsair.
 
 ## Install
 
@@ -32,7 +32,7 @@ pnpm add @corsair-dev/postgrid
 | `templates.get` | `postgrid.api.templates.get` | `read` | Read one template and its HTML |
 | `templates.list` | `postgrid.api.templates.list` | `read` | List print templates, paged by `skip` and `limit` |
 | `templates.update` | `postgrid.api.templates.update` | `write` | Change a template's HTML, description or metadata |
-| `trackers.get` | `postgrid.api.trackers.get` | `read` | Read one order's position in its lifecycle, and on live US mail the USPS intelligent-mail stage |
+| `trackers.get` | `postgrid.api.trackers.get` | `read` | Read one tracker: the PURL and QR-code destination an order references, with its visit counts |
 
 ## Auth
 

@@ -1,6 +1,7 @@
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { POSTGRID_API_BASE, PostgridAPIError } from './client';
+import { POSTGRID_API_BASE, readErrorCode } from './client';
 import { postgrid } from './index';
 import { captureError } from './test-helpers';
 
@@ -135,15 +136,18 @@ describe('PostGrid plugin through createCorsair', () => {
 
 			const error = await captureError(corsair.postgrid.api.contacts.list({}));
 
-			expect(error).toBeInstanceOf(PostgridAPIError);
-			expect(error).toMatchObject({
-				status: 401,
-				code: 'invalid_api_key_error',
-				credentialsRejected: true,
-			});
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).toMatchObject({ status: 401 });
+			expect(readErrorCode((error as ApiError).body)).toBe(
+				'invalid_api_key_error',
+			);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
-			// The key rode in a header, so no error may echo it.
+			// The key rode in a header, but PostGrid repeats it in the message, so
+			// message and stack are checked too: JSON.stringify omits both.
 			expect(JSON.stringify(error)).not.toContain('bad-key');
+			expect((error as Error).message).not.toContain('bad-key');
+			expect(String((error as Error).stack)).not.toContain('bad-key');
+			expect(String(error)).not.toContain('bad-key');
 		} finally {
 			testDb.cleanup();
 		}
@@ -181,7 +185,7 @@ describe('PostGrid plugin through createCorsair', () => {
 					from: { id: 'contact_sender' },
 					html: '<b>Hi</b>',
 				}),
-			).rejects.toBeInstanceOf(PostgridAPIError);
+			).rejects.toBeInstanceOf(ApiError);
 			// One attempt only: the letter may already be printing.
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {

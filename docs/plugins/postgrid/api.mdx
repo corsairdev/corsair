@@ -267,7 +267,7 @@ await corsair.postgrid.api.letters.cancel({ id: 'letter_cS61RTPrSvBKVyT7kenpjn' 
 | `url` | `string \| null` | No | A signed link to preview this order. |
 | `pageCount` | `number \| null` | No | — |
 | `html` | `string \| null` | No | — |
-| `template` | `string \| null` | No | — |
+| `template` | `string \| object \| null` | No | — |
 | `uploadedPDF` | `string \| null` | No | — |
 | `addressPlacement` | `string \| null` | No | — |
 | `color` | `boolean \| null` | No | — |
@@ -333,6 +333,20 @@ await corsair.postgrid.api.letters.cancel({ id: 'letter_cS61RTPrSvBKVyT7kenpjn' 
 } | null
 ```
 </Accordion>
+
+<Accordion title="template full type">
+
+```ts
+string | {
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  html?: string | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -348,7 +362,7 @@ Print and mail a letter, which costs postage and cannot be recalled once it leav
 **Risk:** `destructive`
 
 ```ts
-await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, html: '<b>Hello</b>', color: true, doubleSided: true, size: 'us_letter', mailingClass: 'usps_first_class' });
+await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, html: '<b>Hello</b>', color: true, doubleSided: true, size: 'us_letter', mailingClass: 'usps_first_class' });
 ```
 
 **Input**
@@ -356,13 +370,13 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `to` | `object` | Yes | The recipient: a contact id or the address fields. |
-| `from` | `object` | Yes | The sender: a contact id or the address fields. |
 | `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
-| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| ca_post_lettermail \| ca_post_personalized \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| au_post_regular \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
+| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
 | `description` | `string` | No | — |
 | `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
 | `mergeVariables` | `Record<string, JsonValue>` | No | — |
 | `metadata` | `Record<string, JsonValue>` | No | — |
+| `from` | `object` | Yes | The sender: a contact id or the address fields. |
 | `html` | `string` | No | The letter body. Supply this or a template. |
 | `template` | `string` | No | A `template_` id to render instead of raw html. |
 | `size` | `us_letter \| us_legal \| a4` | No | — |
@@ -371,7 +385,7 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
 | `addressPlacement` | `top_first_page \| insert_blank_page` | No | — |
 | `envelopeType` | `standard_double_window \| flat` | No | — |
 | `express` | `boolean` | No | Send by express postage. |
-| `perforatedPage` | `string` | No | The id of a page to perforate, for a tear-off return slip. |
+| `perforatedPage` | `1` | No | The page to perforate, for a tear-off return slip. PostGrid accepts only 1, the first page. |
 | `returnEnvelope` | `string` | No | A `return_envelope_` id to include. |
 
 <AccordionGroup>
@@ -392,6 +406,7 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
   email?: string,
   phoneNumber?: string,
   jobTitle?: string,
+  secret?: boolean,
   metadata?: Record<string, JsonValue>
 }
 ```
@@ -414,6 +429,7 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
   email?: string,
   phoneNumber?: string,
   jobTitle?: string,
+  secret?: boolean,
   metadata?: Record<string, JsonValue>
 }
 ```
@@ -442,7 +458,7 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
 | `url` | `string \| null` | No | A signed link to preview this order. |
 | `pageCount` | `number \| null` | No | — |
 | `html` | `string \| null` | No | — |
-| `template` | `string \| null` | No | — |
+| `template` | `string \| object \| null` | No | — |
 | `uploadedPDF` | `string \| null` | No | — |
 | `addressPlacement` | `string \| null` | No | — |
 | `color` | `boolean \| null` | No | — |
@@ -504,6 +520,20 @@ await corsair.postgrid.api.letters.create({ to: { addressLine1: '145 Mulberry St
   skipVerification?: boolean | null,
   forceVerifiedStatus?: boolean | null,
   secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="template full type">
+
+```ts
+string | {
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  html?: string | null,
   metadata?: Record<string, JsonValue> | null
 } | null
 ```
@@ -555,7 +585,7 @@ await corsair.postgrid.api.letters.get({ id: 'letter_oNrxnVvpyKwbcHtJinF5cm', ex
 | `url` | `string \| null` | No | A signed link to preview this order. |
 | `pageCount` | `number \| null` | No | — |
 | `html` | `string \| null` | No | — |
-| `template` | `string \| null` | No | — |
+| `template` | `string \| object \| null` | No | — |
 | `uploadedPDF` | `string \| null` | No | — |
 | `addressPlacement` | `string \| null` | No | — |
 | `color` | `boolean \| null` | No | — |
@@ -617,6 +647,20 @@ await corsair.postgrid.api.letters.get({ id: 'letter_oNrxnVvpyKwbcHtJinF5cm', ex
   skipVerification?: boolean | null,
   forceVerifiedStatus?: boolean | null,
   secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="template full type">
+
+```ts
+string | {
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  html?: string | null,
   metadata?: Record<string, JsonValue> | null
 } | null
 ```
@@ -724,7 +768,14 @@ await corsair.postgrid.api.letters.list({ limit: 10 });
   url?: string | null,
   pageCount?: number | null,
   html?: string | null,
-  template?: string | null,
+  template?: string | {
+    id?: string | null,
+    object?: string | null,
+    live?: boolean | null,
+    description?: string | null,
+    html?: string | null,
+    metadata?: Record<string, JsonValue> | null
+  } | null,
   uploadedPDF?: string | null,
   addressPlacement?: string | null,
   color?: boolean | null,
@@ -861,7 +912,7 @@ Print and mail a postcard with a front and a back face, which costs postage and 
 **Risk:** `destructive`
 
 ```ts
-await corsair.postgrid.api.postcards.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, size: '6x4', frontHTML: '<b>Front</b>', backHTML: '<b>Back</b>' });
+await corsair.postgrid.api.postcards.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '6x4', frontHTML: '<b>Front</b>', backHTML: '<b>Back</b>' });
 ```
 
 **Input**
@@ -869,13 +920,13 @@ await corsair.postgrid.api.postcards.create({ to: { addressLine1: '145 Mulberry 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `to` | `object` | Yes | The recipient: a contact id or the address fields. |
-| `from` | `object` | Yes | The sender: a contact id or the address fields. |
 | `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
-| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| ca_post_lettermail \| ca_post_personalized \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| au_post_regular \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
+| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
 | `description` | `string` | No | — |
 | `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
 | `mergeVariables` | `Record<string, JsonValue>` | No | — |
 | `metadata` | `Record<string, JsonValue>` | No | — |
+| `from` | `object` | No | The sender: a contact id or the address fields. |
 | `size` | `6x4 \| 9x6 \| 11x6` | Yes | Which postcard stock to print. |
 | `frontHTML` | `string` | No | The front face. Supply this or `frontTemplate`. |
 | `backHTML` | `string` | No | The back face. Supply this or `backTemplate`. |
@@ -900,6 +951,7 @@ await corsair.postgrid.api.postcards.create({ to: { addressLine1: '145 Mulberry 
   email?: string,
   phoneNumber?: string,
   jobTitle?: string,
+  secret?: boolean,
   metadata?: Record<string, JsonValue>
 }
 ```
@@ -922,6 +974,7 @@ await corsair.postgrid.api.postcards.create({ to: { addressLine1: '145 Mulberry 
   email?: string,
   phoneNumber?: string,
   jobTitle?: string,
+  secret?: boolean,
   metadata?: Record<string, JsonValue>
 }
 ```
@@ -1253,7 +1306,7 @@ Print and mail a folded self mailer with inside and outside panels, which costs 
 **Risk:** `destructive`
 
 ```ts
-await corsair.postgrid.api.selfMailers.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, size: '8.5x11_bifold', insideHTML: '<b>Inside</b>', outsideHTML: '<b>Outside</b>' });
+await corsair.postgrid.api.selfMailers.create({ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '8.5x11_bifold', insideHTML: '<b>Inside</b>', outsideHTML: '<b>Outside</b>' });
 ```
 
 **Input**
@@ -1261,13 +1314,13 @@ await corsair.postgrid.api.selfMailers.create({ to: { addressLine1: '145 Mulberr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `to` | `object` | Yes | The recipient: a contact id or the address fields. |
-| `from` | `object` | Yes | The sender: a contact id or the address fields. |
 | `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
-| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| ca_post_lettermail \| ca_post_personalized \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| au_post_regular \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
+| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
 | `description` | `string` | No | — |
 | `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
 | `mergeVariables` | `Record<string, JsonValue>` | No | — |
 | `metadata` | `Record<string, JsonValue>` | No | — |
+| `from` | `object` | Yes | The sender: a contact id or the address fields. |
 | `size` | `8.5x11_bifold \| 8.5x11_trifold` | Yes | Which fold to print and finish. |
 | `insideHTML` | `string` | No | The inside panel. Supply this or `insideTemplate`. |
 | `outsideHTML` | `string` | No | The outside panel. Supply this or `outsideTemplate`. |
@@ -1292,6 +1345,7 @@ await corsair.postgrid.api.selfMailers.create({ to: { addressLine1: '145 Mulberr
   email?: string,
   phoneNumber?: string,
   jobTitle?: string,
+  secret?: boolean,
   metadata?: Record<string, JsonValue>
 }
 ```
@@ -1314,6 +1368,7 @@ await corsair.postgrid.api.selfMailers.create({ to: { addressLine1: '145 Mulberr
   email?: string,
   phoneNumber?: string,
   jobTitle?: string,
+  secret?: boolean,
   metadata?: Record<string, JsonValue>
 }
 ```
@@ -1836,19 +1891,19 @@ await corsair.postgrid.api.templates.update({ id: 'template_c6HSqnsD1h2zoeHJ6Z9E
 
 `trackers.get`
 
-Read one order's position in its lifecycle, and on live US mail the USPS intelligent-mail stage
+Read one tracker: the PURL and QR-code destination an order references, with its visit counts
 
 **Risk:** `read`
 
 ```ts
-await corsair.postgrid.api.trackers.get({ id: 'letter_oNrxnVvpyKwbcHtJinF5cm' });
+await corsair.postgrid.api.trackers.get({ id: 'tracker_oNrxnVvpyKwbcHtJinF5cm' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The id PostGrid gave the order, such as `letter_…` or `postcard_…`. |
+| `id` | `string` | Yes | The `tracker_` id. A tracker is the PURL and QR-code destination used in an order, not the order itself. |
 
 
 
@@ -1857,12 +1912,16 @@ await corsair.postgrid.api.trackers.get({ id: 'letter_oNrxnVvpyKwbcHtJinF5cm' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
-| `object` | `string \| null` | No | — |
-| `status` | `string \| null` | No | — |
-| `imbStatus` | `string \| null` | No | — |
-| `imbDate` | `string \| null` | No | — |
-| `imbZIPCode` | `string \| null` | No | — |
-| `sendDate` | `string \| null` | No | — |
+| `object` | `string \| null` | No | Always `tracker`. |
+| `description` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `redirectURLTemplate` | `string \| null` | No | The base template for the URLs this tracker generates. |
+| `urlExpireAfterDays` | `number \| null` | No | How long a generated URL stays valid: 30, 60 or 90 days. |
+| `visitCount` | `number \| null` | No | The total number of interactions this tracker recorded. |
+| `uniqueVisitCount` | `number \| null` | No | The number of distinct interactions this tracker recorded. |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
