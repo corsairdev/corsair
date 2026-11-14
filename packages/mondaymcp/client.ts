@@ -29,7 +29,7 @@ const REQUEST_TIMEOUT_MS = 60_000;
 
 // The JSON-RPC envelope is typed strictly; only the tool `result` payload and
 // the protocol-error `data` field stay unknown on purpose: MCP tool results
-// are provider-defined (each of the 60 tools returns a different shape that
+// are provider-defined (each of the 59 tools returns a different shape that
 // monday.com documents through examples, not schemas), and `error.data` is an
 // optional server-defined extension point, so stricter types here would invent
 // structure the wire does not guarantee. The endpoint output schemas give the
@@ -37,7 +37,7 @@ const REQUEST_TIMEOUT_MS = 60_000;
 type JsonRpcResponse = {
 	jsonrpc?: string;
 	id?: number;
-	// Tool result payloads are provider-defined per tool (60 different shapes,
+	// Tool result payloads are provider-defined per tool (59 different shapes,
 	// documented by examples rather than schemas) — unknown avoids inventing
 	// structure the wire does not guarantee; output schemas own the public type.
 	result?: unknown;
