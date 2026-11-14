@@ -1,5 +1,6 @@
 displayName: Cloudlayer
 description: Generate PDFs and images from HTML, URLs, and templates, and manage Cloudlayer jobs, assets, and storage.
+domain: cloudlayer.io
 overviewNote: >-
   V2 generation returns JSON job responses, including a completed job when
   `async: false`; v1 generation routes return base64 artifacts. Run the Corsair
