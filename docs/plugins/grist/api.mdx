@@ -1,0 +1,2463 @@
+---
+title: "Grist API reference"
+sidebarTitle: "API"
+description: "API reference for the Grist plugin in Corsair: every `grist.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attachments
+
+### get
+
+`attachments.get`
+
+Get metadata for a specific attachment in a document
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.attachments.get({ docId: 'doc123example', attachmentId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `attachmentId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | No | — |
+| `fileSize` | `number` | No | — |
+| `timeUploaded` | `string` | No | — |
+
+
+
+---
+
+### getTransferStatus
+
+`attachments.getTransferStatus`
+
+Get current attachment transfer status for an external store
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.attachments.getTransferStatus({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### list
+
+`attachments.list`
+
+List metadata for attachments stored in a document
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.attachments.list({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: number,
+  fields: {
+    fileName?: string,
+    fileSize?: number,
+    timeUploaded?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeUnused
+
+`attachments.removeUnused`
+
+Delete unused attachments from a document
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.attachments.removeUnused({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `verify` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateUsed
+
+`attachments.updateUsed`
+
+Update attachment usage tracking in a document
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.attachments.updateUsed({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### verifyFiles
+
+`attachments.verifyFiles`
+
+Verify attachment file integrity for a document
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.attachments.verifyFiles({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Columns
+
+### add
+
+`columns.add`
+
+Add new columns to a table in a document
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.columns.add({ docId: 'doc123example', tableId: 'Table1', columns: [{ id: 'category', fields: { label: 'Category' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `columns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  id?: string,
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`columns.delete`
+
+Delete a column from a table
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.columns.delete({ docId: 'doc123example', tableId: 'Table1', colId: 'category' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `colId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`columns.list`
+
+List columns and metadata for a table
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.columns.list({ docId: 'doc123example', tableId: 'Table1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `columns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  id: string,
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`columns.replace`
+
+Add or update column definitions in a table
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.columns.replace({ docId: 'doc123example', tableId: 'Table1', columns: [{ id: 'category', fields: { label: 'Category' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `columns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  id?: string,
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`columns.update`
+
+Modify column configurations or labels in a table
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.columns.update({ docId: 'doc123example', tableId: 'Table1', columns: [{ id: 'category', fields: { label: 'Product Category' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `columns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  id: string,
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Docs
+
+### copy
+
+`docs.copy`
+
+Copy a document to a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.copy({ docId: 'doc123example', workspaceId: 1, documentName: 'Inventory Copy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `workspaceId` | `number` | No | — |
+| `documentName` | `string` | No | — |
+| `asTemplate` | `boolean` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### create
+
+`docs.create`
+
+Create a new Grist document or copy from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.create({ workspaceId: 1, documentName: 'Inventory' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `number` | No | — |
+| `documentName` | `string` | No | — |
+| `sourceDocumentId` | `string` | No | — |
+| `asTemplate` | `boolean` | No | — |
+| `timezone` | `string` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### createInWorkspace
+
+`docs.createInWorkspace`
+
+Create an empty document inside a specific workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.createInWorkspace({ workspaceId: 1, name: 'Inventory' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `isPinned` | `boolean` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### delete
+
+`docs.delete`
+
+Permanently delete a document
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.docs.delete({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### fork
+
+`docs.fork`
+
+Fork a document into a new unsaved document
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.fork({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### get
+
+`docs.get`
+
+Describe document metadata and containing workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.docs.get({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `access` | `owners \| editors \| viewers` | No | — |
+| `isPinned` | `boolean` | No | — |
+| `urlId` | `string \| null` | No | — |
+| `workspace` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  access?: owners | editors | viewers
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAccess
+
+`docs.listAccess`
+
+List users with access permissions to a document
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.docs.listAccess({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxInheritedRole` | `owners \| editors \| viewers` | No | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  email?: string,
+  access?: owners | editors | viewers,
+  parentAccess?: owners | editors | viewers
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSnapshots
+
+`docs.listSnapshots`
+
+List historical snapshots of a document
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.docs.listSnapshots({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `raw` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshots` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="snapshots full type">
+
+```ts
+{
+  snapshotId: string,
+  snapshotTime: string,
+  docId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### modifyAccess
+
+`docs.modifyAccess`
+
+Change user access permissions for a document
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.modifyAccess({ docId: 'doc123example', users: { 'user@example.com': 'owners' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `maxInheritedRole` | `owners \| editors \| viewers` | No | — |
+| `users` | `Record<string, owners \| editors \| viewers \| members \| null>` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### move
+
+`docs.move`
+
+Move a document to a different workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.move({ docId: 'doc123example', workspace: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `workspace` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### pin
+
+`docs.pin`
+
+Pin a document for quick access
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.pin({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### remove
+
+`docs.remove`
+
+Move a document to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.docs.remove({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeSnapshots
+
+`docs.removeSnapshots`
+
+Remove historical snapshots of a document
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.docs.removeSnapshots({ docId: 'doc123example', snapshotIds: ['snap123'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `snapshotIds` | `string[]` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### unpin
+
+`docs.unpin`
+
+Unpin a document
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.unpin({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### unremove
+
+`docs.unremove`
+
+Restore a document from the trash
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.unremove({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`docs.update`
+
+Modify document metadata such as name or pin status
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.docs.update({ docId: 'doc123example', name: 'Inventory 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `isPinned` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Orgs
+
+### delete
+
+`orgs.delete`
+
+Delete an organization by ID and confirmed name
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.orgs.delete({ orgId: 'current', name: 'My Team' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`orgs.get`
+
+Describe details of a specific organization
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.orgs.get({ orgId: 'current' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `domain` | `string \| null` | No | — |
+| `owner` | `object \| null` | No | — |
+| `access` | `owners \| editors \| viewers` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  picture?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUsage
+
+`orgs.getUsage`
+
+Get organization resource and storage usage summary
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.orgs.getUsage({ orgId: 'current' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### list
+
+`orgs.list`
+
+List organizations accessible to the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.orgs.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  domain?: string | null,
+  owner?: {
+    id: number,
+    name: string,
+    picture?: string | null
+  } | null,
+  access?: owners | editors | viewers,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccess
+
+`orgs.listAccess`
+
+List users with access permissions to an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.orgs.listAccess({ orgId: 'current' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  email?: string,
+  access?: owners | editors | viewers
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### modifyAccess
+
+`orgs.modifyAccess`
+
+Change user access roles for an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.orgs.modifyAccess({ orgId: 'current', users: { 'user@example.com': 'editors' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| number` | Yes | — |
+| `users` | `Record<string, owners \| editors \| viewers \| members \| null>` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`orgs.update`
+
+Modify organization metadata such as its name
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.orgs.update({ orgId: 'current', name: 'My Team' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Profile
+
+### createApiKey
+
+`profile.createApiKey`
+
+Create or regenerate user API key
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.profile.createApiKey({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### deleteApiKey
+
+`profile.deleteApiKey`
+
+Delete user API key
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.profile.deleteApiKey({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`profile.get`
+
+Get current authenticated user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.profile.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `picture` | `string \| null` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+### getApiKey
+
+`profile.getApiKey`
+
+Get the current user API key
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.profile.getApiKey({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### updateLocale
+
+`profile.updateLocale`
+
+Update user locale preference
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.profile.updateLocale({ locale: 'en-US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locale` | `string \| null` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateName
+
+`profile.updateName`
+
+Update user display name
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.profile.updateName({ name: 'Jane Doe' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Records
+
+### add
+
+`records.add`
+
+Add new records with field values to a table
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.records.add({ docId: 'doc123example', tableId: 'Table1', records: [{ fields: { pet: 'cat', popularity: 67 } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `noparse` | `boolean` | No | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Delete records by record IDs from a table
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.records.delete({ docId: 'doc123example', tableId: 'Table1', recordIds: [1] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `recordIds` | `number[]` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`records.list`
+
+Fetch records from a table with filtering and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.records.list({ docId: 'doc123example', tableId: 'Table1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `hidden` | `boolean` | No | — |
+| `cellFormat` | `raw \| formatted` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: number,
+  fields: Record<string, any>,
+  errors?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`records.replace`
+
+Add or update records matching require criteria (upsert)
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.records.replace({ docId: 'doc123example', tableId: 'Table1', records: [{ require: { pet: 'cat' }, fields: { popularity: 85 } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `noparse` | `boolean` | No | — |
+| `onmany` | `first \| none \| all` | No | — |
+| `noadd` | `boolean` | No | — |
+| `noupdate` | `boolean` | No | — |
+| `allow_empty_require` | `boolean` | No | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  require: Record<string, any>,
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`records.update`
+
+Modify existing records by record ID in a table
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.records.update({ docId: 'doc123example', tableId: 'Table1', records: [{ id: 1, fields: { popularity: 80 } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `noparse` | `boolean` | No | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: number,
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Service Accounts
+
+### create
+
+`serviceAccounts.create`
+
+Create a new service account with an API key
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.serviceAccounts.create({ name: 'CI Service Account' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `label` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `apiKey` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`serviceAccounts.delete`
+
+Delete a service account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.serviceAccounts.delete({ saId: 'sa_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `saId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteApiKey
+
+`serviceAccounts.deleteApiKey`
+
+Delete a service account API key
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.serviceAccounts.deleteApiKey({ saId: 'sa_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `saId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`serviceAccounts.get`
+
+Get service account details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.serviceAccounts.get({ saId: 'sa_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `saId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`serviceAccounts.list`
+
+List all service accounts owned by the user
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.serviceAccounts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### regenerateApiKey
+
+`serviceAccounts.regenerateApiKey`
+
+Generate a new API key for a service account
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.serviceAccounts.regenerateApiKey({ saId: 'sa_1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `saId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### update
+
+`serviceAccounts.update`
+
+Modify service account name or label
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.serviceAccounts.update({ saId: 'sa_1', name: 'Updated CI Service Account' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `saId` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `label` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Session
+
+### getActive
+
+`session.getActive`
+
+Get active session details and current organization
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.session.getActive({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+| `org` | `object` | No | — |
+| `orgError` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  picture?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="org full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  domain?: string | null,
+  owner?: {
+    id: number,
+    name: string,
+    picture?: string | null
+  } | null,
+  access?: owners | editors | viewers,
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAll
+
+`session.getAll`
+
+Get all logged-in session accounts and organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.session.getAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### setActive
+
+`session.setActive`
+
+Switch active user account for an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.session.setActive({ email: 'user@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `org` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+
+
+
+---
+
+## Sql
+
+### query
+
+`sql.query`
+
+Execute a read-only SQL query with parameters against a document
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.sql.query({ docId: 'doc123example', sql: 'SELECT * FROM Table1 WHERE popularity >= ?', args: [50] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `sql` | `string` | Yes | — |
+| `args` | `(string \| number \| boolean \| null)[]` | No | — |
+| `timeout` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statement` | `string` | Yes | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryGet
+
+`sql.queryGet`
+
+Execute a simple read-only SQL query via GET against a document
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.sql.queryGet({ docId: 'doc123example', q: 'SELECT * FROM Table1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statement` | `string` | No | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  fields: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tables
+
+### create
+
+`tables.create`
+
+Add new tables and their column definitions to a document
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.tables.create({ docId: 'doc123example', tables: [{ id: 'Products', columns: [{ id: 'title', fields: { label: 'Title' } }] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tables` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  id?: string,
+  columns: {
+    id?: string,
+    fields?: Record<string, any>
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tables` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tables.list`
+
+List tables within a Grist document
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.tables.list({ docId: 'doc123example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tables` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  id: string,
+  fields: {
+    tableRef?: number,
+    onDemand?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tables.update`
+
+Modify table identifiers or on-demand loading settings
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.tables.update({ docId: 'doc123example', tables: [{ id: 'Products', fields: { tableId: 'Items' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docId` | `string` | Yes | — |
+| `tables` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  id: string,
+  fields: {
+    tableId?: string,
+    onDemand?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Templates
+
+### get
+
+`templates.get`
+
+Get details of a specific document template
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.templates.get({ templateId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`templates.list`
+
+List available document templates from the catalog
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.templates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+## Users
+
+### delete
+
+`users.delete`
+
+Delete a user from Grist
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.users.delete({ userId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### disable
+
+`users.disable`
+
+Disable a user account in Grist
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.users.disable({ userId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### enable
+
+`users.enable`
+
+Enable a previously disabled user account
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.users.enable({ userId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Widgets
+
+### list
+
+`widgets.list`
+
+List available custom widgets from the gallery
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.widgets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+## Workspaces
+
+### create
+
+`workspaces.create`
+
+Create a new empty workspace in an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.workspaces.create({ orgId: 'current', name: 'Operations' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `number`
+
+
+---
+
+### delete
+
+`workspaces.delete`
+
+Permanently delete a workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.workspaces.delete({ workspaceId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`workspaces.get`
+
+Describe a workspace and its documents
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.workspaces.get({ workspaceId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `access` | `owners \| editors \| viewers` | No | — |
+| `docs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="docs full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  access?: owners | editors | viewers,
+  isPinned?: boolean,
+  urlId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workspaces.list`
+
+List workspaces and their documents within an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.workspaces.list({ orgId: 'current' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  access?: owners | editors | viewers,
+  docs?: {
+    id: string,
+    name: string,
+    access?: owners | editors | viewers,
+    isPinned?: boolean,
+    urlId?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccess
+
+`workspaces.listAccess`
+
+List users with access permissions to a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.grist.api.workspaces.listAccess({ workspaceId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxInheritedRole` | `owners \| editors \| viewers` | No | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  email?: string,
+  access?: owners | editors | viewers,
+  parentAccess?: owners | editors | viewers
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### modifyAccess
+
+`workspaces.modifyAccess`
+
+Change user access permissions for a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.workspaces.modifyAccess({ workspaceId: 1, users: { 'user@example.com': 'viewers' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+| `maxInheritedRole` | `owners \| editors \| viewers` | No | — |
+| `users` | `Record<string, owners \| editors \| viewers \| members \| null>` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### remove
+
+`workspaces.remove`
+
+Move a workspace to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.grist.api.workspaces.remove({ workspaceId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### unremove
+
+`workspaces.unremove`
+
+Restore a workspace from the trash
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.workspaces.unremove({ workspaceId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`workspaces.update`
+
+Modify workspace name or settings
+
+**Risk:** `write`
+
+```ts
+await corsair.grist.api.workspaces.update({ workspaceId: 1, name: 'Operations Hub' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
