@@ -1,7 +1,12 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GammaAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/**
+ * An HTTP failure is core's ApiError, as `request()` throws it; a request that
+ * got no answer is a GammaAPIError.
+ */
 function apiError(options: {
 	status?: number;
 	code?: string;
@@ -9,8 +14,27 @@ function apiError(options: {
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new GammaAPIError('failed', options);
+}): Error {
+	const method = (options.method ?? 'POST') as 'GET' | 'POST' | 'DELETE';
+	if (options.status === undefined) {
+		return new GammaAPIError('failed', {
+			method,
+			transport: options.transport,
+			timedOut: options.timedOut,
+		});
+	}
+	return new ApiError(
+		{ method, url: '/v1.0/test' },
+		{
+			url: 'https://public-api.gamma.app/v1.0/test',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { message: 'failed', code: options.code },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -96,11 +120,32 @@ describe('error handler selection', () => {
 		});
 	});
 
-	it('retries a 503, which Gamma says to retry', async () => {
-		await expect(resolve(apiError({ status: 503 }))).resolves.toEqual({
+	it('retries a 503 on a read, which Gamma says to retry', async () => {
+		await expect(
+			resolve(apiError({ status: 503, method: 'GET' })),
+		).resolves.toEqual({
 			maxRetries: 3,
 			retryStrategy: 'exponential_backoff',
 		});
+	});
+
+	it('never replays a 503 generation, which may have started and spent credits', async () => {
+		await expect(
+			resolve(apiError({ status: 503, method: 'POST' })),
+		).resolves.toEqual({
+			maxRetries: 0,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('reads an agent route out of credits as quota, not permission', async () => {
+		await expect(
+			resolve(apiError({ status: 403, code: 'insufficient_credits' })),
+		).resolves.toEqual({ maxRetries: 0 });
+		const names = Object.keys(errorHandlers);
+		expect(names.indexOf('QUOTA_ERROR')).toBeLessThan(
+			names.indexOf('PERMISSION_ERROR'),
+		);
 	});
 
 	it('retries a 5xx read twice', async () => {

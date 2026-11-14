@@ -481,7 +481,7 @@ export type GammaArchiveInput = z.input<typeof GammaArchiveInputSchema>;
 // so a body that does not confirm the archive fails here.
 const ArchivedResponseSchema = z.object({
 	success: z.literal(true),
-	gamma_id: z.string(),
+	gamma_id: z.string().min(1),
 });
 
 export type ArchivedResponse = z.infer<typeof ArchivedResponseSchema>;

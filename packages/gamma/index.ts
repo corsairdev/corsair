@@ -143,7 +143,7 @@ const defaultAuthType = 'api_key' as const;
 
 const gammaEndpointMeta = {
 	'generations.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Start a Classic generation from text or a `pages` array, at once returning a `generationId` to poll. Spends credits. Use it for webpages and multi-page gammas; the agent route covers a single new presentation',
 	},
@@ -153,7 +153,7 @@ const gammaEndpointMeta = {
 			'Where a Classic generation stands: `pending` is not final, `completed` carries the gamma ID, URL and any export URL, `failed` carries the error',
 	},
 	'agent.generate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Start a Gamma 5 agent generation from one brief, with a theme, template, quality preset and up to 10 source URLs. Spends credits',
 	},
@@ -251,7 +251,8 @@ export function gamma<const T extends GammaPluginOptions>(
 	} satisfies InternalGammaPlugin;
 }
 
-export { GammaAPIError } from './client';
+export type { GammaErrorInfo } from './client';
+export { GammaAPIError, gammaErrorInfo } from './client';
 
 export type {
 	AgentGenerateInput,

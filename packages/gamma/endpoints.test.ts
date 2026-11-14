@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { GammaAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { GammaAPIError, gammaErrorInfo } from './client';
 import { Gammas, Generations, Workspace } from './endpoints';
 import {
 	agentCompleted,
@@ -514,14 +515,33 @@ describe('gammas.archive', () => {
 	it('surfaces a web app slug sent where a file ID belongs', async () => {
 		respond(analyticsForbidden, 403);
 
-		await expect(
+		const error = await caught(
 			invoke(Gammas.archive, { gammaId: 'my-deck-slug' }),
-		).rejects.toMatchObject({
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(gammaErrorInfo(error)).toMatchObject({
 			status: 403,
 			code: 'individual_analytics_required',
 			isPermissionError: true,
 		});
 	});
+
+	// R8: a malformed reply is not turned into a made-up success.
+	it.each([
+		[{ archived: true }],
+		[{ gammaId: '', archived: true }],
+		[{ gammaId: 7, archived: true }],
+	])(
+		'does not report an archive whose reply carries no gamma ID: %j',
+		async (body) => {
+			respond(body);
+
+			await expect(
+				invoke(Gammas.archive, { gammaId: 'gam_xyz789' }),
+			).rejects.toThrow();
+		},
+	);
 });
 
 describe('gammas.delete', () => {
@@ -627,10 +647,16 @@ describe('error envelopes', () => {
 	it('reads the message out of a 401', async () => {
 		respond(invalidKey, 401);
 
-		await expect(invoke(Gammas.get, { gammaId: 'gam' })).rejects.toMatchObject({
+		const error = await caught(invoke(Gammas.get, { gammaId: 'gam' }));
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
 			status: 401,
-			isAuthError: true,
 			message: 'Gamma 401: Invalid API key.',
+			request: { method: 'GET' },
+		});
+		expect(gammaErrorInfo(error)).toMatchObject({
+			isAuthError: true,
 			method: 'GET',
 		});
 	});
@@ -640,8 +666,8 @@ describe('error envelopes', () => {
 
 		const error = await caught(invoke(Generations.create, { inputText: 'x' }));
 
-		expect(error).toBeInstanceOf(GammaAPIError);
-		expect(error).toMatchObject({
+		expect(error).toBeInstanceOf(ApiError);
+		expect(gammaErrorInfo(error)).toMatchObject({
 			status: 402,
 			isQuotaError: true,
 			isRateLimit: false,
@@ -651,9 +677,11 @@ describe('error envelopes', () => {
 	it('reads an agent route out of credits as a quota error, not a permission one', async () => {
 		respond(agentNoCredits, 403);
 
-		await expect(
+		const error = await caught(
 			invoke(Generations.agentCreate, { prompt: 'x' }),
-		).rejects.toMatchObject({
+		);
+
+		expect(gammaErrorInfo(error)).toMatchObject({
 			status: 403,
 			code: 'insufficient_credits',
 			isQuotaError: true,
@@ -664,9 +692,10 @@ describe('error envelopes', () => {
 	it('keeps the code on a 429, which covers in-flight jobs as well as rate', async () => {
 		respond(concurrencyLimited, 429);
 
-		await expect(
-			invoke(Generations.create, { inputText: 'x' }),
-		).rejects.toMatchObject({
+		const error = await caught(invoke(Generations.create, { inputText: 'x' }));
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(gammaErrorInfo(error)).toMatchObject({
 			status: 429,
 			code: 'workspace_concurrency_limit_exceeded',
 			isRateLimit: true,
@@ -676,9 +705,9 @@ describe('error envelopes', () => {
 	it('reads an edit already in progress as a conflict', async () => {
 		respond(editInProgress, 409);
 
-		await expect(
-			invoke(Generations.create, { inputText: 'x' }),
-		).rejects.toMatchObject({
+		const error = await caught(invoke(Generations.create, { inputText: 'x' }));
+
+		expect(gammaErrorInfo(error)).toMatchObject({
 			status: 409,
 			code: 'edit_in_progress',
 			isConflict: true,
@@ -688,9 +717,14 @@ describe('error envelopes', () => {
 	it('reads a 503 as the service being busy', async () => {
 		respond(serviceBusy, 503);
 
-		await expect(
+		const error = await caught(
 			invoke(Generations.agentCreate, { prompt: 'x' }),
-		).rejects.toMatchObject({ status: 503, isServiceBusy: true });
+		);
+
+		expect(gammaErrorInfo(error)).toMatchObject({
+			status: 503,
+			isServiceBusy: true,
+		});
 	});
 
 	it('keeps the key out of the error', async () => {
@@ -702,20 +736,43 @@ describe('error envelopes', () => {
 		expect(String(error)).not.toContain(API_KEY);
 	});
 
-	it('keeps no body on the error, so a prompt or export link cannot follow it into a log', async () => {
+	it('keeps the prompt off the error, so it cannot follow the error into a log', async () => {
 		respond(noCredits, 402);
 
-		const error = await caught(invoke(Generations.create, { inputText: 'x' }));
+		const error = await caught(
+			invoke(Generations.create, { inputText: 'secret quarterly numbers' }),
+		);
 
-		expect(error).not.toHaveProperty('body');
+		expect(error).toBeInstanceOf(ApiError);
+		expect(JSON.stringify(error)).not.toContain('secret quarterly numbers');
+		expect((error as ApiError).request.body).toBeUndefined();
+		// Only Gamma's error envelope stays on the body.
+		expect((error as ApiError).body).toEqual({
+			message: 'Insufficient credits remaining',
+			statusCode: 402,
+		});
+	});
+
+	it('keeps a search query off the error', async () => {
+		respond(serviceBusy, 503);
+
+		const error = await caught(
+			invoke(Gammas.search, { q: 'acme layoffs plan' }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(JSON.stringify(error)).not.toContain('layoffs');
+		expect((error as ApiError).url).not.toContain('layoffs');
+		expect((error as ApiError).request.query).toBeUndefined();
 	});
 
 	it('marks a transport failure and keeps the method', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		await expect(
-			invoke(Generations.create, { inputText: 'x' }),
-		).rejects.toMatchObject({
+		const error = await caught(invoke(Generations.create, { inputText: 'x' }));
+
+		expect(error).toBeInstanceOf(GammaAPIError);
+		expect(error).toMatchObject({
 			transport: true,
 			method: 'POST',
 			message: 'fetch failed',

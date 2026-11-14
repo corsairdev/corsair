@@ -62,11 +62,13 @@ export const archive: GammaEndpoints['gammasArchive'] = (ctx, input) =>
 			path: `/v1.0/gammas/${segment(gammaId)}/archive`,
 		}),
 		{
-			shape: (raw, { gammaId }) => {
+			// The ID comes from Gamma's reply, not the request, so a reply with no
+			// ID fails the output schema instead of reading as a success.
+			shape: (raw) => {
 				const body = asRecord(raw);
 				return {
 					success: body?.archived === true ? true : body?.archived,
-					gamma_id: typeof body?.gammaId === 'string' ? body.gammaId : gammaId,
+					gamma_id: body?.gammaId,
 				};
 			},
 			log: ({ gammaId }) => ({ gammaId }),

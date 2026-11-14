@@ -56,19 +56,13 @@ const GAMMA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A Gamma failure.
+ * A Gamma request that got no answer: a reset, DNS failure, abort or timeout.
  *
- * The body is dropped. A completed generation carries an `exportUrl` that is a
- * bearer-capable download link, which the docs say to treat as a secret, and a
- * failed one can carry the prompt back; neither belongs on an error that a
- * caller might log.
+ * An HTTP error from Gamma stays core's `ApiError` (see `sanitizeApiError`), so
+ * its status, Retry-After and rate-limit fields reach core and the error
+ * handlers. `gammaErrorInfo` reads either kind.
  */
 export class GammaAPIError extends Error {
-	readonly status?: number;
-	/** Gamma's own code, such as `workspace_concurrency_limit_exceeded`. */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when Gamma sent one. */
-	readonly retryAfter?: number;
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
@@ -77,9 +71,6 @@ export class GammaAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			code?: string;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -87,54 +78,64 @@ export class GammaAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'GammaAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
+}
 
-	get isRateLimit(): boolean {
-		// The HTTP limit and the in-flight job cap share a 429 and a code.
-		return this.status === 429;
-	}
-
+/** What a Gamma failure means to a caller, read from either error kind. */
+export type GammaErrorInfo = {
+	status?: number;
+	/** Gamma's own code, such as `workspace_concurrency_limit_exceeded`. */
+	code?: string;
+	method?: string;
+	/** Milliseconds from a Retry-After header, when Gamma sent one. */
+	retryAfter?: number;
+	transport: boolean;
+	timedOut: boolean;
+	/** The HTTP limit and the in-flight job cap share a 429 and a code. */
+	isRateLimit: boolean;
 	/** A missing or invalid key, which no retry fixes. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
+	isAuthError: boolean;
 	/**
 	 * The workspace has no credits, which no retry fixes. Classic routes answer
 	 * 402; the agent routes answer 403 with `code: insufficient_credits`.
 	 */
-	get isQuotaError(): boolean {
-		return (
-			this.status === 402 ||
-			(this.status === 403 && this.code === 'insufficient_credits')
-		);
-	}
-
+	isQuotaError: boolean;
 	/** Short plan, wrong permissions, or the wrong kind of gamma ID. */
-	get isPermissionError(): boolean {
-		return this.status === 403 && !this.isQuotaError;
-	}
-
+	isPermissionError: boolean;
 	/** Another edit is running on this Gamma. */
-	get isConflict(): boolean {
-		return this.status === 409;
-	}
-
+	isConflict: boolean;
 	/** A parameter or a record Gamma cannot find. */
-	get isValidationError(): boolean {
-		return this.status === 400 || this.status === 404;
-	}
-
+	isValidationError: boolean;
 	/** The service is busy and says to retry. */
-	get isServiceBusy(): boolean {
-		return this.status === 503;
-	}
+	isServiceBusy: boolean;
+};
+
+// unknown: anything can be thrown; only ApiError and GammaAPIError carry fields.
+export function gammaErrorInfo(error: unknown): GammaErrorInfo {
+	const http = error instanceof ApiError ? error : undefined;
+	const transport = error instanceof GammaAPIError ? error : undefined;
+	const status = http?.status;
+	const code = http ? readError(http.body).code : undefined;
+	const isQuotaError =
+		status === 402 || (status === 403 && code === 'insufficient_credits');
+	return {
+		status,
+		code,
+		method: http?.request.method ?? transport?.method,
+		retryAfter: http?.retryAfter,
+		transport: transport?.transport ?? false,
+		timedOut: transport?.timedOut ?? false,
+		isRateLimit: status === 429,
+		isAuthError: status === 401,
+		isQuotaError,
+		isPermissionError: status === 403 && !isQuotaError,
+		isConflict: status === 409,
+		isValidationError: status === 400 || status === 404,
+		isServiceBusy: status === 503,
+	};
 }
 
 /** The message Gamma sent, with the status and code in front. */
@@ -196,18 +197,7 @@ export async function makeGammaRequest(
 			rateLimitConfig: GAMMA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const fields = readError(error.body);
-			throw new GammaAPIError(
-				describeGammaError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					code: fields.code,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			// A transport failure never had a response body, so its cause is safe.
@@ -223,6 +213,43 @@ export async function makeGammaRequest(
 			transport: true,
 		});
 	}
+}
+
+/**
+ * Core's `ApiError` keeps the sent body and query: a generation's prompt, a
+ * search's `q`. The error is rebuilt as an `ApiError` with the same status and
+ * rate-limit fields, Gamma's `{ message, statusCode, code }` envelope as the
+ * body (nothing else from the response, so no export link), and the sent body,
+ * form data and query dropped.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const fields = readError(error.body);
+	const envelope = Object.fromEntries(
+		Object.entries(fields).filter(([, value]) => value !== undefined),
+	);
+	return new ApiError(
+		{ ...request, url: request.url.split('?')[0] ?? request.url },
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: envelope,
+		},
+		describeGammaError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /** Drops the keys whose value is undefined, so a query carries only what was asked for. */
