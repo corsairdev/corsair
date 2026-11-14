@@ -52,6 +52,47 @@ function serializeParameters(
 	return result;
 }
 
+// The docs require waiting `backoff` seconds before calling the same method
+// again, and count /me routes as their /users/{ids} equivalent.
+const backoffUntil = new Map<string, number>();
+export const MAX_BACKOFF_WAIT_MS = 30_000;
+
+function backoffKey(path: string, site: string | undefined): string {
+	const method = path.replace(/^me(?=\/|$)/, 'users/{ids}');
+	return `${site ?? ''} ${method}`;
+}
+
+async function waitForBackoff(key: string): Promise<void> {
+	const until = backoffUntil.get(key);
+	if (until === undefined) return;
+	const waitMs = until - Date.now();
+	if (waitMs > MAX_BACKOFF_WAIT_MS) {
+		throw new Error(
+			`Stack Exchange rate limit: backoff requested, retry this method in ${Math.ceil(waitMs / 1000)}s`,
+		);
+	}
+	if (waitMs > 0) await new Promise((resolve) => setTimeout(resolve, waitMs));
+	backoffUntil.delete(key);
+}
+
+// The wrapper is untrusted JSON; only a positive numeric backoff is recorded.
+function recordBackoff(key: string, response: unknown): void {
+	if (
+		typeof response !== 'object' ||
+		response === null ||
+		!('backoff' in response)
+	)
+		return;
+	const { backoff } = response;
+	if (typeof backoff === 'number' && backoff > 0) {
+		backoffUntil.set(key, Date.now() + backoff * 1000);
+	}
+}
+
+export function clearStackExchangeBackoff(): void {
+	backoffUntil.clear();
+}
+
 // Stack Exchange item fields depend on the selected route/filter; endpoints
 // validate the shared response wrapper after receiving this untrusted JSON.
 export async function makeStackExchangeRequest(
@@ -90,9 +131,15 @@ export async function makeStackExchangeRequest(
 	const path = encodePath(route.path, input.pathParams);
 	const parameters = serializeParameters(input.parameters);
 	const page = parameters.page;
-	if (!apiKey && typeof page === 'number' && page > 25) {
+	// Live 11-15: page 26 with an app key in the Authorization header still
+	// returns access_denied "page above 25 requires access token or app key".
+	if (
+		(authType !== 'oauth_2' || !apiKey) &&
+		typeof page === 'number' &&
+		page > 25
+	) {
 		throw new Error(
-			'Anonymous Stack Exchange access cannot request pages above 25',
+			'Stack Exchange serves pages above 25 only to OAuth connections; anonymous and app-key requests stop at page 25',
 		);
 	}
 	if (input.site) parameters.site = input.site;
@@ -129,6 +176,10 @@ export async function makeStackExchangeRequest(
 		};
 	}
 
+	const throttleKey = backoffKey(route.path, input.site);
+	await waitForBackoff(throttleKey);
 	// The transport response is untrusted JSON; the endpoint output schema narrows it.
-	return request<unknown>(config, options);
+	const response = await request<unknown>(config, options);
+	recordBackoff(throttleKey, response);
+	return response;
 }
