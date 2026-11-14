@@ -8,6 +8,8 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
+	// The live suite calls Postiz; run it only through `pnpm test:live`.
+	testPathIgnorePatterns: ['/node_modules/', '/api\\.test\\.ts$'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',

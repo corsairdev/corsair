@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PostizAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { POSTIZ_API_BASE, PostizAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { postiz } from './index';
 
@@ -14,20 +15,23 @@ const CONTEXT = {
 // arguments they use. Typing it as the core map is what the runtime sees.
 const HANDLERS: CorsairErrorHandler = errorHandlers;
 
+/** Core's ApiError, as the client now lets it through. */
 function apiError(
 	status: number,
-	options: {
-		transport?: boolean;
-		retryAfter?: number;
-		method?: string;
-		credentialsRejected?: boolean;
-	} = {},
+	options: { retryAfter?: number; method?: 'GET' | 'POST' | 'DELETE' } = {},
 ) {
-	return new PostizAPIError(`Postiz ${status}`, {
-		status,
-		method: 'GET',
-		...options,
-	});
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: '/posts' },
+		{
+			url: `${POSTIZ_API_BASE}/posts`,
+			ok: false,
+			status,
+			statusText: 'error',
+			body: { msg: 'Invalid API key' },
+		},
+		`Postiz ${status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 function route(error: Error): string {
@@ -40,7 +44,7 @@ function route(error: Error): string {
 
 describe('Postiz errorHandlers', () => {
 	it('routes a rejected key to AUTH_ERROR without a retry', async () => {
-		const error = apiError(401, { credentialsRejected: true });
+		const error = apiError(401);
 
 		expect(route(error)).toBe('AUTH_ERROR');
 		await expect(HANDLERS.AUTH_ERROR?.handler(error, CONTEXT)).resolves.toEqual(
@@ -48,10 +52,6 @@ describe('Postiz errorHandlers', () => {
 				maxRetries: 0,
 			},
 		);
-	});
-
-	it('stops a bare 401 at UNAUTHORIZED_ERROR rather than letting it fall through', () => {
-		expect(route(apiError(401))).toBe('UNAUTHORIZED_ERROR');
 	});
 
 	it('routes a 403 to PERMISSION_ERROR, which is a key without access', async () => {
@@ -63,21 +63,20 @@ describe('Postiz errorHandlers', () => {
 		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('routes a 429 to RATE_LIMIT_ERROR with a short bounded wait', async () => {
+	it('leaves 429 retries to core, which has already honoured Retry-After', async () => {
 		const error = apiError(429, { retryAfter: 4000 });
 
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(
 			HANDLERS.RATE_LIMIT_ERROR?.handler(error, CONTEXT),
-		).resolves.toEqual({
-			maxRetries: 2,
-			headersRetryAfterMs: 4000,
-			retryStrategy: 'linear_4s',
-		});
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('recognises a rate limit expressed only in the message', () => {
-		expect(route(new Error('Too Many Requests'))).toBe('RATE_LIMIT_ERROR');
+	it('does not treat a 500 that mentions a rate limit as a 429, so a write is not replayed', () => {
+		const error = apiError(500, { method: 'POST' });
+		error.message = 'Postiz 500: rate limit backend unavailable';
+
+		expect(route(error)).toBe('DEFAULT');
 	});
 
 	it('routes 400, 404 and 413 to VALIDATION_ERROR with no retry', async () => {
@@ -120,10 +119,7 @@ describe('Postiz errorHandlers', () => {
 
 	it('replays a 5xx on a read and refuses to on a publish', async () => {
 		const read = apiError(503);
-		const publish = new PostizAPIError('Postiz 503', {
-			status: 503,
-			method: 'POST',
-		});
+		const publish = apiError(503, { method: 'POST' });
 
 		expect(route(read)).toBe('SERVER_ERROR');
 		await expect(

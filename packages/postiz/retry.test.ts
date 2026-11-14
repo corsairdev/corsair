@@ -1,6 +1,7 @@
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { POSTIZ_API_BASE, PostizAPIError } from './client';
+import { POSTIZ_API_BASE } from './client';
 import { postiz } from './index';
 import { captureError } from './test-helpers';
 
@@ -75,10 +76,43 @@ describe('Postiz plugin through createCorsair', () => {
 		}
 	});
 
+	it("sends to the account's stored self-hosted base_url", async () => {
+		const { corsair, testDb } = await createClient({});
+		try {
+			await corsair.postiz.keys.issue_new_dek();
+			await corsair.postiz.keys.set_api_key('stored-key');
+			await corsair.postiz.keys.set_base_url('https://postiz.example.com');
+			respond({ connected: true });
+
+			await corsair.postiz.api.integrations.isConnected({});
+
+			const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+			expect(url).toBe('https://postiz.example.com/api/public/v1/is-connected');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('refuses a stored http base_url without sending the key', async () => {
+		const { corsair, testDb } = await createClient({});
+		try {
+			await corsair.postiz.keys.issue_new_dek();
+			await corsair.postiz.keys.set_api_key('stored-key');
+			await corsair.postiz.keys.set_base_url('http://postiz.example.com');
+
+			await expect(
+				corsair.postiz.api.integrations.isConnected({}),
+			).rejects.toThrow(/https/);
+			expect(fetchMock).not.toHaveBeenCalled();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('creates a scheduled post with the configured key', async () => {
 		const { corsair, testDb } = await createClient({ key: 'inline-key' });
 		try {
-			respond({ posts: [{ id: 'p1', state: 'QUEUE' }] });
+			respond([{ postId: 'p1', integration: integrationId }]);
 
 			const result = await corsair.postiz.api.posts.create({
 				type: 'schedule',
@@ -116,8 +150,9 @@ describe('Postiz plugin through createCorsair', () => {
 				corsair.postiz.api.integrations.list({}),
 			);
 
-			expect(error).toBeInstanceOf(PostizAPIError);
-			expect(error).toMatchObject({ status: 401, credentialsRejected: true });
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).toMatchObject({ status: 401 });
+			expect((error as Error).message).toContain('Invalid API key');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			// The key rode in a header, so no error may echo it.
 			expect(JSON.stringify(error)).not.toContain('bad-key');
@@ -165,7 +200,7 @@ describe('Postiz plugin through createCorsair', () => {
 						},
 					],
 				}),
-			).rejects.toBeInstanceOf(PostizAPIError);
+			).rejects.toBeInstanceOf(ApiError);
 			// One attempt only: the post may already have gone out.
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
@@ -191,7 +226,7 @@ describe('Postiz plugin through createCorsair', () => {
 						},
 					],
 				}),
-			).rejects.toBeInstanceOf(PostizAPIError);
+			).rejects.toBeInstanceOf(ApiError);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();

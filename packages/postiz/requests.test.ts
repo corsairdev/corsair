@@ -121,9 +121,11 @@ describe('posts endpoints', () => {
 	});
 
 	it('posts.create sends the documented body for a scheduled post', async () => {
-		mockedRequest.mockResolvedValue({ posts: [post] });
+		mockedRequest.mockResolvedValue([
+			{ postId: 'post_1', integration: integration.id },
+		]);
 
-		await Posts.create(ctx, {
+		const result = await Posts.create(ctx, {
 			type: 'schedule',
 			date: '2024-12-14T10:00:00.000Z',
 			shortLink: false,
@@ -155,10 +157,14 @@ describe('posts endpoints', () => {
 				inter: undefined,
 			},
 		});
+		// The route answers a bare array of receipts, wrapped under `posts`.
+		expect(result.posts).toEqual([
+			{ postId: 'post_1', integration: integration.id },
+		]);
 	});
 
 	it('posts.create sends a draft with no posts attached', async () => {
-		mockedRequest.mockResolvedValue({ posts: [] });
+		mockedRequest.mockResolvedValue([]);
 
 		await Posts.create(ctx, {
 			type: 'draft',
@@ -172,7 +178,9 @@ describe('posts endpoints', () => {
 	});
 
 	it('posts.create sends a thread as several parts in order', async () => {
-		mockedRequest.mockResolvedValue({ posts: [post] });
+		mockedRequest.mockResolvedValue([
+			{ postId: 'post_1', integration: integration.id },
+		]);
 
 		await Posts.create(ctx, {
 			type: 'now',
@@ -234,57 +242,113 @@ describe('posts endpoints', () => {
 });
 
 describe('insights endpoints', () => {
-	it('media.list pages the media library', async () => {
-		mockedRequest.mockResolvedValue([
-			{
-				id: 'media_1',
-				name: 'photo.jpg',
-				path: 'https://uploads.postiz.com/p.jpg',
-			},
-		]);
+	it('media.list pages the media library and keeps the page count', async () => {
+		mockedRequest.mockResolvedValue({
+			pages: 2,
+			results: [
+				{
+					id: 'e639003b-f727-4a1e-87bd-74a2c48ae41e',
+					name: '6fba0ef5febb4400ae8778a5b854224d.png',
+					originalName: 'cover-cyan.png',
+					path: 'https://uploads.postiz.com/6fba0ef5febb4400ae8778a5b854224d.png',
+					createdAt: '2024-12-14T08:18:54.274Z',
+				},
+			],
+		});
 
-		const result = await Insights.list(ctx, { page: 1 });
+		const result = await Insights.list(ctx, { page: 1, search: 'cover' });
 
-		// The route answers a bare array.
 		expect(sentRequest()).toEqual({
 			method: 'GET',
 			path: '/media',
-			query: { page: 1 },
+			query: { page: 1, search: 'cover' },
 		});
-		expect(result.media).toHaveLength(1);
+		expect(result.pages).toBe(2);
+		expect(result.results[0]?.originalName).toBe('cover-cyan.png');
 	});
 
-	it('notifications.list pages the notifications', async () => {
-		mockedRequest.mockResolvedValue([
-			{ id: 'n1', content: 'Your post to X was published' },
-		]);
+	it('media.uploadFromUrl posts the URL and returns the stored file', async () => {
+		mockedRequest.mockResolvedValue({
+			id: 'e639003b-f727-4a1e-87bd-74a2c48ae41e',
+			name: 'image.png',
+			path: 'https://uploads.postiz.com/image.png',
+			organizationId: 'org_1',
+			createdAt: '2024-12-14T08:18:54.274Z',
+			updatedAt: '2024-12-14T08:18:54.274Z',
+		});
 
-		const result = await Insights.notifications(ctx, { page: 1 });
+		const result = await Insights.uploadFromUrl(ctx, {
+			url: 'https://example.com/image.png',
+		});
+
+		expect(sentRequest()).toEqual({
+			method: 'POST',
+			path: '/upload-from-url',
+			body: { url: 'https://example.com/image.png', adjust: undefined },
+		});
+		expect(result.path).toBe('https://uploads.postiz.com/image.png');
+	});
+
+	it('media.uploadFromUrl refuses a non-http URL before sending', async () => {
+		await expect(
+			Insights.uploadFromUrl(ctx, { url: 'file:///etc/passwd' }),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('notifications.list reads the paging envelope from page 0', async () => {
+		mockedRequest.mockResolvedValue({
+			notifications: [
+				{
+					id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+					content: 'Your post to X was published successfully',
+					link: null,
+					createdAt: '2025-01-15T10:30:00.000Z',
+				},
+			],
+			total: 250,
+			page: 0,
+			limit: 100,
+			hasMore: true,
+		});
+
+		const result = await Insights.notifications(ctx, { page: 0 });
 
 		expect(sentRequest()).toEqual({
 			method: 'GET',
 			path: '/notifications',
-			query: { page: 1 },
+			query: { page: 0 },
 		});
 		expect(result.notifications).toHaveLength(1);
+		expect(result.hasMore).toBe(true);
+		expect(result.total).toBe(250);
 	});
 
-	it('analytics.platform reads one channel over a period', async () => {
+	it('analytics.platform reads dated points for one channel', async () => {
 		mockedRequest.mockResolvedValue([
-			{ label: 'Followers', percentageChange: 2.5, data: [10, 12, 15] },
+			{
+				label: 'Followers',
+				data: [
+					{ total: '1250', date: '2025-01-01' },
+					{ total: '1280', date: '2025-01-02' },
+				],
+				percentageChange: 2.4,
+			},
 		]);
 
 		const result = await Insights.analytics(ctx, {
 			integration: integration.id,
-			date: 'last_30_days',
+			date: '30',
 		});
 
 		expect(sentRequest()).toEqual({
 			method: 'GET',
 			path: `/analytics/${integration.id}`,
-			query: { date: 'last_30_days' },
+			query: { date: '30' },
 		});
-		expect(result.analytics).toHaveLength(1);
-		expect(result.analytics[0]?.data).toEqual([10, 12, 15]);
+		expect(result.analytics[0]?.data).toEqual([
+			{ total: '1250', date: '2025-01-01' },
+			{ total: '1280', date: '2025-01-02' },
+		]);
 	});
 });

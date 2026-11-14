@@ -1,66 +1,83 @@
 import { AuthMissingError } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-/** Postiz Cloud. A self-hosted instance uses `https://<your-domain>/api/public/v1`. */
+/** Postiz Cloud's public API. */
 export const POSTIZ_API_BASE = 'https://api.postiz.com/public/v1';
 
-/**
- * The create-post route allows 90 requests an hour on a self-hosted instance and
- * 100 on the cloud, and that budget is the whole instance's. The API documents
- * no Retry-After, so handlers own the retries.
- */
-const POSTIZ_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-};
+const POSTIZ_CLOUD_HOSTS = new Set(['api.postiz.com', 'platform.postiz.com']);
 
 /**
- * Postiz answers two error shapes. Its own handlers send `{ msg }`, as in
- * `{"msg":"Invalid API key"}`. A route that does not exist is caught by NestJS
- * and answered as `{ message, error, statusCode }`. Both are read here so a
- * handler can match on either.
+ * Turns the instance URL from the account's `base_url` field (or the `baseUrl`
+ * option) into the API base. Empty means Postiz Cloud. A self-hosted instance
+ * serves the API under `/api/public/v1` on its own origin, so an origin alone
+ * gets that path added; a URL that already ends in `/public/v1` is kept.
+ *
+ * The API key rides in the Authorization header to this host, so the URL must
+ * be https and carry no credentials, query or fragment.
+ */
+export function normalizePostizBaseUrl(url: string | null | undefined): string {
+	const trimmed = (url ?? '').trim();
+	if (!trimmed) return POSTIZ_API_BASE;
+	let parsed: URL;
+	try {
+		parsed = new URL(trimmed);
+	} catch {
+		throw new Error(
+			'[postiz] base_url must be an absolute https:// URL, such as https://postiz.example.com',
+		);
+	}
+	if (parsed.protocol !== 'https:') {
+		throw new Error('[postiz] base_url must use https');
+	}
+	if (parsed.username || parsed.password) {
+		throw new Error('[postiz] base_url must not include credentials');
+	}
+	if (parsed.search || parsed.hash || /[?#]/.test(trimmed)) {
+		throw new Error('[postiz] base_url must not include a query or fragment');
+	}
+	if (POSTIZ_CLOUD_HOSTS.has(parsed.hostname)) return POSTIZ_API_BASE;
+	let path = parsed.pathname;
+	while (path.endsWith('/')) path = path.slice(0, -1);
+	if (!path.endsWith('/public/v1')) path = `${path}/api/public/v1`;
+	return `${parsed.origin}${path}`;
+}
+
+/**
+ * The API base for a call: the `baseUrl` option when set, otherwise the
+ * account's stored `base_url`, otherwise Postiz Cloud. An inline `key` option
+ * is not the stored account's key, so it is paired with the option or Cloud,
+ * never with the stored field.
+ */
+export async function resolvePostizBaseUrl(ctx: {
+	options?: { baseUrl?: string; key?: string };
+	keys?: { get_base_url?: () => Promise<string | null | undefined> };
+}): Promise<string> {
+	const fromOptions = ctx.options?.baseUrl?.trim();
+	if (fromOptions) return normalizePostizBaseUrl(fromOptions);
+	if (ctx.options?.key) return POSTIZ_API_BASE;
+	return normalizePostizBaseUrl(await ctx.keys?.get_base_url?.());
+}
+
+/**
+ * A failure before Postiz answered: a dropped connection, DNS, an abort, or a
+ * key that cannot go in a header. An HTTP error from Postiz stays core's
+ * `ApiError`, so its status and Retry-After reach the handlers unchanged.
  */
 export class PostizAPIError extends Error {
-	readonly status?: number;
-	/** The API's own short reason, such as `Unauthorized`. */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when Postiz sent one. */
-	readonly retryAfter?: number;
 	/** The request method, so handlers can refuse to replay a write. */
 	readonly method?: string;
 	/** Set when the request never reached Postiz (DNS, reset, abort). */
 	readonly transport: boolean;
-	/** Set when Postiz rejected the key rather than the request. */
-	readonly credentialsRejected: boolean;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			retryAfter?: number;
-			method?: string;
-			transport?: boolean;
-			credentialsRejected?: boolean;
-		} = {},
+		options: { cause?: Error; method?: string; transport?: boolean } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'PostizAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
-		this.credentialsRejected = options.credentialsRejected ?? false;
 	}
 }
 
@@ -93,23 +110,11 @@ export function readErrorLabel(body: Untyped): string | undefined {
 	return readString(asRecord(body), 'error');
 }
 
-const CREDENTIAL_MESSAGE = /api key/i;
-
 /**
- * Both documented key rejections arrive as a 401 with a message naming the key:
- * `No API Key found` and `Invalid API key`. A 403 is a key that is valid but
- * does not own the resource, which is a permission problem rather than a
- * credential one, so it is not flagged here.
+ * Postiz answers two error shapes. Its own handlers send `{ msg }`, as in
+ * `{"msg":"Invalid API key"}`. A route that does not exist is caught by NestJS
+ * and answered as `{ message, error, statusCode }`.
  */
-export function isCredentialRejection(
-	status: number | undefined,
-	body: Untyped,
-): boolean {
-	if (status !== 401) return false;
-	const message = readErrorMessage(body);
-	return message !== undefined && CREDENTIAL_MESSAGE.test(message);
-}
-
 export function describePostizError(
 	status: number | undefined,
 	body: Untyped,
@@ -141,6 +146,7 @@ export function segment(value: string | number): string {
 export async function makePostizRequest(
 	apiKey: string,
 	{ method, path, query, body }: PostizRequest,
+	baseUrl: string = POSTIZ_API_BASE,
 ): Promise<Untyped> {
 	if (!apiKey.trim()) {
 		throw new AuthMissingError('postiz', 'api_key');
@@ -157,7 +163,7 @@ export async function makePostizRequest(
 	if (body !== undefined) headers['Content-Type'] = 'application/json';
 
 	const config: OpenAPIConfig = {
-		BASE: POSTIZ_API_BASE,
+		BASE: baseUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -174,21 +180,19 @@ export async function makePostizRequest(
 
 	try {
 		// unknown: the caller's output schema parses the body returned here.
-		return await request<Untyped>(config, requestOptions, {
-			rateLimitConfig: POSTIZ_RATE_LIMIT_CONFIG,
-		});
+		// Core retries a 429 itself, honouring Retry-After.
+		return await request<Untyped>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new PostizAPIError(
-				describePostizError(error.status, error.body, error.statusText),
-				{
-					status: error.status,
-					code: readErrorLabel(error.body),
-					retryAfter: error.retryAfter,
-					method,
-					credentialsRejected: isCredentialRejection(error.status, error.body),
-				},
+			// Core's message is only the status text ("Bad Request"). Put Postiz's
+			// own reason on the same error, so an agent sees why and handlers
+			// still get core's ApiError with its status and Retry-After.
+			error.message = describePostizError(
+				error.status,
+				error.body,
+				error.message,
 			);
+			throw error;
 		}
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {

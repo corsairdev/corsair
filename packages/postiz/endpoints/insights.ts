@@ -15,12 +15,32 @@ export const list: PostizEndpoints['mediaList'] = (ctx, input) =>
 			output: Outputs.mediaList,
 		},
 		input,
-		({ page }) => ({ method: 'GET', path: '/media', query: { page } }),
+		({ page, search }) => ({
+			method: 'GET',
+			path: '/media',
+			query: { page, search },
+		}),
+		{ log: (_, result) => ({ count: result.results.length }) },
+	);
+
+export const uploadFromUrl: PostizEndpoints['mediaUploadFromUrl'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
 		{
-			// The route answers a bare array of files, not an envelope.
-			shape: asList('media'),
-			log: (_, result) => ({ count: result.media.length }),
+			event: 'media.uploadFromUrl',
+			input: Inputs.mediaUploadFromUrl,
+			output: Outputs.mediaUploadFromUrl,
 		},
+		input,
+		({ url, adjust }) => ({
+			method: 'POST',
+			path: '/upload-from-url',
+			body: { url, adjust },
+		}),
+		{ log: (_, result) => ({ mediaId: result.id }) },
 	);
 
 export const notifications: PostizEndpoints['notificationsList'] = (
@@ -40,10 +60,7 @@ export const notifications: PostizEndpoints['notificationsList'] = (
 			path: '/notifications',
 			query: { page },
 		}),
-		{
-			shape: asList('notifications'),
-			log: (_, result) => ({ count: result.notifications.length }),
-		},
+		{ log: (_, result) => ({ count: result.notifications.length }) },
 	);
 
 export const analytics: PostizEndpoints['analyticsPlatform'] = (ctx, input) =>

@@ -104,24 +104,28 @@ describe('response parsing', () => {
 		).rejects.toThrow();
 	});
 
-	it('rejects a media page whose body is not an array', async () => {
-		mockedRequest.mockResolvedValue({ media: [] });
+	it('rejects a media page that is not the `{ pages, results }` envelope', async () => {
+		mockedRequest.mockResolvedValue([]);
 
 		await expect(Insights.list(ctx, {})).rejects.toThrow();
 	});
 
 	it('rejects a notification whose id is not a string', async () => {
-		mockedRequest.mockResolvedValue([{ id: 42, content: 'hi' }]);
+		mockedRequest.mockResolvedValue({
+			notifications: [{ id: 42, content: 'hi' }],
+		});
 
 		await expect(Insights.notifications(ctx, {})).rejects.toThrow();
 	});
 
 	it('accepts an analytics row whose platform reports no percentage change', async () => {
-		mockedRequest.mockResolvedValue([{ label: 'Followers', data: [1, 2] }]);
+		mockedRequest.mockResolvedValue([
+			{ label: 'Followers', data: [{ total: 1, date: '2025-01-01' }] },
+		]);
 
 		const result = await Insights.analytics(ctx, {
 			integration: integrationId,
-			date: 'last_30_days',
+			date: '30',
 		});
 
 		expect(result.analytics[0]?.percentageChange).toBeUndefined();
@@ -133,9 +137,19 @@ describe('response parsing', () => {
 		await expect(
 			Insights.analytics(ctx, {
 				integration: integrationId,
+				date: '30',
+			}),
+		).rejects.toThrow();
+	});
+
+	it('rejects a period that is not a number of days', async () => {
+		await expect(
+			Insights.analytics(ctx, {
+				integration: integrationId,
 				date: 'last_30_days',
 			}),
 		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });
 
@@ -165,7 +179,7 @@ describe('input validation before the request', () => {
 	});
 
 	it('accepts a draft with no posts', async () => {
-		mockedRequest.mockResolvedValue({ posts: [] });
+		mockedRequest.mockResolvedValue([]);
 
 		await expect(
 			Posts.create(ctx, {
@@ -236,7 +250,8 @@ describe('input validation before the request', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('rejects a non-positive page', async () => {
+	it("rejects a page below each route's first page", async () => {
+		// Media pages start at 1 and notification pages at 0.
 		await expect(Insights.list(ctx, { page: 0 })).rejects.toThrow();
 		await expect(Insights.notifications(ctx, { page: -1 })).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
@@ -244,16 +259,12 @@ describe('input validation before the request', () => {
 
 	it('surfaces a Postiz rejection as an error a handler can match', async () => {
 		mockedRequest.mockRejectedValue(
-			new PostizAPIError('Postiz 401: Invalid API key', {
-				status: 401,
-				method: 'GET',
-				credentialsRejected: true,
-			}),
+			new PostizAPIError('fetch failed', { method: 'GET', transport: true }),
 		);
 
 		const error = await captureError(Integrations.list(ctx, {}));
 
 		expect(error).toBeInstanceOf(PostizAPIError);
-		expect(error).toMatchObject({ status: 401, credentialsRejected: true });
+		expect(error).toMatchObject({ method: 'GET', transport: true });
 	});
 });

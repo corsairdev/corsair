@@ -11,6 +11,7 @@ const OPERATIONS = [
 	'posts.delete',
 	'posts.changeStatus',
 	'media.list',
+	'media.uploadFromUrl',
 	'notifications.list',
 	'analytics.platform',
 ] as const;
@@ -90,8 +91,12 @@ describe('postiz plugin', () => {
 		expect(meta['posts.delete']?.riskLevel).toBe('destructive');
 	});
 
-	it('treats a status change as a write, since it only moves a post', () => {
-		expect(meta['posts.changeStatus']?.riskLevel).toBe('write');
+	it('marks a status change destructive, because scheduling queues a post to publish', () => {
+		expect(meta['posts.changeStatus']?.riskLevel).toBe('destructive');
+	});
+
+	it('treats an upload as a write, since it only stores a file', () => {
+		expect(meta['media.uploadFromUrl']?.riskLevel).toBe('write');
 	});
 
 	it('keeps every read-only operation a read', () => {
@@ -120,8 +125,8 @@ describe('postiz plugin', () => {
 		}
 	});
 
-	it('declares api_key as the only credential, since a key is all the API needs', () => {
-		expect(postizAuthConfig).toEqual({ api_key: {} });
+	it('declares an api_key with an optional self-hosted base_url per account', () => {
+		expect(postizAuthConfig).toEqual({ api_key: { account: ['base_url'] } });
 	});
 });
 

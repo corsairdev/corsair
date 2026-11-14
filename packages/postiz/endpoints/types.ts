@@ -306,6 +306,26 @@ const PostsListOutputSchema = z.object({
 
 export type PostsListOutput = z.infer<typeof PostsListOutputSchema>;
 
+/** One receipt per channel the create call posted to. */
+export const PostCreatedSchema = z
+	.object({
+		postId: IdSchema.nullish().describe('The id of the post Postiz created.'),
+		integration: z
+			.string()
+			.nullish()
+			.describe('The integration id the post was created for.'),
+	})
+	.loose();
+
+export type PostizPostCreated = z.infer<typeof PostCreatedSchema>;
+
+/** The route answers a bare array of receipts, wrapped here under `posts`. */
+const PostsCreateOutputSchema = z.object({
+	posts: z.array(PostCreatedSchema),
+});
+
+export type PostsCreateOutput = z.infer<typeof PostsCreateOutputSchema>;
+
 const PostsDeleteInputSchema = z.object({
 	id: IdSchema.describe(
 		'The post id. Deleting one removes every post in its group.',
@@ -352,7 +372,14 @@ const MediaListInputSchema = z.object({
 		.int()
 		.positive()
 		.optional()
-		.describe('Page number. The library returns 18 files per page.'),
+		.describe(
+			'Page number, starting at 1. The library returns 18 files per page.',
+		),
+	search: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Case-insensitive filter on the original file name.'),
 });
 
 export type MediaListInput = z.infer<typeof MediaListInputSchema>;
@@ -360,8 +387,15 @@ export type MediaListInput = z.infer<typeof MediaListInputSchema>;
 export const MediaFileSchema = z
 	.object({
 		id: IdSchema.nullish(),
-		name: z.string().nullish(),
-		path: z.string().nullish().describe('The hosted URL.'),
+		name: z.string().nullish().describe('The stored file name.'),
+		originalName: z
+			.string()
+			.nullish()
+			.describe('The file name as uploaded, which `search` matches.'),
+		path: z
+			.string()
+			.nullish()
+			.describe('The hosted URL, usable as a post attachment.'),
 		thumbnail: z.string().nullish(),
 		alt: z.string().nullish(),
 		createdAt: z.string().nullish(),
@@ -370,11 +404,51 @@ export const MediaFileSchema = z
 
 export type PostizMediaFile = z.infer<typeof MediaFileSchema>;
 
-const MediaListOutputSchema = z.object({
-	media: z.array(MediaFileSchema),
-});
+/** The route answers `{ pages, results }`. */
+const MediaListOutputSchema = z
+	.object({
+		pages: z.number().nullish().describe('The total number of pages.'),
+		results: z.array(MediaFileSchema),
+	})
+	.loose();
 
 export type MediaListOutput = z.infer<typeof MediaListOutputSchema>;
+
+const MediaUploadFromUrlInputSchema = z.object({
+	url: z
+		.url({ protocol: /^https?$/ })
+		.describe('A public http(s) URL Postiz downloads the file from.'),
+	adjust: z
+		.boolean()
+		.optional()
+		.describe(
+			"Resize and re-encode the file to the platforms' limits after the upload. Runs in the background; the result's `status` is `processing` until it is done.",
+		),
+});
+
+export type MediaUploadFromUrlInput = z.infer<
+	typeof MediaUploadFromUrlInputSchema
+>;
+
+/** The stored file. Use its `id` and `path` as a post's `image` entry. */
+const MediaUploadFromUrlOutputSchema = z
+	.object({
+		id: IdSchema.describe('The uploaded media id.'),
+		name: z.string().nullish(),
+		path: z.string().min(1).describe('The hosted URL of the file.'),
+		organizationId: z.string().nullish(),
+		createdAt: z.string().nullish(),
+		updatedAt: z.string().nullish(),
+		status: z
+			.string()
+			.nullish()
+			.describe('`processing` while `adjust` runs, otherwise `ready`.'),
+	})
+	.loose();
+
+export type MediaUploadFromUrlOutput = z.infer<
+	typeof MediaUploadFromUrlOutputSchema
+>;
 
 // ── notifications ─────────────────────────────────────────────────────────
 
@@ -382,9 +456,11 @@ const NotificationsListInputSchema = z.object({
 	page: z
 		.number()
 		.int()
-		.positive()
+		.nonnegative()
 		.optional()
-		.describe('Page number. The API returns 100 notifications per page.'),
+		.describe(
+			'Page number, starting at 0. The API returns 100 notifications per page.',
+		),
 });
 
 export type NotificationsListInput = z.infer<
@@ -402,9 +478,16 @@ export const NotificationSchema = z
 
 export type PostizNotification = z.infer<typeof NotificationSchema>;
 
-const NotificationsListOutputSchema = z.object({
-	notifications: z.array(NotificationSchema),
-});
+/** The route answers the page of notifications with its paging fields. */
+const NotificationsListOutputSchema = z
+	.object({
+		notifications: z.array(NotificationSchema),
+		total: z.number().nullish().describe('Notifications across all pages.'),
+		page: z.number().nullish().describe('This page, starting at 0.'),
+		limit: z.number().nullish(),
+		hasMore: z.boolean().nullish().describe('True when another page exists.'),
+	})
+	.loose();
 
 export type NotificationsListOutput = z.infer<
 	typeof NotificationsListOutputSchema
@@ -416,10 +499,8 @@ const AnalyticsPlatformInputSchema = z.object({
 	integration: IdSchema.describe('The integration id to read analytics for.'),
 	date: z
 		.string()
-		.min(1)
-		.describe(
-			'The period to read, which the API takes as its own window token.',
-		),
+		.regex(/^\d+$/, 'Pass a number of days, such as `7`, `30` or `90`.')
+		.describe('How many days to look back, such as `7`, `30` or `90`.'),
 });
 
 export type AnalyticsPlatformInput = z.infer<
@@ -430,11 +511,22 @@ export type AnalyticsPlatformInput = z.infer<
  * Each platform reports different metrics, so the row is opened up rather than
  * pinned to one platform's fields.
  */
+export const AnalyticsPointSchema = z
+	.object({
+		// Documented as a string, such as "1250"; a number is kept as sent.
+		total: z.union([z.string(), z.number()]).nullish(),
+		date: z.string().nullish().describe('The day, as `YYYY-MM-DD`.'),
+	})
+	.loose();
+
 export const AnalyticsRowSchema = z
 	.object({
-		label: z.string().nullish(),
+		label: z
+			.string()
+			.nullish()
+			.describe('The metric, such as `Followers` or `Impressions`.'),
 		percentageChange: z.number().nullish(),
-		data: z.array(z.number()).nullish(),
+		data: z.array(AnalyticsPointSchema).nullish(),
 	})
 	.loose();
 
@@ -461,6 +553,7 @@ export type PostizEndpointInputs = {
 	postsDelete: PostsDeleteInput;
 	postsChangeStatus: PostsChangeStatusInput;
 	mediaList: MediaListInput;
+	mediaUploadFromUrl: MediaUploadFromUrlInput;
 	notificationsList: NotificationsListInput;
 	analyticsPlatform: AnalyticsPlatformInput;
 };
@@ -470,10 +563,11 @@ export type PostizEndpointOutputs = {
 	isConnected: IsConnectedOutput;
 	findSlot: FindSlotOutput;
 	postsList: PostsListOutput;
-	postsCreate: PostsListOutput;
+	postsCreate: PostsCreateOutput;
 	postsDelete: PostsDeleteOutput;
 	postsChangeStatus: PostsChangeStatusOutput;
 	mediaList: MediaListOutput;
+	mediaUploadFromUrl: MediaUploadFromUrlOutput;
 	notificationsList: NotificationsListOutput;
 	analyticsPlatform: AnalyticsPlatformOutput;
 };
@@ -487,6 +581,7 @@ export const PostizEndpointInputSchemas = {
 	postsDelete: PostsDeleteInputSchema,
 	postsChangeStatus: PostsChangeStatusInputSchema,
 	mediaList: MediaListInputSchema,
+	mediaUploadFromUrl: MediaUploadFromUrlInputSchema,
 	notificationsList: NotificationsListInputSchema,
 	analyticsPlatform: AnalyticsPlatformInputSchema,
 } as const;
@@ -496,11 +591,11 @@ export const PostizEndpointOutputSchemas = {
 	isConnected: IsConnectedOutputSchema,
 	findSlot: FindSlotOutputSchema,
 	postsList: PostsListOutputSchema,
-	// Create answers the same shape a list does, so both parse `{ posts }`.
-	postsCreate: PostsListOutputSchema,
+	postsCreate: PostsCreateOutputSchema,
 	postsDelete: PostsDeleteOutputSchema,
 	postsChangeStatus: PostsChangeStatusOutputSchema,
 	mediaList: MediaListOutputSchema,
+	mediaUploadFromUrl: MediaUploadFromUrlOutputSchema,
 	notificationsList: NotificationsListOutputSchema,
 	analyticsPlatform: AnalyticsPlatformOutputSchema,
 } as const;

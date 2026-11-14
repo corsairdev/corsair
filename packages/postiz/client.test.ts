@@ -2,11 +2,12 @@ import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
 	describePostizError,
-	isCredentialRejection,
 	makePostizRequest,
+	normalizePostizBaseUrl,
 	POSTIZ_API_BASE,
 	PostizAPIError,
 	readErrorLabel,
+	resolvePostizBaseUrl,
 } from './client';
 import { captureError } from './test-helpers';
 
@@ -58,23 +59,6 @@ describe('Postiz error body', () => {
 			'Postiz 404 Not Found: Cannot GET /public/v1/nope',
 		);
 	});
-
-	it('flags both documented key rejections', () => {
-		expect(isCredentialRejection(401, { msg: 'No API Key found' })).toBe(true);
-		expect(isCredentialRejection(401, { msg: 'Invalid API key' })).toBe(true);
-	});
-
-	it('does not flag a 403, which is a key without access rather than a bad key', () => {
-		expect(
-			isCredentialRejection(403, { msg: 'You do not own this resource' }),
-		).toBe(false);
-	});
-
-	it('does not flag a 400 that happens to mention a key', () => {
-		expect(isCredentialRejection(400, { msg: 'api key not needed here' })).toBe(
-			false,
-		);
-	});
 });
 
 describe('makePostizRequest', () => {
@@ -111,8 +95,9 @@ describe('makePostizRequest', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('reports a rejected key as a credential failure without echoing it', async () => {
-		mockRequest.mockRejectedValue(apiError(401, { msg: 'Invalid API key' }));
+	it("lets core's ApiError through, with Postiz's own reason in the message", async () => {
+		const rejected = apiError(400, { msg: 'Integration not found' });
+		mockRequest.mockRejectedValue(rejected);
 
 		const error = await captureError(
 			makePostizRequest('secret-key', {
@@ -121,11 +106,11 @@ describe('makePostizRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PostizAPIError);
-		if (!(error instanceof PostizAPIError)) return;
-		expect(error.status).toBe(401);
-		expect(error.credentialsRejected).toBe(true);
-		expect(error.method).toBe('GET');
+		// The same instance, so status, Retry-After and the body survive.
+		expect(error).toBe(rejected);
+		if (!(error instanceof ApiError)) return;
+		expect(error.status).toBe(400);
+		expect(error.message).toBe('Postiz 400: Integration not found');
 		// The key rides in a header, so nothing on the error may repeat it.
 		expect(JSON.stringify(error)).not.toContain('secret-key');
 	});
@@ -153,11 +138,33 @@ describe('makePostizRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PostizAPIError);
-		if (!(error instanceof PostizAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(3000);
-		expect(error.method).toBe('POST');
+		expect(error.request.method).toBe('POST');
+	});
+
+	it("does not override core's 429 retries", async () => {
+		mockRequest.mockResolvedValue([]);
+
+		await makePostizRequest('key', { method: 'GET', path: '/integrations' });
+
+		expect(mockRequest.mock.calls[0]?.[2]).toBeUndefined();
+	});
+
+	it('sends to a self-hosted base when one is given', async () => {
+		mockRequest.mockResolvedValue([]);
+
+		await makePostizRequest(
+			'key',
+			{ method: 'GET', path: '/integrations' },
+			'https://postiz.example.com/api/public/v1',
+		);
+
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			BASE: 'https://postiz.example.com/api/public/v1',
+		});
 	});
 
 	it('flags a dropped connection as a transport failure with its method', async () => {
@@ -171,5 +178,64 @@ describe('makePostizRequest', () => {
 		if (!(error instanceof PostizAPIError)) return;
 		expect(error.transport).toBe(true);
 		expect(error.method).toBe('POST');
+	});
+});
+
+describe('base URL', () => {
+	it('uses Postiz Cloud when nothing is set', async () => {
+		expect(normalizePostizBaseUrl(undefined)).toBe(POSTIZ_API_BASE);
+		expect(normalizePostizBaseUrl('  ')).toBe(POSTIZ_API_BASE);
+		await expect(resolvePostizBaseUrl({})).resolves.toBe(POSTIZ_API_BASE);
+	});
+
+	it('adds the public API path to a self-hosted origin', () => {
+		expect(normalizePostizBaseUrl('https://postiz.example.com')).toBe(
+			'https://postiz.example.com/api/public/v1',
+		);
+		expect(normalizePostizBaseUrl('https://postiz.example.com/')).toBe(
+			'https://postiz.example.com/api/public/v1',
+		);
+		expect(
+			normalizePostizBaseUrl('https://postiz.example.com/api/public/v1/'),
+		).toBe('https://postiz.example.com/api/public/v1');
+	});
+
+	it('maps the cloud hosts to the cloud API base', () => {
+		expect(normalizePostizBaseUrl('https://api.postiz.com')).toBe(
+			POSTIZ_API_BASE,
+		);
+		expect(normalizePostizBaseUrl('https://platform.postiz.com')).toBe(
+			POSTIZ_API_BASE,
+		);
+	});
+
+	it('refuses a URL the key should not be sent to', () => {
+		expect(() => normalizePostizBaseUrl('http://postiz.example.com')).toThrow(
+			/https/,
+		);
+		expect(() => normalizePostizBaseUrl('postiz.example.com')).toThrow(
+			/absolute/,
+		);
+		expect(() =>
+			normalizePostizBaseUrl('https://user:pw@postiz.example.com'),
+		).toThrow(/credentials/);
+		expect(() =>
+			normalizePostizBaseUrl('https://postiz.example.com/?next=evil'),
+		).toThrow(/query/);
+	});
+
+	it('prefers the baseUrl option over the stored account field', async () => {
+		const keys = {
+			get_base_url: () => Promise.resolve('https://stored.example.com'),
+		};
+		await expect(resolvePostizBaseUrl({ keys })).resolves.toBe(
+			'https://stored.example.com/api/public/v1',
+		);
+		await expect(
+			resolvePostizBaseUrl({
+				options: { baseUrl: 'https://option.example.com' },
+				keys,
+			}),
+		).resolves.toBe('https://option.example.com/api/public/v1');
 	});
 });

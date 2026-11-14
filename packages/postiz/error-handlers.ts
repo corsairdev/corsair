@@ -1,22 +1,25 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { PostizAPIError } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PostizAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+/** The HTTP method of the failed request; every read here is a GET. */
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	if (error instanceof PostizAPIError) return error.method;
+	return undefined;
 }
 
 // Postiz documents its status codes explicitly, including one quirk this map
 // has to respect: a delete of something already gone answers 404, and a known
 // bug surfaces a missing post id as a 500. Neither is retried.
 export const errorHandlers = {
-	// `No API Key found` or `Invalid API key`. No retry sends a different key.
+	// `No API Key found`, `Invalid API key`, or any other 401. No retry sends a
+	// different key.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof PostizAPIError && error.credentialsRejected,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// Any other 401: the key is present but Postiz still refused it.
-	UNAUTHORIZED_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
@@ -26,22 +29,12 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// The create-post route allows 90-100 requests an hour for the whole
-	// instance. Postiz sends no Retry-After, so a minute is the floor.
+	// Core's request() has already retried the 429 three times, honouring
+	// Retry-After, before this sees it. The public API allows 30 requests an
+	// hour, so another round here would only spend more of that budget.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
-			const text = error.message.toLowerCase();
-			return text.includes('too many requests') || text.includes('rate limit');
-		},
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof PostizAPIError ? error.retryAfter : undefined,
-			// An hourly budget will not reopen within a retry, so one longer wait
-			// then a stop is more honest than three quick attempts.
-			retryStrategy: 'linear_4s' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A malformed body or a path id that matches nothing. A 413 is a body over
 	// the 50 MB limit, which a retry cannot shrink.
@@ -62,8 +55,7 @@ export const errorHandlers = {
 	NETWORK_ERROR: {
 		match: (error: Error) => error instanceof PostizAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof PostizAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -72,9 +64,7 @@ export const errorHandlers = {
 	// a missing post id as a 500, so a write is never replayed here.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PostizAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

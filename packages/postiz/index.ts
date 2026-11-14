@@ -24,14 +24,25 @@ import {
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { PostizSchema } from './schema';
 
+/**
+ * `base_url` is the instance URL for a self-hosted Postiz, such as
+ * `https://postiz.example.com`. Leave it empty for Postiz Cloud.
+ */
 export const postizAuthConfig = {
-	api_key: {},
+	api_key: {
+		account: ['base_url'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type PostizPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	/** The API key from Developer settings. Overrides the stored `api_key`. */
 	key?: string;
+	/**
+	 * A self-hosted instance's https URL, such as `https://postiz.example.com`.
+	 * Overrides the account's stored `base_url`. Unset means Postiz Cloud.
+	 */
+	baseUrl?: string;
 	hooks?: InternalPostizPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof postizEndpointsNested>;
@@ -66,6 +77,7 @@ export type PostizEndpoints = {
 	postsDelete: PostizEndpoint<'postsDelete'>;
 	postsChangeStatus: PostizEndpoint<'postsChangeStatus'>;
 	mediaList: PostizEndpoint<'mediaList'>;
+	mediaUploadFromUrl: PostizEndpoint<'mediaUploadFromUrl'>;
 	notificationsList: PostizEndpoint<'notificationsList'>;
 	analyticsPlatform: PostizEndpoint<'analyticsPlatform'>;
 };
@@ -84,6 +96,7 @@ const postizEndpointsNested = {
 	},
 	media: {
 		list: Insights.list,
+		uploadFromUrl: Insights.uploadFromUrl,
 	},
 	notifications: {
 		list: Insights.notifications,
@@ -125,6 +138,10 @@ export const postizEndpointSchemas = {
 	'media.list': {
 		input: PostizEndpointInputSchemas.mediaList,
 		output: PostizEndpointOutputSchemas.mediaList,
+	},
+	'media.uploadFromUrl': {
+		input: PostizEndpointInputSchemas.mediaUploadFromUrl,
+		output: PostizEndpointOutputSchemas.mediaUploadFromUrl,
 	},
 	'notifications.list': {
 		input: PostizEndpointInputSchemas.notificationsList,
@@ -170,13 +187,19 @@ const postizEndpointMeta = {
 			'Delete a post, which also deletes every post in its group. A published post stays live on the platform',
 	},
 	'posts.changeStatus': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Move a post between draft and scheduled, without touching its content or date',
+			'Move a post between draft and scheduled. Scheduling queues it to publish at its stored date to every channel it targets',
 	},
 	'media.list': {
 		riskLevel: 'read',
-		description: "Page through the organization's media library",
+		description:
+			"Page through the organization's media library, optionally filtered by file name",
+	},
+	'media.uploadFromUrl': {
+		riskLevel: 'write',
+		description:
+			'Copy a file from a public URL into the media library, for use as a post attachment',
 	},
 	'notifications.list': {
 		riskLevel: 'read',
@@ -249,6 +272,8 @@ export type {
 	IsConnectedOutput,
 	MediaListInput,
 	MediaListOutput,
+	MediaUploadFromUrlInput,
+	MediaUploadFromUrlOutput,
 	NotificationsListInput,
 	NotificationsListOutput,
 	PostizEndpointInputs,
@@ -259,12 +284,14 @@ export type {
 	PostizNotification,
 	PostizPost,
 	PostizPostContent,
+	PostizPostCreated,
 	PostizPostItem,
 	PostizSettings,
 	PostizTag,
 	PostsChangeStatusInput,
 	PostsChangeStatusOutput,
 	PostsCreateInput,
+	PostsCreateOutput,
 	PostsDeleteInput,
 	PostsDeleteOutput,
 	PostsListInput,

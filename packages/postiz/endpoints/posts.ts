@@ -1,6 +1,6 @@
 import type { PostizEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { asList, call } from './call';
 import {
 	PostizEndpointInputSchemas as Inputs,
 	PostizEndpointOutputSchemas as Outputs,
@@ -38,6 +38,8 @@ export const create: PostizEndpoints['postsCreate'] = (ctx, input) =>
 			body: { type, date, shortLink, tags, posts, inter },
 		}),
 		{
+			// The route answers a bare array of `{ postId, integration }` receipts.
+			shape: asList('posts'),
 			log: (parsed, result) => ({
 				count: result.posts.length,
 				type: parsed.type,
