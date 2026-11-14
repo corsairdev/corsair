@@ -21,11 +21,11 @@ pnpm add @corsair-dev/gatherup
 | `businesses.search` | `gatherup.api.businesses.search` | `read` | Search the business directory for an ID by name or domain |
 | `businesses.types` | `gatherup.api.businesses.types` | `read` | The Google business types a business can be created with |
 | `businesses.update` | `gatherup.api.businesses.update` | `write` | Update a business, including its name, type, address and thresholds |
-| `customers.create` | `gatherup.api.customers.create` | `write` | Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed to reach them |
+| `customers.create` | `gatherup.api.customers.create` | `destructive` | Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed. Destructive because it can message the customer: a feedback request goes out when `sendFeedbackRequest` is true, and a business in automatic mode sends one on its own schedule |
 | `customers.delete` | `gatherup.api.customers.delete` | `destructive` | Delete a customer and their feedback record |
 | `customers.get` | `gatherup.api.customers.get` | `read` | One customer with their status, rating and review |
 | `customers.list` | `gatherup.api.customers.list` | `read` | Customers of a business, paged, with their rating, review and request status |
-| `customers.requestFeedback` | `gatherup.api.customers.requestFeedback` | `write` | Send a feedback request to a customer, which is a message to a real person |
+| `customers.requestFeedback` | `gatherup.api.customers.requestFeedback` | `destructive` | Send a feedback request to a customer, which is a message to a real person |
 | `customers.update` | `gatherup.api.customers.update` | `write` | Update a customer. This route spells the phone `customerPhoneNumber`, where create spells it `customerPhone` |
 | `feedbacks.list` | `gatherup.api.feedbacks.list` | `read` | Feedback a business received, with its rating, NPS answer and text, paged |
 

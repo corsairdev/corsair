@@ -37,13 +37,13 @@ apiExamples:
   businesses.get:
     call: "{ businessId: 34291 }"
   businesses.search:
-    call: "{ search: 'peach' }"
+    call: "{ by: 'customField', search: '1234' }"
   businesses.types:
     call: "{ search: 'Medicine' }"
   businesses.create:
-    call: "{ businessName: 'Peach Trees Intl.', businessType: 'Insurance Agency', city: 'Haiku', country: 'US' }"
+    call: "{ businessName: 'Peach Trees Intl.', businessType: 'Insurance Agency', city: 'Haiku', country: 'US', streetAddress: '4150 Hana Hwy', state: 'HI', zip: '96708', phone: '808-333-3334' }"
   businesses.update:
-    call: "{ businessId: 34291, businessName: 'Peach Trees II' }"
+    call: "{ businessId: 34291, businessType: 'Insurance Agency', businessName: 'Peach Trees II' }"
   businesses.deactivate:
     call: "{ businessId: 34291 }"
   businesses.reactivate:
