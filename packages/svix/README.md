@@ -24,8 +24,8 @@ pnpm add @corsair-dev/svix
 | `attempts.listAttemptedMessages` | `svix.api.attempts.listAttemptedMessages` | `read` | List Attempted Messages |
 | `attempts.listByEndpoint` | `svix.api.attempts.listByEndpoint` | `read` | List Attempts By Endpoint |
 | `attempts.listByMsg` | `svix.api.attempts.listByMsg` | `read` | List Attempts By Msg |
-| `attempts.resend` | `svix.api.attempts.resend` | `write` | Resend Webhook |
-| `endpoints.bulkReplay` | `svix.api.endpoints.bulkReplay` | `write` | Bulk Replay Messages |
+| `attempts.resend` | `svix.api.attempts.resend` | `destructive` | Resend Webhook |
+| `endpoints.bulkReplay` | `svix.api.endpoints.bulkReplay` | `destructive` | Bulk Replay Messages |
 | `endpoints.create` | `svix.api.endpoints.create` | `write` | Create Endpoint |
 | `endpoints.delete` | `svix.api.endpoints.delete` | `destructive` | Delete Endpoint |
 | `endpoints.get` | `svix.api.endpoints.get` | `read` | Get Endpoint |
@@ -38,11 +38,11 @@ pnpm add @corsair-dev/svix
 | `endpoints.mcpEventsUnsubscribe` | `svix.api.endpoints.mcpEventsUnsubscribe` | `destructive` | Unsubscribe from MCP Events |
 | `endpoints.patch` | `svix.api.endpoints.patch` | `write` | Patch Endpoint |
 | `endpoints.patchHeaders` | `svix.api.endpoints.patchHeaders` | `write` | Patch Endpoint Headers |
-| `endpoints.recover` | `svix.api.endpoints.recover` | `write` | Recover Failed Webhooks |
-| `endpoints.replayMissing` | `svix.api.endpoints.replayMissing` | `write` | Replay Missing Webhooks |
-| `endpoints.rotateSecret` | `svix.api.endpoints.rotateSecret` | `write` | Rotate Endpoint Secret |
-| `endpoints.sendExample` | `svix.api.endpoints.sendExample` | `write` | Send Event Type Example Message |
-| `endpoints.setHeaders` | `svix.api.endpoints.setHeaders` | `write` | Set Endpoint Headers |
+| `endpoints.recover` | `svix.api.endpoints.recover` | `destructive` | Recover Failed Webhooks |
+| `endpoints.replayMissing` | `svix.api.endpoints.replayMissing` | `destructive` | Replay Missing Webhooks |
+| `endpoints.rotateSecret` | `svix.api.endpoints.rotateSecret` | `destructive` | Rotate Endpoint Secret |
+| `endpoints.sendExample` | `svix.api.endpoints.sendExample` | `destructive` | Send Event Type Example Message |
+| `endpoints.setHeaders` | `svix.api.endpoints.setHeaders` | `destructive` | Set Endpoint Headers |
 | `endpoints.transformationGet` | `svix.api.endpoints.transformationGet` | `read` | Get Endpoint Transformation |
 | `endpoints.transformationPatch` | `svix.api.endpoints.transformationPatch` | `write` | Patch Endpoint Transformation |
 | `endpoints.upsert` | `svix.api.endpoints.upsert` | `write` | Upsert Endpoint |
@@ -54,8 +54,8 @@ pnpm add @corsair-dev/svix
 | `eventTypes.patch` | `svix.api.eventTypes.patch` | `write` | Patch Event Type |
 | `eventTypes.upsert` | `svix.api.eventTypes.upsert` | `write` | Upsert Event Type |
 | `messages.bulkExpungeContent` | `svix.api.messages.bulkExpungeContent` | `destructive` | Expunge a set of message payloads |
-| `messages.create` | `svix.api.messages.create` | `write` | Create Message |
-| `messages.createBatch` | `svix.api.messages.createBatch` | `write` | Quickly Create a Batch of Messages |
+| `messages.create` | `svix.api.messages.create` | `destructive` | Create Message |
+| `messages.createBatch` | `svix.api.messages.createBatch` | `destructive` | Quickly Create a Batch of Messages |
 | `messages.expungeAllContents` | `svix.api.messages.expungeAllContents` | `destructive` | Expunge all message contents for an application |
 | `messages.expungeContent` | `svix.api.messages.expungeContent` | `destructive` | Expunge one message payload |
 | `messages.get` | `svix.api.messages.get` | `read` | Get Message |
@@ -63,15 +63,15 @@ pnpm add @corsair-dev/svix
 | `messages.pollerConsumerPoll` | `svix.api.messages.pollerConsumerPoll` | `write` | Poller Consumer Poll |
 | `messages.pollerConsumerSeek` | `svix.api.messages.pollerConsumerSeek` | `write` | Poller Consumer Seek |
 | `messages.pollerPoll` | `svix.api.messages.pollerPoll` | `read` | Poller Poll |
-| `messages.precheck` | `svix.api.messages.precheck` | `write` | Create Message Precheck |
+| `messages.precheck` | `svix.api.messages.precheck` | `read` | Create Message Precheck |
 | `operationalWebhooks.create` | `svix.api.operationalWebhooks.create` | `write` | Create Operational Webhook Endpoint |
 | `operationalWebhooks.delete` | `svix.api.operationalWebhooks.delete` | `destructive` | Delete Operational Webhook Endpoint |
 | `operationalWebhooks.get` | `svix.api.operationalWebhooks.get` | `read` | Get Operational Webhook Endpoint |
 | `operationalWebhooks.getHeaders` | `svix.api.operationalWebhooks.getHeaders` | `read` | Get Operational Webhook Endpoint Headers |
 | `operationalWebhooks.getSecret` | `svix.api.operationalWebhooks.getSecret` | `read` | Get Operational Webhook Endpoint Secret |
 | `operationalWebhooks.list` | `svix.api.operationalWebhooks.list` | `read` | List Operational Webhook Endpoints |
-| `operationalWebhooks.rotateSecret` | `svix.api.operationalWebhooks.rotateSecret` | `write` | Rotate Operational Webhook Endpoint Secret |
-| `operationalWebhooks.setHeaders` | `svix.api.operationalWebhooks.setHeaders` | `write` | Set Operational Webhook Endpoint Headers |
+| `operationalWebhooks.rotateSecret` | `svix.api.operationalWebhooks.rotateSecret` | `destructive` | Rotate Operational Webhook Endpoint Secret |
+| `operationalWebhooks.setHeaders` | `svix.api.operationalWebhooks.setHeaders` | `destructive` | Set Operational Webhook Endpoint Headers |
 | `operationalWebhooks.upsert` | `svix.api.operationalWebhooks.upsert` | `write` | Upsert Operational Webhook Endpoint |
 
 ## Auth

@@ -390,4 +390,27 @@ describe('Svix OpenAPI request seam', () => {
 			AuthMissingError,
 		);
 	});
+
+	it.each([
+		'messages.create',
+		'messages.createBatch',
+		'attempts.resend',
+		'endpoints.sendExample',
+		'endpoints.replayMissing',
+		'endpoints.bulkReplay',
+		'endpoints.recover',
+		'endpoints.rotateSecret',
+		'endpoints.setHeaders',
+		'operationalWebhooks.rotateSecret',
+		'operationalWebhooks.setHeaders',
+	] as const)(
+		'marks %s destructive (it delivers webhooks or replaces state)',
+		(op) => {
+			expect(svixEndpointMeta[op].riskLevel).toBe('destructive');
+		},
+	);
+
+	it('marks the message precheck as a read', () => {
+		expect(svixEndpointMeta['messages.precheck'].riskLevel).toBe('read');
+	});
 });

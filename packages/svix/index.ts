@@ -387,7 +387,7 @@ export const svixEndpointMeta = {
 		description: 'Get Endpoint Secret',
 	},
 	'endpoints.rotateSecret': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Rotate Endpoint Secret',
 	},
 	'endpoints.getHeaders': {
@@ -395,7 +395,7 @@ export const svixEndpointMeta = {
 		description: 'Get Endpoint Headers',
 	},
 	'endpoints.setHeaders': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Set Endpoint Headers',
 	},
 	'endpoints.patchHeaders': {
@@ -411,11 +411,11 @@ export const svixEndpointMeta = {
 		description: 'Patch Endpoint Transformation',
 	},
 	'endpoints.replayMissing': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Replay Missing Webhooks',
 	},
 	'endpoints.bulkReplay': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Bulk Replay Messages',
 	},
 	'endpoints.getStats': { riskLevel: 'read', description: 'Endpoint Stats' },
@@ -424,11 +424,11 @@ export const svixEndpointMeta = {
 		description: 'Endpoint Attempt Stats',
 	},
 	'endpoints.recover': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Recover Failed Webhooks',
 	},
 	'endpoints.sendExample': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send Event Type Example Message',
 	},
 	'eventTypes.list': { riskLevel: 'read', description: 'List Event Types' },
@@ -446,15 +446,15 @@ export const svixEndpointMeta = {
 	'eventTypes.patch': { riskLevel: 'write', description: 'Patch Event Type' },
 	'messages.list': { riskLevel: 'read', description: 'List Messages' },
 	'messages.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create Message',
 	},
 	'messages.createBatch': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Quickly Create a Batch of Messages',
 	},
 	'messages.precheck': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Create Message Precheck',
 	},
 	'messages.get': { riskLevel: 'read', description: 'Get Message' },
@@ -492,7 +492,7 @@ export const svixEndpointMeta = {
 		description: 'Delete attempt response body',
 	},
 	'attempts.resend': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Resend Webhook',
 	},
 	'messages.pollerPoll': { riskLevel: 'read', description: 'Poller Poll' },
@@ -529,7 +529,7 @@ export const svixEndpointMeta = {
 		description: 'Get Operational Webhook Endpoint Secret',
 	},
 	'operationalWebhooks.rotateSecret': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Rotate Operational Webhook Endpoint Secret',
 	},
 	'operationalWebhooks.getHeaders': {
@@ -537,7 +537,7 @@ export const svixEndpointMeta = {
 		description: 'Get Operational Webhook Endpoint Headers',
 	},
 	'operationalWebhooks.setHeaders': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Set Operational Webhook Endpoint Headers',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof endpoints>;

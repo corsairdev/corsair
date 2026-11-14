@@ -19,7 +19,9 @@ webhook endpoints (9). Request parameters retain Svix wire names; JSON request
 bodies are provided in `body`. Pagination cursors and idempotency keys are
 passed through where supported, including minus-prefixed previous-page cursors.
 Consumer polling is classified as a write because Svix tracks its iterator on
-the server. Writes are not automatically retried. See
+the server. Operations that deliver webhooks to endpoints (message create,
+batch, resend, replay, recover, send example) and those that replace secrets
+or all headers are `destructive`. Writes are not automatically retried. See
 [`README.md`](./README.md) for the endpoint list.
 
 Streaming, ingest, other administration APIs, and inbound Corsair webhook
