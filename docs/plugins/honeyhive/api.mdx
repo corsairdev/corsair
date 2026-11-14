@@ -1,0 +1,1857 @@
+---
+title: "HoneyHive API reference"
+sidebarTitle: "API"
+description: "API reference for the HoneyHive plugin in Corsair: every `honeyhive.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Configurations
+
+### create
+
+`configurations.create`
+
+Create a new configuration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.configurations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `parameters` | `Record<string, any>` | No | — |
+| `env` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `user_properties` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `acknowledged` | `boolean` | No | — |
+| `insertedId` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`configurations.delete`
+
+Delete a configuration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.configurations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `acknowledged` | `boolean` | No | — |
+| `deletedCount` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`configurations.list`
+
+List LLM and pipeline configurations
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.configurations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `env` | `string` | No | — |
+| `tags` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configurations` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### update
+
+`configurations.update`
+
+Update an existing configuration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.configurations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `parameters` | `Record<string, any>` | No | — |
+| `env` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `user_properties` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `acknowledged` | `boolean` | No | — |
+| `modifiedCount` | `number` | No | — |
+| `upsertedId` | `any` | No | — |
+| `upsertedCount` | `number` | No | — |
+| `matchedCount` | `number` | No | — |
+
+
+
+---
+
+## Datasets
+
+### addDatapoints
+
+`datasets.addDatapoints`
+
+Add datapoints to a dataset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.datasets.addDatapoints({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `dataset_id` | `string` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
+| `mapping` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inserted` | `boolean` | No | — |
+| `datapoint_ids` | `string[]` | No | — |
+
+
+
+---
+
+### create
+
+`datasets.create`
+
+Create a new dataset in a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.datasets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `datapoints` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inserted` | `boolean` | No | — |
+| `result` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### createLegacy
+
+`datasets.createLegacy`
+
+Create a new dataset (legacy)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.datasets.createLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `datapoints` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inserted` | `boolean` | No | — |
+| `result` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### delete
+
+`datasets.delete`
+
+Delete a dataset from a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.datasets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `dataset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### deleteLegacy
+
+`datasets.deleteLegacy`
+
+Delete a dataset (legacy)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.datasets.deleteLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`datasets.list`
+
+List datasets in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.datasets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `dataset_id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasets` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### listLegacy
+
+`datasets.listLegacy`
+
+List datasets (legacy)
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.datasets.listLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset_id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasets` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### removeDatapoint
+
+`datasets.removeDatapoint`
+
+Remove a datapoint from a dataset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.datasets.removeDatapoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `dataset_id` | `string` | Yes | — |
+| `datapoint_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dereferenced` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`datasets.update`
+
+Update an existing dataset in a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.datasets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `dataset_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `datapoints` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### updateLegacy
+
+`datasets.updateLegacy`
+
+Update a dataset (legacy)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.datasets.updateLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `datapoints` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, any>` | No | — |
+
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Create a new trace event
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.events.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `source` | `string` | No | — |
+| `event_name` | `string` | No | — |
+| `event_type` | `string` | No | — |
+| `event_id` | `string` | No | — |
+| `session_id` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `children_ids` | `string[]` | No | — |
+| `config` | `Record<string, any>` | No | — |
+| `inputs` | `Record<string, any>` | No | — |
+| `outputs` | `Record<string, any>` | No | — |
+| `error` | `any` | No | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `feedback` | `Record<string, any>` | No | — |
+| `metrics` | `Record<string, any>` | No | — |
+| `user_properties` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `event_id` | `string` | No | — |
+
+
+
+---
+
+### createBatch
+
+`events.createBatch`
+
+Create a batch of trace events
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.events.createBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+| `single_session` | `boolean` | No | — |
+| `session_properties` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  project_id?: string,
+  source?: string,
+  event_name?: string,
+  event_type?: string,
+  event_id?: string,
+  session_id?: string,
+  parent_id?: string,
+  children_ids?: string[],
+  config?: Record<string, any>,
+  inputs?: Record<string, any>,
+  outputs?: Record<string, any>,
+  error?: any,
+  start_time?: number,
+  end_time?: number,
+  duration?: number,
+  metadata?: Record<string, any>,
+  feedback?: Record<string, any>,
+  metrics?: Record<string, any>,
+  user_properties?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `event_ids` | `string[]` | No | — |
+| `session_id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`events.get`
+
+Get a trace event by project and event ID
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `event_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### getLegacy
+
+`events.getLegacy`
+
+Get a trace event by event ID (legacy)
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.events.getLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### search
+
+`events.search`
+
+Search trace events within a project
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.events.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `filters` | `object[]` | No | — |
+| `dateRange` | `Record<string, any>` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `ignore_order` | `boolean` | No | — |
+| `evaluation_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  field: string,
+  operator: string,
+  value: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### searchLegacy
+
+`events.searchLegacy`
+
+Search trace events (legacy)
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.events.searchLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object[]` | No | — |
+| `dateRange` | `Record<string, any>` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `ignore_order` | `boolean` | No | — |
+| `evaluation_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  field: string,
+  operator: string,
+  value: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### update
+
+`events.update`
+
+Update a trace event
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.events.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | — |
+| `event_name` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `feedback` | `Record<string, any>` | No | — |
+| `metrics` | `Record<string, any>` | No | — |
+| `outputs` | `Record<string, any>` | No | — |
+| `config` | `Record<string, any>` | No | — |
+| `user_properties` | `Record<string, any>` | No | — |
+| `duration` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `children_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `event_id` | `string` | No | — |
+
+
+
+---
+
+## Experiments
+
+### compare
+
+`experiments.compare`
+
+Compare two evaluation runs
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.compare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `new_run_id` | `string` | Yes | — |
+| `old_run_id` | `string` | Yes | — |
+| `aggregate_function` | `string` | No | — |
+| `filters` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `Record<string, any>` | No | — |
+| `commonDatapoints` | `Record<string, any>[]` | No | — |
+| `event_details` | `Record<string, any>` | No | — |
+| `old_run` | `Record<string, any>` | No | — |
+| `new_run` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### compareEvents
+
+`experiments.compareEvents`
+
+Compare events between two evaluation runs
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.compareEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `new_run_id` | `string` | Yes | — |
+| `old_run_id` | `string` | Yes | — |
+| `event_name` | `string` | No | — |
+| `event_type` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `Record<string, any>[]` | No | — |
+| `totalEvents` | `number` | No | — |
+
+
+
+---
+
+### createRun
+
+`experiments.createRun`
+
+Create an evaluation run in a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.experiments.createRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `run_id` | `string` | No | — |
+| `description` | `string` | No | — |
+| `status` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
+| `dataset_id` | `string` | No | — |
+| `event_ids` | `string[]` | No | — |
+| `configuration` | `Record<string, any>` | No | — |
+| `evaluators` | `Record<string, any>[]` | No | — |
+| `session_ids` | `string[]` | No | — |
+| `datapoint_ids` | `string[]` | No | — |
+| `passing_ranges` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `evaluation` | `Record<string, any>` | No | — |
+| `run_id` | `string` | No | — |
+
+
+
+---
+
+### createRunLegacy
+
+`experiments.createRunLegacy`
+
+Create an evaluation run (legacy)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.experiments.createRunLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `run_id` | `string` | No | — |
+| `description` | `string` | No | — |
+| `status` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
+| `dataset_id` | `string` | No | — |
+| `event_ids` | `string[]` | No | — |
+| `configuration` | `Record<string, any>` | No | — |
+| `evaluators` | `Record<string, any>[]` | No | — |
+| `session_ids` | `string[]` | No | — |
+| `datapoint_ids` | `string[]` | No | — |
+| `passing_ranges` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `evaluation` | `Record<string, any>` | No | — |
+| `run_id` | `string` | No | — |
+
+
+
+---
+
+### deleteRun
+
+`experiments.deleteRun`
+
+Delete an evaluation run
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.experiments.deleteRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `run_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### getMetrics
+
+`experiments.getMetrics`
+
+Get metric events for an evaluation run
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.getMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `run_id` | `string` | Yes | — |
+| `dateRange` | `string` | No | — |
+| `filters` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `Record<string, any>[]` | No | — |
+| `totalEvents` | `number` | No | — |
+
+
+
+---
+
+### getRun
+
+`experiments.getRun`
+
+Get evaluation run details
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.getRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `run_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `evaluation` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### getRunLegacy
+
+`experiments.getRunLegacy`
+
+Get evaluation run details (legacy)
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.getRunLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `evaluation` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### getRunSchema
+
+`experiments.getRunSchema`
+
+Get event schema for a single run
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.getRunSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `run_id` | `string` | Yes | — |
+| `dateRange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `any` | No | — |
+| `datasets` | `any` | No | — |
+| `mappings` | `any` | No | — |
+
+
+
+---
+
+### getRunsSchema
+
+`experiments.getRunsSchema`
+
+Get event schema across runs in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.getRunsSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `dateRange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `any` | No | — |
+| `datasets` | `any` | No | — |
+| `mappings` | `any` | No | — |
+
+
+
+---
+
+### getSummary
+
+`experiments.getSummary`
+
+Get summary statistics for an evaluation run
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.getSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `run_id` | `string` | Yes | — |
+| `aggregate_function` | `string` | No | — |
+| `filters` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `error` | `any` | No | — |
+| `passed` | `number` | No | — |
+| `failed` | `number` | No | — |
+| `metrics` | `Record<string, any>` | No | — |
+| `datapoints` | `Record<string, any>[]` | No | — |
+| `event_details` | `Record<string, any>` | No | — |
+| `run_object` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### listRuns
+
+`experiments.listRuns`
+
+List evaluation runs in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.listRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `dataset_id` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `run_ids` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `dateRange` | `string` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `evaluations` | `Record<string, any>[]` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
+| `metrics` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### listRunsLegacy
+
+`experiments.listRunsLegacy`
+
+List evaluation runs (legacy)
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.experiments.listRunsLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset_id` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `run_ids` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `dateRange` | `string` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `evaluations` | `Record<string, any>[]` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
+| `metrics` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### updateRun
+
+`experiments.updateRun`
+
+Update an evaluation run
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.experiments.updateRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `run_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `status` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
+| `event_ids` | `string[]` | No | — |
+| `configuration` | `Record<string, any>` | No | — |
+| `evaluators` | `Record<string, any>[]` | No | — |
+| `session_ids` | `string[]` | No | — |
+| `datapoint_ids` | `string[]` | No | — |
+| `passing_ranges` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `evaluation` | `Record<string, any>` | No | — |
+| `warning` | `string` | No | — |
+
+
+
+---
+
+## Metrics
+
+### create
+
+`metrics.create`
+
+Create a new evaluator metric
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.metrics.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `criteria` | `string` | No | — |
+| `description` | `string` | No | — |
+| `return_type` | `string` | No | — |
+| `enabled_in_prod` | `boolean` | No | — |
+| `sampling_percentage` | `number` | No | — |
+| `model_provider` | `string` | No | — |
+| `model_name` | `string` | No | — |
+| `scale` | `any[]` | No | — |
+| `threshold` | `number` | No | — |
+| `categories` | `string[]` | No | — |
+| `needs_ground_truth` | `boolean` | No | — |
+| `child_metrics` | `string[]` | No | — |
+| `filters` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inserted` | `boolean` | No | — |
+| `metric_id` | `string` | No | — |
+
+
+
+---
+
+### createVersion
+
+`metrics.createVersion`
+
+Create a new version snapshot for a metric
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.metrics.createVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric_id` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `content` | `Record<string, any>` | No | — |
+| `deploy_immediately` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### delete
+
+`metrics.delete`
+
+Delete an evaluator metric
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.metrics.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### deployVersion
+
+`metrics.deployVersion`
+
+Deploy a specific version of a metric
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.metrics.deployVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric_id` | `string` | Yes | — |
+| `version_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### list
+
+`metrics.list`
+
+List all metrics and evaluators
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.metrics.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### listVersions
+
+`metrics.listVersions`
+
+List versions of a metric
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.metrics.listVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### run
+
+`metrics.run`
+
+Run an evaluator metric on an event
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.metrics.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric` | `Record<string, any>` | Yes | — |
+| `event` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `loading` | `boolean` | No | — |
+| `result` | `any` | No | — |
+| `explanation` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`metrics.update`
+
+Update an evaluator metric
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.metrics.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `criteria` | `string` | No | — |
+| `description` | `string` | No | — |
+| `return_type` | `string` | No | — |
+| `enabled_in_prod` | `boolean` | No | — |
+| `sampling_percentage` | `number` | No | — |
+| `model_provider` | `string` | No | — |
+| `model_name` | `string` | No | — |
+| `scale` | `any[]` | No | — |
+| `threshold` | `number` | No | — |
+| `categories` | `string[]` | No | — |
+| `needs_ground_truth` | `boolean` | No | — |
+| `child_metrics` | `string[]` | No | — |
+| `filters` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updated` | `boolean` | No | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project in a workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `project_creator` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get details for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.honeyhive.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project name or description
+
+**Risk:** `destructive`
+
+```ts
+await corsair.honeyhive.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+## Sessions
+
+### create
+
+`sessions.create`
+
+Start a new session
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.sessions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | No | — |
+| `session_name` | `string` | No | — |
+| `event_name` | `string` | No | — |
+| `source` | `string` | No | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `config` | `Record<string, any>` | No | — |
+| `inputs` | `Record<string, any>` | No | — |
+| `outputs` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `user_properties` | `Record<string, any>` | No | — |
+| `children_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | No | — |
+| `session_id` | `string` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `children_ids` | `string[]` | No | — |
+| `event_type` | `string` | No | — |
+| `event_name` | `string` | No | — |
+| `config` | `Record<string, any>` | No | — |
+| `inputs` | `Record<string, any>` | No | — |
+| `outputs` | `Record<string, any>` | No | — |
+| `error` | `any` | No | — |
+| `source` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `user_properties` | `Record<string, any>` | No | — |
+| `metrics` | `Record<string, any>` | No | — |
+| `feedback` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `org_id` | `string` | No | — |
+| `workspace_id` | `string` | No | — |
+| `project_id` | `string` | No | — |
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+
+
+
+---
+
+### createEventBatch
+
+`sessions.createEventBatch`
+
+Add a batch of events to a session
+
+**Risk:** `write`
+
+```ts
+await corsair.honeyhive.api.sessions.createEventBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  event_type: chain | model | tool | session,
+  inputs: Record<string, any>,
+  event_name?: string,
+  config?: Record<string, any>,
+  outputs?: Record<string, any>,
+  error?: any,
+  duration?: number,
+  metadata?: Record<string, any>,
+  feedback?: Record<string, any>,
+  metrics?: Record<string, any>,
+  user_properties?: Record<string, any>,
+  start_time?: number,
+  end_time?: number,
+  children_ids?: string[],
+  parent_id?: string,
+  source?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+

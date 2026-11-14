@@ -2475,6 +2475,14 @@
                 ]
               },
               {
+                "group": "HoneyHive",
+                "pages": [
+                  "plugins/honeyhive/overview",
+                  "plugins/honeyhive/api",
+                  "plugins/honeyhive/database"
+                ]
+              },
+              {
                 "group": "Hookdeck",
                 "pages": [
                   "plugins/hookdeck/overview",

@@ -1,0 +1,25 @@
+displayName: HoneyHive
+description: AI agent observability and evaluation platform for tracing, evaluating, monitoring, and improving LLM applications.
+domain: honeyhive.ai
+recommendedAuth: api_key
+overviewNote: |
+  HoneyHive provides AI agent observability and evaluation across development and production:
+
+  - **Authentication**: Authenticate using your HoneyHive API key (`hh_...` or fine-grained key) passed via the `Authorization: Bearer <apiKey>` header.
+  - **Tracing & Sessions**: Group multi-step agent and tool spans into sessions with `sessions.create` and stream event batches with `sessions.createEventBatch` or `events.createBatch`.
+  - **Datasets & Experiments**: Curate evaluation datasets and run automated test suites across prompts, configurations, and models.
+  - **Evaluators & Metrics**: Define custom metrics, deploy metric version snapshots, and run automated evaluations against trace events.
+references:
+  - title: HoneyHive Documentation
+    url: https://docs.honeyhive.ai
+  - title: HoneyHive OpenAPI Specifications
+    url: https://github.com/honeyhiveai/honeyhive-openapi
+examples:
+  read:
+    path: metrics.list
+    title: List evaluators and metrics
+  write:
+    path: sessions.create
+    title: Start a new tracing session
+    args:
+      session_name: customer-support-agent
