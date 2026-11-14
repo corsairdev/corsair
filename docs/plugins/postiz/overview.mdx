@@ -1,0 +1,140 @@
+---
+title: "Postiz plugin"
+sidebarTitle: "Overview"
+description: "Social media scheduling API for publishing, scheduling and managing posts across connected channels."
+---
+
+Use **Postiz** through Corsair: one client, typed API calls.
+
+Postiz schedules and publishes to more than thirty social platforms from one place. Create a key in Developer settings and paste it in; it travels in the `Authorization` header with no scheme prefix. A self-hosted instance uses the same API under `/api/public/v1` on its own domain.
+
+What to know before you publish:
+
+- **The UI says channel, the API says integration.** Both mean one connected social account, and this plugin uses the API's word.
+- **Three ways to create a post.** `posts.create` takes `type: 'draft'`, which saves without publishing; `'schedule'`, which queues for `date`; or `'now'`, which publishes as soon as Postiz accepts it. A draft may have no channels attached, and anything that will publish needs at least one, which the plugin enforces before sending.
+- **Each platform has its own settings.** A post carries a `settings` object whose `__type` names the platform, and the rest follows that platform's schema. The plugin passes it through rather than guessing the fields.
+- **Threads.** One post item's `value` is an array, so several entries make a thread, and `inter` sets the minutes between them.
+- **Media must be uploaded first.** Reference a file by its uploaded `id` and `path`; a base64 body over 50 MB is rejected with 413.
+- **Rate limit.** The create-post route allows 90 to 100 requests an hour for the whole instance, and scheduling several posts in one request is the way to stay inside it.
+- **Deleting.** `posts.delete` removes every post in the group. A post already published stays live on the platform, because deleting here only forgets it.
+- **Webhooks.** Postiz can notify another system when it publishes, but this plugin does not handle inbound deliveries.
+
+**What you get:**
+
+- 10 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/postiz better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/postiz better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/postiz better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/postiz better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { postiz } from '@corsair-dev/postiz';
+
+export const corsair = createCorsair({
+	plugins: [
+		postiz(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Postiz API key before the first call: `pnpm corsair setup --plugin=postiz --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+postiz()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'postiz',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the connected channels**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.postiz.api.integrations.list({});
+```
+
+
+**Delete a post and everyone in its group**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.postiz.api.posts.delete({ id: 'post-123' });
+```
+
+
+See the full list on the [API](/plugins/postiz/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/postiz/api">
+    Every `postiz.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

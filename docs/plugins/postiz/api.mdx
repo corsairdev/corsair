@@ -1,0 +1,474 @@
+---
+title: "Postiz API reference"
+sidebarTitle: "API"
+description: "API reference for the Postiz plugin in Corsair: every `postiz.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analytics
+
+### platform
+
+`analytics.platform`
+
+Read one channel's analytics rows for a period
+
+**Risk:** `read`
+
+```ts
+await corsair.postiz.api.analytics.platform({ integration: 'cm4ean69r0003w8w1cdomox9n', date: 'last_30_days' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integration` | `string` | Yes | The integration id to read analytics for. |
+| `date` | `string` | Yes | The period to read, which the API takes as its own window token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `analytics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="analytics full type">
+
+```ts
+{
+  label?: string | null,
+  percentageChange?: number | null,
+  data?: number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Integrations
+
+### findSlot
+
+`integrations.findSlot`
+
+Read a channel's next free posting slot
+
+**Risk:** `read`
+
+```ts
+await corsair.postiz.api.integrations.findSlot({ id: 'cm4ean69r0003w8w1cdomox9n' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The integration id whose posting schedule to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | The next free slot, as an ISO 8601 UTC timestamp. |
+
+
+
+---
+
+### isConnected
+
+`integrations.isConnected`
+
+Confirm the API key is valid and the workspace is reachable
+
+**Risk:** `read`
+
+```ts
+await corsair.postiz.api.integrations.isConnected({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connected` | `boolean` | Yes | True when the key is valid and the workspace is reachable. |
+
+
+
+---
+
+### list
+
+`integrations.list`
+
+List the connected channels, optionally narrowed to one customer group
+
+**Risk:** `read`
+
+```ts
+await corsair.postiz.api.integrations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | No | Only channels assigned to this customer (group) id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="integrations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  identifier?: string | null,
+  picture?: string | null,
+  disabled?: boolean | null,
+  profile?: string | null,
+  customer?: {
+    id?: string | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media
+
+### list
+
+`media.list`
+
+Page through the organization's media library
+
+**Risk:** `read`
+
+```ts
+await corsair.postiz.api.media.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number. The library returns 18 files per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  path?: string | null,
+  thumbnail?: string | null,
+  alt?: string | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notifications
+
+### list
+
+`notifications.list`
+
+Page through the organization notifications, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.postiz.api.notifications.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number. The API returns 100 notifications per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notifications` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notifications full type">
+
+```ts
+{
+  id?: string | null,
+  content?: string | null,
+  link?: string | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### changeStatus
+
+`posts.changeStatus`
+
+Move a post between draft and scheduled, without touching its content or date
+
+**Risk:** `write`
+
+```ts
+await corsair.postiz.api.posts.changeStatus({ id: 'post-123', status: 'draft' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The post id to move. |
+| `status` | `draft \| schedule` | Yes | `draft` pulls the post back to a draft, and `schedule` returns it to the queue. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `state` | `string \| null` | No | The new state, `DRAFT` or `QUEUE`. |
+
+
+
+---
+
+### create
+
+`posts.create`
+
+Create a post as a draft, scheduled, or published immediately. A schedule or an immediate post goes out to every listed channel and cannot be recalled by this plugin once published
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postiz.api.posts.create({ type: 'schedule', date: '2024-12-14T10:00:00.000Z', shortLink: false, tags: [], posts: [{ integration: { id: 'cm4ean69r0003w8w1cdomox9n' }, value: [{ content: 'Hello from the Postiz API!' }], settings: { __type: 'x', who_can_reply_post: 'everyone' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `draft \| schedule \| now` | Yes | `draft` saves without publishing, `schedule` queues for `date`, and `now` publishes as soon as Postiz takes it. |
+| `date` | `string` | Yes | When to publish, as an ISO 8601 UTC timestamp. |
+| `shortLink` | `boolean` | Yes | Whether Postiz shortens the links in the post. |
+| `tags` | `object[]` | Yes | Tags to attach to the post. |
+| `posts` | `object[]` | No | The per-integration posts. Required unless `type` is `draft`. |
+| `inter` | `number` | No | Minutes between the parts of a thread. |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  value: string,
+  label: string
+}[]
+```
+</Accordion>
+
+<Accordion title="posts full type">
+
+```ts
+{
+  integration: {
+    id: string
+  },
+  value: {
+    content: string,
+    image?: {
+      id: string,
+      path: string,
+      thumbnailTimestamp?: number
+    }[],
+    id?: string
+  }[],
+  group?: string,
+  settings?: {
+    __type?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id?: string | null,
+  content?: string | null,
+  settings?: {
+    __type?: string | null
+  } | null,
+  publishDate?: string | null,
+  releaseURL?: string | null,
+  state?: string | null,
+  error?: string | null,
+  integration?: {
+    id?: string | null,
+    providerIdentifier?: string | null,
+    name?: string | null,
+    picture?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`posts.delete`
+
+Delete a post, which also deletes every post in its group. A published post stays live on the platform
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postiz.api.posts.delete({ id: 'post-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The post id. Deleting one removes every post in its group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id that was deleted. |
+
+
+
+---
+
+### list
+
+`posts.list`
+
+List posts in a date window with their state, release URL and any platform error
+
+**Risk:** `read`
+
+```ts
+await corsair.postiz.api.posts.list({ startDate: '2024-12-01T00:00:00.000Z', endDate: '2024-12-31T23:59:59.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | Yes | Inclusive start of the window, as an ISO 8601 timestamp. |
+| `endDate` | `string` | Yes | Inclusive end of the window, as an ISO 8601 timestamp. |
+| `customer` | `string` | No | Only posts for this customer (group) id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id?: string | null,
+  content?: string | null,
+  settings?: {
+    __type?: string | null
+  } | null,
+  publishDate?: string | null,
+  releaseURL?: string | null,
+  state?: string | null,
+  error?: string | null,
+  integration?: {
+    id?: string | null,
+    providerIdentifier?: string | null,
+    name?: string | null,
+    picture?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
