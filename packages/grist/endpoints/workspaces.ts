@@ -205,7 +205,7 @@ export const modifyAccess: GristEndpoints['workspaces.modifyAccess'] = async (
 			method: 'PATCH',
 			body: {
 				delta: {
-					...(parsedInput.maxInheritedRole
+					...(parsedInput.maxInheritedRole !== undefined
 						? { maxInheritedRole: parsedInput.maxInheritedRole }
 						: {}),
 					users: parsedInput.users,

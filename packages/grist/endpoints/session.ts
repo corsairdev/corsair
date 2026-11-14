@@ -28,24 +28,3 @@ export const getAll: GristEndpoints['session.getAll'] = async (ctx, input) => {
 	await logEventFromContext(ctx, 'grist.session.getAll', {}, 'completed');
 	return parsed;
 };
-
-export const setActive: GristEndpoints['session.setActive'] = async (
-	ctx,
-	input,
-) => {
-	const parsedInput =
-		GristEndpointInputSchemas['session.setActive'].parse(input);
-	const response = await makeGristRequest('/session/access/active', ctx.key, {
-		method: 'POST',
-		body: {
-			email: parsedInput.email,
-			...(parsedInput.org !== undefined ? { org: parsedInput.org } : {}),
-		},
-		baseUrl: await resolveGristBaseUrl(ctx),
-	});
-	const parsed =
-		GristEndpointOutputSchemas['session.setActive'].parse(response);
-	// Never log personal email address
-	await logEventFromContext(ctx, 'grist.session.setActive', {}, 'completed');
-	return parsed;
-};

@@ -63,7 +63,6 @@ pnpm add @corsair-dev/grist
 | `serviceAccounts.update` | `grist.api.serviceAccounts.update` | `write` | Modify service account name or label |
 | `session.getActive` | `grist.api.session.getActive` | `read` | Get active session details and current organization |
 | `session.getAll` | `grist.api.session.getAll` | `read` | Get all logged-in session accounts and organizations |
-| `session.setActive` | `grist.api.session.setActive` | `write` | Switch active user account for an organization |
 | `sql.query` | `grist.api.sql.query` | `read` | Execute a read-only SQL query with parameters against a document |
 | `sql.queryGet` | `grist.api.sql.queryGet` | `read` | Execute a simple read-only SQL query via GET against a document |
 | `tables.create` | `grist.api.tables.create` | `write` | Add new tables and their column definitions to a document |

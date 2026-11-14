@@ -253,7 +253,8 @@ export type WorkspacesListAccessResponse = z.infer<
 export const WorkspacesModifyAccessInputSchema = z
 	.object({
 		workspaceId: z.union([z.string(), z.number()]),
-		maxInheritedRole: AccessSchema.optional(),
+		// null stops inheriting access from the parent org or workspace
+		maxInheritedRole: AccessSchema.nullable().optional(),
 		users: z.record(
 			z.string(),
 			z.union([z.enum(['owners', 'editors', 'viewers', 'members']), z.null()]),
@@ -434,7 +435,8 @@ export type DocsListAccessResponse = z.infer<typeof DocsListAccessOutputSchema>;
 export const DocsModifyAccessInputSchema = z
 	.object({
 		docId: z.string().min(1),
-		maxInheritedRole: AccessSchema.optional(),
+		// null stops inheriting access from the parent org or workspace
+		maxInheritedRole: AccessSchema.nullable().optional(),
 		users: z.record(
 			z.string(),
 			z.union([z.enum(['owners', 'editors', 'viewers', 'members']), z.null()]),
@@ -1090,7 +1092,7 @@ export const TemplatesGetInputSchema = z
 export type TemplatesGetInput = z.infer<typeof TemplatesGetInputSchema>;
 export const TemplatesGetOutputSchema = DocSchema.extend({
 	workspace: WorkspaceSchema.extend({ org: OrgSchema.optional() }).optional(),
-});
+}).passthrough();
 export type TemplatesGetResponse = z.infer<typeof TemplatesGetOutputSchema>;
 
 export const WidgetsListInputSchema = z.object({}).strict();
@@ -1150,7 +1152,8 @@ export const SessionGetActiveInputSchema = z.object({}).strict();
 export type SessionGetActiveInput = z.infer<typeof SessionGetActiveInputSchema>;
 export const SessionGetActiveOutputSchema = z.object({
 	user: UserSchema.optional(),
-	org: OrgSchema.optional(),
+	// null when Grist can't open the org; orgError says why
+	org: OrgSchema.nullish(),
 	// unknown because error details if any are arbitrary provider error JSON
 	orgError: z.unknown().optional(),
 });
@@ -1167,20 +1170,6 @@ export const SessionGetAllOutputSchema = z
 	})
 	.passthrough();
 export type SessionGetAllResponse = z.infer<typeof SessionGetAllOutputSchema>;
-
-export const SessionSetActiveInputSchema = z
-	.object({
-		email: z.string(),
-		org: z.string().optional(),
-	})
-	.strict();
-export type SessionSetActiveInput = z.infer<typeof SessionSetActiveInputSchema>;
-export const SessionSetActiveOutputSchema = z.object({
-	email: z.string().optional(),
-});
-export type SessionSetActiveResponse = z.infer<
-	typeof SessionSetActiveOutputSchema
->;
 
 // ==========================================
 // Mappings
@@ -1272,7 +1261,6 @@ export const GristEndpointInputSchemas = {
 
 	'session.getActive': SessionGetActiveInputSchema,
 	'session.getAll': SessionGetAllInputSchema,
-	'session.setActive': SessionSetActiveInputSchema,
 } as const;
 
 export const GristEndpointOutputSchemas = {
@@ -1361,7 +1349,6 @@ export const GristEndpointOutputSchemas = {
 
 	'session.getActive': SessionGetActiveOutputSchema,
 	'session.getAll': SessionGetAllOutputSchema,
-	'session.setActive': SessionSetActiveOutputSchema,
 } as const;
 
 export type GristEndpointInputs = {

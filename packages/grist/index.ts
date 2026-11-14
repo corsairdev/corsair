@@ -175,7 +175,6 @@ const gristEndpointsNested = {
 	session: {
 		getActive: Session.getActive,
 		getAll: Session.getAll,
-		setActive: Session.setActive,
 	},
 } as const;
 
@@ -476,10 +475,6 @@ export const gristEndpointSchemas = {
 	'session.getAll': {
 		input: GristEndpointInputSchemas['session.getAll'],
 		output: GristEndpointOutputSchemas['session.getAll'],
-	},
-	'session.setActive': {
-		input: GristEndpointInputSchemas['session.setActive'],
-		output: GristEndpointOutputSchemas['session.setActive'],
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof gristEndpointsNested>;
 
@@ -783,10 +778,6 @@ const gristEndpointMeta = {
 	'session.getAll': {
 		riskLevel: 'read',
 		description: 'Get all logged-in session accounts and organizations',
-	},
-	'session.setActive': {
-		riskLevel: 'write',
-		description: 'Switch active user account for an organization',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof gristEndpointsNested>;
 

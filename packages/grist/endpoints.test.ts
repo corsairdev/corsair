@@ -339,6 +339,24 @@ describe('Workspaces endpoints', () => {
 			},
 		);
 	});
+
+	it('workspaces.modifyAccess forwards maxInheritedRole: null to stop inheriting access', async () => {
+		mockedRequest.mockResolvedValue(null);
+		await Workspaces.modifyAccess(ctx, {
+			workspaceId: 97,
+			maxInheritedRole: null,
+			users: {},
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/workspaces/97/access',
+			'test-api-key',
+			{
+				method: 'PATCH',
+				body: { delta: { maxInheritedRole: null, users: {} } },
+				baseUrl: BASE,
+			},
+		);
+	});
 });
 
 describe('Docs endpoints', () => {
@@ -543,6 +561,24 @@ describe('Docs endpoints', () => {
 			{
 				method: 'PATCH',
 				body: { delta: { users: { 'user@example.com': 'owners' } } },
+				baseUrl: BASE,
+			},
+		);
+	});
+
+	it('docs.modifyAccess forwards maxInheritedRole: null to stop inheriting access', async () => {
+		mockedRequest.mockResolvedValue(null);
+		await Docs.modifyAccess(ctx, {
+			docId: 'doc123',
+			maxInheritedRole: null,
+			users: {},
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/docs/doc123/access',
+			'test-api-key',
+			{
+				method: 'PATCH',
+				body: { delta: { maxInheritedRole: null, users: {} } },
 				baseUrl: BASE,
 			},
 		);
@@ -1182,6 +1218,17 @@ describe('Templates endpoints', () => {
 		});
 	});
 
+	it('templates.get keeps template fields the schema does not name', async () => {
+		const mockTemplate = {
+			id: 't1',
+			name: 'Invoice Template',
+			options: { description: 'Monthly invoices' },
+		};
+		mockedRequest.mockResolvedValue(mockTemplate);
+		const result = await Templates.get(ctx, { templateId: 't1' });
+		expect(result).toEqual(mockTemplate);
+	});
+
 	it('templates.get calls GET /templates/{templateId}', async () => {
 		const mockTemplate = {
 			id: 't1',
@@ -1275,6 +1322,17 @@ describe('Session endpoints', () => {
 		);
 	});
 
+	it('session.getActive returns the user and orgError when org is null', async () => {
+		const mockSession = {
+			user: { id: 1, name: 'User' },
+			org: null,
+			orgError: { status: 403, error: 'access denied' },
+		};
+		mockedRequest.mockResolvedValue(mockSession);
+		const result = await Session.getActive(ctx, {});
+		expect(result).toEqual(mockSession);
+	});
+
 	it('session.getAll calls GET /session/access/all', async () => {
 		const mockAll = { users: [{ id: 1, name: 'User' }] };
 		mockedRequest.mockResolvedValue(mockAll);
@@ -1290,23 +1348,8 @@ describe('Session endpoints', () => {
 		);
 	});
 
-	it('session.setActive calls POST /session/access/active', async () => {
-		const mockResp = { email: 'user@example.com' };
-		mockedRequest.mockResolvedValue(mockResp);
-		const result = await Session.setActive(ctx, {
-			email: 'user@example.com',
-			org: 'myorg',
-		});
-		expect(result).toEqual(mockResp);
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/session/access/active',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: { email: 'user@example.com', org: 'myorg' },
-				baseUrl: BASE,
-			},
-		);
+	it('session exposes no setActive: Grist answers 403 to it without a browser session', () => {
+		expect(Object.keys(Session).sort()).toEqual(['getActive', 'getAll']);
 	});
 });
 

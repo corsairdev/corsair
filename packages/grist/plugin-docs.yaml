@@ -158,6 +158,3 @@ apiExamples:
     call: "{ userId: 1 }"
   users.delete:
     call: "{ userId: 1, name: 'Jane Doe' }"
-
-  session.setActive:
-    call: "{ email: 'user@example.com' }"
