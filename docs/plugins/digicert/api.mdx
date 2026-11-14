@@ -2720,16 +2720,16 @@ await corsair.digicert.api.certcentralApi.acmeExternalAccountBinding({
 
 ```ts
 {
-  name: string,
-  product_name_id: string,
+  name?: string,
+  product_name_id?: string,
   organization_id?: number,
-  validity_years: number,
+  validity_years?: number,
   validity_days?: number,
   profile_option?: string,
   container_id?: number,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   ca_cert_id?: string,
   order_validity_days?: number,
   order_validity_years?: number,
@@ -3163,11 +3163,11 @@ await corsair.digicert.api.certcentralApi.addDomain({
 
 ```ts
 {
-  name: string,
-  organization: JsonValue,
-  id: number,
-  validations: JsonValue[],
-  type: string,
+  name?: string,
+  organization?: JsonValue,
+  id?: number,
+  validations?: JsonValue[],
+  type?: string,
   dcv_method?: string,
   locale?: string,
   email_array?: JsonValue[],
@@ -3525,7 +3525,7 @@ await corsair.digicert.api.certcentralApi.addNote_504f5354({
 
 Add or remove funds
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.addOrRemoveFunds({
@@ -3657,9 +3657,9 @@ await corsair.digicert.api.certcentralApi.addServiceUserAddServiceUser({
 
 ```ts
 {
-  is_api_only: boolean,
-  email: string,
-  api_name: string,
+  is_api_only?: boolean,
+  email?: string,
+  api_name?: string,
   restricted_to_role_id?: number,
   container_id_assignments?: JsonValue[]
 }
@@ -3748,16 +3748,16 @@ await corsair.digicert.api.certcentralApi.addUserAddUser({
 
 ```ts
 {
-  username: string,
-  first_name: string,
-  last_name: string,
-  email: string,
+  username?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   container?: JsonValue,
   id?: number,
-  access_roles: JsonValue[],
-  container_id_assignments: JsonValue[],
+  access_roles?: JsonValue[],
+  container_id_assignments?: JsonValue[],
   is_saml_sso_only?: boolean
 }
 ```
@@ -3920,11 +3920,11 @@ await corsair.digicert.api.certcentralApi.approveUserInvitation({
 
 ```ts
 {
-  status: string,
+  status?: string,
   processor_comment?: string,
-  requested_user: JsonValue,
-  container_id_assignments: JsonValue[],
-  access_roles: JsonValue[]
+  requested_user?: JsonValue,
+  container_id_assignments?: JsonValue[],
+  access_roles?: JsonValue[]
 }
 ```
 </Accordion>
@@ -4200,8 +4200,8 @@ await corsair.digicert.api.certcentralApi.bulkAddFields({
 
 ```ts
 {
-  metadata: JsonValue[],
-  label: string,
+  metadata?: JsonValue[],
+  label?: string,
   is_required?: boolean,
   is_active?: boolean,
   data_type?: string
@@ -4223,7 +4223,7 @@ await corsair.digicert.api.certcentralApi.bulkAddFields({
 
 Cancel unit order
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.cancelUnitOrder({});
@@ -4287,7 +4287,7 @@ await corsair.digicert.api.certcentralApi.cancelUnitOrder({});
 
 Cancel voucher code
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.cancelVoucherCode({
@@ -4629,7 +4629,7 @@ await corsair.digicert.api.certcentralApi.changeDcvMethod({
 
 ```ts
 {
-  dcv_method: string,
+  dcv_method?: string,
   locale?: string,
   send_dcv_email_flag?: boolean,
   email_array?: JsonValue[]
@@ -5560,24 +5560,24 @@ await corsair.digicert.api.certcentralApi.createOrganization({
 
 ```ts
 {
-  name: string,
+  name?: string,
   assumed_name?: string,
-  country: string,
-  address: string,
+  country?: string,
+  address?: string,
   address2?: string,
-  city: string,
-  state: string,
-  zip: string,
-  telephone: string,
-  organization_contact: JsonValue,
-  first_name: string,
-  last_name: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  telephone?: string,
+  organization_contact?: JsonValue,
+  first_name?: string,
+  last_name?: string,
   job_title?: string,
-  email: string,
+  email?: string,
   telephone_extension?: string,
   skip_duplicate_org_check?: boolean,
   validations?: JsonValue[],
-  type: string,
+  type?: string,
   verified_users?: JsonValue[]
 }
 ```
@@ -5671,29 +5671,29 @@ await corsair.digicert.api.certcentralApi.createSubaccount({
 
 ```ts
 {
-  account_type: string,
-  allowed_grandchildren: JsonValue[],
+  account_type?: string,
+  allowed_grandchildren?: JsonValue[],
   account_manager_user_id?: number,
   bill_parent?: boolean,
   enforce_bill_parent?: boolean,
   child_name?: string,
-  user: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  user?: JsonValue,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   username?: string,
   job_title?: string,
   telephone?: string,
   disable_renewal_notifications?: boolean,
-  organization: JsonValue,
-  name: string,
+  organization?: JsonValue,
+  name?: string,
   assumed_name?: string,
-  address: string,
+  address?: string,
   address2?: string,
-  zip: string,
-  city: string,
-  state: string,
-  country: string,
+  zip?: string,
+  city?: string,
+  state?: string,
+  country?: string,
   max_allowed_multi_year_plan_length?: number,
   allow_parent_order_renewal?: boolean,
   enable_ica_selection?: boolean,
@@ -5751,7 +5751,7 @@ await corsair.digicert.api.certcentralApi.createSubaccount({
 
 Create unit order
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.createUnitOrder({
@@ -5811,11 +5811,11 @@ await corsair.digicert.api.certcentralApi.createUnitOrder({
 
 ```ts
 {
-  unit_account_id: number,
+  unit_account_id?: number,
   notes?: string,
-  bundle: JsonValue[],
-  product_name_id: string,
-  units: number
+  bundle?: JsonValue[],
+  product_name_id?: string,
+  units?: number
 }
 ```
 </Accordion>
@@ -5919,7 +5919,7 @@ await corsair.digicert.api.certcentralApi.createVerifiedContactDelegation({
 
 Create voucher order
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.createVoucherOrder({
@@ -5990,32 +5990,32 @@ await corsair.digicert.api.certcentralApi.createVoucherOrder({
 
 ```ts
 {
-  vouchers: JsonValue[],
-  product_name_id: string,
+  vouchers?: JsonValue[],
+  product_name_id?: string,
   no_of_fqdns?: number,
   no_of_wildcards?: number,
   validity_years?: number,
   validity_days?: number,
-  quantity: number,
+  quantity?: number,
   shipping_method?: string,
-  payment_method: string,
+  payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   billing_contact?: JsonValue,
-  name: string,
-  organization_name: string,
-  email: string,
+  name?: string,
+  organization_name?: string,
+  email?: string,
   phone?: string,
   notes?: string
 }
@@ -7870,12 +7870,12 @@ await corsair.digicert.api.certcentralApi.duplicateCertificate({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
+  csr?: string,
   server_platform?: JsonValue,
-  signature_hash: string,
+  signature_hash?: string,
   ca_cert_id?: string,
   custom_expiration_date?: string
 }
@@ -8046,8 +8046,8 @@ await corsair.digicert.api.certcentralApi.dvSslCheckDcv({
 ```ts
 {
   dns_name_validations?: JsonValue[],
-  dns_name: string,
-  dcv_method: string
+  dns_name?: string,
+  dcv_method?: string
 }
 ```
 </Accordion>
@@ -8076,7 +8076,7 @@ await corsair.digicert.api.certcentralApi.dvSslCheckDcv({
 
 DV SSL: Resend emails
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.dvSslResendEmails({
@@ -8134,8 +8134,8 @@ await corsair.digicert.api.certcentralApi.dvSslResendEmails({
 ```ts
 {
   domain_approval_emails?: JsonValue[],
-  domain: string,
-  email: string,
+  domain?: string,
+  email?: string,
   email_domain?: string,
   locale?: string
 }
@@ -8447,7 +8447,7 @@ await corsair.digicert.api.certcentralApi.editDomainsOnAPendingOrderOrReissue({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   common_name?: string,
   dns_names?: JsonValue[]
 }
@@ -8945,7 +8945,7 @@ await corsair.digicert.api.certcentralApi.editUserEditUser({
 
 Email certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.emailCertificate({
@@ -9005,8 +9005,8 @@ await corsair.digicert.api.certcentralApi.emailCertificate({
 
 ```ts
 {
-  emails: JsonValue[],
-  certificate_collect_format: string,
+  emails?: JsonValue[],
+  certificate_collect_format?: string,
   custom_message?: string
 }
 ```
@@ -9026,7 +9026,7 @@ await corsair.digicert.api.certcentralApi.emailCertificate({
 
 Email site seal
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.emailSiteSeal({
@@ -13470,7 +13470,7 @@ await corsair.digicert.api.certcentralApi.oidcSsoConfigurationDetails({});
 
 Order AATL Natural Person Certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonCertificate({
@@ -13554,18 +13554,18 @@ await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonCertificate({
 
 ```ts
 {
-  certificate: JsonValue,
-  usage_designation: JsonValue,
-  cs_provisioning_method: string,
+  certificate?: JsonValue,
+  usage_designation?: JsonValue,
+  cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   csr?: string,
   key_size?: number,
   csr_key_type?: string,
@@ -13573,31 +13573,31 @@ await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonCertificate({
   comments?: string,
   additional_emails?: JsonValue[],
   user_id_assignments?: JsonValue[],
-  csa_agreed_to: boolean,
+  csa_agreed_to?: boolean,
   promo_code?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   common_name_indicator?: string,
-  individual: JsonValue,
-  first_name: string,
-  last_name: string,
+  individual?: JsonValue,
+  first_name?: string,
+  last_name?: string,
   pseudonym?: string,
-  email: string,
-  telephone: string,
+  email?: string,
+  telephone?: string,
   id?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -13625,7 +13625,7 @@ await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonCertificate({
 
 Order AATL Natural Person in Organisation Certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonInOrganisationCertificate({
@@ -13711,55 +13711,55 @@ await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonInOrganisationCe
 
 ```ts
 {
-  certificate: JsonValue,
-  usage_designation: JsonValue,
-  cs_provisioning_method: string,
+  certificate?: JsonValue,
+  usage_designation?: JsonValue,
+  cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   csr?: string,
   key_size?: number,
   csr_key_type?: string,
   signature_hash?: string,
   comments?: string,
   additional_emails?: JsonValue[],
-  csa_agreed_to: boolean,
+  csa_agreed_to?: boolean,
   promo_code?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   common_name_indicator?: string,
-  individual: JsonValue,
-  first_name: string,
-  last_name: string,
+  individual?: JsonValue,
+  first_name?: string,
+  last_name?: string,
   pseudonym?: string,
-  email: string,
-  telephone: string,
+  email?: string,
+  telephone?: string,
   id?: number,
-  organization: JsonValue,
-  contacts: JsonValue[],
+  organization?: JsonValue,
+  contacts?: JsonValue[],
   container?: JsonValue,
   skip_approval?: boolean,
   auto_renew?: number,
   custom_renewal_message?: string,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -13788,7 +13788,7 @@ await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonInOrganisationCe
 
 Order AATL Organization eseal Certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderAatlOrganizationEsealCertificate({
@@ -13875,53 +13875,53 @@ await corsair.digicert.api.certcentralApi.orderAatlOrganizationEsealCertificate(
 
 ```ts
 {
-  certificate: JsonValue,
-  usage_designation: JsonValue,
-  cs_provisioning_method: string,
+  certificate?: JsonValue,
+  usage_designation?: JsonValue,
+  cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   csr?: string,
   key_size?: number,
   csr_key_type?: string,
   signature_hash?: string,
   comments?: string,
   additional_emails?: JsonValue[],
-  csa_agreed_to: boolean,
+  csa_agreed_to?: boolean,
   promo_code?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
-  requester: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
-  telephone: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  requester?: JsonValue,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  telephone?: string,
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   container?: JsonValue,
   skip_approval?: boolean,
   auto_renew?: number,
   custom_renewal_message?: string,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -13950,7 +13950,7 @@ await corsair.digicert.api.certcentralApi.orderAatlOrganizationEsealCertificate(
 
 Order Basic EV — Order Basic EV
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderBasicEvOrderBasicEv({
@@ -14027,19 +14027,19 @@ await corsair.digicert.api.certcentralApi.orderBasicEvOrderBasicEv({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -14054,38 +14054,38 @@ await corsair.digicert.api.certcentralApi.orderBasicEvOrderBasicEv({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   certificate_dcv_scope?: string
@@ -14124,7 +14124,7 @@ await corsair.digicert.api.certcentralApi.orderBasicEvOrderBasicEv({
 
 Order Basic OV
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderBasicOv({
@@ -14201,19 +14201,19 @@ await corsair.digicert.api.certcentralApi.orderBasicOv({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -14228,38 +14228,38 @@ await corsair.digicert.api.certcentralApi.orderBasicOv({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   certificate_dcv_scope?: string
@@ -14298,7 +14298,7 @@ await corsair.digicert.api.certcentralApi.orderBasicOv({
 
 Order client certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderClientCertificate({
@@ -14375,10 +14375,10 @@ await corsair.digicert.api.certcentralApi.orderClientCertificate({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   common_name?: string,
-  emails: JsonValue[],
-  signature_hash: string,
+  emails?: JsonValue[],
+  signature_hash?: string,
   organization_units?: JsonValue[],
   csr?: string,
   ca_cert_id?: string,
@@ -14386,39 +14386,39 @@ await corsair.digicert.api.certcentralApi.orderClientCertificate({
   renewal_of_order_id?: number,
   skip_approval?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
   organization?: JsonValue,
-  id: number,
+  id?: number,
   contacts?: JsonValue[],
   skip_duplicate_org_check?: boolean,
   container?: JsonValue,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   validity_years?: number,
   custom_fields?: JsonValue,
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   alternative_order_id?: string,
@@ -14450,7 +14450,7 @@ await corsair.digicert.api.certcentralApi.orderClientCertificate({
 
 Order code signing certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderCodeSigningCertificate({
@@ -14525,9 +14525,9 @@ await corsair.digicert.api.certcentralApi.orderCodeSigningCertificate({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   csr?: string,
-  signature_hash: string,
+  signature_hash?: string,
   ca_cert_id?: string,
   server_platform?: JsonValue,
   organization_units?: JsonValue[],
@@ -14536,14 +14536,14 @@ await corsair.digicert.api.certcentralApi.orderCodeSigningCertificate({
   renewal_of_order_id?: number,
   skip_approval?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
+  organization?: JsonValue,
   id?: number,
   name?: string,
   assumed_name?: string,
@@ -14556,26 +14556,26 @@ await corsair.digicert.api.certcentralApi.orderCodeSigningCertificate({
   contacts?: string,
   skip_duplicate_org_check?: boolean,
   container?: JsonValue,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  addr1: string,
+  addr1?: string,
   addr2?: string,
-  method: string,
+  method?: string,
   subject?: JsonValue,
   custom_fields?: JsonValue,
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
   vat_number?: string,
   alternative_order_id?: string,
@@ -14607,7 +14607,7 @@ await corsair.digicert.api.certcentralApi.orderCodeSigningCertificate({
 
 Order Common Mark Certificate (CMC)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderCommonMarkCertificateCmc({
@@ -14680,14 +14680,14 @@ await corsair.digicert.api.certcentralApi.orderCommonMarkCertificateCmc({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   dns_names?: JsonValue[],
   vmc?: JsonValue,
   logo?: string,
   enable_hosting?: boolean,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   comments?: string,
   auto_renew?: number,
   custom_renewal_message?: string,
@@ -14697,37 +14697,37 @@ await corsair.digicert.api.certcentralApi.orderCommonMarkCertificateCmc({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
+  organization?: JsonValue,
   id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string
 }
 ```
@@ -14761,7 +14761,7 @@ await corsair.digicert.api.certcentralApi.orderCommonMarkCertificateCmc({
 
 Order document signing certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderDocumentSigningCertificate({
@@ -14845,54 +14845,54 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningCertificate({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   csr?: string,
   server_platform?: JsonValue,
-  signature_hash: string,
+  signature_hash?: string,
   cs_provisioning_method?: string,
   use_org_as_common_name?: boolean,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   validity_years?: number,
   comments?: string,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   contacts?: JsonValue[],
   skip_duplicate_org_check?: boolean,
   container?: JsonValue,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
+  name?: string,
+  addr1?: string,
   addr2?: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  subject: JsonValue,
-  phone: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  subject?: JsonValue,
+  phone?: string,
   custom_fields?: JsonValue,
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   user_id_assignments?: JsonValue[],
   skip_approval?: boolean,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
   vat_number?: string,
   alternative_order_id?: string,
@@ -14924,7 +14924,7 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningCertificate({
 
 Order Document Signing for Employee
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderDocumentSigningForEmployee({
@@ -15012,56 +15012,56 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningForEmployee({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   server_platform?: JsonValue,
   ca_cert_id?: string,
-  usage_designation: JsonValue,
-  cs_provisioning_method: string,
+  usage_designation?: JsonValue,
+  cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   csr?: string,
   key_size?: number,
   csr_key_type?: string,
   signature_hash?: string,
   comments?: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   container?: JsonValue,
   renewal_of_order_id?: number,
   custom_renewal_message?: string,
   additional_emails?: JsonValue[],
   user_id_assignments?: JsonValue[],
-  csa_agreed_to: boolean,
+  csa_agreed_to?: boolean,
   promo_code?: string,
-  subject: JsonValue,
-  given_name: string,
-  surname: string,
-  job_title: string,
-  phone: string,
-  email: string,
-  order_validity: JsonValue,
-  years: number,
+  subject?: JsonValue,
+  given_name?: string,
+  surname?: string,
+  job_title?: string,
+  phone?: string,
+  email?: string,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -15090,7 +15090,7 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningForEmployee({
 
 Order Document Signing for Individual
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderDocumentSigningForIndividual({
@@ -15174,20 +15174,20 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningForIndividual({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   server_platform?: JsonValue,
   ca_cert_id?: string,
-  usage_designation: JsonValue,
-  cs_provisioning_method: string,
+  usage_designation?: JsonValue,
+  cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   csr?: string,
   key_size?: number,
   csr_key_type?: string,
@@ -15197,28 +15197,28 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningForIndividual({
   custom_renewal_message?: string,
   additional_emails?: JsonValue[],
   user_id_assignments?: JsonValue[],
-  csa_agreed_to: boolean,
+  csa_agreed_to?: boolean,
   promo_code?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
-  individual: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
-  telephone: string,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  individual?: JsonValue,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  telephone?: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -15247,7 +15247,7 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningForIndividual({
 
 Order Document Signing for Organization
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderDocumentSigningForOrganization({
@@ -15329,50 +15329,50 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningForOrganization({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   server_platform?: JsonValue,
   ca_cert_id?: string,
-  usage_designation: JsonValue,
-  cs_provisioning_method: string,
+  usage_designation?: JsonValue,
+  cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   csr?: string,
   key_size?: number,
   csr_key_type?: string,
   signature_hash?: string,
   comments?: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   container?: JsonValue,
   renewal_of_order_id?: number,
   custom_renewal_message?: string,
   additional_emails?: JsonValue[],
   user_id_assignments?: JsonValue[],
-  csa_agreed_to: boolean,
+  csa_agreed_to?: boolean,
   promo_code?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -15401,7 +15401,7 @@ await corsair.digicert.api.certcentralApi.orderDocumentSigningForOrganization({
 
 Order DV SSL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderDvSsl({
@@ -15480,18 +15480,18 @@ await corsair.digicert.api.certcentralApi.orderDvSsl({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
+  csr?: string,
   profile_option?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -15505,38 +15505,38 @@ await corsair.digicert.api.certcentralApi.orderDvSsl({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   dcv_emails?: JsonValue[],
   use_auth_key?: boolean,
   auth_key_id?: string,
-  dns_name: string,
-  email_domain: string,
+  dns_name?: string,
+  email_domain?: string,
   email?: string,
   locale?: string,
   skip_approval?: boolean,
   disable_ct?: number,
   container?: JsonValue,
-  id: number,
+  id?: number,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   technical_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  telephone: string,
+  first_name?: string,
+  last_name?: string,
+  telephone?: string,
   job_title?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
@@ -15571,7 +15571,7 @@ await corsair.digicert.api.certcentralApi.orderDvSsl({
 
 Order EU Qualified eSeal
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderEuQualifiedESeal({
@@ -15652,37 +15652,37 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedESeal({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   csr?: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   cert_validity?: JsonValue,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -15711,7 +15711,7 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedESeal({
 
 Order EU Qualified eSeal PSD2
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderEuQualifiedESealPsd2({
@@ -15793,39 +15793,39 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedESealPsd2({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
-  psp_roles: JsonValue[],
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
+  psp_roles?: JsonValue[],
   is_rsassa_pss?: boolean,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   csr?: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   cert_validity?: JsonValue,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   sca_token?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -15854,7 +15854,7 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedESealPsd2({
 
 Order EU Qualified Personal
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonal({
@@ -15938,32 +15938,32 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonal({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
-  common_name_indicator: string,
-  individual: JsonValue,
-  first_name: string,
-  last_name: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
+  common_name_indicator?: string,
+  individual?: JsonValue,
+  first_name?: string,
+  last_name?: string,
   pseudonym?: string,
-  email: string,
-  telephone: string,
-  country: string,
-  state: string,
+  email?: string,
+  telephone?: string,
+  country?: string,
+  state?: string,
   city?: string,
   zip?: string,
-  provisioning_method: string,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  method?: string,
   csr?: string,
   container?: JsonValue,
-  id: number,
+  id?: number,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   renewed_thumbprint?: string,
@@ -15976,17 +15976,17 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonal({
   additional_emails?: JsonValue[],
   locale?: string,
   renewal_of_order_id?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -16014,7 +16014,7 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonal({
 
 Order EU Qualified Personal Organisation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonalOrganisation({
@@ -16096,29 +16096,29 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonalOrganisation({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
-  common_name_indictator: string,
-  individual: JsonValue,
-  provisioning_method: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
+  common_name_indictator?: string,
+  individual?: JsonValue,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
   country?: string,
   method?: string,
   csr?: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   renewed_thumbprint?: string,
@@ -16131,17 +16131,17 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonalOrganisation({
   additional_emails?: JsonValue[],
   locale?: string,
   renewal_of_order_id?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -16170,7 +16170,7 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonalOrganisation({
 
 Order EU Qualified Website Authentication Certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderEuQualifiedWebsiteAuthenticationCertificate({});
@@ -16281,7 +16281,7 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedWebsiteAuthenticationC
 
 Order EU Qualified Website Authentication PSD2 Certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderEuQualifiedWebsiteAuthenticationPsd2Certificate({});
@@ -16395,7 +16395,7 @@ await corsair.digicert.api.certcentralApi.orderEuQualifiedWebsiteAuthenticationP
 
 Order GeoTrust DV SSL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderGeoTrustDvSsl({
@@ -16473,19 +16473,19 @@ await corsair.digicert.api.certcentralApi.orderGeoTrustDvSsl({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   profile_option?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -16499,38 +16499,38 @@ await corsair.digicert.api.certcentralApi.orderGeoTrustDvSsl({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   dcv_emails?: JsonValue[],
   use_auth_key?: boolean,
   auth_key_id?: string,
-  dns_name: string,
-  email_domain: string,
+  dns_name?: string,
+  email_domain?: string,
   email?: string,
   locale?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   container?: JsonValue,
-  id: number,
+  id?: number,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   technical_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  telephone: string,
+  first_name?: string,
+  last_name?: string,
+  telephone?: string,
   job_title?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
@@ -16745,7 +16745,7 @@ await corsair.digicert.api.certcentralApi.orderInfo({
 
 Order Multi-year Plan — Order Multi-year Plan
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderMultiYearPlanOrderMultiYearPlan({
@@ -16821,19 +16821,19 @@ await corsair.digicert.api.certcentralApi.orderMultiYearPlanOrderMultiYearPlan({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -16846,38 +16846,38 @@ await corsair.digicert.api.certcentralApi.orderMultiYearPlanOrderMultiYearPlan({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
+  organization?: JsonValue,
   id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   use_auth_key?: boolean,
@@ -16917,7 +16917,7 @@ await corsair.digicert.api.certcentralApi.orderMultiYearPlanOrderMultiYearPlan({
 
 Order OV/EV SSL — Order OV/EV SSL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderOvEvSslOrderOvEvSsl({
@@ -16996,18 +16996,18 @@ await corsair.digicert.api.certcentralApi.orderOvEvSslOrderOvEvSsl({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -17021,38 +17021,38 @@ await corsair.digicert.api.certcentralApi.orderOvEvSslOrderOvEvSsl({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   certificate_dcv_scope?: string
@@ -17091,7 +17091,7 @@ await corsair.digicert.api.certcentralApi.orderOvEvSslOrderOvEvSsl({
 
 Order PKIo Authentication or Encryption - Citizen
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionCitizen({
@@ -17171,36 +17171,36 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionCit
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
-  ship_info: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
+  ship_info?: JsonValue,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -17226,7 +17226,7 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionCit
 
 Order PKIo Authentication or Encryption - Organisation Person
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationPerson({
@@ -17308,39 +17308,39 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrg
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  cs_provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -17367,7 +17367,7 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrg
 
 Order PKIo Authentication or Encryption - Organisation Services
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationServices({
@@ -17448,38 +17448,38 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrg
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -17506,7 +17506,7 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrg
 
 Order PKIo Authentication or Encryption - Private Person
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPrivatePerson({
@@ -17588,39 +17588,39 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPri
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -17647,7 +17647,7 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPri
 
 Order PKIo Authentication or Encryption - Private Professional
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPrivateProfessional({
@@ -17726,36 +17726,36 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPri
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -17781,7 +17781,7 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPri
 
 Order PKIo Authentication or Encryption - Professional
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionProfessional({
@@ -17860,36 +17860,36 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPro
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  cs_provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -17915,7 +17915,7 @@ await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPro
 
 Order PKIo Citizen - Signing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioCitizenSigning({
@@ -17994,36 +17994,36 @@ await corsair.digicert.api.certcentralApi.orderPkioCitizenSigning({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -18049,7 +18049,7 @@ await corsair.digicert.api.certcentralApi.orderPkioCitizenSigning({
 
 Order PKIo Personal Organisation - Signing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioPersonalOrganisationSigning({
@@ -18131,39 +18131,39 @@ await corsair.digicert.api.certcentralApi.orderPkioPersonalOrganisationSigning({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -18192,7 +18192,7 @@ await corsair.digicert.api.certcentralApi.orderPkioPersonalOrganisationSigning({
 
 Order PKIo Private Person - Signing — Order PKIo Private Person - Signing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioPrivatePersonSigningOrderPkioPrivatePersonSigning({
@@ -18273,40 +18273,40 @@ await corsair.digicert.api.certcentralApi.orderPkioPrivatePersonSigningOrderPkio
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
   profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
+  individual?: JsonValue,
   container?: JsonValue,
-  id: number,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  id?: number,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  organization: JsonValue,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  organization?: JsonValue,
+  contacts?: JsonValue[],
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -18333,7 +18333,7 @@ await corsair.digicert.api.certcentralApi.orderPkioPrivatePersonSigningOrderPkio
 
 Order PKIo Private Professional - Signing — Order PKIo Private Professional - Signing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioPrivateProfessionalSigningOrderPkioPrivateProfessionalSigning({
@@ -18414,40 +18414,40 @@ await corsair.digicert.api.certcentralApi.orderPkioPrivateProfessionalSigningOrd
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
   profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
+  individual?: JsonValue,
   container?: JsonValue,
-  id: number,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  id?: number,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  organization: JsonValue,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  organization?: JsonValue,
+  contacts?: JsonValue[],
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -18474,7 +18474,7 @@ await corsair.digicert.api.certcentralApi.orderPkioPrivateProfessionalSigningOrd
 
 Order PKIo Private Services Server
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioPrivateServicesServer({
@@ -18548,41 +18548,41 @@ await corsair.digicert.api.certcentralApi.orderPkioPrivateServicesServer({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
   oin?: number,
   exclude_oin?: boolean,
   common_name?: string,
   dns_names?: JsonValue[],
   server_platform?: JsonValue,
-  csr: string,
+  csr?: string,
   disable_generate_in_browser_email?: boolean,
-  csa_agreed_to: boolean,
+  csa_agreed_to?: boolean,
   dcv_method?: string,
   certificate_dcv_scope?: string,
   use_qvtl_domain?: string,
   container?: JsonValue,
-  id: number,
-  organization: JsonValue,
-  contacts: JsonValue[],
+  id?: number,
+  organization?: JsonValue,
+  contacts?: JsonValue[],
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string
 }
 ```
@@ -18611,7 +18611,7 @@ await corsair.digicert.api.certcentralApi.orderPkioPrivateServicesServer({
 
 Order PKIo Professional - Signing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioProfessionalSigning({
@@ -18690,36 +18690,36 @@ await corsair.digicert.api.certcentralApi.orderPkioProfessionalSigning({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -18745,7 +18745,7 @@ await corsair.digicert.api.certcentralApi.orderPkioProfessionalSigning({
 
 Order PKIo Qualified eSeal
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPkioQualifiedESeal({
@@ -18826,38 +18826,38 @@ await corsair.digicert.api.certcentralApi.orderPkioQualifiedESeal({
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
-  profile_option: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
+  profile_option?: string,
   is_rsassa_pss?: boolean,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   order_validity?: JsonValue,
   years?: number,
   days?: number,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -18886,7 +18886,7 @@ await corsair.digicert.api.certcentralApi.orderPkioQualifiedESeal({
 
 Order Private SSL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderPrivateSsl({
@@ -18965,18 +18965,18 @@ await corsair.digicert.api.certcentralApi.orderPrivateSsl({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   ca_cert_id?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   profile_option?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   validity_years?: number,
@@ -18989,37 +18989,37 @@ await corsair.digicert.api.certcentralApi.orderPrivateSsl({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   contacts?: JsonValue[],
   skip_duplicate_org_check?: boolean,
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number
 }
@@ -19110,7 +19110,7 @@ await corsair.digicert.api.certcentralApi.orderReport({
 
 Order secure email certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSecureEmailCertificate({
@@ -19171,17 +19171,17 @@ await corsair.digicert.api.certcentralApi.orderSecureEmailCertificate({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   csr?: string,
   key_size?: number,
   csr_key_type?: string,
   is_rsassa_pss?: boolean,
-  emails: JsonValue[],
+  emails?: JsonValue[],
   user_principle_name?: JsonValue[],
   common_name_indicator?: string,
   individual?: JsonValue,
-  usage_designation: JsonValue,
-  signature_hash: string,
+  usage_designation?: JsonValue,
+  signature_hash?: string,
   ca_cert_id?: string,
   profile_type?: string,
   auto_renew?: number,
@@ -19192,7 +19192,7 @@ await corsair.digicert.api.certcentralApi.orderSecureEmailCertificate({
   contacts?: JsonValue[],
   skip_duplicate_org_check?: boolean,
   container?: JsonValue,
-  order_validity: JsonValue,
+  order_validity?: JsonValue,
   years?: number
 }
 ```
@@ -19220,7 +19220,7 @@ await corsair.digicert.api.certcentralApi.orderSecureEmailCertificate({
 
 Order Secure Site EV
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSecureSiteEv({
@@ -19296,19 +19296,19 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteEv({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -19324,38 +19324,38 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteEv({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
+  organization?: JsonValue,
   id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   certificate_dcv_scope?: string
@@ -19394,7 +19394,7 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteEv({
 
 Order Secure Site OV
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSecureSiteOv({
@@ -19471,19 +19471,19 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteOv({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -19499,38 +19499,38 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteOv({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   certificate_dcv_scope?: string
@@ -19569,7 +19569,7 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteOv({
 
 Order Secure Site Pro EV SSL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSecureSiteProEvSsl({
@@ -19646,19 +19646,19 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteProEvSsl({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -19674,38 +19674,38 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteProEvSsl({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   certificate_dcv_scope?: string
@@ -19744,7 +19744,7 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteProEvSsl({
 
 Order Secure Site Pro SSL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSecureSiteProSsl({
@@ -19821,19 +19821,19 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteProSsl({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -19849,38 +19849,38 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteProSsl({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   certificate_dcv_scope?: string
@@ -19919,7 +19919,7 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteProSsl({
 
 Order Secure Site SSL — Order Secure Site SSL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSecureSiteSslOrderSecureSiteSsl({
@@ -19998,18 +19998,18 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteSslOrderSecureSiteSsl({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   profile_option?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -20024,38 +20024,38 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteSslOrderSecureSiteSsl({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   contacts?: JsonValue[],
   skip_duplicate_org_check?: boolean,
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string,
   enable_guest_access?: number,
   certificate_dcv_scope?: string
@@ -20094,7 +20094,7 @@ await corsair.digicert.api.certcentralApi.orderSecureSiteSslOrderSecureSiteSsl({
 
 Order SSL (type_hint)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSslTypeHint({
@@ -20161,19 +20161,19 @@ await corsair.digicert.api.certcentralApi.orderSslTypeHint({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   profile_option?: string,
   ca_cert_id?: string,
   organization_units?: JsonValue[],
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   comments?: string,
@@ -20190,15 +20190,15 @@ await corsair.digicert.api.certcentralApi.orderSslTypeHint({
   skip_approval?: boolean,
   disable_ct?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
-  id: number,
+  organization?: JsonValue,
+  id?: number,
   contacts?: JsonValue[],
   skip_duplicate_org_check?: boolean,
   container?: JsonValue,
@@ -20240,7 +20240,7 @@ await corsair.digicert.api.certcentralApi.orderSslTypeHint({
 
 Order Swiss Client Authentication Certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSwissClientAuthenticationCertificate({
@@ -20314,36 +20314,36 @@ await corsair.digicert.api.certcentralApi.orderSwissClientAuthenticationCertific
 
 ```ts
 {
-  certificate: JsonValue,
-  emails: JsonValue[],
-  signature_hash: string,
+  certificate?: JsonValue,
+  emails?: JsonValue[],
+  signature_hash?: string,
   dns_names?: JsonValue[],
   csr?: string,
   ca_cert_id?: string,
   auto_renew?: number,
   renewal_of_order_id?: number,
-  id: number,
+  id?: number,
   user_id_assignments?: JsonValue[],
-  csa_agreed_to: boolean,
-  order_validity: JsonValue,
-  years: number,
+  csa_agreed_to?: boolean,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string
 }
 ```
@@ -20372,7 +20372,7 @@ await corsair.digicert.api.certcentralApi.orderSwissClientAuthenticationCertific
 
 Order Swiss Qualified Certificate for Individual
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndividual({
@@ -20456,40 +20456,40 @@ await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndiv
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
   profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  requester: string,
-  first_name: string,
-  last_name: string,
-  email: string,
-  telephone: string,
-  job_title: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  requester?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  telephone?: string,
+  job_title?: string,
   cert_validity?: JsonValue,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -20515,7 +20515,7 @@ await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndiv
 
 Order Swiss Qualified Certificate for Individual in Organisation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndividualInOrganisation({
@@ -20602,43 +20602,43 @@ await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndiv
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
   profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  requester: string,
-  first_name: string,
-  last_name: string,
-  email: string,
-  telephone: string,
-  job_title: string,
-  organization: JsonValue,
-  id: number,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  requester?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  telephone?: string,
+  job_title?: string,
+  organization?: JsonValue,
+  id?: number,
+  contacts?: JsonValue[],
   cert_validity?: JsonValue,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -20665,7 +20665,7 @@ await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndiv
 
 Order Swiss Regulated Certificate for Individual
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndividual({
@@ -20749,40 +20749,40 @@ await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndiv
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
   profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  individual?: JsonValue,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  requester: string,
-  first_name: string,
-  last_name: string,
-  email: string,
-  telephone: string,
-  job_title: string,
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  requester?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  telephone?: string,
+  job_title?: string,
   cert_validity?: JsonValue,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -20809,7 +20809,7 @@ await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndiv
 
 Order Swiss Regulated Certificate for Individual in Organisation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndividualInOrganisation({
@@ -20896,44 +20896,44 @@ await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndiv
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
   profile_option?: string,
   is_rsassa_pss?: boolean,
-  individual: JsonValue,
+  individual?: JsonValue,
   container?: JsonValue,
-  id: number,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  id?: number,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  requester: string,
-  first_name: string,
-  last_name: string,
-  email: string,
-  telephone: string,
-  job_title: string,
-  organization: JsonValue,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  requester?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  telephone?: string,
+  job_title?: string,
+  organization?: JsonValue,
+  contacts?: JsonValue[],
   cert_validity?: JsonValue,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -20960,7 +20960,7 @@ await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndiv
 
 Order Swiss Regulated Certificate for Organisation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForOrganisation({
@@ -21046,43 +21046,43 @@ await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForOrgan
 
 ```ts
 {
-  certificate: JsonValue,
-  signature_hash: string,
+  certificate?: JsonValue,
+  signature_hash?: string,
   profile_option?: string,
   is_rsassa_pss?: boolean,
   container?: JsonValue,
-  id: number,
-  csa_agreed_to: boolean,
-  provisioning_method: string,
+  id?: number,
+  csa_agreed_to?: boolean,
+  provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
-  addr2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
-  requester: string,
-  first_name: string,
-  last_name: string,
-  email: string,
-  telephone: string,
-  job_title: string,
-  organization: JsonValue,
-  contacts: JsonValue[],
+  name?: string,
+  addr1?: string,
+  addr2?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
+  requester?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  telephone?: string,
+  job_title?: string,
+  organization?: JsonValue,
+  contacts?: JsonValue[],
   cert_validity?: JsonValue,
-  payment_method: string,
-  credit_card: JsonValue,
-  number: string,
-  expiration_month: string,
-  expiration_year: string,
-  cvv: string,
-  cardholder_name: string,
+  payment_method?: string,
+  credit_card?: JsonValue,
+  number?: string,
+  expiration_month?: string,
+  expiration_year?: string,
+  cvv?: string,
+  cardholder_name?: string,
   save_credit_card?: string,
-  set_as_default: string,
+  set_as_default?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string
 }
 ```
@@ -21201,7 +21201,7 @@ await corsair.digicert.api.certcentralApi.orderValidationStatus({
 
 Order Verified Mark Certificate (VMC)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderVerifiedMarkCertificateVmc({
@@ -21274,7 +21274,7 @@ await corsair.digicert.api.certcentralApi.orderVerifiedMarkCertificateVmc({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   dns_names?: JsonValue[],
   vmc?: JsonValue,
   logo?: string,
@@ -21284,8 +21284,8 @@ await corsair.digicert.api.certcentralApi.orderVerifiedMarkCertificateVmc({
   trademark_country_code?: string,
   trademark_registration_number?: string,
   renewed_thumbprint?: string,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   comments?: string,
   auto_renew?: number,
   custom_renewal_message?: string,
@@ -21295,37 +21295,37 @@ await corsair.digicert.api.certcentralApi.orderVerifiedMarkCertificateVmc({
   renewal_of_order_id?: number,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string,
   dcv_method?: string,
   skip_approval?: boolean,
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   telephone_extension?: string,
   technical_contact?: JsonValue,
-  organization: JsonValue,
+  organization?: JsonValue,
   id?: number,
   skip_duplicate_org_check?: boolean,
   contacts?: JsonValue[],
   container?: JsonValue,
   custom_fields?: JsonValue[],
-  metadata_id: number,
-  value: string,
+  metadata_id?: number,
+  value?: string,
   alternative_order_id?: string
 }
 ```
@@ -21359,7 +21359,7 @@ await corsair.digicert.api.certcentralApi.orderVerifiedMarkCertificateVmc({
 
 Order X9 PKI for TLS
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.orderX9PkiForTls({
@@ -21435,15 +21435,15 @@ await corsair.digicert.api.certcentralApi.orderX9PkiForTls({
 
 ```ts
 {
-  certificate: JsonValue,
-  common_name: string,
+  certificate?: JsonValue,
+  common_name?: string,
   dns_names?: JsonValue[],
-  csr: string,
-  signature_hash: string,
+  csr?: string,
+  signature_hash?: string,
   server_platform?: JsonValue,
   comments?: string,
   container?: JsonValue,
-  id: number,
+  id?: number,
   auto_renew?: number,
   custom_renewal_message?: string,
   renewal_of_order_id?: number,
@@ -21451,39 +21451,39 @@ await corsair.digicert.api.certcentralApi.orderX9PkiForTls({
   extended_key_usages?: JsonValue[],
   ca_cert_id?: string,
   renewed_thumbprint?: string,
-  csa_agreed_to: boolean,
+  csa_agreed_to?: boolean,
   promo_code?: string,
   dcv_method?: string,
   certificate_dcv_scope?: string,
   skip_approval?: boolean,
   additional_emails?: JsonValue[],
   locale?: string,
-  organization: JsonValue,
+  organization?: JsonValue,
   contacts?: JsonValue[],
   organization_contact?: JsonValue,
-  first_name: string,
-  last_name: string,
-  email: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   technical_contact?: JsonValue,
-  order_validity: JsonValue,
-  years: number,
+  order_validity?: JsonValue,
+  years?: number,
   days?: number,
   custom_expiration_date?: string,
   payment_method?: string,
   credit_card?: JsonValue,
-  number: string,
-  expiration_month: number,
-  expiration_year: number,
-  cvv: number,
-  cardholder_name: string,
+  number?: string,
+  expiration_month?: number,
+  expiration_year?: number,
+  cvv?: number,
+  cardholder_name?: string,
   billing_address?: JsonValue,
-  address: string,
+  address?: string,
   address2?: string,
-  city: string,
+  city?: string,
   state?: string,
-  country: string,
+  country?: string,
   zip?: string,
   vat_number?: string
 }
@@ -21996,20 +21996,20 @@ await corsair.digicert.api.certcentralApi.priceEstimate({
 
 ```ts
 {
-  certificate: JsonValue,
-  dns_names: JsonValue[],
-  order_validity: JsonValue,
-  years: number,
-  days: number,
+  certificate?: JsonValue,
+  dns_names?: JsonValue[],
+  order_validity?: JsonValue,
+  years?: number,
+  days?: number,
   custom_expiration_date?: string,
-  validity_years: number,
+  validity_years?: number,
   is_out_of_contract?: number,
-  product_name_id: string,
+  product_name_id?: string,
   billing_address?: JsonValue,
-  country: string,
-  city: string,
-  state: string,
-  zip: string,
+  country?: string,
+  city?: string,
+  state?: string,
+  zip?: string,
   renewal_of_order_valid_till?: string,
   addons?: JsonValue[]
 }
@@ -22377,7 +22377,7 @@ await corsair.digicert.api.certcentralApi.productList({});
 
 Purchase KeyLocker signatures
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.purchaseKeyLockerSignatures({
@@ -22611,7 +22611,7 @@ await corsair.digicert.api.certcentralApi.recentOrganizations({});
 
 Reissue certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.reissueCertificate({
@@ -22678,7 +22678,7 @@ await corsair.digicert.api.certcentralApi.reissueCertificate({
 
 ```ts
 {
-  certificate: JsonValue,
+  certificate?: JsonValue,
   csr?: string,
   common_name?: string,
   dns_names?: JsonValue[],
@@ -22690,7 +22690,7 @@ await corsair.digicert.api.certcentralApi.reissueCertificate({
   is_rsassa_pss?: boolean,
   server_platform?: JsonValue,
   cert_validity?: JsonValue,
-  signature_hash: string,
+  signature_hash?: string,
   profile_option?: string,
   ca_cert_id?: string,
   dcv_method?: string,
@@ -22700,14 +22700,14 @@ await corsair.digicert.api.certcentralApi.reissueCertificate({
   use_auth_key?: boolean,
   cs_provisioning_method?: string,
   ship_info?: JsonValue,
-  name: string,
-  addr1: string,
+  name?: string,
+  addr1?: string,
   addr2?: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  method: string,
+  city?: string,
+  state?: string,
+  zip?: string,
+  country?: string,
+  method?: string,
   subject?: JsonValue,
   serial_number?: string,
   pseudonym?: string,
@@ -22959,7 +22959,7 @@ await corsair.digicert.api.certcentralApi.rescanDomain({
 
 Resend create user email
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.resendCreateUserEmail({
@@ -23024,7 +23024,7 @@ await corsair.digicert.api.certcentralApi.resendCreateUserEmail({
 
 Resend DCV email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.resendDcvEmail({
@@ -23101,7 +23101,7 @@ await corsair.digicert.api.certcentralApi.resendDcvEmail({
 
 Resend invite
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.resendInvite({
@@ -23176,7 +23176,7 @@ await corsair.digicert.api.certcentralApi.resendInvite({
 
 Resend order approval email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.resendOrderApprovalEmail({
@@ -23254,7 +23254,7 @@ await corsair.digicert.api.certcentralApi.resendOrderApprovalEmail({
 
 Resend verified contact delegation email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.resendVerifiedContactDelegationEmail({});
@@ -23642,7 +23642,7 @@ await corsair.digicert.api.certcentralApi.samlEntityDetails({});
 
 Send invite
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.sendInvite({
@@ -23700,8 +23700,8 @@ await corsair.digicert.api.certcentralApi.sendInvite({
 
 ```ts
 {
-  emails: JsonValue[],
-  subaccount_type: string,
+  emails?: JsonValue[],
+  subaccount_type?: string,
   invite_note?: string
 }
 ```
@@ -23783,7 +23783,7 @@ await corsair.digicert.api.certcentralApi.setSubaccountProducts({
   currency?: string,
   pricing_method?: string,
   balance_negative_limit?: number,
-  products: JsonValue[],
+  products?: JsonValue[],
   product_name_id?: string,
   prices?: JsonValue[]
 }
@@ -24315,8 +24315,8 @@ await corsair.digicert.api.certcentralApi.submitForValidation({
 
 ```ts
 {
-  validations: JsonValue[],
-  type: string,
+  validations?: JsonValue[],
+  type?: string,
   dcv_method?: string,
   email_array?: JsonValue[]
 }
@@ -24412,8 +24412,8 @@ await corsair.digicert.api.certcentralApi.submitForValidation_504f5354({
 
 ```ts
 {
-  validations: JsonValue[],
-  type: string,
+  validations?: JsonValue[],
+  type?: string,
   verified_users?: JsonValue[]
 }
 ```
@@ -24507,7 +24507,7 @@ await corsair.digicert.api.certcentralApi.templateInfo({
 
 Transfer funds
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.transferFunds({
@@ -24794,9 +24794,9 @@ await corsair.digicert.api.certcentralApi.updateAccountNotificationSettings({
 
 ```ts
 {
-  account_settings: JsonValue[],
-  name: string,
-  value: string
+  account_settings?: JsonValue[],
+  name?: string,
+  value?: string
 }
 ```
 </Accordion>
@@ -25570,11 +25570,11 @@ await corsair.digicert.api.certcentralApi.updateOrderContacts({
 
 ```ts
 {
-  contacts: JsonValue[],
-  contact_type: string,
-  first_name: string,
-  last_name: string,
-  email: string,
+  contacts?: JsonValue[],
+  contact_type?: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
   job_title?: string,
   telephone?: string,
   language_id?: string
@@ -25596,7 +25596,7 @@ await corsair.digicert.api.certcentralApi.updateOrderContacts({
 
 Update order status
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.updateOrderStatus({
@@ -25732,7 +25732,7 @@ await corsair.digicert.api.certcentralApi.updateOrganizationAndTechnicalContact(
 
 ```ts
 {
-  contacts: JsonValue[],
+  contacts?: JsonValue[],
   first_name?: string,
   last_name?: string,
   email?: string,
@@ -27555,17 +27555,17 @@ await corsair.digicert.api.certcentralApi.voucherPriceEstimate({
 
 ```ts
 {
-  vouchers: JsonValue[],
-  product_name_id: string,
+  vouchers?: JsonValue[],
+  product_name_id?: string,
   no_of_fqdns?: number,
   no_of_wildcards?: number,
   shipping_method?: string,
   validity_years?: number,
   validity_days?: number,
-  quantity: number,
+  quantity?: number,
   billing_address?: JsonValue,
-  country: string,
-  city: string,
+  country?: string,
+  city?: string,
   state?: string,
   zip?: string,
   address?: string,
@@ -28578,7 +28578,7 @@ await corsair.digicert.api.contentTrustApi.authorizeCredentials1({
 
 Cancel credential by credential name
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.contentTrustApi.cancelCredentialByName({
@@ -29425,7 +29425,7 @@ await corsair.digicert.api.contentTrustApi.createValidation({
 
 Send credential OTP
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.contentTrustApi.credentialSendOtp({
@@ -29500,7 +29500,7 @@ await corsair.digicert.api.contentTrustApi.credentialSendOtp({
 
 Send credential OTP
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.contentTrustApi.credentialSendOtp1({
@@ -31232,7 +31232,7 @@ await corsair.digicert.api.contentTrustApi.getValidationDetails({
 
 Invalidate validation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.contentTrustApi.invalidateValidation({
@@ -32843,7 +32843,7 @@ await corsair.digicert.api.contentTrustApi.replaceClientAdmin({
 
 Resend validation email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.contentTrustApi.resendEmail({
@@ -47345,7 +47345,7 @@ await corsair.digicert.api.privateCAApi.postHandleScepPkiOperation({
 
 
 
-**Output:** `string`
+**Output:** `number[]`
 
 
 ---
@@ -66901,7 +66901,7 @@ await corsair.digicert.api.trustLifecycleApi.handleGetCaCertsOperationUsingGet({
 
 
 
-**Output:** `undefined`
+**Output:** `number[]`
 
 
 ---
@@ -66969,7 +66969,7 @@ await corsair.digicert.api.trustLifecycleApi.handleSimpleEnrollOperationUsingPos
 
 
 
-**Output:** `undefined`
+**Output:** `number[]`
 
 
 ---
@@ -67037,7 +67037,7 @@ await corsair.digicert.api.trustLifecycleApi.handleSimpleReEnrollOperationUsingP
 
 
 
-**Output:** `undefined`
+**Output:** `number[]`
 
 
 ---
@@ -70070,7 +70070,7 @@ await corsair.digicert.api.trustLifecycleApi.postReinstateSensors({});
 
 Renew certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.trustLifecycleApi.postRenewCertificate({
@@ -70485,7 +70485,7 @@ await corsair.digicert.api.trustLifecycleApi.postRenewCertificate({
 
 Renew Certificate enrollment using certificate Id.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.trustLifecycleApi.postRenewCertificateEnrollmentUsingCertificateId({
