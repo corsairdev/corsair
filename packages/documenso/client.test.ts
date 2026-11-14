@@ -321,6 +321,28 @@ describe('Documenso HTTP client', () => {
 		expect(file.size).toBeLessThanOrEqual(DOCUMENSO_MAX_UPLOAD_BYTES);
 	});
 
+	it('keeps the caller filename out of upload errors', async () => {
+		const definition = DocumensoOperationDefinitions.envelopeCreate;
+		const filename = 'nda-jane-doe-acme.pdf';
+		const oversized = 'A'.repeat(
+			Math.ceil(DOCUMENSO_MAX_UPLOAD_BYTES / 3) * 4 + 4,
+		);
+		for (const contentBase64 of ['not base64!', oversized]) {
+			const input = {
+				...definition.inputExample,
+				files: [{ filename, contentType: 'application/pdf', contentBase64 }],
+			};
+			const error = await makeDocumensoRequest(
+				'envelopeCreate',
+				{ key: 'api_test' },
+				input,
+			).catch((caught: Error) => caught);
+			expect(error).toBeInstanceOf(Error);
+			expect(String(error)).not.toContain(filename);
+		}
+		expect(fetchSpy).not.toHaveBeenCalled();
+	});
+
 	it('bounds aggregate multipart bytes across multiple files', async () => {
 		const contentBase64 = Buffer.alloc(12 * 1024 * 1024).toString('base64');
 		const definition = DocumensoOperationDefinitions.envelopeCreate;

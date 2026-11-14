@@ -122,11 +122,12 @@ function requestBody(
 	return body;
 }
 
-function decodeBase64(value: string, filename: string): Uint8Array {
+// Errors name the field, never the caller's filename: filenames often carry signer or customer names.
+function decodeBase64(value: string, fieldName: string): Uint8Array {
 	const maxEncodedLength = Math.ceil(MAX_UPLOAD_BYTES / 3) * 4;
 	if (value.length > maxEncodedLength) {
 		throw new DocumensoAPIError(
-			`Upload exceeds the ${MAX_UPLOAD_BYTES}-byte plugin limit: ${filename}`,
+			`Upload in ${fieldName} exceeds the ${MAX_UPLOAD_BYTES}-byte plugin limit`,
 			0,
 		);
 	}
@@ -134,11 +135,14 @@ function decodeBase64(value: string, filename: string): Uint8Array {
 	try {
 		decoded = atob(value);
 	} catch {
-		throw new DocumensoAPIError(`Upload is not valid base64: ${filename}`, 0);
+		throw new DocumensoAPIError(
+			`Upload in ${fieldName} is not valid base64`,
+			0,
+		);
 	}
 	if (decoded.length > MAX_UPLOAD_BYTES) {
 		throw new DocumensoAPIError(
-			`Upload exceeds the ${MAX_UPLOAD_BYTES}-byte plugin limit: ${filename}`,
+			`Upload in ${fieldName} exceeds the ${MAX_UPLOAD_BYTES}-byte plugin limit`,
 			0,
 		);
 	}
@@ -172,7 +176,7 @@ function appendUpload(
 		) {
 			throw new DocumensoAPIError('Invalid upload file', 0);
 		}
-		const bytes = decodeBase64(contentBase64, filename);
+		const bytes = decodeBase64(contentBase64, fieldName);
 		totalBytes += bytes.byteLength;
 		if (totalBytes > MAX_UPLOAD_TOTAL_BYTES) {
 			throw new DocumensoAPIError(
