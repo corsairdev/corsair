@@ -1,7 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { shopify } from './index';
-import { productPage, shop, throttledBody } from './test-fixtures';
+import { order, productPage, shop, throttledBody } from './test-fixtures';
 
 /**
  * Endpoints call the HTTP client with `maxRetries: 0`; only the bound client
@@ -205,5 +205,104 @@ describe('Shopify retries through the bound client', () => {
 		} finally {
 			testDb.cleanup();
 		}
+	});
+
+	describe('orders.cancel read-back', () => {
+		// The mutation answers before the job finishes, so the order is re-read.
+		const cancelStarted = {
+			data: {
+				orderCancel: {
+					job: { id: 'gid://shopify/Job/1', done: false },
+					jobResult: { done: false, status: 'STARTED', errors: [], order },
+					orderCancelUserErrors: [],
+				},
+			},
+		};
+		const cancelled = {
+			data: { order: { ...order, cancelledAt: '2026-01-02T00:00:00Z' } },
+		};
+
+		function sentQueries(): string[] {
+			return fetchMock.mock.calls.map(
+				(call) =>
+					(
+						JSON.parse(String((call[1] as RequestInit).body)) as {
+							query: string;
+						}
+					).query,
+			);
+		}
+
+		it('retries the order read after an HTTP 429 without sending the cancel again', async () => {
+			const { corsair, testDb } = await createClient();
+			try {
+				respond(cancelStarted);
+				respond({ errors: 'Too many requests' }, 429, { 'Retry-After': '1' });
+				respond(cancelled);
+
+				const result = await advance(
+					corsair.shopify.api.orders.cancel({ id: 'gid://shopify/Order/1001' }),
+				);
+
+				expect(result.order.cancelledAt).toBe('2026-01-02T00:00:00Z');
+				const queries = sentQueries();
+				expect(queries).toHaveLength(3);
+				expect(queries.filter((q) => q.includes('orderCancel('))).toHaveLength(
+					1,
+				);
+			} finally {
+				testDb.cleanup();
+			}
+		});
+
+		it('gives up within the 15 s window when Shopify asks for a longer wait', async () => {
+			const { corsair, testDb } = await createClient();
+			try {
+				// 1000 points requested, none available, 50 restored per second:
+				// Shopify's own wait is 20 s, longer than the whole window.
+				const longThrottle = {
+					...throttledBody,
+					extensions: {
+						cost: {
+							requestedQueryCost: 1000,
+							actualQueryCost: null,
+							throttleStatus: {
+								maximumAvailable: 1000,
+								currentlyAvailable: 0,
+								restoreRate: 50,
+							},
+						},
+					},
+				};
+				respond(cancelStarted);
+				for (let i = 0; i < 6; i += 1) respond(longThrottle);
+
+				const startedAt = Date.now();
+				let settledAt = 0;
+				const pending = corsair.shopify.api.orders
+					.cancel({ id: 'gid://shopify/Order/1001' })
+					.finally(() => {
+						settledAt = Date.now();
+					});
+				const outcome = pending.then(
+					() => undefined,
+					// unknown: a rejection payload has no type.
+					(error: unknown) => error,
+				);
+				await jest.advanceTimersByTimeAsync(120_000);
+				const error = await outcome;
+
+				expect(error).toBeInstanceOf(Error);
+				expect((error as Error).message).toContain(
+					'orders.cancel was accepted',
+				);
+				expect(settledAt - startedAt).toBeLessThanOrEqual(15_000);
+				expect(
+					sentQueries().filter((q) => q.includes('orderCancel(')),
+				).toHaveLength(1);
+			} finally {
+				testDb.cleanup();
+			}
+		});
 	});
 });

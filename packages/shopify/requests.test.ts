@@ -591,7 +591,11 @@ describe('orders', () => {
 				},
 			},
 		});
-		harness.respond({ errors: 'Too many requests' }, 429);
+		// The read is retried on a 429 only while the wait fits the cancel
+		// window; a 60 s Retry-After does not, so the read gives up at once.
+		harness.respond({ errors: 'Too many requests' }, 429, {
+			'Retry-After': '60',
+		});
 
 		const error = await harness.expectRejection<Error>(
 			Shopify.orders.cancel(ctx, { id: 'gid://shopify/Order/1001' }),

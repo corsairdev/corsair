@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import type {
 	ShopifyContext,
 	ShopifyEndpointInputs,
@@ -288,11 +289,11 @@ async function awaitCancellation(
 	if (isCancelled(started.order)) return { order: started.order };
 
 	const deadline = Date.now() + CANCEL_POLL_TIMEOUT_MS;
-	while (Date.now() < deadline) {
+	while (Date.now() + CANCEL_POLL_INTERVAL_MS < deadline) {
 		await new Promise((resolve) =>
 			setTimeout(resolve, CANCEL_POLL_INTERVAL_MS),
 		);
-		const polled = await readOrderState(run, orderId);
+		const polled = await readOrderState(run, orderId, deadline);
 		const order = (polled.order ?? null) as {
 			cancelledAt?: string | null;
 		} | null;
@@ -318,7 +319,10 @@ const CANCEL_POLL_MAX_ATTEMPTS = 4;
  * Reads the order's cancellation state, retrying only the read on a throttle.
  *
  * The read has no side effect, so repeating it is free; the mutation that
- * started the job is not repeated, because it has already run.
+ * started the job is not repeated, because it has already run. A throttle can
+ * arrive as a THROTTLED body or as core's `ApiError` for an HTTP 429. When the
+ * wait Shopify asks for runs past the cancel window, the read gives up instead
+ * of sleeping beyond it.
  */
 async function readOrderState(
 	run: (
@@ -329,6 +333,7 @@ async function readOrderState(
 		// read here.
 	) => Promise<Record<string, unknown>>,
 	orderId: string,
+	deadline: number,
 ): Promise<Record<string, unknown>> {
 	// unknown: a rejection reason has no static type; only its message and
 	// retryAfter are read before it is rethrown.
@@ -342,13 +347,16 @@ async function readOrderState(
 			const throttled =
 				(error instanceof ShopifyAPIError &&
 					(error.code === 'THROTTLED' || error.status === 429)) ||
+				(error instanceof ApiError && error.status === 429) ||
 				(error instanceof Error && /throttl/i.test(error.message));
 			if (!throttled) throw error;
 			lastError = error;
 			const wait =
-				error instanceof ShopifyAPIError && error.retryAfter
+				(error instanceof ShopifyAPIError || error instanceof ApiError) &&
+				error.retryAfter
 					? error.retryAfter
 					: CANCEL_POLL_INTERVAL_MS;
+			if (Date.now() + wait >= deadline) break;
 			await new Promise((resolve) => setTimeout(resolve, wait));
 		}
 	}
