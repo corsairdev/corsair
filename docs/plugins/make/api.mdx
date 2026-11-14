@@ -156,14 +156,14 @@ await corsair.make.api.scenarios.clone({});
   id?: number,
   name?: string,
   teamId?: number,
-  hookId?: number,
+  hookId?: number | null,
   devices?: {
     id?: number,
     scope?: string
   }[],
-  deviceId?: number,
-  deviceScope?: string,
-  description?: string,
+  deviceId?: number | null,
+  deviceScope?: string | null,
+  description?: string | null,
   folderId?: number | null,
   concept?: boolean,
   folderPath?: string | null,
@@ -189,19 +189,19 @@ await corsair.make.api.scenarios.clone({});
     id?: number,
     name?: string,
     email?: string
-  },
+  } | null,
   updatedByUser?: {
     id?: number,
     name?: string,
     email?: string
-  },
-  nextExec?: string,
+  } | null,
+  nextExec?: string | null,
   created?: string,
   scenarioVersion?: number,
   moduleSequenceId?: number,
-  type?: scenario | tool,
+  type?: string,
   chainingRole?: string | null,
-  isShared?: boolean,
+  isShared?: boolean | null,
   operations?: number,
   centicredits?: number,
   transfer?: number,
@@ -219,8 +219,8 @@ await corsair.make.api.scenarios.clone({});
   labels?: {
     id?: number,
     name?: string,
-    colour?: white | neutral | brand | info | success | warning | danger | pink,
-    scope?: team,
+    colour?: string,
+    scope?: string,
     teamId?: number,
     description?: string | null,
     createdBy?: number | null,
@@ -324,14 +324,14 @@ await corsair.make.api.scenarios.create({});
   id?: number,
   name?: string,
   teamId?: number,
-  hookId?: number,
+  hookId?: number | null,
   devices?: {
     id?: number,
     scope?: string
   }[],
-  deviceId?: number,
-  deviceScope?: string,
-  description?: string,
+  deviceId?: number | null,
+  deviceScope?: string | null,
+  description?: string | null,
   folderId?: number | null,
   concept?: boolean,
   folderPath?: string | null,
@@ -357,19 +357,19 @@ await corsair.make.api.scenarios.create({});
     id?: number,
     name?: string,
     email?: string
-  },
+  } | null,
   updatedByUser?: {
     id?: number,
     name?: string,
     email?: string
-  },
-  nextExec?: string,
+  } | null,
+  nextExec?: string | null,
   created?: string,
   scenarioVersion?: number,
   moduleSequenceId?: number,
-  type?: scenario | tool,
+  type?: string,
   chainingRole?: string | null,
-  isShared?: boolean,
+  isShared?: boolean | null,
   operations?: number,
   centicredits?: number,
   transfer?: number,
@@ -387,8 +387,8 @@ await corsair.make.api.scenarios.create({});
   labels?: {
     id?: number,
     name?: string,
-    colour?: white | neutral | brand | info | success | warning | danger | pink,
-    scope?: team,
+    colour?: string,
+    scope?: string,
     teamId?: number,
     description?: string | null,
     createdBy?: number | null,
@@ -493,7 +493,7 @@ await corsair.make.api.scenarios.delete({});
 
 Delete buildtime variable
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.make.api.scenarios.deleteBuildVariable({});
@@ -553,14 +553,14 @@ await corsair.make.api.scenarios.get({});
   id?: number,
   name?: string,
   teamId?: number,
-  hookId?: number,
+  hookId?: number | null,
   devices?: {
     id?: number,
     scope?: string
   }[],
-  deviceId?: number,
-  deviceScope?: string,
-  description?: string,
+  deviceId?: number | null,
+  deviceScope?: string | null,
+  description?: string | null,
   folderId?: number | null,
   concept?: boolean,
   folderPath?: string | null,
@@ -586,19 +586,19 @@ await corsair.make.api.scenarios.get({});
     id?: number,
     name?: string,
     email?: string
-  },
+  } | null,
   updatedByUser?: {
     id?: number,
     name?: string,
     email?: string
-  },
-  nextExec?: string,
+  } | null,
+  nextExec?: string | null,
   created?: string,
   scenarioVersion?: number,
   moduleSequenceId?: number,
-  type?: scenario | tool,
+  type?: string,
   chainingRole?: string | null,
-  isShared?: boolean,
+  isShared?: boolean | null,
   operations?: number,
   centicredits?: number,
   transfer?: number,
@@ -616,8 +616,8 @@ await corsair.make.api.scenarios.get({});
   labels?: {
     id?: number,
     name?: string,
-    colour?: white | neutral | brand | info | success | warning | danger | pink,
-    scope?: team,
+    colour?: string,
+    scope?: string,
     teamId?: number,
     description?: string | null,
     createdBy?: number | null,
@@ -683,7 +683,7 @@ await corsair.make.api.scenarios.getAiAgentModules({});
   id?: number,
   module?: string,
   userLabel?: string | null,
-  evaluationMode?: disabled | measured | measuredAndInferred,
+  evaluationMode?: string,
   tools?: {
     moduleId?: number,
     module?: string,
@@ -910,14 +910,14 @@ await corsair.make.api.scenarios.list({});
   id?: number,
   name?: string,
   teamId?: number,
-  hookId?: number,
+  hookId?: number | null,
   devices?: {
     id?: number,
     scope?: string
   }[],
-  deviceId?: number,
-  deviceScope?: string,
-  description?: string,
+  deviceId?: number | null,
+  deviceScope?: string | null,
+  description?: string | null,
   folderId?: number | null,
   concept?: boolean,
   folderPath?: string | null,
@@ -943,19 +943,19 @@ await corsair.make.api.scenarios.list({});
     id?: number,
     name?: string,
     email?: string
-  },
+  } | null,
   updatedByUser?: {
     id?: number,
     name?: string,
     email?: string
-  },
-  nextExec?: string,
+  } | null,
+  nextExec?: string | null,
   created?: string,
   scenarioVersion?: number,
   moduleSequenceId?: number,
-  type?: scenario | tool,
+  type?: string,
   chainingRole?: string | null,
-  isShared?: boolean,
+  isShared?: boolean | null,
   operations?: number,
   centicredits?: number,
   transfer?: number,
@@ -973,8 +973,8 @@ await corsair.make.api.scenarios.list({});
   labels?: {
     id?: number,
     name?: string,
-    colour?: white | neutral | brand | info | success | warning | danger | pink,
-    scope?: team,
+    colour?: string,
+    scope?: string,
     teamId?: number,
     description?: string | null,
     createdBy?: number | null,
@@ -1284,7 +1284,7 @@ await corsair.make.api.scenarios.restore({});
   moduleId?: number,
   moduleName?: string,
   entities?: {
-    entityType?: connection | key,
+    entityType?: string,
     entityId?: number
   }[]
 }[]
@@ -1335,7 +1335,7 @@ await corsair.make.api.scenarios.run({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `executionId` | `string` | No | — |
-| `status` | `string` | No | — |
+| `status` | `number \| string` | No | — |
 
 
 
@@ -1394,14 +1394,14 @@ await corsair.make.api.scenarios.update({});
   id?: number,
   name?: string,
   teamId?: number,
-  hookId?: number,
+  hookId?: number | null,
   devices?: {
     id?: number,
     scope?: string
   }[],
-  deviceId?: number,
-  deviceScope?: string,
-  description?: string,
+  deviceId?: number | null,
+  deviceScope?: string | null,
+  description?: string | null,
   folderId?: number | null,
   concept?: boolean,
   folderPath?: string | null,
@@ -1427,19 +1427,19 @@ await corsair.make.api.scenarios.update({});
     id?: number,
     name?: string,
     email?: string
-  },
+  } | null,
   updatedByUser?: {
     id?: number,
     name?: string,
     email?: string
-  },
-  nextExec?: string,
+  } | null,
+  nextExec?: string | null,
   created?: string,
   scenarioVersion?: number,
   moduleSequenceId?: number,
-  type?: scenario | tool,
+  type?: string,
   chainingRole?: string | null,
-  isShared?: boolean,
+  isShared?: boolean | null,
   operations?: number,
   centicredits?: number,
   transfer?: number,
@@ -1457,8 +1457,8 @@ await corsair.make.api.scenarios.update({});
   labels?: {
     id?: number,
     name?: string,
-    colour?: white | neutral | brand | info | success | warning | danger | pink,
-    scope?: team,
+    colour?: string,
+    scope?: string,
     teamId?: number,
     description?: string | null,
     createdBy?: number | null,
@@ -1489,9 +1489,9 @@ await corsair.make.api.scenarios.update({});
 
 `scenarios.updateBuildVariables`
 
-Update buildtime variables in scenario metadata
+Replace buildtime variables in scenario metadata (variables left out are overwritten)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.make.api.scenarios.updateBuildVariables({});
@@ -1571,3 +1571,4 @@ await corsair.make.api.scenarios.updateInterface({});
 
 
 ---
+
