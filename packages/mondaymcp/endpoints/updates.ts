@@ -9,7 +9,7 @@ import {
 
 // Updates, notifications, search, assets & meetings family: create_update,
 // get_updates, create_notification, search, get_assets, get_asset_upload_url,
-// finalize_asset_upload, get_notetaker_meetings.
+// finalize_asset_upload, get_meetings_content (meetings.getNotetaker).
 export const updatesCreate: MondayMcpEndpoints['updates.create'] = async (
 	ctx,
 	input,
@@ -140,7 +140,7 @@ export const meetingsGetNotetaker: MondayMcpEndpoints['meetings.getNotetaker'] =
 			MondayMcpEndpointInputSchemas['meetings.getNotetaker'].parse(input);
 		const result = await makeMondayMcpToolCall(
 			ctx.key,
-			'get_notetaker_meetings',
+			'get_meetings_content',
 			parsed,
 		);
 		const output =

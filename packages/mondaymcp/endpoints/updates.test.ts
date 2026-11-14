@@ -216,7 +216,7 @@ describe('updates family (mocked MCP transport)', () => {
 		) as {
 			params: { name: string; arguments: Record<string, unknown> };
 		};
-		expect(callBody.params.name).toBe('get_notetaker_meetings');
+		expect(callBody.params.name).toBe('get_meetings_content');
 		expect(callBody.params.arguments).toEqual({});
 	});
 

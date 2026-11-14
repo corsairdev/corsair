@@ -8,8 +8,9 @@ import {
 } from './types';
 
 // Automations & Workflows family: list_automations, manage_automations,
-// create_automation, plan_workflow, create_workflow, update_workflow,
-// publish_workflow.
+// create_automation, invoke_process_planner (workflows.plan), create_workflow,
+// invoke_workflow_expert (workflows.update). monday retired publish_workflow
+// from the hosted server; workflows are published from the workflow editor.
 export const automationsList: MondayMcpEndpoints['automations.list'] = async (
 	ctx,
 	input,
@@ -76,7 +77,11 @@ export const workflowsPlan: MondayMcpEndpoints['workflows.plan'] = async (
 	input,
 ) => {
 	const parsed = MondayMcpEndpointInputSchemas['workflows.plan'].parse(input);
-	const result = await makeMondayMcpToolCall(ctx.key, 'plan_workflow', parsed);
+	const result = await makeMondayMcpToolCall(
+		ctx.key,
+		'invoke_process_planner',
+		parsed,
+	);
 	const output = MondayMcpEndpointOutputSchemas['workflows.plan'].parse(result);
 	await logEventFromContext(
 		ctx,
@@ -115,7 +120,7 @@ export const workflowsUpdate: MondayMcpEndpoints['workflows.update'] = async (
 	const parsed = MondayMcpEndpointInputSchemas['workflows.update'].parse(input);
 	const result = await makeMondayMcpToolCall(
 		ctx.key,
-		'update_workflow',
+		'invoke_workflow_expert',
 		parsed,
 	);
 	const output =
@@ -123,28 +128,6 @@ export const workflowsUpdate: MondayMcpEndpoints['workflows.update'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.workflows.update',
-		{ ...safeEventPayload(parsed) },
-		'completed',
-	);
-	return output;
-};
-
-export const workflowsPublish: MondayMcpEndpoints['workflows.publish'] = async (
-	ctx,
-	input,
-) => {
-	const parsed =
-		MondayMcpEndpointInputSchemas['workflows.publish'].parse(input);
-	const result = await makeMondayMcpToolCall(
-		ctx.key,
-		'publish_workflow',
-		parsed,
-	);
-	const output =
-		MondayMcpEndpointOutputSchemas['workflows.publish'].parse(result);
-	await logEventFromContext(
-		ctx,
-		'mondaymcp.workflows.publish',
 		{ ...safeEventPayload(parsed) },
 		'completed',
 	);

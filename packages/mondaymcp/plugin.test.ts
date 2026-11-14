@@ -22,9 +22,9 @@ describe('mondaymcp plugin registry', () => {
 		plugin.endpoints as unknown as Record<string, unknown>,
 	);
 
-	it('registers exactly the 60 documented Platform MCP tools', () => {
-		expect(endpointPaths.length).toBe(60);
-		expect(new Set(endpointPaths).size).toBe(60);
+	it('registers exactly the 59 Platform MCP tools the hosted server serves', () => {
+		expect(endpointPaths.length).toBe(59);
+		expect(new Set(endpointPaths).size).toBe(59);
 	});
 
 	it('aligns endpointMeta and endpointSchemas with the endpoint map', () => {

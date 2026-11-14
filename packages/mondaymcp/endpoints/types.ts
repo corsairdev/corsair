@@ -933,58 +933,48 @@ export const SprintsGetBoardsInputSchema = z.object({}).loose();
 
 export type SprintsGetBoardsInput = z.infer<typeof SprintsGetBoardsInputSchema>;
 
+// Served by the hosted get_meetings_content tool: monday retired
+// get_notetaker_meetings from https://mcp.monday.com/mcp (its tools/list on
+// 2026-11-15 answers "Tool 'get_notetaker_meetings' not found"). Without ids
+// the tool lists recent meetings; it has no limit or cursor parameters.
 export const MeetingsGetNotetakerInputSchema = z
 	.object({
 		ids: z
-			.array(LooseArrayItem)
+			.array(z.string())
 			.describe(
-				'Filter by specific meeting IDs. Use to fetch one or more specific meetings in a single call.',
+				'Meeting IDs to fetch in one call. Omit to list recent meetings for the chosen access level.',
 			)
 			.optional(),
 		access: z
-			.string()
+			.enum(['OWN', 'SHARED_WITH_ME', 'SHARED_WITH_ACCOUNT', 'ALL'])
 			.describe(
-				'Filter meetings by access level. One of `OWN` (default), `SHARED_WITH_ME`, `SHARED_WITH_ACCOUNT`, or `ALL`.',
-			)
-			.optional(),
-		limit: z
-			.number()
-			.describe(
-				'Maximum number of meetings to return per page. Between 1 and 100. Defaults to 25.',
-			)
-			.optional(),
-		cursor: z
-			.string()
-			.describe(
-				"Pagination cursor. Pass the `cursor` value from a previous response's `page_info` to fetch the next page.",
+				'Which meetings to include. Defaults to ALL when ids are given; without ids, meetings shared only account-wide are left out unless ALL is passed.',
 			)
 			.optional(),
 		search: z
 			.string()
-			.describe('Search meetings by title, participant name, or email.')
+			.describe(
+				'Case-insensitive substring match on title, attendee name or email. Not a topic search.',
+			)
 			.optional(),
 		include_summary: z
 			.boolean()
 			.describe(
-				'Whether to include the AI-generated summary for each meeting. Defaults to `false`.',
+				'Include the AI-generated summary for each meeting. The summary is returned when no include_ flag is set.',
 			)
 			.optional(),
 		include_topics: z
 			.boolean()
-			.describe(
-				'Whether to include discussion topics and talking points for each meeting. Defaults to `false`.',
-			)
+			.describe('Include discussion topics for each meeting.')
 			.optional(),
 		include_action_items: z
 			.boolean()
-			.describe(
-				'Whether to include action items for each meeting. Defaults to `false`.',
-			)
+			.describe('Include action items for each meeting.')
 			.optional(),
 		include_transcript: z
 			.boolean()
 			.describe(
-				'Whether to include the full transcript for each meeting. Transcripts can be very large. Defaults to `false`.',
+				'Include the full transcript for each meeting. Transcripts can be very large.',
 			)
 			.optional(),
 	})
@@ -1442,6 +1432,8 @@ export type FoldersMoveObjectInput = z.infer<
 	typeof FoldersMoveObjectInputSchema
 >;
 
+// Served by the hosted invoke_process_planner tool, which replaced
+// plan_workflow on https://mcp.monday.com/mcp and takes the same single prompt.
 export const WorkflowsPlanInputSchema = z
 	.object({
 		prompt: z
@@ -1453,29 +1445,6 @@ export const WorkflowsPlanInputSchema = z
 	.loose();
 
 export type WorkflowsPlanInput = z.infer<typeof WorkflowsPlanInputSchema>;
-
-export const WorkflowsPublishInputSchema = z
-	.object({
-		workflowObjectId: z
-			.string()
-			.describe(
-				'The workflow object ID returned by create_workflow. Identifies the workflow across all drafts and live versions.',
-			),
-		workflowDraftId: z
-			.string()
-			.describe(
-				'The draft version ID to publish. Both workflowObjectId and workflowDraftId are required — together they identify the exact draft to publish.',
-			),
-		shouldActivate: z
-			.boolean()
-			.describe(
-				'Whether to activate the workflow immediately after publishing so it starts running. Defaults to true. Pass false to publish without activating.',
-			)
-			.optional(),
-	})
-	.loose();
-
-export type WorkflowsPublishInput = z.infer<typeof WorkflowsPublishInputSchema>;
 
 export const DocsReadInputSchema = z
 	.object({
@@ -1792,22 +1761,29 @@ export const ViewsUpdateTableInputSchema = z
 
 export type ViewsUpdateTableInput = z.infer<typeof ViewsUpdateTableInputSchema>;
 
+// Served by the hosted invoke_workflow_expert tool, which replaced
+// update_workflow on https://mcp.monday.com/mcp. It answers questions about a
+// workflow or changes it (adds, edits and deletes steps). Without a draft id
+// it works on the live version.
 export const WorkflowsUpdateInputSchema = z
 	.object({
 		workflowObjectId: z
 			.number()
 			.describe(
-				'The workflow object ID returned by create_workflow. Identifies the workflow across all drafts and published versions; does not change across publishes.',
+				'The workflow object ID returned by create_workflow (also in the workflow URL). Not an automation id.',
 			),
 		workflowDraftId: z
 			.number()
+			.int()
+			.positive()
 			.describe(
-				'The draft version ID to update. Always read it from the latest create_workflow/update_workflow response — the agent may return a new draft ID.',
-			),
+				'The draft to work on, from the latest create_workflow or workflows.update response. Omit to work on the live version.',
+			)
+			.optional(),
 		prompt: z
 			.string()
 			.describe(
-				'Natural-language description of the changes to make (e.g. "Add a trigger that fires when an item is created on the Marketing board"). Maximum 2000 characters.',
+				'A question about the workflow or the changes to make (e.g. "Add a trigger that fires when an item is created on the Marketing board").',
 			),
 	})
 	.loose();
@@ -1908,7 +1884,6 @@ export type MondayMcpEndpointInputs = {
 	'automations.manage': AutomationsManageInput;
 	'folders.moveObject': FoldersMoveObjectInput;
 	'workflows.plan': WorkflowsPlanInput;
-	'workflows.publish': WorkflowsPublishInput;
 	'docs.read': DocsReadInput;
 	'search.query': SearchQueryInput;
 	'docs.update': DocsUpdateInput;
@@ -1971,7 +1946,6 @@ export type MondayMcpEndpointOutputs = {
 	'automations.manage': MondayMcpToolResult;
 	'folders.moveObject': MondayMcpToolResult;
 	'workflows.plan': MondayMcpToolResult;
-	'workflows.publish': MondayMcpToolResult;
 	'docs.read': MondayMcpToolResult;
 	'search.query': MondayMcpToolResult;
 	'docs.update': MondayMcpToolResult;
@@ -2034,7 +2008,6 @@ export const MondayMcpEndpointInputSchemas = {
 	'automations.manage': AutomationsManageInputSchema,
 	'folders.moveObject': FoldersMoveObjectInputSchema,
 	'workflows.plan': WorkflowsPlanInputSchema,
-	'workflows.publish': WorkflowsPublishInputSchema,
 	'docs.read': DocsReadInputSchema,
 	'search.query': SearchQueryInputSchema,
 	'docs.update': DocsUpdateInputSchema,
@@ -2097,7 +2070,6 @@ export const MondayMcpEndpointOutputSchemas = {
 	'automations.manage': MondayMcpToolResultSchema,
 	'folders.moveObject': MondayMcpToolResultSchema,
 	'workflows.plan': MondayMcpToolResultSchema,
-	'workflows.publish': MondayMcpToolResultSchema,
 	'docs.read': MondayMcpToolResultSchema,
 	'search.query': MondayMcpToolResultSchema,
 	'docs.update': MondayMcpToolResultSchema,

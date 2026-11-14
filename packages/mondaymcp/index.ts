@@ -101,7 +101,6 @@ export type MondayMcpEndpoints = {
 	'workflows.plan': MondayMcpEndpoint<'workflows.plan'>;
 	'workflows.create': MondayMcpEndpoint<'workflows.create'>;
 	'workflows.update': MondayMcpEndpoint<'workflows.update'>;
-	'workflows.publish': MondayMcpEndpoint<'workflows.publish'>;
 	'agents.manage': MondayMcpEndpoint<'agents.manage'>;
 	'agents.manageTriggers': MondayMcpEndpoint<'agents.manageTriggers'>;
 	'agents.manageSkills': MondayMcpEndpoint<'agents.manageSkills'>;
@@ -307,10 +306,6 @@ export const mondayMcpEndpointSchemas = {
 	'workflows.update': {
 		input: MondayMcpEndpointInputSchemas['workflows.update'],
 		output: MondayMcpEndpointOutputSchemas['workflows.update'],
-	},
-	'workflows.publish': {
-		input: MondayMcpEndpointInputSchemas['workflows.publish'],
-		output: MondayMcpEndpointOutputSchemas['workflows.publish'],
 	},
 	'agents.manage': {
 		input: MondayMcpEndpointInputSchemas['agents.manage'],
@@ -571,7 +566,7 @@ export const mondayMcpEndpointMeta = {
 	'meetings.getNotetaker': {
 		riskLevel: 'read',
 		description:
-			'Retrieves notetaker meetings from the monday.com AI Notetaker, with optional filters for access level, summaries, topics, action items, and transcripts using the Platform MCP.',
+			'Retrieves monday.com AI Notetaker meetings by ID, or lists recent ones, with optional summaries, topics, action items and transcripts using the Platform MCP.',
 	},
 	'automations.list': {
 		riskLevel: 'read',
@@ -601,12 +596,7 @@ export const mondayMcpEndpointMeta = {
 	'workflows.update': {
 		riskLevel: 'write',
 		description:
-			'Updates an existing workflow draft using an AI agent that interprets a natural-language prompt and applies structural changes, via the Platform MCP.',
-	},
-	'workflows.publish': {
-		riskLevel: 'write',
-		description:
-			'Publishes a workflow draft, promoting it to the live version so it starts running, using the Platform MCP.',
+			'Asks the monday.com workflow expert about a workflow, or has it add, edit or delete steps from a natural-language prompt (on a draft, or on the live version when no draft ID is given), via the Platform MCP.',
 	},
 	'agents.manage': {
 		riskLevel: 'destructive',

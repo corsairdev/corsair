@@ -5,7 +5,6 @@ import {
 	automationsManage,
 	workflowsCreate,
 	workflowsPlan,
-	workflowsPublish,
 	workflowsUpdate,
 } from './workflows';
 
@@ -161,7 +160,7 @@ describe('automations & workflows families (mocked MCP transport)', () => {
 		});
 	});
 
-	it('workflows.plan forwards the natural-language prompt to plan_workflow', async () => {
+	it('workflows.plan forwards the natural-language prompt to invoke_process_planner', async () => {
 		stubSession();
 		stubToolResult({ content: [{ type: 'text', text: '{"steps": []}' }] });
 
@@ -175,7 +174,7 @@ describe('automations & workflows families (mocked MCP transport)', () => {
 		) as {
 			params: { name: string; arguments: Record<string, unknown> };
 		};
-		expect(callBody.params.name).toBe('plan_workflow');
+		expect(callBody.params.name).toBe('invoke_process_planner');
 		expect(callBody.params.arguments).toEqual({
 			prompt:
 				'When a deal is marked Won, create a task in the onboarding board and notify the account manager',
@@ -212,7 +211,7 @@ describe('automations & workflows families (mocked MCP transport)', () => {
 		});
 	});
 
-	it('workflows.update forwards the object and draft IDs to update_workflow', async () => {
+	it('workflows.update forwards the object and draft IDs to invoke_workflow_expert', async () => {
 		stubSession();
 		stubToolResult({
 			content: [{ type: 'text', text: '{"workflowDraftId": "wf-draft-2"}' }],
@@ -230,7 +229,7 @@ describe('automations & workflows families (mocked MCP transport)', () => {
 		) as {
 			params: { name: string; arguments: Record<string, unknown> };
 		};
-		expect(callBody.params.name).toBe('update_workflow');
+		expect(callBody.params.name).toBe('invoke_workflow_expert');
 		expect(callBody.params.arguments).toEqual({
 			workflowObjectId: 12345,
 			workflowDraftId: 67890,
@@ -239,16 +238,15 @@ describe('automations & workflows families (mocked MCP transport)', () => {
 		});
 	});
 
-	it('workflows.publish forwards the object and draft IDs to publish_workflow', async () => {
+	it('workflows.update works on the live version when no draft ID is given', async () => {
 		stubSession();
 		stubToolResult({
-			content: [{ type: 'text', text: '{"status": "published"}' }],
+			content: [{ type: 'text', text: 'The workflow has 2 steps.' }],
 		});
 
-		await workflowsPublish(mockCtx, {
-			workflowObjectId: 'wf-object-1',
-			workflowDraftId: 'wf-draft-1',
-			shouldActivate: true,
+		await workflowsUpdate(mockCtx, {
+			workflowObjectId: 12345,
+			prompt: 'What steps does this workflow have?',
 		});
 
 		const callBody = JSON.parse(
@@ -256,11 +254,9 @@ describe('automations & workflows families (mocked MCP transport)', () => {
 		) as {
 			params: { name: string; arguments: Record<string, unknown> };
 		};
-		expect(callBody.params.name).toBe('publish_workflow');
 		expect(callBody.params.arguments).toEqual({
-			workflowObjectId: 'wf-object-1',
-			workflowDraftId: 'wf-draft-1',
-			shouldActivate: true,
+			workflowObjectId: 12345,
+			prompt: 'What steps does this workflow have?',
 		});
 	});
 

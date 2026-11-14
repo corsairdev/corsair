@@ -62,7 +62,6 @@ import {
 	automationsManage,
 	workflowsCreate,
 	workflowsPlan,
-	workflowsPublish,
 	workflowsUpdate,
 } from './workflows';
 import {
@@ -159,7 +158,6 @@ export const mondayMcpEndpointsNested = {
 		plan: workflowsPlan,
 		create: workflowsCreate,
 		update: workflowsUpdate,
-		publish: workflowsPublish,
 	},
 	agents: {
 		manage: agentsManage,
