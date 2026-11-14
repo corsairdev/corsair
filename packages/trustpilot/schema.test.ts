@@ -94,20 +94,22 @@ describe('Trustpilot response edge cases', () => {
 
 	it('keeps a page of private reviews when a consumer typed a malformed email or a product URL is relative', () => {
 		expect(
-			TrustpilotEndpointOutputSchemas['businessUnits.privateReviews'].safeParse({
-				reviews: [
-					{
-						id: 'review-1',
-						referralEmail: 'not an email',
-						findReviewer: {
-							isEligible: true,
-							requests: [
-								{ consumerResponse: { email: 'name at example dot com' } },
-							],
+			TrustpilotEndpointOutputSchemas['businessUnits.privateReviews'].safeParse(
+				{
+					reviews: [
+						{
+							id: 'review-1',
+							referralEmail: 'not an email',
+							findReviewer: {
+								isEligible: true,
+								requests: [
+									{ consumerResponse: { email: 'name at example dot com' } },
+								],
+							},
 						},
-					},
-				],
-			}).success,
+					],
+				},
+			).success,
 		).toBe(true);
 		expect(
 			TrustpilotEndpointOutputSchemas['productReviews.privateGet'].safeParse({

@@ -270,9 +270,15 @@ describe('Trustpilot key builder for public operations', () => {
 			meteredOperationId: 'reviews.latest',
 			keys: oauthKeys(null),
 		} satisfies TrustpilotKeyBuilderContext;
-		await expect(withOption(context, 'endpoint')).resolves.toBe(
-			'option-api-key',
-		);
+		await expect(
+			withOption(
+				{
+					...context,
+					options: { authType: 'oauth_2', apiKey: 'option-api-key' },
+				},
+				'endpoint',
+			),
+		).resolves.toBe('option-api-key');
 		await expect(withoutKey(context, 'endpoint')).rejects.toBeInstanceOf(
 			AuthMissingError,
 		);

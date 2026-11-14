@@ -525,9 +525,7 @@ const privateProductReview = productReview
 				id: z.string().nullable().optional(),
 				productUrl: z.string().nullable().optional(),
 				productImages: z
-					.array(
-						z.object({ type: z.string(), url: z.string() }).passthrough(),
-					)
+					.array(z.object({ type: z.string(), url: z.string() }).passthrough())
 					.optional(),
 				name: z.string().nullable().optional(),
 				sku: z.string().nullable().optional(),
