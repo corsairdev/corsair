@@ -36,5 +36,6 @@ apiNotes:
   taskLists.list: '`taskLists.list` accepts at most 1000 task lists per page and returns `nextPageToken` for continuation.'
   tasks.list: '`tasks.list` returns 20 tasks by default and accepts at most 100 per page. Pass `nextPageToken` back as `pageToken` to continue. Its documented completion, due-date, update-time, and visibility filters are available as inputs.'
   taskLists.delete: 'The default task list cannot be deleted. Deleting a list containing assigned tasks may also delete the original tasks in Docs or Chat Spaces.'
+  tasks.patch: 'Send `due: null` to remove a due date; an omitted field keeps its value. To delete a task use `tasks.delete`: `update` and `patch` accept only `deleted: false`.'
   tasks.delete: 'Deleting an assigned task may also delete its original task in Docs or Chat Spaces.'
   tasks.clear: 'Clearing hides all completed tasks; it does not permanently delete them. Clear and delete methods return HTTP 204 with no response body.'
