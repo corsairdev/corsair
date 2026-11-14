@@ -89,10 +89,10 @@ describe('gatherup plugin definition', () => {
 			'businesses.delete': 'destructive',
 			'customers.list': 'read',
 			'customers.get': 'read',
-			'customers.create': 'write',
+			'customers.create': 'destructive',
 			'customers.update': 'write',
 			'customers.delete': 'destructive',
-			'customers.requestFeedback': 'write',
+			'customers.requestFeedback': 'destructive',
 			'feedbacks.list': 'read',
 		});
 	});

@@ -211,8 +211,10 @@ const BusinessWriteResponseSchema = z
 
 export type BusinessWriteResponse = z.infer<typeof BusinessWriteResponseSchema>;
 
+// GatherUp's reference marks businessType required on update as well as create.
 const BusinessUpdateInputSchema = BusinessCreateInputSchema.partial().extend({
 	businessId: BusinessIdSchema,
+	businessType: BusinessCreateInputSchema.shape.businessType,
 });
 
 export type BusinessUpdateInput = z.input<typeof BusinessUpdateInputSchema>;
@@ -227,6 +229,9 @@ export type BusinessRemoveInput = z.input<typeof BusinessRemoveInputSchema>;
 
 const SuccessResponseSchema = z
 	.object({
+		// unknown: the reference documents these routes as answering only
+		// `errorCode` and `errorMessage`; no route documents what a `data` field
+		// would hold, so it is kept as GatherUp sent it.
 		data: z.unknown().optional(),
 		...errorFields,
 	})

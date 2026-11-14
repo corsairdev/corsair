@@ -8,15 +8,17 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
  * GatherUp needs a bearer token and a client ID, and every call carries both.
- * The client ID is the key, because it names which account the call is about;
- * the token is the account's `api_secret` field beside it. Each one is read
- * from its own option first and its own stored field second, and a missing
- * token is never replaced by the client ID.
+ * The client ID is the key, because it names which account the call is about,
+ * and it is read from `ctx.key` so a before hook can pick the account. The
+ * token is the `apiKey` option or the account's stored `api_secret`, and a
+ * missing token is never replaced by the client ID.
  */
 export async function resolveCredentials(
 	ctx: GatherupContext,
 ): Promise<GatherupCredentials> {
-	const clientId = ctx.options.clientId ?? ctx.options.key ?? ctx.key;
+	// ctx.key is what the key builder resolved (the clientId option first),
+	// after any before hook, so it names the account this call is about.
+	const clientId = ctx.key;
 	const apiKey = ctx.options.apiKey ?? (await ctx.keys.get_api_secret());
 	if (!clientId || !apiKey) {
 		throw new AuthMissingError('gatherup', 'api_key');

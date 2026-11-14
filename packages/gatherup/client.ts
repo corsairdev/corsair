@@ -71,19 +71,19 @@ const GATHERUP_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A GatherUp failure.
+ * A GatherUp failure that never became an HTTP error: a 200 whose body carries
+ * a non-zero `errorCode`, or a request that got no answer (a reset, DNS
+ * failure, abort or timeout).
  *
- * The body is dropped: a customer payload carries the recipient's name, email
- * and phone, and a feedback list carries what reviewers wrote.
+ * An HTTP error stays core's `ApiError` (see `sanitizeApiError`), so its status,
+ * Retry-After and rate-limit fields reach core and the error handlers.
+ * `gatherupErrorInfo` reads either kind.
  */
 export class GatherupAPIError extends Error {
-	readonly status?: number;
 	/** GatherUp's own `errorCode`, such as 2 for an invalid clientId. */
 	readonly errorCode?: number;
 	/** True when the body reported the failure even though the status was 2xx. */
 	readonly bodyError: boolean;
-	/** Milliseconds from a Retry-After header, when GatherUp sent one. */
-	readonly retryAfter?: number;
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
@@ -92,10 +92,8 @@ export class GatherupAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
 			errorCode?: number;
 			bodyError?: boolean;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -103,42 +101,79 @@ export class GatherupAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'GatherupAPIError';
-		this.status = options.status;
 		this.errorCode = options.errorCode;
 		this.bodyError = options.bodyError ?? false;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
+}
 
+/** What a GatherUp failure means to a caller, read from either error kind. */
+export type GatherupErrorInfo = {
+	status?: number;
+	/** GatherUp's own `errorCode`, such as 2 for an invalid clientId. */
+	errorCode?: number;
+	method?: string;
+	/** Milliseconds from a Retry-After header, when GatherUp sent one. */
+	retryAfter?: number;
+	bodyError: boolean;
+	transport: boolean;
+	timedOut: boolean;
 	/**
 	 * GatherUp answers 503 above its 5-a-second limit, so a 503 is a rate limit
 	 * rather than an outage. A 429 is accepted too, in case a proxy adds one.
 	 */
-	get isRateLimit(): boolean {
-		return this.status === 429 || this.status === 503;
-	}
-
+	isRateLimit: boolean;
 	/** No token, or one the account refused. */
-	get isAuthError(): boolean {
-		return this.status === 401 || this.errorCode === 2;
-	}
-
+	isAuthError: boolean;
 	/** The token works but this client is not reachable from it. */
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
-
+	isPermissionError: boolean;
 	/** The business, customer or feedback is not there. */
-	get isNotFound(): boolean {
-		return this.status === 404;
-	}
-
+	isNotFound: boolean;
 	/** A field GatherUp refused. */
-	get isValidationError(): boolean {
-		return this.status === 400;
-	}
+	isValidationError: boolean;
+};
+
+// unknown: anything can be thrown; only ApiError and GatherupAPIError carry fields.
+export function gatherupErrorInfo(error: unknown): GatherupErrorInfo {
+	const http = error instanceof ApiError ? error : undefined;
+	const own = error instanceof GatherupAPIError ? error : undefined;
+	const status = http?.status;
+	const errorCode = http ? readError(http.body).errorCode : own?.errorCode;
+	return {
+		status,
+		errorCode,
+		method: http?.request.method ?? own?.method,
+		retryAfter: http?.retryAfter,
+		bodyError: own?.bodyError ?? false,
+		transport: own?.transport ?? false,
+		timedOut: own?.timedOut ?? false,
+		isRateLimit: status === 429 || status === 503,
+		isAuthError: status === 401 || errorCode === 2,
+		isPermissionError: status === 403,
+		isNotFound: status === 404,
+		isValidationError: status === 400,
+	};
+}
+
+// GatherUp's messages can quote what a request carried, such as
+// "Invalid email: jane@example.com". An address or a phone number is a
+// customer's personal data, so both are replaced before a message reaches an
+// error.
+const EMAIL_ADDRESS = /[^\s@<>"'(),;:]+@[^\s@<>"'(),;:]+\.[^\s@<>"'(),;:]+/g;
+// A run of digits with the usual phone separators, counted as a phone once it
+// holds at least 7 digits, so a business or customer ID stays readable.
+const PHONE_NUMBER = /\+?\(?\d[\d\s().-]{5,}\d/g;
+
+export function redactPersonal(text: string): string {
+	return text
+		.replace(EMAIL_ADDRESS, '[email]')
+		.replace(PHONE_NUMBER, (match) =>
+			match.replace(/\D/g, '').length >= 7 && /[\s().+-]/.test(match)
+				? '[phone]'
+				: match,
+		);
 }
 
 /** The message GatherUp sent, with the status and body code in front. */
@@ -150,7 +185,7 @@ export function describeGatherupError(
 	fallback: string,
 ): string {
 	const fields = readError(body);
-	const text = fields.errorMessage ?? fallback;
+	const text = redactPersonal(fields.errorMessage ?? fallback);
 	const label = [status, fields.errorCode]
 		.filter((part) => part !== undefined)
 		.join(' ');
@@ -225,18 +260,7 @@ export async function makeGatherupRequest(
 		return raw;
 	} catch (error) {
 		if (error instanceof GatherupAPIError) throw error;
-		if (error instanceof ApiError) {
-			const fields = readError(error.body);
-			throw new GatherupAPIError(
-				describeGatherupError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					errorCode: fields.errorCode,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			// A transport failure never had a response body, so its cause is safe.
@@ -252,6 +276,50 @@ export async function makeGatherupRequest(
 			transport: true,
 		});
 	}
+}
+
+/**
+ * Core's `ApiError` keeps the sent body and query: a customer's name, email and
+ * phone, and the client ID. GatherUp's error body can quote them back. The
+ * error is rebuilt as an `ApiError` with the same status and rate-limit fields,
+ * GatherUp's `{ errorCode, errorMessage }` envelope (addresses and phone
+ * numbers replaced) as the body, and the sent body, form data and query
+ * dropped.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const fields = readError(error.body);
+	const envelope = Object.fromEntries(
+		Object.entries({
+			errorCode: fields.errorCode,
+			errorMessage:
+				fields.errorMessage === undefined
+					? undefined
+					: redactPersonal(fields.errorMessage),
+		}).filter(([, value]) => value !== undefined),
+	);
+	return new ApiError(
+		{ ...request, url: request.url.split('?')[0] ?? request.url },
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: envelope,
+		},
+		describeGatherupError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /** Drops the keys whose value is undefined, so a query carries only what was asked for. */

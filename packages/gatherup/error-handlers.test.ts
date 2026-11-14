@@ -1,7 +1,13 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GatherupAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/**
+ * An HTTP failure is core's ApiError, as `request()` throws it. A 200 that
+ * carries an errorCode, or a request that got no answer, is a
+ * GatherupAPIError.
+ */
 function apiError(options: {
 	status?: number;
 	errorCode?: number;
@@ -10,8 +16,29 @@ function apiError(options: {
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new GatherupAPIError('failed', options);
+}): Error {
+	const method = (options.method ?? 'POST') as 'GET' | 'POST' | 'PUT';
+	if (options.status === undefined) {
+		return new GatherupAPIError('failed', {
+			errorCode: options.errorCode,
+			bodyError: options.bodyError,
+			method,
+			transport: options.transport,
+			timedOut: options.timedOut,
+		});
+	}
+	return new ApiError(
+		{ method, url: '/api/v2/test' },
+		{
+			url: 'https://app.gatherup.com/api/v2/test',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { errorCode: options.errorCode, errorMessage: 'failed' },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**

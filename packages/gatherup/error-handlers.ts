@@ -1,9 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { GatherupAPIError } from './client';
-
-function statusOf(error: Error): number | undefined {
-	return error instanceof GatherupAPIError ? error.status : undefined;
-}
+import { gatherupErrorInfo } from './client';
 
 // GatherUp documents 400, 401, 403, 404, 500 and 503, and puts its own
 // `errorCode` in the body even on a 200.
@@ -13,32 +9,29 @@ export const errorHandlers = {
 	// so both statuses are a rate limit. It does not document Retry-After, so the
 	// handler's own backoff is the delay.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GatherupAPIError && error.isRateLimit,
+		match: (error: Error) => gatherupErrorInfo(error).isRateLimit,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof GatherupAPIError ? error.retryAfter : undefined,
+			headersRetryAfterMs: gatherupErrorInfo(error).retryAfter,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// A refused token, or `errorCode: 2` for an invalid clientId on a 200. It sits
 	// before VALIDATION_ERROR because both can carry a 4xx.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof GatherupAPIError && error.isAuthError,
+		match: (error: Error) => gatherupErrorInfo(error).isAuthError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// The token is valid but this client is not reachable from it.
 	PERMISSION_ERROR: {
-		match: (error: Error) => statusOf(error) === 403,
+		match: (error: Error) => gatherupErrorInfo(error).status === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404 is an unknown business, customer or feedback, and 400 a field GatherUp
 	// refused. A retry sends the same body.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			const status = statusOf(error);
+			const { status } = gatherupErrorInfo(error);
 			return error.name === 'ZodError' || status === 400 || status === 404;
 		},
 		handler: async () => ({ maxRetries: 0 }),
@@ -46,17 +39,16 @@ export const errorHandlers = {
 	// Any other body-level error. The status said 2xx, so there is nothing to
 	// retry against.
 	BODY_ERROR: {
-		match: (error: Error) =>
-			error instanceof GatherupAPIError && error.bodyError,
+		match: (error: Error) => gatherupErrorInfo(error).bodyError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A read is safe to replay. A write is not: a 5xx after a customer create can
 	// arrive once the customer exists, and a retry would send a second request.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof GatherupAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+		match: (error: Error) => {
+			const { method, status } = gatherupErrorInfo(error);
+			return method === 'GET' && (status ?? 0) >= 500;
+		},
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
@@ -65,20 +57,16 @@ export const errorHandlers = {
 	// A dropped connection on a read never reached GatherUp. TIMEOUT sits first
 	// because a timeout is also a transport failure.
 	TIMEOUT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GatherupAPIError && error.timedOut,
+		match: (error: Error) => gatherupErrorInfo(error).timedOut,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof GatherupAPIError && error.method === 'GET' ? 1 : 0,
+			maxRetries: gatherupErrorInfo(error).method === 'GET' ? 1 : 0,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
 	NETWORK_ERROR: {
-		match: (error: Error) =>
-			error instanceof GatherupAPIError && error.transport,
+		match: (error: Error) => gatherupErrorInfo(error).transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof GatherupAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: gatherupErrorInfo(error).method === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

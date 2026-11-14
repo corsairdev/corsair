@@ -99,13 +99,15 @@ export const types: GatherupEndpoints['businessesTypes'] = (ctx, input) =>
  * into `data`.
  */
 // unknown: the raw body is an untyped object until the output schema runs.
+// A body that is not an object, or a numbered entry that is not a string, is
+// passed on as is so the output schema refuses it instead of shrinking it.
 export function typesShape(raw: unknown) {
-	const record = asRecord(raw) ?? {};
+	const record = asRecord(raw);
+	if (!record) return raw;
 	const data = Object.keys(record)
 		.filter((key) => /^\d+$/.test(key))
 		.sort((a, b) => Number(a) - Number(b))
-		.map((key) => record[key])
-		.filter((value): value is string => typeof value === 'string');
+		.map((key) => record[key]);
 	return {
 		data,
 		errorCode: record.errorCode,

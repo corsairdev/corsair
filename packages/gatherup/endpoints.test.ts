@@ -1,5 +1,6 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { GatherupAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { GatherupAPIError, gatherupErrorInfo } from './client';
 import { Businesses, Customers } from './endpoints';
 import {
 	business,
@@ -177,9 +178,10 @@ describe('businesses.get', () => {
 	it('surfaces a business that is not there', async () => {
 		respond(notFound, 404);
 
-		await expect(
-			invoke(Businesses.get, { businessId: 9 }),
-		).rejects.toMatchObject({
+		const error = await caught(invoke(Businesses.get, { businessId: 9 }));
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(gatherupErrorInfo(error)).toMatchObject({
 			status: 404,
 			errorCode: 7,
 			isNotFound: true,
@@ -207,6 +209,19 @@ describe('businesses.search and types', () => {
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	// R8: a malformed reply fails instead of shrinking to an empty list.
+	it.each([[{ '0': 42, errorCode: 0 }], ['not an object'], [[]]])(
+		'refuses a malformed types answer %j',
+		async (body) => {
+			respond(body);
+
+			await expect(
+				invoke(Businesses.types, { search: 'Medicine' }),
+			).rejects.toThrow();
+			expect(mockLog).not.toHaveBeenCalled();
+		},
+	);
 
 	it('gathers the numbered keys of the types answer into data', async () => {
 		respond(businessTypes);
@@ -302,14 +317,30 @@ describe('businesses.update and the active switch', () => {
 
 		await invoke(Businesses.update, {
 			businessId: 34291,
+			businessType: 'Insurance Agency',
 			businessName: 'Peach Trees II',
 		});
 
 		expect(lastRequest()).toMatchObject({
 			method: 'PUT',
 			path: '/api/v2/business/update',
-			body: { businessId: 34291, businessName: 'Peach Trees II' },
+			body: {
+				businessId: 34291,
+				businessType: 'Insurance Agency',
+				businessName: 'Peach Trees II',
+			},
 		});
+	});
+
+	// GatherUp's reference marks businessType required on update.
+	it('refuses an update without businessType before calling GatherUp', async () => {
+		await expect(
+			invoke(Businesses.update, {
+				businessId: 34291,
+				businessName: 'Peach Trees II',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('deactivates and reactivates with the ID in the body', async () => {
@@ -597,6 +628,23 @@ describe('credentials', () => {
 		expectAuthenticated();
 	});
 
+	// R8: the key the binder and any before hook resolved names the account,
+	// not the options.
+	it('uses the hook-resolved ctx.key as the client ID over the options', async () => {
+		respond(business);
+
+		await invokeWith({
+			key: 'client-from-hook',
+			options: { clientId: CLIENT_ID, key: CLIENT_ID, apiKey: API_KEY },
+			keys: { get_api_secret: jest.fn().mockResolvedValue(null) },
+		});
+
+		expect(lastRequest().query.clientId).toBe('client-from-hook');
+		expect(lastRequest().headers.get('authorization')).toBe(
+			`Bearer ${API_KEY}`,
+		);
+	});
+
 	it('raises AuthMissingError instead of sending the client ID as the token', async () => {
 		await expect(
 			invokeWith({
@@ -625,11 +673,8 @@ describe('error envelopes', () => {
 		const error = await caught(invoke(Businesses.list, {}));
 
 		expect(error).toBeInstanceOf(GatherupAPIError);
-		expect(error).toMatchObject({
-			errorCode: 2,
-			bodyError: true,
-			isAuthError: true,
-		});
+		expect(error).toMatchObject({ errorCode: 2, bodyError: true });
+		expect(gatherupErrorInfo(error)).toMatchObject({ isAuthError: true });
 		expect((error as Error).message).toContain('Invalid clientId');
 		expect(mockLog).not.toHaveBeenCalled();
 	});
@@ -642,10 +687,14 @@ describe('error envelopes', () => {
 		});
 	});
 
-	it('reads a real 401', async () => {
+	it('reads a real 401 and keeps it core ApiError', async () => {
 		respond(unauthorized, 401);
 
-		await expect(invoke(Businesses.list, {})).rejects.toMatchObject({
+		const error = await caught(invoke(Businesses.list, {}));
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 401, request: { method: 'GET' } });
+		expect(gatherupErrorInfo(error)).toMatchObject({
 			status: 401,
 			errorCode: 2,
 			isAuthError: true,
@@ -655,13 +704,54 @@ describe('error envelopes', () => {
 	it('reads a refused field', async () => {
 		respond(invalidField, 400);
 
-		await expect(
+		const error = await caught(
 			invoke(Businesses.create, { ...ADDRESS, businessName: 'x' }),
-		).rejects.toMatchObject({
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(gatherupErrorInfo(error)).toMatchObject({
 			status: 400,
 			errorCode: 11,
 			isValidationError: true,
 		});
+	});
+
+	it('keeps an address or phone GatherUp quotes back out of the error', async () => {
+		respond(
+			{
+				errorCode: 11,
+				errorMessage:
+					'Invalid email: jane.doe@example.com, phone +1 (808) 333-3334',
+			},
+			400,
+		);
+
+		const error = await caught(
+			invoke(Customers.create, {
+				businessId: 34291,
+				customerFirstName: 'Jane',
+				customerLastName: 'Doe',
+				customerEmail: 'jane.doe@example.com',
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const text = `${String(error)} ${JSON.stringify(error)}`;
+		expect(text).not.toContain('jane.doe@example.com');
+		expect(text).not.toContain('333-3334');
+		expect(text).not.toContain('Jane');
+		expect((error as Error).message).toContain('[email]');
+		expect((error as ApiError).request.body).toBeUndefined();
+		expect((error as ApiError).request.query).toBeUndefined();
+	});
+
+	it('keeps an address quoted in a 200 error body out of the error', async () => {
+		respond({ errorCode: 11, errorMessage: 'Duplicate: jane.doe@example.com' });
+
+		const error = await caught(invoke(Businesses.list, {}));
+
+		expect(error).toBeInstanceOf(GatherupAPIError);
+		expect(String(error)).not.toContain('jane.doe@example.com');
 	});
 
 	it('keeps the token and client ID out of the error', async () => {
@@ -674,18 +764,24 @@ describe('error envelopes', () => {
 		expect(String(error)).not.toContain(CLIENT_ID);
 	});
 
-	it('keeps no body on the error, so a customer payload cannot follow it into a log', async () => {
-		respond(invalidField, 400);
+	it('keeps only the GatherUp error envelope on the body, so a customer payload cannot follow it into a log', async () => {
+		respond({ ...invalidField, customer: { email: 'x@y.example' } }, 400);
 
 		const error = await caught(invoke(Businesses.list, {}));
 
-		expect(error).not.toHaveProperty('body');
+		expect((error as ApiError).body).toEqual({
+			errorCode: 11,
+			errorMessage: 'Business name is required',
+		});
 	});
 
 	it('marks a transport failure and keeps the method', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		await expect(invoke(Businesses.list, {})).rejects.toMatchObject({
+		const error = await caught(invoke(Businesses.list, {}));
+
+		expect(error).toBeInstanceOf(GatherupAPIError);
+		expect(error).toMatchObject({
 			transport: true,
 			method: 'GET',
 			message: 'fetch failed',

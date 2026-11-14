@@ -247,9 +247,9 @@ const gatherupEndpointMeta = {
 		description: 'One customer with their status, rating and review',
 	},
 	'customers.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed. No feedback request goes out unless `sendFeedbackRequest` is true',
+			'Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed. Destructive because it can message the customer: a feedback request goes out when `sendFeedbackRequest` is true, and a business in automatic mode sends one on its own schedule',
 	},
 	'customers.update': {
 		riskLevel: 'write',
@@ -262,7 +262,7 @@ const gatherupEndpointMeta = {
 		description: 'Delete a customer and their feedback record',
 	},
 	'customers.requestFeedback': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send a feedback request to a customer, which is a message to a real person',
 	},
@@ -330,7 +330,8 @@ export function gatherup<const T extends GatherupPluginOptions>(
 	} satisfies InternalGatherupPlugin;
 }
 
-export { GatherupAPIError } from './client';
+export type { GatherupErrorInfo } from './client';
+export { GatherupAPIError, gatherupErrorInfo } from './client';
 
 export type {
 	BusinessActiveInput,
