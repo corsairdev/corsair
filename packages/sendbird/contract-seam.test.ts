@@ -292,6 +292,24 @@ describe('Sendbird public request seam', () => {
 			groups.users?.delete?.(ctx, { user_id: 'u' }),
 		).resolves.toBeUndefined();
 	});
+	// Live run 11-15: Sendbird answers every delete with 200 and a `{}` JSON body.
+	it.each([
+		['users.delete', () => groups.users.delete(ctx, { user_id: 'u' })],
+		[
+			'channels.delete',
+			() => groups.channels.delete(ctx, { channel_url: 'room' }),
+		],
+		[
+			'messages.delete',
+			() => groups.messages.delete(ctx, { ...path, message_id: 42 }),
+		],
+	] as const)(
+		'%s accepts the empty JSON object Sendbird returns',
+		async (_id, run) => {
+			mockRequest.mockResolvedValue({});
+			await expect(run()).resolves.toEqual({});
+		},
+	);
 	it('rejects invalid application hosts before transport', async () => {
 		const bad = {
 			...ctx,

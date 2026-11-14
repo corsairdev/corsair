@@ -300,24 +300,27 @@ export const SendbirdEndpointInputSchemas = {
 		.strict(),
 } as const;
 
+// Sendbird answers a delete with 200 and `{}` (live run 11-15); an empty body is also accepted.
+const deleted = z.object({}).passthrough().optional();
+
 export const SendbirdEndpointOutputSchemas = {
 	usersList: z.object({ users: z.array(user), next: z.string() }).passthrough(),
 	usersGet: user,
 	usersCreate: user,
 	usersUpdate: user,
-	usersDelete: z.void(),
+	usersDelete: deleted,
 	channelsList: z
 		.object({ channels: z.array(channel), next: z.string() })
 		.passthrough(),
 	channelsGet: channel,
 	channelsCreate: channel,
 	channelsUpdate: channel,
-	channelsDelete: z.void(),
+	channelsDelete: deleted,
 	messagesList: z.object({ messages: z.array(message) }).passthrough(),
 	messagesGet: message,
 	messagesSend: message,
 	messagesUpdate: message,
-	messagesDelete: z.void(),
+	messagesDelete: deleted,
 } as const;
 export const SendbirdUserSchema = user;
 export const SendbirdChannelSchema = channel;
