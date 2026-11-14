@@ -512,12 +512,19 @@ export type QueriesMultiAnalysisInput = z.input<
 	typeof QueriesMultiAnalysisInputSchema
 >;
 
-// A multi-analysis result is keyed by the label each analysis was given, so a
-// scalar run answers an object of numbers and an interval run an object of
-// arrays. Both are records, which is what this keeps.
+// A multi-analysis result is keyed by the label each analysis was given. A
+// plain run answers that object of labels; an interval run answers an array of
+// `{ timeframe, value: { label: ... } }`, and a grouped run an array of rows
+// carrying the group values next to the labels.
 const QueriesMultiAnalysisResponseSchema = z
-	// unknown: each label's value takes the shape of its own analysis.
-	.object({ result: z.record(z.string(), z.unknown()) })
+	.object({
+		result: z.union([
+			// unknown: each label's value takes the shape of its own analysis.
+			z.record(z.string(), z.unknown()),
+			// unknown: interval and group rows hold the same per-label values.
+			z.array(z.record(z.string(), z.unknown())),
+		]),
+	})
 	.loose();
 
 export type QueriesMultiAnalysisResponse = z.infer<
@@ -574,9 +581,19 @@ export type SavedQueryResponse = z.infer<typeof SavedQueryResponseSchema>;
 const MIN_REFRESH_SECONDS = 4 * 60 * 60;
 const MAX_REFRESH_SECONDS = 24 * 60 * 60;
 
+// Keen saves a multi-analysis too: the same body as `queries.multiAnalysis`
+// with `analysis_type: 'multi_analysis'`.
+const SavedMultiAnalysisSchema = QueriesMultiAnalysisInputSchema.extend({
+	analysis_type: z.literal('multi_analysis'),
+});
+
 const SavedQueryCreateInputSchema = z.object({
 	queryName: SavedQueryNameSchema,
-	query: AnalysisSchema,
+	query: z
+		.union([SavedMultiAnalysisSchema, AnalysisSchema])
+		.describe(
+			'One analysis, or a multi-analysis with `analysis_type: multi_analysis` and its `analyses` map.',
+		),
 	refresh_rate: z
 		.number()
 		.int()

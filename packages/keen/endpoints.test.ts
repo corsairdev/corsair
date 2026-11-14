@@ -1,5 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
-import { KeenAPIError } from './client';
+import {
+	isKeenAuthError,
+	isKeenNotFound,
+	isKeenQueryIncomplete,
+	KeenAPIError,
+} from './client';
 import {
 	Collections,
 	Datasets,
@@ -554,6 +559,48 @@ describe('queries.run', () => {
 });
 
 describe('queries.multiAnalysis', () => {
+	it('reads an interval result, an array of labelled values', async () => {
+		respond({
+			result: [
+				{
+					timeframe: {
+						start: '2026-11-01T00:00:00.000Z',
+						end: '2026-11-02T00:00:00.000Z',
+					},
+					value: { purchases: 3, revenue: 120 },
+				},
+			],
+		});
+
+		await expect(
+			invoke(Queries.multiAnalysis, {
+				event_collection: 'purchases',
+				analyses: {
+					purchases: { analysis_type: 'count' },
+					revenue: { analysis_type: 'sum', target_property: 'price' },
+				},
+				timeframe: 'this_7_days',
+				interval: 'daily',
+			}),
+		).resolves.toMatchObject({
+			result: [{ value: { purchases: 3, revenue: 120 } }],
+		});
+	});
+
+	it('reads a grouped result, an array of rows', async () => {
+		respond({ result: [{ 'item.name': 'Widget', purchases: 3 }] });
+
+		await expect(
+			invoke(Queries.multiAnalysis, {
+				event_collection: 'purchases',
+				analyses: { purchases: { analysis_type: 'count' } },
+				group_by: ['item.name'],
+			}),
+		).resolves.toMatchObject({
+			result: [{ 'item.name': 'Widget', purchases: 3 }],
+		});
+	});
+
 	it('takes entries without their own collection, as Keen documents them', async () => {
 		respond(multiAnalysisResult);
 
@@ -661,6 +708,31 @@ describe('savedQueries.get', () => {
 });
 
 describe('savedQueries.create', () => {
+	it('saves a multi-analysis with its analyses map', async () => {
+		respond(savedQuery);
+
+		await invoke(SavedQueries.create, {
+			queryName: 'weekly-totals',
+			refresh_rate: 0,
+			query: {
+				analysis_type: 'multi_analysis',
+				event_collection: 'purchases',
+				analyses: { purchases: { analysis_type: 'count' } },
+				timeframe: 'this_7_days',
+			},
+		});
+
+		expect(lastRequest().body).toEqual({
+			refresh_rate: 0,
+			query: {
+				analysis_type: 'multi_analysis',
+				event_collection: 'purchases',
+				analyses: { purchases: { analysis_type: 'count' } },
+				timeframe: 'this_7_days',
+			},
+		});
+	});
+
 	it('PUTs the definition under its name', async () => {
 		respond({ ...savedQuery, created: true });
 
@@ -808,7 +880,10 @@ describe('savedQueries.delete', () => {
 
 		await expect(
 			invoke(SavedQueries.remove, { queryName: 'nope' }),
-		).rejects.toMatchObject({ status: 404, code: 'ResourceNotFoundError' });
+		).rejects.toMatchObject({
+			status: 404,
+			body: { error_code: 'ResourceNotFoundError' },
+		});
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 });
@@ -978,6 +1053,24 @@ describe('datasets.delete', () => {
 	});
 });
 
+describe('the key', () => {
+	it('sends ctx.key, the key a hook may have replaced, not the option', async () => {
+		respond(collections);
+
+		const ctx = {
+			key: 'hook-replaced-key',
+			options: { key: 'option-key', projectId: PROJECT_ID },
+			keys: { get_project_id: jest.fn().mockResolvedValue(PROJECT_ID) },
+		};
+		await (Collections.list as never as AnyEndpoint)(ctx as never, {} as never);
+
+		const [, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+		expect(new Headers(init.headers).get('authorization')).toBe(
+			'hook-replaced-key',
+		);
+	});
+});
+
 describe('the project ID', () => {
 	it('falls back to the stored credential', async () => {
 		respond(collections);
@@ -1017,10 +1110,9 @@ describe('error envelopes', () => {
 
 		expect(error).toMatchObject({
 			status: 401,
-			code: 'InvalidApiKeyError',
-			isAuthError: true,
+			body: { error_code: 'InvalidApiKeyError' },
 		});
-		expect(String(error)).toContain('[REDACTED]');
+		expect(isKeenAuthError(error)).toBe(true);
 		expect(String(error)).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
 		expect(require('node:util').inspect(error)).not.toContain(API_KEY);
@@ -1029,13 +1121,15 @@ describe('error envelopes', () => {
 	it('reads an unknown project as not found', async () => {
 		respond(resourceNotFound, 404);
 
-		await expect(
+		const error = await caught(
 			invoke(Collections.get, { collection: 'purchases' }),
-		).rejects.toMatchObject({
+		);
+
+		expect(error).toMatchObject({
 			status: 404,
-			code: 'ResourceNotFoundError',
-			isNotFound: true,
+			body: { error_code: 'ResourceNotFoundError' },
 		});
+		expect(isKeenNotFound(error)).toBe(true);
 	});
 
 	it('reads a malformed analysis as a validation failure', async () => {
@@ -1059,7 +1153,10 @@ describe('error envelopes', () => {
 
 		await expect(
 			invoke(Events.record, { collection: 'purchases', event: {} }),
-		).rejects.toMatchObject({ status: 403, code: 'ForbiddenError' });
+		).rejects.toMatchObject({
+			status: 403,
+			body: { error_code: 'ForbiddenError' },
+		});
 	});
 
 	it('marks the five minute timeout as an incomplete query', async () => {
@@ -1073,9 +1170,9 @@ describe('error envelopes', () => {
 		);
 		expect(error).toMatchObject({
 			status: 504,
-			code: 'QueryIncompleteError',
-			isQueryIncomplete: true,
+			body: { error_code: 'QueryIncompleteError' },
 		});
+		expect(isKeenQueryIncomplete(error)).toBe(true);
 	});
 
 	it('keeps no body on the error, so an echoed event cannot follow it into a log', async () => {
@@ -1085,7 +1182,12 @@ describe('error envelopes', () => {
 			invoke(Events.record, { collection: 'p', event: {} }),
 		);
 
-		expect(error).not.toHaveProperty('body');
+		expect(error).toMatchObject({
+			body: { error_code: 'PropertyDoesNotExistError' },
+		});
+		expect(require('node:util').inspect(error, { depth: 10 })).not.toContain(
+			badRequest.message,
+		);
 	});
 
 	it('turns a dropped connection into a transport error with the method', async () => {

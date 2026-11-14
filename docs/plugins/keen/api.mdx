@@ -480,7 +480,7 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `Record<string, any>` | Yes | — |
+| `result` | `Record<string, any> \| Record<string, any>[]` | Yes | — |
 
 
 
@@ -623,7 +623,7 @@ await corsair.keen.api.savedQueries.create({ queryName: 'weekly-purchases', refr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `queryName` | `string` | Yes | The saved query name, which is also its identifier. |
-| `query` | `object` | Yes | — |
+| `query` | `object` | Yes | One analysis, or a multi-analysis with `analysis_type: multi_analysis` and its `analyses` map. |
 | `refresh_rate` | `number` | Yes | Seconds between refreshes. `0` caches nothing; a cached query refreshes every 14400 (four hours) to 86400 (24 hours) seconds. |
 | `metadata` | `object` | No | — |
 
@@ -634,6 +634,89 @@ A PUT keyed by name, so the same name replaces the definition. `refresh_rate` is
 
 ```ts
 {
+  event_collection: string,
+  analyses: Record<string, {
+    analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel,
+    event_collection?: string,
+    steps?: {
+      event_collection: string,
+      actor_property: string,
+      timeframe?: string | {
+        start: string,
+        end: string
+      },
+      timezone?: string,
+      filters?: (
+        {
+          operator: or,
+          operands: {
+            property_name: string,
+            operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+            property_value: any
+          }[]
+        } | {
+          property_name: string,
+          operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+          property_value: any
+        }
+      )[],
+      optional?: boolean,
+      inverted?: boolean,
+      with_actors?: boolean
+    }[],
+    target_property?: string,
+    timeframe?: string | {
+      start: string,
+      end: string
+    },
+    interval?: minutely | hourly | daily | weekly | monthly | yearly,
+    timezone?: string,
+    filters?: (
+      {
+        operator: or,
+        operands: {
+          property_name: string,
+          operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+          property_value: any
+        }[]
+      } | {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }
+    )[],
+    group_by?: (string | Record<string, any>)[],
+    order_by?: {
+      property_name: string,
+      direction: ASC | DESC
+    }[],
+    limit?: number,
+    percentile?: number | null,
+    include_metadata?: boolean
+  }>,
+  timeframe?: string | {
+    start: string,
+    end: string
+  },
+  interval?: minutely | hourly | daily | weekly | monthly | yearly,
+  timezone?: string,
+  filters?: (
+    {
+      operator: or,
+      operands: {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }[]
+    } | {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }
+  )[],
+  group_by?: (string | Record<string, any>)[],
+  analysis_type: multi_analysis
+} | {
   analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel,
   event_collection?: string,
   steps?: {
