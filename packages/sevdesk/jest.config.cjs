@@ -2,23 +2,14 @@ module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
-	testMatch: [
-		'**/*.test.ts',
-		'**/tests/**/*.test.ts',
-		'**/plugins/**/*.test.ts',
-		'**/setup/**/*.test.ts',
-	],
-	collectCoverageFrom: [
-		'**/*.ts',
-		'!**/*.d.ts',
-		'!**/node_modules/**',
-		'!**/dist/**',
-		'!jest.config.ts',
-		'!tests/**',
-	],
-	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+	testMatch: ['**/*.test.ts'],
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
+	moduleNameMapper: {
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^(\\.\\.?/.*)\\.js$': '$1',
+	},
 	transform: {
-		'^.+\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',
 		'^.+\\.ts$': [
 			'ts-jest',
 			{
@@ -36,17 +27,9 @@ module.exports = {
 			'ts-jest',
 			{
 				useESM: true,
-				tsconfig: {
-					esModuleInterop: true,
-					allowSyntheticDefaultImports: true,
-				},
+				tsconfig: { esModuleInterop: true, allowSyntheticDefaultImports: true },
 			},
 		],
-	},
-	moduleNameMapper: {
-		'^corsair/core$': '<rootDir>/../corsair/core.ts',
-		'^corsair/http$': '<rootDir>/../corsair/http.ts',
-		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],

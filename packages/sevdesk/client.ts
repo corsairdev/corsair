@@ -1,65 +1,115 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export class SevdeskAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'SevdeskAPIError';
-	}
+export const SEVDESK_API_BASE = 'https://my.sevdesk.de/api/v1';
+export type SevdeskHttpMethod = ApiRequestOptions['method'];
+const RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'retry-after' },
+};
+type Options = {
+	path?: object;
+	query?: object;
+	body?: object;
+	resourceVersion?: string;
+};
+// Unknown query values are documented JSON scalars, arrays, or nested filter objects passed to the shared query serializer.
+function toRecord(
+	value: object | undefined,
+): Record<string, unknown> | undefined {
+	if (!value) return undefined;
+	const result: Record<string, unknown> = {};
+	for (const [key, entry] of Object.entries(value)) result[key] = entry;
+	return result;
 }
-
-// TODO: Update with your API base URL
-const SEVDESK_API_BASE = 'https://api.example.com';
-
+function delay(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+function safeError(caught: unknown, method: SevdeskHttpMethod): Error {
+	// unknown because HTTP and fetch errors have no stable shape; narrow API errors before removing potentially sensitive data.
+	if (caught instanceof ApiError)
+		return new ApiError(
+			{ method, url: SEVDESK_API_BASE },
+			{
+				url: SEVDESK_API_BASE,
+				ok: false,
+				status: caught.status,
+				statusText: '',
+				body: undefined,
+			},
+			'Sevdesk API request failed',
+			{
+				retryAfter: caught.retryAfter,
+				rateLimitReset: caught.rateLimitReset,
+				rateLimitRemaining: caught.rateLimitRemaining,
+				rateLimitLimit: caught.rateLimitLimit,
+			},
+		);
+	return new Error('Sevdesk request failed');
+}
 export async function makeSevdeskRequest<T>(
+	method: SevdeskHttpMethod,
 	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	apiKey: string | undefined,
+	options: Options = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
-
+	if (!apiKey || !/^[a-f0-9]{32}$/iu.test(apiKey))
+		throw new AuthMissingError('sevdesk', 'api_key');
+	if (
+		options.resourceVersion !== undefined &&
+		options.resourceVersion !== 'default' &&
+		!/^\d+\.\d+$/u.test(options.resourceVersion)
+	)
+		throw new Error('Invalid Sevdesk X-Version value');
+	const headers: Record<string, string> = {
+		Authorization: apiKey,
+		Accept: 'application/json',
+		'Content-Type': 'application/json',
+		'User-Agent': 'Corsair Sevdesk integration',
+	};
+	if (options.resourceVersion !== undefined)
+		headers['X-Version'] = options.resourceVersion;
 	const config: OpenAPIConfig = {
 		BASE: SEVDESK_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
-		},
+		HEADERS: headers,
+		ENCODE_PATH: encodeURIComponent,
 	};
-
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		path: toRecord(options.path),
+		query: toRecord(options.query),
+		body: ['POST', 'PUT', 'PATCH'].includes(method) ? options.body : undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
 	};
-
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new SevdeskAPIError(error.message);
+	for (let attempt = 0; attempt < 3; attempt += 1) {
+		try {
+			// unknown because provider JSON is untrusted until the operation's output Zod schema validates it.
+			return await request<T>(config, requestOptions, {
+				rateLimitConfig: RATE_LIMIT_CONFIG,
+			});
+		} catch (caught: unknown) {
+			// unknown because transport failures may contain PII; sanitize before retrying or propagating them.
+			const error = safeError(caught, method);
+			if (
+				method !== 'GET' ||
+				(error instanceof ApiError && error.status < 500) ||
+				attempt === 2
+			)
+				throw error;
+			await delay(50 * 2 ** attempt);
 		}
-		throw new SevdeskAPIError('Unknown error');
 	}
+	throw new Error('Sevdesk request failed');
 }
