@@ -8,6 +8,9 @@ import type { UsersGetCurrentResponse } from './endpoints/types';
 import { FeltEndpointOutputSchemas } from './endpoints/types';
 
 const LIVE_KEY = process.env.FELT_API_KEY ?? '';
+if (LIVE_KEY.length === 0) {
+	console.warn('Skipping Felt live API test: FELT_API_KEY is not set.');
+}
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Felt live API smoke test (env-gated)', () => {
