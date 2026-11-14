@@ -2783,10 +2783,12 @@ const CreateTicketAssigneeSchema = z
 		id: z.number().int().min(0).optional(),
 	})
 	.strict();
+// Gorgias stores ticket field values as scalars, as the dedicated field-value
+// endpoints and live ticket responses show.
 const CreateTicketCustomFieldSchema = z
 	.object({
 		id: z.number().int(),
-		value: z.record(z.string(), z.json()),
+		value: z.union([z.string(), z.number(), z.boolean()]),
 	})
 	.strict();
 const CreateTicketCustomerSchema = z
@@ -7810,10 +7812,12 @@ const UpdateTicketAssigneeUserSchema = z
 		id: z.number().int().min(0).optional(),
 	})
 	.strict();
+// Gorgias stores ticket field values as scalars, as the dedicated field-value
+// endpoints and live ticket responses show.
 const UpdateTicketCustomFieldSchema = z
 	.object({
 		id: z.number().int(),
-		value: z.record(z.string(), z.json()),
+		value: z.union([z.string(), z.number(), z.boolean()]),
 	})
 	.strict();
 const UpdateTicketCustomerSchema = z
@@ -8319,6 +8323,32 @@ export const GorgiasBinaryOutputSchema = z
 	})
 	.passthrough();
 
+const ruleEventTypes = [
+	'ticket-created',
+	'ticket-updated',
+	'ticket-message-created',
+	'ticket-assigned',
+	'ticket-self-unsnoozed',
+	'satisfaction-survey-responded',
+] as const;
+// Gorgias keeps a rule's events in one comma-separated string,
+// e.g. "ticket-created,ticket-updated" in the Rule reference.
+const RuleEventTypesInputSchema = z
+	.string()
+	.refine(
+		(value) =>
+			value
+				.split(',')
+				.every((event) =>
+					(ruleEventTypes as readonly string[]).includes(event),
+				),
+		{
+			message: `Use one or more of ${ruleEventTypes.join(', ')}, separated by commas`,
+		},
+	)
+	.describe(
+		`Comma-separated rule events, e.g. ticket-created,ticket-updated. Allowed: ${ruleEventTypes.join(', ')}`,
+	);
 export const GorgiasEndpointInputSchemas = {
 	'account.createAccountSetting': z
 		.object({
@@ -11961,8 +11991,8 @@ export const GorgiasEndpointInputSchemas = {
 					description: z.string().nullable().nullable().optional(),
 					http: z
 						.object({
-							form: z.null().optional(),
-							headers: z.null().optional(),
+							form: z.record(z.string(), z.json()).nullable().optional(),
+							headers: z.record(z.string(), z.string()).nullable().optional(),
 							hmac_secret: z.string().optional(),
 							method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH']),
 							request_content_type: z.enum([
@@ -12075,8 +12105,8 @@ export const GorgiasEndpointInputSchemas = {
 					description: z.string().nullable().nullable().optional(),
 					http: z
 						.object({
-							form: z.null().optional(),
-							headers: z.null().optional(),
+							form: z.record(z.string(), z.json()).nullable().optional(),
+							headers: z.record(z.string(), z.string()).nullable().optional(),
 							hmac_secret: z.string().optional(),
 							method: z
 								.enum(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH'])
@@ -12444,16 +12474,7 @@ export const GorgiasEndpointInputSchemas = {
 					code_ast: z.record(z.string(), z.json()).optional(),
 					deactivated_datetime: z.string().nullable().optional(),
 					description: z.string().nullable().optional(),
-					event_types: z
-						.enum([
-							'ticket-created',
-							'ticket-updated',
-							'ticket-message-created',
-							'ticket-assigned',
-							'ticket-self-unsnoozed',
-							'satisfaction-survey-responded',
-						])
-						.optional(),
+					event_types: RuleEventTypesInputSchema.optional(),
 					name: z.string(),
 					priority: z.number().int().optional(),
 				})
@@ -12506,16 +12527,7 @@ export const GorgiasEndpointInputSchemas = {
 					code_ast: z.record(z.string(), z.json()).optional(),
 					deactivated_datetime: z.string().nullable().optional(),
 					description: z.string().nullable().optional(),
-					event_types: z
-						.enum([
-							'ticket-created',
-							'ticket-updated',
-							'ticket-message-created',
-							'ticket-assigned',
-							'ticket-self-unsnoozed',
-							'satisfaction-survey-responded',
-						])
-						.optional(),
+					event_types: RuleEventTypesInputSchema.optional(),
 					name: z.string().optional(),
 					priority: z.number().int().optional(),
 				})

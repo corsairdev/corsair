@@ -155,7 +155,10 @@ describe('Gorgias live responses', () => {
 			],
 			[
 				'integrations.updateIntegration',
-				{ path: { id: 1 }, body: { deactivated_datetime: null } },
+				{
+					path: { id: 1 },
+					body: { name: 'Integration', deactivated_datetime: null },
+				},
 			],
 			[
 				'widgets.updateWidget',
@@ -163,16 +166,89 @@ describe('Gorgias live responses', () => {
 			],
 		];
 		for (const [key, input] of cases) {
-			const issues =
-				gorgiasEndpointSchemas[key].input.safeParse(input).error?.issues ?? [];
-			expect(
-				issues.filter(
-					(issue) =>
-						issue.path.includes('deactivated_datetime') ||
-						issue.path.includes('trashed_datetime'),
-				),
-			).toEqual([]);
+			const result = gorgiasEndpointSchemas[key].input.safeParse(input);
+			expect([key, result.error?.issues ?? []]).toEqual([key, []]);
 		}
+	});
+
+	it('accepts scalar values for custom fields set inline on a ticket', () => {
+		const customFields = [
+			{ id: 381950, value: 'gold' },
+			{ id: 381951, value: 3 },
+			{ id: 381952, value: true },
+		];
+		const cases: [OperationKey, object][] = [
+			[
+				'tickets.createTicket',
+				{
+					body: {
+						messages: [{ channel: 'aircall', from_agent: true }],
+						custom_fields: customFields,
+					},
+				},
+			],
+			[
+				'tickets.updateTicket',
+				{ path: { id: 1 }, body: { custom_fields: customFields } },
+			],
+		];
+		for (const [key, input] of cases) {
+			const result = gorgiasEndpointSchemas[key].input.safeParse(input);
+			expect([key, result.error?.issues ?? []]).toEqual([key, []]);
+		}
+	});
+
+	it('accepts a request body and headers for an HTTP integration', () => {
+		// The Gorgias create-integration example sends `form: {}` and `headers: {}`.
+		const http = {
+			form: { ticket_id: '{{ticket.id}}' },
+			headers: { Authorization: 'Bearer example' },
+			method: 'POST',
+			request_content_type: 'application/json',
+			response_content_type: 'application/json',
+			url: 'https://example.com/hook',
+		};
+		const cases: [OperationKey, object][] = [
+			[
+				'integrations.createIntegration',
+				{ body: { name: 'Hook', type: 'http', http } },
+			],
+			[
+				'integrations.updateIntegration',
+				{ path: { id: 1 }, body: { name: 'Hook', http } },
+			],
+		];
+		for (const [key, input] of cases) {
+			const result = gorgiasEndpointSchemas[key].input.safeParse(input);
+			expect([key, result.error?.issues ?? []]).toEqual([key, []]);
+		}
+	});
+
+	it('accepts several rule events as a comma-separated list and rejects unknown ones', () => {
+		// The Rule reference example stores `event_types: "ticket-created,ticket-updated"`.
+		const create = gorgiasEndpointSchemas['rules.createRule'].input;
+		const update = gorgiasEndpointSchemas['rules.updateRule'].input;
+		const body = {
+			name: 'r',
+			code: 'x',
+			event_types: 'ticket-created,ticket-updated',
+		};
+		expect(create.safeParse({ body }).error?.issues ?? []).toEqual([]);
+		expect(
+			update.safeParse({
+				path: { id: 1 },
+				body: { event_types: body.event_types },
+			}).error?.issues ?? [],
+		).toEqual([]);
+		expect(
+			create.safeParse({
+				body: { ...body, event_types: 'ticket-created,nope' },
+			}).success,
+		).toBe(false);
+		expect(
+			create.safeParse({ body: { ...body, event_types: 'ticket-created,' } })
+				.success,
+		).toBe(false);
 	});
 
 	it('parses fractional reporting values such as an average survey score', () => {

@@ -2527,8 +2527,8 @@ await corsair.gorgias.api.integrations.createIntegration({"body":{"name":"x","ty
   deactivated_datetime?: string | null,
   description?: string | null | null,
   http?: {
-    form?: null,
-    headers?: null,
+    form?: Record<string, JsonValue> | null,
+    headers?: Record<string, string> | null,
     hmac_secret?: string,
     method: GET | POST | PUT | DELETE | HEAD | PATCH,
     request_content_type: application/json | application/x-www-form-urlencoded,
@@ -2965,8 +2965,8 @@ await corsair.gorgias.api.integrations.updateIntegration({"path":{"id":1},"body"
   deactivated_datetime?: string | null,
   description?: string | null | null,
   http?: {
-    form?: null,
-    headers?: null,
+    form?: Record<string, JsonValue> | null,
+    headers?: Record<string, string> | null,
     hmac_secret?: string,
     method?: GET | POST | PUT | DELETE | HEAD | PATCH,
     request_content_type?: application/json | application/x-www-form-urlencoded,
@@ -5405,7 +5405,7 @@ await corsair.gorgias.api.rules.createRule({"body":{"code":"x","name":"x"}});
   code_ast?: Record<string, JsonValue>,
   deactivated_datetime?: string | null,
   description?: string | null,
-  event_types?: ticket-created | ticket-updated | ticket-message-created | ticket-assigned | ticket-self-unsnoozed | satisfaction-survey-responded,
+  event_types?: string,
   name: string,
   priority?: number
 }
@@ -5637,7 +5637,7 @@ await corsair.gorgias.api.rules.updateRule({"path":{"id":1},"body":{"code":"x","
   code_ast?: Record<string, JsonValue>,
   deactivated_datetime?: string | null,
   description?: string | null,
-  event_types?: ticket-created | ticket-updated | ticket-message-created | ticket-assigned | ticket-self-unsnoozed | satisfaction-survey-responded,
+  event_types?: string,
   name?: string,
   priority?: number
 }
@@ -8525,7 +8525,7 @@ await corsair.gorgias.api.tickets.createTicket({"body":{"messages":[{"channel":"
   created_datetime?: string,
   custom_fields?: {
     id: number,
-    value: Record<string, JsonValue>
+    value: string | number | boolean
   }[],
   customer?: {
     id?: number,
@@ -10325,7 +10325,7 @@ await corsair.gorgias.api.tickets.updateTicket({"path":{"id":1},"body":{"assigne
   closed_datetime?: string,
   custom_fields?: {
     id: number,
-    value: Record<string, JsonValue>
+    value: string | number | boolean
   }[],
   customer?: {
     id?: number,
