@@ -143,7 +143,10 @@ export const sendbirdEndpointMeta = {
 		description: 'List messages around a timestamp or message ID.',
 	},
 	'messages.get': { riskLevel: 'read', description: 'Get a message.' },
-	'messages.send': { riskLevel: 'write', description: 'Send a text message.' },
+	'messages.send': {
+		riskLevel: 'destructive',
+		description: 'Send a text message to a channel; members can see it.',
+	},
 	'messages.update': {
 		riskLevel: 'write',
 		description: 'Update a text message.',

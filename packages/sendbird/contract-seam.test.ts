@@ -190,6 +190,8 @@ describe('Sendbird public request seam', () => {
 		expect(sendbirdEndpointMeta['messages.delete'].riskLevel).toBe(
 			'destructive',
 		);
+		// R8: sending a message to a channel reaches its members.
+		expect(sendbirdEndpointMeta['messages.send'].riskLevel).toBe('destructive');
 	});
 	it.each(fixtures)(
 		'$id validates its input and output boundary',
