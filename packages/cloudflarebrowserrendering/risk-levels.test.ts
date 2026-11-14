@@ -1,7 +1,11 @@
 import { cloudflarebrowserrendering } from './index';
 
 // R8 in .github/PLUGIN_PR_RULES.md: an operation that sends a message, spends
-// money or credits, or can't be undone is `destructive`.
+// money or credits, or can't be undone is `destructive`. Reads that only return
+// page data stay `read` even though each call uses browser time (the Ahrefs
+// plugin keeps its metered reads as `read` the same way). Calls that produce a
+// new artifact (screenshot, PDF, snapshot) or start a billed job or session
+// (crawl, browser session) are `destructive`.
 const meta = cloudflarebrowserrendering().endpointMeta as Record<
 	string,
 	{ riskLevel: string }
@@ -9,13 +13,7 @@ const meta = cloudflarebrowserrendering().endpointMeta as Record<
 
 describe('cloudflarebrowserrendering risk levels', () => {
 	it.each([
-		'content.fetch',
-		'markdown.convert',
 		'snapshot.capture',
-		'accessibilityTree.capture',
-		'scrape.extract',
-		'json.extract',
-		'links.list',
 		'screenshot.capture',
 		'pdf.render',
 		'crawl.start',
@@ -25,6 +23,12 @@ describe('cloudflarebrowserrendering risk levels', () => {
 	});
 
 	it.each([
+		'content.fetch',
+		'markdown.convert',
+		'accessibilityTree.capture',
+		'scrape.extract',
+		'json.extract',
+		'links.list',
 		'crawl.get',
 		'sessions.list',
 		'sessions.get',
@@ -32,7 +36,7 @@ describe('cloudflarebrowserrendering risk levels', () => {
 		'browser.protocol',
 		'targets.list',
 		'targets.get',
-	])('keeps free read %s as read', (op) => {
+	])('keeps read %s as read', (op) => {
 		expect(meta[op]?.riskLevel).toBe('read');
 	});
 });

@@ -248,12 +248,12 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const cloudflareBrowserRenderingEndpointMeta = {
 	'content.fetch': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Fetch rendered HTML through Browser Run Quick Actions: https://developers.cloudflare.com/browser-run/quick-actions/content-endpoint/.',
 	},
 	'markdown.convert': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Convert rendered page content to Markdown: https://developers.cloudflare.com/browser-run/quick-actions/markdown-endpoint/.',
 	},
@@ -263,22 +263,22 @@ const cloudflareBrowserRenderingEndpointMeta = {
 			'Capture multiple page formats in one request: https://developers.cloudflare.com/browser-run/quick-actions/snapshot/.',
 	},
 	'accessibilityTree.capture': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Capture a page accessibility tree: https://developers.cloudflare.com/browser-run/quick-actions/accessibility-tree-endpoint/.',
 	},
 	'scrape.extract': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Extract selected HTML elements: https://developers.cloudflare.com/browser-run/quick-actions/scrape-endpoint/.',
 	},
 	'json.extract': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Extract structured page data using a prompt or JSON schema: https://developers.cloudflare.com/browser-run/quick-actions/json-endpoint/.',
 	},
 	'links.list': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Retrieve links from a rendered page: https://developers.cloudflare.com/browser-run/quick-actions/links-endpoint/.',
 	},

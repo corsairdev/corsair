@@ -16,7 +16,7 @@ description: "API reference for Cloudflare Browser Run: every `cloudflarebrowser
 
 Capture a page accessibility tree: https://developers.cloudflare.com/browser-run/quick-actions/accessibility-tree-endpoint/.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.accessibilityTree.capture({
@@ -387,7 +387,7 @@ await corsair.cloudflarebrowserrendering.api.browser.version({ accountId: 'acct-
 
 Fetch rendered HTML through Browser Run Quick Actions: https://developers.cloudflare.com/browser-run/quick-actions/content-endpoint/.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.content.fetch({
@@ -727,7 +727,7 @@ await corsair.cloudflarebrowserrendering.api.crawl.start({
 
 Extract structured page data using a prompt or JSON schema: https://developers.cloudflare.com/browser-run/quick-actions/json-endpoint/.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.json.extract({
@@ -840,7 +840,7 @@ await corsair.cloudflarebrowserrendering.api.json.extract({
 
 Retrieve links from a rendered page: https://developers.cloudflare.com/browser-run/quick-actions/links-endpoint/.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.links.list({
@@ -946,7 +946,7 @@ await corsair.cloudflarebrowserrendering.api.links.list({
 
 Convert rendered page content to Markdown: https://developers.cloudflare.com/browser-run/quick-actions/markdown-endpoint/.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.markdown.convert({
@@ -1183,7 +1183,7 @@ await corsair.cloudflarebrowserrendering.api.pdf.render({ accountId: 'acct-123',
 
 Extract selected HTML elements: https://developers.cloudflare.com/browser-run/quick-actions/scrape-endpoint/.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.scrape.extract({
