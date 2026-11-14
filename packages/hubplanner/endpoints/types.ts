@@ -541,11 +541,17 @@ export type BookingsDeleteResponse = z.infer<
 	typeof BookingsDeleteResponseSchema
 >;
 
-export const BookingsDeleteBulkInputSchema = z.object({
-	ids: z.array(z.string().min(1)).optional(),
-	resourceId: z.string().optional(),
-	projectId: z.string().optional(),
-});
+export const BookingsDeleteBulkInputSchema = z
+	.object({
+		ids: z.array(z.string().min(1)).min(1).optional(),
+		resourceId: z.string().trim().min(1).optional(),
+		projectId: z.string().trim().min(1).optional(),
+	})
+	.refine(
+		(input) =>
+			Boolean(input.ids?.length || input.resourceId || input.projectId),
+		'At least one booking ID or filter is required',
+	);
 export type BookingsDeleteBulkInput = z.infer<
 	typeof BookingsDeleteBulkInputSchema
 >;

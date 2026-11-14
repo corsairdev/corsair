@@ -105,13 +105,8 @@ export const Resources = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['resources.delete'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['resources.delete'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.resources.delete',
@@ -128,13 +123,8 @@ export const Resources = {
 			method: 'DELETE',
 			body: parsedInput.resourceIds,
 		});
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['resources.deleteBulk'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['resources.deleteBulk'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.resources.deleteBulk',
@@ -220,13 +210,8 @@ export const Resources = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['resources.removeTag'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['resources.removeTag'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.resources.removeTag',

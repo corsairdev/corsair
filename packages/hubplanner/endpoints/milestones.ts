@@ -106,13 +106,8 @@ export const Milestones = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['milestones.delete'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['milestones.delete'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.milestones.delete',

@@ -100,13 +100,8 @@ export const CustomFields = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['customFields.delete'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['customFields.delete'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.customFields.delete',

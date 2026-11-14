@@ -429,7 +429,13 @@ describe('Resources Endpoints', () => {
 	it('resources.getTags, addTags, and removeTag manage tags', async () => {
 		const tags = [{ tagId: 'rt1', value: 'frontend' }];
 		mockedRequest.mockResolvedValueOnce(tags);
-		await Resources.getTags(ctx, { resourceId: 'r1' });
+		const getTagsRes = await Resources.getTags(ctx, { resourceId: 'r1' });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/resource/r1/tag',
+			'test-hubplanner-key',
+			{ method: 'GET' },
+		);
+		expect(getTagsRes).toEqual(tags);
 
 		mockedRequest.mockResolvedValueOnce({
 			_id: 'r1',
@@ -437,10 +443,28 @@ describe('Resources Endpoints', () => {
 			lastName: 'Doe',
 			tags,
 		});
-		await Resources.addTags(ctx, { resourceId: 'r1', tags: ['rt1'] });
+		const addTagsRes = await Resources.addTags(ctx, {
+			resourceId: 'r1',
+			tags: ['rt1'],
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/resource/r1/tag',
+			'test-hubplanner-key',
+			{ method: 'PATCH', body: { tags: ['rt1'] } },
+		);
+		expect(addTagsRes._id).toBe('r1');
 
 		mockedRequest.mockResolvedValueOnce({ success: true });
-		await Resources.removeTag(ctx, { resourceId: 'r1', tagId: 'rt1' });
+		const removeTagRes = await Resources.removeTag(ctx, {
+			resourceId: 'r1',
+			tagId: 'rt1',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/resource/r1/tag/rt1',
+			'test-hubplanner-key',
+			{ method: 'DELETE' },
+		);
+		expect(removeTagRes.success).toBe(true);
 	});
 });
 
@@ -1033,10 +1057,7 @@ describe('Invalid input rejection before network I/O', () => {
 
 		caughtError = undefined;
 		try {
-			await Resources.create(ctx, { firstName: '' } as unknown as {
-				firstName: string;
-				lastName: string;
-			});
+			await Resources.create(ctx, { firstName: '', lastName: 'Doe' });
 		} catch (err: unknown) {
 			// `unknown` because caught rejection is untyped at runtime; narrowed by expect/assertions below.
 			caughtError = err;
@@ -1054,9 +1075,9 @@ describe('Hub Planner plugin metadata and registry synchronization', () => {
 		for (const [groupKey, groupEndpoints] of Object.entries(
 			plugin.endpoints ?? {},
 		)) {
-			for (const actionKey of Object.keys(
-				groupEndpoints as Record<string, unknown>,
-			)) {
+			// `unknown` because plugin endpoint groups are dynamically iterated over runtime records
+			const endpointsGroup = groupEndpoints as Record<string, unknown>;
+			for (const actionKey of Object.keys(endpointsGroup)) {
 				registeredKeys.push(`${groupKey}.${actionKey}`);
 			}
 		}

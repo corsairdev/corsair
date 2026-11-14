@@ -365,6 +365,9 @@ describe('Bookings schemas', () => {
 				resourceId: 'r1',
 			}),
 		).toEqual({ resourceId: 'r1' });
+		expect(() =>
+			HubPlannerEndpointInputSchemas['bookings.deleteBulk'].parse({}),
+		).toThrow();
 	});
 });
 

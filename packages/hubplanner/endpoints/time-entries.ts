@@ -136,13 +136,8 @@ export const TimeEntries = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['timeEntries.delete'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['timeEntries.delete'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.timeEntries.delete',
@@ -159,15 +154,8 @@ export const TimeEntries = {
 			method: 'DELETE',
 			body: parsedInput.ids,
 		});
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['timeEntries.deleteBulk'].parse(
-				normalized,
-			);
+			HubPlannerEndpointOutputSchemas['timeEntries.deleteBulk'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.timeEntries.deleteBulk',

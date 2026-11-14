@@ -157,13 +157,8 @@ export const Bookings = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['bookings.delete'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['bookings.delete'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.bookings.delete',
@@ -188,17 +183,12 @@ export const Bookings = {
 			body: parsedInput.ids,
 			query,
 		});
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['bookings.deleteBulk'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['bookings.deleteBulk'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.bookings.deleteBulk',
-			{ success: true },
+			{ count: parsedInput.ids?.length ?? 1 },
 			'completed',
 		);
 		return parsed;

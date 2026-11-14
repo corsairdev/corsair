@@ -268,14 +268,9 @@ export const Categories = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
 			HubPlannerEndpointOutputSchemas['categories.deleteCostCategory'].parse(
-				normalized,
+				raw,
 			);
 		await logEventFromContext(
 			ctx,

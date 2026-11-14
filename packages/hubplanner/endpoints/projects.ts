@@ -101,13 +101,8 @@ export const Projects = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['projects.delete'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['projects.delete'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.projects.delete',
@@ -124,13 +119,8 @@ export const Projects = {
 			method: 'DELETE',
 			body: parsedInput.projectIds,
 		});
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['projects.deleteBulk'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['projects.deleteBulk'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.projects.deleteBulk',
@@ -178,15 +168,8 @@ export const Projects = {
 				body: { resourceIds: parsedInput.resourceIds },
 			},
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['projects.addResources'].parse(
-				normalized,
-			);
+			HubPlannerEndpointOutputSchemas['projects.addResources'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.projects.addResources',
@@ -207,15 +190,8 @@ export const Projects = {
 				body: { projectIds: parsedInput.projectIds },
 			},
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['projects.removeResource'].parse(
-				normalized,
-			);
+			HubPlannerEndpointOutputSchemas['projects.removeResource'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.projects.removeResource',
@@ -236,13 +212,8 @@ export const Projects = {
 				body: { clientIds: parsedInput.clientIds },
 			},
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['projects.addClients'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['projects.addClients'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.projects.addClients',
@@ -263,15 +234,8 @@ export const Projects = {
 				body: { projectIds: parsedInput.projectIds },
 			},
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['projects.removeClient'].parse(
-				normalized,
-			);
+			HubPlannerEndpointOutputSchemas['projects.removeClient'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.projects.removeClient',
@@ -356,13 +320,8 @@ export const Projects = {
 			ctx.key,
 			{ method: 'DELETE' },
 		);
-		// 'unknown' raw response normalized to SuccessResponse object
-		const normalized =
-			typeof raw === 'object' && raw !== null
-				? { success: true, ...raw }
-				: { success: true };
 		const parsed =
-			HubPlannerEndpointOutputSchemas['projects.removeTag'].parse(normalized);
+			HubPlannerEndpointOutputSchemas['projects.removeTag'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.projects.removeTag',
