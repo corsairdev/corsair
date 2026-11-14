@@ -129,6 +129,32 @@ describe('makeEndorsalRequest', () => {
 		expect(JSON.stringify(result)).not.toContain('private@example.com');
 	});
 
+	it('keeps no line of a multi-line provider message in the stack', async () => {
+		// Core puts the pretty-printed response body in the message for unmapped statuses.
+		const original = new ApiError(
+			{ method: 'POST', url: '/v1/contacts' },
+			{
+				url: `${ENDORSAL_API_BASE}/v1/contacts`,
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable',
+				body: { email: 'private@example.com' },
+			},
+			'HTTP 422: {\n  "email": "private@example.com",\n  "phone": "+14172618261"\n}',
+		);
+		mockedRequest.mockRejectedValue(original);
+		const result = await makeEndorsalRequest('/v1/contacts', 'test-key', {
+			method: 'POST',
+		}).catch((caught: unknown) => caught);
+		if (!(result instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(result.stack).not.toContain('private@example.com');
+		expect(result.stack).not.toContain('+14172618261');
+		expect(result.stack?.split('\n').slice(1).length).toBeGreaterThan(0);
+		for (const line of result.stack?.split('\n').slice(1) ?? []) {
+			expect(line).toMatch(/^\s+at /);
+		}
+	});
+
 	it('marks contacts.post destructive, since campaignID enrolls the contact in emails', () => {
 		const meta = endorsal().endpointMeta as Record<
 			string,

@@ -84,11 +84,15 @@ export async function makeEndorsalRequest<T>(
 					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
-			// Keep the frames of the request that failed, under the new message
-			// line, since the original first line can quote the provider.
+			// Keep only the frames of the request that failed, under the new
+			// message line. The original message can span several lines (core
+			// pretty-prints the response body for unmapped statuses), so every
+			// non-frame line is dropped.
 			if (error.stack && sanitized.stack) {
 				const [headline] = sanitized.stack.split('\n');
-				const frames = error.stack.split('\n').slice(1);
+				const frames = error.stack
+					.split('\n')
+					.filter((line) => /^\s+at /.test(line));
 				sanitized.stack = [headline, ...frames].join('\n');
 			}
 			throw sanitized;
