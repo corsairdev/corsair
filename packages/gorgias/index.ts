@@ -42,7 +42,16 @@ export type GorgiasBoundEndpoints = BindEndpoints<
 >;
 export type GorgiasEndpoints = typeof gorgiasEndpointsNested;
 
-export const gorgiasEndpointSchemas = {
+// Named so the declaration emit references the schema maps instead of inlining
+// every Zod type (the inlined type passes TypeScript's serialization limit, TS7056).
+type GorgiasEndpointSchemaMap = {
+	readonly [K in keyof typeof GorgiasEndpointOutputSchemas]: {
+		readonly input: (typeof GorgiasEndpointInputSchemas)[K];
+		readonly output: (typeof GorgiasEndpointOutputSchemas)[K];
+	};
+};
+
+export const gorgiasEndpointSchemas: GorgiasEndpointSchemaMap = {
 	'account.createAccountSetting': {
 		input: GorgiasEndpointInputSchemas['account.createAccountSetting'],
 		output: GorgiasEndpointOutputSchemas['account.createAccountSetting'],
