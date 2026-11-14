@@ -1,0 +1,1624 @@
+---
+title: "Polygon API reference"
+sidebarTitle: "API"
+description: "API reference for the Polygon plugin in Corsair: every `polygon.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Cash Locations
+
+### list
+
+`cashLocations.list`
+
+List the retail cash locations in range, nearest first, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.cashLocations.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `startingAfter` | `string` | No | The previous page's `nextCursor`. |
+| `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `limit` | `number \| null` | No | The effective page size OMS applied. |
+| `hasMore` | `boolean` | Yes | True when more rows exist in the direction of travel. |
+| `nextCursor` | `string \| null` | No | Pass as `startingAfter`. |
+| `previousCursor` | `string \| null` | No | Pass as `endingBefore` to page backwards. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  cashLocationReference?: string | null,
+  name?: string | null,
+  provider?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zipCode?: string | null,
+  country?: string | null,
+  coordinates?: {
+    latitude: number,
+    longitude: number
+  } | null,
+  distance?: number | null,
+  distanceUnit?: string | null,
+  buyAllowed?: boolean | null,
+  sellAllowed?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a customer. Individuals need a first and last name; businesses need a legal name and email. Identity verification follows the project policy
+
+**Risk:** `write`
+
+```ts
+await corsair.polygon.api.customers.create({ type: 'individual', firstName: 'Jane', lastName: 'Smith', email: 'jane@example.com', nationality: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted. |
+| `type` | `individual \| business` | Yes | Which KYC or KYB policy this customer follows. |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | E.164 format, such as +12125551234. |
+| `externalId` | `string` | No | Your own identifier, kept on the customer for cross-referencing. |
+| `signedAgreement` | `boolean` | No | Whether the customer accepted the OMS terms. Defaults to false. |
+| `firstName` | `string` | No | Legal first name. Individuals only. |
+| `middleName` | `string` | No | Individuals only. |
+| `lastName` | `string` | No | Legal last name. Individuals only. |
+| `birthDate` | `string` | No | YYYY-MM-DD. Write-only: OMS never returns it. |
+| `nationality` | `string` | No | ISO 3166-1 alpha-2 country code. |
+| `ipAddress` | `string` | No | Used for geo-based compliance checks. Write-only. |
+| `residentialAddress` | `object` | No | Write-only: OMS never returns it. Which parts it requires depends on the project's KYC policy. |
+| `companyLegalName` | `string` | No | Legal business name. Businesses only, and required to create one. |
+| `dbaName` | `string` | No | — |
+| `formationDate` | `string` | No | — |
+| `registrationCountry` | `string` | No | — |
+| `registrationNumber` | `string` | No | — |
+| `websiteUrl` | `string` | No | — |
+| `businessDescription` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="residentialAddress full type">
+
+```ts
+{
+  line1?: string,
+  line2?: string,
+  city?: string,
+  state?: string,
+  zipCode?: string,
+  country?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `type` | `string \| null` | No | `individual` or `business`. |
+| `name` | `string \| null` | No | The composed name, left out when the customer has none. |
+| `firstName` | `string \| null` | No | — |
+| `middleName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `companyLegalName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `nationality` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | Where the customer is in onboarding. A status OMS adds later must not fail a read, so this stays a string. |
+| `hold` | `object \| null` | No | — |
+| `failure` | `object \| null` | No | — |
+| `signedAgreement` | `boolean \| null` | No | — |
+| `endorsements` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="hold full type">
+
+```ts
+{
+  code?: string | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="failure full type">
+
+```ts
+{
+  code?: string | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Delete a customer. OMS returns the record in its offboarded state
+
+**Risk:** `destructive`
+
+```ts
+await corsair.polygon.api.customers.delete({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The `cst_` id of the customer. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `type` | `string \| null` | No | `individual` or `business`. |
+| `name` | `string \| null` | No | The composed name, left out when the customer has none. |
+| `firstName` | `string \| null` | No | — |
+| `middleName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `companyLegalName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `nationality` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | Where the customer is in onboarding. A status OMS adds later must not fail a read, so this stays a string. |
+| `hold` | `object \| null` | No | — |
+| `failure` | `object \| null` | No | — |
+| `signedAgreement` | `boolean \| null` | No | — |
+| `endorsements` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="hold full type">
+
+```ts
+{
+  code?: string | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="failure full type">
+
+```ts
+{
+  code?: string | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer with its onboarding status
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.customers.get({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The `cst_` id of the customer. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `type` | `string \| null` | No | `individual` or `business`. |
+| `name` | `string \| null` | No | The composed name, left out when the customer has none. |
+| `firstName` | `string \| null` | No | — |
+| `middleName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `companyLegalName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `nationality` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | Where the customer is in onboarding. A status OMS adds later must not fail a read, so this stays a string. |
+| `hold` | `object \| null` | No | — |
+| `failure` | `object \| null` | No | — |
+| `signedAgreement` | `boolean \| null` | No | — |
+| `endorsements` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="hold full type">
+
+```ts
+{
+  code?: string | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="failure full type">
+
+```ts
+{
+  code?: string | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers, filtered by status, email, external id or creation window, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.customers.list({ status: 'active', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `pending \| actionRequired \| active \| rejected \| offboarded` | No | Only customers in this status. |
+| `email` | `string` | No | Only this exact email address. |
+| `externalId` | `string` | No | Only the customer carrying this `externalId`. |
+| `createdAfter` | `string` | No | Only customers created after this ISO 8601 timestamp. |
+| `createdBefore` | `string` | No | Only customers created before this ISO 8601 timestamp. |
+| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `startingAfter` | `string` | No | The previous page's `nextCursor`. |
+| `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+| `cursor` | `string \| null` | No | Absent on the last page. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  type?: string | null,
+  name?: string | null,
+  firstName?: string | null,
+  middleName?: string | null,
+  lastName?: string | null,
+  companyLegalName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  nationality?: string | null,
+  externalId?: string | null,
+  status?: string | null,
+  hold?: {
+    code?: string | null,
+    reason?: string | null
+  } | null,
+  failure?: {
+    code?: string | null,
+    reason?: string | null
+  } | null,
+  signedAgreement?: boolean | null,
+  endorsements?: string[] | null,
+  metadata?: Record<string, string> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a customer's details, or request additional endorsements. Personal data fields are write-only
+
+**Risk:** `write`
+
+```ts
+await corsair.polygon.api.customers.update({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', phone: '+12125551234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The `cst_` id of the customer. |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `externalId` | `string` | No | — |
+| `signedAgreement` | `boolean` | No | One-way: OMS does not accept setting it back to false. |
+| `endorsements` | `(basic \| cryptoCustody \| usd)[]` | No | Request additional endorsements. Existing ones are not removed, and naming any triggers re-evaluation. |
+| `firstName` | `string` | No | Legal first name. Individuals only. |
+| `middleName` | `string` | No | Individuals only. |
+| `lastName` | `string` | No | Legal last name. Individuals only. |
+| `birthDate` | `string` | No | YYYY-MM-DD. Write-only: OMS never returns it. |
+| `nationality` | `string` | No | ISO 3166-1 alpha-2 country code. |
+| `ipAddress` | `string` | No | Used for geo-based compliance checks. Write-only. |
+| `residentialAddress` | `object` | No | Write-only: OMS never returns it. Which parts it requires depends on the project's KYC policy. |
+| `companyLegalName` | `string` | No | Legal business name. Businesses only, and required to create one. |
+| `dbaName` | `string` | No | — |
+| `formationDate` | `string` | No | — |
+| `registrationCountry` | `string` | No | — |
+| `registrationNumber` | `string` | No | — |
+| `websiteUrl` | `string` | No | — |
+| `businessDescription` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="residentialAddress full type">
+
+```ts
+{
+  line1?: string,
+  line2?: string,
+  city?: string,
+  state?: string,
+  zipCode?: string,
+  country?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `type` | `string \| null` | No | `individual` or `business`. |
+| `name` | `string \| null` | No | The composed name, left out when the customer has none. |
+| `firstName` | `string \| null` | No | — |
+| `middleName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `companyLegalName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `nationality` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | Where the customer is in onboarding. A status OMS adds later must not fail a read, so this stays a string. |
+| `hold` | `object \| null` | No | — |
+| `failure` | `object \| null` | No | — |
+| `signedAgreement` | `boolean \| null` | No | — |
+| `endorsements` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="hold full type">
+
+```ts
+{
+  code?: string | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="failure full type">
+
+```ts
+{
+  code?: string | null,
+  reason?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Networks
+
+### list
+
+`networks.list`
+
+List the networks, rails and assets this project can route, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.networks.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `startingAfter` | `string` | No | The previous page's `nextCursor`. |
+| `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `limit` | `number \| null` | No | The effective page size OMS applied. |
+| `hasMore` | `boolean` | Yes | True when more rows exist in the direction of travel. |
+| `nextCursor` | `string \| null` | No | Pass as `startingAfter`. |
+| `previousCursor` | `string \| null` | No | Pass as `endingBefore` to page backwards. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  network: string,
+  category?: string | null,
+  type?: string | null,
+  chainId?: number | null,
+  networkFamily?: string | null,
+  displayName?: string | null,
+  assets?: {
+    asset?: string | null,
+    contractAddress?: string | null,
+    decimals?: number | null
+  }[] | null,
+  supportedBy?: {
+    externalAccount?: {
+      asSource?: string[] | null,
+      asDestination?: string[] | null
+    } | null,
+    depositAddress?: {
+      asSource?: boolean | null,
+      asDestination?: boolean | null
+    } | null,
+    virtualAccount?: {
+      asSource?: boolean | null,
+      asDestination?: boolean | null
+    } | null,
+    cashIn?: {
+      asSource?: boolean | null,
+      asDestination?: boolean | null
+    } | null,
+    card?: {
+      asSource?: boolean | null,
+      asDestination?: boolean | null
+    } | null,
+    wallet?: {
+      asSource?: boolean | null,
+      asDestination?: boolean | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quotes
+
+### create
+
+`quotes.create`
+
+Price a transfer: set the amount on one side and OMS calculates the other. Nothing moves until a transaction accepts the quote
+
+**Risk:** `write`
+
+```ts
+await corsair.polygon.api.quotes.create({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', source: { type: 'walletCrypto', details: { id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn', asset: 'usdc', network: 'polygon' }, amount: '100.00' }, destination: { type: 'bankUs', details: { id: 'ext_fky491gakzj0dd46qb6whsr2vq', asset: 'usd' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted. |
+| `customerId` | `string` | Yes | The `cst_` customer this quote is for. |
+| `source` | `object` | Yes | What funds the transaction. |
+| `destination` | `object` | Yes | The instrument that receives the funds. |
+| `sponsorGas` | `boolean` | No | When true, OMS absorbs the on-chain gas for the delivery. Only true is supported today. |
+| `metadata` | `Record<string, string>` | No | Free-form pairs, copied to the resulting transaction. |
+
+<AccordionGroup>
+<Accordion title="source full type">
+
+```ts
+{
+  type: walletCrypto,
+  details: {
+    id: string,
+    asset: string,
+    network: ethereum | polygon | base | solana | tron | bnb
+  },
+  amount?: string
+} | {
+  type: walletFiat,
+  details: {
+    id: string,
+    asset: usd
+  },
+  amount?: string
+} | {
+  type: card,
+  details: {
+    id: string,
+    asset: usd
+  },
+  amount?: string
+}
+```
+</Accordion>
+
+<Accordion title="destination full type">
+
+```ts
+{
+  type: walletCrypto,
+  details: {
+    id: string,
+    asset: string,
+    network: ethereum | polygon | base | solana | tron | bnb
+  },
+  amount?: string
+} | {
+  type: walletExternal,
+  details: {
+    id?: string,
+    blockchainAddress?: string,
+    asset: string,
+    network: ethereum | polygon | base | solana | tron | bnb
+  },
+  amount?: string
+} | {
+  type: walletFiat,
+  details: {
+    id: string,
+    asset: usd
+  },
+  amount?: string
+} | {
+  type: bankUs,
+  details: {
+    id: string,
+    asset: usd,
+    memo?: string
+  },
+  amount?: string
+} | {
+  type: card,
+  details: {
+    id: string,
+    asset: usd
+  },
+  amount?: string
+} | {
+  type: cash,
+  details: {
+    asset: usd,
+    cashLocationId: string,
+    cashLocationReference: string,
+    amount: string
+  },
+  amount?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `open`, `accepted` or `expired`. |
+| `sourceToDestination` | `string \| null` | No | — |
+| `customerId` | `string \| null` | No | — |
+| `pricing` | `object \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pricing full type">
+
+```ts
+{
+  source?: {
+    amount?: string | null,
+    asset?: string | null
+  } | null,
+  destination?: {
+    amount?: string | null,
+    asset?: string | null
+  } | null,
+  fees: {
+    type?: string | null,
+    amount?: string | null,
+    asset?: string | null
+  }[],
+  exchangeRate?: string | null,
+  fixedAmountSide?: string | null,
+  sponsorGas?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`quotes.get`
+
+Read one quote with its status and pricing
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.quotes.get({ quoteId: 'qt_0gq9aesz4wb5etdv88z1j61qcm' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quoteId` | `string` | Yes | The `qt_` id of the quote. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `open`, `accepted` or `expired`. |
+| `sourceToDestination` | `string \| null` | No | — |
+| `customerId` | `string \| null` | No | — |
+| `pricing` | `object \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pricing full type">
+
+```ts
+{
+  source?: {
+    amount?: string | null,
+    asset?: string | null
+  } | null,
+  destination?: {
+    amount?: string | null,
+    asset?: string | null
+  } | null,
+  fees: {
+    type?: string | null,
+    amount?: string | null,
+    asset?: string | null
+  }[],
+  exchangeRate?: string | null,
+  fixedAmountSide?: string | null,
+  sponsorGas?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### create
+
+`transactions.create`
+
+Accept a quote and move the money. This is the irreversible step: pricing is locked at the quote and the transfer starts as soon as OMS accepts it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.polygon.api.transactions.create({ quoteId: 'qt_0gq9aesz4wb5etdv88z1j61qcm', metadata: { orderId: 'order_12345' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted. |
+| `quoteId` | `string` | Yes | The `qt_` quote to accept. It must be `open` with unexpired pricing. |
+| `deviceFingerprint` | `string` | No | The end user fingerprint, used for risk screening. |
+| `webSessionId` | `string` | No | The risk-session id from the Sardine SDK. Required when the quote funds from or delivers to a card, and rejected as 422 RiskSessionRequired when missing. |
+| `metadata` | `Record<string, string>` | No | Free-form pairs, echoed back on reads. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | The lifecycle status. |
+| `subStatus` | `string \| null` | No | A finer, status-scoped state such as `processing.fundsPulled`. |
+| `customer` | `object \| null` | No | — |
+| `pricing` | `object \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `destination` | `object \| null` | No | — |
+| `precursor` | `object \| null` | No | — |
+| `transfers` | `object[] \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="pricing full type">
+
+```ts
+{
+  source?: {
+    amount?: string | null,
+    asset?: string | null
+  } | null,
+  destination?: {
+    amount?: string | null,
+    asset?: string | null
+  } | null,
+  fees: {
+    type?: string | null,
+    amount?: string | null,
+    asset?: string | null
+  }[],
+  exchangeRate?: string | null,
+  fixedAmountSide?: string | null,
+  sponsorGas?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null,
+  asset?: string | null,
+  network?: string | null,
+  details?: {
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="destination full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null,
+  asset?: string | null,
+  network?: string | null,
+  details?: {
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="precursor full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="transfers full type">
+
+```ts
+{
+  id?: string | null,
+  role?: string | null,
+  rail?: string | null,
+  attempt?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`transactions.get`
+
+Read one transaction with its status, pricing and transfers
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.transactions.get({ transactionId: 'txn_01h9xd' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | The `txn_` id of the transaction. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | The lifecycle status. |
+| `subStatus` | `string \| null` | No | A finer, status-scoped state such as `processing.fundsPulled`. |
+| `customer` | `object \| null` | No | — |
+| `pricing` | `object \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `destination` | `object \| null` | No | — |
+| `precursor` | `object \| null` | No | — |
+| `transfers` | `object[] \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="pricing full type">
+
+```ts
+{
+  source?: {
+    amount?: string | null,
+    asset?: string | null
+  } | null,
+  destination?: {
+    amount?: string | null,
+    asset?: string | null
+  } | null,
+  fees: {
+    type?: string | null,
+    amount?: string | null,
+    asset?: string | null
+  }[],
+  exchangeRate?: string | null,
+  fixedAmountSide?: string | null,
+  sponsorGas?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null,
+  asset?: string | null,
+  network?: string | null,
+  details?: {
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="destination full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null,
+  asset?: string | null,
+  network?: string | null,
+  details?: {
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="precursor full type">
+
+```ts
+{
+  type?: string | null,
+  id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="transfers full type">
+
+```ts
+{
+  id?: string | null,
+  role?: string | null,
+  rail?: string | null,
+  attempt?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+List transactions filtered by status, customer, wallet, precursor or creation window, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.transactions.list({ status: ['processing', 'completed'], limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `(processing \| awaitingAction \| completed \| failed)[]` | No | Only transactions in these statuses. |
+| `customerId` | `string` | No | Matches rows where the customer is on either side. |
+| `walletId` | `string` | No | Transactions where this wallet is the source or destination. |
+| `virtualAccountId` | `string` | No | The transaction's originating virtual account. |
+| `depositAddressId` | `string` | No | The transaction's originating deposit address. |
+| `cashInId` | `string` | No | The transaction's originating cash-in. |
+| `createdAfter` | `string` | No | Inclusive lower bound on `createdAt`. |
+| `createdBefore` | `string` | No | Inclusive upper bound on `createdAt`. |
+| `search` | `string` | No | Matches a transaction id, a customer id, or a customer email. |
+| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `startingAfter` | `string` | No | The previous page's `nextCursor`. |
+| `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `limit` | `number \| null` | No | The effective page size OMS applied. |
+| `hasMore` | `boolean` | Yes | True when more rows exist in the direction of travel. |
+| `nextCursor` | `string \| null` | No | Pass as `startingAfter`. |
+| `previousCursor` | `string \| null` | No | Pass as `endingBefore` to page backwards. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  status?: string | null,
+  subStatus?: string | null,
+  customer?: {
+    id?: string | null
+  } | null,
+  pricing?: {
+    source?: {
+      amount?: string | null,
+      asset?: string | null
+    } | null,
+    destination?: {
+      amount?: string | null,
+      asset?: string | null
+    } | null,
+    fees: {
+      type?: string | null,
+      amount?: string | null,
+      asset?: string | null
+    }[],
+    exchangeRate?: string | null,
+    fixedAmountSide?: string | null,
+    sponsorGas?: boolean | null
+  } | null,
+  source?: {
+    type?: string | null,
+    id?: string | null,
+    asset?: string | null,
+    network?: string | null,
+    details?: {
+    } | null
+  } | null,
+  destination?: {
+    type?: string | null,
+    id?: string | null,
+    asset?: string | null,
+    network?: string | null,
+    details?: {
+    } | null
+  } | null,
+  precursor?: {
+    type?: string | null,
+    id?: string | null
+  } | null,
+  transfers?: {
+    id?: string | null,
+    role?: string | null,
+    rail?: string | null,
+    attempt?: number | null
+  }[] | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Wallets
+
+### balance
+
+`wallets.balance`
+
+Read one wallet balance in its asset, with an estimated value. The balance can be negative after a clawback
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.wallets.balance({ id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `wlt_` id of the wallet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  customerId?: string | null,
+  asset?: string | null,
+  chain?: string | null,
+  address?: string | null,
+  balance?: string | null,
+  currencyName?: string | null,
+  estimatedBalanceValue?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`wallets.create`
+
+Create a wallet for an asset on a chain
+
+**Risk:** `write`
+
+```ts
+await corsair.polygon.api.wallets.create({ asset: 'usdc', chain: 'polygon' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted. |
+| `asset` | `string` | Yes | The asset the wallet holds, such as `usdc`. |
+| `chain` | `string` | Yes | The chain the wallet lives on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `customer` | `string \| null` | No | — |
+| `custodyType` | `string \| null` | No | `custodial` or `embedded`. |
+| `blockchainAddress` | `string \| null` | No | — |
+| `networkFamily` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `preallocated`, `active` or `suspended`. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`wallets.get`
+
+Read one wallet by id
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.wallets.get({ id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `wlt_` id of the wallet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `customer` | `string \| null` | No | — |
+| `custodyType` | `string \| null` | No | `custodial` or `embedded`. |
+| `blockchainAddress` | `string \| null` | No | — |
+| `networkFamily` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `preallocated`, `active` or `suspended`. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`wallets.list`
+
+List wallets, scoped to a customer or type, with balance ordering and cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.wallets.list({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | No | Scope to one `cst_` customer. |
+| `type` | `string` | No | A wallet variant, such as `custodial` or `fiat`. |
+| `search` | `string` | No | Matches a wallet id or an on-chain address. |
+| `orderBy` | `string` | No | Orders by the balance's estimated USD value. |
+| `order` | `asc \| desc` | No | Balance sort direction. Needs `orderBy`. |
+| `includeHidden` | `string[]` | No | `claimed` adds wallets currently claimed by a live instrument. |
+| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `startingAfter` | `string` | No | The previous page's `nextCursor`. |
+| `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `limit` | `number \| null` | No | The effective page size OMS applied. |
+| `hasMore` | `boolean` | Yes | True when more rows exist in the direction of travel. |
+| `nextCursor` | `string \| null` | No | Pass as `startingAfter`. |
+| `previousCursor` | `string \| null` | No | Pass as `endingBefore` to page backwards. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  customer?: string | null,
+  custodyType?: string | null,
+  blockchainAddress?: string | null,
+  networkFamily?: string | null,
+  status?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a webhook endpoint. The HMAC signing key is returned only here, so store it when the call returns
+
+**Risk:** `write`
+
+```ts
+await corsair.polygon.api.webhooks.create({ url: 'https://partner.example/webhooks', subscriptions: ['transaction.settled'], timeoutMs: 5000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted. |
+| `url` | `string` | Yes | Where OMS posts deliveries. |
+| `subscriptions` | `string[]` | Yes | Event types to receive, such as transaction.settled. `*` subscribes to every type. |
+| `timeoutMs` | `number` | No | Per-delivery HTTP timeout. Defaults to 5000. |
+| `notifyThresholdSecs` | `number` | No | Down-notification threshold. Defaults to 3600. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+| `signingKey` | `string` | Yes | The cleartext HMAC key, shown only here and on a same-key retry. Store it to verify deliveries. |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  url?: string | null,
+  status?: string | null,
+  statusReason?: string | null,
+  subscriptions?: string[] | null,
+  timeoutMs?: number | null,
+  notifyThresholdSecs?: number | null,
+  successCount?: number | null,
+  failureCount?: number | null,
+  mode?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook endpoint. Deliveries stop immediately and the signing key is discarded
+
+**Risk:** `destructive`
+
+```ts
+await corsair.polygon.api.webhooks.delete({ webhookId: 'whk_01H9Xa8F5dN6mP3q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | The `whk_` id of the webhook. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `enabled`, `disabled` or `suspended`. |
+| `statusReason` | `string \| null` | No | Why OMS suspended the endpoint. |
+| `subscriptions` | `string[] \| null` | No | The event types this endpoint receives. `*` means every type. |
+| `timeoutMs` | `number \| null` | No | Defaults to 5000, capped at 10000. |
+| `notifyThresholdSecs` | `number \| null` | No | — |
+| `successCount` | `number \| null` | No | — |
+| `failureCount` | `number \| null` | No | — |
+| `mode` | `string \| null` | No | `live` or `sandbox`. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.webhooks.get({ webhookId: 'whk_01H9Xa8F5dN6mP3q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | The `whk_` id of the webhook. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `enabled`, `disabled` or `suspended`. |
+| `statusReason` | `string \| null` | No | Why OMS suspended the endpoint. |
+| `subscriptions` | `string[] \| null` | No | The event types this endpoint receives. `*` means every type. |
+| `timeoutMs` | `number \| null` | No | Defaults to 5000, capped at 10000. |
+| `notifyThresholdSecs` | `number \| null` | No | — |
+| `successCount` | `number \| null` | No | — |
+| `failureCount` | `number \| null` | No | — |
+| `mode` | `string \| null` | No | `live` or `sandbox`. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook endpoints with their delivery counts and cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.polygon.api.webhooks.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `enabled \| disabled \| suspended` | No | Only webhooks in this status. |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | The previous page's `cursor`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+| `cursor` | `string \| null` | No | Absent on the last page. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  webhook?: {
+    id?: string | null,
+    object?: string | null,
+    url?: string | null,
+    status?: string | null,
+    statusReason?: string | null,
+    subscriptions?: string[] | null,
+    timeoutMs?: number | null,
+    notifyThresholdSecs?: number | null,
+    successCount?: number | null,
+    failureCount?: number | null,
+    mode?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | null,
+  deliveryCount?: number | null,
+  successCount?: number | null,
+  failureCount?: number | null,
+  failureRate?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook's URL, subscriptions or delivery settings
+
+**Risk:** `write`
+
+```ts
+await corsair.polygon.api.webhooks.update({ webhookId: 'whk_01H9Xa8F5dN6mP3q', timeoutMs: 8000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | The `whk_` id of the webhook. |
+| `url` | `string` | No | — |
+| `subscriptions` | `string[]` | No | — |
+| `timeoutMs` | `number` | No | — |
+| `notifyThresholdSecs` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `enabled`, `disabled` or `suspended`. |
+| `statusReason` | `string \| null` | No | Why OMS suspended the endpoint. |
+| `subscriptions` | `string[] \| null` | No | The event types this endpoint receives. `*` means every type. |
+| `timeoutMs` | `number \| null` | No | Defaults to 5000, capped at 10000. |
+| `notifyThresholdSecs` | `number \| null` | No | — |
+| `successCount` | `number \| null` | No | — |
+| `failureCount` | `number \| null` | No | — |
+| `mode` | `string \| null` | No | `live` or `sandbox`. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
