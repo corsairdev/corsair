@@ -13,6 +13,9 @@ const CloudPubsubTopicSchema = z
 			),
 	})
 	.strict();
+// Response schemas are loose and their enums accept any string: Google adds read-only
+// fields and enum values over time, and a new one must not break reads. Request
+// schemas stay strict.
 const CloudPubsubTopicResponseSchema = z
 	.object({
 		topicName: z
@@ -25,7 +28,7 @@ const CloudPubsubTopicResponseSchema = z
 				'The `name` field of a Cloud Pub/Sub [Topic](https://cloud.google.com/pubsub/docs/reference/rest/v1/projects.topics#Topic).',
 			),
 	})
-	.strict();
+	.loose();
 
 const DriveFolderSchema = z
 	.object({
@@ -64,7 +67,7 @@ const DriveFolderResponseSchema = z
 			.optional()
 			.describe('Drive API resource ID.'),
 	})
-	.strict();
+	.loose();
 
 const AssignmentSchema = z
 	.object({
@@ -79,7 +82,7 @@ const AssignmentResponseSchema = z
 			'Drive folder where attachments from student submissions are placed. This is only populated for course teachers and administrators.',
 		),
 	})
-	.strict();
+	.loose();
 
 const GeminiGemSchema = z
 	.object({
@@ -118,7 +121,7 @@ const GeminiGemResponseSchema = z
 			.optional()
 			.describe('Title of the Gem.'),
 	})
-	.strict();
+	.loose();
 
 const YouTubeVideoSchema = z
 	.object({
@@ -167,7 +170,7 @@ const YouTubeVideoResponseSchema = z
 			.optional()
 			.describe('URL of a thumbnail image of the YouTube video. Read-only.'),
 	})
-	.strict();
+	.loose();
 
 const FormSchema = z
 	.object({
@@ -224,7 +227,7 @@ const FormResponseSchema = z
 			.optional()
 			.describe('URL of a thumbnail image of the Form. Read-only.'),
 	})
-	.strict();
+	.loose();
 
 const DriveFileSchema = z
 	.object({
@@ -273,7 +276,7 @@ const DriveFileResponseSchema = z
 			.optional()
 			.describe('Title of the Drive item. Read-only.'),
 	})
-	.strict();
+	.loose();
 
 const SharedDriveFileSchema = z
 	.object({
@@ -291,10 +294,11 @@ const SharedDriveFileResponseSchema = z
 		),
 		shareMode: z
 			.enum(['UNKNOWN_SHARE_MODE', 'VIEW', 'EDIT', 'STUDENT_COPY'])
+			.or(z.string())
 			.optional()
 			.describe('Mechanism by which students access the Drive item.'),
 	})
-	.strict();
+	.loose();
 
 const NotebookLmNotebookSchema = z
 	.object({
@@ -333,7 +337,7 @@ const NotebookLmNotebookResponseSchema = z
 			.optional()
 			.describe('Title of the Notebook.'),
 	})
-	.strict();
+	.loose();
 
 const LinkSchema = z
 	.object({
@@ -380,7 +384,7 @@ const LinkResponseSchema = z
 			.optional()
 			.describe('Title of the target of the URL. Read-only.'),
 	})
-	.strict();
+	.loose();
 
 const MaterialSchema = z
 	.object({
@@ -421,7 +425,7 @@ const MaterialResponseSchema = z
 			'Link material. On creation, this is upgraded to a more appropriate type if possible, and this is reflected in the response.',
 		),
 	})
-	.strict();
+	.loose();
 
 const IndividualStudentsOptionsSchema = z
 	.object({
@@ -442,7 +446,7 @@ const IndividualStudentsOptionsResponseSchema = z
 				'Identifiers for the students that have access to the coursework/announcement.',
 			),
 	})
-	.strict();
+	.loose();
 
 const AnnouncementSchema = z
 	.object({
@@ -552,6 +556,7 @@ const AnnouncementResponseSchema = z
 				'ALL_STUDENTS',
 				'INDIVIDUAL_STUDENTS',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Assignee mode of the announcement. If unspecified, the default value is `ALL_STUDENTS`.',
@@ -594,6 +599,7 @@ const AnnouncementResponseSchema = z
 			),
 		state: z
 			.enum(['ANNOUNCEMENT_STATE_UNSPECIFIED', 'PUBLISHED', 'DRAFT', 'DELETED'])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Status of this announcement. If unspecified, the default state is `DRAFT`.',
@@ -631,7 +637,7 @@ const AnnouncementResponseSchema = z
 				'Description of this announcement. The text must be a valid UTF-8 string containing no more than 30,000 characters.',
 			),
 	})
-	.strict();
+	.loose();
 
 const TimeOfDaySchema = z
 	.object({
@@ -720,7 +726,7 @@ const TimeOfDayResponseSchema = z
 				'Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ModifyIndividualStudentsOptionsSchema = z
 	.object({
@@ -753,7 +759,7 @@ const ModifyIndividualStudentsOptionsResponseSchema = z
 				'IDs of students to be added as having access to this coursework/announcement.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ModifyAnnouncementAssigneesRequestSchema = z
 	.object({
@@ -785,15 +791,16 @@ const ModifyAnnouncementAssigneesRequestResponseSchema = z
 				'ALL_STUDENTS',
 				'INDIVIDUAL_STUDENTS',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Mode of the announcement describing whether it is accessible by all students or specified individual students.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ReclaimStudentSubmissionRequestSchema = z.object({}).strict();
-const ReclaimStudentSubmissionRequestResponseSchema = z.object({}).strict();
+const ReclaimStudentSubmissionRequestResponseSchema = z.object({}).loose();
 
 const NameSchema = z
 	.object({
@@ -840,7 +847,7 @@ const NameResponseSchema = z
 			.optional()
 			.describe("The user's first name. Read-only."),
 	})
-	.strict();
+	.loose();
 
 const GlobalPermissionSchema = z
 	.object({
@@ -854,10 +861,11 @@ const GlobalPermissionResponseSchema = z
 	.object({
 		permission: z
 			.enum(['PERMISSION_UNSPECIFIED', 'CREATE_COURSE'])
+			.or(z.string())
 			.optional()
 			.describe('Permission value.'),
 	})
-	.strict();
+	.loose();
 
 const UserProfileSchema = z
 	.object({
@@ -942,7 +950,7 @@ const UserProfileResponseSchema = z
 				"Represents whether a Google Workspace for Education user's domain administrator has explicitly verified them as being a teacher. This field is always false if the user is not a member of a Google Workspace for Education domain. Read-only",
 			),
 	})
-	.strict();
+	.loose();
 
 const StudentSchema = z
 	.object({
@@ -991,7 +999,7 @@ const StudentResponseSchema = z
 			.optional()
 			.describe('Identifier of the course. Read-only.'),
 	})
-	.strict();
+	.loose();
 
 const ListStudentsResponseSchema = z
 	.object({
@@ -1009,7 +1017,7 @@ const ListStudentsResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 const ListStudentsResponseResponseSchema = z
 	.object({
 		students: z
@@ -1026,7 +1034,7 @@ const ListStudentsResponseResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 
 const AddOnAttachmentStudentSubmissionSchema = z
 	.object({
@@ -1090,6 +1098,7 @@ const AddOnAttachmentStudentSubmissionResponseSchema = z
 				'RETURNED',
 				'RECLAIMED_BY_STUDENT',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				"Submission state of add-on attachment's parent post (i.e. assignment).",
@@ -1129,7 +1138,7 @@ const AddOnAttachmentStudentSubmissionResponseSchema = z
 				'Output only. Classroom-assigned identifier for this student submission. This is unique among submissions for the relevant course work and add-on attachment combination.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListAddOnAttachmentStudentSubmissionsResponseSchema = z
 	.object({
@@ -1149,7 +1158,7 @@ const ListAddOnAttachmentStudentSubmissionsResponseSchema = z
 				'Add-on attachment student submissions that match the request.',
 			),
 	})
-	.strict();
+	.loose();
 const ListAddOnAttachmentStudentSubmissionsResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -1168,7 +1177,7 @@ const ListAddOnAttachmentStudentSubmissionsResponseResponseSchema = z
 				'Add-on attachment student submissions that match the request.',
 			),
 	})
-	.strict();
+	.loose();
 
 const DateSchema = z
 	.object({
@@ -1237,7 +1246,7 @@ const DateResponseSchema = z
 				"Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.",
 			),
 	})
-	.strict();
+	.loose();
 
 const GradingPeriodSchema = z
 	.object({
@@ -1285,7 +1294,7 @@ const GradingPeriodResponseSchema = z
 			.optional()
 			.describe('Output only. System generated grading period ID. Read-only.'),
 	})
-	.strict();
+	.loose();
 
 const GradingPeriodSettingsSchema = z
 	.object({
@@ -1324,7 +1333,7 @@ const GradingPeriodSettingsResponseSchema = z
 				'Supports toggling the application of grading periods on existing stream items. Once set, this value is persisted meaning that it does not need to be set in every request to update `GradingPeriodSettings`. If not previously set, the default is False.',
 			),
 	})
-	.strict();
+	.loose();
 
 const LevelSchema = z
 	.object({
@@ -1389,7 +1398,7 @@ const LevelResponseSchema = z
 			.optional()
 			.describe('The level ID. On creation, an ID is assigned.'),
 	})
-	.strict();
+	.loose();
 
 const CriterionSchema = z
 	.object({
@@ -1436,7 +1445,7 @@ const CriterionResponseSchema = z
 			.optional()
 			.describe('The list of levels within this criterion.'),
 	})
-	.strict();
+	.loose();
 
 const RubricSchema = z
 	.object({
@@ -1557,7 +1566,7 @@ const RubricResponseSchema = z
 				'Input only. Immutable. Google Sheets ID of the spreadsheet. This spreadsheet must contain formatted rubric settings. See [Create or reuse a rubric for an assignment](https://support.google.com/edu/classroom/answer/9335069). Use of this field requires the `https://www.googleapis.com/auth/spreadsheets.readonly` or `https://www.googleapis.com/auth/spreadsheets` scope.',
 			),
 	})
-	.strict();
+	.loose();
 
 const MultipleChoiceQuestionSchema = z
 	.object({
@@ -1568,7 +1577,7 @@ const MultipleChoiceQuestionResponseSchema = z
 	.object({
 		choices: z.array(z.string()).optional().describe('Possible choices.'),
 	})
-	.strict();
+	.loose();
 
 const GradeHistorySchema = z
 	.object({
@@ -1622,6 +1631,7 @@ const GradeHistoryResponseSchema = z
 				'ASSIGNED_GRADE_POINTS_EARNED_CHANGE',
 				'MAX_POINTS_CHANGE',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'The type of grade change at this time in the submission grade history.',
@@ -1655,7 +1665,7 @@ const GradeHistoryResponseSchema = z
 			.optional()
 			.describe('The teacher who made the grade change.'),
 	})
-	.strict();
+	.loose();
 
 const CourseRosterChangesInfoSchema = z
 	.object({
@@ -1682,7 +1692,7 @@ const CourseRosterChangesInfoResponseSchema = z
 				'The `course_id` of the course to subscribe to roster changes for.',
 			),
 	})
-	.strict();
+	.loose();
 
 const CopyHistorySchema = z
 	.object({
@@ -1739,7 +1749,7 @@ const CopyHistoryResponseSchema = z
 			.optional()
 			.describe('Immutable. Identifier of the attachment.'),
 	})
-	.strict();
+	.loose();
 
 const AttachmentSchema = z
 	.object({
@@ -1764,7 +1774,7 @@ const AttachmentResponseSchema = z
 			'Google Drive file attachment.',
 		),
 	})
-	.strict();
+	.loose();
 
 const CourseAliasSchema = z
 	.object({
@@ -1791,7 +1801,7 @@ const CourseAliasResponseSchema = z
 				'Alias string. The format of the string indicates the desired alias scoping. * `d:` indicates a domain-scoped alias. Example: `d:math_101` * `p:` indicates a project-scoped alias. Example: `p:abc123` This field has a maximum length of 256 characters.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListCourseAliasesResponseSchema = z
 	.object({
@@ -1809,7 +1819,7 @@ const ListCourseAliasesResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 const ListCourseAliasesResponseResponseSchema = z
 	.object({
 		aliases: z
@@ -1826,7 +1836,7 @@ const ListCourseAliasesResponseResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 
 const RubricGradeSchema = z
 	.object({
@@ -1881,7 +1891,7 @@ const RubricGradeResponseSchema = z
 				'Optional. Optional points assigned for this criterion, typically based on the level. Levels might or might not have points. If unset, no points were set for this criterion.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListRubricsResponseSchema = z
 	.object({
@@ -1899,7 +1909,7 @@ const ListRubricsResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 const ListRubricsResponseResponseSchema = z
 	.object({
 		rubrics: z
@@ -1916,7 +1926,7 @@ const ListRubricsResponseResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ModifyCourseWorkAssigneesRequestSchema = z
 	.object({
@@ -1948,12 +1958,13 @@ const ModifyCourseWorkAssigneesRequestResponseSchema = z
 				'ALL_STUDENTS',
 				'INDIVIDUAL_STUDENTS',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Mode of the coursework describing whether it will be assigned to all students or specified individual students.',
 			),
 	})
-	.strict();
+	.loose();
 
 const GradeCategorySchema = z
 	.object({
@@ -2022,7 +2033,7 @@ const GradeCategoryResponseSchema = z
 			.optional()
 			.describe('Name of the grade category.'),
 	})
-	.strict();
+	.loose();
 
 const GradebookSettingsSchema = z
 	.object({
@@ -2065,6 +2076,7 @@ const GradebookSettingsResponseSchema = z
 				'TOTAL_POINTS',
 				'WEIGHTED_CATEGORIES',
 			])
+			.or(z.string())
 			.optional()
 			.describe('Indicates how the overall grade is calculated.'),
 		displaySetting: z
@@ -2074,10 +2086,11 @@ const GradebookSettingsResponseSchema = z
 				'HIDE_OVERALL_GRADE',
 				'SHOW_TEACHERS_ONLY',
 			])
+			.or(z.string())
 			.optional()
 			.describe('Indicates who can see the overall grade..'),
 	})
-	.strict();
+	.loose();
 
 const CourseMaterialSchema = z
 	.object({
@@ -2102,7 +2115,7 @@ const CourseMaterialResponseSchema = z
 		link: LinkResponseSchema.optional().describe('Link atatchment.'),
 		form: FormResponseSchema.optional().describe('Google Forms attachment.'),
 	})
-	.strict();
+	.loose();
 
 const CourseMaterialSetSchema = z
 	.object({
@@ -2129,7 +2142,7 @@ const CourseMaterialSetResponseSchema = z
 			.optional()
 			.describe('Materials attached to this set.'),
 	})
-	.strict();
+	.loose();
 
 const CourseSchema = z
 	.object({
@@ -2318,6 +2331,7 @@ const CourseResponseSchema = z
 				'DECLINED',
 				'SUSPENDED',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'State of the course. If unspecified, the default state is `PROVISIONED`.',
@@ -2484,7 +2498,7 @@ const CourseResponseSchema = z
 				'Sets of materials that appear on the "about" page of this course. Read-only.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListCoursesResponseSchema = z
 	.object({
@@ -2502,7 +2516,7 @@ const ListCoursesResponseSchema = z
 			.optional()
 			.describe('Courses that match the list request.'),
 	})
-	.strict();
+	.loose();
 const ListCoursesResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -2519,7 +2533,7 @@ const ListCoursesResponseResponseSchema = z
 			.optional()
 			.describe('Courses that match the list request.'),
 	})
-	.strict();
+	.loose();
 
 const StudentGroupMemberSchema = z
 	.object({
@@ -2558,7 +2572,7 @@ const StudentGroupMemberResponseSchema = z
 			.optional()
 			.describe('The identifier of the student group.'),
 	})
-	.strict();
+	.loose();
 
 const ListStudentGroupMembersResponseSchema = z
 	.object({
@@ -2576,7 +2590,7 @@ const ListStudentGroupMembersResponseSchema = z
 			.optional()
 			.describe('The student group members.'),
 	})
-	.strict();
+	.loose();
 const ListStudentGroupMembersResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -2593,10 +2607,10 @@ const ListStudentGroupMembersResponseResponseSchema = z
 			.optional()
 			.describe('The student group members.'),
 	})
-	.strict();
+	.loose();
 
 const EmptySchema = z.object({}).strict();
-const EmptyResponseSchema = z.object({}).strict();
+const EmptyResponseSchema = z.object({}).loose();
 
 const AssignmentSubmissionSchema = z
 	.object({
@@ -2617,7 +2631,7 @@ const AssignmentSubmissionResponseSchema = z
 				'Attachments added by the student. Drive files that correspond to materials with a share mode of STUDENT_COPY may not exist yet if the student has not accessed the assignment in Classroom. Some attachment metadata is only populated if the requesting user has permission to access it. Identifier and alternate_link fields are always available, but others (for example, title) may not be.',
 			),
 	})
-	.strict();
+	.loose();
 
 const StateHistorySchema = z
 	.object({
@@ -2655,6 +2669,7 @@ const StateHistoryResponseSchema = z
 				'RECLAIMED_BY_STUDENT',
 				'STUDENT_EDITED_AFTER_TURN_IN',
 			])
+			.or(z.string())
 			.optional()
 			.describe('The workflow pipeline stage.'),
 		actorUserId: z
@@ -2668,7 +2683,7 @@ const StateHistoryResponseSchema = z
 			.optional()
 			.describe('When the submission entered this state.'),
 	})
-	.strict();
+	.loose();
 
 const SubmissionHistorySchema = z
 	.object({
@@ -2689,7 +2704,7 @@ const SubmissionHistoryResponseSchema = z
 			'The state history information of the submission, if present.',
 		),
 	})
-	.strict();
+	.loose();
 
 const CourseWorkChangesInfoSchema = z
 	.object({
@@ -2716,7 +2731,7 @@ const CourseWorkChangesInfoResponseSchema = z
 				'The `course_id` of the course to subscribe to work changes for.',
 			),
 	})
-	.strict();
+	.loose();
 
 const FeedSchema = z
 	.object({
@@ -2746,6 +2761,7 @@ const FeedResponseSchema = z
 				'COURSE_ROSTER_CHANGES',
 				'COURSE_WORK_CHANGES',
 			])
+			.or(z.string())
 			.optional()
 			.describe('The type of feed.'),
 		courseWorkChangesInfo:
@@ -2757,7 +2773,7 @@ const FeedResponseSchema = z
 				'Information about a `Feed` with a `feed_type` of `COURSE_ROSTER_CHANGES`. This field must be specified if `feed_type` is `COURSE_ROSTER_CHANGES`.',
 			),
 	})
-	.strict();
+	.loose();
 
 const RegistrationSchema = z
 	.object({
@@ -2814,7 +2830,7 @@ const RegistrationResponseSchema = z
 			'Specification for the class of notifications that Classroom should deliver to the destination.',
 		),
 	})
-	.strict();
+	.loose();
 
 const ListAnnouncementsResponseSchema = z
 	.object({
@@ -2832,7 +2848,7 @@ const ListAnnouncementsResponseSchema = z
 			.optional()
 			.describe('Announcement items that match the request.'),
 	})
-	.strict();
+	.loose();
 const ListAnnouncementsResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -2849,13 +2865,13 @@ const ListAnnouncementsResponseResponseSchema = z
 			.optional()
 			.describe('Announcement items that match the request.'),
 	})
-	.strict();
+	.loose();
 
 const TeacherContextSchema = z.object({}).strict();
-const TeacherContextResponseSchema = z.object({}).strict();
+const TeacherContextResponseSchema = z.object({}).loose();
 
 const TurnInStudentSubmissionRequestSchema = z.object({}).strict();
-const TurnInStudentSubmissionRequestResponseSchema = z.object({}).strict();
+const TurnInStudentSubmissionRequestResponseSchema = z.object({}).loose();
 
 const InvitationSchema = z
 	.object({
@@ -2895,6 +2911,7 @@ const InvitationResponseSchema = z
 			.describe('Identifier assigned by Classroom. Read-only.'),
 		role: z
 			.enum(['COURSE_ROLE_UNSPECIFIED', 'STUDENT', 'TEACHER', 'OWNER'])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Role to invite the user to have. Must not be `COURSE_ROLE_UNSPECIFIED`.',
@@ -2914,7 +2931,7 @@ const InvitationResponseSchema = z
 			.optional()
 			.describe('Identifier of the course to invite the user to.'),
 	})
-	.strict();
+	.loose();
 
 const EmbedUriSchema = z
 	.object({
@@ -2940,7 +2957,7 @@ const EmbedUriResponseSchema = z
 				'Required. URI to be iframed after being populated with query parameters. This must be a valid UTF-8 string containing between 1 and 1800 characters.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ModifyAttachmentsRequestSchema = z
 	.object({
@@ -2961,10 +2978,10 @@ const ModifyAttachmentsRequestResponseSchema = z
 				'Attachments to add. A student submission may not have more than 20 attachments. Form attachments are not supported.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ReturnStudentSubmissionRequestSchema = z.object({}).strict();
-const ReturnStudentSubmissionRequestResponseSchema = z.object({}).strict();
+const ReturnStudentSubmissionRequestResponseSchema = z.object({}).loose();
 
 const AddOnAttachmentSchema = z
 	.object({
@@ -3124,7 +3141,7 @@ const AddOnAttachmentResponseSchema = z
 			.optional()
 			.describe('Immutable. Identifier of the course.'),
 	})
-	.strict();
+	.loose();
 
 const ListAddOnAttachmentsResponseSchema = z
 	.object({
@@ -3142,7 +3159,7 @@ const ListAddOnAttachmentsResponseSchema = z
 				'A token, which can be sent as `pageToken` to retrieve the next page. If this field is omitted, there are no subsequent pages.',
 			),
 	})
-	.strict();
+	.loose();
 const ListAddOnAttachmentsResponseResponseSchema = z
 	.object({
 		addOnAttachments: z
@@ -3159,7 +3176,7 @@ const ListAddOnAttachmentsResponseResponseSchema = z
 				'A token, which can be sent as `pageToken` to retrieve the next page. If this field is omitted, there are no subsequent pages.',
 			),
 	})
-	.strict();
+	.loose();
 
 const TeacherSchema = z
 	.object({
@@ -3202,7 +3219,7 @@ const TeacherResponseSchema = z
 			.optional()
 			.describe('Identifier of the course. Read-only.'),
 	})
-	.strict();
+	.loose();
 
 const ListTeachersResponseSchema = z
 	.object({
@@ -3220,7 +3237,7 @@ const ListTeachersResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 const ListTeachersResponseResponseSchema = z
 	.object({
 		teachers: z
@@ -3237,7 +3254,7 @@ const ListTeachersResponseResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 
 const GuardianInvitationSchema = z
 	.object({
@@ -3290,6 +3307,7 @@ const GuardianInvitationResponseSchema = z
 			.describe('ID of the student (in standard format)'),
 		state: z
 			.enum(['GUARDIAN_INVITATION_STATE_UNSPECIFIED', 'PENDING', 'COMPLETE'])
+			.or(z.string())
 			.optional()
 			.describe('The state that this invitation is in.'),
 		invitedEmailAddress: z
@@ -3302,7 +3320,7 @@ const GuardianInvitationResponseSchema = z
 				'Email address that the invitation was sent to. This field is only visible to domain administrators.',
 			),
 	})
-	.strict();
+	.loose();
 
 const MultipleChoiceSubmissionSchema = z
 	.object({
@@ -3321,7 +3339,7 @@ const MultipleChoiceSubmissionResponseSchema = z
 			.optional()
 			.describe("Student's select choice."),
 	})
-	.strict();
+	.loose();
 
 const ShortAnswerSubmissionSchema = z
 	.object({
@@ -3340,7 +3358,7 @@ const ShortAnswerSubmissionResponseSchema = z
 			.optional()
 			.describe('Student response to a short-answer question.'),
 	})
-	.strict();
+	.loose();
 
 const StudentSubmissionSchema = z
 	.object({
@@ -3516,6 +3534,7 @@ const StudentSubmissionResponseSchema = z
 				'SHORT_ANSWER_QUESTION',
 				'MULTIPLE_CHOICE_QUESTION',
 			])
+			.or(z.string())
 			.optional()
 			.describe('Type of course work this submission is for. Read-only.'),
 		submissionHistory: z
@@ -3572,6 +3591,7 @@ const StudentSubmissionResponseSchema = z
 				'RETURNED',
 				'RECLAIMED_BY_STUDENT',
 			])
+			.or(z.string())
 			.optional()
 			.describe('State of this submission. Read-only.'),
 		courseId: z
@@ -3629,7 +3649,7 @@ const StudentSubmissionResponseSchema = z
 				'Submission content when course_work_type is SHORT_ANSWER_QUESTION.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListStudentSubmissionsResponseSchema = z
 	.object({
@@ -3647,7 +3667,7 @@ const ListStudentSubmissionsResponseSchema = z
 			.optional()
 			.describe('Student work that matches the request.'),
 	})
-	.strict();
+	.loose();
 const ListStudentSubmissionsResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -3664,7 +3684,7 @@ const ListStudentSubmissionsResponseResponseSchema = z
 			.optional()
 			.describe('Student work that matches the request.'),
 	})
-	.strict();
+	.loose();
 
 const CourseWorkMaterialSchema = z
 	.object({
@@ -3805,6 +3825,7 @@ const CourseWorkMaterialResponseSchema = z
 				'DRAFT',
 				'DELETED',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Status of this course work material. If unspecified, the default state is `DRAFT`.',
@@ -3879,6 +3900,7 @@ const CourseWorkMaterialResponseSchema = z
 				'ALL_STUDENTS',
 				'INDIVIDUAL_STUDENTS',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Assignee mode of the course work material. If unspecified, the default value is `ALL_STUDENTS`.',
@@ -3907,7 +3929,7 @@ const CourseWorkMaterialResponseSchema = z
 				'Classroom-assigned identifier of this course work material, unique per course. Read-only.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListCourseWorkMaterialResponseSchema = z
 	.object({
@@ -3925,7 +3947,7 @@ const ListCourseWorkMaterialResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 const ListCourseWorkMaterialResponseResponseSchema = z
 	.object({
 		courseWorkMaterial: z
@@ -3942,7 +3964,7 @@ const ListCourseWorkMaterialResponseResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListGuardianInvitationsResponseSchema = z
 	.object({
@@ -3960,7 +3982,7 @@ const ListGuardianInvitationsResponseSchema = z
 			.optional()
 			.describe('Guardian invitations that matched the list request.'),
 	})
-	.strict();
+	.loose();
 const ListGuardianInvitationsResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -3977,7 +3999,7 @@ const ListGuardianInvitationsResponseResponseSchema = z
 			.optional()
 			.describe('Guardian invitations that matched the list request.'),
 	})
-	.strict();
+	.loose();
 
 const StudentGroupSchema = z
 	.object({
@@ -4016,7 +4038,7 @@ const StudentGroupResponseSchema = z
 			.optional()
 			.describe('The identifier of the course.'),
 	})
-	.strict();
+	.loose();
 
 const StudentContextSchema = z
 	.object({
@@ -4043,7 +4065,7 @@ const StudentContextResponseSchema = z
 				"Requesting user's submission id to be used for grade passback and to identify the student when showing student work to the teacher. This is set exactly when `supportsStudentWork` is `true`.",
 			),
 	})
-	.strict();
+	.loose();
 
 const AddOnContextSchema = z
 	.object({
@@ -4120,7 +4142,7 @@ const AddOnContextResponseSchema = z
 				'Immutable. Identifier of the `Announcement`, `CourseWork`, or `CourseWorkMaterial` under which the attachment is attached.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListInvitationsResponseSchema = z
 	.object({
@@ -4138,7 +4160,7 @@ const ListInvitationsResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 const ListInvitationsResponseResponseSchema = z
 	.object({
 		invitations: z
@@ -4155,7 +4177,7 @@ const ListInvitationsResponseResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 
 const TopicSchema = z
 	.object({
@@ -4216,7 +4238,7 @@ const TopicResponseSchema = z
 			.optional()
 			.describe('Identifier of the course. Read-only.'),
 	})
-	.strict();
+	.loose();
 
 const CourseWorkSchema = z
 	.object({
@@ -4411,6 +4433,7 @@ const CourseWorkResponseSchema = z
 			.describe('Timestamp when this course work was created. Read-only.'),
 		state: z
 			.enum(['COURSE_WORK_STATE_UNSPECIFIED', 'PUBLISHED', 'DRAFT', 'DELETED'])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Status of this course work. If unspecified, the default state is `DRAFT`.',
@@ -4442,6 +4465,7 @@ const CourseWorkResponseSchema = z
 				'ALL_STUDENTS',
 				'INDIVIDUAL_STUDENTS',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Assignee mode of the coursework. If unspecified, the default value is `ALL_STUDENTS`.',
@@ -4503,6 +4527,7 @@ const CourseWorkResponseSchema = z
 				'MODIFIABLE_UNTIL_TURNED_IN',
 				'MODIFIABLE',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Setting to determine when students are allowed to modify submissions. If unspecified, the default value is `MODIFIABLE_UNTIL_TURNED_IN`.',
@@ -4523,6 +4548,7 @@ const CourseWorkResponseSchema = z
 				'SHORT_ANSWER_QUESTION',
 				'MULTIPLE_CHOICE_QUESTION',
 			])
+			.or(z.string())
 			.optional()
 			.describe(
 				'Type of this course work. The type is set when the course work is created and cannot be changed.',
@@ -4568,7 +4594,7 @@ const CourseWorkResponseSchema = z
 				'Identifier for the user that created the coursework. Read-only.',
 			),
 	})
-	.strict();
+	.loose();
 
 const GuardianSchema = z
 	.object({
@@ -4629,7 +4655,7 @@ const GuardianResponseSchema = z
 				'The email address to which the initial guardian invitation was sent. This field is only visible to domain administrators.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListGuardiansResponseSchema = z
 	.object({
@@ -4649,7 +4675,7 @@ const ListGuardiansResponseSchema = z
 				'Guardians on this page of results that met the criteria specified in the request.',
 			),
 	})
-	.strict();
+	.loose();
 const ListGuardiansResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -4668,7 +4694,7 @@ const ListGuardiansResponseResponseSchema = z
 				'Guardians on this page of results that met the criteria specified in the request.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListStudentGroupsResponseSchema = z
 	.object({
@@ -4686,7 +4712,7 @@ const ListStudentGroupsResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 const ListStudentGroupsResponseResponseSchema = z
 	.object({
 		studentGroups: z
@@ -4703,7 +4729,7 @@ const ListStudentGroupsResponseResponseSchema = z
 				'Token identifying the next page of results to return. If empty, no further results are available.',
 			),
 	})
-	.strict();
+	.loose();
 
 const ListCourseWorkResponseSchema = z
 	.object({
@@ -4721,7 +4747,7 @@ const ListCourseWorkResponseSchema = z
 			.optional()
 			.describe('Course work items that match the request.'),
 	})
-	.strict();
+	.loose();
 const ListCourseWorkResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -4738,7 +4764,7 @@ const ListCourseWorkResponseResponseSchema = z
 			.optional()
 			.describe('Course work items that match the request.'),
 	})
-	.strict();
+	.loose();
 
 const ListTopicResponseSchema = z
 	.object({
@@ -4756,7 +4782,7 @@ const ListTopicResponseSchema = z
 			.optional()
 			.describe('Topic items that match the request.'),
 	})
-	.strict();
+	.loose();
 const ListTopicResponseResponseSchema = z
 	.object({
 		nextPageToken: z
@@ -4773,7 +4799,7 @@ const ListTopicResponseResponseSchema = z
 			.optional()
 			.describe('Topic items that match the request.'),
 	})
-	.strict();
+	.loose();
 
 export const GoogleClassroomModelSchemas = {
 	CloudPubsubTopic: CloudPubsubTopicSchema,
