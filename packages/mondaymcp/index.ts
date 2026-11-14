@@ -449,7 +449,7 @@ export const mondayMcpEndpointMeta = {
 			'Creates a new monday.com document in a workspace or attached to a board item, then populates it with the provided markdown content using the Platform MCP.',
 	},
 	'docs.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Updates an existing monday.com document by executing an ordered list of operations such as appending content, renaming, editing blocks, or adding comments using the Platform MCP.',
 	},
@@ -509,7 +509,7 @@ export const mondayMcpEndpointMeta = {
 			"Updates a monday.com WorkForm's settings, appearance, features, tags, or question order using a single action-based call using the Platform MCP.",
 	},
 	'forms.editQuestions': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Creates, updates, or deletes a single question on a monday.com WorkForm, with support for 23 question types and conditional visibility rules using the Platform MCP.',
 	},
@@ -594,7 +594,7 @@ export const mondayMcpEndpointMeta = {
 			'Creates a new empty workflow in a monday.com workspace using the Platform MCP, returning the workflow object ID and draft ID.',
 	},
 	'workflows.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Asks the monday.com workflow expert about a workflow, or has it add, edit or delete steps from a natural-language prompt (on a draft, or on the live version when no draft ID is given), via the Platform MCP.',
 	},

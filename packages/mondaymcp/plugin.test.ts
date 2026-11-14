@@ -60,6 +60,10 @@ describe('mondaymcp plugin registry', () => {
 		expect(meta['schema.executeQuery']?.riskLevel).toBe('destructive');
 		expect(meta['updates.create']?.riskLevel).toBe('destructive');
 		expect(meta['notifications.create']?.riskLevel).toBe('destructive');
+		// Deletes blocks, questions or workflow steps (the server marks them destructive).
+		expect(meta['docs.update']?.riskLevel).toBe('destructive');
+		expect(meta['forms.editQuestions']?.riskLevel).toBe('destructive');
+		expect(meta['workflows.update']?.riskLevel).toBe('destructive');
 	});
 
 	it('registers as an api_key plugin with no webhooks', () => {
