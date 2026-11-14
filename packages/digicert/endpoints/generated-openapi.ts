@@ -6650,7 +6650,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Approve escrowed certificate recovery',
 	},
 	'trustLifecycleApi.postRenewCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Renew certificate',
 	},
 	'trustLifecycleApi.postBulkUpdateTags': {
@@ -6907,7 +6907,7 @@ export const generatedOpenApiEndpointMeta: Record<
 			'Get enrollment details for renewable certificate using Certificate-Id',
 	},
 	'trustLifecycleApi.postRenewCertificateEnrollmentUsingCertificateId': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Renew Certificate enrollment using certificate Id.',
 	},
 	'trustLifecycleApi.handleGetCaCertsOperationUsingGet': {
@@ -7172,7 +7172,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Extend multi-signature authorization',
 	},
 	'contentTrustApi.credentialSendOtp': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send credential OTP',
 	},
 	'contentTrustApi.signHash': { riskLevel: 'write', description: 'Sign hash' },
@@ -7205,7 +7205,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Extend multi-signature authorization',
 	},
 	'contentTrustApi.credentialSendOtp1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send credential OTP',
 	},
 	'contentTrustApi.signHash1': { riskLevel: 'write', description: 'Sign hash' },
@@ -7246,7 +7246,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Get validation by ID',
 	},
 	'contentTrustApi.resendEmail': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Resend validation email',
 	},
 	'contentTrustApi.cancelValidation': {
@@ -7266,7 +7266,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Disable validation',
 	},
 	'contentTrustApi.invalidateValidation': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Invalidate validation',
 	},
 	'contentTrustApi.approvePendingSignerApproval': {
@@ -7321,7 +7321,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Returns credential details by credential name',
 	},
 	'contentTrustApi.cancelCredentialByName': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel credential by credential name',
 	},
 	'contentTrustApi.revokeCredentials': {

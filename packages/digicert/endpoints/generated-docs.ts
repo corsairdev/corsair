@@ -12480,7 +12480,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'OIDC SSO configuration details',
 	},
 	'certcentralApi.resendInvite': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Resend invite',
 	},
 	'certcentralApi.samlEntityDetails': {
@@ -12488,7 +12488,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'SAML entity details',
 	},
 	'certcentralApi.sendInvite': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send invite',
 	},
 	'certcentralApi.updateAccountEmails': {
@@ -12568,7 +12568,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Download certificate (order_id)',
 	},
 	'certcentralApi.emailCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Email certificate',
 	},
 	'certcentralApi.listCertificateNotes': {
@@ -12741,7 +12741,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'OV/EV SSL: Generate DCV token',
 	},
 	'certcentralApi.resendDcvEmail': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Resend DCV email',
 	},
 	'certcentralApi.submitForValidation': {
@@ -12777,7 +12777,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Receipt info',
 	},
 	'certcentralApi.transferFunds': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Transfer funds',
 	},
 	'certcentralApi.viewBalance': {
@@ -12854,7 +12854,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Generate DCV token',
 	},
 	'certcentralApi.dvSslResendEmails': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'DV SSL: Resend emails',
 	},
 	'certcentralApi.editCustomFieldValue': {
@@ -12871,7 +12871,7 @@ export const generatedDocEndpointMeta: Record<
 	},
 	'certcentralApi.editNote': { riskLevel: 'write', description: 'Edit note' },
 	'certcentralApi.emailSiteSeal': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Email site seal',
 	},
 	'certcentralApi.emailValidationStatus': {
@@ -12899,228 +12899,228 @@ export const generatedDocEndpointMeta: Record<
 		description: 'List reissues',
 	},
 	'certcentralApi.orderAatlNaturalPersonCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order AATL Natural Person Certificate',
 	},
 	'certcentralApi.orderAatlNaturalPersonInOrganisationCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order AATL Natural Person in Organisation Certificate',
 	},
 	'certcentralApi.orderAatlOrganizationEsealCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order AATL Organization eseal Certificate',
 	},
 	'certcentralApi.orderBasicEvOrderBasicEv': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Basic EV — Order Basic EV',
 	},
 	'certcentralApi.orderMultiYearPlanOrderMultiYearPlan': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Multi-year Plan — Order Multi-year Plan',
 	},
 	'certcentralApi.orderBasicOv': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Basic OV',
 	},
 	'certcentralApi.orderClientCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order client certificate',
 	},
 	'certcentralApi.orderCodeSigningCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order code signing certificate',
 	},
 	'certcentralApi.orderCommonMarkCertificateCmc': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Common Mark Certificate (CMC)',
 	},
 	'certcentralApi.orderDocumentSigningCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order document signing certificate',
 	},
 	'certcentralApi.orderDocumentSigningForEmployee': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Document Signing for Employee',
 	},
 	'certcentralApi.orderDocumentSigningForIndividual': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Document Signing for Individual',
 	},
 	'certcentralApi.orderDocumentSigningForOrganization': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Document Signing for Organization',
 	},
 	'certcentralApi.orderDvSsl': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order DV SSL',
 	},
 	'certcentralApi.orderEuQualifiedESealPsd2': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order EU Qualified eSeal PSD2',
 	},
 	'certcentralApi.orderEuQualifiedESeal': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order EU Qualified eSeal',
 	},
 	'certcentralApi.orderEuQualifiedPersonalOrganisation': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order EU Qualified Personal Organisation',
 	},
 	'certcentralApi.orderEuQualifiedPersonal': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order EU Qualified Personal',
 	},
 	'certcentralApi.orderEuQualifiedWebsiteAuthenticationCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order EU Qualified Website Authentication Certificate',
 	},
 	'certcentralApi.orderEuQualifiedWebsiteAuthenticationPsd2Certificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order EU Qualified Website Authentication PSD2 Certificate',
 	},
 	'certcentralApi.orderGeoTrustDvSsl': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order GeoTrust DV SSL',
 	},
 	'certcentralApi.orderInfo': { riskLevel: 'read', description: 'Order info' },
 	'certcentralApi.orderOvEvSslOrderOvEvSsl': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order OV/EV SSL — Order OV/EV SSL',
 	},
 	'certcentralApi.orderSecureSiteSslOrderSecureSiteSsl': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Secure Site SSL — Order Secure Site SSL',
 	},
 	'certcentralApi.orderPkioAuthenticationOrEncryptionCitizen': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order PKIo Authentication or Encryption - Citizen',
 	},
 	'certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationPerson': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Order PKIo Authentication or Encryption - Organisation Person',
 	},
 	'certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationServices': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Order PKIo Authentication or Encryption - Organisation Services',
 	},
 	'certcentralApi.orderPkioAuthenticationOrEncryptionPrivatePerson': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order PKIo Authentication or Encryption - Private Person',
 	},
 	'certcentralApi.orderPkioAuthenticationOrEncryptionPrivateProfessional': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Order PKIo Authentication or Encryption - Private Professional',
 	},
 	'certcentralApi.orderPkioAuthenticationOrEncryptionProfessional': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order PKIo Authentication or Encryption - Professional',
 	},
 	'certcentralApi.orderPkioCitizenSigning': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order PKIo Citizen - Signing',
 	},
 	'certcentralApi.orderPkioPersonalOrganisationSigning': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order PKIo Personal Organisation - Signing',
 	},
 	'certcentralApi.orderPkioPrivatePersonSigningOrderPkioPrivatePersonSigning': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Order PKIo Private Person - Signing — Order PKIo Private Person - Signing',
 	},
 	'certcentralApi.orderPkioPrivateProfessionalSigningOrderPkioPrivateProfessionalSigning':
 		{
-			riskLevel: 'write',
+			riskLevel: 'destructive',
 			description:
 				'Order PKIo Private Professional - Signing — Order PKIo Private Professional - Signing',
 		},
 	'certcentralApi.orderPkioPrivateServicesServer': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order PKIo Private Services Server',
 	},
 	'certcentralApi.orderPkioProfessionalSigning': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order PKIo Professional - Signing',
 	},
 	'certcentralApi.orderPkioQualifiedESeal': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order PKIo Qualified eSeal',
 	},
 	'certcentralApi.orderPrivateSsl': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Private SSL',
 	},
 	'certcentralApi.orderSecureEmailCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order secure email certificate',
 	},
 	'certcentralApi.orderSecureSiteEv': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Secure Site EV',
 	},
 	'certcentralApi.orderSecureSiteOv': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Secure Site OV',
 	},
 	'certcentralApi.orderSecureSiteProEvSsl': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Secure Site Pro EV SSL',
 	},
 	'certcentralApi.orderSecureSiteProSsl': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Secure Site Pro SSL',
 	},
 	'certcentralApi.orderSslTypeHint': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order SSL (type_hint)',
 	},
 	'certcentralApi.orderSwissClientAuthenticationCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Swiss Client Authentication Certificate',
 	},
 	'certcentralApi.orderSwissQualifiedCertificateForIndividualInOrganisation': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Order Swiss Qualified Certificate for Individual in Organisation',
 	},
 	'certcentralApi.orderSwissQualifiedCertificateForIndividual': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Swiss Qualified Certificate for Individual',
 	},
 	'certcentralApi.orderSwissRegulatedCertificateForIndividualInOrganisation': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Order Swiss Regulated Certificate for Individual in Organisation',
 	},
 	'certcentralApi.orderSwissRegulatedCertificateForIndividual': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Swiss Regulated Certificate for Individual',
 	},
 	'certcentralApi.orderSwissRegulatedCertificateForOrganisation': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Swiss Regulated Certificate for Organisation',
 	},
 	'certcentralApi.orderVerifiedMarkCertificateVmc': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order Verified Mark Certificate (VMC)',
 	},
 	'certcentralApi.orderX9PkiForTls': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Order X9 PKI for TLS',
 	},
 	'certcentralApi.purchaseKeyLockerSignatures': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Purchase KeyLocker signatures',
 	},
 	'certcentralApi.reissueCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Reissue certificate',
 	},
 	'certcentralApi.resendOrderApprovalEmail': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Resend order approval email',
 	},
 	'certcentralApi.revokeOrderCertificates': {
@@ -13145,7 +13145,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Update order contacts',
 	},
 	'certcentralApi.updateOrderStatus': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Update order status',
 	},
 	'certcentralApi.updateRenewalMessage': {
@@ -13278,7 +13278,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Update request status',
 	},
 	'certcentralApi.addOrRemoveFunds': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add or remove funds',
 	},
 	'certcentralApi.balanceDetails': {
@@ -13286,7 +13286,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Balance details',
 	},
 	'certcentralApi.cancelUnitOrder': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel unit order',
 	},
 	'certcentralApi.createSubaccount': {
@@ -13294,7 +13294,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Create subaccount',
 	},
 	'certcentralApi.createUnitOrder': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create unit order',
 	},
 	'certcentralApi.editSubaccount': {
@@ -13402,11 +13402,11 @@ export const generatedDocEndpointMeta: Record<
 		description: 'List verified contacts that can delegate',
 	},
 	'certcentralApi.resendCreateUserEmail': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Resend create user email',
 	},
 	'certcentralApi.resendVerifiedContactDelegationEmail': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Resend verified contact delegation email',
 	},
 	'certcentralApi.updateContainerAssignments': {
@@ -13427,11 +13427,11 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Validate VMC or CMC logo format (SVG)',
 	},
 	'certcentralApi.cancelVoucherCode': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel voucher code',
 	},
 	'certcentralApi.createVoucherOrder': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create voucher order',
 	},
 	'certcentralApi.getVoucherOrderDetails': {
