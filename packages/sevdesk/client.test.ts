@@ -63,7 +63,8 @@ describe('Sevdesk JSON client', () => {
 		const listUrl = new URL(String(fetchSpy.mock.calls[0]?.[0]));
 		expect(listUrl.searchParams.get('limit')).toBe('25');
 		expect(listUrl.searchParams.get('offset')).toBe('50');
-		expect(listUrl.searchParams.get('countAll')).toBe('true');
+		// Sevdesk reads any non-empty value as true, so flags go out as 1/0.
+		expect(listUrl.searchParams.get('countAll')).toBe('1');
 		expect(listUrl.searchParams.get('contact[id]')).toBe('8');
 		fetchSpy.mockResolvedValueOnce(
 			new Response('{"objects":{}}', {
@@ -102,18 +103,63 @@ describe('Sevdesk JSON client', () => {
 		).rejects.toThrow('Invalid Sevdesk X-Version value');
 		expect(fetchSpy).not.toHaveBeenCalled();
 	});
-	it('preserves Retry-After but sanitizes and does not replay a failed write', async () => {
+	it('sends false query flags as 0 so download=false returns JSON', async () => {
 		fetchSpy.mockResolvedValueOnce(
-			new Response(
-				JSON.stringify({
-					code: 'RATE_LIMITED',
-					message: 'Sensitive contact content',
-					contact: { name: 'Private Customer' },
-				}),
-				{
-					status: 429,
-					headers: { 'Content-Type': 'application/json', 'Retry-After': '4' },
-				},
+			new Response('{"objects":{}}', {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await makeSevdeskRequest('GET', '/Invoice/{invoiceId}/getPdf', token, {
+			path: { invoiceId: 1 },
+			query: {
+				download: false,
+				preventSendBy: true,
+				sevQuery: { filter: { onlyOpen: false } },
+			},
+		});
+		const url = new URL(String(fetchSpy.mock.calls[0]?.[0]));
+		expect(url.searchParams.get('download')).toBe('0');
+		expect(url.searchParams.get('preventSendBy')).toBe('1');
+		expect(url.searchParams.get('sevQuery[filter][onlyOpen]')).toBe('0');
+	});
+	it('lets core retry a 429 and honour Retry-After', async () => {
+		fetchSpy.mockResolvedValueOnce(
+			new Response('{"error":{"code":"RATE_LIMITED"}}', {
+				status: 429,
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '1' },
+			}),
+		);
+		fetchSpy.mockResolvedValueOnce(
+			new Response('{"objects":{}}', {
+				status: 201,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(
+			makeSevdeskRequest('POST', '/Contact', token, {
+				body: { name: 'Corsair test contact' },
+			}),
+		).resolves.toEqual({ objects: {} });
+		expect(fetchSpy).toHaveBeenCalledTimes(2);
+	});
+	it('preserves Retry-After but sanitizes the error once core stops retrying', async () => {
+		fetchSpy.mockImplementation(() =>
+			Promise.resolve(
+				new Response(
+					JSON.stringify({
+						code: 'RATE_LIMITED',
+						message: 'Sensitive contact content',
+						contact: { name: 'Private Customer' },
+					}),
+					{
+						status: 429,
+						headers: {
+							'Content-Type': 'application/json',
+							'Retry-After': '1',
+						},
+					},
+				),
 			),
 		);
 		// unknown because the shared HTTP client rejects with an external transport value.
@@ -124,7 +170,7 @@ describe('Sevdesk JSON client', () => {
 		if (!(caught instanceof ApiError))
 			throw new Error('Expected sanitized Sevdesk ApiError');
 		expect(caught.status).toBe(429);
-		expect(caught.retryAfter).toBe(4000);
+		expect(caught.retryAfter).toBe(1000);
 		expect(caught.message).toBe('Sevdesk API request failed');
 		expect(caught.body).toEqual({
 			code: 'RATE_LIMITED',
@@ -136,7 +182,8 @@ describe('Sevdesk JSON client', () => {
 		expect(caught.stack).toBeDefined();
 		expect(caught.stack).not.toContain('Sensitive contact content');
 		expect(caught.stack).not.toContain('Private Customer');
-		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		// Core's default: one request plus three 429 retries; the plugin adds none.
+		expect(fetchSpy).toHaveBeenCalledTimes(4);
 	});
 	it('retries transient server errors only for reads', async () => {
 		fetchSpy.mockResolvedValueOnce(

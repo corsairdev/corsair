@@ -1,20 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const SEVDESK_API_BASE = 'https://my.sevdesk.de/api/v1';
 export type SevdeskHttpMethod = ApiRequestOptions['method'];
-const RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
-	headerNames: { retryAfter: 'retry-after' },
-};
 type Options = {
 	path?: object;
 	query?: object;
@@ -29,6 +18,33 @@ function toRecord(
 	if (!value) return undefined;
 	const result: Record<string, unknown> = {};
 	for (const [key, entry] of Object.entries(value)) result[key] = entry;
+	return result;
+}
+
+// Sevdesk reads any non-empty query value as true, so `download=false` returns the raw file and
+// `preventSendBy=false` still prevents the status change. Send flags as 1/0 instead.
+// `unknown` because query values are scalars, arrays or nested sevQuery objects.
+function toQueryFlags(value: unknown): unknown {
+	if (typeof value === 'boolean') return value ? 1 : 0;
+	if (Array.isArray(value))
+		return value.map((entry: unknown) => toQueryFlags(entry));
+	if (value !== null && typeof value === 'object') {
+		const result: Record<string, unknown> = {};
+		for (const [key, entry] of Object.entries(value))
+			result[key] = toQueryFlags(entry);
+		return result;
+	}
+	return value;
+}
+
+function toQuery(
+	value: object | undefined,
+): Record<string, unknown> | undefined {
+	const record = toRecord(value);
+	if (!record) return undefined;
+	const result: Record<string, unknown> = {};
+	for (const [key, entry] of Object.entries(record))
+		result[key] = toQueryFlags(entry);
 	return result;
 }
 function delay(ms: number): Promise<void> {
@@ -125,16 +141,15 @@ export async function makeSevdeskRequest<T>(
 		method,
 		url: endpoint,
 		path: toRecord(options.path),
-		query: toRecord(options.query),
+		query: toQuery(options.query),
 		body: ['POST', 'PUT', 'PATCH'].includes(method) ? options.body : undefined,
 		mediaType: 'application/json; charset=utf-8',
 	};
 	for (let attempt = 0; attempt < 3; attempt += 1) {
 		try {
 			// unknown because provider JSON is untrusted until the operation's output Zod schema validates it.
-			return await request<T>(config, requestOptions, {
-				rateLimitConfig: RATE_LIMIT_CONFIG,
-			});
+			// Core's default rate-limit config retries a 429 three times and honours Retry-After.
+			return await request<T>(config, requestOptions);
 		} catch (caught: unknown) {
 			// unknown because transport failures may contain PII; sanitize before retrying or propagating them.
 			const error = safeError(caught);
