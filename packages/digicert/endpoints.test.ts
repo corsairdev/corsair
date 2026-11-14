@@ -588,6 +588,76 @@ describe('DigiCert endpoint requests', () => {
 		);
 	});
 
+	// SCEP carries a binary PKCS#7 message both ways, so the request goes out as
+	// application/x-pki-message bytes and the reply comes back as bytes.
+	it('sends a SCEP PKI operation as x-pki-message bytes and reads bytes back', async () => {
+		const reply = [0x30, 0x80, 0x06, 0x09];
+		call.mockResolvedValueOnce(reply);
+		await expect(
+			endpoints.privateCAApi.postHandleScepPkiOperation(ctx, {
+				path: { profileID: 'profile-1' },
+				body: [0x30, 0x82, 0x01],
+			}),
+		).resolves.toEqual(reply);
+		expect(call).toHaveBeenLastCalledWith(
+			'privateCA',
+			'/certificate-authority/api/v1/scep/{profileID}',
+			'test-key',
+			expect.objectContaining({
+				mediaType: 'application/x-pki-message',
+				binary: true,
+				body: expect.any(Blob),
+			}),
+		);
+	});
+
+	// EST (RFC 7030) answers with a PKCS#7 certificate payload, and enrollment
+	// sends a PKCS#10 request.
+	it.each([
+		['handleGetCaCertsOperationUsingGet', undefined],
+		['handleSimpleEnrollOperationUsingPost', 'application/pkcs10'],
+		['handleSimpleReEnrollOperationUsingPost', 'application/pkcs10'],
+	] as const)(
+		'returns the EST %s certificate payload as bytes',
+		async (operation, mediaType) => {
+			const reply = [0x4d, 0x49, 0x49];
+			call.mockResolvedValueOnce(reply);
+			const input =
+				mediaType === undefined
+					? { path: { profileId: 'profile-1' } }
+					: { path: { profileId: 'profile-1' }, body: 'MIIBCSR' };
+			await expect(
+				endpoints.trustLifecycleApi[operation](ctx, input),
+			).resolves.toEqual(reply);
+			expect(call).toHaveBeenLastCalledWith(
+				'trustLifecycle',
+				expect.stringContaining('/.well-known/est/'),
+				'test-key',
+				expect.objectContaining({ binary: true, mediaType }),
+			);
+		},
+	);
+
+	// The reference tables list child fields (credit card, certificate, address)
+	// next to their parents. A correctly nested order without a card must pass.
+	it('accepts a nested CertCentral order without a credit card', async () => {
+		call.mockResolvedValueOnce({ id: 1 });
+		await expect(
+			generatedDocEndpoints.certcentralApi.orderBasicOv(ctx, {
+				body: {
+					certificate: {
+						common_name: 'example.com',
+						csr: '-----BEGIN CERTIFICATE REQUEST-----',
+						signature_hash: 'sha256',
+					},
+					organization: { id: 1 },
+					order_validity: { years: 1 },
+					payment_method: 'balance',
+				},
+			}),
+		).resolves.toEqual({ id: 1 });
+	});
+
 	it('downloads Report Library files through the binary response path', async () => {
 		const bytes = [0x50, 0x4b, 0x03, 0x04, 0xff];
 		call.mockResolvedValueOnce(bytes);

@@ -5198,7 +5198,7 @@ const r_61fda20c9ab6Input = z
 		body: z.array(z.number().int()),
 	})
 	.strict();
-const r_61fda20c9ab6Output = z.string();
+const r_61fda20c9ab6Output = z.array(z.number().int());
 const r_39c28941d620Input = z
 	.object({
 		path: z.object({}).strict().default({}),
@@ -10670,7 +10670,7 @@ const r_a38f059e2a70Input = z
 		cookies: z.object({}).strict().default({}),
 	})
 	.strict();
-const r_a38f059e2a70Output = z.undefined();
+const r_a38f059e2a70Output = z.array(z.number().int());
 const r_aa991ba230c3Input = z
 	.object({
 		path: z.object({ profileId: unspecifiedProviderValue() }).strict(),
@@ -10680,7 +10680,7 @@ const r_aa991ba230c3Input = z
 		body: unspecifiedProviderValue().optional(),
 	})
 	.strict();
-const r_aa991ba230c3Output = z.undefined();
+const r_aa991ba230c3Output = z.array(z.number().int());
 const r_af7ddf1c733dInput = z
 	.object({
 		path: z.object({ profileId: unspecifiedProviderValue() }).strict(),
@@ -10690,7 +10690,7 @@ const r_af7ddf1c733dInput = z
 		body: unspecifiedProviderValue().optional(),
 	})
 	.strict();
-const r_af7ddf1c733dOutput = z.undefined();
+const r_af7ddf1c733dOutput = z.array(z.number().int());
 const r_e827e3bec28aInput = z
 	.object({
 		path: z.object({}).strict().default({}),
