@@ -8,6 +8,7 @@ import {
 	Templates,
 	Trackers,
 } from './endpoints';
+import { PostcardsCreateInputSchema } from './endpoints/types';
 import { buildContext } from './test-helpers';
 
 jest.mock('corsair/core', () => {
@@ -482,6 +483,22 @@ describe('order recipients and senders, as PostGrid reads them', () => {
 			size: '6x4',
 			frontHTML: '<b>Front</b>',
 			backHTML: '<b>Back</b>',
+		});
+	});
+
+	it('postcards.create keeps the verification flags on an inline recipient', async () => {
+		mockedRequest.mockResolvedValue({ id: 'postcard_new', status: 'ready' });
+		const input = PostcardsCreateInputSchema.parse({
+			to: { ...to, forceVerifiedStatus: true, skipVerification: true },
+			size: '6x4',
+			frontHTML: '<b>Front</b>',
+			backHTML: '<b>Back</b>',
+		});
+
+		await Postcards.create(ctx, input);
+
+		expect(sentRequest()?.body).toMatchObject({
+			to: { ...to, forceVerifiedStatus: true, skipVerification: true },
 		});
 	});
 

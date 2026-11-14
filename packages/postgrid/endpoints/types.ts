@@ -199,6 +199,14 @@ const contactInputFields = {
 	email: z.string().min(1).optional(),
 	phoneNumber: z.string().min(1).optional(),
 	jobTitle: z.string().min(1).optional(),
+	skipVerification: z
+		.boolean()
+		.optional()
+		.describe('Skip address correction and verification.'),
+	forceVerifiedStatus: z
+		.boolean()
+		.optional()
+		.describe('Mark the address verified even if verification fails.'),
 	// Documented on an inline contact: hides the contact's details from API
 	// responses and the dashboard. Omitting the field here would silently drop a
 	// caller's `secret: true` before the request was built.
