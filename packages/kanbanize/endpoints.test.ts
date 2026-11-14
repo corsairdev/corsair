@@ -1420,6 +1420,26 @@ describe('error envelopes', () => {
 		expect(JSON.stringify(error)).not.toContain('secret plan table');
 		expect(String(error)).not.toContain('secret plan table');
 	});
+
+	// cards.delete sends the caller's exceeding_reason as a query value, so the
+	// error drops the query and the URL's query string.
+	it('keeps the exceeding_reason query text off a failed card delete', async () => {
+		respond({ error: { code: 'V001', message: 'Invalid field.' } }, 400);
+
+		const error = await caught(
+			invoke(Cards.remove, {
+				card_id: 7,
+				exceeding_reason: 'acme renewal for jane doe',
+			}),
+		);
+
+		expect(error).toMatchObject({ status: 400, request: { method: 'DELETE' } });
+		const { url, request } = error as { url: string; request: object };
+		expect(url).not.toContain('?');
+		expect(JSON.stringify(request)).not.toContain('acme renewal');
+		expect(JSON.stringify(error)).not.toContain('acme renewal');
+		expect(String(error)).not.toContain('acme renewal');
+	});
 });
 
 // The single-resource reads and updates leave the record's own ID out, and the

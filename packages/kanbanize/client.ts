@@ -131,15 +131,22 @@ export function isKanbanizeAuthError(error: unknown): boolean {
  * Businessmap's `details` echoes a card create's request back. The error is
  * rebuilt as an `ApiError` with the same status and rate-limit fields, the
  * body cut down to `{ error: { code, message, reference } }`, the sent body
- * dropped, and the body's `retry_after` seconds used when no header gave one.
+ * and query dropped, and the body's `retry_after` seconds used when no header gave one.
  */
 function sanitizeApiError(error: ApiError): ApiError {
-	const { body: _body, formData: _formData, ...request } = error.request;
+	// The query can carry caller text too (cards.delete's exceeding_reason), so
+	// it goes along with the body, and the URL keeps only its path.
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
 	const fields = errorObject(error.body);
 	return new ApiError(
 		request,
 		{
-			url: error.url,
+			url: error.url.split('?')[0] ?? error.url,
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
