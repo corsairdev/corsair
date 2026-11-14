@@ -99,7 +99,15 @@ export const update = (
 						...(sku !== undefined ? { inventoryItem: { sku } } : {}),
 						...(barcode !== undefined
 							? {
-									barcodes: [{ value: barcode, type: barcodeType ?? 'UPC' }],
+									// No type unless the caller names one: Shopify checks a
+									// typed barcode against its standard, and a UPC default
+									// rejected a 13-digit ISBN live (and the price change
+									// sent with it).
+									barcodes: [
+										barcodeType
+											? { value: barcode, type: barcodeType }
+											: { value: barcode },
+									],
 								}
 							: {}),
 					},

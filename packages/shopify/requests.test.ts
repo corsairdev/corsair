@@ -228,6 +228,45 @@ describe('variants', () => {
 			variants: [{ id: 'gid://shopify/ProductVariant/11', price: '79.00' }],
 		});
 	});
+	// Live, 2026-11-15: '9780262033848' sent as UPC was rejected with "invalid
+	// length for UPC", and the price in the same call was not applied.
+	it('variants.update sends no barcode type unless one is given', async () => {
+		const ctx = createContext();
+		const updated = {
+			data: {
+				productVariantsBulkUpdate: {
+					productVariants: [{ id: 'gid://shopify/ProductVariant/11' }],
+					userErrors: [],
+				},
+			},
+		};
+		harness.respond(updated);
+		await Shopify.variants.update(ctx, {
+			productId: 'gid://shopify/Product/1',
+			id: 'gid://shopify/ProductVariant/11',
+			barcode: '9780262033848',
+		});
+		expect(sentGraphql().variables.variants).toEqual([
+			{
+				id: 'gid://shopify/ProductVariant/11',
+				barcodes: [{ value: '9780262033848' }],
+			},
+		]);
+
+		harness.respond(updated);
+		await Shopify.variants.update(ctx, {
+			productId: 'gid://shopify/Product/1',
+			id: 'gid://shopify/ProductVariant/11',
+			barcode: '9780262033848',
+			barcodeType: 'ISBN',
+		});
+		expect(sentGraphql().variables.variants).toEqual([
+			{
+				id: 'gid://shopify/ProductVariant/11',
+				barcodes: [{ value: '9780262033848', type: 'ISBN' }],
+			},
+		]);
+	});
 });
 
 describe('inventory', () => {

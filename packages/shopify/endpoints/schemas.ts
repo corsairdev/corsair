@@ -359,7 +359,9 @@ export const variantsUpdateInput = z.object({
 	barcodeType: z
 		.enum(['UPC', 'EAN', 'ISBN', 'GTIN', 'ASIN', 'NS_PID'])
 		.optional()
-		.describe('Barcode standard. Defaults to UPC when barcode is set.'),
+		.describe(
+			'Barcode standard. When omitted the value is stored without a type and is not checked against a standard.',
+		),
 	inventoryPolicy: z.enum(['DENY', 'CONTINUE']).optional(),
 });
 
