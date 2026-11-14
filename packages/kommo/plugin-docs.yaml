@@ -59,11 +59,11 @@ apiExamples:
   tasks.list:
     call: "{ entity_type: 'leads', is_completed: false }"
   tasks.create:
-    call: "{ tasks: [{ entity_id: 20024930, entity_type: 'leads', text: 'Call about the quote', complete_till: 1893456000 }] }"
+    call: "{ tasks: [{ entity_id: 20024930, entity_type: 'leads', text: 'Call about the quote', complete_till: Math.floor(Date.now() / 1000) + 86400 }] }"
   pipelines.list: {}
   users.list: {}
 apiNotes:
-  leads.list: 'Pages by number, 250 at most. `next_page` is null on the last page. Date filters are Unix seconds. A `status_id` filter needs its `pipeline_id`; Kommo allows one stage in one pipeline per request.'
+  leads.list: 'Pages by number, 250 at most. `next_page` is null on the last page. Date filters are Unix seconds. A `status_id` filter needs its `pipeline_id`; Kommo allows one stage in one pipeline per request. `order_by` and `order_direction` go together.'
   leads.create: 'Posts an array of up to 250. A lead without `pipeline_id` or `status_id` lands in the first stage of the main pipeline.'
   leads.update: 'PATCH with an array, each lead carrying its `id`. A field left out is untouched.'
   contacts.create: 'A contact needs a `name`, or a `first_name` and `last_name`.'

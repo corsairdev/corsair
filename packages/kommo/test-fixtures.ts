@@ -245,7 +245,7 @@ export const invalidPayload = {
 	detail: 'Custom field 1928052 is not available for this entity',
 };
 
-/** The plan does not include the entity. */
+/** The account's paid or trial period has ended. */
 export const paymentRequired = {
 	type: 'https://httpstatus.es/402',
 	title: 'Payment Required',

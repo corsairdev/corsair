@@ -755,10 +755,10 @@ await corsair.kommo.api.leads.list({ limit: 50, pipeline_id: 12215168, with: ['c
 | `created_to` | `number` | No | Unix seconds. |
 | `updated_from` | `number` | No | Unix seconds. |
 | `updated_to` | `number` | No | Unix seconds. |
-| `order_by` | `created_at \| updated_at \| id` | No | — |
-| `order_direction` | `asc \| desc` | No | — |
+| `order_by` | `created_at \| updated_at \| id` | No | Sort field. Needs `order_direction`. |
+| `order_direction` | `asc \| desc` | No | Sort direction. Needs `order_by`. |
 
-Pages by number, 250 at most. `next_page` is null on the last page. Date filters are Unix seconds. A `status_id` filter needs its `pipeline_id`; Kommo allows one stage in one pipeline per request.
+Pages by number, 250 at most. `next_page` is null on the last page. Date filters are Unix seconds. A `status_id` filter needs its `pipeline_id`; Kommo allows one stage in one pipeline per request. `order_by` and `order_direction` go together.
 
 
 
@@ -1024,7 +1024,7 @@ Create tasks against a lead, contact or company; every task needs a `complete_ti
 **Risk:** `write`
 
 ```ts
-await corsair.kommo.api.tasks.create({ tasks: [{ entity_id: 20024930, entity_type: 'leads', text: 'Call about the quote', complete_till: 1893456000 }] });
+await corsair.kommo.api.tasks.create({ tasks: [{ entity_id: 20024930, entity_type: 'leads', text: 'Call about the quote', complete_till: Math.floor(Date.now() / 1000) + 86400 }] });
 ```
 
 **Input**
