@@ -435,3 +435,101 @@ describe('Make scenario public endpoints', () => {
 		);
 	});
 });
+
+describe('Make responses and settings from the API reference', () => {
+	let fetchMock: jest.SpyInstance;
+	const reply = (body: object) =>
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+	});
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+	// Trimmed from the "Get scenario details" example in Make's reference.
+	const documented = {
+		id: 925,
+		name: 'New scenario',
+		teamId: 215,
+		hookId: null,
+		devices: [],
+		deviceId: null,
+		deviceScope: null,
+		concept: false,
+		description: '',
+		folderId: null,
+		folderPath: null,
+		isActive: false,
+		nextExec: null,
+		type: 'scenario',
+		chainingRole: null,
+	};
+	it('parses the null hookId, deviceId, deviceScope and nextExec Make returns', async () => {
+		reply({ scenario: documented });
+		await expect(endpoints.get(context(), id)).resolves.toEqual({
+			scenario: documented,
+		});
+		reply({ scenarios: [documented], pg: { offset: 0, limit: 10 } });
+		await expect(endpoints.list(context(), { teamId: 215 })).resolves.toEqual({
+			scenarios: [documented],
+			pg: { offset: 0, limit: 10 },
+		});
+	});
+	it('accepts enum values Make adds later in responses', async () => {
+		const later = {
+			...documented,
+			type: 'agent',
+			labels: [{ id: 1, colour: 'teal', scope: 'organization' }],
+		};
+		reply({ scenario: later });
+		await expect(endpoints.get(context(), id)).resolves.toEqual({
+			scenario: later,
+		});
+		reply({ agentModules: [{ id: 1, evaluationMode: 'sampled' }] });
+		await expect(
+			endpoints.getAiAgentModules(context(), { teamId: 7 }),
+		).resolves.toEqual({
+			agentModules: [{ id: 1, evaluationMode: 'sampled' }],
+		});
+	});
+	it('waits past the 40 s window for responsive runs and for replays', async () => {
+		const timeout = jest.spyOn(AbortSignal, 'timeout');
+		reply({ executionId: 'a'.repeat(32), status: '1' });
+		await endpoints.run(context(), { ...id, body: { responsive: true } });
+		expect(timeout).toHaveBeenLastCalledWith(60_000);
+		reply({ executionId: 'a'.repeat(32) });
+		await endpoints.run(context(), { ...id, body: { responsive: false } });
+		expect(timeout).toHaveBeenLastCalledWith(20_000);
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					executionId: 'b'.repeat(32),
+					replayed: [],
+					failed: [],
+				}),
+				{ status: 202, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		await endpoints.replay(context(), {
+			...id,
+			body: { executionIds: ['a'.repeat(32)] },
+		});
+		expect(timeout).toHaveBeenLastCalledWith(60_000);
+	});
+	it('marks replace-all and delete of build variables as destructive', () => {
+		const meta = make({ zone: 'eu1' }).endpointMeta!;
+		expect(meta['scenarios.updateBuildVariables']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(meta['scenarios.deleteBuildVariable']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(meta['scenarios.run']?.riskLevel).toBe('destructive');
+		expect(meta['scenarios.getUsage']?.riskLevel).toBe('read');
+	});
+});

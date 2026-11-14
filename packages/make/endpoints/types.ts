@@ -4,6 +4,9 @@ import { z } from 'zod';
 // The reference leaves nested scenario data, flags, mappings, interfaces,
 // variables, and metadata open-ended. Their values depend on user configuration
 // or installed modules, so a stricter shared value schema would reject valid data.
+// Output enums (scenario type, label colour and scope, entity type, evaluation
+// mode) are plain strings so a value Make adds later does not fail parsing; the
+// documented examples also return null for unset hookId, deviceId and deviceScope.
 export const listInput = z
 	.object({
 		teamId: z.number().int().optional(),
@@ -109,7 +112,7 @@ export const listOutput = z
 						id: z.number().int().optional(),
 						name: z.string().optional(),
 						teamId: z.number().int().optional(),
-						hookId: z.number().int().optional(),
+						hookId: z.number().int().nullable().optional(),
 						devices: z
 							.array(
 								z
@@ -120,9 +123,9 @@ export const listOutput = z
 									.passthrough(),
 							)
 							.optional(),
-						deviceId: z.number().int().optional(),
-						deviceScope: z.string().optional(),
-						description: z.string().optional(),
+						deviceId: z.number().int().nullable().optional(),
+						deviceScope: z.string().nullable().optional(),
+						description: z.string().nullable().optional(),
 						folderId: z.number().int().nullable().optional(),
 						concept: z.boolean().optional(),
 						folderPath: z.string().nullable().optional(),
@@ -169,11 +172,11 @@ export const listOutput = z
 							})
 							.passthrough()
 							.optional(),
-						nextExec: z.string().optional(),
+						nextExec: z.string().nullable().optional(),
 						created: z.string().optional(),
 						scenarioVersion: z.number().int().optional(),
 						moduleSequenceId: z.number().int().optional(),
-						type: z.enum(['scenario', 'tool']).optional(),
+						type: z.string().optional(),
 						chainingRole: z.string().nullable().optional(),
 						isShared: z.boolean().optional(),
 						operations: z.number().int().optional(),
@@ -203,19 +206,8 @@ export const listOutput = z
 									.object({
 										id: z.number().int().optional(),
 										name: z.string().optional(),
-										colour: z
-											.enum([
-												'white',
-												'neutral',
-												'brand',
-												'info',
-												'success',
-												'warning',
-												'danger',
-												'pink',
-											])
-											.optional(),
-										scope: z.enum(['team']).optional(),
+										colour: z.string().optional(),
+										scope: z.string().optional(),
 										teamId: z.number().int().optional(),
 										description: z.string().nullable().optional(),
 										createdBy: z.number().int().nullable().optional(),
@@ -316,7 +308,7 @@ export const createOutput = z
 				id: z.number().int().optional(),
 				name: z.string().optional(),
 				teamId: z.number().int().optional(),
-				hookId: z.number().int().optional(),
+				hookId: z.number().int().nullable().optional(),
 				devices: z
 					.array(
 						z
@@ -327,9 +319,9 @@ export const createOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				deviceId: z.number().int().optional(),
-				deviceScope: z.string().optional(),
-				description: z.string().optional(),
+				deviceId: z.number().int().nullable().optional(),
+				deviceScope: z.string().nullable().optional(),
+				description: z.string().nullable().optional(),
 				folderId: z.number().int().nullable().optional(),
 				concept: z.boolean().optional(),
 				folderPath: z.string().nullable().optional(),
@@ -376,11 +368,11 @@ export const createOutput = z
 					})
 					.passthrough()
 					.optional(),
-				nextExec: z.string().optional(),
+				nextExec: z.string().nullable().optional(),
 				created: z.string().optional(),
 				scenarioVersion: z.number().int().optional(),
 				moduleSequenceId: z.number().int().optional(),
-				type: z.enum(['scenario', 'tool']).optional(),
+				type: z.string().optional(),
 				chainingRole: z.string().nullable().optional(),
 				isShared: z.boolean().optional(),
 				operations: z.number().int().optional(),
@@ -410,19 +402,8 @@ export const createOutput = z
 							.object({
 								id: z.number().int().optional(),
 								name: z.string().optional(),
-								colour: z
-									.enum([
-										'white',
-										'neutral',
-										'brand',
-										'info',
-										'success',
-										'warning',
-										'danger',
-										'pink',
-									])
-									.optional(),
-								scope: z.enum(['team']).optional(),
+								colour: z.string().optional(),
+								scope: z.string().optional(),
 								teamId: z.number().int().optional(),
 								description: z.string().nullable().optional(),
 								createdBy: z.number().int().nullable().optional(),
@@ -540,7 +521,7 @@ export const getOutput = z
 				id: z.number().int().optional(),
 				name: z.string().optional(),
 				teamId: z.number().int().optional(),
-				hookId: z.number().int().optional(),
+				hookId: z.number().int().nullable().optional(),
 				devices: z
 					.array(
 						z
@@ -551,9 +532,9 @@ export const getOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				deviceId: z.number().int().optional(),
-				deviceScope: z.string().optional(),
-				description: z.string().optional(),
+				deviceId: z.number().int().nullable().optional(),
+				deviceScope: z.string().nullable().optional(),
+				description: z.string().nullable().optional(),
 				folderId: z.number().int().nullable().optional(),
 				concept: z.boolean().optional(),
 				folderPath: z.string().nullable().optional(),
@@ -600,11 +581,11 @@ export const getOutput = z
 					})
 					.passthrough()
 					.optional(),
-				nextExec: z.string().optional(),
+				nextExec: z.string().nullable().optional(),
 				created: z.string().optional(),
 				scenarioVersion: z.number().int().optional(),
 				moduleSequenceId: z.number().int().optional(),
-				type: z.enum(['scenario', 'tool']).optional(),
+				type: z.string().optional(),
 				chainingRole: z.string().nullable().optional(),
 				isShared: z.boolean().optional(),
 				operations: z.number().int().optional(),
@@ -634,19 +615,8 @@ export const getOutput = z
 							.object({
 								id: z.number().int().optional(),
 								name: z.string().optional(),
-								colour: z
-									.enum([
-										'white',
-										'neutral',
-										'brand',
-										'info',
-										'success',
-										'warning',
-										'danger',
-										'pink',
-									])
-									.optional(),
-								scope: z.enum(['team']).optional(),
+								colour: z.string().optional(),
+								scope: z.string().optional(),
 								teamId: z.number().int().optional(),
 								description: z.string().nullable().optional(),
 								createdBy: z.number().int().nullable().optional(),
@@ -732,7 +702,7 @@ export const updateOutput = z
 				id: z.number().int().optional(),
 				name: z.string().optional(),
 				teamId: z.number().int().optional(),
-				hookId: z.number().int().optional(),
+				hookId: z.number().int().nullable().optional(),
 				devices: z
 					.array(
 						z
@@ -743,9 +713,9 @@ export const updateOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				deviceId: z.number().int().optional(),
-				deviceScope: z.string().optional(),
-				description: z.string().optional(),
+				deviceId: z.number().int().nullable().optional(),
+				deviceScope: z.string().nullable().optional(),
+				description: z.string().nullable().optional(),
 				folderId: z.number().int().nullable().optional(),
 				concept: z.boolean().optional(),
 				folderPath: z.string().nullable().optional(),
@@ -792,11 +762,11 @@ export const updateOutput = z
 					})
 					.passthrough()
 					.optional(),
-				nextExec: z.string().optional(),
+				nextExec: z.string().nullable().optional(),
 				created: z.string().optional(),
 				scenarioVersion: z.number().int().optional(),
 				moduleSequenceId: z.number().int().optional(),
-				type: z.enum(['scenario', 'tool']).optional(),
+				type: z.string().optional(),
 				chainingRole: z.string().nullable().optional(),
 				isShared: z.boolean().optional(),
 				operations: z.number().int().optional(),
@@ -826,19 +796,8 @@ export const updateOutput = z
 							.object({
 								id: z.number().int().optional(),
 								name: z.string().optional(),
-								colour: z
-									.enum([
-										'white',
-										'neutral',
-										'brand',
-										'info',
-										'success',
-										'warning',
-										'danger',
-										'pink',
-									])
-									.optional(),
-								scope: z.enum(['team']).optional(),
+								colour: z.string().optional(),
+								scope: z.string().optional(),
 								teamId: z.number().int().optional(),
 								description: z.string().nullable().optional(),
 								createdBy: z.number().int().nullable().optional(),
@@ -948,7 +907,7 @@ export const cloneOutput = z
 				id: z.number().int().optional(),
 				name: z.string().optional(),
 				teamId: z.number().int().optional(),
-				hookId: z.number().int().optional(),
+				hookId: z.number().int().nullable().optional(),
 				devices: z
 					.array(
 						z
@@ -959,9 +918,9 @@ export const cloneOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				deviceId: z.number().int().optional(),
-				deviceScope: z.string().optional(),
-				description: z.string().optional(),
+				deviceId: z.number().int().nullable().optional(),
+				deviceScope: z.string().nullable().optional(),
+				description: z.string().nullable().optional(),
 				folderId: z.number().int().nullable().optional(),
 				concept: z.boolean().optional(),
 				folderPath: z.string().nullable().optional(),
@@ -1008,11 +967,11 @@ export const cloneOutput = z
 					})
 					.passthrough()
 					.optional(),
-				nextExec: z.string().optional(),
+				nextExec: z.string().nullable().optional(),
 				created: z.string().optional(),
 				scenarioVersion: z.number().int().optional(),
 				moduleSequenceId: z.number().int().optional(),
-				type: z.enum(['scenario', 'tool']).optional(),
+				type: z.string().optional(),
 				chainingRole: z.string().nullable().optional(),
 				isShared: z.boolean().optional(),
 				operations: z.number().int().optional(),
@@ -1042,19 +1001,8 @@ export const cloneOutput = z
 							.object({
 								id: z.number().int().optional(),
 								name: z.string().optional(),
-								colour: z
-									.enum([
-										'white',
-										'neutral',
-										'brand',
-										'info',
-										'success',
-										'warning',
-										'danger',
-										'pink',
-									])
-									.optional(),
-								scope: z.enum(['team']).optional(),
+								colour: z.string().optional(),
+								scope: z.string().optional(),
 								teamId: z.number().int().optional(),
 								description: z.string().nullable().optional(),
 								createdBy: z.number().int().nullable().optional(),
@@ -1091,7 +1039,7 @@ export const restoreOutput = z
 							.array(
 								z
 									.object({
-										entityType: z.enum(['connection', 'key']).optional(),
+										entityType: z.string().optional(),
 										entityId: z.number().int().optional(),
 									})
 									.passthrough(),
@@ -1337,9 +1285,7 @@ export const getAiAgentModulesOutput = z
 						id: z.number().int().optional(),
 						module: z.string().optional(),
 						userLabel: z.string().nullable().optional(),
-						evaluationMode: z
-							.enum(['disabled', 'measured', 'measuredAndInferred'])
-							.optional(),
+						evaluationMode: z.string().optional(),
 						tools: z
 							.array(
 								z
