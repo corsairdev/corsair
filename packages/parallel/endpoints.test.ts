@@ -72,17 +72,35 @@ test('rejects empty search queries and obsolete top-level extract settings', asy
 	expect(fetchMock).not.toHaveBeenCalled();
 });
 
-test('surfaces rate limits without retrying the request', async () => {
+test('retries a rate-limited request after Retry-After', async () => {
+	const output = { search_id: 's', session_id: 'x', results: [] };
 	const fetchMock = jest
 		.spyOn(globalThis, 'fetch')
-		.mockResolvedValue(
-			new Response('{}', { status: 429, headers: { 'retry-after': '2' } }),
+		.mockResolvedValueOnce(
+			new Response('{}', { status: 429, headers: { 'retry-after': '0' } }),
+		)
+		.mockResolvedValueOnce(
+			new Response(JSON.stringify(output), { status: 200 }),
+		);
+	expect(await api.search.search({ search_queries: ['query'] })).toEqual(
+		output,
+	);
+	expect(fetchMock).toHaveBeenCalledTimes(2);
+});
+
+test('gives up after three rate-limit retries and keeps status and Retry-After', async () => {
+	jest.spyOn(console, 'log').mockImplementation(() => {});
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(
+			async () =>
+				new Response('{}', { status: 429, headers: { 'retry-after': '0' } }),
 		);
 	await expect(
 		api.search.search({ search_queries: ['query'] }),
-	).rejects.toMatchObject({ status: 429, retryAfter: 2000 });
-	expect(fetchMock).toHaveBeenCalledTimes(1);
-});
+	).rejects.toMatchObject({ status: 429, retryAfter: 0 });
+	expect(fetchMock).toHaveBeenCalledTimes(4);
+}, 20_000);
 
 test('image search forwards documented options and returns nullable dimensions', async () => {
 	const input = {
@@ -237,6 +255,9 @@ test('memory retrieve forwards filters and parses results', async () => {
 	);
 });
 
+// The test.each tables below mix inputs for several endpoints, so each row's
+// input is typed as object and its call casts it back to that endpoint's
+// input type. Each row pairs an input with its own endpoint.
 const monitorFixture = {
 	type: 'event_stream',
 	monitor_id: 'm_1',
@@ -815,11 +836,12 @@ test('task auto schemas remain intact in requests', async () => {
 
 // Billing: https://docs.parallel.ai/getting-started/pricing.
 // Schema generation and monitor updates are conservatively treated as billable.
+// Paid runs and generations, cancels and deletes are destructive. Metered
+// lookups (search, extract, image/place search, entity search) stay `read`,
+// as R8 in .github/PLUGIN_PR_RULES.md and the Ahrefs plugin do.
 const billableCalls = [
 	() => api.chat.create({ model: 'base', messages: [] }),
 	() => api.responses.create({ model: 'parallel', input: 'question' }),
-	() =>
-		api.findall.entitySearch({ entity_type: 'companies', objective: 'firms' }),
 	() => api.findall.ingest({ objective: 'firms' }),
 	() =>
 		api.findall.createRun({
@@ -848,16 +870,13 @@ const billableCalls = [
 			settings: { query: 'news' },
 		}),
 	() => api.monitors.trigger({ monitor_id: 'm' }),
+	() => api.findall.cancel({ findall_id: 'f' }),
 	() => api.monitors.update({ monitor_id: 'm', body: { frequency: '1d' } }),
-	() => api.images.search({ search_queries: ['query'] }),
-	() => api.places.search({ query: 'coffee', location: 'London' }),
 	() =>
 		api.decisions.create({
 			state: null,
 			questions: { q: { type: 'noul', instructions: 'question' } },
 		}),
-	() => api.search.search({ search_queries: ['query'] }),
-	() => api.extract.extract({ urls: ['https://example.com'] }),
 ];
 
 test.each(['cautious', 'strict', 'readonly'] as const)(
@@ -880,4 +899,155 @@ test('non-billable retrieval remains available in readonly mode', async () => {
 		expect(await api.monitors.stats({})).toEqual(response),
 	);
 	expect(fetchMock).toHaveBeenCalledTimes(1);
+});
+
+test.each([
+	{
+		name: 'search',
+		call: () => api.search.search({ search_queries: ['query'] }),
+		body: { search_id: 's', session_id: 'x', results: [] },
+	},
+	{
+		name: 'extract',
+		call: () => api.extract.extract({ urls: ['https://example.com'] }),
+		body: { extract_id: 'e', session_id: 'x', results: [], errors: [] },
+	},
+	{
+		name: 'image search',
+		call: () => api.images.search({ search_queries: ['query'] }),
+		body: { search_id: 's', session_id: 'x', results: [] },
+	},
+	{
+		name: 'place search',
+		call: () => api.places.search({ query: 'coffee', location: 'London' }),
+		body: { search_id: 's', session_id: 'x', results: [] },
+	},
+	{
+		name: 'entity search',
+		call: () =>
+			api.findall.entitySearch({
+				entity_type: 'companies',
+				objective: 'firms',
+			}),
+		body: { entity_set_id: 'es', entities: [] },
+	},
+])('metered lookup $name runs in readonly mode', async ({ call, body }) => {
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockResolvedValue(new Response(JSON.stringify(body), { status: 200 }));
+	await runWithMode('readonly', async () => expect(await call()).toEqual(body));
+	expect(fetchMock).toHaveBeenCalledTimes(1);
+});
+
+describe('response values Parallel adds later still parse', () => {
+	const respond = (body: object) =>
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response(JSON.stringify(body), { status: 200 }));
+
+	test('task run status', async () => {
+		const run = { ...taskRun, status: 'paused' };
+		respond(run);
+		expect(await api.tasks.getRun({ run_id: 'trun_1' })).toEqual(run);
+	});
+
+	test('monitor type, status, processor and webhook event', async () => {
+		const monitor = {
+			...monitorFixture,
+			status: 'paused',
+			processor: 'pro',
+			webhook: {
+				url: 'https://example.com/hook',
+				event_types: ['monitor.execution.started'],
+			},
+		};
+		respond(monitor);
+		expect(await api.monitors.get({ monitor_id: 'm_1' })).toEqual(monitor);
+	});
+
+	test('monitor event type', async () => {
+		const events = { events: [{ event_type: 'heartbeat' }], next_cursor: null };
+		respond(events);
+		expect(await api.monitors.events({ monitor_id: 'm_1' })).toEqual(events);
+	});
+
+	test('FindAll generator, status, termination reason and match status', async () => {
+		const run = {
+			findall_id: 'f',
+			generator: 'ultra',
+			status: {
+				status: 'paused',
+				is_active: false,
+				metrics: {},
+				termination_reason: 'budget_reached',
+			},
+		};
+		const result = {
+			run,
+			candidates: [
+				{
+					candidate_id: 'c',
+					name: 'n',
+					url: 'https://x',
+					match_status: 'pending',
+				},
+			],
+		};
+		respond(result);
+		expect(await api.findall.result({ findall_id: 'f' })).toEqual(result);
+	});
+
+	test('memory kind and status', async () => {
+		const body = {
+			results: [
+				{
+					kind: 'session',
+					id: 's',
+					updated_at: '2026-01-01T00:00:00Z',
+					input_excerpt: 'q',
+				},
+			],
+		};
+		respond(body);
+		expect(await api.memory.retrieve({})).toEqual(body);
+	});
+
+	test('response output item type', async () => {
+		const body = {
+			id: 'resp_1',
+			created_at: 1,
+			object: 'response',
+			parallel_tool_calls: false,
+			output: [{ id: 'rs_1', type: 'reasoning', summary: [] }],
+		};
+		respond(body);
+		expect(
+			await api.responses.create({ model: 'parallel', input: 'q' }),
+		).toEqual(body);
+	});
+
+	test('place rating', async () => {
+		const body = {
+			search_id: 's',
+			session_id: 'x',
+			results: [{ name: 'Cafe', rating: 'outstanding' }],
+		};
+		respond(body);
+		expect(
+			await api.places.search({ query: 'coffee', location: 'London' }),
+		).toEqual(body);
+	});
+});
+
+test('task run advanced fetch_policy reaches Parallel', async () => {
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockResolvedValue(new Response(JSON.stringify(taskRun), { status: 200 }));
+	const body = {
+		processor: 'lite',
+		input: 'question',
+		advanced_settings: { fetch_policy: { max_age_seconds: 3600 } },
+	};
+	await api.tasks.createRun({ body });
+	expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toEqual(body);
 });
