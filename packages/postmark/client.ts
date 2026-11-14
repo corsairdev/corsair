@@ -293,12 +293,14 @@ export async function makePostmarkRequest(
 		// isRateLimitError() keep working. Postmark's `Message` can repeat an
 		// address, and the request (recipients, an `emailFilter`) and URL travel
 		// on the error too, so all of them are rebuilt without private values.
+		// The sent body is dropped whole: a failed send's subject, text and
+		// attachments are customer data, and nothing reads them off the error.
 		if (error instanceof ApiError) {
 			throw new ApiError(
 				{
 					...error.request,
 					query: asRecord(redactAddresses(error.request.query)),
-					body: redactAddresses(error.request.body),
+					body: undefined,
 				},
 				{
 					url: redactUrlAddresses(error.url),

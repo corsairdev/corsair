@@ -173,7 +173,7 @@ describe('makePostmarkRequest', () => {
 		expect(error.message).not.toContain('harry@example.com');
 	});
 
-	it('keeps addresses out of the error url and the request it carries', async () => {
+	it('keeps addresses and the sent message out of the error url and request', async () => {
 		// A failed send or an address-filtered list must not leave the recipient,
 		// sender or filter on the error, where it reaches callers and logs.
 		mockRequest.mockRejectedValue(
@@ -186,6 +186,8 @@ describe('makePostmarkRequest', () => {
 						From: 'sender@example.com',
 						To: 'customer@example.com',
 						Subject: 'Hi',
+						TextBody: 'Your order 123 shipped',
+						Attachments: [{ Name: 'invoice.pdf', Content: 'JVBERi0=' }],
 					},
 				},
 				{
@@ -210,7 +212,9 @@ describe('makePostmarkRequest', () => {
 		expect(error.url).toContain('count=5');
 		expect(JSON.stringify(error.request)).not.toContain('example.com');
 		expect(error.request.query).toMatchObject({ count: 5 });
-		expect(error.request.body).toMatchObject({ Subject: 'Hi' });
+		// The message itself (subject, text, attachments) is customer data too.
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error.request)).not.toMatch(/order 123|invoice\.pdf/);
 		expect(error.request.method).toBe('POST');
 		expect(error.status).toBe(401);
 		expect(error.retryAfter).toBe(7);
