@@ -3423,6 +3423,22 @@
                 ]
               },
               {
+                "group": "Prerender",
+                "pages": [
+                  "plugins/prerender/overview",
+                  "plugins/prerender/api",
+                  "plugins/prerender/database"
+                ]
+              },
+              {
+                "group": "Prerender",
+                "pages": [
+                  "plugins/prerender/overview",
+                  "plugins/prerender/api",
+                  "plugins/prerender/database"
+                ]
+              },
+              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",

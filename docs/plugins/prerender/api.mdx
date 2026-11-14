@@ -1,0 +1,235 @@
+---
+title: "Prerender API reference"
+sidebarTitle: "API"
+description: "API reference for the Prerender plugin in Corsair: every `prerender.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Cache
+
+### clear
+
+`cache.clear`
+
+Delete cached URLs matching a pattern. The clear runs as a job, and only one runs at a time
+
+**Risk:** `destructive`
+
+```ts
+await corsair.prerender.api.cache.clear({ query: 'https://example.com%' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | A SQL-like pattern: `%` matches any run of characters, `?` matches one. A trailing `%` clears everything under that prefix. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### clearStatus
+
+`cache.clearStatus`
+
+Read whether a cache clear job is still running. A 403 means one is in progress
+
+**Risk:** `read`
+
+```ts
+await corsair.prerender.api.cache.clearStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `inProgress` | `boolean \| null` | No | True while a clear job is running. |
+
+
+
+---
+
+### recache
+
+`cache.recache`
+
+Cache one URL, or up to 1000 in one call, so crawlers see current content. Recaching an already cached page is idempotent
+
+**Risk:** `write`
+
+```ts
+await corsair.prerender.api.cache.recache({ url: 'https://example.com/pricing' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | An absolute URL, including its scheme. |
+| `urls` | `string[]` | No | Up to 1000 URLs, which is the API limit per request. |
+| `adaptiveType` | `desktop \| mobile` | No | Which cached variant to act on. Defaults to desktop. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### search
+
+`cache.search`
+
+Search the cache by substring or exact URL, 200 results per page, optionally filtered by device
+
+**Risk:** `read`
+
+```ts
+await corsair.prerender.api.cache.search({ query: 'example.com/path', start: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | A substring match against the cached URLs. |
+| `exactMatch` | `string` | No | Only the URL identical to this. When both are given, only this is used. |
+| `start` | `number` | No | Paging offset. Each page holds 200 URLs. |
+| `adaptiveType` | `desktop \| mobile` | No | Which cached variant to act on. Defaults to desktop. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `object[]` | Yes | — |
+| `totalCount` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="urls full type">
+
+```ts
+{
+  url?: string | null,
+  cachedUrl?: string | null,
+  status?: string | null,
+  lastCached?: string | null,
+  expires?: string | null,
+  adaptiveType?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sitemap
+
+`cache.sitemap`
+
+Add every URL in a sitemap that is not cached yet. URLs already cached are left as they are
+
+**Risk:** `write`
+
+```ts
+await corsair.prerender.api.cache.sitemap({ url: 'https://example.com/sitemap.xml' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The sitemap XML URL to read new URLs from. |
+| `adaptiveType` | `desktop \| mobile` | No | Which cached variant to act on. Defaults to desktop. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Queue
+
+### changeSpeed
+
+`queue.changeSpeed`
+
+Set how many URLs the render queue processes per hour, or restore the automatic delay. A faster rate can overload the origin
+
+**Risk:** `write`
+
+```ts
+await corsair.prerender.api.queue.changeSpeed({ urlsPerHour: 18000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urlsPerHour` | `number` | Yes | How many URLs to recache per hour. `0` restores the automatic delay. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `recacheMetrics` | `object \| null` | No | — |
+| `isAutomaticDelay` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recacheMetrics full type">
+
+```ts
+{
+  delayBetweenURLs?: number | null,
+  num10Sec?: number | null,
+  num30Sec?: number | null,
+  num1Min?: number | null,
+  num10Min?: number | null,
+  num1Hour?: number | null,
+  num1Day?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
