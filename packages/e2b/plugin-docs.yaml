@@ -111,27 +111,27 @@ apiExamples:
   filesystem.getWatcherEvents:
     call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
   filesystem.listDir:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}}'
   filesystem.createDir:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}}'
   filesystem.move:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"source":"/tmp/corsair-e2b/a.txt","destination":"/tmp/corsair-e2b/b.txt"}}'
   filesystem.remove:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}}'
   filesystem.removeWatcher:
     call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
   filesystem.stat:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"path":"/tmp/corsair-e2b"}}'
   process.closeStdin:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101}}}'
   process.list:
     call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
   process.sendInput:
     call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"input":{"stdin":"aGVsbG8="}}}'
   process.sendSignal:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"signal":"SIGNAL_SIGTERM"}}'
   process.update:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"pty":{"size":{"cols":80,"rows":24}}}}'
   teams.getMetrics:
     call: '{"path":{"teamID":"test"},"query":{"start":0,"end":0}}'
   teams.getMaxMetrics:
