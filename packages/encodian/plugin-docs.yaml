@@ -1,0 +1,546 @@
+displayName: Encodian
+description: "Document conversion, PDF, Word, Excel, image, barcode, AI, utility, and electronic signature operations from Encodian Flowr."
+recommendedAuth: api_key
+overviewNote: |-
+  Encodian Flowr API requests require an account subscription API key in the X-ApiKey header. The official API key guide says keys are issued when an organization starts a subscription or trial.
+
+  File contents are passed as base64 strings in the documented JSON body fields. Replace the barcode example placeholder with the base64-encoded contents of an actual supported image file containing a barcode (for example, `readFileSync('barcode.png').toString('base64')`). POST actions are not automatically retried because provider documentation does not establish idempotency or retry behavior. When Encodian returns HTTP 202, the client polls its same-origin Location URL with GET until HTTP 200 returns the processed result; polling is bounded and does not replay the POST.
+examples:
+  read:
+    path: barcodes.aiBarcodeRead
+    args:
+      body:
+        FileContent: '<base64-encoded PNG barcode file>'
+  write:
+    path: conversion.htmlToPdf
+    args:
+      body:
+        encoding: UTF8
+        FileName: x
+        htmlData: "<html><body>Example</body></html>"
+        outputFilename: x
+apiExamples:
+  'barcodes.createBarcode':
+    call: '{"body":{"codeTextEncoding":"Default","dotCodemask":0}}'
+  'barcodes.readBarcodeFromDocument':
+    call: '{"body":{}}'
+  'barcodes.aiBarcodeRead':
+    call: '{"body":{"FileContent":"<base64-encoded PNG barcode file>"}}'
+  'barcodes.readBarcodeFromImage':
+    call: '{"body":{"barcodeImageFormat":"PNG","fileContent":"AA=="}}'
+  'barcodes.createQrCode':
+    call: '{"body":{"barcodeData":"x","barcodeImageFormat":"PNG"}}'
+  'barcodes.readQrCodeFromDocument':
+    call: '{"body":{}}'
+  'barcodes.readQrCodeFromImage':
+    call: '{"body":{"barcodeImageFormat":"PNG","fileContent":"AA=="}}'
+  'barcodes.createSwissQrCode':
+    call: '{"body":{"account":"x","amount":0,"creditor":{"countryCode":"Afghanistan","name":"x"},"currency":"CHF","debtor":{"countryCode":"Afghanistan","name":"x"},"imageFormat":"PNG","reference":"x"}}'
+  'barcodes.readSwissQrCodesFromDocument':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'barcodes.readSwissQrCodeFromImage':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'conversion.convertCad':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}}'
+  'conversion.convertMailMessage':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x"}}'
+  'conversion.convertExcel':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}}'
+  'conversion.basicConversion':
+    call: '{"body":{"fileContent":"AA==","FileName":"x","outputFilename":"x"}}'
+  'conversion.convertHeicToPdf':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'conversion.htmlToImage':
+    call: '{"body":{}}'
+  'conversion.htmlToPdf':
+    call: '{"body":{"encoding":"UTF8","FileName":"x","htmlData":"<html><body>Example</body></html>","outputFilename":"x"}}'
+  'conversion.htmlToPDFV2':
+    call: '{"body":{}}'
+  'conversion.htmlToWord':
+    call: '{"body":{"FileName":"x","FinalOperation":false,"outputFilename":"x"}}'
+  'conversion.convertImageToPdf':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'conversion.convertJsonToExcel':
+    call: '{"body":{"outputFilename":"x"}}'
+  'conversion.convertPdfToExcel':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'conversion.convertPdfToImages':
+    call: '{"body":{"fileContent":"AA==","imageFormat":"JPG"}}'
+  'conversion.convertPdfToJpg':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'conversion.convertToPdfA':
+    call: '{"body":{"FileName":"x"}}'
+  'conversion.convertPdfToPng':
+    call: '{"body":{"bitDepth":0,"fileContent":"AA=="}}'
+  'conversion.convertPdfToTiff':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'conversion.convertPdfToWord':
+    call: '{"body":{"fileName":"x","finalOperation":false,"outputFilename":"x"}}'
+  'conversion.convertPowerPoint':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}}'
+  'conversion.textToPdf':
+    call: '{"body":{"FileName":"x","outputFilename":"x","textData":"Example text"}}'
+  'conversion.convertVisio':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","outputFormat":"PDF"}}'
+  'conversion.convertWord':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}}'
+  'conversion.wordToPdfForm':
+    call: '{"body":{"fileContent":"AA==","FileName":"x","outputFilename":"x"}}'
+  'excel.parseCsv':
+    call: '{"body":{"FileContent":"AA==","FileName":"x"}}'
+  'excel.excelAddImageHeaderOrFooter':
+    call: '{"body":{"fileContent":"AA==","imageFileContent":"AA==","position":"HeaderLeft"}}'
+  'excel.addRowsToExcel':
+    call: '{"body":{"fileContent":"AA==","jsonData":"x"}}'
+  'excel.excelAddTextHeadersAndFooters':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.excelWatermarkText':
+    call: '{"body":{"columnPosition":0,"fileContent":"AA==","height":0,"rowPosition":0,"text":"x","width":0}}'
+  'excel.deleteRowsFromExcel':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.deleteExcelWorksheets':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.getRowsFromExcel':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.extractExcelWorksheets':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.mergeArrayOfExcelDocuments':
+    call: '{"body":{"documents":[]}}'
+  'excel.mergeExcelRows':
+    call: '{"body":{"documents":[],"outputFormat":"PDF"}}'
+  'excel.excelMergeWorksheets':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.populateExcel':
+    call: '{"body":{"fileContent":"AA==","jsonData":"x"}}'
+  'excel.excelRemoveHeadersAndFooters':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.excelWatermarkTextRemove':
+    call: '{"body":{"fileContent":"AA==","watermarkId":0}}'
+  'excel.excelRenameWorksheets':
+    call: '{"body":{"fileContent":"AA==","worksheets":[]}}'
+  'excel.excelReplaceText':
+    call: '{"body":{"fileContent":"AA==","phrases":[]}}'
+  'excel.secureExcel':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.excelSeparateWorksheets':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.unlockExcel':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'excel.updateRowsInExcel':
+    call: '{"body":{"fileContent":"AA==","jsonData":"x","updateColumn":0,"updateRow":0}}'
+  'general.aiProcessBankCheckUs':
+    call: '{"body":{}}'
+  'general.aiProcessBankStatementUs':
+    call: '{"body":{}}'
+  'general.aiProcessContract':
+    call: '{"body":{}}'
+  'general.aiProcessCreditCard':
+    call: '{"body":{}}'
+  'general.aiProcessHealthInsuranceCardUs':
+    call: '{"body":{}}'
+  'general.aiProcessIDDocument':
+    call: '{"body":{}}'
+  'general.aiProcessInvoice':
+    call: '{"body":{}}'
+  'general.aiProcessMarriageCertificateUs':
+    call: '{"body":{}}'
+  'general.aiProcessMortgageUs':
+    call: '{"body":{}}'
+  'general.aiProcessPayStubUs':
+    call: '{"body":{}}'
+  'general.aiProcessReceipt':
+    call: '{"body":{}}'
+  'general.aiProcessTaxUs':
+    call: '{"body":{}}'
+  'general.aiRunPromptText':
+    call: '{"body":{"model":"GPT_4_1","prompt":"x"}}'
+  'general.aiSpeechToText':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'general.aiTranslateFile':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","targetLanguage":"Afrikaans"}}'
+  'general.aiTranslateTextMultiple':
+    call: '{"body":{"targetLanguages":[],"text":"x"}}'
+  'general.aiTranslateText':
+    call: '{"body":{"targetLanguage":"Afrikaans","text":"x"}}'
+  'general.addToZip':
+    call: '{"body":{"documents":[],"FinalOperation":false,"outputFilename":"x"}}'
+  'general.extractFromArchive':
+    call: '{"body":{"fileContent":"AA==","includeFolders":false}}'
+  'general.extractFromArchiveV2':
+    call: '{"body":{"fileContent":"AA==","pathSeparator":"Backslash","recursive":false}}'
+  'general.getEmailAttachments':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","getInlineAttachments":false}}'
+  'general.getEmailInfo':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'general.searchAndReplaceText':
+    call: '{"body":{"Phrases":[]}}'
+  'general.searchAndReplaceTextWithImage':
+    call: '{"body":{"imageFileContent":"AA==","imageFilename":"x","SearchText":"x"}}'
+  'general.buyAdditionalCredits':
+    call: '{"body":{"credits":0,"productName":"Flowr","purchaseType":"Automated"}}'
+  'general.getSubscriptionStatus':
+    call: '{}'
+  'trigr.getTrigrSubscriptionStatus':
+    call: '{}'
+  'image.addImageWatermarkToImage':
+    call: '{"body":{"fileContent":"AA==","filename":"x","watermarkFileContent":"AA==","watermarkFilename":"x","watermarkPosition":"BottomLeft"}}'
+  'image.addTextWatermarkToImage':
+    call: '{"body":{"FileName":"x","FinalOperation":false,"Text":"x"}}'
+  'image.imageCleanUpDocument':
+    call: '{"body":{"AutoRotateConfidenceLevel":0,"FileName":"x","FinalOperation":false}}'
+  'image.imageCleanUpPhoto':
+    call: '{"body":{"AutoRotateConfidenceLevel":0,"FileName":"x","FinalOperation":false}}'
+  'image.compressImage':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","imageType":"JPG"}}'
+  'image.imageConvertFormat':
+    call: '{"body":{"currentImageFormat":"BMP","fileContent":"AA==","fileName":"x","newImageFormat":"BMP"}}'
+  'image.imageConvertToGrayscale':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'image.cropImage':
+    call: '{"body":{"cropType":"Border","fileContent":"AA=="}}'
+  'image.getImageInfo':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'image.imageExtractText':
+    call: '{"body":{"AutoRotateConfidenceLevel":0,"fileContent":"AA==","fileName":"x","imageType":"JPG"}}'
+  'image.flipImage':
+    call: '{"body":{"fileContent":"AA==","flipOrientation":"Horizontal"}}'
+  'image.imageRemoveExifTags':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","imageType":"JPG"}}'
+  'image.resizeImage':
+    call: '{"body":{"FileContent":"AA==","FileName":"x","FinalOperation":false,"ImageResizeType":"Percentage"}}'
+  'image.rotateImage':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'image.rotateImageByExifData':
+    call: '{"body":{}}'
+  'pdf.addAttachmentsToPdf':
+    call: '{"body":{"attachments":[],"fileContent":"AA=="}}'
+  'pdf.addHtmlHeaderFooter':
+    call: '{"body":{"FileName":"x","htmlHeaderFooter":"x","htmlHeaderFooterLocation":"Header"}}'
+  'pdf.addImageWatermark':
+    call: '{"body":{"FileName":"x","watermarkFileContent":"AA==","watermarkFilename":"x"}}'
+  'pdf.addImageWatermarkAdvanced':
+    call: '{"body":{"FileName":"x","watermarkFileContent":"AA==","watermarkFilename":"x"}}'
+  'pdf.addPageNumbers':
+    call: '{"body":{"FileName":"x"}}'
+  'pdf.addTextWatermark':
+    call: '{"body":{"FileName":"x","Text":"x"}}'
+  'pdf.addTextWatermarkAdvanced':
+    call: '{"body":{"FileName":"x","Text":"x"}}'
+  'pdf.aiOcrPdfDocument':
+    call: '{"body":{"fileContent":"AA==","rotateConfidenceLevel":0}}'
+  'pdf.ocrPdfDocument':
+    call: '{"body":{"AutoRotateConfidenceLevel":0,"FileName":"x"}}'
+  'pdf.pdfCheckPassword':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.compressPdf':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.pdfCreateZUGFeRDInvoice':
+    call: '{"body":{"fileContent":"AA==","zUGFeRDFileContent":"AA=="}}'
+  'pdf.pdfDeleteBlankPages':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.deletePdfPages':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.extractAttachmentsFromPdf':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.getPdfFormData':
+    call: '{"body":{"FileName":"x","FinalOperation":false}}'
+  'pdf.pdfExtractHyperlinks':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.extractImagesAll':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.extractImages':
+    call: '{"body":{"FileName":"x","ImageRegions":[]}}'
+  'pdf.getPdfDocumentInfo':
+    call: '{"body":{"fileContent":"AA==","FileName":"x"}}'
+  'pdf.extractPdfPages':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.extractPdfPagesByText':
+    call: '{"body":{"fileContent":"AA==","searchValue":"x"}}'
+  'pdf.pdfExtractTableData':
+    call: '{"body":{}}'
+  'pdf.getPdfTextLayer':
+    call: '{"body":{"FileName":"x"}}'
+  'pdf.pdfExtractTextByPage':
+    call: '{"body":{"FileContent":"AA=="}}'
+  'pdf.extractTextRegions':
+    call: '{"body":{"FileName":"x","TextRegions":[]}}'
+  'pdf.fillPdfForm':
+    call: '{"body":{"FileName":"x","formData":"x"}}'
+  'pdf.flattenPdf':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.pdfFlattenFields':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.pdfGenerateBookmarks':
+    call: '{"body":{"bookmarks":"x","fileContent":"AA=="}}'
+  'pdf.insertHtmlToPdf':
+    call: '{"body":{"FileName":"x","FinalOperation":false,"htmlData":"x"}}'
+  'pdf.pdfInsertPages':
+    call: '{"body":{"documents":[],"fileContent":"AA==","outputFilename":"x"}}'
+  'pdf.pdfInsertToc':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.pdfLinearize':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.mergeArrayOfDocumentsToPdf':
+    call: '{"body":{"documents":[],"FileName":"x","outputFilename":"x"}}'
+  'pdf.mergeDocumentsToPdf':
+    call: '{"body":{"fileContent":"AA==","fileContent2":"AA==","FileName":"x","fileName2":"x","outputFilename":"x"}}'
+  'pdf.redactPdf':
+    call: '{"body":{"FileName":"x","Redactions":[]}}'
+  'pdf.pdfRemoveDigitalSignature':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.removeWatermarksFromPdf':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'pdf.repairPdf':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.pdfReplaceTextWithImage':
+    call: '{"body":{"FileContent":"AA==","imageFileContent":"AA==","SearchText":"x"}}'
+  'pdf.resizePdf':
+    call: '{"body":{"FileContent":"AA==","pageSize":"Default"}}'
+  'pdf.rotatePdfPages':
+    call: '{"body":{"fileContent":"AA==","pdfPageRotation":"Degrees90"}}'
+  'pdf.pdfSearchAndReplaceText':
+    call: '{"body":{"phrases":[]}}'
+  'pdf.securePdfDocument':
+    call: '{"body":{"FileName":"x","FinalOperation":false}}'
+  'pdf.pdfSetMetadata':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'pdf.setPdfPrivileges':
+    call: '{"body":{"FileName":"x"}}'
+  'pdf.signPdf':
+    call: '{"body":{"certificateType":"Standard","fileContent":"AA=="}}'
+  'pdf.splitDocument':
+    call: '{"body":{"fileName":"x","splitByType":"NumberOfPages","splitConfiguration":"x"}}'
+  'pdf.splitPdfByBarcode':
+    call: '{"body":{"fileName":"x","splitPdfByBarcodeAction":"SplitOn","splitPdfByBarcodeType":"AllInstances"}}'
+  'pdf.splitPdfByText':
+    call: '{"body":{"fileName":"x","splitAction":"SplitOn","splitPdfByTextType":"AllInstances","splitValue":"x"}}'
+  'pdf.unlockPdfDocument':
+    call: '{"body":{"FileName":"x","FinalOperation":false,"password":"x"}}'
+  'pdf.pdfUpdateHyperlinks':
+    call: '{"body":{"fileContent":"AA==","hyperlinks":[]}}'
+  'pdf.validatePdfTextLayer':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'powerPoint.compressPowerPoint':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'powerPoint.powerPointDeleteSlides':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'powerPoint.mergePresentations':
+    call: '{"body":{"documents":[],"mergePresentationOutputFormat":"FODP"}}'
+  'powerPoint.populatePowerPoint':
+    call: '{"body":{"fileContent":"AA==","jsonData":"x"}}'
+  'powerPoint.powerPointSearchAndReplaceText':
+    call: '{"body":{"phrases":[]}}'
+  'powerPoint.powerPointSplit':
+    call: '{"body":{"fileContent":"AA==","splitType":"All"}}'
+  'utilities.aesEncryption':
+    call: '{"body":{"data":"x","key":"x","mode":"CBC","outputDataEncodingMethod":"BASE64"}}'
+  'utilities.aesDecryption':
+    call: '{"body":{"data":"x","inputDataEncodingMethod":"BASE64","key":"x","mode":"CBC"}}'
+  'utilities.arrayAddItems':
+    call: '{"body":{"data":"x","itemPosition":"First","items":"x"}}'
+  'utilities.arrayCombine':
+    call: '{"body":{"data":"x","dataKey":"x","mergeData":"x"}}'
+  'utilities.arrayContainsValue':
+    call: '{"body":{"data":"x","value":"x"}}'
+  'utilities.arrayCountItems':
+    call: '{"body":{"data":"x"}}'
+  'utilities.arrayFilterItems':
+    call: '{"body":{"data":"x","keywords":"x","matchType":"All"}}'
+  'utilities.arrayGetItems':
+    call: '{"body":{"data":"x","itemPosition":"First"}}'
+  'utilities.arrayFilterItemsViaRegex':
+    call: '{"body":{"data":"x","matchType":"All","regex":"x"}}'
+  'utilities.arrayMerge':
+    call: '{"body":{"data":"x","mergeData":"x"}}'
+  'utilities.arrayRemoveDuplicates':
+    call: '{"body":{"data":"x","ignoreCase":false}}'
+  'utilities.arrayRemoveItems':
+    call: '{"body":{"data":"x","itemPosition":"First"}}'
+  'utilities.arrayRemoveItemsRegex':
+    call: '{"body":{"data":"x","regex":"x"}}'
+  'utilities.arrayReplaceValues':
+    call: '{"body":{"data":"x"}}'
+  'utilities.arrayReverseItems':
+    call: '{"body":{"data":"x"}}'
+  'utilities.arraySortItems':
+    call: '{"body":{"data":"x"}}'
+  'utilities.arraySplitItems':
+    call: '{"body":{"data":"x"}}'
+  'utilities.arrayConvertToJson':
+    call: '{"body":{"data":"x","name":"x"}}'
+  'utilities.arrayConvertToXml':
+    call: '{"body":{"data":"x","item":"x","root":"x"}}'
+  'utilities.calculateDate':
+    call: '{"body":{"date":"x","interval":0,"measurement":"Ticks","operation":"Add"}}'
+  'utilities.cleanString':
+    call: '{"body":{"text":"x"}}'
+  'utilities.compareText':
+    call: '{"body":{"primaryText":"x","secondaryText":"x"}}'
+  'utilities.concatenateText':
+    call: '{"body":{}}'
+  'utilities.convertJsonToXml':
+    call: '{"body":{"json":"x"}}'
+  'utilities.convertTimeZoneEnc':
+    call: '{"body":{"date":"x","newTimeZone":"Default"}}'
+  'utilities.convertXmlToJson':
+    call: '{"body":{"xml":"x"}}'
+  'utilities.createGuid':
+    call: '{"body":{"case":"Lower"}}'
+  'utilities.createHashCodeV2':
+    call: '{"body":{"data":"x","digestAlgorithm":"SHA1"}}'
+  'utilities.createHMACV2':
+    call: '{"body":{"digestAlgorithm":"SHA1","key":"x"}}'
+  'utilities.createJwt':
+    call: '{"body":{"key":"x","securityAlgorithm":"HmacSha256Signature"}}'
+  'utilities.escapeHtml':
+    call: '{"body":{"html":"x"}}'
+  'utilities.extractEmailAddressesFromText':
+    call: '{"body":{"regex":"x","text":"x"}}'
+  'utilities.extractTextBetweenValues':
+    call: '{"body":{"text":"x"}}'
+  'utilities.extractAllTextInstancesBetweenValues':
+    call: '{"body":{"text":"x"}}'
+  'utilities.extractUrlsFromText':
+    call: '{"body":{"regex":"x","text":"x"}}'
+  'utilities.formatDate':
+    call: '{"body":{"date":"x","format":"x"}}'
+  'utilities.formatTextCase':
+    call: '{"body":{"action":"ToUpper","text":"x"}}'
+  'utilities.generatePassword':
+    call: '{"body":{"length":0}}'
+  'utilities.generateRandomNumber':
+    call: '{"body":{}}'
+  'utilities.getDateTimeDifference':
+    call: '{"body":{"endDateTime":"x","interval":"Year","startDateTime":"x"}}'
+  'utilities.getFileExtension':
+    call: '{"body":{"fileName":"x"}}'
+  'utilities.getFileFormat':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'utilities.parseHtmlTable':
+    call: '{"body":{}}'
+  'utilities.removeDiacritics':
+    call: '{"body":{"text":"x"}}'
+  'utilities.removeTextBetweenValues':
+    call: '{"body":{"endValue":"x","startValue":"x","text":"x"}}'
+  'utilities.removeWhitespaceFromText':
+    call: '{"body":{"text":"x"}}'
+  'utilities.replaceValueWithRegex':
+    call: '{"body":{"regex":"x","text":"x"}}'
+  'utilities.replaceValueWithText':
+    call: '{"body":{"text":"x"}}'
+  'utilities.rsaEncryption':
+    call: '{"body":{"data":"x","key":"x","keyType":"PUBLIC","mode":"RSA","rsaOutputDataType":"BASE64"}}'
+  'utilities.rsaDecryption':
+    call: '{"body":{"data":"x","key":"x","keyType":"PUBLIC","mode":"RSA","rsaInputDataType":"BASE64"}}'
+  'utilities.createRsaKeyPair':
+    call: '{"body":{"addHeaderAndFooter":false,"keySize":"Size2048","privateKeyFormat":"PKCS1"}}'
+  'utilities.regexSearchTextV2':
+    call: '{"body":{"query":"x","text":"x"}}'
+  'utilities.splitText':
+    call: '{"body":{"text":"x"}}'
+  'utilities.splitTextViaRegex':
+    call: '{"body":{"regex":"x","text":"x"}}'
+  'utilities.textContainsValue':
+    call: '{"body":{"text":"x","value":"x"}}'
+  'utilities.trimText':
+    call: '{"body":{"text":"x","textTrimPosition":"TrimStartAndEnd"}}'
+  'utilities.unescapeHtml':
+    call: '{"body":{"html":"x"}}'
+  'utilities.validateEmailAddress':
+    call: '{"body":{"emailAddress":"x","regex":"x"}}'
+  'utilities.validateGuid':
+    call: '{"body":{"guid":"x"}}'
+  'utilities.validateJson':
+    call: '{"body":{"json":"x"}}'
+  'utilities.validateUrlAvailability':
+    call: '{"body":{"url":"x"}}'
+  'utilities.validateUrlSyntax':
+    call: '{"body":{"url":"x"}}'
+  'word.addHtmlHeaderFooterWord':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'word.addImageWatermarkWord':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","watermarkFileContent":"AA==","watermarkFilename":"x"}}'
+  'word.wordAddPageNumbers':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.addTextWatermarkWord':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","text":"x"}}'
+  'word.compareWordDocuments':
+    call: '{"body":{"fileContentOne":"AA==","fileContentTwo":"AA=="}}'
+  'word.deleteWordPages':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.disableTrackedChanges':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.enableTrackedChanges':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.wordExtractFieldData':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'word.wordExtractFiles':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'word.wordExtractImages':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'word.wordExtractMetadata':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'word.extractWordPages':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.getTextFromWord':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'word.getTrackedChanges':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'word.wordInsertText':
+    call: '{"body":{"elementType":"Any","fileContent":"AA==","fileName":"x","insertAs":"New","instance":0,"instances":"All","searchBy":"Element","text":"x","textPlacement":"Append"}}'
+  'word.manageTrackedChanges':
+    call: '{"body":{"FileContent":"AA==","FileName":"x"}}'
+  'word.mergeArrayOfDocumentsToWord':
+    call: '{"body":{"documents":[],"FinalOperation":false,"outputFilename":"x"}}'
+  'word.optimiseWordDocument':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","version":"Word2000"}}'
+  'word.populateWordDocument':
+    call: '{"body":{"documentData":"x","fileContent":"AA==","populationOptions":"Default"}}'
+  'word.removeHeaderFooterWord':
+    call: '{"body":{"fileContent":"AA=="}}'
+  'word.removeWordTableOfContents':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.removeWatermarksFromWord':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.wordSearchAndReplaceText':
+    call: '{"body":{"fileName":"x","phrases":[]}}'
+  'word.wordReplaceTextWithImage':
+    call: '{"body":{"FileContent":"AA==","FileName":"x","imageFileContent":"AA==","SearchText":"x"}}'
+  'word.secureWordDocument':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.wordSetMetadata':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.splitWordDocument':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","splitType":"AllPages"}}'
+  'word.wordSplitByText':
+    call: '{"body":{"fileContent":"AA==","fileName":"x","splitAction":"SplitOn","splitValue":"x","wordSplitByTextType":"All"}}'
+  'word.wordUnlock':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'word.searchAndReplaceHyperlink':
+    call: '{"body":{"fileContent":"AA==","hyperlinks":[]}}'
+  'word.updateWordTableOfContents':
+    call: '{"body":{"fileContent":"AA==","fileName":"x"}}'
+  'sign.envelopeCreateSingle':
+    call: '{"body":{"downloadAs":"Default","expiresIn":0,"file":"AA==","sender":"x","title":"x"}}'
+  'sign.envelopeCreateSingleWithStages':
+    call: '{"body":{"downloadAs":"Default","expiresIn":0,"file":"AA==","sender":"x","stages":[],"title":"x"}}'
+  'sign.envelopeCreateMultiple':
+    call: '{"body":{"downloadAs":"Default","expiresIn":0,"files":[],"recipients":[],"sender":"x","title":"x"}}'
+  'sign.envelopeCreateMultipleWithStages':
+    call: '{"body":{"downloadAs":"Default","expiresIn":0,"files":[],"sender":"x","stages":[],"title":"x"}}'
+  'sign.envelopeGetStatus':
+    call: '{"body":{}}'
+  'sign.envelopeDownloadSignedDocuments':
+    call: '{"body":{}}'
+  'sign.envelopeDownloadAuditTrail':
+    call: '{"body":{}}'
+  'sign.recipientCreateSingle':
+    call: '{"body":{"emailAddress":"x"}}'
+  'sign.recipientCreateMultiple':
+    call: '{"body":{"recipients":[]}}'
+  'sign.recipientDeleteSingle':
+    call: '{"body":{}}'
+  'sign.recipientGetSingle':
+    call: '{"body":{}}'
+  'sign.recipientListAll':
+    call: '{"body":{}}'

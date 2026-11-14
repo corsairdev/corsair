@@ -1,0 +1,140 @@
+---
+title: "Encodian plugin"
+sidebarTitle: "Overview"
+description: "Document conversion, PDF, Word, Excel, image, barcode, AI, utility, and electronic signature operations from Encodian Flowr."
+---
+
+Use **Encodian** through Corsair: one client, typed API calls.
+
+Encodian Flowr API requests require an account subscription API key in the X-ApiKey header. The official API key guide says keys are issued when an organization starts a subscription or trial.
+
+File contents are passed as base64 strings in the documented JSON body fields. Replace the barcode example placeholder with the base64-encoded contents of an actual supported image file containing a barcode (for example, `readFileSync('barcode.png').toString('base64')`). POST actions are not automatically retried because provider documentation does not establish idempotency or retry behavior. When Encodian returns HTTP 202, the client polls its same-origin Location URL with GET until HTTP 200 returns the processed result; polling is bounded and does not replay the POST.
+
+**What you get:**
+
+- 262 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/encodian better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/encodian better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/encodian better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/encodian better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { encodian } from '@corsair-dev/encodian';
+
+export const corsair = createCorsair({
+	plugins: [
+		encodian(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Encodian API key before the first call: `pnpm corsair setup --plugin=encodian --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+encodian()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'encodian',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`barcodes.aiBarcodeRead`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.encodian.api.barcodes.aiBarcodeRead({
+	body: { FileContent: '<base64-encoded PNG barcode file>' },
+});
+```
+
+
+**`conversion.htmlToPdf`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.encodian.api.conversion.htmlToPdf({
+	body: {
+		encoding: 'UTF8',
+		FileName: 'x',
+		htmlData: '<html><body>Example</body></html>',
+		outputFilename: 'x',
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/encodian/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/encodian/api">
+    Every `encodian.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
