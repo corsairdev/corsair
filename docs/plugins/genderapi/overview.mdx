@@ -1,0 +1,136 @@
+---
+title: "Gender API plugin"
+sidebarTitle: "Overview"
+description: "Look up the gender behind a first name with Gender API - one name, up to 100 at once, an email address or a full name, each answer scored with its sample count and accuracy."
+---
+
+Use **Gender API** through Corsair: one client, typed API calls.
+
+Copy the server key from your Gender API account. The key travels as the `key` **query parameter**, which is where the simple API expects it, not as a header.
+
+Things to know before you call:
+
+- **A failure arrives with HTTP 200.** Gender API puts `errno` and `errmsg` in the body of every answer, with `0` on a good one. A live probe with a bad key answered **200** and `{"errno":40,"errmsg":"invalid or missing key"}`. The plugin throws whenever the code is non-zero, whatever the status was.
+- **The documented codes are 10, 11, 20, 21, 30, 40 and 500.** They cover an invalid country code, a country count that does not match the name count, a missing name, more than 100 names, a used-up quota, an unknown key, and their own internal failure. `GenderApiAPIError` exposes `errno` so a caller can branch on them, and `GENDER_API_ERRNO` names each one.
+- **The quota is `errno: 30`, not a 429.** A limit that ran out answers 200 with the code and a link to the pricing page, so it is not retried.
+- **`gender` can be `unknown`.** The answer is still a success: `samples` and `accuracy` tell you how weak the data is. Gender API never returns a null gender.
+- **A country changes the answer.** `Andrea` is male in Italy and female in Germany, and `multi` accepts one country for every name or one per name in the same order.
+- **A name is normalized before lookup.** `name_sanitized` is the form the database actually matched, which is worth reading when a result looks wrong.
+- **`fullName` returns a null last name under `strict`.** With `strict: true` Gender API returns a null `last_name` when it is not in the database, instead of guessing one.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/genderapi better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/genderapi better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/genderapi better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/genderapi better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { genderapi } from '@corsair-dev/genderapi';
+
+export const corsair = createCorsair({
+	plugins: [
+		genderapi(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Gender API API key before the first call: `pnpm corsair setup --plugin=genderapi --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+genderapi()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'genderapi',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Look up the gender behind one first name**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.genderapi.api.lookup.name({ name: 'Andrea', country: 'IT' });
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/genderapi/api) reference._
+
+
+See the full list on the [API](/plugins/genderapi/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/genderapi/api">
+    Every `genderapi.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
