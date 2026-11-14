@@ -2,10 +2,8 @@ import { conversiontools } from './index';
 
 // R8 in .github/PLUGIN_PR_RULES.md: an operation that sends a message, spends
 // money or credits, or can't be undone is `destructive`.
-const meta = conversiontools().endpointMeta as Record<
-	string,
-	{ riskLevel: string }
->;
+const meta: Record<string, { riskLevel?: string } | undefined> =
+	conversiontools().endpointMeta ?? {};
 
 describe('conversiontools risk levels', () => {
 	it.each(['tasks.create', 'tasks.remove'])('marks %s destructive', (op) => {
