@@ -188,6 +188,25 @@ describe('makeKadoaRequest', () => {
 		});
 	});
 
+	it('uses a fixed message when the body has none, not the raw body', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('upstream said: row secret-value', {
+				status: 504,
+				headers: { 'Content-Type': 'text/plain' },
+			}),
+		);
+
+		const error = await makeKadoaRequest(API_KEY, {
+			method: 'GET',
+			path: '/v4/workflows',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toMatchObject({
+			status: 504,
+			message: 'Kadoa 504: Kadoa request failed',
+		});
+	});
+
 	it('rejects a key with a line break without quoting it', async () => {
 		const badKey = 'tk-secret-part\nsecond-line';
 

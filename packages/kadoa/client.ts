@@ -116,7 +116,9 @@ function sanitizeApiError(error: ApiError): ApiError {
 			statusText: error.statusText,
 			body: error.body,
 		},
-		describeKadoaError(error.status, error.body, error.message),
+		// Core's message for a status it does not list quotes the whole response
+		// body, so a body without a message gets a fixed one instead.
+		describeKadoaError(error.status, error.body, 'Kadoa request failed'),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
