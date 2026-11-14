@@ -1047,10 +1047,17 @@ await corsair.gorgias.api.customers.listCustomerCustomFieldsValues({"path":{"cus
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `object` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `meta` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -1093,11 +1100,22 @@ await corsair.gorgias.api.customers.listCustomerCustomFieldsValues({"path":{"cus
     updated_datetime?: string | null,
     deactivated_datetime?: string | null
   } | null,
-  value?: Record<string, JsonValue> | null
+  value?: JsonValue | null
 }[]
 ```
 </Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  prev_cursor?: string | null,
+  next_cursor?: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1423,7 +1441,7 @@ await corsair.gorgias.api.customers.updateCustomerCustomFieldValue({"path":{"cus
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `field` | `object \| null` | No | — |
-| `value` | `Record<string, JsonValue> \| null` | No | — |
+| `value` | `JsonValue \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="field full type">
@@ -1510,7 +1528,7 @@ await corsair.gorgias.api.customers.updateCustomerCustomFieldValues({"path":{"cu
 ```ts
 {
   id: number,
-  value: Record<string, JsonValue>
+  value: string | boolean | number
 }[]
 ```
 </Accordion>
@@ -1518,10 +1536,17 @@ await corsair.gorgias.api.customers.updateCustomerCustomFieldValues({"path":{"cu
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `object` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `meta` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -1564,11 +1589,22 @@ await corsair.gorgias.api.customers.updateCustomerCustomFieldValues({"path":{"cu
     updated_datetime?: string | null,
     deactivated_datetime?: string | null
   } | null,
-  value?: Record<string, JsonValue> | null
+  value?: JsonValue | null
 }[]
 ```
 </Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  prev_cursor?: string | null,
+  next_cursor?: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -2004,7 +2040,7 @@ await corsair.gorgias.api.customFields.updateCustomField({"path":{"id":1},"body"
       default?: boolean
     }
   },
-  deactivated_datetime?: string
+  deactivated_datetime?: string | null
 }
 ```
 </Accordion>
@@ -2125,7 +2161,7 @@ await corsair.gorgias.api.customFields.updateCustomFields({"body":[]});
       default?: boolean
     }
   },
-  deactivated_datetime?: string,
+  deactivated_datetime?: string | null,
   id: number
 }[]
 ```
@@ -2464,7 +2500,7 @@ await corsair.gorgias.api.integrations.createIntegration({"body":{"name":"x","ty
 
 ```ts
 {
-  deactivated_datetime?: string | null,
+  deactivated_datetime?: string,
   description?: string | null | null,
   http?: {
     form?: null,
@@ -2902,7 +2938,7 @@ await corsair.gorgias.api.integrations.updateIntegration({"path":{"id":1},"body"
 
 ```ts
 {
-  deactivated_datetime?: string | null,
+  deactivated_datetime?: string,
   description?: string | null | null,
   http?: {
     form?: null,
@@ -5343,7 +5379,7 @@ await corsair.gorgias.api.rules.createRule({"body":{"code":"x","name":"x"}});
 {
   code: string,
   code_ast?: Record<string, JsonValue>,
-  deactivated_datetime?: string | null,
+  deactivated_datetime?: string,
   description?: string | null,
   event_types?: ticket-created | ticket-updated | ticket-message-created | ticket-assigned | ticket-self-unsnoozed | satisfaction-survey-responded,
   name: string,
@@ -5575,7 +5611,7 @@ await corsair.gorgias.api.rules.updateRule({"path":{"id":1},"body":{"code":"x","
 {
   code?: string,
   code_ast?: Record<string, JsonValue>,
-  deactivated_datetime?: string | null,
+  deactivated_datetime?: string,
   description?: string | null,
   event_types?: ticket-created | ticket-updated | ticket-message-created | ticket-assigned | ticket-self-unsnoozed | satisfaction-survey-responded,
   name?: string,
@@ -8895,7 +8931,7 @@ Record<string, {
   } | null,
   id?: number | null,
   prediction?: Record<string, JsonValue> | null,
-  value?: Record<string, JsonValue> | null
+  value?: JsonValue | null
 }> | null
 ```
 </Accordion>
@@ -9634,7 +9670,7 @@ Record<string, {
   } | null,
   id?: number | null,
   prediction?: Record<string, JsonValue> | null,
-  value?: Record<string, JsonValue> | null
+  value?: JsonValue | null
 }> | null
 ```
 </Accordion>
@@ -9891,10 +9927,17 @@ await corsair.gorgias.api.tickets.listTicketCustomFields({"path":{"ticket_id":1}
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `object` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `meta` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -9940,11 +9983,22 @@ await corsair.gorgias.api.tickets.listTicketCustomFields({"path":{"ticket_id":1}
   } | null,
   id?: number | null,
   prediction?: Record<string, JsonValue> | null,
-  value?: Record<string, JsonValue> | null
+  value?: JsonValue | null
 }[]
 ```
 </Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  prev_cursor?: string | null,
+  next_cursor?: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -10109,7 +10163,7 @@ await corsair.gorgias.api.tickets.listTickets({});
     } | null,
     id?: number | null,
     prediction?: Record<string, JsonValue> | null,
-    value?: Record<string, JsonValue> | null
+    value?: JsonValue | null
   }> | null
 }[]
 ```
@@ -10161,10 +10215,17 @@ await corsair.gorgias.api.tickets.listTicketTags({"path":{"ticket_id":1}});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `object` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `meta` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -10181,7 +10242,18 @@ await corsair.gorgias.api.tickets.listTicketTags({"path":{"ticket_id":1}});
 }[]
 ```
 </Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  prev_cursor?: string | null,
+  next_cursor?: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -10570,7 +10642,7 @@ Record<string, {
   } | null,
   id?: number | null,
   prediction?: Record<string, JsonValue> | null,
-  value?: Record<string, JsonValue> | null
+  value?: JsonValue | null
 }> | null
 ```
 </Accordion>
@@ -10836,7 +10908,7 @@ await corsair.gorgias.api.tickets.updateTicketCustomField({"path":{"ticket_id":1
 | `field` | `object \| null` | No | — |
 | `id` | `number \| null` | No | — |
 | `prediction` | `Record<string, JsonValue> \| null` | No | — |
-| `value` | `Record<string, JsonValue> \| null` | No | — |
+| `value` | `JsonValue \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="field full type">
@@ -10934,10 +11006,17 @@ This route replaces all custom-field values on the ticket. Include every value y
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `object` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `meta` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -10983,11 +11062,22 @@ This route replaces all custom-field values on the ticket. Include every value y
   } | null,
   id?: number | null,
   prediction?: Record<string, JsonValue> | null,
-  value?: Record<string, JsonValue> | null
+  value?: JsonValue | null
 }[]
 ```
 </Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  prev_cursor?: string | null,
+  next_cursor?: string | null
+}
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -12664,7 +12754,7 @@ await corsair.gorgias.api.widgets.createWidget({"body":{"template":{},"type":"bi
 ```ts
 {
   context?: ticket | customer | user,
-  deactivated_datetime?: string | null,
+  deactivated_datetime?: string,
   integration_id?: number | null,
   app_id?: string | null,
   order?: number,
@@ -12897,7 +12987,7 @@ await corsair.gorgias.api.widgets.updateWidget({"path":{"id":1},"body":{"context
 ```ts
 {
   context?: ticket | customer | user,
-  deactivated_datetime?: string | null,
+  deactivated_datetime?: string,
   integration_id?: number | null,
   app_id?: string | null,
   order?: number,
