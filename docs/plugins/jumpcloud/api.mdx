@@ -38,7 +38,7 @@ await corsair.jumpcloud.api.applications.get({});
 | `active` | `boolean \| null` | No | — |
 | `beta` | `boolean \| null` | No | — |
 | `color` | `"" \| #202D38 \| #005466 \| #3E8696 \| #006CAC \| #0617AC \| #7C6ADA \| #D5779D \| #9E2F00 \| #FFB000 \| #58C469 \| #57C49F \| #FF6C03 \| string \| null` | No | — |
-| `config` | `object` | Yes | Only required for SAML configuration (not required for Bookmarks) |
+| `config` | `object \| null` | No | Only required for SAML configuration (not required for Bookmarks) |
 | `created` | `string \| null` | No | — |
 | `databaseAttributes` | `Record<string, any>[] \| null` | No | — |
 | `description` | `string \| null` | No | — |
@@ -127,7 +127,7 @@ await corsair.jumpcloud.api.applications.get({});
     visible?: boolean | null
   } | null,
   authClaimConfiguration?: any | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3348,7 +3348,7 @@ await corsair.jumpcloud.api.users.unlock({});
 
 Update a JumpCloud system user; setting state to ACTIVATED on a staged user emails them an activation link
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.jumpcloud.api.users.update({});

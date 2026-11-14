@@ -59,7 +59,7 @@ pnpm add @corsair-dev/jumpcloud
 | `users.setPassword` | `jumpcloud.api.users.setPassword` | `destructive` | Force-set a system user's password, replacing the current one |
 | `users.syncMfa` | `jumpcloud.api.users.syncMfa` | `write` | Sync system user MFA |
 | `users.unlock` | `jumpcloud.api.users.unlock` | `write` | Unlock a locked system user |
-| `users.update` | `jumpcloud.api.users.update` | `write` | Update a JumpCloud system user; setting state to ACTIVATED on a staged user emails them an activation link |
+| `users.update` | `jumpcloud.api.users.update` | `destructive` | Update a JumpCloud system user; setting state to ACTIVATED on a staged user emails them an activation link |
 
 ## Auth
 
