@@ -34,8 +34,8 @@ await corsair.sendbird.api.channels.create({
 | `data` | `string` | No | — |
 | `is_distinct` | `boolean` | No | — |
 | `is_public` | `boolean` | No | — |
-| `is_super` | `boolean` | No | — |
 | `access_code` | `string` | No | — |
+| `is_super` | `boolean` | No | — |
 | `user_ids` | `string[]` | Yes | — |
 | `operator_ids` | `string[]` | No | — |
 | `channel_url` | `string` | No | — |
@@ -725,7 +725,6 @@ await corsair.sendbird.api.channels.update({
   data?: string,
   is_distinct?: boolean,
   is_public?: boolean,
-  is_super?: boolean,
   access_code?: string
 }
 ```
@@ -1676,7 +1675,6 @@ await corsair.sendbird.api.users.update({
 {
   nickname?: string,
   profile_url?: string,
-  issue_access_token?: boolean,
   is_active?: boolean,
   last_seen_at?: number,
   discovery_keys?: string[],

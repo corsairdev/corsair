@@ -1,5 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 import { z } from 'zod';
 
@@ -37,6 +41,22 @@ function queryString(
 	return pairs.length ? `?${pairs.join('&')}` : '';
 }
 
+// Core's default retry schedule, reading Sendbird's documented `X-RateLimit-RetryAfter` header
+// (seconds) instead of `Retry-After`, which Sendbird does not send. `X-RateLimit-Reset` is an epoch
+// timestamp in Sendbird's example and keeps core's default handling.
+export const sendbirdRateLimitConfig: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'x-ratelimit-retryafter',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
+
 // Responses cross an untrusted HTTP boundary and are parsed by each endpoint's output schema.
 export async function makeSendbirdRequest(
 	applicationId: string,
@@ -65,9 +85,11 @@ export async function makeSendbirdRequest(
 		mediaType: options.body === undefined ? undefined : 'application/json',
 	};
 	// Core's ApiError passes through unchanged (R8): its status and retryAfter drive the 429 handler,
-	// and core's default config retries a 429 three times honouring Retry-After.
+	// and core retries a 429 three times, waiting for Sendbird's X-RateLimit-RetryAfter when sent.
 	// The shared transport cannot validate the endpoint-specific response shape.
-	const result = await request<unknown>(config, requestOptions);
+	const result = await request<unknown>(config, requestOptions, {
+		rateLimitConfig: sendbirdRateLimitConfig,
+	});
 	// Empty non-JSON 200 responses are returned by the shared transport as ''.
 	return options.method === 'DELETE' && result === '' ? undefined : result;
 }

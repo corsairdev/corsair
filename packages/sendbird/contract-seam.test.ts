@@ -226,8 +226,12 @@ describe('Sendbird public request seam', () => {
 				body: 'body' in fixture ? fixture.body : undefined,
 			});
 			expect(options.query).toBeUndefined();
-			// Core's default 429 retries (R8) stay on: no plugin override.
-			expect(transport?.rateLimitConfig).toBeUndefined();
+			// Core's 429 retries (R8) stay on, reading Sendbird's own retry header.
+			expect(transport?.rateLimitConfig).toMatchObject({
+				enabled: true,
+				maxRetries: 3,
+				headerNames: { retryAfter: 'x-ratelimit-retryafter' },
+			});
 		},
 	);
 	it.each(['', '.', '..', 'a/b', 'a\\b', 'a"b', "a'b"])(
@@ -279,6 +283,32 @@ describe('Sendbird public request seam', () => {
 				// Deliberately invalid to verify that updates reject creation-only fields.
 				// @ts-expect-error operator_ids is only accepted on creation.
 				body: { operator_ids: ['user 1'] },
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+	it('accepts the irreversible Supergroup and token flags only at creation', async () => {
+		mockRequest.mockResolvedValue(channel);
+		await groups.channels.create(ctx, { user_ids: ['user 1'], is_super: true });
+		expect(mockRequest.mock.calls[0][1].body).toEqual({
+			user_ids: ['user 1'],
+			is_super: true,
+		});
+		mockRequest.mockClear();
+		await expect(
+			groups.channels.update(ctx, {
+				channel_url: 'room',
+				// Deliberately invalid: Sendbird cannot undo a Supergroup conversion.
+				// @ts-expect-error is_super is only accepted on creation.
+				body: { is_super: true },
+			}),
+		).rejects.toThrow();
+		await expect(
+			groups.users.update(ctx, {
+				user_id: 'u',
+				// Deliberately invalid: on update this revokes the user's current access token.
+				// @ts-expect-error issue_access_token is only accepted on creation.
+				body: { issue_access_token: true },
 			}),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();

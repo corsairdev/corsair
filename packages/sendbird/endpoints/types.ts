@@ -114,7 +114,8 @@ const userUpdate = z
 	.object({
 		nickname: z.string().max(80).optional(),
 		profile_url: z.string().max(2048).optional(),
-		issue_access_token: z.boolean().optional(),
+		// No issue_access_token: on update it revokes the user's current token (R8: irreversible),
+		// which would sign out every client using it under a `write` approval.
 		is_active: z.boolean().optional(),
 		last_seen_at: number.optional(),
 		discovery_keys: z.array(z.string()).optional(),
@@ -130,7 +131,6 @@ const channelUpdate = z
 		data: z.string().optional(),
 		is_distinct: z.boolean().optional(),
 		is_public: z.boolean().optional(),
-		is_super: z.boolean().optional(),
 		access_code: z.string().optional(),
 	})
 	.strict();
@@ -229,6 +229,9 @@ export const SendbirdEndpointInputSchemas = {
 		.strict(),
 	channelsCreate: channelUpdate
 		.extend({
+			// Creation only: Sendbird cannot turn a Supergroup back into a group channel, so
+			// converting an existing channel would be irreversible (R8) under a `write` approval.
+			is_super: z.boolean().optional(),
 			user_ids: z.array(z.string()).min(1).max(100),
 			operator_ids: z.array(z.string()).optional(),
 			channel_url: pathPart.optional(),
