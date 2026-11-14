@@ -201,7 +201,7 @@ describe('2. Events endpoints', () => {
 
 		const result = await Events.update(ctx, {
 			event_id: 'evt-1',
-			event_name: 'renamed',
+			metadata: { reviewed: true },
 		});
 
 		expect(result).toEqual({ success: true, event_id: 'evt-1' });
@@ -210,7 +210,7 @@ describe('2. Events endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'PUT',
-				body: { event_name: 'renamed' },
+				body: { metadata: { reviewed: true } },
 			},
 		);
 	});
@@ -333,6 +333,7 @@ describe('3. Datasets endpoints', () => {
 			project_id: 'proj-1',
 			dataset_id: 'ds-1',
 			data: [{ prompt: 'hi' }],
+			mapping: { inputs: ['prompt'] },
 		});
 
 		expect(result).toEqual({ inserted: true });
@@ -341,7 +342,7 @@ describe('3. Datasets endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'POST',
-				body: { data: [{ prompt: 'hi' }] },
+				body: { data: [{ prompt: 'hi' }], mapping: { inputs: ['prompt'] } },
 			},
 		);
 	});

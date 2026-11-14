@@ -243,12 +243,12 @@ describe('HoneyHive Zod schemas validation', () => {
 		expect(
 			EventUpdateInputSchema.safeParse({
 				event_id: 'evt-1',
-				event_name: 'renamed',
+				metadata: { reviewed: true },
 			}).success,
 		).toBe(true);
-		expect(
-			EventUpdateInputSchema.safeParse({ event_name: 'no_id' }).success,
-		).toBe(false);
+		expect(EventUpdateInputSchema.safeParse({ metadata: {} }).success).toBe(
+			false,
+		);
 	});
 
 	it('validates eventsSearch input structure', () => {
@@ -272,7 +272,7 @@ describe('HoneyHive Zod schemas validation', () => {
 			project_id: 'proj-1',
 			name: 'eval-dataset',
 			description: 'Dataset for test evals',
-			datapoints: [{ input: 'hello', expected: 'world' }],
+			datapoints: ['dp-1', 'dp-2'],
 		};
 		expect(DatasetsCreateInputSchema.safeParse(createInput).success).toBe(true);
 		expect(
@@ -304,6 +304,7 @@ describe('HoneyHive Zod schemas validation', () => {
 				project_id: 'proj-1',
 				dataset_id: 'ds-1',
 				data: [{ text: 'sample' }],
+				mapping: { inputs: ['text'] },
 			}).success,
 		).toBe(true);
 

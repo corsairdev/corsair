@@ -38,25 +38,25 @@ export const SessionCreateResponseSchema = z
 	.object({
 		event_id: z.string().optional(),
 		session_id: z.string().optional(),
-		parent_id: z.string().nullable().optional(),
-		children_ids: z.array(z.string()).optional(),
-		event_type: z.string().optional(),
-		event_name: z.string().optional(),
-		config: JsonRecordSchema.optional(),
-		inputs: JsonRecordSchema.optional(),
-		outputs: JsonRecordSchema.optional(),
+		parent_id: z.string().nullish(),
+		children_ids: z.array(z.string()).nullish(),
+		event_type: z.string().nullish(),
+		event_name: z.string().nullish(),
+		config: JsonRecordSchema.nullish(),
+		inputs: JsonRecordSchema.nullish(),
+		outputs: JsonRecordSchema.nullish(),
 		error: JsonUnknownSchema.optional(),
-		source: z.string().optional(),
-		duration: z.number().optional(),
-		user_properties: JsonRecordSchema.optional(),
-		metrics: JsonRecordSchema.optional(),
-		feedback: JsonRecordSchema.optional(),
-		metadata: JsonRecordSchema.optional(),
+		source: z.string().nullish(),
+		duration: z.number().nullish(),
+		user_properties: JsonRecordSchema.nullish(),
+		metrics: JsonRecordSchema.nullish(),
+		feedback: JsonRecordSchema.nullish(),
+		metadata: JsonRecordSchema.nullish(),
 		org_id: z.string().optional(),
 		workspace_id: z.string().optional(),
 		project_id: z.string().optional(),
-		start_time: z.number().optional(),
-		end_time: z.number().optional(),
+		start_time: z.number().nullish(),
+		end_time: z.number().nullish(),
 	})
 	.passthrough();
 
@@ -154,7 +154,6 @@ export const EventGetResponseSchema = z
 
 export const EventUpdateInputSchema = z.strictObject({
 	event_id: z.string(),
-	event_name: z.string().optional(),
 	metadata: JsonRecordSchema.optional(),
 	feedback: JsonRecordSchema.optional(),
 	metrics: JsonRecordSchema.optional(),
@@ -230,13 +229,15 @@ export const DatasetsCreateInputSchema = z.strictObject({
 	project_id: z.string(),
 	name: z.string(),
 	description: z.string().optional(),
-	datapoints: JsonRecordArraySchema.optional(),
+	// Datapoint IDs; on update the list replaces the dataset's whole membership.
+	datapoints: z.array(z.string()).optional(),
 });
 
 export const DatasetsCreateLegacyInputSchema = z.strictObject({
 	name: z.string(),
 	description: z.string().optional(),
-	datapoints: JsonRecordArraySchema.optional(),
+	// Datapoint IDs; on update the list replaces the dataset's whole membership.
+	datapoints: z.array(z.string()).optional(),
 });
 
 export const DatasetsCreateResponseSchema = z
@@ -251,14 +252,16 @@ export const DatasetsUpdateInputSchema = z.strictObject({
 	dataset_id: z.string(),
 	name: z.string().optional(),
 	description: z.string().optional(),
-	datapoints: JsonRecordArraySchema.optional(),
+	// Datapoint IDs; on update the list replaces the dataset's whole membership.
+	datapoints: z.array(z.string()).optional(),
 });
 
 export const DatasetsUpdateLegacyInputSchema = z.strictObject({
 	dataset_id: z.string(),
 	name: z.string().optional(),
 	description: z.string().optional(),
-	datapoints: JsonRecordArraySchema.optional(),
+	// Datapoint IDs; on update the list replaces the dataset's whole membership.
+	datapoints: z.array(z.string()).optional(),
 });
 
 export const DatasetsUpdateResponseSchema = z
@@ -287,7 +290,12 @@ export const DatasetsAddDatapointsInputSchema = z.strictObject({
 	project_id: z.string(),
 	dataset_id: z.string(),
 	data: JsonRecordArraySchema,
-	mapping: z.record(z.string(), z.string()).optional(),
+	// Which keys of each `data` record become inputs, chat history and ground truth.
+	mapping: z.strictObject({
+		inputs: z.array(z.string()).optional(),
+		history: z.array(z.string()).optional(),
+		ground_truth: z.array(z.string()).optional(),
+	}),
 });
 
 export const DatasetsAddDatapointsResponseSchema = z
@@ -343,7 +351,7 @@ export const ExperimentsListRunsResponseSchema = z
 	.object({
 		evaluations: JsonRecordArraySchema.optional(),
 		pagination: JsonRecordSchema.optional(),
-		metrics: JsonRecordArraySchema.optional(),
+		metrics: z.array(z.string()).optional(),
 	})
 	.passthrough();
 
@@ -354,7 +362,7 @@ export const ExperimentsCreateRunInputSchema = z.strictObject({
 	description: z.string().optional(),
 	status: z.string().optional(),
 	metadata: JsonRecordSchema.optional(),
-	results: JsonRecordArraySchema.optional(),
+	results: JsonRecordSchema.optional(),
 	dataset_id: z.string().optional(),
 	event_ids: z.array(z.string()).optional(),
 	configuration: JsonRecordSchema.optional(),
@@ -370,7 +378,7 @@ export const ExperimentsCreateRunLegacyInputSchema = z.strictObject({
 	description: z.string().optional(),
 	status: z.string().optional(),
 	metadata: JsonRecordSchema.optional(),
-	results: JsonRecordArraySchema.optional(),
+	results: JsonRecordSchema.optional(),
 	dataset_id: z.string().optional(),
 	event_ids: z.array(z.string()).optional(),
 	configuration: JsonRecordSchema.optional(),
@@ -409,7 +417,7 @@ export const ExperimentsUpdateRunInputSchema = z.strictObject({
 	description: z.string().optional(),
 	status: z.string().optional(),
 	metadata: JsonRecordSchema.optional(),
-	results: JsonRecordArraySchema.optional(),
+	results: JsonRecordSchema.optional(),
 	event_ids: z.array(z.string()).optional(),
 	configuration: JsonRecordSchema.optional(),
 	evaluators: JsonRecordArraySchema.optional(),
@@ -449,11 +457,12 @@ export const ExperimentsGetSummaryResponseSchema = z
 		status: z.string().optional(),
 		success: z.boolean().optional(),
 		error: JsonUnknownSchema.optional(),
-		passed: z.number().optional(),
-		failed: z.number().optional(),
+		// IDs of the datapoints that passed and failed.
+		passed: z.array(z.string()).optional(),
+		failed: z.array(z.string()).optional(),
 		metrics: JsonRecordSchema.optional(),
 		datapoints: JsonRecordArraySchema.optional(),
-		event_details: JsonRecordSchema.optional(),
+		event_details: JsonRecordArraySchema.optional(),
 		run_object: JsonRecordSchema.optional(),
 	})
 	.passthrough();
@@ -509,9 +518,9 @@ export const ExperimentsCompareInputSchema = z.strictObject({
 
 export const ExperimentsCompareResponseSchema = z
 	.object({
-		metrics: JsonRecordSchema.optional(),
-		commonDatapoints: JsonRecordArraySchema.optional(),
-		event_details: JsonRecordSchema.optional(),
+		metrics: JsonRecordArraySchema.optional(),
+		commonDatapoints: z.array(z.string()).optional(),
+		event_details: JsonRecordArraySchema.optional(),
 		old_run: JsonRecordSchema.optional(),
 		new_run: JsonRecordSchema.optional(),
 	})
@@ -550,6 +559,23 @@ export const MetricsListResponseSchema = z
 	})
 	.passthrough();
 
+export const MetricThresholdSchema = z.strictObject({
+	min: z.number().optional(),
+	max: z.number().optional(),
+	pass_when: z.union([z.boolean(), z.number()]).optional(),
+	passing_categories: z.array(z.string()).min(1).optional(),
+});
+
+export const MetricCategorySchema = z.strictObject({
+	category: z.string(),
+	score: z.number().nullable(),
+});
+
+export const MetricFiltersSchema = z.strictObject({
+	// Filter objects use HoneyHive's event filter shape ({ field, operator, value, type }).
+	filterArray: JsonRecordArraySchema,
+});
+
 export const MetricsCreateInputSchema = z.strictObject({
 	name: z.string(),
 	type: z.string(),
@@ -560,12 +586,13 @@ export const MetricsCreateInputSchema = z.strictObject({
 	sampling_percentage: z.number().optional(),
 	model_provider: z.string().optional(),
 	model_name: z.string().optional(),
-	scale: z.array(JsonUnknownSchema).optional(),
-	threshold: z.number().optional(),
-	categories: z.array(z.string()).optional(),
+	scale: z.number().int().positive().nullable().optional(),
+	threshold: MetricThresholdSchema.nullable().optional(),
+	categories: z.array(MetricCategorySchema).min(1).nullable().optional(),
 	needs_ground_truth: z.boolean().optional(),
-	child_metrics: z.array(z.string()).optional(),
-	filters: JsonRecordArraySchema.optional(),
+	// Deprecated by HoneyHive and ignored (composite metrics are no longer supported).
+	child_metrics: JsonRecordArraySchema.nullable().optional(),
+	filters: MetricFiltersSchema.optional(),
 });
 
 export const MetricsCreateResponseSchema = z
@@ -586,12 +613,13 @@ export const MetricsUpdateInputSchema = z.strictObject({
 	sampling_percentage: z.number().optional(),
 	model_provider: z.string().optional(),
 	model_name: z.string().optional(),
-	scale: z.array(JsonUnknownSchema).optional(),
-	threshold: z.number().optional(),
-	categories: z.array(z.string()).optional(),
+	scale: z.number().int().positive().nullable().optional(),
+	threshold: MetricThresholdSchema.nullable().optional(),
+	categories: z.array(MetricCategorySchema).min(1).nullable().optional(),
 	needs_ground_truth: z.boolean().optional(),
-	child_metrics: z.array(z.string()).optional(),
-	filters: JsonRecordArraySchema.optional(),
+	// Deprecated by HoneyHive and ignored (composite metrics are no longer supported).
+	child_metrics: JsonRecordArraySchema.nullable().optional(),
+	filters: MetricFiltersSchema.optional(),
 });
 
 export const MetricsUpdateResponseSchema = z
@@ -682,7 +710,7 @@ export const ConfigurationsCreateInputSchema = z.strictObject({
 	type: z.string().optional(),
 	provider: z.string().optional(),
 	parameters: JsonRecordSchema.optional(),
-	env: z.string().optional(),
+	env: z.array(z.string()).optional(),
 	tags: z.array(z.string()).optional(),
 	user_properties: JsonRecordSchema.optional(),
 });
@@ -700,7 +728,7 @@ export const ConfigurationsUpdateInputSchema = z.strictObject({
 	type: z.string().optional(),
 	provider: z.string().optional(),
 	parameters: JsonRecordSchema.optional(),
-	env: z.string().optional(),
+	env: z.array(z.string()).optional(),
 	tags: z.array(z.string()).optional(),
 	user_properties: JsonRecordSchema.optional(),
 });
