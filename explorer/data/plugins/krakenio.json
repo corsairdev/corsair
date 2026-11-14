@@ -1,0 +1,359 @@
+{
+  "id": "krakenio",
+  "displayName": "Kraken.io",
+  "description": "Image and PDF optimization with Kraken.io - compress a file from a URL or a base64 upload, resize it, change its format, control the quality and keep chosen metadata, and read the account's plan and remaining quota.",
+  "npmPackageName": "@corsair-dev/krakenio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "krakenio.api.account.status",
+      "shortPath": "account.status",
+      "description": "The plan, whether the account is active, and the quota total, used and remaining, all in bytes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the account may optimize."
+          },
+          {
+            "key": "plan_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "quota_total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes."
+          },
+          {
+            "key": "quota_used",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes."
+          },
+          {
+            "key": "quota_remaining",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes."
+          }
+        ]
+      }
+    },
+    {
+      "path": "krakenio.api.upload.optimize",
+      "shortPath": "upload.optimize",
+      "description": "Optimize a file passed as base64, which the plugin uploads to Kraken as multipart, with the same resize and conversion options. Spends quota",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "boolean",
+            "description": "Hold the connection open and answer with the result. Without it a `callback_url` is required."
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string",
+            "description": "Kraken posts the result here instead of answering in-line."
+          },
+          {
+            "key": "lossy",
+            "optional": true,
+            "type": "boolean",
+            "description": "`true` for lossy, `false` for lossless. Kraken’s default, when this is left out, is lossless."
+          },
+          {
+            "key": "resize",
+            "optional": true,
+            "type": "{ width?: number, height?: number, size?: number, strategy: exact | portrait | landscape | auto | fit | crop | square | fill, background?: string }"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number",
+            "description": "JPEG quality for a lossy run. Ignored on a lossless one."
+          },
+          {
+            "key": "auto_orient",
+            "optional": true,
+            "type": "boolean",
+            "description": "Rotate the image according to its EXIF orientation."
+          },
+          {
+            "key": "preserve_meta",
+            "optional": true,
+            "type": "(profile | date | copyright | geotag | orientation)[]",
+            "description": "Metadata categories to keep. Anything left out is stripped."
+          },
+          {
+            "key": "convert",
+            "optional": true,
+            "type": "{ format: jpeg | png | gif | webp | avif, background?: string }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string",
+            "description": "The file as a base64 string. The plugin decodes it and sends it to Kraken as the multipart file part."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "A name for the upload, such as `header.jpg`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean",
+            "description": "Absent on a callback request, which answers only `id`."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The job ID that the callback delivery repeats."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "original_size",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes."
+          },
+          {
+            "key": "kraked_size",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes."
+          },
+          {
+            "key": "saved_bytes",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes saved."
+          },
+          {
+            "key": "original_width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "original_height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "kraked_width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "kraked_height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "kraked_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Where the optimized file is served from `dl.kraken.io` for a limited time."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, { success: boolean, file_name?: string | null, original_size?: number | null, kraked_size?: number | null, saved_bytes?: number | null, original_width?: number | null, original_height?: number | null, kraked_width?: number | null, kraked_height?: number | null, kraked_url?: string | null, message?: string | null }> | null",
+            "description": "One entry per size, keyed by its `id`, on a multi-size resize."
+          }
+        ]
+      }
+    },
+    {
+      "path": "krakenio.api.url.optimize",
+      "shortPath": "url.optimize",
+      "description": "Fetch an image or PDF from a URL and optimize it, optionally resizing, converting, keeping metadata or setting the quality. Spends quota",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "boolean",
+            "description": "Hold the connection open and answer with the result. Without it a `callback_url` is required."
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string",
+            "description": "Kraken posts the result here instead of answering in-line."
+          },
+          {
+            "key": "lossy",
+            "optional": true,
+            "type": "boolean",
+            "description": "`true` for lossy, `false` for lossless. Kraken’s default, when this is left out, is lossless."
+          },
+          {
+            "key": "resize",
+            "optional": true,
+            "type": "{ width?: number, height?: number, size?: number, strategy: exact | portrait | landscape | auto | fit | crop | square | fill, background?: string }"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number",
+            "description": "JPEG quality for a lossy run. Ignored on a lossless one."
+          },
+          {
+            "key": "auto_orient",
+            "optional": true,
+            "type": "boolean",
+            "description": "Rotate the image according to its EXIF orientation."
+          },
+          {
+            "key": "preserve_meta",
+            "optional": true,
+            "type": "(profile | date | copyright | geotag | orientation)[]",
+            "description": "Metadata categories to keep. Anything left out is stripped."
+          },
+          {
+            "key": "convert",
+            "optional": true,
+            "type": "{ format: jpeg | png | gif | webp | avif, background?: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The publicly reachable image or PDF to fetch and optimize."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean",
+            "description": "Absent on a callback request, which answers only `id`."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The job ID that the callback delivery repeats."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "original_size",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes."
+          },
+          {
+            "key": "kraked_size",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes."
+          },
+          {
+            "key": "saved_bytes",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes saved."
+          },
+          {
+            "key": "original_width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "original_height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "kraked_width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "kraked_height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "kraked_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Where the optimized file is served from `dl.kraken.io` for a limited time."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, { success: boolean, file_name?: string | null, original_size?: number | null, kraked_size?: number | null, saved_bytes?: number | null, original_width?: number | null, original_height?: number | null, kraked_width?: number | null, kraked_height?: number | null, kraked_url?: string | null, message?: string | null }> | null",
+            "description": "One entry per size, keyed by its `id`, on a multi-size resize."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
