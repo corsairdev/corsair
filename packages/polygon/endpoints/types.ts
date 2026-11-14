@@ -162,7 +162,12 @@ export type CustomersListInput = z.infer<typeof CustomersListInputSchema>;
 const CustomersListOutputSchema = z.object({
 	data: z.array(CustomerSchema),
 	hasMore: z.boolean(),
-	cursor: z.string().nullish().describe('Absent on the last page.'),
+	cursor: z
+		.string()
+		.nullish()
+		.describe(
+			'The next page cursor. While `hasMore` is true, pass it as `startingAfter`; it is absent on the last page.',
+		),
 });
 
 export type CustomersListOutput = z.infer<typeof CustomersListOutputSchema>;

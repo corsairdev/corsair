@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
@@ -143,11 +144,24 @@ const tokenCache = new Map<string, CachedToken>();
 /** In-flight token requests, so parallel calls mint one token, not one each. */
 const inFlightTokens = new Map<string, Promise<string>>();
 
-function tokenCacheKey(
+/** Identifies a cached token by host and the complete credential pair. The secret
+ * is part of the identity but not part of the key that is stored: it goes
+ * through SHA-256 so the cache holds no credential in readable form. Keeping it
+ * out of the key was a real bug: a second caller presenting the same key with a
+ * different secret used to receive the first caller's token.
+ *
+ * Exported so a test can assert that neither credential appears in the key.
+ */
+export function tokenCacheKey(
 	environment: PolygonEnvironment,
 	credentials: PolygonCredentials,
 ): string {
-	return `${environment}:${credentials.apiKey}`;
+	const fingerprint = createHash('sha256')
+		.update(credentials.apiKey)
+		.update('\0')
+		.update(credentials.apiSecret)
+		.digest('hex');
+	return `${environment}:${fingerprint}`;
 }
 
 /** Clears the cached token, which a test uses to pin the refresh path. */
@@ -214,15 +228,27 @@ export async function mintPolygonToken(
 		});
 		return readTokenResponse(body);
 	} catch (error) {
+		// Core's ApiError goes through (R8) so status, retryAfter and
+		// isRateLimitError() keep working. This is the one call that carries the
+		// secret, and ApiError retains the request it was built from, so the
+		// request body is dropped when the error is rebuilt. Only the body held
+		// the credential: the headers stay, and none of them is the secret.
 		if (error instanceof ApiError) {
-			throw new PolygonAPIError(
-				describePolygonError(error.status, error.body, error.statusText),
+			throw new ApiError(
+				{ ...requestOptions, body: undefined, query: undefined },
 				{
+					url: error.url,
+					ok: false,
 					status: error.status,
-					code: readErrorCode(error.body),
-					errorNumber: readErrorNumber(error.body),
+					statusText: error.statusText,
+					body: error.body,
+				},
+				error.message,
+				{
 					retryAfter: error.retryAfter,
-					method: 'POST',
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}
@@ -355,18 +381,8 @@ export async function makePolygonRequest(
 			rateLimitConfig: POLYGON_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new PolygonAPIError(
-				describePolygonError(error.status, error.body, error.statusText),
-				{
-					status: error.status,
-					code: readErrorCode(error.body),
-					errorNumber: readErrorNumber(error.body),
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
+		// A real HTTP failure keeps core's ApiError (see mintPolygonToken).
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new PolygonAPIError(error.message, {
 				cause: error,

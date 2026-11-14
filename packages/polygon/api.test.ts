@@ -6,10 +6,11 @@
 // schema a caller receives, so a field typed wrongly cannot pass silently.
 // OMS issues sandbox keys as `sk_sdbx_`; a live `sk_live_` key moves real money,
 // so this suite never creates a quote or a transaction.
+import { ApiError } from 'corsair/http';
 import {
 	makePolygonRequest,
 	POLYGON_HOSTS,
-	PolygonAPIError,
+	readErrorCode,
 	resetPolygonTokenCache,
 	resolvePolygonToken,
 } from './client';
@@ -122,15 +123,18 @@ describeLive('Polygon OMS live API', () => {
 
 	it('rejects a wrong secret with InvalidCredentials, keeping it off the error', async () => {
 		resetPolygonTokenCache();
-		const error = await resolvePolygonToken(environment, {
-			apiKey: 'sk_sdbx_definitely-not-a-key',
-			apiSecret: 'definitely-not-a-secret',
-		}).then(() => undefined, captureError);
+		const error = await captureError(
+			resolvePolygonToken(environment, {
+				apiKey: 'sk_sdbx_definitely-not-a-key',
+				apiSecret: 'definitely-not-a-secret',
+			}),
+		);
 
-		expect(error).toBeInstanceOf(PolygonAPIError);
-		if (!(error instanceof PolygonAPIError)) return;
+		// A 401 is core's ApiError, passed through unchanged.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('InvalidCredentials');
+		expect(readErrorCode(error.body)).toBe('InvalidCredentials');
 		expect(JSON.stringify(error)).not.toContain('definitely-not-a-secret');
 		expect(String(error.stack)).not.toContain('definitely-not-a-secret');
 	});

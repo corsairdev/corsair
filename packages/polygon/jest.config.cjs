@@ -50,6 +50,10 @@ module.exports = {
 		'^corsair/tests$': '<rootDir>/../corsair/tests.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
+	// api.test.ts reaches the live hosts, so it stays out of the default run. It
+	// runs only through `test:live`, which CI does not call. A command-line
+	// --testPathIgnorePatterns replaces this list and runs it.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts$'],
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,

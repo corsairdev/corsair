@@ -1,12 +1,20 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PolygonAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { PolygonAPIError, readErrorCode } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PolygonAPIError ? error.status : undefined;
+	if (error instanceof PolygonAPIError) return error.status;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 function codeOf(error: Error): string | undefined {
-	return error instanceof PolygonAPIError ? error.code : undefined;
+	if (error instanceof PolygonAPIError) return error.code;
+	return error instanceof ApiError ? readErrorCode(error.body) : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof PolygonAPIError) return error.method;
+	return error instanceof ApiError ? error.request.method : undefined;
 }
 
 // OMS error names and numeric codes are documented as stable identifiers, so
@@ -49,7 +57,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof PolygonAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -67,8 +75,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof PolygonAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -103,8 +110,7 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof PolygonAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof PolygonAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -112,9 +118,7 @@ export const errorHandlers = {
 	// and only a caller-supplied idempotency key could make a replay safe.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PolygonAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

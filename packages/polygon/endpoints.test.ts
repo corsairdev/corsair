@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import * as client from './client';
 import { PolygonAPIError } from './client';
 import {
@@ -26,6 +27,21 @@ jest.mock('./client', () => {
 const mockedRequest = jest.mocked(client.makePolygonRequest);
 
 const ctx = buildContext();
+
+/** A 401 as `request()` raises it, which is the shape the refresh path sees. */
+function unauthorized(): ApiError {
+	return new ApiError(
+		{ method: 'GET', url: '/networks' },
+		{
+			url: 'https://api.polygon.technology/v0.13/networks',
+			ok: false,
+			status: 401,
+			statusText: 'Unauthorized',
+			body: { error: 'Unauthorized', code: 1002, msg: 'expired' },
+		},
+		'Polygon 401 Unauthorized: expired',
+	);
+}
 
 beforeEach(() => {
 	mockedRequest.mockReset();
@@ -276,15 +292,7 @@ describe('input validation before the request', () => {
 	});
 
 	it('refreshes a rejected token once, then succeeds', async () => {
-		const unauthorized = new PolygonAPIError(
-			'Polygon 401 Unauthorized: expired',
-			{
-				status: 401,
-				code: 'Unauthorized',
-				method: 'GET',
-			},
-		);
-		mockedRequest.mockRejectedValueOnce(unauthorized).mockResolvedValueOnce({
+		mockedRequest.mockRejectedValueOnce(unauthorized()).mockResolvedValueOnce({
 			object: 'list',
 			limit: 20,
 			hasMore: false,
@@ -300,19 +308,12 @@ describe('input validation before the request', () => {
 	});
 
 	it('raises the second 401 rather than looping', async () => {
-		const unauthorized = new PolygonAPIError(
-			'Polygon 401 Unauthorized: expired',
-			{
-				status: 401,
-				code: 'Unauthorized',
-				method: 'GET',
-			},
-		);
-		mockedRequest.mockRejectedValue(unauthorized);
+		mockedRequest.mockRejectedValue(unauthorized());
 
 		const error = await captureError(Networks.list(ctx, {}));
 
-		expect(error).toBeInstanceOf(PolygonAPIError);
+		// Core's ApiError reaches the caller unchanged.
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error).toMatchObject({ status: 401 });
 		// Exactly one retry: the second 401 propagates.
 		expect(mockedRequest).toHaveBeenCalledTimes(2);

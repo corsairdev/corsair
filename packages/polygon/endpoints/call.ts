@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import type { z } from 'zod';
 import type { PolygonContext } from '..';
 import type {
@@ -10,7 +11,6 @@ import type {
 import {
 	invalidatePolygonToken,
 	makePolygonRequest,
-	PolygonAPIError,
 	resolvePolygonToken,
 } from '../client';
 
@@ -20,15 +20,15 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 type Untyped = unknown; // unknown: see the note above.
 
 /**
- * Reads the two credentials OMS needs. They are a pair rather than one key, so
- * both live on the account and are read through the account key manager, with
- * the plugin options as an override for tests and scripts.
+ * Reads the two credentials OMS needs. `ctx.key` is the key the binder resolved
+ * after hooks and the per-tenant lookup, so it is the only source for the API
+ * key. The secret is the second half of the pair rather than the key, so it
+ * comes from the account key manager, with the plugin option as its override.
  */
 export async function resolvePolygonCredentials(
 	ctx: PolygonContext,
 ): Promise<PolygonCredentials> {
-	const apiKey =
-		ctx.options?.apiKey?.trim() || (await ctx.keys.get_api_key())?.trim();
+	const apiKey = ctx.key?.trim();
 	const apiSecret =
 		ctx.options?.apiSecret?.trim() || (await ctx.keys.get_api_secret())?.trim();
 
@@ -117,7 +117,9 @@ async function sendWithTokenRefresh(
 	try {
 		return await makePolygonRequest(environment, accessToken, request);
 	} catch (error) {
-		if (!(error instanceof PolygonAPIError) || error.status !== 401) {
+		// A 401 arrives as core's ApiError, so its status is read from there.
+		const status = error instanceof ApiError ? error.status : undefined;
+		if (status !== 401) {
 			throw error;
 		}
 		invalidatePolygonToken(environment, credentials);

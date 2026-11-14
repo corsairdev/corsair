@@ -1,5 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
+import * as client from './client';
 import {
 	describePolygonError,
 	makePolygonRequest,
@@ -7,6 +8,7 @@ import {
 	POLYGON_HOSTS,
 	PolygonAPIError,
 	readErrorCode,
+	readErrorNumber,
 	resetPolygonTokenCache,
 	resolvePolygonToken,
 } from './client';
@@ -94,7 +96,7 @@ describe('mintPolygonToken', () => {
 		});
 	});
 
-	it('reports InvalidCredentials as an auth failure without the secret', async () => {
+	it('passes InvalidCredentials through as a core ApiError without the secret', async () => {
 		mockRequest.mockRejectedValue(
 			apiError(401, {
 				error: 'InvalidCredentials',
@@ -106,11 +108,12 @@ describe('mintPolygonToken', () => {
 
 		const error = await captureError(mintPolygonToken('live', CREDENTIALS));
 
-		expect(error).toBeInstanceOf(PolygonAPIError);
-		if (!(error instanceof PolygonAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('InvalidCredentials');
-		expect(error.errorNumber).toBe(1003);
+		// OMS's stable code is read from the body the error carries.
+		expect(readErrorCode(error.body)).toBe('InvalidCredentials');
+		expect(readErrorNumber(error.body)).toBe(1003);
 		// The secret never reaches an error, since it rides in the POST body.
 		expect(JSON.stringify(error)).not.toContain('secret-value');
 		expect(String(error.stack)).not.toContain('secret-value');
@@ -152,6 +155,39 @@ describe('resolvePolygonToken', () => {
 			'live-jwt',
 		);
 		expect(mockRequest).toHaveBeenCalledTimes(2);
+	});
+
+	it('mints a separate token per secret, so a wrong secret cannot reuse one', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ accessToken: 'real-jwt' })
+			.mockResolvedValueOnce({ accessToken: 'other-jwt' });
+
+		await expect(resolvePolygonToken('live', CREDENTIALS)).resolves.toBe(
+			'real-jwt',
+		);
+		// Same key, different secret: this must authenticate on its own rather than
+		// inherit the token the first pair was granted.
+		await expect(
+			resolvePolygonToken('live', {
+				apiKey: CREDENTIALS.apiKey,
+				apiSecret: 'a-different-secret',
+			}),
+		).resolves.toBe('other-jwt');
+		expect(mockRequest).toHaveBeenCalledTimes(2);
+	});
+
+	it('keeps the secret out of the cache key that is held in memory', () => {
+		const key = client.tokenCacheKey('live', CREDENTIALS);
+
+		expect(key).not.toContain(CREDENTIALS.apiSecret);
+		expect(key).not.toContain(CREDENTIALS.apiKey);
+		// The pair still separates: one key with two secrets is two entries.
+		expect(
+			client.tokenCacheKey('live', {
+				apiKey: CREDENTIALS.apiKey,
+				apiSecret: 'a-different-secret',
+			}),
+		).not.toBe(key);
 	});
 
 	it('deduplicates concurrent mints into one request', async () => {
@@ -249,7 +285,7 @@ describe('makePolygonRequest', () => {
 		expect(withoutKey.HEADERS['Content-Type']).toBeUndefined();
 	});
 
-	it('keeps status, error code and Retry-After, and drops the failed request', async () => {
+	it('keeps status, error code and Retry-After on the core ApiError', async () => {
 		mockRequest.mockRejectedValue(
 			apiError(
 				429,
@@ -270,12 +306,12 @@ describe('makePolygonRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PolygonAPIError);
-		if (!(error instanceof PolygonAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(429);
-		expect(error.code).toBe('RateLimited');
+		expect(readErrorCode(error.body)).toBe('RateLimited');
 		expect(error.retryAfter).toBe(2500);
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
 		expect(JSON.stringify(error)).not.toContain('jwt');
 	});
 

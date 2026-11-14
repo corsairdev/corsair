@@ -15,11 +15,36 @@ const CONTEXT = {
 // arguments they use. Typing it as the core map is what the runtime sees.
 const HANDLERS: CorsairErrorHandler = errorHandlers;
 
+/**
+ * A core ApiError carrying OMS's error body, which is the shape `request()`
+ * raises and the client now passes through unchanged.
+ */
 function polygonError(
 	status: number,
-	options: { code?: string; method?: string; retryAfter?: number } = {},
+	options: {
+		code?: string;
+		method?: 'GET' | 'POST';
+		retryAfter?: number;
+		errorNumber?: number;
+	} = {},
 ) {
-	return new PolygonAPIError(`Polygon ${status}`, { status, ...options });
+	const body: Record<string, unknown> = { status };
+	if (options.code !== undefined) body.error = options.code;
+	if (options.errorNumber !== undefined) body.code = options.errorNumber;
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: '/networks' },
+		{
+			url: 'https://api.polygon.technology/v0.13/networks',
+			ok: false,
+			status,
+			statusText: `Polygon ${status}`,
+			body,
+		},
+		`Polygon ${status}`,
+		options.retryAfter === undefined
+			? undefined
+			: { retryAfter: options.retryAfter },
+	);
 }
 
 function route(error: Error): string {

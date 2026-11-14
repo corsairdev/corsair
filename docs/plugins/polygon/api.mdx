@@ -358,7 +358,7 @@ await corsair.polygon.api.customers.list({ status: 'active', limit: 20 });
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
-| `cursor` | `string \| null` | No | Absent on the last page. |
+| `cursor` | `string \| null` | No | The next page cursor. While `hasMore` is true, pass it as `startingAfter`; it is absent on the last page. |
 
 <AccordionGroup>
 <Accordion title="data full type">

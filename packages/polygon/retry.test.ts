@@ -1,10 +1,7 @@
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import {
-	POLYGON_HOSTS,
-	PolygonAPIError,
-	resetPolygonTokenCache,
-} from './client';
+import { POLYGON_HOSTS, readErrorCode, resetPolygonTokenCache } from './client';
 import { polygon } from './index';
 import { captureError } from './test-helpers';
 
@@ -169,8 +166,12 @@ describe('Polygon plugin through createCorsair', () => {
 
 			const error = await captureError(corsair.polygon.api.networks.list({}));
 
-			expect(error).toBeInstanceOf(PolygonAPIError);
-			expect(error).toMatchObject({ status: 401, code: 'InvalidCredentials' });
+			// Core's ApiError passes through, and OMS's code stays on its body.
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).toMatchObject({ status: 401 });
+			expect(readErrorCode((error as ApiError).body)).toBe(
+				'InvalidCredentials',
+			);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			expect(JSON.stringify(error)).not.toContain('wrong-secret');
 		} finally {
@@ -230,7 +231,7 @@ describe('Polygon plugin through createCorsair', () => {
 					url: 'https://partner.example/webhooks',
 					subscriptions: ['*'],
 				}),
-			).rejects.toBeInstanceOf(PolygonAPIError);
+			).rejects.toBeInstanceOf(ApiError);
 			// The token call and the single failed write, with no replay.
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
