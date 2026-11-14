@@ -2,12 +2,12 @@ displayName: Make
 description: Manage and run Make automation scenarios.
 domain: make.com
 overviewNote: >-
-  Configure your organization’s Make zone and an API token with the required scopes.
+  Each Make organization lives in one zone (eu1, eu2, us1, us2, celonis-eu1, celonis-us1), so each connected account stores its zone (the `zone` field) next to its API token; the `zone` plugin option overrides it for single-account setups. The token needs the scopes for the operations you call.
   Scenario runs and replays can trigger external actions and consume credits.
   The client does not retry failed requests automatically, including quota-related 429 responses.
   Buildtime variables are not available on Make's free plan, which answers those calls with 403 (SC403).
 factory:
-  note: Select the Make zone for your organization; for example, `eu1`.
+  note: "Each connected account stores its Make zone (the `zone` field, for example `eu1`, the subdomain of the Make URL you sign in at) next to its API token: `pnpm corsair setup --plugin=make --tenant=acme zone=eu1`, or the connect page with Hub. Set the `zone` option only for a single-account setup; it overrides the stored value."
   options:
     zone: eu1
 examples:

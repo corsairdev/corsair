@@ -1,4 +1,8 @@
-import { createCorsair, logEventFromContext } from 'corsair/core';
+import {
+	AuthMissingError,
+	createCorsair,
+	logEventFromContext,
+} from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import type { MakeContext, MakePluginOptions } from './index';
 import {
@@ -17,6 +21,7 @@ const endpoints = make({ zone: 'eu1', key: 'test-token' }).endpoints!.scenarios;
 const context = (
 	options: MakePluginOptions = { zone: 'eu1' },
 	key = 'test-token',
+	storedZone: string | null = null,
 ): MakeContext => ({
 	key,
 	options,
@@ -27,6 +32,8 @@ const context = (
 		issue_new_dek: async () => 'test-dek',
 		get_api_key: async () => key,
 		set_api_key: async () => {},
+		get_zone: async () => storedZone,
+		set_zone: async () => {},
 		get_webhook_signature: async () => null,
 		set_webhook_signature: async () => {},
 	},
@@ -323,6 +330,50 @@ describe('Make scenario public endpoints', () => {
 			),
 		).rejects.toThrow('zone');
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+	it("uses the connected account's stored zone when no zone option is set", async () => {
+		for (const [stored, origin] of [
+			['us1', 'https://us1.make.com'],
+			[' EU2 ', 'https://eu2.make.com'],
+			['https://us2.make.com/', 'https://us2.make.com'],
+			['eu1.make.celonis.com', 'https://eu1.make.celonis.com'],
+		] as const) {
+			fetchMock.mockResolvedValueOnce(
+				new Response(JSON.stringify(scenario), {
+					headers: { 'Content-Type': 'application/json' },
+				}),
+			);
+			await endpoints.get(context({}, 'test-token', stored), id);
+			expect(new URL(fetchMock.mock.calls.at(-1)![0] as string).origin).toBe(
+				origin,
+			);
+		}
+	});
+	it('lets the zone option override the stored zone', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(scenario), {
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await endpoints.get(context({ zone: 'us2' }, 'test-token', 'eu1'), id);
+		expect(new URL(fetchMock.mock.calls[0][0] as string).origin).toBe(
+			'https://us2.make.com',
+		);
+	});
+	it('rejects a missing or unknown stored zone before sending credentials', async () => {
+		await expect(endpoints.get(context({}), id)).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		await expect(
+			endpoints.get(context({}, 'test-token', 'evil.example'), id),
+		).rejects.toThrow('zone');
+		await expect(
+			endpoints.get(context({}, 'test-token', 'eu1.make.com.evil.example'), id),
+		).rejects.toThrow('zone');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+	it('declares zone as an account field of the api_key auth', () => {
+		expect(make().authConfig).toEqual({ api_key: { account: ['zone'] } });
 	});
 	it('forwards later AI-agent pages and build-variable values', async () => {
 		fetchMock.mockResolvedValueOnce(

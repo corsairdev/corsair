@@ -5,6 +5,7 @@ import type {
 	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
@@ -18,6 +19,11 @@ import { MakeSchema } from './schema';
 export type MakePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * The Make zone your organization lives in. When unset, each connected
+	 * account's stored `zone` field is used, so one plugin serves accounts in
+	 * different zones.
+	 */
 	zone?: 'eu1' | 'eu2' | 'us1' | 'us2' | 'celonis-eu1' | 'celonis-us1';
 	hooks?: InternalMakePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -25,9 +31,14 @@ export type MakePluginOptions = {
 };
 export type MakeContext = CorsairPluginContext<
 	typeof MakeSchema,
-	MakePluginOptions
+	MakePluginOptions,
+	undefined,
+	typeof makeAuthConfig
 >;
-export type MakeKeyBuilderContext = KeyBuilderContext<MakePluginOptions>;
+export type MakeKeyBuilderContext = KeyBuilderContext<
+	MakePluginOptions,
+	typeof makeAuthConfig
+>;
 export type MakeBoundEndpoints = BindEndpoints<typeof makeEndpointsNested>;
 const makeEndpointsNested = {
 	scenarios: {
@@ -237,13 +248,24 @@ const makeEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof makeEndpointsNested>;
 const defaultAuthType = 'api_key' as const;
+/**
+ * Each Make organization lives in one zone (eu1, us2, ...), and its API answers
+ * only on that zone's host. The zone is an account-level field (`get_zone()`)
+ * stored with the API token; the `zone` plugin option, when set, overrides it.
+ */
+export const makeAuthConfig = {
+	api_key: {
+		account: ['zone'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 export type BaseMakePlugin<T extends MakePluginOptions> = CorsairPlugin<
 	'make',
 	typeof MakeSchema,
 	typeof makeEndpointsNested,
 	{},
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof makeAuthConfig
 >;
 export type InternalMakePlugin = BaseMakePlugin<MakePluginOptions>;
 export type ExternalMakePlugin<T extends MakePluginOptions> = BaseMakePlugin<T>;
@@ -256,6 +278,7 @@ export function make<const T extends MakePluginOptions>(
 	};
 	return {
 		id: 'make',
+		authConfig: makeAuthConfig,
 		schema: MakeSchema,
 		options,
 		hooks: options.hooks,
