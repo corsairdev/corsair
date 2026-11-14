@@ -7748,7 +7748,7 @@ const UpdateCustomFieldSchema = z
 				BooleanDataTypeDefinitionSchema,
 			])
 			.optional(),
-		deactivated_datetime: z.string().optional(),
+		deactivated_datetime: z.string().nullable().optional(),
 	})
 	.strict();
 const UpdateCustomFieldItemSchema = z
@@ -7770,7 +7770,7 @@ const UpdateCustomFieldItemSchema = z
 				BooleanDataTypeDefinitionSchema,
 			])
 			.optional(),
-		deactivated_datetime: z.string().optional(),
+		deactivated_datetime: z.string().nullable().optional(),
 		id: z.number().int(),
 	})
 	.strict();

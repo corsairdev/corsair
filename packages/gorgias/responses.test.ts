@@ -128,4 +128,14 @@ describe('Gorgias live responses', () => {
 		});
 		expect(result.error?.issues ?? []).toEqual([]);
 	});
+
+	it('accepts a null deactivated_datetime to restore an archived custom field', () => {
+		const result = gorgiasEndpointSchemas[
+			'customFields.updateCustomField'
+		].input.safeParse({
+			path: { id: 1 },
+			body: { deactivated_datetime: null },
+		});
+		expect(result.error?.issues ?? []).toEqual([]);
+	});
 });
