@@ -8,6 +8,8 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
+	// The live suite runs only through `pnpm test:live`, which overrides this.
+	testPathIgnorePatterns: ['/node_modules/', 'api\\.test\\.ts$'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',

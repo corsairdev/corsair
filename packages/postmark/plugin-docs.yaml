@@ -12,9 +12,9 @@ overviewNote: |
   - **The sender must be verified.** `From` needs a confirmed Sender Signature or a verified domain, or the send is rejected with code 300.
   - **A body is required.** Supply `TextBody`, `HtmlBody`, or both; the plugin rejects a message with neither before it is sent.
   - **Attachments are base64.** Give each one a `Name`, a `Content` and a `ContentType`, and set `ContentID` to reference it as `cid:` from the HTML.
-  - **Paging is by offset.** List routes take `Count` and `Offset` and return `TotalCount`; page while the offset is below it. Note that the bounces route spells its parameters in lowercase, which this plugin maps for you.
+  - **Paging is by offset.** List routes take `Count` and `Offset` (100 and 0 when left out) and return `TotalCount`; page while the offset is below it. Note that the bounces route spells its parameters in lowercase, which this plugin maps for you.
   - **Stats are limited.** The overview accepts a window no older than a year, and the stats API needs the plan that includes it.
-  - **Retries.** A 429 uses the published `X-RateLimit-*` headers rather than a Retry-After, so the plugin retries with a jittered backoff. A 5xx on a send is never replayed.
+  - **Retries.** A 429 is retried three times by Corsair's request layer, which waits for a `Retry-After` when Postmark sends one. A 5xx or a dropped connection is retried only on reads; a send is never replayed.
   - **Webhooks.** Postmark posts delivery, bounce and inbound events to a URL you register, but this plugin does not handle inbound deliveries.
 references:
   - title: Postmark API overview
@@ -50,7 +50,7 @@ apiExamples:
   templates.delete:
     call: "{ idOrAlias: 'onboarding-v1' }"
   templates.validate:
-    call: "{ HtmlBody: '<b>{{name}}</b>', TemplateModel: { name: 'Kevin' } }"
+    call: "{ HtmlBody: '<b>{{name}}</b>', TestRenderModel: { name: 'Kevin' } }"
   server.get:
     call: '{}'
   server.update:

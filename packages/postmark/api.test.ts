@@ -8,10 +8,11 @@
 //
 // A server in Sandbox mode accepts sends without delivering them, but this suite
 // does not send at all, so it is safe on a Live server too.
+import { ApiError } from 'corsair/http';
 import {
 	makePostmarkRequest,
 	POSTMARK_API_BASE,
-	PostmarkAPIError,
+	readErrorCode,
 } from './client';
 import {
 	BounceSchema,
@@ -105,13 +106,14 @@ describeLive('Postmark live API', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PostmarkAPIError);
-		if (!(error instanceof PostmarkAPIError)) return;
+		// Core's ApiError passes through, with Postmark's code on its body.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.errorCode).toBe(10);
-		expect(error.credentialsRejected).toBe(true);
+		expect(readErrorCode(error.body)).toBe(10);
 		// The token rode in a header, so nothing may echo it back.
 		expect(JSON.stringify(error)).not.toContain('definitely-not-a-token');
+		expect(error.message).not.toContain('definitely-not-a-token');
 	});
 
 	it('exposes the documented API host', () => {
