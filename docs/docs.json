@@ -2717,6 +2717,14 @@
                 ]
               },
               {
+                "group": "Kraken.io",
+                "pages": [
+                  "plugins/krakenio/overview",
+                  "plugins/krakenio/api",
+                  "plugins/krakenio/database"
+                ]
+              },
+              {
                 "group": "Leexi",
                 "pages": [
                   "plugins/leexi/overview",

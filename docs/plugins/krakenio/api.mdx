@@ -1,0 +1,245 @@
+---
+title: "Kraken.io API reference"
+sidebarTitle: "API"
+description: "API reference for the Kraken.io plugin in Corsair: every `krakenio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### status
+
+`account.status`
+
+The plan, whether the account is active, and the quota total, used and remaining, all in bytes
+
+**Risk:** `read`
+
+```ts
+await corsair.krakenio.api.account.status({});
+```
+
+**Input:** _empty object_
+
+Quota figures are in bytes.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `active` | `boolean \| null` | No | Whether the account may optimize. |
+| `plan_name` | `string \| null` | No | — |
+| `quota_total` | `number \| null` | No | Bytes. |
+| `quota_used` | `number \| null` | No | Bytes. |
+| `quota_remaining` | `number \| null` | No | Bytes. |
+
+
+
+---
+
+## Upload
+
+### optimize
+
+`upload.optimize`
+
+Optimize a file passed as base64, which the plugin uploads to Kraken as multipart, with the same resize and conversion options. Spends quota
+
+**Risk:** `destructive`
+
+```ts
+await corsair.krakenio.api.upload.optimize({ data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', filename: 'pixel.png', wait: true, convert: { format: 'webp' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wait` | `boolean` | No | Hold the connection open and answer with the result. Without it a `callback_url` is required. |
+| `callback_url` | `string` | No | Kraken posts the result here instead of answering in-line. |
+| `lossy` | `boolean` | No | `true` for lossy, `false` for lossless. Kraken’s default, when this is left out, is lossless. |
+| `resize` | `object` | No | — |
+| `quality` | `number` | No | JPEG quality for a lossy run. Ignored on a lossless one. |
+| `auto_orient` | `boolean` | No | Rotate the image according to its EXIF orientation. |
+| `preserve_meta` | `(profile \| date \| copyright \| geotag \| orientation)[]` | No | Metadata categories to keep. Anything left out is stripped. |
+| `convert` | `object` | No | — |
+| `data` | `string` | Yes | The file as a base64 string. The plugin decodes it and sends it to Kraken as the multipart file part. |
+| `filename` | `string` | No | A name for the upload, such as `header.jpg`. |
+
+Takes the file as base64 and sends it to Kraken as a multipart upload. Needs `wait: true` or a `callback_url`. Spends quota.
+
+<AccordionGroup>
+<Accordion title="resize full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  size?: number,
+  strategy: exact | portrait | landscape | auto | fit | crop | square | fill,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="convert full type">
+
+```ts
+{
+  format: jpeg | png | gif | webp | avif,
+  background?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Absent on a callback request, which answers only `id`. |
+| `id` | `string \| null` | No | The job ID that the callback delivery repeats. |
+| `message` | `string \| null` | No | — |
+| `file_name` | `string \| null` | No | — |
+| `original_size` | `number \| null` | No | Bytes. |
+| `kraked_size` | `number \| null` | No | Bytes. |
+| `saved_bytes` | `number \| null` | No | Bytes saved. |
+| `original_width` | `number \| null` | No | — |
+| `original_height` | `number \| null` | No | — |
+| `kraked_width` | `number \| null` | No | — |
+| `kraked_height` | `number \| null` | No | — |
+| `kraked_url` | `string \| null` | No | Where the optimized file is served from `dl.kraken.io` for a limited time. |
+| `results` | `object \| null` | No | One entry per size, keyed by its `id`, on a multi-size resize. |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+Record<string, {
+  success: boolean,
+  file_name?: string | null,
+  original_size?: number | null,
+  kraked_size?: number | null,
+  saved_bytes?: number | null,
+  original_width?: number | null,
+  original_height?: number | null,
+  kraked_width?: number | null,
+  kraked_height?: number | null,
+  kraked_url?: string | null,
+  message?: string | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Url
+
+### optimize
+
+`url.optimize`
+
+Fetch an image or PDF from a URL and optimize it, optionally resizing, converting, keeping metadata or setting the quality. Spends quota
+
+**Risk:** `destructive`
+
+```ts
+await corsair.krakenio.api.url.optimize({ url: 'https://acme.example/header.jpg', wait: true, lossy: true, quality: 80, resize: { width: 800, strategy: 'fit' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wait` | `boolean` | No | Hold the connection open and answer with the result. Without it a `callback_url` is required. |
+| `callback_url` | `string` | No | Kraken posts the result here instead of answering in-line. |
+| `lossy` | `boolean` | No | `true` for lossy, `false` for lossless. Kraken’s default, when this is left out, is lossless. |
+| `resize` | `object` | No | — |
+| `quality` | `number` | No | JPEG quality for a lossy run. Ignored on a lossless one. |
+| `auto_orient` | `boolean` | No | Rotate the image according to its EXIF orientation. |
+| `preserve_meta` | `(profile \| date \| copyright \| geotag \| orientation)[]` | No | Metadata categories to keep. Anything left out is stripped. |
+| `convert` | `object` | No | — |
+| `url` | `string` | Yes | The publicly reachable image or PDF to fetch and optimize. |
+
+Needs `wait: true` or a `callback_url`. Spends quota. With a multi-size resize, a failure of one size appears in the `results` entry for that size; a whole-request refusal arrives as a 200 with `success: false`, which the plugin throws on.
+
+<AccordionGroup>
+<Accordion title="resize full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  size?: number,
+  strategy: exact | portrait | landscape | auto | fit | crop | square | fill,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="convert full type">
+
+```ts
+{
+  format: jpeg | png | gif | webp | avif,
+  background?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | Absent on a callback request, which answers only `id`. |
+| `id` | `string \| null` | No | The job ID that the callback delivery repeats. |
+| `message` | `string \| null` | No | — |
+| `file_name` | `string \| null` | No | — |
+| `original_size` | `number \| null` | No | Bytes. |
+| `kraked_size` | `number \| null` | No | Bytes. |
+| `saved_bytes` | `number \| null` | No | Bytes saved. |
+| `original_width` | `number \| null` | No | — |
+| `original_height` | `number \| null` | No | — |
+| `kraked_width` | `number \| null` | No | — |
+| `kraked_height` | `number \| null` | No | — |
+| `kraked_url` | `string \| null` | No | Where the optimized file is served from `dl.kraken.io` for a limited time. |
+| `results` | `object \| null` | No | One entry per size, keyed by its `id`, on a multi-size resize. |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+Record<string, {
+  success: boolean,
+  file_name?: string | null,
+  original_size?: number | null,
+  kraked_size?: number | null,
+  saved_bytes?: number | null,
+  original_width?: number | null,
+  original_height?: number | null,
+  kraked_width?: number | null,
+  kraked_height?: number | null,
+  kraked_url?: string | null,
+  message?: string | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
