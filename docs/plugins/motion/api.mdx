@@ -978,6 +978,18 @@ await corsair.motion.api.tasks.create({});
 | `startOn` | `string \| null` | No | — |
 | `creator` | `object \| null` | No | — |
 | `project` | `object \| null` | No | — |
+| `workspace` | `object \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
+| `priority` | `string \| null` | No | ASAP, HIGH, MEDIUM or LOW. |
+| `labels` | `object[] \| null` | No | — |
+| `scheduledStart` | `string \| null` | No | — |
+| `scheduledEnd` | `string \| null` | No | — |
+| `schedulingIssue` | `boolean \| null` | No | True when Motion could not schedule the task. |
+| `createdTime` | `string \| null` | No | — |
+| `lastInteractedTime` | `string \| null` | No | — |
+| `chunks` | `object[] \| null` | No | — |
+| `customFieldValues` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1016,6 +1028,85 @@ await corsair.motion.api.tasks.create({});
     } | null
   }> | null
 } | null
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  teamId?: string | null,
+  type?: string | null,
+  labels?: {
+    name?: string
+  }[] | null,
+  statuses?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  name?: string | null,
+  isDefaultStatus?: boolean | null,
+  isResolvedStatus?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name?: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="chunks full type">
+
+```ts
+{
+  id?: string | null,
+  duration?: number | null,
+  scheduledStart?: string | null,
+  scheduledEnd?: string | null,
+  completedTime?: string | null,
+  isFixed?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="customFieldValues full type">
+
+```ts
+Record<string, {
+  type: string,
+  value?: string | number | boolean | any[] | {
+    id?: string,
+    name?: string,
+    email?: string
+  } | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1086,6 +1177,18 @@ await corsair.motion.api.tasks.get({});
 | `startOn` | `string \| null` | No | — |
 | `creator` | `object \| null` | No | — |
 | `project` | `object \| null` | No | — |
+| `workspace` | `object \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
+| `priority` | `string \| null` | No | ASAP, HIGH, MEDIUM or LOW. |
+| `labels` | `object[] \| null` | No | — |
+| `scheduledStart` | `string \| null` | No | — |
+| `scheduledEnd` | `string \| null` | No | — |
+| `schedulingIssue` | `boolean \| null` | No | True when Motion could not schedule the task. |
+| `createdTime` | `string \| null` | No | — |
+| `lastInteractedTime` | `string \| null` | No | — |
+| `chunks` | `object[] \| null` | No | — |
+| `customFieldValues` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1124,6 +1227,85 @@ await corsair.motion.api.tasks.get({});
     } | null
   }> | null
 } | null
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  teamId?: string | null,
+  type?: string | null,
+  labels?: {
+    name?: string
+  }[] | null,
+  statuses?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  name?: string | null,
+  isDefaultStatus?: boolean | null,
+  isResolvedStatus?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name?: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="chunks full type">
+
+```ts
+{
+  id?: string | null,
+  duration?: number | null,
+  scheduledStart?: string | null,
+  scheduledEnd?: string | null,
+  completedTime?: string | null,
+  isFixed?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="customFieldValues full type">
+
+```ts
+Record<string, {
+  type: string,
+  value?: string | number | boolean | any[] | {
+    id?: string,
+    name?: string,
+    email?: string
+  } | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1218,7 +1400,56 @@ await corsair.motion.api.tasks.list({});
         email?: string
       } | null
     }> | null
-  } | null
+  } | null,
+  workspace?: {
+    id: string,
+    name?: string | null,
+    teamId?: string | null,
+    type?: string | null,
+    labels?: {
+      name?: string
+    }[] | null,
+    statuses?: {
+      name?: string | null,
+      isDefaultStatus?: boolean | null,
+      isResolvedStatus?: boolean | null
+    }[] | null
+  } | null,
+  status?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  } | null,
+  assignees?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  }[] | null,
+  priority?: string | null,
+  labels?: {
+    name?: string
+  }[] | null,
+  scheduledStart?: string | null,
+  scheduledEnd?: string | null,
+  schedulingIssue?: boolean | null,
+  createdTime?: string | null,
+  lastInteractedTime?: string | null,
+  chunks?: {
+    id?: string | null,
+    duration?: number | null,
+    scheduledStart?: string | null,
+    scheduledEnd?: string | null,
+    completedTime?: string | null,
+    isFixed?: boolean | null
+  }[] | null,
+  customFieldValues?: Record<string, {
+    type: string,
+    value?: string | number | boolean | any[] | {
+      id?: string,
+      name?: string,
+      email?: string
+    } | null
+  }> | null
 }[]
 ```
 </Accordion>
@@ -1267,6 +1498,18 @@ await corsair.motion.api.tasks.move({});
 | `startOn` | `string \| null` | No | — |
 | `creator` | `object \| null` | No | — |
 | `project` | `object \| null` | No | — |
+| `workspace` | `object \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
+| `priority` | `string \| null` | No | ASAP, HIGH, MEDIUM or LOW. |
+| `labels` | `object[] \| null` | No | — |
+| `scheduledStart` | `string \| null` | No | — |
+| `scheduledEnd` | `string \| null` | No | — |
+| `schedulingIssue` | `boolean \| null` | No | True when Motion could not schedule the task. |
+| `createdTime` | `string \| null` | No | — |
+| `lastInteractedTime` | `string \| null` | No | — |
+| `chunks` | `object[] \| null` | No | — |
+| `customFieldValues` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1305,6 +1548,85 @@ await corsair.motion.api.tasks.move({});
     } | null
   }> | null
 } | null
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  teamId?: string | null,
+  type?: string | null,
+  labels?: {
+    name?: string
+  }[] | null,
+  statuses?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  name?: string | null,
+  isDefaultStatus?: boolean | null,
+  isResolvedStatus?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name?: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="chunks full type">
+
+```ts
+{
+  id?: string | null,
+  duration?: number | null,
+  scheduledStart?: string | null,
+  scheduledEnd?: string | null,
+  completedTime?: string | null,
+  isFixed?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="customFieldValues full type">
+
+```ts
+Record<string, {
+  type: string,
+  value?: string | number | boolean | any[] | {
+    id?: string,
+    name?: string,
+    email?: string
+  } | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1399,6 +1721,18 @@ await corsair.motion.api.tasks.update({});
 | `startOn` | `string \| null` | No | — |
 | `creator` | `object \| null` | No | — |
 | `project` | `object \| null` | No | — |
+| `workspace` | `object \| null` | No | — |
+| `status` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
+| `priority` | `string \| null` | No | ASAP, HIGH, MEDIUM or LOW. |
+| `labels` | `object[] \| null` | No | — |
+| `scheduledStart` | `string \| null` | No | — |
+| `scheduledEnd` | `string \| null` | No | — |
+| `schedulingIssue` | `boolean \| null` | No | True when Motion could not schedule the task. |
+| `createdTime` | `string \| null` | No | — |
+| `lastInteractedTime` | `string \| null` | No | — |
+| `chunks` | `object[] \| null` | No | — |
+| `customFieldValues` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1437,6 +1771,85 @@ await corsair.motion.api.tasks.update({});
     } | null
   }> | null
 } | null
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  teamId?: string | null,
+  type?: string | null,
+  labels?: {
+    name?: string
+  }[] | null,
+  statuses?: {
+    name?: string | null,
+    isDefaultStatus?: boolean | null,
+    isResolvedStatus?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  name?: string | null,
+  isDefaultStatus?: boolean | null,
+  isResolvedStatus?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name?: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="chunks full type">
+
+```ts
+{
+  id?: string | null,
+  duration?: number | null,
+  scheduledStart?: string | null,
+  scheduledEnd?: string | null,
+  completedTime?: string | null,
+  isFixed?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="customFieldValues full type">
+
+```ts
+Record<string, {
+  type: string,
+  value?: string | number | boolean | any[] | {
+    id?: string,
+    name?: string,
+    email?: string
+  } | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>

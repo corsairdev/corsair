@@ -104,6 +104,26 @@ const ProjectResourceSchema = nullishObject({
 	.extend({ id: z.string() })
 	.loose();
 
+const WorkspaceResourceSchema = nullishObject({
+	id: z.string(),
+	name: z.string(),
+	teamId: z.string(),
+	type: z.string(),
+	labels: z.array(z.object({ name: z.string().optional() }).loose()),
+	statuses: z.array(ProjectStatusSchema),
+})
+	.extend({ id: z.string() })
+	.loose();
+
+const TaskChunkSchema = nullishObject({
+	id: z.string(),
+	duration: z.number(),
+	scheduledStart: z.string(),
+	scheduledEnd: z.string(),
+	completedTime: z.string(),
+	isFixed: z.boolean(),
+}).loose();
+
 const TaskResourceSchema = nullishObject({
 	id: z.string(),
 	name: z.string(),
@@ -118,6 +138,20 @@ const TaskResourceSchema = nullishObject({
 	startOn: z.string().optional(),
 	creator: UserReferenceSchema,
 	project: ProjectResourceSchema.optional(),
+	workspace: WorkspaceResourceSchema,
+	status: ProjectStatusSchema,
+	assignees: z.array(UserReferenceSchema),
+	priority: z.string().describe('ASAP, HIGH, MEDIUM or LOW.'),
+	labels: z.array(z.object({ name: z.string().optional() }).loose()),
+	scheduledStart: z.string(),
+	scheduledEnd: z.string(),
+	schedulingIssue: z
+		.boolean()
+		.describe('True when Motion could not schedule the task.'),
+	createdTime: z.string(),
+	lastInteractedTime: z.string(),
+	chunks: z.array(TaskChunkSchema),
+	customFieldValues: z.record(z.string(), CustomFieldValueSchema),
 })
 	.extend({ id: z.string() })
 	.loose();
@@ -145,17 +179,6 @@ const CommentPageSchema = z
 const ProjectPageSchema = z
 	.object({ meta: CursorMetaSchema })
 	.extend({ projects: z.array(ProjectResourceSchema).optional() })
-	.loose();
-
-const WorkspaceResourceSchema = nullishObject({
-	id: z.string(),
-	name: z.string(),
-	teamId: z.string(),
-	type: z.string(),
-	labels: z.array(z.object({ name: z.string().optional() }).loose()),
-	statuses: z.array(ProjectStatusSchema),
-})
-	.extend({ id: z.string() })
 	.loose();
 
 const WorkspacePageSchema = z
