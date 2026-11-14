@@ -121,7 +121,7 @@ describe('Shortcut HTTP client', () => {
 				statusText: 'Unprocessable Entity',
 				body: { detail: 'private provider detail' },
 			},
-			'private provider detail',
+			'private provider headline\nprivate provider detail\n{"body":"customer"}',
 			{ retryAfter: 1500 },
 		);
 		const requestSpy = jest
@@ -146,7 +146,10 @@ describe('Shortcut HTTP client', () => {
 		expect(original.request.query).toBeUndefined();
 		expect(original.request.body).toBeUndefined();
 		expect(original.body).toBeUndefined();
+		expect(original.stack).toContain('client.test.ts');
+		expect(original.stack).not.toContain('private provider headline');
 		expect(original.stack).not.toContain('private provider detail');
+		expect(original.stack).not.toContain('"body":"customer"');
 		requestSpy.mockRestore();
 	});
 });

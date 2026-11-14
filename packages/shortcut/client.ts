@@ -57,8 +57,14 @@ export async function makeShortcutRequest(
 		if (error instanceof ApiError) {
 			// Preserve core ApiError identity/stack and retry fields; strip input, response body, and IDs.
 			const message = `Shortcut request failed with HTTP ${error.status}`;
-			const stack = error.stack?.split('\n');
-			if (stack?.length) stack[0] = `${error.name}: ${message}`;
+			const stackLines = error.stack?.split('\n') ?? [];
+			const firstFrame = stackLines.findIndex(
+				(line, index) => index > 0 && /^\s*at\s/.test(line),
+			);
+			const stack = [
+				`${error.name}: ${message}`,
+				...(firstFrame > 0 ? stackLines.slice(firstFrame) : []),
+			].join('\n');
 			Object.assign(error.request, {
 				url: '/api/v3',
 				path: undefined,
@@ -70,7 +76,7 @@ export async function makeShortcutRequest(
 			});
 			Object.assign(error, {
 				message,
-				stack: stack?.join('\n'),
+				stack,
 				url: `${SHORTCUT_API_BASE}/api/v3`,
 				body: undefined,
 			});
