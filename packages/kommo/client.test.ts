@@ -202,6 +202,7 @@ describe('makeKommoRequest', () => {
 			400,
 		);
 
+		// unknown: a promise can reject with any value; the assertions below narrow it.
 		const error = await makeKommoRequest(API_KEY, SUBDOMAIN, {
 			method: 'POST',
 			path: '/leads',
@@ -217,6 +218,7 @@ describe('makeKommoRequest', () => {
 	it('clears both bodies, so a submitted contact cannot follow the error into a log', async () => {
 		respond({ title: 'Bad Request', detail: 'Request validation failed' }, 400);
 
+		// unknown: a promise can reject with any value; the assertions below narrow it.
 		const error = (await makeKommoRequest(API_KEY, SUBDOMAIN, {
 			method: 'POST',
 			path: '/contacts',
@@ -243,6 +245,7 @@ describe('makeKommoRequest', () => {
 			422,
 		);
 
+		// unknown: a promise can reject with any value; the assertions below narrow it.
 		const error = (await makeKommoRequest(API_KEY, SUBDOMAIN, {
 			method: 'POST',
 			path: '/contacts',
