@@ -1,65 +1,86 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export class ShortcutAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'ShortcutAPIError';
+export const SHORTCUT_API_BASE = 'https://api.app.shortcut.com';
+
+export class ShortcutNetworkError extends Error {
+	constructor() {
+		super('Shortcut network request failed');
+		this.name = 'ShortcutNetworkError';
 	}
 }
 
-// TODO: Update with your API base URL
-const SHORTCUT_API_BASE = 'https://api.example.com';
+export type ShortcutRequestOptions = {
+	method?: ApiRequestOptions['method'];
+	path?: Record<string, string | number>;
+	// Endpoint-specific query values vary; each is narrowed by its Zod input schema.
+	query?: Record<string, unknown>;
+	body?: object;
+	formData?: object;
+};
 
-export async function makeShortcutRequest<T>(
+export async function makeShortcutRequest(
 	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	apiKey: string | undefined,
+	options: ShortcutRequestOptions = {},
+): Promise<unknown> {
+	if (apiKey !== undefined && apiKey.length === 0) {
+		throw new AuthMissingError('shortcut', 'api_key');
+	}
+	if (!apiKey) throw new AuthMissingError('shortcut', 'api_key');
 
 	const config: OpenAPIConfig = {
 		BASE: SHORTCUT_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '3',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'Shortcut-Token': apiKey,
+			...(options.formData ? {} : { 'Content-Type': 'application/json' }),
 		},
 	};
-
 	const requestOptions: ApiRequestOptions = {
-		method,
+		method: options.method ?? 'GET',
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		path: options.path,
+		query: options.query,
+		body: options.body,
+		formData: options.formData,
+		mediaType: options.formData ? undefined : 'application/json; charset=utf-8',
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		// Provider JSON is unknown here; the endpoint-specific output schema validates it.
+		return await request<unknown>(config, requestOptions);
 	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new ShortcutAPIError(error.message);
+		if (error instanceof ApiError) {
+			// Provider error bodies and request payloads can contain private story/document text.
+			const safeRequest: ApiRequestOptions = {
+				...error.request,
+				body: undefined,
+				formData: undefined,
+			};
+			throw new ApiError(
+				safeRequest,
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: undefined,
+				},
+				`Shortcut request failed with HTTP ${error.status}`,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
-		throw new ShortcutAPIError('Unknown error');
+		if (error instanceof Error) throw new ShortcutNetworkError();
+		// `unknown` because JavaScript permits throwing values that are not Error instances.
+		throw new ShortcutNetworkError();
 	}
 }

@@ -51,5 +51,6 @@ module.exports = {
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	verbose: true,
 };

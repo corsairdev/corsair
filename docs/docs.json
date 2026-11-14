@@ -3659,6 +3659,14 @@
                 ]
               },
               {
+                "group": "Shortcut",
+                "pages": [
+                  "plugins/shortcut/overview",
+                  "plugins/shortcut/api",
+                  "plugins/shortcut/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",

@@ -1,4 +1,301 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Shortcut"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Shortcut
+description: Manage Shortcut stories, epics, projects, workflows, labels, documents, and workspace resources through the REST API v3.
+domain: api.app.shortcut.com
+recommendedAuth: api_key
+overviewNote: >-
+  Store a Shortcut API token as the API key. Requests use the Shortcut-Token header; deprecated token query authentication is not used. Shortcut permits 200 requests per minute, and the shared transport honors Retry-After on 429 responses. Webhook receivers and webhook-integration management routes are not included.
+apiNotes:
+  'createDoc.post': 'Shortcut defaults document content to HTML when `content_format` is omitted; set it to `markdown` when sending Markdown.'
+  'getDoc.get': 'Use `content_format: html` to include HTML content; the default response format is Markdown.'
+  'updateDoc.put': 'Shortcut defaults document content to HTML when `content_format` is omitted. Set `markdown` when writing Markdown content.'
+  'listEpicsPaginated.get': 'This route supports `page` and `page_size`; values are forwarded without local pagination defaults.'
+  'search.get': 'Continuation pagination uses the documented `next` query value and `page_size`.'
+  'searchDocuments.get': 'Continuation pagination uses the documented `next` query value and `page_size`.'
+  'searchEpics.get': 'Continuation pagination uses the documented `next` query value and `page_size`.'
+  'searchIterations.get': 'Continuation pagination uses the documented `next` query value and `page_size`.'
+  'searchMilestones.get': 'Continuation pagination uses the documented `next` query value and `page_size`.'
+  'searchObjectives.get': 'Continuation pagination uses the documented `next` query value and `page_size`.'
+  'searchStories.get': 'Continuation pagination uses the documented `next` query value and `page_size`.'
+  'listGroupStories.get': 'This route supports `limit` and `offset` pagination.'
+  'uploadFiles.post': 'Provide at least `file0`; `file1` through `file3` are optional multipart file fields.'
+apiExamples:
+  listCategories.get:
+    call: '{}'
+  createCategory.post:
+    call: '{"body":{"name":"foo"}}'
+  getCategory.get:
+    call: '{"path":{"categoryPublicId":1}}'
+  updateCategory.put:
+    call: '{"path":{"categoryPublicId":1},"body":{}}'
+  deleteCategory.delete:
+    call: '{"path":{"categoryPublicId":1}}'
+  listCategoryMilestones.get:
+    call: '{"path":{"categoryPublicId":1}}'
+  listCategoryObjectives.get:
+    call: '{"path":{"categoryPublicId":1}}'
+  listCustomFields.get:
+    call: '{}'
+  getCustomField.get:
+    call: '{"path":{"customFieldPublicId":"12345678-9012-3456-7890-123456789012"}}'
+  updateCustomField.put:
+    call: '{"path":{"customFieldPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
+  deleteCustomField.delete:
+    call: '{"path":{"customFieldPublicId":"12345678-9012-3456-7890-123456789012"}}'
+  listDocs.get:
+    call: '{}'
+  createDoc.post:
+    call: '{"body":{"title":"foo","content":"foo"}}'
+  getDoc.get:
+    call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"}}'
+  updateDoc.put:
+    call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
+  deleteDoc.delete:
+    call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
+  listDocumentEpics.get:
+    call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012"}}'
+  linkDocumentToEpic.put:
+    call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012","epicPublicId":1}}'
+  unlinkDocumentFromEpic.delete:
+    call: '{"path":{"docPublicId":"12345678-9012-3456-7890-123456789012","epicPublicId":1}}'
+  listEntityTemplates.get:
+    call: '{}'
+  createEntityTemplate.post:
+    call: '{"body":{"name":"foo","story_contents":{}}}'
+  disableStoryTemplates.put:
+    call: '{}'
+  enableStoryTemplates.put:
+    call: '{}'
+  getEntityTemplate.get:
+    call: '{"path":{"entityTemplatePublicId":"12345678-9012-3456-7890-123456789012"}}'
+  updateEntityTemplate.put:
+    call: '{"path":{"entityTemplatePublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
+  deleteEntityTemplate.delete:
+    call: '{"path":{"entityTemplatePublicId":"12345678-9012-3456-7890-123456789012"}}'
+  getEpicWorkflow.get:
+    call: '{}'
+  listEpics.get:
+    call: '{}'
+  createEpic.post:
+    call: '{"body":{"name":"foo"}}'
+  listEpicsPaginated.get:
+    call: '{}'
+  getEpic.get:
+    call: '{"path":{"epicPublicId":1}}'
+  updateEpic.put:
+    call: '{"path":{"epicPublicId":1},"body":{}}'
+  deleteEpic.delete:
+    call: '{"path":{"epicPublicId":1}}'
+  listEpicComments.get:
+    call: '{"path":{"epicPublicId":1}}'
+  createEpicComment.post:
+    call: '{"path":{"epicPublicId":1},"body":{"text":"foo"}}'
+  createEpicCommentComment.post:
+    call: '{"path":{"epicPublicId":1,"commentPublicId":1},"body":{"text":"foo"}}'
+  getEpicComment.get:
+    call: '{"path":{"epicPublicId":1,"commentPublicId":1}}'
+  updateEpicComment.put:
+    call: '{"path":{"epicPublicId":1,"commentPublicId":1},"body":{"text":"foo"}}'
+  deleteEpicComment.delete:
+    call: '{"path":{"epicPublicId":1,"commentPublicId":1}}'
+  listEpicDocuments.get:
+    call: '{"path":{"epicPublicId":1}}'
+  getEpicHealth.get:
+    call: '{"path":{"epicPublicId":1}}'
+  createEpicHealth.post:
+    call: '{"path":{"epicPublicId":1},"body":{"status":"At Risk"}}'
+  listEpicHealths.get:
+    call: '{"path":{"epicPublicId":1}}'
+  listEpicStories.get:
+    call: '{"path":{"epicPublicId":1}}'
+  getExternalLinkStories.get:
+    call: '{"query":{"external_link":"foo"}}'
+  listFiles.get:
+    call: '{}'
+  uploadFiles.post:
+    call: '{"body":{"file0":null}}'
+  getFile.get:
+    call: '{"path":{"filePublicId":1}}'
+  updateFile.put:
+    call: '{"path":{"filePublicId":1},"body":{}}'
+  deleteFile.delete:
+    call: '{"path":{"filePublicId":1}}'
+  listGroups.get:
+    call: '{}'
+  createGroup.post:
+    call: '{"body":{"mention_name":"foo","name":"foo"}}'
+  getGroup.get:
+    call: '{"path":{"groupPublicId":"12345678-9012-3456-7890-123456789012"}}'
+  updateGroup.put:
+    call: '{"path":{"groupPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
+  listGroupStories.get:
+    call: '{"path":{"groupPublicId":"12345678-9012-3456-7890-123456789012"}}'
+  updateHealth.put:
+    call: '{"path":{"healthPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
+  listIterations.get:
+    call: '{}'
+  createIteration.post:
+    call: '{"body":{"name":"foo","start_date":"foo","end_date":"foo"}}'
+  disableIterations.put:
+    call: '{}'
+  enableIterations.put:
+    call: '{}'
+  getIteration.get:
+    call: '{"path":{"iterationPublicId":1}}'
+  updateIteration.put:
+    call: '{"path":{"iterationPublicId":1},"body":{}}'
+  deleteIteration.delete:
+    call: '{"path":{"iterationPublicId":1}}'
+  listIterationStories.get:
+    call: '{"path":{"iterationPublicId":1}}'
+  getKeyResult.get:
+    call: '{"path":{"keyResultPublicId":"12345678-9012-3456-7890-123456789012"}}'
+  updateKeyResult.put:
+    call: '{"path":{"keyResultPublicId":"12345678-9012-3456-7890-123456789012"},"body":{}}'
+  listLabels.get:
+    call: '{}'
+  createLabel.post:
+    call: '{"body":{"name":"foo"}}'
+  getLabel.get:
+    call: '{"path":{"labelPublicId":1}}'
+  updateLabel.put:
+    call: '{"path":{"labelPublicId":1},"body":{}}'
+  deleteLabel.delete:
+    call: '{"path":{"labelPublicId":1}}'
+  listLabelEpics.get:
+    call: '{"path":{"labelPublicId":1}}'
+  listLabelStories.get:
+    call: '{"path":{"labelPublicId":1}}'
+  listLinkedFiles.get:
+    call: '{}'
+  createLinkedFile.post:
+    call: '{"body":{"name":"foo","type":"google","url":"foo"}}'
+  getLinkedFile.get:
+    call: '{"path":{"linkedFilePublicId":1}}'
+  updateLinkedFile.put:
+    call: '{"path":{"linkedFilePublicId":1},"body":{}}'
+  deleteLinkedFile.delete:
+    call: '{"path":{"linkedFilePublicId":1}}'
+  getCurrentMemberInfo.get:
+    call: '{}'
+  listMembers.get:
+    call: '{}'
+  getMember.get:
+    call: '{"path":{"memberPublicId":"12345678-9012-3456-7890-123456789012"}}'
+  listMilestones.get:
+    call: '{}'
+  createMilestone.post:
+    call: '{"body":{"name":"foo"}}'
+  getMilestone.get:
+    call: '{"path":{"milestonePublicId":1}}'
+  updateMilestone.put:
+    call: '{"path":{"milestonePublicId":1},"body":{}}'
+  deleteMilestone.delete:
+    call: '{"path":{"milestonePublicId":1}}'
+  listMilestoneEpics.get:
+    call: '{"path":{"milestonePublicId":1}}'
+  listObjectives.get:
+    call: '{}'
+  createObjective.post:
+    call: '{"body":{"name":"foo"}}'
+  getObjective.get:
+    call: '{"path":{"objectivePublicId":1}}'
+  updateObjective.put:
+    call: '{"path":{"objectivePublicId":1},"body":{}}'
+  deleteObjective.delete:
+    call: '{"path":{"objectivePublicId":1}}'
+  listObjectiveEpics.get:
+    call: '{"path":{"objectivePublicId":1}}'
+  getObjectiveHealth.get:
+    call: '{"path":{"objectivePublicId":1}}'
+  createObjectiveHealth.post:
+    call: '{"path":{"objectivePublicId":1},"body":{"status":"At Risk"}}'
+  listObjectiveHealths.get:
+    call: '{"path":{"objectivePublicId":1}}'
+  listProjects.get:
+    call: '{}'
+  createProject.post:
+    call: '{"body":{"name":"foo","team_id":1}}'
+  getProject.get:
+    call: '{"path":{"projectPublicId":1}}'
+  updateProject.put:
+    call: '{"path":{"projectPublicId":1},"body":{}}'
+  deleteProject.delete:
+    call: '{"path":{"projectPublicId":1}}'
+  listStories.get:
+    call: '{"path":{"projectPublicId":1}}'
+  listRepositories.get:
+    call: '{}'
+  getRepository.get:
+    call: '{"path":{"repoPublicId":1}}'
+  search.get:
+    call: '{"query":{"query":"foo"}}'
+  searchDocuments.get:
+    call: '{"query":{"title":"foo"}}'
+  searchEpics.get:
+    call: '{"query":{"query":"foo"}}'
+  searchIterations.get:
+    call: '{"query":{"query":"foo"}}'
+  searchMilestones.get:
+    call: '{"query":{"query":"foo"}}'
+  searchObjectives.get:
+    call: '{"query":{"query":"foo"}}'
+  searchStories.get:
+    call: '{"query":{"query":"foo"}}'
+  createStory.post:
+    call: '{"body":{"name":"foo"}}'
+  createMultipleStories.post:
+    call: '{"body":{"stories":[{"name":"foo"}]}}'
+  updateMultipleStories.put:
+    call: '{"body":{"story_ids":[1]}}'
+  deleteMultipleStories.delete:
+    call: '{"body":{"story_ids":[1]}}'
+  createStoryFromTemplate.post:
+    call: '{"body":{"story_template_id":"12345678-9012-3456-7890-123456789012"}}'
+  queryStories.post:
+    call: '{"body":{}}'
+  getStory.get:
+    call: '{"path":{"storyPublicId":1}}'
+  updateStory.put:
+    call: '{"path":{"storyPublicId":1},"body":{}}'
+  deleteStory.delete:
+    call: '{"path":{"storyPublicId":1}}'
+  listStoryComment.get:
+    call: '{"path":{"storyPublicId":1}}'
+  createStoryComment.post:
+    call: '{"path":{"storyPublicId":1},"body":{"text":"foo"}}'
+  getStoryComment.get:
+    call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
+  updateStoryComment.put:
+    call: '{"path":{"storyPublicId":1,"commentPublicId":1},"body":{"text":"foo"}}'
+  deleteStoryComment.delete:
+    call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
+  createStoryReaction.post:
+    call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
+  deleteStoryReaction.delete:
+    call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
+  unlinkCommentThreadFromSlack.post:
+    call: '{"path":{"storyPublicId":1,"commentPublicId":1}}'
+  storyHistory.get:
+    call: '{"path":{"storyPublicId":1}}'
+  listStorySubTasks.get:
+    call: '{"path":{"storyPublicId":1}}'
+  createTask.post:
+    call: '{"path":{"storyPublicId":1},"body":{"description":"foo"}}'
+  getTask.get:
+    call: '{"path":{"storyPublicId":1,"taskPublicId":1}}'
+  updateTask.put:
+    call: '{"path":{"storyPublicId":1,"taskPublicId":1},"body":{}}'
+  deleteTask.delete:
+    call: '{"path":{"storyPublicId":1,"taskPublicId":1}}'
+  createStoryLink.post:
+    call: '{"body":{"verb":"blocks","subject_id":1,"object_id":1}}'
+  getStoryLink.get:
+    call: '{"path":{"storyLinkPublicId":1}}'
+  updateStoryLink.put:
+    call: '{"path":{"storyLinkPublicId":1},"body":{}}'
+  deleteStoryLink.delete:
+    call: '{"path":{"storyLinkPublicId":1}}'
+  listWorkflows.get:
+    call: '{}'
+  getWorkflow.get:
+    call: '{"path":{"workflowPublicId":1}}'
