@@ -299,6 +299,20 @@ it('preserves rate limit error and retry-after without retry', async () => {
 	});
 	expect(fetchMock).toHaveBeenCalledTimes(1);
 });
+it('sends the API key without exposing it in provider errors', async () => {
+	fetchMock.mockResolvedValueOnce(
+		new Response(JSON.stringify({ error: { code: 'unauthorized' } }), {
+			status: 401,
+			headers: { 'Content-Type': 'application/json' },
+		}),
+	);
+	const error = await api.coins.list({}).catch((caught) => caught);
+	expect(error).toMatchObject({ status: 401 });
+	expect(JSON.stringify(error)).not.toContain('test-key');
+	expect(error.request.headers).toBeUndefined();
+	const [, request] = fetchMock.mock.calls[0] as [string, RequestInit];
+	expect(new Headers(request.headers).get('X-Api-Key')).toBe('test-key');
+});
 it('rejects malformed responses and missing credentials', async () => {
 	fetchMock.mockResolvedValueOnce(
 		new Response(

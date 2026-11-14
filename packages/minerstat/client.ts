@@ -17,19 +17,16 @@ export async function makeMinerstatRequest(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		ENCODE_PATH: encodeURIComponent,
+		HEADERS: { 'X-Api-Key': key },
 	};
 	// Keep the HTTP result unchecked until the endpoint's Zod parser validates it.
-	return request<unknown>(
-		config,
-		{ ...options, headers: { ...options.headers, 'X-Api-Key': key } },
-		{
-			rateLimitConfig: {
-				enabled: true,
-				maxRetries: 0,
-				initialRetryDelay: 1000,
-				backoffMultiplier: 2,
-				headerNames: { retryAfter: 'retry-after' },
-			},
+	return request<unknown>(config, options, {
+		rateLimitConfig: {
+			enabled: true,
+			maxRetries: 0,
+			initialRetryDelay: 1000,
+			backoffMultiplier: 2,
+			headerNames: { retryAfter: 'retry-after' },
 		},
-	);
+	});
 }
