@@ -24,8 +24,15 @@ import {
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { PrismicSchema } from './schema';
 
+/**
+ * The account's key (`api_key`) is the Migration API write token. Each account
+ * also stores its repository id, since the Content API host is built from it,
+ * and a private repository's Content API access token.
+ */
 export const prismicAuthConfig = {
-	api_key: {},
+	api_key: {
+		account: ['repository', 'access_token'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type PrismicPluginOptions = {
@@ -35,13 +42,17 @@ export type PrismicPluginOptions = {
 	 * Only the `migration.*` operations need it.
 	 */
 	key?: string;
-	/** The repository id. Required for every call. */
-	repository?: string;
-	/** A private repository's access token, sent on Content API reads. */
-	accessToken?: string;
 	/**
-	 * Overrides the stored write token. Prefer `key` or the stored `api_key`.
+	 * The repository id, such as `my-repo` from `my-repo.prismic.io`. Overrides
+	 * the account's stored `repository`.
 	 */
+	repository?: string;
+	/**
+	 * A private repository's access token, sent on Content API reads. Overrides
+	 * the account's stored `access_token`.
+	 */
+	accessToken?: string;
+	/** Same as `key`: the write token, resolved by the key builder. */
 	writeToken?: string;
 	hooks?: InternalPrismicPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -123,16 +134,17 @@ const prismicEndpointMeta = {
 	'repository.info': {
 		riskLevel: 'read',
 		description:
-			"Read the repository's refs, custom types, languages and tags, which a document query needs since it is pinned to a ref",
+			"Read the repository's refs, custom types, languages and tags. Document reads use the master ref unless given another one",
 	},
 	'documents.search': {
 		riskLevel: 'read',
 		description:
-			'Query published documents with Prismic predicates, ordering, tags and locale, paged by number or by a `next_page` cursor',
+			'Query published documents with Prismic predicates, ordering, tags and locale at the master ref or a given one, paged by number or by `next_page`',
 	},
 	'documents.get': {
 		riskLevel: 'read',
-		description: 'Read one published document by id, optionally at a ref',
+		description:
+			'Read one published document by id, at the master ref or a given one',
 	},
 	'migration.create': {
 		riskLevel: 'write',
@@ -181,8 +193,9 @@ export function prismic<const T extends PrismicPluginOptions>(
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: PrismicKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			const inline = options.key ?? options.writeToken;
+			if (source === 'endpoint' && inline) {
+				return inline;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {

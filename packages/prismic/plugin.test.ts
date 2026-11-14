@@ -105,8 +105,12 @@ describe('prismic plugin', () => {
 		}
 	});
 
-	it('declares api_key as the write token, since a public repository needs none for a read', () => {
-		expect(prismicAuthConfig).toEqual({ api_key: {} });
+	it('stores the repository and access token on each account, beside the write token', () => {
+		// Hub serves many accounts from one plugin, so a code option cannot hold
+		// a tenant's repository.
+		expect(prismicAuthConfig).toEqual({
+			api_key: { account: ['repository', 'access_token'] },
+		});
 	});
 });
 
@@ -118,6 +122,15 @@ describe('prismic keyBuilder', () => {
 				'endpoint',
 			),
 		).resolves.toBe('inline-token');
+	});
+
+	it('takes writeToken as the inline key too', async () => {
+		await expect(
+			keyBuilderOf(prismic({ writeToken: 'inline-write-token' }))(
+				keyBuilderContext('stored-token'),
+				'endpoint',
+			),
+		).resolves.toBe('inline-write-token');
 	});
 
 	it('falls back to the stored account key', async () => {
