@@ -248,7 +248,8 @@ const WorkflowSchemaFieldSchema = z
 	.object({
 		name: z.string().nullish(),
 		description: z.string().nullish(),
-		example: z.string().nullish(),
+		// Kadoa's DataField takes one sample or a list of them.
+		example: z.union([z.string(), z.array(z.string())]).nullish(),
 		dataType: z.string().nullish(),
 		isKey: z.boolean().nullish(),
 		isRequired: z.boolean().nullish(),
@@ -486,8 +487,9 @@ const WorkflowsCreateInputSchema = z
 			.number()
 			.int()
 			.min(1)
+			.nullable()
 			.optional()
-			.describe('Maximum records per run. Omit for no limit.'),
+			.describe('Maximum records per run. Omit or send null for no limit.'),
 		interval: IntervalSchema.optional().describe(
 			'How often the workflow runs. Defaults to Kadoa’s choice for the workflow type.',
 		),
@@ -519,13 +521,15 @@ const WorkflowsCreateInputSchema = z
 			.min(1)
 			.optional()
 			.describe(
-				'Entity name for inline extraction, such as `Product`. Needs `fields`.',
+				'Entity name for inline extraction, such as `Product`. Needs `fields` unless `userPrompt` is set.',
 			),
 		fields: z
 			.array(FieldSchema)
 			.min(1)
 			.optional()
-			.describe('Inline extraction fields. Needs `entity`.'),
+			.describe(
+				'Inline extraction fields. Need `entity` unless `userPrompt` is set.',
+			),
 		templateId: z
 			.string()
 			.min(1)
@@ -552,7 +556,12 @@ const WorkflowsCreateInputSchema = z
 			return value.entity !== undefined || value.fields !== undefined;
 		});
 
-		if ((value.entity === undefined) !== (value.fields === undefined)) {
+		// A prompt workflow takes `entity` and `fields` as separate optional hints;
+		// only a workflow built from inline fields alone needs both.
+		if (
+			value.userPrompt === undefined &&
+			(value.entity === undefined) !== (value.fields === undefined)
+		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: [value.entity === undefined ? 'entity' : 'fields'],
@@ -1287,10 +1296,9 @@ const VariableCreateInputSchema = z
 		key: z.string().min(1).describe('Unique within the team.'),
 		value: z
 			.string()
-			.min(1)
 			.optional()
 			.describe(
-				'The value. For OBJECT and ARRAY, a JSON string. Omit only for a CUSTOMER_MANAGED secret.',
+				'The value. For OBJECT and ARRAY, a JSON string. May be empty, except for a Kadoa-managed secret. Omit only for a CUSTOMER_MANAGED secret.',
 			),
 		dataType: z
 			.enum(KADOA_VARIABLE_DATA_TYPES)
@@ -1363,11 +1371,11 @@ const VariableCreateInputSchema = z
 			return;
 		}
 
-		if (value.value === undefined) {
+		if (value.value === undefined || value.value.length === 0) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['value'],
-				message: 'A Kadoa-managed secret needs a `value`.',
+				message: 'A Kadoa-managed secret needs a non-empty `value`.',
 			});
 		}
 		for (const field of [

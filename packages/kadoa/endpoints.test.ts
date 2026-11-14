@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { KadoaAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { kadoaErrorCode } from './client';
 import {
 	Changes,
 	Locations,
@@ -411,6 +412,40 @@ describe('workflows.create', () => {
 		});
 	});
 
+	it('takes entity or fields alone as hints on a prompt workflow', async () => {
+		respond(
+			{ error: false, success: true, workflowId: 'wf_new', message: 'ok' },
+			201,
+		);
+
+		await invoke(Workflows.create, {
+			urls: ['https://acme.example/p'],
+			userPrompt: 'Collect every product and its price.',
+			entity: 'Product',
+		});
+
+		expect(lastRequest().body).toEqual({
+			urls: ['https://acme.example/p'],
+			userPrompt: 'Collect every product and its price.',
+			entity: 'Product',
+		});
+	});
+
+	it('sends a null limit for no limit', async () => {
+		respond(
+			{ error: false, success: true, workflowId: 'wf_new', message: 'ok' },
+			201,
+		);
+
+		await invoke(Workflows.create, {
+			urls: ['https://acme.example/p'],
+			userPrompt: 'Collect every product and its price.',
+			limit: null,
+		});
+
+		expect(lastRequest().body).toMatchObject({ limit: null });
+	});
+
 	it('builds from a template, pinning its version', async () => {
 		respond(
 			{ error: false, success: true, workflowId: 'wf_new', message: 'ok' },
@@ -463,18 +498,18 @@ describe('workflows.create', () => {
 				entity: 'Product',
 			},
 		],
+		[{ urls: ['https://a.example'], entity: 'Product' }],
 		[
 			{
 				urls: ['https://a.example'],
-				userPrompt: 'Collect every product and its price.',
-				entity: 'Product',
-			},
-		],
-		[
-			{
-				urls: ['https://a.example'],
-				userPrompt: 'Collect every product and its price.',
-				fields: [{ name: 'title', fieldType: 'SCHEMA', dataType: 'STRING' }],
+				fields: [
+					{
+						name: 'title',
+						fieldType: 'SCHEMA',
+						dataType: 'STRING',
+						description: 'The product name',
+					},
+				],
 			},
 		],
 		[
@@ -683,7 +718,7 @@ describe('workflows.run', () => {
 			invoke(Workflows.run, { workflowId: 'wf_01HZX6' }),
 		).rejects.toMatchObject({
 			status: 409,
-			code: 'PREVIEW_AWAITS_CUSTOMER_CONFIRMATION',
+			body: { reason: 'PREVIEW_AWAITS_CUSTOMER_CONFIRMATION' },
 			message:
 				'Kadoa 409 PREVIEW_AWAITS_CUSTOMER_CONFIRMATION: Workflow is not ready to run',
 		});
@@ -694,12 +729,9 @@ describe('workflows.run', () => {
 
 		const error = await caught(invoke(Workflows.run, { workflowId: 'wf' }));
 
-		expect(error).toBeInstanceOf(KadoaAPIError);
-		expect(error).toMatchObject({
-			status: 429,
-			code: 'PIPELINE_CROWDED',
-			isRateLimit: true,
-		});
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 429 });
+		expect(kadoaErrorCode(error)).toBe('PIPELINE_CROWDED');
 	});
 
 	it.each([
@@ -1172,6 +1204,22 @@ describe('schemas.get', () => {
 		});
 	});
 
+	it('reads a field whose example is a list of samples', async () => {
+		respond({
+			error: false,
+			data: {
+				...schemaDefinition,
+				schema: [{ ...schemaDefinition.schema[0], example: ['A', 'B'] }],
+			},
+		});
+
+		await expect(
+			invoke(Schemas.get, { schemaId: 'sch_01HZX8' }),
+		).resolves.toMatchObject({
+			data: { schema: [{ example: ['A', 'B'] }] },
+		});
+	});
+
 	it('surfaces an unknown schema', async () => {
 		respond({ error: true, message: 'Schema not found' }, 404);
 
@@ -1624,6 +1672,33 @@ describe('variables.create', () => {
 		});
 	});
 
+	it('POSTs a plain variable with an empty value', async () => {
+		respond(variable);
+
+		await invoke(Variables.create, {
+			key: 'suffix',
+			value: '',
+			dataType: 'STRING',
+		});
+
+		expect(lastRequest().body).toEqual({
+			key: 'suffix',
+			value: '',
+			dataType: 'STRING',
+		});
+	});
+
+	it('rejects a Kadoa-managed secret with an empty value', async () => {
+		await expect(
+			invoke(Variables.create, {
+				key: 'apiLogin',
+				value: '',
+				dataType: 'SECRET',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('POSTs a Kadoa-managed secret', async () => {
 		respond({ variable: variables[1], error: null });
 
@@ -1805,7 +1880,7 @@ describe('error envelopes', () => {
 		await expect(invoke(Workflows.list, {})).rejects.toMatchObject({
 			status: 401,
 			message: 'Kadoa 401: Unauthorized',
-			method: 'GET',
+			request: { method: 'GET' },
 		});
 	});
 
@@ -1839,17 +1914,15 @@ describe('error envelopes', () => {
 		expect(String(error)).not.toContain(API_KEY);
 	});
 
-	it('marks a 500 as a server error and keeps no body', async () => {
+	it('keeps a 5xx as core ApiError with its status', async () => {
 		respond({ error: 'Internal service error' }, 503);
 
 		const error = await caught(invoke(Workflows.list, {}));
 
-		expect(error).toBeInstanceOf(KadoaAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error).toMatchObject({
 			status: 503,
-			isServerError: true,
-			transport: false,
+			message: 'Kadoa 503: Internal service error',
 		});
-		expect(error).not.toHaveProperty('body');
 	});
 });

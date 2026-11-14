@@ -328,7 +328,7 @@ await corsair.kadoa.api.schemas.get({ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b5c7
   schema?: {
     name?: string | null,
     description?: string | null,
-    example?: string | null,
+    example?: string | string[] | null,
     dataType?: string | null,
     isKey?: boolean | null,
     isRequired?: boolean | null,
@@ -380,7 +380,7 @@ await corsair.kadoa.api.schemas.list({});
   schema?: {
     name?: string | null,
     description?: string | null,
-    example?: string | null,
+    example?: string | string[] | null,
     dataType?: string | null,
     isKey?: boolean | null,
     isRequired?: boolean | null,
@@ -463,7 +463,7 @@ await corsair.kadoa.api.schemas.update({ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b
   schema?: {
     name?: string | null,
     description?: string | null,
-    example?: string | null,
+    example?: string | string[] | null,
     dataType?: string | null,
     isKey?: boolean | null,
     isRequired?: boolean | null,
@@ -567,7 +567,7 @@ await corsair.kadoa.api.variables.create({ key: 'region', value: 'eu-west', data
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `key` | `string` | Yes | Unique within the team. |
-| `value` | `string` | No | The value. For OBJECT and ARRAY, a JSON string. Omit only for a CUSTOMER_MANAGED secret. |
+| `value` | `string` | No | The value. For OBJECT and ARRAY, a JSON string. May be empty, except for a Kadoa-managed secret. Omit only for a CUSTOMER_MANAGED secret. |
 | `dataType` | `STRING \| OBJECT \| ARRAY \| NUMBER \| SECRET` | No | Defaults to STRING. |
 | `managementMode` | `KADOA_MANAGED \| CUSTOMER_MANAGED` | No | SECRET only. Defaults to KADOA_MANAGED. |
 | `providerConnectionId` | `string` | No | SECRET with CUSTOMER_MANAGED: the Google Secret Manager connection. |
@@ -924,15 +924,15 @@ await corsair.kadoa.api.workflows.create({ urls: ['https://acme.example/products
 | `name` | `string` | No | Human-readable workflow name. |
 | `description` | `string` | No | What the workflow does, at most 500 characters. |
 | `tags` | `string[]` | No | Tags for grouping. Each is at least two characters. |
-| `limit` | `number` | No | Maximum records per run. Omit for no limit. |
+| `limit` | `number \| null` | No | Maximum records per run. Omit or send null for no limit. |
 | `interval` | `ONLY_ONCE \| EVERY_10_MINUTES \| EVERY_20_MINUTES \| HALF_HOURLY \| HOURLY \| TWO_HOURLY \| THREE_HOURLY \| FOUR_HOURLY \| SIX_HOURLY \| TWELVE_HOURLY \| EIGHTEEN_HOURLY \| DAILY \| TWO_DAY \| THREE_DAY \| WEEKLY \| BIWEEKLY \| TRIWEEKLY \| FOUR_WEEKS \| MONTHLY \| CUSTOM` | No | How often the workflow runs. Defaults to Kadoa’s choice for the workflow type. |
 | `schedules` | `string[]` | No | Cron expressions. Overrides `interval`. |
 | `timezone` | `string` | No | IANA timezone for `schedules`, such as `America/New_York`. Defaults to UTC. |
 | `location` | `object` | No | — |
 | `userPrompt` | `string` | No | What to extract and how to navigate the site. Required unless the workflow is built from `schemaId`, `entity` with `fields`, or `templateId`. |
 | `schemaId` | `string` | No | Build from an existing schema instead of inline fields. |
-| `entity` | `string` | No | Entity name for inline extraction, such as `Product`. Needs `fields`. |
-| `fields` | `object[]` | No | Inline extraction fields. Needs `entity`. |
+| `entity` | `string` | No | Entity name for inline extraction, such as `Product`. Needs `fields` unless `userPrompt` is set. |
+| `fields` | `object[]` | No | Inline extraction fields. Need `entity` unless `userPrompt` is set. |
 | `templateId` | `string` | No | Build from a published template. |
 | `templateVersion` | `number` | No | Pin a template version. Omit for the latest published one. |
 | `bypassPreview` | `boolean` | No | Skip preview and validation and deploy at once. Only for a configuration you are sure of. |
@@ -1166,7 +1166,7 @@ await corsair.kadoa.api.workflows.get({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5
 {
   name?: string | null,
   description?: string | null,
-  example?: string | null,
+  example?: string | string[] | null,
   dataType?: string | null,
   isKey?: boolean | null,
   isRequired?: boolean | null,
@@ -1403,7 +1403,7 @@ Pages by offset. Pass `nextSkip` back as `skip`; a page that comes back short is
   schema?: {
     name?: string | null,
     description?: string | null,
-    example?: string | null,
+    example?: string | string[] | null,
     dataType?: string | null,
     isKey?: boolean | null,
     isRequired?: boolean | null,
