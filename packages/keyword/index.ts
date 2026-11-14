@@ -388,7 +388,13 @@ export function keyword<const T extends KeywordPluginOptions>(
 	} satisfies InternalKeywordPlugin;
 }
 
-export { KeywordAPIError } from './client';
+export {
+	isKeywordAuthError,
+	isKeywordPermissionError,
+	isKeywordQuotaError,
+	isKeywordRateLimit,
+	KeywordAPIError,
+} from './client';
 
 export type {
 	AccountGetInput,

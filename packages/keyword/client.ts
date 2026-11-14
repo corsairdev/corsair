@@ -57,17 +57,12 @@ const KEYWORD_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A Keyword failure. The key travels in an `Authorization` header, so no body
- * can echo it, but the body is still dropped: a keyword create echoes the
- * project's `auth` key inside the resource attributes, and keeping it as
- * `cause` would put that into every log line.
+ * A Keyword failure that got no answer: a reset, DNS failure, abort or
+ * timeout, or a body that is not JSON. An HTTP error from Keyword stays core's
+ * `ApiError` (see `sanitizeApiError`), so its status and rate-limit fields
+ * reach core and the error handlers.
  */
 export class KeywordAPIError extends Error {
-	readonly status?: number;
-	/** The status Keyword repeated in its error envelope, as a string. */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when Keyword sent one. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
 	readonly transport: boolean;
@@ -77,9 +72,6 @@ export class KeywordAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			code?: string;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -87,31 +79,67 @@ export class KeywordAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KeywordAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
+function keywordStatus(error: unknown): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
 
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
+export function isKeywordRateLimit(error: unknown): boolean {
+	return keywordStatus(error) === 429;
+}
 
-	/** The token's user is not allowed to make this call. */
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
+export function isKeywordAuthError(error: unknown): boolean {
+	return keywordStatus(error) === 401;
+}
 
-	/** The plan's keyword allowance is full, which no retry can fix. */
-	get isQuotaError(): boolean {
-		return this.status === 402;
-	}
+/** The token's user is not allowed to make this call. */
+export function isKeywordPermissionError(error: unknown): boolean {
+	return keywordStatus(error) === 403;
+}
+
+/** The plan's keyword allowance is full, which no retry can fix. */
+export function isKeywordQuotaError(error: unknown): boolean {
+	return keywordStatus(error) === 402;
+}
+
+/**
+ * Core's `ApiError` keeps the request body and the raw response, and a keyword
+ * create echoes the project's `auth` key inside the resource. The error is
+ * rebuilt as an `ApiError` with the same status and rate-limit fields, the body
+ * cut to the first error's `code`, `title` and `message`, and the sent body
+ * dropped.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const { body: _body, formData: _formData, ...request } = error.request;
+	const errorBody = parseJsonText(error.body) ?? error.body;
+	const fields = readErrors(errorBody);
+	const kept = Object.fromEntries(
+		Object.entries(fields).filter(([, value]) => value !== undefined),
+	);
+	return new ApiError(
+		request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: Object.keys(kept).length > 0 ? { errors: [kept] } : {},
+		},
+		// Core's message for a status it does not list quotes the whole
+		// response body, so a body without a message gets a fixed one.
+		describeKeywordError(error.status, errorBody, 'Keyword request failed'),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /** The message Keyword sent, with the status in front. */
@@ -182,19 +210,7 @@ export async function makeKeywordRequest(
 			rateLimitConfig: KEYWORD_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const errorBody = parseJsonText(error.body) ?? error.body;
-			const fields = readErrors(errorBody);
-			throw new KeywordAPIError(
-				describeKeywordError(error.status, errorBody, error.message),
-				{
-					status: error.status,
-					code: fields.code,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			// A transport failure never had a response body, so its cause is safe.

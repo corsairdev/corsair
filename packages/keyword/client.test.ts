@@ -1,5 +1,8 @@
+import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeKeywordError,
+	isKeywordRateLimit,
 	makeKeywordRequest,
 	projectSegment,
 	readErrors,
@@ -227,12 +230,11 @@ describe('makeKeywordRequest', () => {
 		await expect(
 			makeKeywordRequest(API_KEY, { method: 'POST', path: '/groups' }),
 		).rejects.toMatchObject({
-			name: 'KeywordAPIError',
+			name: 'ApiError',
 			status: 422,
-			code: '422',
+			body: { errors: [{ code: '422' }] },
 			message: 'Keyword 422: The url field is required.',
-			method: 'POST',
-			transport: false,
+			request: { method: 'POST' },
 		});
 	});
 
@@ -254,7 +256,7 @@ describe('makeKeywordRequest', () => {
 			}),
 		).rejects.toMatchObject({
 			status: 404,
-			code: '1001',
+			body: { errors: [{ code: '1001' }] },
 			message: 'Keyword 404: The project not found',
 		});
 	});
@@ -286,9 +288,14 @@ describe('makeKeywordRequest', () => {
 			),
 		);
 
-		await expect(
-			makeKeywordRequest(API_KEY, { method: 'GET', path: '/users/self' }),
-		).rejects.toMatchObject({ retryAfter: 4000, isRateLimit: true });
+		const error = await makeKeywordRequest(API_KEY, {
+			method: 'GET',
+			path: '/users/self',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ retryAfter: 4000 });
+		expect(isKeywordRateLimit(error)).toBe(true);
 	});
 
 	it('keeps no body on the error, so a project auth key cannot leak', async () => {
@@ -301,14 +308,34 @@ describe('makeKeywordRequest', () => {
 			422,
 		);
 
-		// unknown: the rejection is an error whose fields the assertions read.
-		const error = (await makeKeywordRequest(API_KEY, {
+		const error = await makeKeywordRequest(API_KEY, {
 			method: 'POST',
 			path: '/groups',
-		}).catch((caught: unknown) => caught)) as Error;
+			body: { url: 'secret-sent-value' },
+		}).catch((caught: unknown) => caught);
 
-		expect(error).not.toHaveProperty('body');
-		expect(error.cause).toBeUndefined();
+		expect(error).toBeInstanceOf(ApiError);
+		expect(inspect(error, { depth: 10 })).not.toContain('PROJECT-AUTH-KEY');
+		expect(inspect(error, { depth: 10 })).not.toContain('secret-sent-value');
+	});
+
+	it('uses a fixed message when the body has none, not the raw body', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('gateway said: project auth PROJECT-AUTH-KEY', {
+				status: 504,
+				headers: { 'Content-Type': 'text/plain' },
+			}),
+		);
+
+		const error = await makeKeywordRequest(API_KEY, {
+			method: 'GET',
+			path: '/groups',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toMatchObject({
+			status: 504,
+			message: 'Keyword 504: Keyword request failed',
+		});
 	});
 
 	it('marks a transport failure and keeps its cause, which never held a body', async () => {

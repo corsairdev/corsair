@@ -1,16 +1,36 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import { KeywordAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An answered request fails as core's ApiError, as the client throws it; one
+// that got no answer fails as KeywordAPIError.
 function apiError(options: {
 	status?: number;
 	code?: string;
-	method?: string;
+	method?: ApiRequestOptions['method'];
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new KeywordAPIError('failed', options);
+}): Error {
+	const method = options.method ?? 'GET';
+	if (options.status === undefined) {
+		return new KeywordAPIError('failed', { ...options, method });
+	}
+	return new ApiError(
+		{ method, url: '/groups' },
+		{
+			url: 'https://app.keyword.com/api/v2/groups',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body:
+				options.code === undefined ? {} : { errors: [{ code: options.code }] },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**

@@ -1,5 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
-import { KeywordAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isKeywordAuthError,
+	isKeywordPermissionError,
+	isKeywordQuotaError,
+	isKeywordRateLimit,
+} from './client';
 import {
 	Account,
 	Keywords,
@@ -271,9 +277,10 @@ describe('projects.create', () => {
 	it('surfaces a token that cannot create across the account', async () => {
 		respond(forbidden, 403);
 
-		await expect(
-			invoke(Projects.create, { category: 'Pixar' }),
-		).rejects.toMatchObject({ status: 403, isPermissionError: true });
+		const error = await caught(invoke(Projects.create, { category: 'Pixar' }));
+
+		expect(error).toMatchObject({ status: 403 });
+		expect(isKeywordPermissionError(error)).toBe(true);
 	});
 
 	it.each([[{}], [{ category: '' }]])(
@@ -1107,13 +1114,16 @@ describe('error envelopes', () => {
 	it('reads the message out of a 401', async () => {
 		respond(unauthorized, 401);
 
-		await expect(invoke(Projects.list, {})).rejects.toMatchObject({
+		const error = await caught(invoke(Projects.list, {}));
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
 			status: 401,
-			code: '401',
-			isAuthError: true,
+			body: { errors: [{ code: '401' }] },
 			message: 'Keyword 401: Unauthenticated.',
-			method: 'GET',
+			request: { method: 'GET' },
 		});
+		expect(isKeywordAuthError(error)).toBe(true);
 	});
 
 	it('reads a plan that is full as a quota error, not a rate limit', async () => {
@@ -1126,12 +1136,10 @@ describe('error envelopes', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(KeywordAPIError);
-		expect(error).toMatchObject({
-			status: 402,
-			isQuotaError: true,
-			isRateLimit: false,
-		});
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 402 });
+		expect(isKeywordQuotaError(error)).toBe(true);
+		expect(isKeywordRateLimit(error)).toBe(false);
 	});
 
 	it('reads a refused field', async () => {
@@ -1162,7 +1170,10 @@ describe('error envelopes', () => {
 
 		const error = await caught(invoke(Projects.list, {}));
 
-		expect(error).not.toHaveProperty('body');
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			body: { errors: [{ message: 'The url field is required.' }] },
+		});
 	});
 
 	it('marks a transport failure and keeps the method', async () => {

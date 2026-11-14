@@ -1,8 +1,15 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { KeywordAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isKeywordQuotaError,
+	isKeywordRateLimit,
+	KeywordAPIError,
+} from './client';
 
+// Keyword's HTTP errors arrive as core's ApiError; KeywordAPIError is a request
+// that got no answer, so it has no status.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KeywordAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // Keyword publishes 401, 403, 404, 422 and 429 on its routes, plus the usual
@@ -12,19 +19,17 @@ export const errorHandlers = {
 	// retry can fix a quota, so this sits before RATE_LIMIT_ERROR rather than
 	// after: both look like "slow down", and only one of them clears on its own.
 	QUOTA_ERROR: {
-		match: (error: Error) =>
-			error instanceof KeywordAPIError && error.isQuotaError,
+		match: (error: Error) => isKeywordQuotaError(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Keyword limits each token to 60 requests a minute (30 for competitor
 	// history) and sends no Retry-After, so the backoff is exponential.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof KeywordAPIError && error.isRateLimit,
+		match: (error: Error) => isKeywordRateLimit(error),
 		handler: async (error: Error) => ({
 			maxRetries: 2,
 			headersRetryAfterMs:
-				error instanceof KeywordAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -54,9 +59,9 @@ export const errorHandlers = {
 	// keyword exists, and a replay would create a second one.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof KeywordAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

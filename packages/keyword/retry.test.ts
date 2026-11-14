@@ -101,7 +101,7 @@ describe('retry behaviour', () => {
 					.catch((caught: unknown) => caught),
 			);
 
-			expect(error).toMatchObject({ status: 429, isRateLimit: true });
+			expect(error).toMatchObject({ status: 429 });
 			// One attempt plus two retries.
 			expect(fetchMock).toHaveBeenCalledTimes(3);
 		} finally {
@@ -119,7 +119,7 @@ describe('retry behaviour', () => {
 					projectName: 'Disney',
 					keywords: [{ kw: 'x', url: 'disney.com' }],
 				}),
-			).rejects.toMatchObject({ status: 402, isQuotaError: true });
+			).rejects.toMatchObject({ status: 402 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
@@ -181,7 +181,7 @@ describe('retry behaviour', () => {
 			respond(unauthorized, 401);
 
 			await expect(corsair.keyword.api.projects.list({})).rejects.toMatchObject(
-				{ status: 401, isAuthError: true },
+				{ status: 401 },
 			);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
