@@ -23,8 +23,8 @@ await corsair.sendbird.api.messages.send({
 });
 ```
 
-Users and group channels use `token` and `next` for pagination. Message lists require `message_ts` or `message_id` and support `prev_limit` and `next_limit`. Deletes return `undefined`. The integration does not automatically retry writes, including rate-limited requests.
+Users and group channels use `token` and `next` for pagination. Message lists require `message_ts` or `message_id` and support `prev_limit` and `next_limit`. Deletes return Sendbird's empty `{}` body. A rate-limited (429) request is retried by Corsair's HTTP client, which honours `Retry-After`; other failed writes are not retried. `messages.send` is marked destructive because channel members see the message.
 
 The initial write scope is JSON only: user profiles and channel covers use URLs, group channel creation uses `user_ids`, and message send/update accepts `message_type: 'MESG'` text messages. The alternative `users` channel-creation form, file uploads, file/admin message writes, advanced text message options such as push templates and sorted metaarrays, other API families, moderation, bots, outbound webhook management, and inbound webhooks are not implemented. Message reads can return other message types.
 
-Use unescaped query values; Corsair URL-encodes them, including comma-separated filters. List members containing literal commas are not supported by these string filters. Provider identifiers are validated as individual path components before encoding.
+Use unescaped query values; the plugin URL-encodes each one. Comma-separated filters (`user_ids`, `channel_urls`, `custom_types`, `members_include_in` and the like) keep their commas raw, because Sendbird returns no results when the comma arrives encoded. List members containing literal commas are not supported by these string filters. Provider identifiers are validated as individual path components before encoding.
