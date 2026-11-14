@@ -1,0 +1,747 @@
+displayName: Dialpad
+description: Manage company calling, users, contacts, messages, routing, reporting, Dialpad Meetings, WFM, and PowerDialer through the documented Dialpad REST APIs.
+domain: dialpad.com
+recommendedAuth: api_key
+overviewNote: |
+  Dialpad supports both company API keys and OAuth 2 access tokens. API keys are created by a company admin and sent as Bearer tokens. OAuth applications use Dialpad's authorization-code flow; store the resulting access token with Corsair's `oauth_2` auth type. The OAuth client ID and client secret are application credentials, not an API-key auth method.
+
+  Choose `environment: 'sandbox'` to use Dialpad's documented sandbox host. All operations use HTTPS Bearer authentication. Some operations require additional OAuth scopes or company-admin permissions, as noted in the official API reference.
+
+  List endpoints expose documented cursors as input/output fields; pass the returned cursor to fetch the next page. Async reporting and anonymization operations return request IDs that must be polled with their documented status endpoints. Rate-limit responses preserve Dialpad's `Retry-After` value; the plugin does not automatically retry operations.
+
+  Webhook/event-subscription management, OAuth token lifecycle endpoints, webhook callbacks, and multipart CSV uploads are not exposed. The plugin includes ordinary REST operations that create and manage WebSocket resources, but does not open long-lived event streams.
+examples:
+  read:
+    path: accesscontrolpolicies.assignments
+    title: List assignments for an access control policy
+    args:
+      path:
+        id: 1
+      query: {}
+  write:
+    path: accesscontrolpolicies.assign
+    title: Assign a user to an access control policy
+    args:
+      path:
+        id: 1
+      body:
+        user_id: 2
+references:
+  - title: Dialpad API reference
+    url: https://developers.dialpad.com/reference
+  - title: API key generation
+    url: https://developers.dialpad.com/docs/api-key-generation
+  - title: OAuth 2 authentication
+    url: https://developers.dialpad.com/docs/oauth
+  - title: Rate limits
+    url: https://developers.dialpad.com/docs/rate-limits
+apiNotes:
+  reports.scheduledstats.download: |
+    The official Report Download API page does not specify the successful response media type or maximum report size. The plugin returns bytes as `{ kind: 'binary', contentType, base64, sizeBytes }`, with a 25 MiB client safety cap and 20-second timeout. The `t` field currently accepts the only documented report type, `user_voiceline`.
+  recordings.call.download: |
+    Requires the `recordings_export` scope. The guide documents successful downloads as audio/mpeg; the plugin returns the raw bytes in the same bounded base64 result envelope as report downloads.
+  recordings.voicemail.download: |
+    Requires the `recordings_export` scope. The guide documents successful downloads as audio/mpeg; the plugin returns the raw bytes in the same bounded base64 result envelope as report downloads.
+  recordings.admin_call.download: |
+    Admin recordings cannot be downloaded from their browser-only URL. Create a recording share link first and pass its ID here; the plugin returns the bytes in the bounded base64 result envelope.
+apiExamples:
+  "accesscontrolpolicies.assign":
+    call: "{ path: {\"id\":1}, body: {\"user_id\":1} }"
+  "accesscontrolpolicies.delete":
+    call: "{ path: {\"id\":1} }"
+  "accesscontrolpolicies.update":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "agentgroup.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "anonymization.requests.get":
+    call: "{ path: {\"request_id\":\"sample-value\"} }"
+  "accesscontrolpolicies.list":
+    call: "{ query: {} }"
+  "accesscontrolpolicies.unassign":
+    call: "{ path: {\"id\":1}, body: {\"user_id\":1} }"
+  "accesscontrolpolicies.create":
+    call: "{ body: {\"name\":\"sample-value\",\"owner_id\":1,\"permission_sets\":[]} }"
+  "accesscontrolpolicies.assignments":
+    call: "{ path: {\"id\":1}, query: {} }"
+  "anonymization.contacts":
+    call: "{ body: {\"contact_keys\":[]} }"
+  "accesscontrolpolicies.get":
+    call: "{ path: {\"id\":1} }"
+  "app_settings.get":
+    call: "{ query: {} }"
+  "blockednumbers.get":
+    call: "{ path: {\"number\":\"sample-value\"} }"
+  "available_numbers.list":
+    call: "{ query: {} }"
+  "blockednumbers.add":
+    call: "{ body: {} }"
+  "blockednumbers.list":
+    call: "{ query: {} }"
+  "blockednumbers.remove":
+    call: "{ body: {} }"
+  "call.assign":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "call.get_assigned_operators":
+    call: "{ path: {\"id\":1} }"
+  "anonymization.callcontent":
+    call: "{ body: {\"call_ids\":[]} }"
+  "call.get_ai_recap":
+    call: "{ path: {\"id\":1}, query: {} }"
+  "call.participants.add":
+    call: "{ path: {\"id\":1}, body: {\"participant\":{\"number\":\"sample-value\"}} }"
+  "call.list":
+    call: "{ query: {} }"
+  "call.initiate_ivr_call":
+    call: "{ body: {\"phone_number\":\"sample-value\",\"target_id\":1,\"target_type\":\"callcenter\"} }"
+  "call.unassign_all_call_operators":
+    call: "{ path: {\"id\":1} }"
+  "call.transfer_call":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "call.get_call_info":
+    call: "{ path: {\"id\":1} }"
+  "call.unassign_operator":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "call.unpark":
+    call: "{ path: {\"id\":1}, body: {\"user_id\":1} }"
+  "call.initiate":
+    call: "{ body: {\"phone_number\":\"sample-value\",\"user_id\":1} }"
+  "call.add_labels":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "call.hangup":
+    call: "{ path: {\"id\":1} }"
+  "callbacks.list":
+    call: "{ query: {\"call_center_id\":1} }"
+  "callback.validate":
+    call: "{ body: {\"call_center_id\":1,\"phone_number\":\"sample-value\"} }"
+  "callcenters.listall":
+    call: "{ query: {} }"
+  "callcenters.get":
+    call: "{ path: {\"id\":1} }"
+  "callcenters.update":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "callcenters.create":
+    call: "{ body: {\"name\":\"sample-value\",\"office_id\":1} }"
+  "callback.enqueue":
+    call: "{ body: {\"call_center_id\":1,\"phone_number\":\"sample-value\"} }"
+  "callcenters.delete":
+    call: "{ path: {\"id\":1} }"
+  "callcenters.get_status":
+    call: "{ path: {\"id\":1} }"
+  "callcenters.operators.update_duty_status":
+    call: "{ path: {\"id\":1}, body: {\"on_duty\":false} }"
+  "callcenters.operators.get_skill_level":
+    call: "{ path: {\"call_center_id\":1,\"user_id\":1} }"
+  "callcenters.operators.get_duty_status":
+    call: "{ path: {\"id\":1} }"
+  "callcenters.operators.update_skill_level":
+    call: "{ path: {\"call_center_id\":1,\"user_id\":1}, body: {\"skill_level\":1} }"
+  "callcenters.operators.add":
+    call: "{ path: {\"id\":1}, body: {\"user_id\":1} }"
+  "callcenters.queue.list":
+    call: "{ path: {\"id\":1}, query: {} }"
+  "callcenters.operators.delete":
+    call: "{ path: {\"id\":1}, body: {\"user_id\":1} }"
+  "call_labels.list":
+    call: "{ query: {} }"
+  "call_review_share_link.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "call_review_share_link.create":
+    call: "{ body: {} }"
+  "call_review_share_link.delete":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "callrouters.list":
+    call: "{ query: {} }"
+  "callcenters.operators.list":
+    call: "{ path: {\"id\":1} }"
+  "callrouters.delete":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "callrouters.create":
+    call: "{ body: {\"default_target_id\":1,\"default_target_type\":\"callcenter\",\"name\":\"sample-value\",\"office_id\":1,\"routing_url\":\"sample-value\"} }"
+  "callrouters.get":
+    call: "{ path: {\"id\":1} }"
+  "call_review_share_link.update":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {\"privacy\":\"company\"} }"
+  "callrouters.update":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "numbers.assign_call_router_number.post":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "channels.delete":
+    call: "{ path: {\"id\":1} }"
+  "channels.get":
+    call: "{ path: {\"id\":1} }"
+  "channels.members.list":
+    call: "{ path: {\"id\":1}, query: {} }"
+  "channels.list":
+    call: "{ query: {} }"
+  "coaching_team.get":
+    call: "{ path: {\"id\":1} }"
+  "coaching_team.members.get":
+    call: "{ path: {\"id\":1}, query: {} }"
+  "channels.create":
+    call: "{ body: {\"description\":\"sample-value\",\"name\":\"sample-value\",\"privacy_type\":\"private\"} }"
+  "channels.members.delete":
+    call: "{ path: {\"id\":1}, body: {\"user_id\":1} }"
+  "channels.members.add":
+    call: "{ path: {\"id\":1}, body: {\"user_id\":1} }"
+  "coaching_team.listall":
+    call: "{ query: {} }"
+  "company.get":
+    call: "{  }"
+  "company.sms_opt_out":
+    call: "{ path: {\"id\":\"sample-value\"}, query: {\"opt_out_state\":\"opted_back_in\"} }"
+  "company.update_settings":
+    call: "{ query: {} }"
+  "coaching_team.members.add":
+    call: "{ path: {\"id\":1}, body: {\"member_id\":\"sample-value\",\"role\":\"coach\"} }"
+  "company.get_ai_settings":
+    call: "{  }"
+  "company.update":
+    call: "{ body: {} }"
+  "company.update_ai_settings":
+    call: "{ body: {} }"
+  "contacts.delete":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "contacts.update":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "contacts.list":
+    call: "{ query: {} }"
+  "contacts.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "contacts.create":
+    call: "{ body: {\"first_name\":\"sample-value\",\"last_name\":\"sample-value\"} }"
+  "contacts.create_with_uid":
+    call: "{ body: {\"first_name\":\"sample-value\",\"last_name\":\"sample-value\",\"uid\":\"sample-value\"} }"
+  "ivr.delete":
+    call: "{ path: {\"target_type\":\"callcenter\",\"target_id\":1,\"ivr_type\":\"ADMIN_AUTO_RECORDING\"}, body: {\"ivr_id\":1} }"
+  "contacts.search":
+    call: "{ query: {} }"
+  "ivr.assign":
+    call: "{ path: {\"target_type\":\"callcenter\",\"target_id\":1,\"ivr_type\":\"ADMIN_AUTO_RECORDING\"}, body: {\"ivr_id\":1} }"
+  "custom_ivrs.list":
+    call: "{ query: {\"target_type\":\"callcenter\",\"target_id\":1} }"
+  "ivr.update_details":
+    call: "{ path: {\"ivr_id\":\"sample-value\"}, body: {} }"
+  "departments.delete":
+    call: "{ path: {\"id\":1} }"
+  "ivr.create":
+    call: "{ body: {\"file\":\"c2FtcGxl\",\"ivr_type\":\"ADMIN_AUTO_RECORDING\",\"target_id\":1,\"target_type\":\"callcenter\"} }"
+  "departments.update":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "departments.create":
+    call: "{ body: {\"name\":\"sample-value\",\"office_id\":1} }"
+  "departments.listall":
+    call: "{ query: {} }"
+  "departments.get":
+    call: "{ path: {\"id\":1} }"
+  "departments.operators.delete":
+    call: "{ path: {\"id\":1}, body: {\"operator_id\":1,\"operator_type\":\"room\"} }"
+  "dispositions.delete":
+    call: "{ path: {\"id\":1} }"
+  "digital.sessions.list":
+    call: "{ query: {\"end_date\":\"sample-value\",\"start_date\":\"sample-value\"} }"
+  "dispositions.update":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "dispositions.get":
+    call: "{ path: {\"id\":1} }"
+  "departments.operators.list":
+    call: "{ path: {\"id\":1}, query: {} }"
+  "dispositions.list":
+    call: "{ query: {} }"
+  "dispositions.create":
+    call: "{ body: {\"name\":\"sample-value\",\"office_id\":1} }"
+  "departments.operators.add":
+    call: "{ path: {\"id\":1}, body: {\"operator_id\":1,\"operator_type\":\"room\"} }"
+  "faxline.assign":
+    call: "{ body: {\"line\":{\"number\":\"sample-value\",\"type\":\"reserved\"},\"target\":{\"target_id\":1,\"target_type\":\"department\"}} }"
+  "bulk_messages.get":
+    call: "{ path: {\"id\":\"sample-value\"}, query: {} }"
+  "fax.send":
+    call: "{ body: {\"to_number\":\"sample-value\"} }"
+  "bulk_messages.send":
+    call: "{ body: {\"from_number\":\"sample-value\",\"text\":\"sample-value\",\"to_numbers\":[]} }"
+  "scheduled_messages.create":
+    call: "{ body: {\"start_date\":1} }"
+  "scheduled_messages.delete":
+    call: "{ path: {\"id\":\"sample-value\"}, query: {} }"
+  "bulk_messages.update":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "bulk_messages.list":
+    call: "{ query: {} }"
+  "scheduled_messages.list":
+    call: "{ query: {} }"
+  "numbers.unassign":
+    call: "{ path: {\"number\":\"sample-value\"}, query: {} }"
+  "scheduled_messages.get":
+    call: "{ path: {\"id\":\"sample-value\"}, query: {} }"
+  "numbers.assign":
+    call: "{ path: {\"number\":\"sample-value\"}, body: {\"target_id\":1,\"target_type\":\"callcenter\"} }"
+  "scheduled_messages.send_now":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "numbers.list":
+    call: "{ query: {} }"
+  "numbers.auto_assign":
+    call: "{ body: {\"target_id\":1,\"target_type\":\"callcenter\"} }"
+  "numbers.swap":
+    call: "{ body: {\"target\":{\"target_id\":1,\"target_type\":\"callcenter\"}} }"
+  "number_tags.update":
+    call: "{ body: {\"phone\":\"sample-value\"} }"
+  "scheduled_messages.update":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "numbers.get":
+    call: "{ path: {\"number\":\"sample-value\"} }"
+  "coaching_team.list":
+    call: "{ path: {\"office_id\":1}, query: {} }"
+  "office_plan.get":
+    call: "{ path: {\"office_id\":1} }"
+  "phone_number.format":
+    call: "{ query: {} }"
+  "departments.list":
+    call: "{ path: {\"office_id\":1}, query: {} }"
+  "numbers.office_unassign_number.post":
+    call: "{ path: {\"id\":1}, body: {\"number\":\"sample-value\"} }"
+  "callcenters.list":
+    call: "{ path: {\"office_id\":1}, query: {} }"
+  "numbers.assign_office_number.post":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "available_licenses.list":
+    call: "{ path: {\"office_id\":1} }"
+  "offices.e911.get":
+    call: "{ path: {\"id\":1} }"
+  "offices.offdutystatuses.get":
+    call: "{ path: {\"id\":1} }"
+  "offices.e911.update":
+    call: "{ path: {\"id\":1}, body: {\"address\":\"sample-value\",\"city\":\"sample-value\",\"country\":\"sample-value\",\"state\":\"sample-value\",\"zip\":\"sample-value\"} }"
+  "offices.update":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "offices.get":
+    call: "{ path: {\"id\":1} }"
+  "offices.primary.get":
+    call: "{  }"
+  "offices.list":
+    call: "{ query: {} }"
+  "offices.operators.delete":
+    call: "{ path: {\"id\":1}, body: {\"operator_id\":1,\"operator_type\":\"room\"} }"
+  "offices.create":
+    call: "{ body: {\"annual_commit_monthly_billing\":false,\"billing_address\":{\"address_line_1\":\"sample-value\",\"city\":\"sample-value\",\"country\":\"sample-value\",\"postal_code\":\"sample-value\",\"region\":\"sample-value\"},\"country\":\"AE\",\"currency\":\"AUD\",\"invoiced\":false,\"name\":\"sample-value\",\"plan_period\":\"monthly\",\"unified_billing\":false} }"
+  "offices.operators.get":
+    call: "{ path: {\"id\":1} }"
+  "offices.operators.post":
+    call: "{ path: {\"id\":1}, body: {\"operator_id\":1,\"operator_type\":\"room\"} }"
+  "recording_share_link.create":
+    call: "{ body: {\"recording_id\":\"sample-value\",\"recording_type\":\"admincallrecording\"} }"
+  "recording_share_link.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "numbers.assign_room_number.post":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "numbers.room_unassign_number.post":
+    call: "{ path: {\"id\":1}, body: {\"number\":\"sample-value\"} }"
+  "rooms.delete":
+    call: "{ path: {\"id\":1} }"
+  "rooms.get":
+    call: "{ path: {\"id\":1} }"
+  "recording_share_link.delete":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "rooms.post":
+    call: "{ body: {\"name\":\"sample-value\",\"office_id\":1} }"
+  "recording_share_link.update":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {\"privacy\":\"admin\"} }"
+  "deskphones.rooms.create_international_pin":
+    call: "{ body: {} }"
+  "rooms.list":
+    call: "{ query: {} }"
+  "deskphones.rooms.get":
+    call: "{ path: {\"id\":\"sample-value\",\"parent_id\":1} }"
+  "rooms.patch":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "deskphones.rooms.list":
+    call: "{ path: {\"parent_id\":1} }"
+  "deskphones.rooms.delete":
+    call: "{ path: {\"id\":\"sample-value\",\"parent_id\":1} }"
+  "schedule_reports.update":
+    call: "{ path: {\"id\":1}, body: {\"at\":1,\"endpoint_id\":1,\"frequency\":\"daily\",\"name\":\"sample-value\",\"on_day\":1,\"report_type\":\"call_logs\"} }"
+  "schedule_reports.create":
+    call: "{ body: {\"at\":1,\"endpoint_id\":1,\"frequency\":\"daily\",\"name\":\"sample-value\",\"on_day\":1,\"report_type\":\"call_logs\"} }"
+  "schedule_reports.get":
+    call: "{ path: {\"id\":1} }"
+  "scorecards.export.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "scorecards.export.create":
+    call: "{ body: {\"scorecards_type\":\"scorecard_export_agent_leaderboard\"} }"
+  "scorecards.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "scorecards.list":
+    call: "{ query: {} }"
+  "schedule_reports.delete":
+    call: "{ path: {\"id\":1} }"
+  "schedule_reports.list":
+    call: "{ query: {} }"
+  "stats.export.create":
+    call: "{ body: {\"export_type\":\"records\",\"stat_type\":\"calls\"} }"
+  "stats.export.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "sms.send":
+    call: "{ body: {\"to_numbers\":[\"+14155557777\"],\"text\":\"Test text\",\"user_id\":2} }"
+  "users.initiate_call":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "users.toggle_call_vi":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "userdevices.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "transcripts.get":
+    call: "{ path: {\"call_id\":1} }"
+  "userdevices.list":
+    call: "{ query: {} }"
+  "users.toggle_call_recording":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "transcripts.get_url":
+    call: "{ path: {\"call_id\":1} }"
+  "users.set_caller_id":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {\"caller_id\":\"sample-value\"} }"
+  "deskphones.users.delete":
+    call: "{ path: {\"id\":\"sample-value\",\"parent_id\":1} }"
+  "caller_id.users.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "deskphones.users.get":
+    call: "{ path: {\"id\":\"sample-value\",\"parent_id\":1} }"
+  "users.e911.update":
+    call: "{ path: {\"id\":1}, body: {\"address\":\"sample-value\",\"city\":\"sample-value\",\"country\":\"sample-value\",\"state\":\"sample-value\",\"zip\":\"sample-value\"} }"
+  "users.toggle_dnd":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {\"do_not_disturb\":false} }"
+  "users.unassign_number":
+    call: "{ path: {\"id\":1}, body: {\"number\":\"sample-value\"} }"
+  "users.assign_number":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "users.list_personas":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "users.e911.get":
+    call: "{ path: {\"id\":1} }"
+  "deskphones.users.list":
+    call: "{ path: {\"parent_id\":1} }"
+  "screen_pop.initiate":
+    call: "{ path: {\"id\":1}, body: {\"screen_pop_uri\":\"sample-value\"} }"
+  "users.delete":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "users.get":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "users.list":
+    call: "{ query: {} }"
+  "users.update":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "users.create":
+    call: "{ body: {\"email\":\"sample-value\",\"office_id\":1} }"
+  "users.move_office":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "users.create_batch":
+    call: "{ body: {\"users\":[]} }"
+  "users.update_status":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "search.users":
+    call: "{ query: {\"query\":\"sample-value\"} }"
+  "websockets.get":
+    call: "{ path: {\"id\":1} }"
+  "websockets.list":
+    call: "{ query: {} }"
+  "websockets.create":
+    call: "{ body: {} }"
+  "meetings.conference-meetings.list":
+    call: "{ query: {} }"
+  "meetings.conference-rooms.list":
+    call: "{ query: {} }"
+  "websockets.update":
+    call: "{ path: {\"id\":1}, body: {} }"
+  "meetings.meetings.get":
+    call: "{ path: {\"scheduled_conference_id\":1}, query: {} }"
+  "websockets.delete":
+    call: "{ path: {\"id\":1} }"
+  "meetings.meetings.update":
+    call: "{ path: {\"scheduled_conference_id\":1}, body: {\"user_id\":1} }"
+  "meetings.meetings.delete":
+    call: "{ path: {\"scheduled_conference_id\":1}, query: {} }"
+  "meetings.meetings.create":
+    call: "{ body: {\"start_datetime\":1,\"title\":\"sample-value\",\"user_id\":1} }"
+  "meetings.meetings.room.create":
+    call: "{ query: {\"user_id\":1} }"
+  "wfm.wfm-metrics-activity.get":
+    call: "{ query: {\"end\":\"2024-01-02T03:04:05Z\",\"start\":\"2024-01-02T03:04:05Z\"} }"
+  "wfm.wfm-metrics-agent.get":
+    call: "{ query: {\"end\":\"2024-01-02T03:04:05Z\",\"start\":\"2024-01-02T03:04:05Z\"} }"
+  "meetings.meetings.list":
+    call: "{ query: {\"user_id\":1,\"start_datetime\":1} }"
+  "powerdialer.getModelsByKeys":
+    call: "{ query: {} }"
+  "powerdialer.getAblyToken":
+    call: "{  }"
+  "powerdialer.getContact":
+    call: "{ path: {\"contact_id\":\"sample-value\"} }"
+  "powerdialer.getModelsByKeysOfKind":
+    call: "{ path: {\"kind\":\"sample-value\"}, query: {} }"
+  "powerdialer.deleteModelsByKeysOfKind":
+    call: "{ path: {\"kind\":\"sample-value\"}, query: {} }"
+  "powerdialer.createCustomProperties":
+    call: "{ body: {\"properties\":[]} }"
+  "powerdialer.getCustomProperties":
+    call: "{ query: {} }"
+  "powerdialer.getCustomProperty":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "powerdialer.updateCustomProperty":
+    call: "{ path: {\"id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getDialpadOAuthService":
+    call: "{ path: {\"service\":\"sample-value\"} }"
+  "powerdialer.updateGlobalSettings":
+    call: "{ path: {\"company_id\":1}, body: {} }"
+  "powerdialer.deleteCustomProperty":
+    call: "{ path: {\"id\":\"sample-value\"} }"
+  "powerdialer.getGlobalSettings":
+    call: "{ path: {\"company_id\":1} }"
+  "powerdialer.getEventLogs":
+    call: "{ query: {} }"
+  "powerdialer.getJobs":
+    call: "{ query: {} }"
+  "powerdialer.getJob":
+    call: "{ path: {\"job_id\":\"sample-value\"} }"
+  "powerdialer.getApiKey":
+    call: "{ path: {\"key_id\":\"sample-value\"} }"
+  "powerdialer.getApiKeys":
+    call: "{ query: {} }"
+  "powerdialer.getOperator":
+    call: "{ query: {\"target_id\":\"sample-value\"} }"
+  "powerdialer.getLogin":
+    call: "{  }"
+  "powerdialer.deleteApiKey":
+    call: "{ path: {\"key_id\":\"sample-value\"} }"
+  "powerdialer.updateApiKey":
+    call: "{ path: {\"key_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.postLogin":
+    call: "{ query: {} }"
+  "powerdialer.createApiKey":
+    call: "{ body: {} }"
+  "powerdialer.createServiceAccount":
+    call: "{ body: {\"name\":\"sample-value\"} }"
+  "powerdialer.getServiceAccount":
+    call: "{ path: {\"account_id\":\"sample-value\"} }"
+  "powerdialer.updateServiceAccount":
+    call: "{ path: {\"account_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.deleteServiceAccount":
+    call: "{ path: {\"account_id\":\"sample-value\"} }"
+  "powerdialer.getSmsForTarget":
+    call: "{ query: {\"target_type\":\"sample-value\",\"target_id\":\"sample-value\"} }"
+  "powerdialer.smsItem":
+    call: "{ body: {\"item_id\":\"sample-value\"} }"
+  "powerdialer.getServiceAccounts":
+    call: "{ query: {} }"
+  "powerdialer.getCurrentUser":
+    call: "{  }"
+  "powerdialer.getWorker":
+    call: "{ path: {\"worker_id\":\"sample-value\"} }"
+  "powerdialer.updateWorker":
+    call: "{ path: {\"worker_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getWorkers":
+    call: "{ query: {} }"
+  "powerdialer.createAudience":
+    call: "{ body: {} }"
+  "powerdialer.getAudiences":
+    call: "{ query: {} }"
+  "powerdialer.updateAudience":
+    call: "{ path: {\"audience_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getAudience":
+    call: "{ path: {\"audience_id\":\"sample-value\"} }"
+  "powerdialer.createBot":
+    call: "{ body: {} }"
+  "powerdialer.duplicateAudience":
+    call: "{ path: {\"audience_id\":\"sample-value\"} }"
+  "powerdialer.getBots":
+    call: "{ query: {} }"
+  "powerdialer.updateBot":
+    call: "{ path: {\"bot_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.deleteAudience":
+    call: "{ path: {\"audience_id\":\"sample-value\"} }"
+  "powerdialer.deleteBot":
+    call: "{ path: {\"bot_id\":\"sample-value\"} }"
+  "powerdialer.getBot":
+    call: "{ path: {\"bot_id\":\"sample-value\"} }"
+  "powerdialer.getBotDialogs":
+    call: "{ query: {} }"
+  "powerdialer.createBotDialog":
+    call: "{ body: {\"bot_id\":\"sample-value\"} }"
+  "powerdialer.deleteBotDialog":
+    call: "{ path: {\"bot_dialog_id\":\"sample-value\"} }"
+  "powerdialer.getBotMessages":
+    call: "{ query: {\"bot_dialog_id\":\"sample-value\"} }"
+  "powerdialer.createBotMessage":
+    call: "{ body: {\"bot_dialog_id\":\"sample-value\"} }"
+  "powerdialer.deleteBotMessage":
+    call: "{ path: {\"bot_message_id\":\"sample-value\"} }"
+  "powerdialer.getBotMessage":
+    call: "{ path: {\"bot_message_id\":\"sample-value\"} }"
+  "powerdialer.updateBotDialog":
+    call: "{ path: {\"bot_dialog_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getCampaigns":
+    call: "{ query: {} }"
+  "powerdialer.searchCampaigns":
+    call: "{ body: {} }"
+  "powerdialer.deleteCampaign":
+    call: "{ path: {\"campaign_id\":\"sample-value\"} }"
+  "powerdialer.createCampaign":
+    call: "{ body: {\"group_id\":1} }"
+  "powerdialer.getCampaign":
+    call: "{ path: {\"campaign_id\":\"sample-value\"} }"
+  "powerdialer.updateCampaign":
+    call: "{ path: {\"campaign_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.duplicateCampaign":
+    call: "{ path: {\"campaign_id\":\"sample-value\"} }"
+  "powerdialer.getCampaignResultExportUrl":
+    call: "{ path: {\"campaign_id\":\"sample-value\"}, query: {} }"
+  "powerdialer.createCampaignGroup":
+    call: "{ body: {\"group_id\":1} }"
+  "powerdialer.deleteCampaignGroup":
+    call: "{ path: {\"campaign_group_id\":\"sample-value\"} }"
+  "powerdialer.getCampaignGroup":
+    call: "{ path: {\"campaign_group_id\":\"sample-value\"} }"
+  "powerdialer.getCampaignGroups":
+    call: "{ query: {} }"
+  "powerdialer.startCampaignResultExport":
+    call: "{ path: {\"campaign_id\":\"sample-value\"}, query: {} }"
+  "powerdialer.getCampaignSettings":
+    call: "{ path: {\"campaign_settings_id\":\"sample-value\"} }"
+  "powerdialer.updateCampaignGroup":
+    call: "{ path: {\"campaign_group_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.editCampaignSettings":
+    call: "{ path: {\"campaign_settings_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.deleteCsv":
+    call: "{ path: {\"csv_id\":\"sample-value\"} }"
+  "powerdialer.getCsvPresignedUrl":
+    call: "{ path: {\"csv_id\":\"sample-value\"} }"
+  "powerdialer.updateCsv":
+    call: "{ path: {\"csv_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getVarsInfo":
+    call: "{ path: {\"campaign_id\":\"sample-value\"} }"
+  "powerdialer.getCsv":
+    call: "{ path: {\"csv_id\":\"sample-value\"} }"
+  "powerdialer.getPhoneCsvs":
+    call: "{ query: {} }"
+  "powerdialer.getCsvs":
+    call: "{ query: {} }"
+  "powerdialer.getPhoneCsv":
+    call: "{ path: {\"csv_id\":\"sample-value\"} }"
+  "powerdialer.updatePhoneCsv":
+    call: "{ path: {\"csv_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.deletePhoneCsv":
+    call: "{ path: {\"csv_id\":\"sample-value\"} }"
+  "powerdialer.createLeadList":
+    call: "{ body: {} }"
+  "powerdialer.getBotDialog":
+    call: "{ path: {\"bot_dialog_id\":\"sample-value\"} }"
+  "powerdialer.getListItems":
+    call: "{ query: {} }"
+  "powerdialer.deleteLeadListItem":
+    call: "{ path: {\"item_id\":\"sample-value\"} }"
+  "powerdialer.getListList":
+    call: "{ path: {\"list_id\":\"sample-value\"} }"
+  "powerdialer.getLeadListItem":
+    call: "{ path: {\"item_id\":\"sample-value\"} }"
+  "powerdialer.deleteLeadList":
+    call: "{ path: {\"list_id\":\"sample-value\"} }"
+  "powerdialer.duplicateLeadList":
+    call: "{ path: {\"list_id\":\"sample-value\"} }"
+  "powerdialer.getLeadLists":
+    call: "{ query: {} }"
+  "powerdialer.updateLeadList":
+    call: "{ path: {\"list_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getListView":
+    call: "{ query: {\"types\":\"sample-value\"} }"
+  "powerdialer.createStaticList":
+    call: "{ body: {} }"
+  "powerdialer.getStaticLists":
+    call: "{ query: {} }"
+  "powerdialer.getStaticList":
+    call: "{ path: {\"static_list_id\":\"sample-value\"} }"
+  "powerdialer.deleteStaticList":
+    call: "{ path: {\"static_list_id\":\"sample-value\"} }"
+  "powerdialer.duplicateStaticList":
+    call: "{ path: {\"static_list_id\":\"sample-value\"} }"
+  "powerdialer.createLeads":
+    call: "{ body: {} }"
+  "powerdialer.queryLeads":
+    call: "{ query: {}, body: {\"field\":\"sample-value\",\"op\":\"=\"} }"
+  "powerdialer.getLead":
+    call: "{ path: {\"lead_id\":\"sample-value\"}, query: {} }"
+  "powerdialer.updateLead":
+    call: "{ path: {\"lead_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getLeadCompany":
+    call: "{ path: {\"lead_company_id\":\"sample-value\"} }"
+  "powerdialer.getLeadCompanies":
+    call: "{ query: {} }"
+  "powerdialer.updateStaticList":
+    call: "{ path: {\"static_list_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getLeads":
+    call: "{ query: {} }"
+  "powerdialer.startLeadExport":
+    call: "{ body: {} }"
+  "powerdialer.getLeadListView":
+    call: "{ query: {} }"
+  "powerdialer.bulkUpdateLeadItems":
+    call: "{ body: {\"item_ids\":[],\"state\":\"cancelled\"} }"
+  "powerdialer.getLeadItem":
+    call: "{ path: {\"item_id\":\"sample-value\"} }"
+  "powerdialer.getLeadItems":
+    call: "{ query: {} }"
+  "powerdialer.getLeadListViewById":
+    call: "{ path: {\"list_id\":\"sample-value\"}, query: {} }"
+  "powerdialer.getLeadExport":
+    call: "{ path: {\"export_id\":\"sample-value\"} }"
+  "powerdialer.createPhone":
+    call: "{ body: {} }"
+  "powerdialer.getPhone":
+    call: "{ path: {\"e164\":\"sample-value\"} }"
+  "powerdialer.updateLeadItem":
+    call: "{ path: {\"item_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.deletePhone":
+    call: "{ path: {\"e164\":\"sample-value\"} }"
+  "powerdialer.getSalesforceObjectListViews":
+    call: "{ query: {} }"
+  "powerdialer.updatePhone":
+    call: "{ path: {\"e164\":\"sample-value\"}, body: {} }"
+  "powerdialer.getSalesforceObjectFields":
+    call: "{ query: {\"sobject_type\":\"sample-value\"} }"
+  "powerdialer.getSalesforceListViewById":
+    call: "{ path: {\"sfdc_id\":\"sample-value\"} }"
+  "powerdialer.createSalesforceListViewImport":
+    call: "{ query: {}, body: {} }"
+  "powerdialer.getSalesforceListViewImports":
+    call: "{ query: {\"campaign_id\":\"sample-value\"} }"
+  "powerdialer.getSalesforceObjectMappings":
+    call: "{ query: {} }"
+  "powerdialer.createSalesforceObjectMapping":
+    call: "{ query: {}, body: {} }"
+  "powerdialer.updateSalesforceListViewImport":
+    call: "{ path: {\"import_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.deleteSalesforceObjectMapping":
+    call: "{ path: {\"object_mapping_id\":\"sample-value\"} }"
+  "powerdialer.getSalesforceListViewImport":
+    call: "{ path: {\"import_id\":\"sample-value\"} }"
+  "powerdialer.getSalesforceObjectMapping":
+    call: "{ path: {\"object_mapping_id\":\"sample-value\"} }"
+  "powerdialer.patchSalesforceListView":
+    call: "{ path: {\"sfdc_id\":\"sample-value\"}, query: {} }"
+  "powerdialer.updateSalesforceObjectMapping":
+    call: "{ path: {\"object_mapping_id\":\"sample-value\"}, body: {} }"
+  "powerdialer.getRules":
+    call: "{ query: {} }"
+  "powerdialer.createRule":
+    call: "{ body: {\"type\":\"call\"} }"
+  "powerdialer.getPhones":
+    call: "{ query: {} }"
+  "powerdialer.deleteRule":
+    call: "{ path: {\"rule_id\":\"sample-value\"} }"
+  "powerdialer.updateRule":
+    call: "{ path: {\"rule_id\":\"sample-value\"}, body: {\"type\":\"call\"} }"
+  "powerdialer.getRule":
+    call: "{ path: {\"rule_id\":\"sample-value\"} }"
+  "reports.scheduledstats.download":
+    call: "{ query: {\"t\":\"user_voiceline\",\"d\":\"2024-06-01\"} }"
+  "recordings.call.download":
+    call: "{ path: {\"recording_id\":\"6086754856781234\"} }"
+  "recordings.voicemail.download":
+    call: "{ path: {\"recording_id\":\"6086754856787890\"} }"
+  "recordings.admin_call.download":
+    call: "{ path: {\"share_link_id\":\"share-link-123\"} }"

@@ -1707,6 +1707,14 @@
                 ]
               },
               {
+                "group": "Dialpad",
+                "pages": [
+                  "plugins/dialpad/overview",
+                  "plugins/dialpad/api",
+                  "plugins/dialpad/database"
+                ]
+              },
+              {
                 "group": "Diffbot",
                 "pages": [
                   "plugins/diffbot/overview",

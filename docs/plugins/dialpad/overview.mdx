@@ -1,0 +1,154 @@
+---
+title: "Dialpad plugin"
+sidebarTitle: "Overview"
+description: "Manage company calling, users, contacts, messages, routing, reporting, Dialpad Meetings, WFM, and PowerDialer through the documented Dialpad REST APIs."
+---
+
+Use **Dialpad** through Corsair: one client, typed API calls.
+
+Dialpad supports both company API keys and OAuth 2 access tokens. API keys are created by a company admin and sent as Bearer tokens. OAuth applications use Dialpad's authorization-code flow; store the resulting access token with Corsair's `oauth_2` auth type. The OAuth client ID and client secret are application credentials, not an API-key auth method.
+
+Choose `environment: 'sandbox'` to use Dialpad's documented sandbox host. All operations use HTTPS Bearer authentication. Some operations require additional OAuth scopes or company-admin permissions, as noted in the official API reference.
+
+List endpoints expose documented cursors as input/output fields; pass the returned cursor to fetch the next page. Async reporting and anonymization operations return request IDs that must be polled with their documented status endpoints. Rate-limit responses preserve Dialpad's `Retry-After` value; the plugin does not automatically retry operations.
+
+Webhook/event-subscription management, OAuth token lifecycle endpoints, webhook callbacks, and multipart CSV uploads are not exposed. The plugin includes ordinary REST operations that create and manage WebSocket resources, but does not open long-lived event streams.
+
+**What you get:**
+
+- 350 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/dialpad better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/dialpad better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/dialpad better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/dialpad better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { dialpad } from '@corsair-dev/dialpad';
+
+export const corsair = createCorsair({
+	plugins: [
+		dialpad(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Dialpad API key before the first call: `pnpm corsair setup --plugin=dialpad --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+dialpad()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Dialpad OAuth app.
+
+```ts
+dialpad({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'dialpad',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List assignments for an access control policy**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.dialpad.api.accesscontrolpolicies.assignments({
+	path: { id: 1 },
+	query: {},
+});
+```
+
+
+**Assign a user to an access control policy**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.dialpad.api.accesscontrolpolicies.assign({
+	path: { id: 1 },
+	body: { user_id: 2 },
+});
+```
+
+
+See the full list on the [API](/plugins/dialpad/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/dialpad/api">
+    Every `dialpad.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

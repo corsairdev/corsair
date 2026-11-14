@@ -202,6 +202,7 @@ export const BaseProviders = [
 	'demio',
 	'desktime',
 	'devinmcp',
+	'dialpad',
 	'diffbot',
 	'digitalocean',
 	'discord',
@@ -737,6 +738,7 @@ export const ProviderDisplayNames = {
 	demio: 'Demio',
 	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
+	dialpad: 'Dialpad',
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
@@ -1279,6 +1281,7 @@ export type AllProviders =
 	| 'demio'
 	| 'desktime'
 	| 'devinmcp'
+	| 'dialpad'
 	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
