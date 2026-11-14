@@ -16,7 +16,7 @@ description: "API reference for the HoneyHive plugin in Corsair: every `honeyhiv
 
 Create a new configuration
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.configurations.create({});
@@ -30,7 +30,7 @@ await corsair.honeyhive.api.configurations.create({});
 | `type` | `string` | No | — |
 | `provider` | `string` | No | — |
 | `parameters` | `Record<string, any>` | No | — |
-| `env` | `string` | No | — |
+| `env` | `string[]` | No | — |
 | `tags` | `string[]` | No | — |
 | `user_properties` | `Record<string, any>` | No | — |
 
@@ -131,7 +131,7 @@ await corsair.honeyhive.api.configurations.update({});
 | `type` | `string` | No | — |
 | `provider` | `string` | No | — |
 | `parameters` | `Record<string, any>` | No | — |
-| `env` | `string` | No | — |
+| `env` | `string[]` | No | — |
 | `tags` | `string[]` | No | — |
 | `user_properties` | `Record<string, any>` | No | — |
 
@@ -159,7 +159,7 @@ await corsair.honeyhive.api.configurations.update({});
 
 Add datapoints to a dataset
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.datasets.addDatapoints({});
@@ -172,7 +172,20 @@ await corsair.honeyhive.api.datasets.addDatapoints({});
 | `project_id` | `string` | Yes | — |
 | `dataset_id` | `string` | Yes | — |
 | `data` | `Record<string, any>[]` | Yes | — |
-| `mapping` | `Record<string, string>` | No | — |
+| `mapping` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mapping full type">
+
+```ts
+{
+  inputs?: string[],
+  history?: string[],
+  ground_truth?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -193,7 +206,7 @@ await corsair.honeyhive.api.datasets.addDatapoints({});
 
 Create a new dataset in a project
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.datasets.create({});
@@ -206,7 +219,7 @@ await corsair.honeyhive.api.datasets.create({});
 | `project_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `datapoints` | `Record<string, any>[]` | No | — |
+| `datapoints` | `string[]` | No | — |
 
 
 
@@ -227,7 +240,7 @@ await corsair.honeyhive.api.datasets.create({});
 
 Create a new dataset (legacy)
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.datasets.createLegacy({});
@@ -239,7 +252,7 @@ await corsair.honeyhive.api.datasets.createLegacy({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `datapoints` | `Record<string, any>[]` | No | — |
+| `datapoints` | `string[]` | No | — |
 
 
 
@@ -258,7 +271,7 @@ await corsair.honeyhive.api.datasets.createLegacy({});
 
 `datasets.delete`
 
-Delete a dataset from a project
+Delete a dataset and its datapoints from a project
 
 **Risk:** `destructive`
 
@@ -417,7 +430,7 @@ await corsair.honeyhive.api.datasets.removeDatapoint({});
 
 `datasets.update`
 
-Update an existing dataset in a project
+Update a dataset in a project; a datapoints list replaces its whole membership
 
 **Risk:** `destructive`
 
@@ -433,7 +446,7 @@ await corsair.honeyhive.api.datasets.update({});
 | `dataset_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
-| `datapoints` | `Record<string, any>[]` | No | — |
+| `datapoints` | `string[]` | No | — |
 
 
 
@@ -451,7 +464,7 @@ await corsair.honeyhive.api.datasets.update({});
 
 `datasets.updateLegacy`
 
-Update a dataset (legacy)
+Update a dataset (legacy); a datapoints list replaces its whole membership
 
 **Risk:** `destructive`
 
@@ -466,7 +479,7 @@ await corsair.honeyhive.api.datasets.updateLegacy({});
 | `dataset_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
-| `datapoints` | `Record<string, any>[]` | No | — |
+| `datapoints` | `string[]` | No | — |
 
 
 
@@ -686,7 +699,8 @@ await corsair.honeyhive.api.events.search({});
 {
   field: string,
   operator: string,
-  value: any
+  value: any,
+  type?: string | number | boolean | datetime
 }[]
 ```
 </Accordion>
@@ -735,7 +749,8 @@ await corsair.honeyhive.api.events.searchLegacy({});
 {
   field: string,
   operator: string,
-  value: any
+  value: any,
+  type?: string | number | boolean | datetime
 }[]
 ```
 </Accordion>
@@ -771,7 +786,6 @@ await corsair.honeyhive.api.events.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `event_id` | `string` | Yes | — |
-| `event_name` | `string` | No | — |
 | `metadata` | `Record<string, any>` | No | — |
 | `feedback` | `Record<string, any>` | No | — |
 | `metrics` | `Record<string, any>` | No | — |
@@ -825,9 +839,9 @@ await corsair.honeyhive.api.experiments.compare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metrics` | `Record<string, any>` | No | — |
-| `commonDatapoints` | `Record<string, any>[]` | No | — |
-| `event_details` | `Record<string, any>` | No | — |
+| `metrics` | `Record<string, any>[]` | No | — |
+| `commonDatapoints` | `string[]` | No | — |
+| `event_details` | `Record<string, any>[]` | No | — |
 | `old_run` | `Record<string, any>` | No | — |
 | `new_run` | `Record<string, any>` | No | — |
 
@@ -879,7 +893,7 @@ await corsair.honeyhive.api.experiments.compareEvents({});
 
 Create an evaluation run in a project
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.experiments.createRun({});
@@ -895,7 +909,7 @@ await corsair.honeyhive.api.experiments.createRun({});
 | `description` | `string` | No | — |
 | `status` | `string` | No | — |
 | `metadata` | `Record<string, any>` | No | — |
-| `results` | `Record<string, any>[]` | No | — |
+| `results` | `Record<string, any>` | No | — |
 | `dataset_id` | `string` | No | — |
 | `event_ids` | `string[]` | No | — |
 | `configuration` | `Record<string, any>` | No | — |
@@ -923,7 +937,7 @@ await corsair.honeyhive.api.experiments.createRun({});
 
 Create an evaluation run (legacy)
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.experiments.createRunLegacy({});
@@ -938,7 +952,7 @@ await corsair.honeyhive.api.experiments.createRunLegacy({});
 | `description` | `string` | No | — |
 | `status` | `string` | No | — |
 | `metadata` | `Record<string, any>` | No | — |
-| `results` | `Record<string, any>[]` | No | — |
+| `results` | `Record<string, any>` | No | — |
 | `dataset_id` | `string` | No | — |
 | `event_ids` | `string[]` | No | — |
 | `configuration` | `Record<string, any>` | No | — |
@@ -1184,11 +1198,11 @@ await corsair.honeyhive.api.experiments.getSummary({});
 | `status` | `string` | No | — |
 | `success` | `boolean` | No | — |
 | `error` | `any` | No | — |
-| `passed` | `number` | No | — |
-| `failed` | `number` | No | — |
+| `passed` | `string[]` | No | — |
+| `failed` | `string[]` | No | — |
 | `metrics` | `Record<string, any>` | No | — |
 | `datapoints` | `Record<string, any>[]` | No | — |
-| `event_details` | `Record<string, any>` | No | — |
+| `event_details` | `Record<string, any>[]` | No | — |
 | `run_object` | `Record<string, any>` | No | — |
 
 
@@ -1230,7 +1244,7 @@ await corsair.honeyhive.api.experiments.listRuns({});
 |------|------|----------|-------------|
 | `evaluations` | `Record<string, any>[]` | No | — |
 | `pagination` | `Record<string, any>` | No | — |
-| `metrics` | `Record<string, any>[]` | No | — |
+| `metrics` | `string[]` | No | — |
 
 
 
@@ -1270,7 +1284,7 @@ await corsair.honeyhive.api.experiments.listRunsLegacy({});
 |------|------|----------|-------------|
 | `evaluations` | `Record<string, any>[]` | No | — |
 | `pagination` | `Record<string, any>` | No | — |
-| `metrics` | `Record<string, any>[]` | No | — |
+| `metrics` | `string[]` | No | — |
 
 
 
@@ -1282,7 +1296,7 @@ await corsair.honeyhive.api.experiments.listRunsLegacy({});
 
 Update an evaluation run
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.experiments.updateRun({});
@@ -1298,7 +1312,7 @@ await corsair.honeyhive.api.experiments.updateRun({});
 | `description` | `string` | No | — |
 | `status` | `string` | No | — |
 | `metadata` | `Record<string, any>` | No | — |
-| `results` | `Record<string, any>[]` | No | — |
+| `results` | `Record<string, any>` | No | — |
 | `event_ids` | `string[]` | No | — |
 | `configuration` | `Record<string, any>` | No | — |
 | `evaluators` | `Record<string, any>[]` | No | — |
@@ -1346,12 +1360,45 @@ await corsair.honeyhive.api.metrics.create({});
 | `sampling_percentage` | `number` | No | — |
 | `model_provider` | `string` | No | — |
 | `model_name` | `string` | No | — |
-| `scale` | `any[]` | No | — |
-| `threshold` | `number` | No | — |
-| `categories` | `string[]` | No | — |
+| `scale` | `number \| null` | No | — |
+| `threshold` | `object \| null` | No | — |
+| `categories` | `object[] \| null` | No | — |
 | `needs_ground_truth` | `boolean` | No | — |
-| `child_metrics` | `string[]` | No | — |
-| `filters` | `Record<string, any>[]` | No | — |
+| `child_metrics` | `Record<string, any>[] \| null` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="threshold full type">
+
+```ts
+{
+  min?: number,
+  max?: number,
+  pass_when?: boolean | number,
+  passing_categories?: string[]
+} | null
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  category: string,
+  score: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  filterArray: Record<string, any>[]
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1530,7 +1577,7 @@ await corsair.honeyhive.api.metrics.listVersions({});
 
 Run an evaluator metric on an event
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.honeyhive.api.metrics.run({});
@@ -1552,7 +1599,7 @@ await corsair.honeyhive.api.metrics.run({});
 | `success` | `boolean` | No | — |
 | `loading` | `boolean` | No | — |
 | `result` | `any` | No | — |
-| `explanation` | `string` | No | — |
+| `explanation` | `string \| null` | No | — |
 
 
 
@@ -1584,12 +1631,45 @@ await corsair.honeyhive.api.metrics.update({});
 | `sampling_percentage` | `number` | No | — |
 | `model_provider` | `string` | No | — |
 | `model_name` | `string` | No | — |
-| `scale` | `any[]` | No | — |
-| `threshold` | `number` | No | — |
-| `categories` | `string[]` | No | — |
+| `scale` | `number \| null` | No | — |
+| `threshold` | `object \| null` | No | — |
+| `categories` | `object[] \| null` | No | — |
 | `needs_ground_truth` | `boolean` | No | — |
-| `child_metrics` | `string[]` | No | — |
-| `filters` | `Record<string, any>[]` | No | — |
+| `child_metrics` | `Record<string, any>[] \| null` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="threshold full type">
+
+```ts
+{
+  min?: number,
+  max?: number,
+  pass_when?: boolean | number,
+  passing_categories?: string[]
+} | null
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  category: string,
+  score: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  filterArray: Record<string, any>[]
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1611,7 +1691,7 @@ await corsair.honeyhive.api.metrics.update({});
 
 Create a new project in a workspace
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.projects.create({});
@@ -1643,7 +1723,7 @@ await corsair.honeyhive.api.projects.create({});
 
 `projects.delete`
 
-Delete a project
+Delete (archive) a project
 
 **Risk:** `destructive`
 
@@ -1707,7 +1787,7 @@ await corsair.honeyhive.api.projects.get({});
 
 Update a project name or description
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.honeyhive.api.projects.update({});
@@ -1775,24 +1855,24 @@ await corsair.honeyhive.api.sessions.create({});
 | `event_id` | `string` | No | — |
 | `session_id` | `string` | No | — |
 | `parent_id` | `string \| null` | No | — |
-| `children_ids` | `string[]` | No | — |
-| `event_type` | `string` | No | — |
-| `event_name` | `string` | No | — |
-| `config` | `Record<string, any>` | No | — |
-| `inputs` | `Record<string, any>` | No | — |
-| `outputs` | `Record<string, any>` | No | — |
+| `children_ids` | `string[] \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `event_name` | `string \| null` | No | — |
+| `config` | `Record<string, any> \| null` | No | — |
+| `inputs` | `Record<string, any> \| null` | No | — |
+| `outputs` | `Record<string, any> \| null` | No | — |
 | `error` | `any` | No | — |
-| `source` | `string` | No | — |
-| `duration` | `number` | No | — |
-| `user_properties` | `Record<string, any>` | No | — |
-| `metrics` | `Record<string, any>` | No | — |
-| `feedback` | `Record<string, any>` | No | — |
-| `metadata` | `Record<string, any>` | No | — |
+| `source` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `user_properties` | `Record<string, any> \| null` | No | — |
+| `metrics` | `Record<string, any> \| null` | No | — |
+| `feedback` | `Record<string, any> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `org_id` | `string` | No | — |
 | `workspace_id` | `string` | No | — |
 | `project_id` | `string` | No | — |
-| `start_time` | `number` | No | — |
-| `end_time` | `number` | No | — |
+| `start_time` | `number \| null` | No | — |
+| `end_time` | `number \| null` | No | — |
 
 
 
