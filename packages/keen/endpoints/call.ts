@@ -7,15 +7,14 @@ import { makeKeenRequest } from '../client';
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
- * The project ID and key, from the plugin options when given and otherwise from
- * the account credentials. Both are account fields: a project has one ID and
- * one key, and an `api_key` account only generates accessors for its own
- * `authConfig` fields.
+ * The key is `ctx.key`, which the key builder resolved (the plugin option or
+ * the account's key) and hooks may have replaced. The project ID comes from
+ * the plugin options when given and otherwise from the account credentials.
  */
 export async function resolveCredentials(
 	ctx: KeenContext,
 ): Promise<KeenCredentials> {
-	const apiKey = ctx.options.key ?? ctx.key;
+	const apiKey = ctx.key;
 	const projectId =
 		ctx.options.projectId ?? (await ctx.keys.get_project_id()) ?? '';
 	return { apiKey, projectId };
