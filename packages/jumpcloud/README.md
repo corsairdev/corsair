@@ -48,7 +48,7 @@ pnpm add @corsair-dev/jumpcloud
 | `userGroups.listMembership` | `jumpcloud.api.userGroups.listMembership` | `read` | List a user group's membership graph |
 | `userGroups.manageMembers` | `jumpcloud.api.userGroups.manageMembers` | `write` | Manage (add or remove) members of a user group |
 | `userGroups.update` | `jumpcloud.api.userGroups.update` | `write` | Update a JumpCloud user group |
-| `users.create` | `jumpcloud.api.users.create` | `write` | Create a JumpCloud system user |
+| `users.create` | `jumpcloud.api.users.create` | `destructive` | Create a JumpCloud system user; unless state is STAGED, JumpCloud emails the user a welcome or activation link |
 | `users.delete` | `jumpcloud.api.users.delete` | `destructive` | Delete a JumpCloud system user |
 | `users.enforceMfa` | `jumpcloud.api.users.enforceMfa` | `destructive` | Update a system user's MFA requirement; an unenrolled user is locked out of MFA-protected resources once any exclusion ends |
 | `users.expirePassword` | `jumpcloud.api.users.expirePassword` | `destructive` | Expire a system user's password so they must reset it at next login |
@@ -59,7 +59,7 @@ pnpm add @corsair-dev/jumpcloud
 | `users.setPassword` | `jumpcloud.api.users.setPassword` | `destructive` | Force-set a system user's password, replacing the current one |
 | `users.syncMfa` | `jumpcloud.api.users.syncMfa` | `write` | Sync system user MFA |
 | `users.unlock` | `jumpcloud.api.users.unlock` | `write` | Unlock a locked system user |
-| `users.update` | `jumpcloud.api.users.update` | `write` | Update a JumpCloud system user |
+| `users.update` | `jumpcloud.api.users.update` | `write` | Update a JumpCloud system user; setting state to ACTIVATED on a staged user emails them an activation link |
 
 ## Auth
 

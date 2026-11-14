@@ -43,7 +43,7 @@ describe('jumpcloud plugin registry', () => {
 		}
 	});
 
-	it('marks deletes, command runs, password and MFA resets destructive', () => {
+	it('marks deletes, command runs, user creation (activation email), password and MFA resets destructive', () => {
 		const destructiveOps = paths
 			.filter((op) => meta[op]?.riskLevel === 'destructive')
 			.sort();
@@ -53,6 +53,7 @@ describe('jumpcloud plugin registry', () => {
 			'systemGroups.delete',
 			'systems.delete',
 			'userGroups.delete',
+			'users.create',
 			'users.delete',
 			'users.enforceMfa',
 			'users.expirePassword',

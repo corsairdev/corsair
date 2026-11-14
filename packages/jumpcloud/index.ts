@@ -338,8 +338,9 @@ export const jumpCloudEndpointMeta = {
 		description: 'List JumpCloud system users with limit/skip pagination',
 	},
 	'users.create': {
-		riskLevel: 'write',
-		description: 'Create a JumpCloud system user',
+		riskLevel: 'destructive',
+		description:
+			'Create a JumpCloud system user; unless state is STAGED, JumpCloud emails the user a welcome or activation link',
 	},
 	'users.get': {
 		riskLevel: 'read',
@@ -347,7 +348,8 @@ export const jumpCloudEndpointMeta = {
 	},
 	'users.update': {
 		riskLevel: 'write',
-		description: 'Update a JumpCloud system user',
+		description:
+			'Update a JumpCloud system user; setting state to ACTIVATED on a staged user emails them an activation link',
 	},
 	'users.delete': {
 		riskLevel: 'destructive',
