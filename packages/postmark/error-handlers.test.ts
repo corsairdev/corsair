@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { PostmarkAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { postmark } from './index';
@@ -14,20 +15,27 @@ const CONTEXT = {
 // arguments they use. Typing it as the core map is what the runtime sees.
 const HANDLERS: CorsairErrorHandler = errorHandlers;
 
+/**
+ * A core ApiError carrying Postmark's error body, which is the shape `request()`
+ * raises and the client now passes through unchanged.
+ */
 function apiError(
 	status: number,
-	options: {
-		errorCode?: number;
-		transport?: boolean;
-		method?: string;
-		credentialsRejected?: boolean;
-	} = {},
+	options: { errorCode?: number; method?: 'GET' | 'POST' } = {},
 ) {
-	return new PostmarkAPIError(`Postmark ${status}`, {
-		status,
-		method: 'GET',
-		...options,
-	});
+	const body: Record<string, unknown> =
+		options.errorCode === undefined ? {} : { ErrorCode: options.errorCode };
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: '/server' },
+		{
+			url: 'https://api.postmarkapp.com/server',
+			ok: false,
+			status,
+			statusText: `Postmark ${status}`,
+			body,
+		},
+		`Postmark ${status}`,
+	);
 }
 
 function route(error: Error): string {
@@ -40,7 +48,7 @@ function route(error: Error): string {
 
 describe('Postmark errorHandlers', () => {
 	it('routes a rejected token to AUTH_ERROR without a retry', async () => {
-		const error = apiError(401, { errorCode: 10, credentialsRejected: true });
+		const error = apiError(401, { errorCode: 10 });
 
 		expect(route(error)).toBe('AUTH_ERROR');
 		await expect(HANDLERS.AUTH_ERROR?.handler(error, CONTEXT)).resolves.toEqual(
@@ -50,22 +58,33 @@ describe('Postmark errorHandlers', () => {
 		);
 	});
 
-	it('stops a bare 401 at UNAUTHORIZED_ERROR rather than letting it fall through', () => {
-		expect(route(apiError(401))).toBe('UNAUTHORIZED_ERROR');
+	it('sends a bare 401 to AUTH_ERROR, and a coded non-auth 401 to UNAUTHORIZED_ERROR', () => {
+		// Postmark's docs say a 401 is always the token, so a body-less 401 is the
+		// credential case rather than the generic one.
+		expect(route(apiError(401))).toBe('AUTH_ERROR');
+		// A 401 naming some other code is still a refusal no retry can fix, so it
+		// stops at UNAUTHORIZED_ERROR rather than falling through to DEFAULT.
+		expect(route(apiError(401, { errorCode: 300 }))).toBe('UNAUTHORIZED_ERROR');
 	});
 
-	it('retries maintenance, which the API says will end', async () => {
-		const error = apiError(503, { errorCode: 100 });
+	it('retries maintenance on a read, but never replays a send', async () => {
+		const read = apiError(503, { errorCode: 100 });
+		const send = apiError(503, { errorCode: 100, method: 'POST' });
 
 		// Code 100 must win before the generic 5xx branch, which only reads GETs
 		// anyway; the ordering is what makes this retry happen at all.
-		expect(route(error)).toBe('MAINTENANCE_ERROR');
+		expect(route(read)).toBe('MAINTENANCE_ERROR');
 		await expect(
-			HANDLERS.MAINTENANCE_ERROR?.handler(error, CONTEXT),
+			HANDLERS.MAINTENANCE_ERROR?.handler(read, CONTEXT),
 		).resolves.toEqual({
 			maxRetries: 2,
 			retryStrategy: 'linear_3s',
 		});
+		// A send may already have been queued, so it must not be replayed.
+		expect(route(send)).toBe('MAINTENANCE_ERROR');
+		await expect(
+			HANDLERS.MAINTENANCE_ERROR?.handler(send, CONTEXT),
+		).resolves.toMatchObject({ maxRetries: 0 });
 	});
 
 	it('routes a 429 to RATE_LIMIT_ERROR, which has no Retry-After to read', async () => {
@@ -121,10 +140,7 @@ describe('Postmark errorHandlers', () => {
 
 	it('replays a 5xx on a read and refuses to on a send', async () => {
 		const read = apiError(500);
-		const send = new PostmarkAPIError('Postmark 500', {
-			status: 500,
-			method: 'POST',
-		});
+		const send = apiError(500, { method: 'POST' });
 
 		expect(route(read)).toBe('SERVER_ERROR');
 		await expect(

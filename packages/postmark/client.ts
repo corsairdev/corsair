@@ -98,11 +98,6 @@ export function readErrorCode(body: Untyped): number | undefined {
 	return readNumber(asRecord(body), 'ErrorCode');
 }
 
-/** The human `Message`, such as `Invalid request field(s): 'From'.`. */
-export function readErrorMessage(body: Untyped): string | undefined {
-	return readString(asRecord(body), 'Message');
-}
-
 /**
  * Code 10 is the only authentication error in the published table, and its
  * message names whether a server or account token was wrong. A 401 always means
@@ -116,17 +111,68 @@ export function isCredentialRejection(
 	return readErrorCode(body) === 10 || readErrorCode(body) === undefined;
 }
 
+/**
+ * Builds the message from the status and Postmark's stable `ErrorCode`, and
+ * never from Postmark's `Message`. That text can repeat a sender or recipient
+ * address, and the message reaches callers and server logs, so it is left out
+ * entirely rather than filtered: the code identifies the failure precisely.
+ */
 export function describePostmarkError(
 	status: number | undefined,
 	body: Untyped,
 	fallback: string,
 ): string {
-	const message = readErrorMessage(body) ?? fallback;
+	// unknown: the error body before a guard narrows it.
 	const code = readErrorCode(body);
-	const label = [status, code === undefined ? undefined : `code ${code}`]
-		.filter((part) => part !== undefined)
-		.join(' ');
-	return label ? `Postmark ${label}: ${message}` : message;
+	if (status !== undefined && code !== undefined) {
+		return `Postmark ${status}, code ${code}`;
+	}
+	if (status !== undefined) return `Postmark ${status}`;
+	return fallback;
+}
+
+/** Matches an email address inside free text. */
+const EMAIL = /[^\s<>"'@]+@[^\s<>"'@]+\.[A-Za-z]{2,}/g;
+const REDACTED = '[redacted]';
+
+/**
+ * Replaces every email address in a string. Postmark's `Message` and any echoed
+ * field can carry the sender or recipient, and both the error body and its text
+ * travel to callers and logs.
+ */
+export function redactAddresses(value: string): string;
+export function redactAddresses(value: Untyped): Untyped;
+export function redactAddresses(value: Untyped): Untyped {
+	// unknown: a body is arbitrary JSON, walked without narrowing its shape.
+	if (typeof value === 'string') return value.replace(EMAIL, REDACTED);
+	if (Array.isArray(value)) {
+		return value.map((item: Untyped) => redactAddresses(item));
+	}
+	const record = asRecord(value);
+	if (record === undefined) return value;
+	const redacted: Record<string, Untyped> = {};
+	for (const [key, item] of Object.entries(record)) {
+		redacted[key] = redactAddresses(item);
+	}
+	return redacted;
+}
+
+/**
+ * Removes the server's API tokens from a settings response.
+ *
+ * `server.get` is a read, and a caller limited to reads must not be able to lift
+ * a token out of it and use that token directly against Postmark, where none of
+ * Corsair's permission checks apply. Dropping the field from the schema is not
+ * enough: `ServerSchema` is `.loose()`, so an undeclared `ApiTokens` would still
+ * pass through. This runs on the raw body, before the schema sees it.
+ */
+export function withoutApiTokens(
+	body: Untyped, // unknown: the server body before the output schema parses it.
+): Untyped {
+	const record = asRecord(body);
+	if (record === undefined) return body;
+	const { ApiTokens: _tokens, ...rest } = record;
+	return rest;
 }
 
 /** A query value; Postmark takes repeated keys for a list, not `key[]`. */
@@ -217,15 +263,26 @@ export async function makePostmarkRequest(
 			rateLimitConfig: POSTMARK_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
+		// Core's ApiError goes through (R8) so status, retryAfter and
+		// isRateLimitError() keep working. Postmark's `Message` can repeat an
+		// address, and the body it rides in travels on the error, so both are
+		// rebuilt without private values.
 		if (error instanceof ApiError) {
-			throw new PostmarkAPIError(
-				describePostmarkError(error.status, error.body, error.statusText),
+			throw new ApiError(
+				error.request,
 				{
+					url: error.url,
+					ok: false,
 					status: error.status,
-					errorCode: readErrorCode(error.body),
+					statusText: redactAddresses(error.statusText),
+					body: redactAddresses(error.body),
+				},
+				describePostmarkError(error.status, error.body, 'Postmark error'),
+				{
 					retryAfter: error.retryAfter,
-					method,
-					credentialsRejected: isCredentialRejection(error.status, error.body),
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}

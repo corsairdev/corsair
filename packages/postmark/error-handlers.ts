@@ -1,12 +1,24 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PostmarkAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isCredentialRejection,
+	PostmarkAPIError,
+	readErrorCode,
+} from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PostmarkAPIError ? error.status : undefined;
+	if (error instanceof PostmarkAPIError) return error.status;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 function codeOf(error: Error): number | undefined {
-	return error instanceof PostmarkAPIError ? error.errorCode : undefined;
+	if (error instanceof PostmarkAPIError) return error.errorCode;
+	return error instanceof ApiError ? readErrorCode(error.body) : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof PostmarkAPIError) return error.method;
+	return error instanceof ApiError ? error.request.method : undefined;
 }
 
 // Postmark publishes a stable numeric ErrorCode per failure, and some codes
@@ -16,8 +28,13 @@ export const errorHandlers = {
 	// `Authentication` (10): a wrong or missing token, or the wrong token type for
 	// the route.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof PostmarkAPIError && error.credentialsRejected,
+		match: (error: Error) => {
+			if (error instanceof PostmarkAPIError) return error.credentialsRejected;
+			return (
+				error instanceof ApiError &&
+				isCredentialRejection(error.status, error.body)
+			);
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Any other 401: Postmark refused the token, which no retry changes.
@@ -26,11 +43,12 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// `Maintenance` (100) is a planned outage the API says will end; it is the one
-	// 503 worth waiting through. It sits before SERVER_ERROR so it wins first.
+	// 503 worth waiting through, and only for a read. A send may already have been
+	// queued, so replaying it could deliver the mail twice.
 	MAINTENANCE_ERROR: {
 		match: (error: Error) => codeOf(error) === 100,
-		handler: async () => ({
-			maxRetries: 2,
+		handler: async (error: Error) => ({
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'linear_3s' as const,
 		}),
 	},
@@ -66,17 +84,14 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof PostmarkAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof PostmarkAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// Only reads are replayed: a failed send may still have been queued.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PostmarkAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

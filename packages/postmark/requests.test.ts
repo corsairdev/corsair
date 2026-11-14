@@ -203,13 +203,33 @@ describe('templates endpoints', () => {
 });
 
 describe('server endpoints', () => {
-	it('server.get reads this server', async () => {
-		mockedRequest.mockResolvedValue({ ID: 1234, DeliveryType: 'Live' });
+	it('server.get leaves out the server API tokens, which a read must not expose', async () => {
+		mockedRequest.mockResolvedValue({
+			ID: 1234,
+			DeliveryType: 'Live',
+			ApiTokens: ['server-token-abc'],
+		});
 
 		const result = await Server.get(ctx, {});
 
 		expect(sentRequest()).toEqual({ method: 'GET', path: '/server' });
 		expect(result.DeliveryType).toBe('Live');
+		// A read that handed these back would let the caller bypass Corsair's
+		// permission checks and call Postmark directly.
+		expect(result).not.toHaveProperty('ApiTokens');
+		expect(JSON.stringify(result)).not.toContain('server-token-abc');
+	});
+
+	it('server.update also leaves out the tokens it answers with', async () => {
+		mockedRequest.mockResolvedValue({
+			ID: 1234,
+			ApiTokens: ['server-token-abc'],
+		});
+
+		const result = await Server.update(ctx, { TrackOpens: true });
+
+		expect(result).not.toHaveProperty('ApiTokens');
+		expect(JSON.stringify(result)).not.toContain('server-token-abc');
 	});
 
 	it('server.update puts the changed settings', async () => {

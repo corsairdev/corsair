@@ -1,5 +1,5 @@
 import type { PostmarkEndpoints } from '..';
-import { segment } from '../client';
+import { segment, withoutApiTokens } from '../client';
 import { call } from './call';
 import {
 	PostmarkEndpointInputSchemas as Inputs,
@@ -16,7 +16,11 @@ export const get: PostmarkEndpoints['serverGet'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/server' }),
-		{ log: (_, result) => ({ serverId: result.ID ?? undefined }) },
+		{
+			// A read must not hand back the server's API tokens.
+			shape: (raw) => withoutApiTokens(raw),
+			log: (_, result) => ({ serverId: result.ID ?? undefined }),
+		},
 	);
 
 export const update: PostmarkEndpoints['serverUpdate'] = (ctx, input) =>
@@ -29,7 +33,11 @@ export const update: PostmarkEndpoints['serverUpdate'] = (ctx, input) =>
 		},
 		input,
 		(body) => ({ method: 'PUT', path: '/server', body }),
-		{ log: (_, result) => ({ serverId: result.ID ?? undefined }) },
+		{
+			// The update route answers the same settings shape, so it strips too.
+			shape: (raw) => withoutApiTokens(raw),
+			log: (_, result) => ({ serverId: result.ID ?? undefined }),
+		},
 	);
 
 export const streams: PostmarkEndpoints['streamsList'] = (ctx, input) =>

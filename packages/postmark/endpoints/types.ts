@@ -380,7 +380,9 @@ export const ServerSchema = z
 		InboundSpamThreshold: z.number().nullish(),
 		TrackOpens: z.boolean().nullish(),
 		TrackLinks: z.string().nullish(),
-		ApiTokens: z.array(z.string()).nullish(),
+		// `ApiTokens` is deliberately absent: `server.get` is a read, and a token
+		// taken from it would bypass Corsair's permission checks entirely. The
+		// client strips the field from the raw body, so it never reaches a caller.
 	})
 	.loose();
 

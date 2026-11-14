@@ -9,6 +9,7 @@ import {
 	POSTMARK_SERVER_TOKEN_HEADER,
 	PostmarkAPIError,
 	readErrorCode,
+	redactAddresses,
 } from './client';
 import { captureError } from './test-helpers';
 
@@ -39,13 +40,28 @@ beforeEach(() => {
 });
 
 describe('Postmark error body', () => {
-	it('reads the numeric code and builds a labelled message', () => {
-		const body = { ErrorCode: 300, Message: 'Invalid request field(s): From.' };
+	it('builds a labelled message from the status and code, not the provider text', () => {
+		// Postmark's `Message` can name a sender or recipient address, and this
+		// string reaches callers and logs, so only the stable code is used.
+		const body = {
+			ErrorCode: 300,
+			Message: "Invalid 'To' address: harry@example.com",
+		};
 
 		expect(readErrorCode(body)).toBe(300);
-		expect(describePostmarkError(422, body, 'fallback')).toBe(
-			'Postmark 422 code 300: Invalid request field(s): From.',
-		);
+		const message = describePostmarkError(422, body, 'fallback');
+		expect(message).toBe('Postmark 422, code 300');
+		expect(message).not.toContain('harry@example.com');
+	});
+
+	it('redacts any address that survives in a body', () => {
+		const redacted = redactAddresses({
+			ErrorCode: 300,
+			Message: "Invalid 'To' address: harry@example.com",
+			To: 'harry@example.com',
+		});
+		expect(JSON.stringify(redacted)).not.toContain('harry@example.com');
+		expect(redacted).toMatchObject({ ErrorCode: 300 });
 	});
 
 	it('treats code 10 as the authentication failure', () => {
@@ -55,7 +71,7 @@ describe('Postmark error body', () => {
 		};
 		expect(isCredentialRejection(401, body)).toBe(true);
 		expect(describePostmarkError(401, body, 'fallback')).toBe(
-			'Postmark 401 code 10: Request does not contain a valid Server token.',
+			'Postmark 401, code 10',
 		);
 	});
 
@@ -130,14 +146,14 @@ describe('makePostmarkRequest', () => {
 			makePostmarkRequest('secret-token', { method: 'GET', path: '/server' }),
 		);
 
-		expect(error).toBeInstanceOf(PostmarkAPIError);
-		if (!(error instanceof PostmarkAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.errorCode).toBe(10);
-		expect(error.credentialsRejected).toBe(true);
-		expect(error.method).toBe('GET');
+		expect(readErrorCode(error.body)).toBe(10);
+		expect(error.request.method).toBe('GET');
 		// The token rides in a header, so no error may repeat it.
 		expect(JSON.stringify(error)).not.toContain('secret-token');
+		expect(error.message).not.toContain('secret-token');
 	});
 
 	it('keeps the numeric code and status on a validation rejection', async () => {
@@ -147,11 +163,14 @@ describe('makePostmarkRequest', () => {
 			makePostmarkRequest('token', { method: 'POST', path: '/email' }),
 		);
 
-		expect(error).toBeInstanceOf(PostmarkAPIError);
-		if (!(error instanceof PostmarkAPIError)) return;
+		// Core's ApiError passes through, with the code still on its body.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(422);
-		expect(error.errorCode).toBe(300);
-		expect(error.credentialsRejected).toBe(false);
+		expect(readErrorCode(error.body)).toBe(300);
+		// The address the provider echoed is gone from the body and the message.
+		expect(JSON.stringify(error)).not.toContain('harry@example.com');
+		expect(error.message).not.toContain('harry@example.com');
 	});
 
 	it('flags a dropped connection as a transport failure with its method', async () => {

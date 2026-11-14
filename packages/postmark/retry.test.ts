@@ -1,9 +1,10 @@
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import {
 	POSTMARK_API_BASE,
 	POSTMARK_SERVER_TOKEN_HEADER,
-	PostmarkAPIError,
+	readErrorCode,
 } from './client';
 import { postmark } from './index';
 import { captureError } from './test-helpers';
@@ -122,14 +123,13 @@ describe('Postmark plugin through createCorsair', () => {
 
 			const error = await captureError(corsair.postmark.api.server.get({}));
 
-			expect(error).toBeInstanceOf(PostmarkAPIError);
-			expect(error).toMatchObject({
-				status: 401,
-				errorCode: 10,
-				credentialsRejected: true,
-			});
+			// Core's ApiError passes through, and the code stays on its body.
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).toMatchObject({ status: 401 });
+			expect(readErrorCode((error as ApiError).body)).toBe(10);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			expect(JSON.stringify(error)).not.toContain('bad-token');
+			expect((error as Error).message).not.toContain('bad-token');
 		} finally {
 			testDb.cleanup();
 		}
@@ -165,7 +165,7 @@ describe('Postmark plugin through createCorsair', () => {
 					To: 'receiver@example.com',
 					TextBody: 'Hello',
 				}),
-			).rejects.toBeInstanceOf(PostmarkAPIError);
+			).rejects.toBeInstanceOf(ApiError);
 			// One attempt only: the message may already be queued.
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
