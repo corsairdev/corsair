@@ -2108,6 +2108,14 @@
                 ]
               },
               {
+                "group": "Folk",
+                "pages": [
+                  "plugins/folk/overview",
+                  "plugins/folk/api",
+                  "plugins/folk/database"
+                ]
+              },
+              {
                 "group": "Follow Up Boss",
                 "pages": [
                   "plugins/followupboss/overview",

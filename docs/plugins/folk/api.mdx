@@ -1,0 +1,2243 @@
+---
+title: "Folk API reference"
+sidebarTitle: "API"
+description: "API reference for the Folk plugin in Corsair: every `folk.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### create
+
+`companies.create`
+
+Create a new company in the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.companies.create({ name: 'Acme Corporation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `fundingRaised` | `number \| string \| null` | No | — |
+| `lastFundingDate` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
+| `foundationYear` | `number \| string \| null` | No | — |
+| `employeeRange` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10000+ \| null` | No | — |
+| `groups` | `object[]` | No | — |
+| `addresses` | `string[]` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+| `urls` | `string[]` | No | — |
+| `customFieldValues` | `Record<string, Record<string, any>>` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  fundingRaised?: number | string | null,
+  lastFundingDate?: string | null,
+  industry?: string | null,
+  foundationYear?: number | string | null,
+  employeeRange?: string | null,
+  groups?: {
+    id: string,
+    name?: string
+  }[],
+  addresses?: string[],
+  emails?: string[],
+  phones?: string[],
+  urls?: string[],
+  createdAt?: string | null,
+  createdBy?: {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  } | null,
+  customFieldValues?: Record<string, Record<string, any>>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`companies.delete`
+
+Delete an existing company in the workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.folk.api.companies.delete({ companyId: 'com_92346499-30bf-4278-ae8e-4aa3ae2ace2c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`companies.get`
+
+Retrieve an existing company by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.companies.get({ companyId: 'com_92346499-30bf-4278-ae8e-4aa3ae2ace2c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  fundingRaised?: number | string | null,
+  lastFundingDate?: string | null,
+  industry?: string | null,
+  foundationYear?: number | string | null,
+  employeeRange?: string | null,
+  groups?: {
+    id: string,
+    name?: string
+  }[],
+  addresses?: string[],
+  emails?: string[],
+  phones?: string[],
+  urls?: string[],
+  createdAt?: string | null,
+  createdBy?: {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  } | null,
+  customFieldValues?: Record<string, Record<string, any>>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companies.list`
+
+Retrieve a paginated list of companies in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.companies.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `combinator` | `and \| or` | No | — |
+| `filter` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    name: string,
+    description?: string | null,
+    fundingRaised?: number | string | null,
+    lastFundingDate?: string | null,
+    industry?: string | null,
+    foundationYear?: number | string | null,
+    employeeRange?: string | null,
+    groups?: {
+      id: string,
+      name?: string
+    }[],
+    addresses?: string[],
+    emails?: string[],
+    phones?: string[],
+    urls?: string[],
+    createdAt?: string | null,
+    createdBy?: {
+      id: string,
+      fullName?: string | null,
+      email?: string | null
+    } | null,
+    customFieldValues?: Record<string, Record<string, any>>
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companies.update`
+
+Update an existing company in the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.companies.update({ companyId: 'com_92346499-30bf-4278-ae8e-4aa3ae2ace2c', description: 'Enterprise Software' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `fundingRaised` | `number \| string \| null` | No | — |
+| `lastFundingDate` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
+| `foundationYear` | `number \| string \| null` | No | — |
+| `employeeRange` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1000 \| 1001-5000 \| 5001-10000 \| 10000+ \| null` | No | — |
+| `groups` | `object[]` | No | — |
+| `addresses` | `string[]` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+| `urls` | `string[]` | No | — |
+| `customFieldValues` | `Record<string, Record<string, any>>` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  fundingRaised?: number | string | null,
+  lastFundingDate?: string | null,
+  industry?: string | null,
+  foundationYear?: number | string | null,
+  employeeRange?: string | null,
+  groups?: {
+    id: string,
+    name?: string
+  }[],
+  addresses?: string[],
+  emails?: string[],
+  phones?: string[],
+  urls?: string[],
+  createdAt?: string | null,
+  createdBy?: {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  } | null,
+  customFieldValues?: Record<string, Record<string, any>>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credits
+
+### get
+
+`credits.get`
+
+Retrieve credit balance for metered workspace features
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.credits.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    feature: string,
+    scope: string,
+    used: number,
+    limit: number | null,
+    periodStart: string,
+    periodEnd: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Group Members
+
+### add
+
+`groupMembers.add`
+
+Add a workspace member to a group
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.groupMembers.add({ groupId: 'grp_5fa60242-0756-4e31-8cca-30c2c5ff1ac2', id: 'usr_bc984b3f-0386-434d-82d7-a91eb6badd71', role: 'contributor' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `role` | `admin \| contributor \| reader` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fullName?: string | null,
+  email?: string | null,
+  role: owner | admin | contributor | reader
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groupMembers.list`
+
+Retrieve members of a specific group
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.groupMembers.list({ groupId: 'grp_5fa60242-0756-4e31-8cca-30c2c5ff1ac2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    fullName?: string | null,
+    email?: string | null,
+    role: owner | admin | contributor | reader
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`groupMembers.remove`
+
+Remove a member from a group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.folk.api.groupMembers.remove({ groupId: 'grp_5fa60242-0756-4e31-8cca-30c2c5ff1ac2', userId: 'usr_bc984b3f-0386-434d-82d7-a91eb6badd71' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groupMembers.update`
+
+Update a member role within a group
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.groupMembers.update({ groupId: 'grp_5fa60242-0756-4e31-8cca-30c2c5ff1ac2', userId: 'usr_bc984b3f-0386-434d-82d7-a91eb6badd71', role: 'admin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `role` | `admin \| contributor \| reader` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fullName?: string | null,
+  email?: string | null,
+  role: owner | admin | contributor | reader
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a new group in the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.groups.create({ name: 'Strategic Partners', visibility: 'public' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `visibility` | `public \| private` | Yes | — |
+| `emoji` | `string` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  visibility: public | private,
+  createdBy?: string | null,
+  emoji?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+Retrieve a paginated list of groups in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.groups.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    name: string,
+    visibility: public | private,
+    createdBy?: string | null,
+    emoji?: string | null
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Update an existing group in the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.groups.update({ groupId: 'grp_5fa60242-0756-4e31-8cca-30c2c5ff1ac2', name: 'Key Partners' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `visibility` | `public \| private` | No | — |
+| `emoji` | `string` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  visibility: public | private,
+  createdBy?: string | null,
+  emoji?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Interactions
+
+### create
+
+`interactions.create`
+
+Log an interaction connected to a person or company
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.interactions.create({ entity: { id: 'per_183ed5cc-3182-45de-84d1-d520f2604810' }, dateTime: '2025-07-17T09:00:00.000Z', title: 'Coffee Catchup', content: 'Met to discuss roadmap' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `object` | Yes | — |
+| `dateTime` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `activityType` | `string` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="entity full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  interactionType?: string,
+  from?: {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  },
+  to?: {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  } | {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  }[],
+  entity?: {
+    id: string,
+    entityType?: string,
+    fullName?: string
+  },
+  dateTime?: string,
+  url?: string | null,
+  privacyLevel?: string,
+  title?: string,
+  content?: string | Record<string, any>,
+  type?: string,
+  activityType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`interactions.delete`
+
+Delete an existing interaction
+
+**Risk:** `destructive`
+
+```ts
+await corsair.folk.api.interactions.delete({ interactionId: 'lit_b049db09-c03d-4f32-96d6-d314760add5d', entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interactionId` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`interactions.get`
+
+Retrieve a specific past or upcoming interaction by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.interactions.get({ interactionId: 'lit_b049db09-c03d-4f32-96d6-d314760add5d', entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interactionId` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  interactionType?: string,
+  from?: {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  },
+  to?: {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  } | {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  }[],
+  entity?: {
+    id: string,
+    entityType?: string,
+    fullName?: string
+  },
+  dateTime?: string,
+  url?: string | null,
+  privacyLevel?: string,
+  title?: string,
+  content?: string | Record<string, any>,
+  type?: string,
+  activityType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`interactions.list`
+
+Retrieve interactions linked to people or companies
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.interactions.list({ entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810', timeframe: 'past' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `entityId` | `string` | Yes | — |
+| `timeframe` | `past \| upcoming` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    interactionType?: string,
+    from?: {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    },
+    to?: {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    } | {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    }[],
+    entity?: {
+      id: string,
+      entityType?: string,
+      fullName?: string
+    },
+    dateTime?: string,
+    url?: string | null,
+    privacyLevel?: string,
+    title?: string,
+    content?: string | Record<string, any>,
+    type?: string,
+    activityType?: string
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPast
+
+`interactions.listPast`
+
+Retrieve past interactions in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.interactions.listPast({ entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `entityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    interactionType?: string,
+    from?: {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    },
+    to?: {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    } | {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    }[],
+    entity?: {
+      id: string,
+      entityType?: string,
+      fullName?: string
+    },
+    dateTime?: string,
+    url?: string | null,
+    privacyLevel?: string,
+    title?: string,
+    content?: string | Record<string, any>,
+    type?: string,
+    activityType?: string
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUpcoming
+
+`interactions.listUpcoming`
+
+Retrieve upcoming interactions in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.interactions.listUpcoming({ entityId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `entityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    interactionType?: string,
+    from?: {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    },
+    to?: {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    } | {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    }[],
+    entity?: {
+      id: string,
+      entityType?: string,
+      fullName?: string
+    },
+    dateTime?: string,
+    url?: string | null,
+    privacyLevel?: string,
+    title?: string,
+    content?: string | Record<string, any>,
+    type?: string,
+    activityType?: string
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`interactions.update`
+
+Update an existing interaction
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.interactions.update({ interactionId: 'lit_b049db09-c03d-4f32-96d6-d314760add5d', entity: { id: 'per_183ed5cc-3182-45de-84d1-d520f2604810' }, title: 'Follow-up Call' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interactionId` | `string` | Yes | — |
+| `entity` | `object` | Yes | — |
+| `dateTime` | `string` | No | — |
+| `title` | `string` | No | — |
+| `content` | `string` | No | — |
+| `activityType` | `string` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="entity full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  interactionType?: string,
+  from?: {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  },
+  to?: {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  } | {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  }[],
+  entity?: {
+    id: string,
+    entityType?: string,
+    fullName?: string
+  },
+  dateTime?: string,
+  url?: string | null,
+  privacyLevel?: string,
+  title?: string,
+  content?: string | Record<string, any>,
+  type?: string,
+  activityType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Create a note linked to a person or company
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.notes.create({ entity: { id: 'per_183ed5cc-3182-45de-84d1-d520f2604810' }, visibility: 'public', content: 'Follow-up planned for next month' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `object` | Yes | — |
+| `visibility` | `public \| private` | Yes | — |
+| `content` | `string` | Yes | — |
+| `parentNote` | `object` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="entity full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="parentNote full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  entity?: {
+    id: string,
+    entityType?: string,
+    fullName?: string
+  },
+  content: string,
+  visibility: public | private,
+  author?: {
+    type?: string,
+    id?: string,
+    fullName?: string | null,
+    email?: string | null,
+    deleted?: boolean
+  } | null,
+  createdAt?: string | null,
+  parentNote?: {
+    id: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Delete an existing note
+
+**Risk:** `destructive`
+
+```ts
+await corsair.folk.api.notes.delete({ noteId: 'nte_14c18444-a0c7-459a-86b0-ccd70ebcd65c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `noteId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`notes.get`
+
+Retrieve a specific note by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.notes.get({ noteId: 'nte_14c18444-a0c7-459a-86b0-ccd70ebcd65c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `noteId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  entity?: {
+    id: string,
+    entityType?: string,
+    fullName?: string
+  },
+  content: string,
+  visibility: public | private,
+  author?: {
+    type?: string,
+    id?: string,
+    fullName?: string | null,
+    email?: string | null,
+    deleted?: boolean
+  } | null,
+  createdAt?: string | null,
+  parentNote?: {
+    id: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`notes.list`
+
+Retrieve notes in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.notes.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `entityId` | `string` | No | — |
+| `query` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `createdBefore` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    entity?: {
+      id: string,
+      entityType?: string,
+      fullName?: string
+    },
+    content: string,
+    visibility: public | private,
+    author?: {
+      type?: string,
+      id?: string,
+      fullName?: string | null,
+      email?: string | null,
+      deleted?: boolean
+    } | null,
+    createdAt?: string | null,
+    parentNote?: {
+      id: string
+    } | null
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Update an existing note
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.notes.update({ noteId: 'nte_14c18444-a0c7-459a-86b0-ccd70ebcd65c', content: 'Updated meeting notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `noteId` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `visibility` | `public \| private` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  entity?: {
+    id: string,
+    entityType?: string,
+    fullName?: string
+  },
+  content: string,
+  visibility: public | private,
+  author?: {
+    type?: string,
+    id?: string,
+    fullName?: string | null,
+    email?: string | null,
+    deleted?: boolean
+  } | null,
+  createdAt?: string | null,
+  parentNote?: {
+    id: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## People
+
+### create
+
+`people.create`
+
+Create a new person in the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.people.create({ firstName: 'Jane', lastName: 'Doe', emails: ['jane.doe@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `fullName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `birthday` | `string \| null` | No | — |
+| `gender` | `Male \| Female \| Unknown \| Other \| null` | No | — |
+| `jobTitle` | `string` | No | — |
+| `groups` | `object[]` | No | — |
+| `companies` | `object[]` | No | — |
+| `addresses` | `string[]` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+| `urls` | `string[]` | No | — |
+| `customFieldValues` | `Record<string, Record<string, any>>` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="companies full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  description?: string | null,
+  birthday?: string | null,
+  gender?: string | null,
+  jobTitle?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  } | null,
+  groups?: {
+    id: string,
+    name?: string
+  }[],
+  companies?: {
+    id?: string,
+    name?: string
+  }[],
+  addresses?: string[],
+  emails?: string[],
+  phones?: string[],
+  urls?: string[],
+  customFieldValues?: Record<string, Record<string, any>>,
+  interactionMetadata?: {
+    user?: {
+      approximateCount?: number,
+      lastInteractedAt?: string | null
+    },
+    workspace?: {
+      approximateCount?: number,
+      lastInteractedAt?: string | null,
+      lastInteractedBy?: {
+        id: string,
+        fullName?: string | null,
+        email?: string | null
+      }[]
+    }
+  } | null,
+  strongestConnection?: Record<string, {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  }> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`people.delete`
+
+Delete an existing person in the workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.folk.api.people.delete({ personId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `personId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`people.get`
+
+Retrieve an existing person by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.people.get({ personId: 'per_183ed5cc-3182-45de-84d1-d520f2604810' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `personId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  description?: string | null,
+  birthday?: string | null,
+  gender?: string | null,
+  jobTitle?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  } | null,
+  groups?: {
+    id: string,
+    name?: string
+  }[],
+  companies?: {
+    id?: string,
+    name?: string
+  }[],
+  addresses?: string[],
+  emails?: string[],
+  phones?: string[],
+  urls?: string[],
+  customFieldValues?: Record<string, Record<string, any>>,
+  interactionMetadata?: {
+    user?: {
+      approximateCount?: number,
+      lastInteractedAt?: string | null
+    },
+    workspace?: {
+      approximateCount?: number,
+      lastInteractedAt?: string | null,
+      lastInteractedBy?: {
+        id: string,
+        fullName?: string | null,
+        email?: string | null
+      }[]
+    }
+  } | null,
+  strongestConnection?: Record<string, {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  }> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`people.list`
+
+Retrieve a paginated list of people in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.people.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `combinator` | `and \| or` | No | — |
+| `filter` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    firstName?: string | null,
+    lastName?: string | null,
+    fullName?: string | null,
+    description?: string | null,
+    birthday?: string | null,
+    gender?: string | null,
+    jobTitle?: string | null,
+    createdAt?: string | null,
+    createdBy?: {
+      id: string,
+      fullName?: string | null,
+      email?: string | null
+    } | null,
+    groups?: {
+      id: string,
+      name?: string
+    }[],
+    companies?: {
+      id?: string,
+      name?: string
+    }[],
+    addresses?: string[],
+    emails?: string[],
+    phones?: string[],
+    urls?: string[],
+    customFieldValues?: Record<string, Record<string, any>>,
+    interactionMetadata?: {
+      user?: {
+        approximateCount?: number,
+        lastInteractedAt?: string | null
+      },
+      workspace?: {
+        approximateCount?: number,
+        lastInteractedAt?: string | null,
+        lastInteractedBy?: {
+          id: string,
+          fullName?: string | null,
+          email?: string | null
+        }[]
+      }
+    } | null,
+    strongestConnection?: Record<string, {
+      id: string,
+      fullName?: string | null,
+      email?: string | null
+    }> | null
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`people.update`
+
+Update an existing person in the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.folk.api.people.update({ personId: 'per_183ed5cc-3182-45de-84d1-d520f2604810', jobTitle: 'Senior Lead' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `personId` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `fullName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `birthday` | `string \| null` | No | — |
+| `gender` | `Male \| Female \| Unknown \| Other \| null` | No | — |
+| `jobTitle` | `string` | No | — |
+| `groups` | `object[]` | No | — |
+| `companies` | `object[]` | No | — |
+| `addresses` | `string[]` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+| `urls` | `string[]` | No | — |
+| `customFieldValues` | `Record<string, Record<string, any>>` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="companies full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  description?: string | null,
+  birthday?: string | null,
+  gender?: string | null,
+  jobTitle?: string | null,
+  createdAt?: string | null,
+  createdBy?: {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  } | null,
+  groups?: {
+    id: string,
+    name?: string
+  }[],
+  companies?: {
+    id?: string,
+    name?: string
+  }[],
+  addresses?: string[],
+  emails?: string[],
+  phones?: string[],
+  urls?: string[],
+  customFieldValues?: Record<string, Record<string, any>>,
+  interactionMetadata?: {
+    user?: {
+      approximateCount?: number,
+      lastInteractedAt?: string | null
+    },
+    workspace?: {
+      approximateCount?: number,
+      lastInteractedAt?: string | null,
+      lastInteractedBy?: {
+        id: string,
+        fullName?: string | null,
+        email?: string | null
+      }[]
+    }
+  } | null,
+  strongestConnection?: Record<string, {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  }> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Retrieve a specific user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.users.get({ userId: 'usr_bc984b3f-0386-434d-82d7-a91eb6badd71' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fullName?: string | null,
+  email?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrentUser
+
+`users.getCurrentUser`
+
+Retrieve the current authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.users.getCurrentUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  fullName?: string | null,
+  email?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+Retrieve users in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.folk.api.users.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `deprecations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  items: {
+    id: string,
+    fullName?: string | null,
+    email?: string | null
+  }[],
+  pagination: {
+    nextLink?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
