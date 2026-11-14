@@ -1,7 +1,16 @@
-import { get as exampleGet } from './example';
-
-export const Example = {
-	get: exampleGet,
-};
-
+export * as Cards from './cards';
+export * as CustomCards from './custom-cards';
+export * as Orders from './orders';
+export * as Basket from './basket';
+export * as Fonts from './fonts';
+export * as Signatures from './signatures';
+export * as AddressBook from './address-book';
+export * as Templates from './templates';
+export * as GiftCards from './gift-cards';
+export * as Inserts from './inserts';
+export * as Bundles from './bundles';
+export * as QrCodes from './qr-codes';
+export * as Shipping from './shipping';
+export * as Prospecting from './prospecting';
+export * as Auth from './auth';
 export * from './types';

@@ -1,0 +1,2220 @@
+---
+title: "Handwrytten API reference"
+sidebarTitle: "API"
+description: "API reference for the Handwrytten plugin in Corsair: every `handwrytten.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Address Book
+
+### addRecipient
+
+`addressBook.addRecipient`
+
+Add a new recipient address to the user address book
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.addressBook.addRecipient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `business_name` | `string` | No | — |
+| `address1` | `string` | Yes | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `zip` | `string` | Yes | — |
+| `country` | `string` | No | — |
+| `country_id` | `number` | No | — |
+| `birthday` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `address_id` | `number` | No | — |
+
+
+
+---
+
+### addSender
+
+`addressBook.addSender`
+
+Add a new sender return address to the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.addressBook.addSender({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `business_name` | `string` | No | — |
+| `address1` | `string` | Yes | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `zip` | `string` | Yes | — |
+| `country_id` | `number` | No | — |
+| `default` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `address` | `any` | No | — |
+
+
+
+---
+
+### countries
+
+`addressBook.countries`
+
+List supported destination countries and country codes for mailing
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.addressBook.countries({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `countries` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="countries full type">
+
+```ts
+{
+  id?: number,
+  name: string,
+  short_name?: string,
+  code?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteRecipient
+
+`addressBook.deleteRecipient`
+
+Delete a recipient address from the user address book
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.addressBook.deleteRecipient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `address_id` | `number` | No | — |
+
+
+
+---
+
+### deleteSender
+
+`addressBook.deleteSender`
+
+Delete a sender return address from the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.addressBook.deleteSender({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### getSender
+
+`addressBook.getSender`
+
+Get default sender return address and account billing info
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.addressBook.getSender({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `billing_info` | `any` | No | — |
+| `subscription` | `any` | No | — |
+
+
+
+---
+
+### listRecipients
+
+`addressBook.listRecipients`
+
+List saved recipient mailing addresses from the address book
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.addressBook.listRecipients({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `addresses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  id?: number,
+  address_id?: number,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  business_name?: string | null,
+  address1?: string,
+  address2?: string | null,
+  city?: string,
+  state?: string,
+  zip?: string | number,
+  country?: string,
+  country_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSenders
+
+`addressBook.listSenders`
+
+List saved return/sender addresses from the account
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.addressBook.listSenders({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `addresses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  id?: number,
+  address_id?: number,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  business_name?: string | null,
+  address1?: string,
+  address2?: string | null,
+  city?: string,
+  state?: string,
+  zip?: string | number,
+  country?: string,
+  country_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setDefaultSender
+
+`addressBook.setDefaultSender`
+
+Set an address as the default sender return address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.addressBook.setDefaultSender({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### states
+
+`addressBook.states`
+
+List states and provinces for a given country
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.addressBook.states({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `string` | No | — |
+| `country_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `states` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="states full type">
+
+```ts
+{
+  id?: number,
+  name: string,
+  short_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRecipient
+
+`addressBook.updateRecipient`
+
+Update an existing recipient address in the user address book
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.addressBook.updateRecipient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `business_name` | `string` | No | — |
+| `address1` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country_id` | `number` | No | — |
+| `birthday` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `address_id` | `number` | No | — |
+
+
+
+---
+
+### updateSender
+
+`addressBook.updateSender`
+
+Update the sender return address on the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.addressBook.updateSender({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address1` | `string` | Yes | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `zip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `addresses` | `any` | No | — |
+
+
+
+---
+
+## Auth
+
+### checkAuth
+
+`auth.checkAuth`
+
+Check API key authentication status and whether test mode is active
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.auth.checkAuth({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `login` | `string` | No | — |
+| `test_mode` | `boolean` | No | — |
+
+
+
+---
+
+### getUser
+
+`auth.getUser`
+
+Get authenticated user profile details, email, and credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.auth.getUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `id` | `string \| number` | No | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `credits` | `number` | No | — |
+
+
+
+---
+
+### logout
+
+`auth.logout`
+
+Invalidate current session credentials
+
+**Risk:** `write`
+
+```ts
+await corsair.handwrytten.api.auth.logout({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### setTestMode
+
+`auth.setTestMode`
+
+Enable or disable account test mode for simulating orders without fulfillment charges
+
+**Risk:** `write`
+
+```ts
+await corsair.handwrytten.api.auth.setTestMode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_mode` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `test_mode` | `boolean` | No | — |
+
+
+
+---
+
+## Basket
+
+### clear
+
+`basket.clear`
+
+Remove all pending orders and clear the shopping basket
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.basket.clear({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `item` | `any` | No | — |
+
+
+
+---
+
+### count
+
+`basket.count`
+
+Get current item count in the shopping basket
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.basket.count({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+---
+
+### send
+
+`basket.send`
+
+Submit and charge all pending orders in the shopping basket for robotic fulfillment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.basket.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `couponCode` | `string` | No | — |
+| `notes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `items` | `any` | No | — |
+
+
+
+---
+
+## Bundles
+
+### list
+
+`bundles.list`
+
+List product bundles and gift pairings available to enclose with cards
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.bundles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `bundles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bundles full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  description?: string,
+  price?: number,
+  delivery_cost?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cards
+
+### categories
+
+`cards.categories`
+
+List all card categories and taxonomies
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.cards.categories({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `categories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  slug?: string,
+  meta_title?: string | null,
+  meta_description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`cards.get`
+
+Get details, dimensions, and cover image for a specific card
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.cards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `card_id` | `number` | Yes | — |
+| `lowres` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `card` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="card full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  title?: string,
+  description?: string | null,
+  dimension_id?: number | null,
+  cover?: string | null,
+  inside_image?: string | null,
+  price?: number,
+  category_id?: number | null,
+  category_name?: string,
+  orientation?: string,
+  card_dimension?: {
+    id?: number,
+    closed_height?: string | number,
+    closed_width?: string | number,
+    character_width?: number,
+    character_height?: number,
+    orientation?: string,
+    open_height?: string | number,
+    open_width?: string | number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`cards.list`
+
+List available greeting cards and designs with optional filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.cards.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | No | — |
+| `with_images` | `boolean` | No | — |
+| `with_detailed_images` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `lowres` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `cards` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cards full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  title?: string,
+  description?: string | null,
+  dimension_id?: number | null,
+  cover?: string | null,
+  inside_image?: string | null,
+  price?: number,
+  category_id?: number | null,
+  category_name?: string,
+  orientation?: string,
+  card_dimension?: {
+    id?: number,
+    closed_height?: string | number,
+    closed_width?: string | number,
+    character_width?: number,
+    character_height?: number,
+    orientation?: string,
+    open_height?: string | number,
+    open_width?: string | number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  is_last?: boolean,
+  next?: number | null,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sections
+
+`cards.sections`
+
+List cards grouped by category sections
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.cards.sections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | No | — |
+| `with_images` | `boolean` | No | — |
+| `with_detailed_images` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `lowres` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `cards` | `any` | No | — |
+| `discount` | `any` | No | — |
+
+
+
+---
+
+## Custom Cards
+
+### checkImage
+
+`customCards.checkImage`
+
+Check image quality, resolution, and DPI for printing compatibility
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.customCards.checkImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_id` | `number` | Yes | — |
+| `card_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `quality` | `string` | No | — |
+| `dpi` | `number` | No | — |
+
+
+
+---
+
+### create
+
+`customCards.create`
+
+Create a custom card template with uploaded cover or inside artwork
+
+**Risk:** `write`
+
+```ts
+await corsair.handwrytten.api.customCards.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `dimension_id` | `number` | Yes | — |
+| `cover_image_id` | `number` | No | — |
+| `inside_image_id` | `number` | No | — |
+| `category_id` | `number` | No | — |
+| `orientation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `card_id` | `number` | No | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`customCards.delete`
+
+Permanently delete a custom card template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.customCards.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### deleteImage
+
+`customCards.deleteImage`
+
+Delete a previously uploaded custom logo or image
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.customCards.deleteImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### dimensions
+
+`customCards.dimensions`
+
+List supported card dimensions and print orientations for custom cards
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.customCards.dimensions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orientation` | `string` | No | — |
+| `format` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `dimensions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dimensions full type">
+
+```ts
+{
+  id?: number,
+  closed_height?: string | number,
+  closed_width?: string | number,
+  character_width?: number,
+  character_height?: number,
+  orientation?: string,
+  open_height?: string | number,
+  open_width?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listImages
+
+`customCards.listImages`
+
+List custom logos and user-uploaded images
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.customCards.listImages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `images` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  id: number,
+  src?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### presetImages
+
+`customCards.presetImages`
+
+List preset cover images available for custom card design
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.customCards.presetImages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dimension_id` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `images` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  id: number,
+  src?: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadImage
+
+`customCards.uploadImage`
+
+Upload a custom logo or image for card customization
+
+**Risk:** `write`
+
+```ts
+await corsair.handwrytten.api.customCards.uploadImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `image_id` | `number` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+## Fonts
+
+### list
+
+`fonts.list`
+
+List available realistic handwriting font styles and stroke properties
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.fonts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `fonts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fonts full type">
+
+```ts
+{
+  id: string,
+  label?: string,
+  font_name?: string,
+  image?: string,
+  path?: string,
+  font_id?: number,
+  line_spacing?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Gift Cards
+
+### list
+
+`giftCards.list`
+
+List physical merchant gift cards and denominations that can be enclosed in notes
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.giftCards.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `gcards` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="gcards full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  image?: string,
+  denominations?: {
+    id: number,
+    nominal?: number,
+    price?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inserts
+
+### list
+
+`inserts.list`
+
+List custom marketing inserts and business cards available for envelope insertion
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.inserts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_historical` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `inserts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="inserts full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  image?: string,
+  price?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### addToBasket
+
+`orders.addToBasket`
+
+Add a handwritten card order to the shopping basket for batch sending
+
+**Risk:** `write`
+
+```ts
+await corsair.handwrytten.api.orders.addToBasket({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `card_id` | `number` | Yes | — |
+| `return_address_id` | `number` | No | — |
+| `address_id` | `number` | No | — |
+| `address_ids` | `number[]` | No | — |
+| `font` | `string` | No | — |
+| `font_size` | `number` | No | — |
+| `denomination_id` | `number` | No | — |
+| `insert_id` | `number` | No | — |
+| `bundle_id` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `stamp_option_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `order_id` | `number \| string` | No | — |
+
+
+
+---
+
+### cancel
+
+`orders.cancel`
+
+Cancel an order before it enters robotic production
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.orders.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`orders.get`
+
+Get status and details for an existing order by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.orders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `order` | `any` | No | — |
+
+
+
+---
+
+### sendSingle
+
+`orders.sendSingle`
+
+Place a single real handwritten card order (spends credits and triggers robotic fulfillment)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.orders.sendSingle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `card_id` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `wishes` | `string` | No | — |
+| `font_label` | `string` | No | — |
+| `denomination_id` | `number` | No | — |
+| `insert_id` | `number` | No | — |
+| `bundle_id` | `number` | No | — |
+| `couponCode` | `string` | No | — |
+| `date_send` | `string` | No | — |
+| `validate_address` | `boolean` | No | — |
+| `delivery_confirmation` | `boolean` | No | — |
+| `stamp_option_id` | `number` | No | — |
+| `sender_first_name` | `string` | No | — |
+| `sender_last_name` | `string` | No | — |
+| `sender_business_name` | `string` | No | — |
+| `sender_address1` | `string` | No | — |
+| `sender_address2` | `string` | No | — |
+| `sender_city` | `string` | No | — |
+| `sender_zip` | `string` | No | — |
+| `sender_state` | `string` | No | — |
+| `sender_country_id` | `number` | No | — |
+| `sender_country` | `string` | No | — |
+| `recipient_first_name` | `string` | No | — |
+| `recipient_last_name` | `string` | No | — |
+| `recipient_business_name` | `string` | No | — |
+| `recipient_address1` | `string` | Yes | — |
+| `recipient_address2` | `string` | No | — |
+| `recipient_city` | `string` | Yes | — |
+| `recipient_zip` | `string` | Yes | — |
+| `recipient_state` | `string` | Yes | — |
+| `recipient_country_id` | `number` | No | — |
+| `recipient_country` | `string` | No | — |
+| `client_metadata` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `order_id` | `number \| string` | No | — |
+| `mail_sent` | `boolean` | No | — |
+
+
+
+---
+
+## Prospecting
+
+### calculateTargets
+
+`prospecting.calculateTargets`
+
+Calculate target recipient counts based on demographic and geographic filters
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.prospecting.calculateTargets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `city` | `string` | Yes | — |
+| `zip` | `string` | Yes | — |
+| `country` | `string` | No | — |
+| `radius` | `number` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `total_records` | `number` | No | — |
+| `mask` | `string` | No | — |
+
+
+
+---
+
+### createOrder
+
+`prospecting.createOrder`
+
+Create a direct-mail prospecting campaign order with targeted recipient lists
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.prospecting.createOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `card_id` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+| `city` | `string` | Yes | — |
+| `zip` | `string` | Yes | — |
+| `records` | `number` | Yes | — |
+| `country` | `string` | No | — |
+| `insert_id` | `number` | No | — |
+| `font` | `string` | No | — |
+| `font_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `order_id` | `number \| string` | No | — |
+
+
+
+---
+
+### preview
+
+`prospecting.preview`
+
+Preview prospecting order pricing and recipient volume before sending
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.prospecting.preview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `card_id` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+| `records` | `number` | Yes | — |
+| `country` | `string` | No | — |
+| `insert_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `prices` | `any` | No | — |
+| `quantity` | `number` | No | — |
+
+
+
+---
+
+## Qr Codes
+
+### create
+
+`qrCodes.create`
+
+Create a dynamic trackable QR code to print on handwritten cards
+
+**Risk:** `write`
+
+```ts
+await corsair.handwrytten.api.qrCodes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `id` | `string \| number` | No | — |
+
+
+
+---
+
+### dashboard
+
+`qrCodes.dashboard`
+
+Get scan analytics and statistics for created QR codes
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.qrCodes.dashboard({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `statistics` | `any` | No | — |
+| `total_scans` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`qrCodes.delete`
+
+Delete a trackable QR code by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.qrCodes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### frames
+
+`qrCodes.frames`
+
+List decorative frame designs available for printed QR codes
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.qrCodes.frames({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `frames` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`qrCodes.list`
+
+List trackable QR codes created in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.qrCodes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `list` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shipping
+
+### stampOptions
+
+`shipping.stampOptions`
+
+List postage stamp options (first-class vs presorted mail) and rates
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.shipping.stampOptions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `stamp_options` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stamp_options full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  description?: string,
+  price?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Signatures
+
+### list
+
+`signatures.list`
+
+List user handwriting signatures saved on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.signatures.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `signatures` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signatures full type">
+
+```ts
+{
+  id: number,
+  preview?: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### categories
+
+`templates.categories`
+
+List template categories available for card messages
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.templates.categories({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `categories` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  price?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`templates.create`
+
+Create a new saved message template in the user account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `category_id` | `number` | No | — |
+| `wishes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `template` | `object` | No | — |
+| `id` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  id: number,
+  category_id?: number,
+  name?: string,
+  message?: string,
+  wishes?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a message template from the user account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Get a specific message template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `template` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  id: number,
+  category_id?: number,
+  name?: string,
+  message?: string,
+  wishes?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List saved message templates with optional category filter
+
+**Risk:** `read`
+
+```ts
+await corsair.handwrytten.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `templates` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id: number,
+  category_id?: number,
+  name?: string,
+  message?: string,
+  wishes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Update an existing message template in the user account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.handwrytten.api.templates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `message` | `string` | No | — |
+| `category_id` | `number` | No | — |
+| `wishes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `httpCode` | `number` | No | — |
+| `status` | `string` | No | — |
+| `template` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  id: number,
+  category_id?: number,
+  name?: string,
+  message?: string,
+  wishes?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
