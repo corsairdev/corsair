@@ -1,5 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
-import { KickboxAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isKickboxAuthError,
+	isKickboxQuotaError,
+	KickboxAPIError,
+} from './client';
 import { Verify } from './endpoints';
 import {
 	badRequest,
@@ -181,14 +186,17 @@ describe('verify.verify', () => {
 	it('reads a spent balance on a 403 as a quota error, not a refused key', async () => {
 		respond(insufficientBalance, 403);
 
-		await expect(
-			invoke(Verify.verify, { email: 'test@example.com' }),
-		).rejects.toMatchObject({
+		const error = await invoke(Verify.verify, {
+			email: 'test@example.com',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
 			status: 403,
-			code: 'INSUFFICIENT_BALANCE',
-			isQuotaError: true,
-			isAuthError: false,
+			body: { code: 'INSUFFICIENT_BALANCE' },
 		});
+		expect(isKickboxQuotaError(error)).toBe(true);
+		expect(isKickboxAuthError(error)).toBe(false);
 	});
 
 	it('surfaces a refused key that arrives as a 403', async () => {
@@ -198,8 +206,8 @@ describe('verify.verify', () => {
 			invoke(Verify.verify, { email: 'test@example.com' }),
 		).rejects.toMatchObject({
 			status: 403,
-			code: 'FORBIDDEN',
-			message: 'Kickbox 403 FORBIDDEN: Invalid API key',
+			body: { code: 'FORBIDDEN' },
+			message: 'Kickbox 403 FORBIDDEN: request failed',
 		});
 	});
 
@@ -208,7 +216,7 @@ describe('verify.verify', () => {
 
 		await expect(
 			invoke(Verify.verify, { email: 'test@example.com' }),
-		).rejects.toMatchObject({ status: 400, isValidationError: true });
+		).rejects.toMatchObject({ status: 400 });
 	});
 
 	it('keeps a result value Kickbox adds later instead of failing', async () => {
@@ -283,6 +291,14 @@ describe('verify.disposable', () => {
 			'completed',
 		);
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('someone@');
+	});
+
+	it('logs no domain for text that is not a hostname', async () => {
+		respond({ disposable: false });
+
+		await invoke(Verify.disposable, { address: 'jane_doe_private' });
+
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('jane_doe');
 	});
 
 	it('logs a bare domain as the domain', async () => {

@@ -41,13 +41,20 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	return result;
 }
 
+// One or more DNS labels and a letter-only TLD, such as `mailinator.com`.
+const HOSTNAME =
+	/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
+
 /**
  * The domain half of an address, for a log line that omits the local part. A
  * bare domain, which `verify.disposable` accepts, is already the domain.
+ * Anything that is not a hostname gives undefined, so text a caller passed by
+ * mistake (a name, a local part) never reaches the event log.
  */
-export function domainOf(address: string): string {
+export function domainOf(address: string): string | undefined {
 	const at = address.lastIndexOf('@');
-	return (at === -1 ? address : address.slice(at + 1)).toLowerCase();
+	const domain = (at === -1 ? address : address.slice(at + 1)).toLowerCase();
+	return HOSTNAME.test(domain) ? domain : undefined;
 }
 
 /**
