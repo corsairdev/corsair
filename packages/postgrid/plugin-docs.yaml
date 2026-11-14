@@ -1,0 +1,76 @@
+displayName: PostGrid
+description: Print and mail API for sending letters, postcards, self mailers and cheques, with contact and template management.
+domain: postgrid.com
+recommendedAuth: api_key
+overviewNote: |
+  PostGrid prints and mails physical mail on demand. Create a key under Settings in the dashboard and paste it in; it travels in the `x-api-key` header. A key created in test mode reads and writes test-mode data only, which is the right place to develop.
+
+  What to know before you print:
+
+  - **An order spends money.** `letters.create`, `postcards.create` and `selfMailers.create` print and post a physical item. There is no sandbox flag on the request: test mode is a property of the key.
+  - **Idempotency.** Order creation accepts an `Idempotency-Key` header, and PostGrid honours it for 24 hours. The plugin generates one per call; pass `idempotencyKey` in the input to reuse it so a retried request returns the original order instead of printing a second one.
+  - **Cancelling.** An order can be cancelled only while its status is `ready`. After that it is with the printer. For a send-as-soon-as-possible order that is roughly midnight Eastern on the following day.
+  - **Tracking.** Every order carries `status`, from `ready` through `printing` and `processed_for_delivery` to `completed` or `cancelled`. Live mail bound for the US also gains `imbStatus`, the USPS stage, plus `imbDate` and `imbZIPCode`.
+  - **Paging is by offset.** List routes take `skip` and `limit` and return `totalCount`; page while `skip` is below it by adding `limit` each time.
+  - **Addresses are corrected.** A created contact may come back with a different address than it was sent, and `addressStatus` says whether it was `verified`, `corrected` or `failed`.
+  - **Webhooks.** PostGrid can post delivery notifications to a URL you register in its dashboard, but this plugin does not handle inbound deliveries.
+references:
+  - title: PostGrid API reference
+    url: https://docs.postgrid.com
+  - title: Rate limits and retry logic
+    url: https://postgrid.readme.io/docs/response-codes-and-retry-logic
+examples:
+  read:
+    path: letters.list
+    title: List recent letters
+    args:
+      limit: 10
+  write:
+    path: templates.create
+    title: Create a template with a merge variable
+    args:
+      description: Welcome postcard
+      html: <b>Hello</b> {{to.firstName}}!
+apiExamples:
+  contacts.list:
+    call: "{ limit: 10, skip: 0 }"
+  contacts.get:
+    call: "{ id: 'contact_nA8mdzveShFEmFraaChaDn' }"
+  contacts.create:
+    call: "{ addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US', firstName: 'Kevin', lastName: 'Villena' }"
+  contacts.delete:
+    call: "{ id: 'contact_nA8mdzveShFEmFraaChaDn' }"
+  templates.list:
+    call: "{ limit: 10 }"
+  templates.get:
+    call: "{ id: 'template_c6HSqnsD1h2zoeHJ6Z9EEA' }"
+  templates.create:
+    call: "{ description: 'Welcome', html: '<b>Hello</b> {{to.firstName}}!' }"
+  templates.update:
+    call: "{ id: 'template_c6HSqnsD1h2zoeHJ6Z9EEA', description: 'Welcome v2' }"
+  templates.delete:
+    call: "{ id: 'template_c6HSqnsD1h2zoeHJ6Z9EEA' }"
+  letters.list:
+    call: "{ limit: 10 }"
+  letters.get:
+    call: "{ id: 'letter_oNrxnVvpyKwbcHtJinF5cm', expand: ['template'] }"
+  letters.create:
+    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, html: '<b>Hello</b>', color: true, doubleSided: true, size: 'us_letter', mailingClass: 'usps_first_class' }"
+  letters.cancel:
+    call: "{ id: 'letter_cS61RTPrSvBKVyT7kenpjn' }"
+  postcards.list:
+    call: "{ limit: 10 }"
+  postcards.get:
+    call: "{ id: 'postcard_mWZGkpb16fcdGKnZUk2WQv' }"
+  postcards.create:
+    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, size: '6x4', frontHTML: '<b>Front</b>', backHTML: '<b>Back</b>' }"
+  postcards.cancel:
+    call: "{ id: 'postcard_55yTG9Hjt7mg9UtkRDRNNz' }"
+  selfMailers.list:
+    call: "{ limit: 10 }"
+  selfMailers.get:
+    call: "{ id: 'self_mailer_wx97UGTC7H3UaSfhunWLjt' }"
+  selfMailers.create:
+    call: "{ to: { addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { id: 'contact_sender' }, size: '8.5x11_bifold', insideHTML: '<b>Inside</b>', outsideHTML: '<b>Outside</b>' }"
+  trackers.get:
+    call: "{ id: 'letter_oNrxnVvpyKwbcHtJinF5cm' }"
