@@ -1,0 +1,50 @@
+displayName: Userlist
+description: Customer messaging with Userlist - push users, companies, relationships and events, send transactional email and in-app messages, and receive webhooks for user, company, relationship, form and message activity.
+domain: userlist.com
+recommendedAuth: api_key
+overviewNote: |
+  Get the **Push API Key** from the Push Settings in Userlist. It goes in the `Authorization` header with the `Push` scheme, and the webhook secret is a separate value from the Webhooks Integration settings.
+
+  - **The scheme is `Push`, not `Bearer`.** `Authorization: Push <key>` is the credential, so a Bearer token is refused with a 401. That is the single most common way a first call fails.
+  - **Writes go to a different host.** The Push API lives at `push.userlist.com`, not `api.userlist.com`, and every operation is a write. There is no way to read a user or a company back through this API.
+  - **Everything is queued.** Every call answers `202 Accepted` with an empty body: the payload has been accepted for processing, not applied. So each operation here resolves to an acknowledgement saying what was queued, not to the stored object.
+  - **Deletes carry a body.** Removing a user, company or relationship is a `DELETE` with the identifier in a JSON body, which is how the Push API names what to remove.
+  - **A failure is `{ status, code, errors: [...] }`.** Note the array: the plugin keeps every message, so a `422` tells you each field that failed rather than only the first.
+  - **Rate and size limits.** 1,000 requests a minute per account, and 100 KB per request body. A `429` was refused before the write and is retried up to three times; a `413` cannot be fixed by retrying, so it is not.
+  - **A 5xx is never replayed.** Since success only means "queued", a server error may mean the write landed and the response was lost. Nothing is retried that could duplicate a user, event or message.
+  - **Matching is by identifier or email.** `users.upsert` needs at least one, and uses the `identifier` when both are given. Topic preferences only change the topics sent; the rest keep their values.
+  - **Messages follow two sets of rules.** With a `template` the subject and body come from it; without one, both are required inline. Email goes to a `user` or a `to` address; a web message needs a `user` and must not carry `to`, since it is shown in-app.
+  - **Webhooks are verified with the webhook secret, not the Push key.** Userlist sends `X-Userlist-Signature: t=<timestamp>,v1=<hex hmac>`, signing `"<timestamp>.<raw body>"` with HMAC-SHA256. The plugin compares in constant time and rejects anything older than five minutes, so a captured request cannot be replayed.
+  - **Delivery is at-least-once and unordered.** Userlist retries a failed delivery up to ten times with backoff, and does not guarantee order — so a `user_updated` can arrive before the `user_created` for the same person.
+examples:
+  read:
+    path: events.create
+    title: Record a subscription event
+    args:
+      name: subscription_activated
+      user: user-123
+  write:
+    path: users.upsert
+    title: Push a user with a company
+    args:
+      identifier: user-123
+      email: user-123@example.com
+      properties:
+        first_name: Delaney
+apiExamples:
+  users.upsert:
+    call: "{ identifier: 'user-123', email: 'user-123@example.com', properties: { first_name: 'Delaney' }, companies: ['company-42'] }"
+  users.delete:
+    call: "{ identifier: 'user-123' }"
+  companies.upsert:
+    call: "{ identifier: 'company-42', name: 'Acme Inc.', properties: { plan: 'plus' } }"
+  companies.delete:
+    call: "{ identifier: 'company-42' }"
+  relationships.upsert:
+    call: "{ user: 'user-123', company: 'company-42', properties: { role: 'admin' } }"
+  relationships.delete:
+    call: "{ user: 'user-123', company: 'company-42' }"
+  events.create:
+    call: "{ name: 'subscription_activated', user: 'user-123', properties: { plan: 'plus' } }"
+  messages.send:
+    call: "{ template: 'welcome_email', user: 'user-123', properties: { first_name: 'Delaney' } }"

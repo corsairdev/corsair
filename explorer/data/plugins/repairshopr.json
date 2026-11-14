@@ -1,0 +1,1413 @@
+{
+  "id": "repairshopr",
+  "displayName": "RepairShopr",
+  "description": "Repair desk and ticketing with RepairShopr - read and write customers, tickets, invoices and products, and list contact people and vendors, against a RepairShopr account's own subdomain.",
+  "npmPackageName": "@corsair-dev/repairshopr",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "subdomain"]
+    }
+  ],
+  "api": [
+    {
+      "path": "repairshopr.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contact people, optionally for one customer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: string | null, email?: string | null, phone?: string | null, mobile?: string | null, latitude?: number | null, longitude?: number | null, customer_id?: number | null, vendor_id?: number | null, account_id?: number | null, notes?: string | null, opt_out?: boolean | null, created_at?: string | null, updated_at?: string | null, properties?: Record<string, string | number | boolean | null> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_entries?: number | null, per_page?: number | null, page?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page to request next, or null on the last page."
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_entries",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a customer from a business name or a person name, with contact details and notification settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "get_sms",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opt_out",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "no_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "get_billing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "get_marketing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "get_reports",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_rate_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notification_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_cc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_term_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "referred_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number | null, firstname?: string | null, lastname?: string | null, fullname?: string | null, business_name?: string | null, email?: string | null, phone?: string | null, mobile?: string | null, address?: string | null, address_2?: string | null, city?: string | null, state?: string | null, zip?: string | null, latitude?: number | string | null, longitude?: number | string | null, notes?: string | null, created_at?: string | null, updated_at?: string | null, pdf_url?: string | null, location_name?: string | null, get_sms?: boolean | null, opt_out?: boolean | null, no_email?: boolean | null, get_billing?: boolean | null, get_marketing?: boolean | null, get_reports?: boolean | null, disabled?: boolean | null, properties?: Record<string, string | number | boolean | null> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer permanently",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Fetch one customer with their contact details, addresses and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number | null, firstname?: string | null, lastname?: string | null, fullname?: string | null, business_name?: string | null, email?: string | null, phone?: string | null, mobile?: string | null, address?: string | null, address_2?: string | null, city?: string | null, state?: string | null, zip?: string | null, latitude?: number | string | null, longitude?: number | string | null, notes?: string | null, created_at?: string | null, updated_at?: string | null, pdf_url?: string | null, location_name?: string | null, get_sms?: boolean | null, opt_out?: boolean | null, no_email?: boolean | null, get_billing?: boolean | null, get_marketing?: boolean | null, get_reports?: boolean | null, disabled?: boolean | null, properties?: Record<string, string | number | boolean | null> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers with name, email and id filters, an optional sort, and page paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A free-text search."
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "Only this customer id."
+          },
+          {
+            "key": "id_not",
+            "optional": true,
+            "type": "number",
+            "description": "Every customer but this id."
+          },
+          {
+            "key": "include_disabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include disabled customers."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "A column and direction, such as `firstname ASC` or `city DESC`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "{ id?: number | null, firstname?: string | null, lastname?: string | null, fullname?: string | null, business_name?: string | null, email?: string | null, phone?: string | null, mobile?: string | null, address?: string | null, address_2?: string | null, city?: string | null, state?: string | null, zip?: string | null, latitude?: number | string | null, longitude?: number | string | null, notes?: string | null, created_at?: string | null, updated_at?: string | null, pdf_url?: string | null, location_name?: string | null, get_sms?: boolean | null, opt_out?: boolean | null, no_email?: boolean | null, get_billing?: boolean | null, get_marketing?: boolean | null, get_reports?: boolean | null, disabled?: boolean | null, properties?: Record<string, string | number | boolean | null> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_entries?: number | null, per_page?: number | null, page?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page to request next, or null on the last page."
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_entries",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update a customer: their name, addresses, contact details or notification settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "get_sms",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opt_out",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "no_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "get_billing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "get_marketing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "get_reports",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_rate_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notification_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_cc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_term_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "referred_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>"
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ id?: number | null, firstname?: string | null, lastname?: string | null, fullname?: string | null, business_name?: string | null, email?: string | null, phone?: string | null, mobile?: string | null, address?: string | null, address_2?: string | null, city?: string | null, state?: string | null, zip?: string | null, latitude?: number | string | null, longitude?: number | string | null, notes?: string | null, created_at?: string | null, updated_at?: string | null, pdf_url?: string | null, location_name?: string | null, get_sms?: boolean | null, opt_out?: boolean | null, no_email?: boolean | null, get_billing?: boolean | null, get_marketing?: boolean | null, get_reports?: boolean | null, disabled?: boolean | null, properties?: Record<string, string | number | boolean | null> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Fetch one invoice with its totals, tax, paid state and linked ticket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, number?: string | null, external_id?: number | string | null, schedule_id?: number | null, qbsdk_external_id?: string | null, xero_id?: string | null, customer_id?: number | null, customer_business_then_name?: string | null, ticket_id?: number | null, location_id?: number | null, contact_id?: number | null, po_number?: string | null, created_at?: string | null, updated_at?: string | null, date?: string | null, due_date?: string | null, subtotal?: string | null, total?: string | null, tax?: string | null, verified_paid?: boolean | null, tech_marked_paid?: boolean | null, is_paid?: boolean | null, pdf_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List invoices with ticket, paid-state and update filters, plus page and per_page paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Invoices per page, at most 25; the one collection that accepts it."
+          },
+          {
+            "key": "ticket_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unpaid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "since_updated_at",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO timestamp."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, number?: string | null, external_id?: number | string | null, schedule_id?: number | null, qbsdk_external_id?: string | null, xero_id?: string | null, customer_id?: number | null, customer_business_then_name?: string | null, ticket_id?: number | null, location_id?: number | null, contact_id?: number | null, po_number?: string | null, created_at?: string | null, updated_at?: string | null, date?: string | null, due_date?: string | null, subtotal?: string | null, total?: string | null, tax?: string | null, verified_paid?: boolean | null, tech_marked_paid?: boolean | null, is_paid?: boolean | null, pdf_url?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_entries?: number | null, per_page?: number | null, page?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page to request next, or null on the last page."
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_entries",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a product; the name and description are both required by RepairShopr",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string",
+            "description": "Required when creating a product."
+          },
+          {
+            "key": "price_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_retail",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_wholesale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maintain_stock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "warranty",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reorder_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "desired_stock_level",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "taxable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "upc_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_rate_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serialized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "category_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "vendor_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, condition?: string | null, price_cost?: number | null, price_retail?: number | null, price_wholesale?: number | null, maintain_stock?: boolean | null, quantity?: number | null, warranty?: string | null, sort_order?: number | null, reorder_at?: number | null, disabled?: boolean | null, taxable?: boolean | null, product_category?: string | null, category_path?: string | null, upc_code?: string | null, discount_percent?: number | null, warranty_template_id?: number | null, qb_item_id?: number | null, desired_stock_level?: number | null, notes?: string | null, tax_rate_id?: number | null, physical_location?: string | null, serialized?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.products.get",
+      "shortPath": "products.get",
+      "description": "Fetch one product with its pricing, stock level, warranty and category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, condition?: string | null, price_cost?: number | null, price_retail?: number | null, price_wholesale?: number | null, maintain_stock?: boolean | null, quantity?: number | null, warranty?: string | null, sort_order?: number | null, reorder_at?: number | null, disabled?: boolean | null, taxable?: boolean | null, product_category?: string | null, category_path?: string | null, upc_code?: string | null, discount_percent?: number | null, warranty_template_id?: number | null, qb_item_id?: number | null, desired_stock_level?: number | null, notes?: string | null, tax_rate_id?: number | null, physical_location?: string | null, serialized?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.products.list",
+      "shortPath": "products.list",
+      "description": "List products with sku, name, upc and category filters, plus an optional sort",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upc_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id_not",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "A column and direction, such as `name ASC`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, condition?: string | null, price_cost?: number | null, price_retail?: number | null, price_wholesale?: number | null, maintain_stock?: boolean | null, quantity?: number | null, warranty?: string | null, sort_order?: number | null, reorder_at?: number | null, disabled?: boolean | null, taxable?: boolean | null, product_category?: string | null, category_path?: string | null, upc_code?: string | null, discount_percent?: number | null, warranty_template_id?: number | null, qb_item_id?: number | null, desired_stock_level?: number | null, notes?: string | null, tax_rate_id?: number | null, physical_location?: string | null, serialized?: boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_entries?: number | null, per_page?: number | null, page?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page to request next, or null on the last page."
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.products.update",
+      "shortPath": "products.update",
+      "description": "Update a product: its name, description, pricing, stock settings or category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Required when creating a product."
+          },
+          {
+            "key": "price_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_retail",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_wholesale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maintain_stock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "warranty",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reorder_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "desired_stock_level",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "taxable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "upc_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_rate_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serialized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "category_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "vendor_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, condition?: string | null, price_cost?: number | null, price_retail?: number | null, price_wholesale?: number | null, maintain_stock?: boolean | null, quantity?: number | null, warranty?: string | null, sort_order?: number | null, reorder_at?: number | null, disabled?: boolean | null, taxable?: boolean | null, product_category?: string | null, category_path?: string | null, upc_code?: string | null, discount_percent?: number | null, warranty_template_id?: number | null, qb_item_id?: number | null, desired_stock_level?: number | null, notes?: string | null, tax_rate_id?: number | null, physical_location?: string | null, serialized?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.tickets.create",
+      "shortPath": "tickets.create",
+      "description": "Create a ticket for a customer with its subject, status, priority, assignee and assets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "number",
+            "description": "The customer the ticket belongs to."
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string",
+            "description": "The ticket subject."
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ticket_type_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "A status name from the account, such as `New`, `In Progress`, `Waiting for Parts` or `Resolved`."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "Urgent | High | Medium | Low",
+            "description": "RepairShopr's four priority values."
+          },
+          {
+            "key": "problem_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date, as `YYYY-MM-DD`."
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number",
+            "description": "The assigned user."
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sla_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "asset_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "{ id?: number | null, number?: number | null, subject?: string | null, created_at?: string | null, updated_at?: string | null, customer_id?: number | null, customer_business_then_name?: string | null, due_date?: string | null, resolved_at?: string | null, start_at?: string | null, end_at?: string | null, location_id?: number | null, location_name?: string | null, problem_type?: string | null, status?: string | null, ticket_type_id?: number | null, ticket_type_name?: string | null, user_id?: number | null, pdf_url?: string | null, priority?: string | null, billing_status?: string | null, tag_list?: string[] | null, sla_name?: string | null, contact_id?: number | null, parent_id?: number | null, properties?: Record<string, string | number | boolean | null> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.tickets.delete",
+      "shortPath": "tickets.delete",
+      "description": "Delete a ticket permanently",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.tickets.get",
+      "shortPath": "tickets.get",
+      "description": "Fetch one ticket with its customer, location, status, priority and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "{ id?: number | null, number?: number | null, subject?: string | null, created_at?: string | null, updated_at?: string | null, customer_id?: number | null, customer_business_then_name?: string | null, due_date?: string | null, resolved_at?: string | null, start_at?: string | null, end_at?: string | null, location_id?: number | null, location_name?: string | null, problem_type?: string | null, status?: string | null, ticket_type_id?: number | null, ticket_type_name?: string | null, user_id?: number | null, pdf_url?: string | null, priority?: string | null, billing_status?: string | null, tag_list?: string[] | null, sla_name?: string | null, contact_id?: number | null, parent_id?: number | null, properties?: Record<string, string | number | boolean | null> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.tickets.list",
+      "shortPath": "tickets.list",
+      "description": "List tickets with customer, contact, status, assignee and date filters, plus page paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "The ticket status, such as `New` or `Resolved`."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mine",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only the calling user’s tickets."
+          },
+          {
+            "key": "resolved_after",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO timestamp."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO timestamp."
+          },
+          {
+            "key": "since_updated_at",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO timestamp."
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tickets",
+            "optional": false,
+            "type": "{ id?: number | null, number?: number | null, subject?: string | null, created_at?: string | null, updated_at?: string | null, customer_id?: number | null, customer_business_then_name?: string | null, due_date?: string | null, resolved_at?: string | null, start_at?: string | null, end_at?: string | null, location_id?: number | null, location_name?: string | null, problem_type?: string | null, status?: string | null, ticket_type_id?: number | null, ticket_type_name?: string | null, user_id?: number | null, pdf_url?: string | null, priority?: string | null, billing_status?: string | null, tag_list?: string[] | null, sla_name?: string | null, contact_id?: number | null, parent_id?: number | null, properties?: Record<string, string | number | boolean | null> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_entries?: number | null, per_page?: number | null, page?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page to request next, or null on the last page."
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_entries",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.tickets.update",
+      "shortPath": "tickets.update",
+      "description": "Update a ticket: its subject, status, priority, assignee or due date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "number",
+            "description": "The customer the ticket belongs to."
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string",
+            "description": "The ticket subject."
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ticket_type_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "A status name from the account, such as `New`, `In Progress`, `Waiting for Parts` or `Resolved`."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "Urgent | High | Medium | Low",
+            "description": "RepairShopr's four priority values."
+          },
+          {
+            "key": "problem_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date, as `YYYY-MM-DD`."
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number",
+            "description": "The assigned user."
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sla_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "asset_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>"
+          },
+          {
+            "key": "ticket_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "{ id?: number | null, number?: number | null, subject?: string | null, created_at?: string | null, updated_at?: string | null, customer_id?: number | null, customer_business_then_name?: string | null, due_date?: string | null, resolved_at?: string | null, start_at?: string | null, end_at?: string | null, location_id?: number | null, location_name?: string | null, problem_type?: string | null, status?: string | null, ticket_type_id?: number | null, ticket_type_name?: string | null, user_id?: number | null, pdf_url?: string | null, priority?: string | null, billing_status?: string | null, tag_list?: string[] | null, sla_name?: string | null, contact_id?: number | null, parent_id?: number | null, properties?: Record<string, string | number | boolean | null> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "repairshopr.api.vendors.list",
+      "shortPath": "vendors.list",
+      "description": "List vendors with their sales rep and contact details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vendors",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, rep_first_name?: string | null, rep_last_name?: string | null, email?: string | null, phone?: string | null, account_number?: string | null, address?: string | null, city?: string | null, state?: string | null, zip?: string | null, website?: string | null, notes?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_entries?: number | null, per_page?: number | null, page?: number | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The page to request next, or null on the last page."
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_entries",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,52 @@
+displayName: GenderAPI.io
+description: Infer gender from a name, an email address or a username with GenderAPI.io - one at a time or in a batch of up to 50, with the confidence, the source that answered and the credits it cost.
+domain: genderapi.io
+recommendedAuth: api_key
+overviewNote: |
+  Copy your 24-character API key from the GenderAPI.io dashboard. The key travels as a bearer token, and the same key and balance work on v1 and v2.
+
+  Things to know before you call:
+
+  - **A key is optional, so Corsair does not prompt for one.** With no key connected, GenderAPI.io falls back to an IP-scoped trial of 10 credits per 24 hours, shared by every caller behind the same public IP (on a shared server, every tenant without a key). Connect the key with a connect link or the `key` option before paid use. `meta.access.mode` says which one was used: `api_key` or `ip_trial`. A missing or unknown key falls back too, while a disabled, expired or restricted key does **not** and answers 403. A trial batch takes at most 10 items.
+  - **An unknown gender is a billed result, not an error.** The answer is HTTP 200 with `gender: null`, `result_status: "unknown"` and a `reason` such as `not_found` or `ambiguous`.
+  - **`source` says who answered.** `dataset` means the name was in the database, `ai` means a model inferred it, and `none` means nothing could. `confidence_kind` follows: `observed_frequency` for the dataset, `model_reported` for AI.
+  - **What a call costs.** A single request defaults to `ai_mode: 'fallback'`, which costs 1 credit in total whether the dataset or AI answers. `ai_mode: 'always'` costs 2, and so does a `forceToGenderize` call that AI answers. A batch defaults to `off`, so pass `ai_mode` (for the batch or per item) when a batch needs AI. Phone validation costs 1, and so does an unknown result.
+  - **A batch item can fail without failing the batch.** Only successful items are billed, and `meta.summary` counts `total`, `succeeded`, `unknown` and `failed`.
+  - **A failed prediction may already be charged.** The error catalog says to inspect `billing_status` before retrying, because a retry starts a new billed operation. The plugin does not retry a prediction or phone call after a 5xx, a timeout or a dropped connection; an HTTP failure is core's `ApiError`, whose body keeps `meta.usage.billing_status` when the API sent one (`genderApiIoErrorInfo(error).billingStatus` reads it). Only the free GET routes and a 429 are retried.
+  - **`usage`, `capabilities` and `errorCatalog` are free.** They are safe to poll: the first gives the balance, the second the batch limit and AI availability, the third every error code with what to do about it.
+  - **Confidence is not a calibrated probability.** The docs say so explicitly, so treat it as a ranking signal rather than a certainty.
+examples:
+  read:
+    path: phone.validate
+    title: Validate and format a phone number
+    args:
+      number: "+14155552671"
+      country: US
+  write:
+    path: gender.batch
+    title: Infer gender for a batch of names
+    args:
+      items:
+        - type: name
+          value: Sophia
+        - type: name
+          value: Michael
+          country: US
+apiExamples:
+  gender.infer:
+    call: "{ type: 'name', value: 'Sophia', country: 'US' }"
+  gender.batch:
+    call: "{ items: [{ type: 'name', value: 'Sophia' }, { type: 'name', value: 'Michael', country: 'US' }] }"
+  phone.validate:
+    call: "{ number: '+14155552671', country: 'US' }"
+  account.usage:
+    call: "{}"
+  account.capabilities:
+    call: "{}"
+  account.errorCatalog:
+    call: "{}"
+apiNotes:
+  gender.infer: '`ai_mode` defaults to `fallback` here (1 credit in total); `always` costs 2.'
+  gender.batch: 'Up to 50 items (10 on the IP trial); defaults to `ai_mode: off`, unlike a single request.'
+  phone.validate: 'Returns the E.164 form, or null when the number cannot be formatted.'
+  account.usage: 'Free, and `meta.access.mode` tells an IP trial from a keyed call.'

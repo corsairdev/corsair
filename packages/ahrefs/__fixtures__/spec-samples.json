@@ -1,0 +1,142 @@
+{
+  "socialMedia.channelMetrics": {
+    "input": {
+      "channel_id": "ch_1",
+      "date_from": "2026-10-01"
+    },
+    "response": {
+      "metrics": [
+        {
+          "follower_count": 1200,
+          "retrieved_at": "2026-10-01T00:00:00Z"
+        },
+        {
+          "follower_count": 1215,
+          "retrieved_at": "2026-10-02T00:00:00Z"
+        }
+      ]
+    }
+  },
+  "socialMedia.postMetrics": {
+    "input": {
+      "external_post_id": "urn:li:share:1",
+      "channel_id": "ch_1",
+      "date_from": "2026-10-01"
+    },
+    "response": {
+      "metrics": [
+        {
+          "retrieved_at": "2026-10-02T00:00:00Z",
+          "views": 340,
+          "unique_views": 290,
+          "likes": 12,
+          "linkedin_metrics": {
+            "comments": 2,
+            "reposts": 1
+          }
+        }
+      ]
+    }
+  },
+  "socialMedia.activityHistory": {
+    "input": {
+      "post_id": 101
+    },
+    "response": {
+      "activities": [
+        {
+          "activity_id": 1,
+          "action_type": "created",
+          "channel_id": "ch_1",
+          "channel_kind": "linkedin",
+          "created_at": "2026-11-01T09:58:00Z",
+          "user_name": "Example Author"
+        }
+      ]
+    }
+  },
+  "socialMedia.createPost": {
+    "input": {
+      "channel_ids": ["ch_1"],
+      "text_content": "Example post text",
+      "timing": "draft"
+    },
+    "response": {
+      "post": {
+        "post_id": 101,
+        "author_id": "7",
+        "author_name": "Example Author",
+        "text_content": "Example post text",
+        "auto_comment": null,
+        "created_at": "2026-11-01T10:00:00Z",
+        "status_timestamp": "2026-11-01T10:00:00Z",
+        "external_post_id": "urn:li:share:1",
+        "permalink": "https://www.linkedin.com/feed/update/urn:li:share:1",
+        "channels": [
+          {
+            "channel_id": "ch_1",
+            "channel_kind": "linkedin",
+            "channel_username": "example",
+            "channel_display_name": "Example",
+            "channel_profile_image_url": null
+          }
+        ]
+      }
+    }
+  },
+  "socialMedia.updatePost": {
+    "input": {
+      "post_id": 101,
+      "text_content": "Edited example post text"
+    },
+    "response": {
+      "post": {
+        "post_id": 101,
+        "author_id": "7",
+        "author_name": "Example Author",
+        "text_content": "Edited example post text",
+        "auto_comment": null,
+        "created_at": "2026-11-01T10:00:00Z",
+        "status_timestamp": "2026-11-01T10:00:00Z",
+        "external_post_id": "urn:li:share:1",
+        "permalink": "https://www.linkedin.com/feed/update/urn:li:share:1",
+        "channels": [
+          {
+            "channel_id": "ch_1",
+            "channel_kind": "linkedin",
+            "channel_username": "example",
+            "channel_display_name": "Example",
+            "channel_profile_image_url": null
+          }
+        ]
+      }
+    }
+  },
+  "socialMedia.deletePost": {
+    "input": {
+      "post_id": 101
+    },
+    "response": {
+      "post": {
+        "post_id": 101,
+        "author_id": "7",
+        "author_name": "Example Author",
+        "text_content": "Example post text",
+        "auto_comment": null,
+        "created_at": "2026-11-01T10:00:00Z",
+        "status_timestamp": "2026-11-01T10:00:00Z",
+        "external_post_id": "urn:li:share:1",
+        "permalink": "https://www.linkedin.com/feed/update/urn:li:share:1",
+        "channels": [
+          {
+            "channel_id": "ch_1",
+            "channel_kind": "linkedin",
+            "channel_username": "example",
+            "channel_display_name": "Example",
+            "channel_profile_image_url": null
+          }
+        ]
+      }
+    }
+  }
+}

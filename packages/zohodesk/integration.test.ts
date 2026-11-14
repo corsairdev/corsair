@@ -332,8 +332,11 @@ describe('Zoho Desk token refresh through createCorsair', () => {
 				}),
 			);
 
+			// Older core throws the raw refresh failure; newer core turns a refused
+			// refresh token into an auth-missing (reconnect) error. Either way the
+			// call must fail rather than run with a dead token.
 			await expect(corsair.zohodesk.api.tickets.list({})).rejects.toThrow(
-				'OAuth token refresh failed (400)',
+				/OAuth token refresh failed \(400\)|\[auth-missing:zohodesk/,
 			);
 		} finally {
 			testDb.cleanup();
