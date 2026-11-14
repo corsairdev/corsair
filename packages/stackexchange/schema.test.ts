@@ -72,6 +72,32 @@ describe('Stack Exchange API schemas', () => {
 		}
 	});
 
+	it('accepts Stack Exchange advanced-search criteria and rejects bad boolean enums', () => {
+		expect(
+			SiteReadInputSchema.parse({
+				route: 'advanced-search',
+				site: 'stackoverflow',
+				parameters: {
+					q: 'corsair plugin',
+					accepted: true,
+					answers: 2,
+					closed: false,
+					views: 100,
+					migrated: false,
+					notice: false,
+					wiki: false,
+				},
+			}),
+		).toMatchObject({ route: 'advanced-search' });
+		expect(
+			SiteReadInputSchema.safeParse({
+				route: 'excerpt-search',
+				site: 'stackoverflow',
+				parameters: { q: 'corsair', accepted: 'true' },
+			}).success,
+		).toBe(false);
+	});
+
 	it('validates common wrapper pagination and quota fields strictly', () => {
 		const response = {
 			items: [{ question_id: 17, title: 'Question', tags: ['api'] }],

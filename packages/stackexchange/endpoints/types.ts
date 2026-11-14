@@ -9,9 +9,12 @@ const QueryValueSchema = z.union([
 ]);
 
 const DOCUMENTED_PARAMETER_NAMES = new Set([
+	'accepted',
+	'answers',
 	'base',
 	'body',
 	'body_markdown',
+	'closed',
 	'close_reason_id',
 	'comment',
 	'comments',
@@ -33,10 +36,12 @@ const DOCUMENTED_PARAMETER_NAMES = new Set([
 	'is_rollback',
 	'link',
 	'max',
+	'migrated',
 	'min',
 	'name',
 	'nottagged',
 	'notify',
+	'notice',
 	'option_id',
 	'order',
 	'page',
@@ -45,6 +50,7 @@ const DOCUMENTED_PARAMETER_NAMES = new Set([
 	'period',
 	'preview',
 	'query',
+	'q',
 	'related',
 	'revision',
 	'revision_guid',
@@ -66,6 +72,8 @@ const DOCUMENTED_PARAMETER_NAMES = new Set([
 	'url',
 	'user',
 	'users',
+	'views',
+	'wiki',
 ]);
 
 const QueryParametersSchema = z
@@ -120,6 +128,16 @@ const QueryParametersSchema = z
 				context.addIssue({
 					code: 'custom',
 					message: 'order must be asc or desc',
+					path: [name],
+				});
+			}
+			if (
+				['accepted', 'closed', 'migrated', 'notice', 'wiki'].includes(name) &&
+				typeof value !== 'boolean'
+			) {
+				context.addIssue({
+					code: 'custom',
+					message: `${name} must be a boolean`,
 					path: [name],
 				});
 			}

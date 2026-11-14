@@ -142,7 +142,7 @@ export function stackexchange<const T extends StackExchangePluginOptions>(
 		authConfig: stackExchangeAuthConfig,
 		oauthConfig: {
 			providerName: 'Stack Exchange',
-			authUrl: 'https://stackoverflow.com/oauth/dialog',
+			authUrl: 'https://stackoverflow.com/oauth',
 			tokenUrl: 'https://stackoverflow.com/oauth/access_token/json',
 			scopes: ['read_inbox', 'write_access', 'private_info'],
 			requiresRegisteredRedirect: true,
