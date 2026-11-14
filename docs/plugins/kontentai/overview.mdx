@@ -1,0 +1,145 @@
+---
+title: "Kontent.ai plugin"
+sidebarTitle: "Overview"
+description: "Headless content delivery with Kontent.ai - read published content items by type, language, collection or filter, along with their content types, taxonomy terms and languages, from the Delivery API."
+---
+
+Use **Kontent.ai** through Corsair: one client, typed API calls.
+
+Copy your environment ID from Kontent.ai under Environment settings, General. It is a GUID such as `975bf280-fd91-488c-994c-2f04416e5ee3`, and it is both the first path segment of every call and the only credential a published read needs.
+
+Optionally store a Delivery API key (Project settings, API keys) as the account's `delivery_api_key`. It is needed for two things: `preview: true` reads, which go to the Preview API with a key that has preview access, and every read in an environment with secure access turned on. The key is stored encrypted with the account and is never a call argument.
+
+Things to know before you call:
+
+- **The Delivery API reads published content only.** It has no write routes, so every operation here is a read. Draft and unpublished content comes from a separate host, `preview-deliver.kontent.ai`; pass `preview: true` and the plugin sends the call there with the stored `delivery_api_key`. A key sent to the published host is ignored, so preview never works without the switch.
+- **`depth` is bounded at 0 to 2, and Kontent clamps silently.** A live probe of `depth=99` answered `200` with depth 2 applied, so an out-of-range value looks like a complete answer. The plugin rejects anything outside 0 to 2 rather than returning a response that quietly disagrees with the request.
+- **Paging is `skip` and `limit`.** A list answers a `pagination` block whose `next_page` is a full URL, or an empty string on the last page. The plugin returns `next_skip`, the number to pass back, and null when the page is the last.
+- **An element's `value` type follows its `type`.** A `text` element is a string, a `number` a number, a `modular_content` an array of codenames, and an `asset` an array of objects. Some types carry no value at all: a `url_slug` element arrives as `{ type, name }` with no `value` key.
+- **Linked items come back under `modular_content`**, keyed by codename, and only when `depth` is above 0.
+- **Filters go in `in_filter`** in Kontent's own syntax, such as `elements.price[gt]=10`, with several joined by `&` (`system.type[in]=article,coffee&elements.title[nempty]`). Each filter becomes its own query parameter, which is what Kontent reads. `type` and `collection` are sent as `system.type` and `system.collection`, since Kontent ignores the bare names and answers every item.
+- **`elements` is sent as one comma-separated value.** Kontent answers repeated `elements` keys with a 400.
+- **Without `limit`, a list returns everything** from `skip` on in one answer.
+- **A 404 does not say what is missing.** Three different codes answer 404: `105` is an unknown environment, which is a configuration mistake, while `100` and `101` are a missing item or type. A failed HTTP call is core's `ApiError` with Kontent's envelope as `body`, so `error.body.error_code` tells them apart, and `kontentErrorFields(error)` reads it out with an `isEnvironmentNotFound` flag. A call the plugin refuses before sending it (no environment ID, or `preview: true` without a stored key) and a network failure throw `KontentAPIError` instead, with no `body`; `kontentErrorFields` returns no code for those.
+- **Keep the `request_id`.** Kontent support asks for it, so when Kontent returns one, the error message ends with it and it is in `error.body.request_id`.
+- **No webhooks.** The Delivery API does not push; a caller polls, or uses Kontent's own webhook configuration outside this plugin.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/kontentai better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/kontentai better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/kontentai better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/kontentai better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { kontentai } from '@corsair-dev/kontentai';
+
+export const corsair = createCorsair({
+	plugins: [
+		kontentai(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Kontent.ai API key before the first call: `pnpm corsair setup --plugin=kontentai --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+kontentai()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'kontentai',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of published items**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kontentai.api.items.list({ limit: 10, depth: 1 });
+```
+
+
+**Read one item by codename**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kontentai.api.items.get({ codename: 'about_us' });
+```
+
+
+See the full list on the [API](/plugins/kontentai/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/kontentai/api">
+    Every `kontentai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

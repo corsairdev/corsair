@@ -1,0 +1,145 @@
+---
+title: "DigiCert plugin"
+sidebarTitle: "Overview"
+description: "Manage DigiCert CertCentral, Report Library, Account Manager, Private CA, Trust Lifecycle Manager, and Content Trust API operations."
+---
+
+Use **DigiCert** through Corsair: one client, typed API calls.
+
+The plugin implements all 656 currently documented non-webhook HTTP endpoints across DigiCert families and all 663 route/query modes. CertCentral and Report Library use `X-DC-DEVKEY`; DigiCert ONE APIs use a separate service-user token in `x-api-key`; Content Trust operations that document OAuth2 also accept `authType: 'oauth_2'` with the `service` scope. Public TLM version and CSC info operations need no key. Webhook operations are out of scope, five deprecated TLM routes are excluded, and 14 CertCentral Discovery catalog operations were discontinued on October 1, 2026. DigiCert ONE also offers mTLS, which this plugin does not implement. See `route-inventory.md` for per-family counts, exclusions, and sources.
+
+**What you get:**
+
+- 663 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/digicert better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/digicert better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/digicert better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/digicert better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { digicert } from '@corsair-dev/digicert';
+
+export const corsair = createCorsair({
+	plugins: [
+		digicert(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the DigiCert API key before the first call: `pnpm corsair setup --plugin=digicert --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+digicert()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your DigiCert OAuth app.
+
+```ts
+digicert({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'digicert',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List Account Manager locales**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.digicert.api.accountManager.locales({});
+```
+
+
+**Add tags to a certificate**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.digicert.api.trustLifecycle.addCertificateTags({
+	certificateId: '00000000-0000-0000-0000-000000000000',
+	tags: ['reviewed'],
+});
+```
+
+
+See the full list on the [API](/plugins/digicert/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/digicert/api">
+    Every `digicert.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
