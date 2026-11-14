@@ -11,6 +11,7 @@ import {
 	ExperimentsListRunsResponseSchema,
 	ExperimentsUpdateRunInputSchema,
 	MetricsCreateInputSchema,
+	MetricsRunResponseSchema,
 	MetricsUpdateInputSchema,
 	SessionCreateResponseSchema,
 } from './endpoints/types';
@@ -141,6 +142,18 @@ describe('HoneyHive response shapes match the API', () => {
 				event_details: [],
 				old_run: {},
 				new_run: {},
+			}).success,
+		).toBe(true);
+	});
+
+	it('parses an evaluator run with a null explanation (live run, 11-15)', () => {
+		// Trimmed from a live POST /v1/metrics/run with a PYTHON evaluator.
+		expect(
+			MetricsRunResponseSchema.safeParse({
+				success: true,
+				loading: false,
+				result: 51,
+				explanation: null,
 			}).success,
 		).toBe(true);
 	});

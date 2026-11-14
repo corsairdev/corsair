@@ -650,7 +650,7 @@ export const MetricsRunResponseSchema = z
 		success: z.boolean().optional(),
 		loading: z.boolean().optional(),
 		result: JsonUnknownSchema.optional(),
-		explanation: z.string().optional(),
+		explanation: z.string().nullish(),
 	})
 	.passthrough();
 
