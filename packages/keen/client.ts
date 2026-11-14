@@ -104,18 +104,22 @@ export class KeenAPIError extends Error {
 }
 
 /** Keen's `error_code` on an HTTP error, such as `InvalidApiKeyError`. */
+// unknown: error handlers receive whatever was thrown and narrow it to ApiError here.
 export function keenErrorCode(error: unknown): string | undefined {
 	return error instanceof ApiError ? errorFields(error.body).code : undefined;
 }
 
+// unknown: any thrown value; only an ApiError has a status.
 function keenStatus(error: unknown): number | undefined {
 	return error instanceof ApiError ? error.status : undefined;
 }
 
+// unknown: error handlers pass the raw thrown value.
 export function isKeenRateLimit(error: unknown): boolean {
 	return keenStatus(error) === 429;
 }
 
+// unknown: error handlers pass the raw thrown value.
 export function isKeenAuthError(error: unknown): boolean {
 	return keenStatus(error) === 401 || keenErrorCode(error) === INVALID_KEY_CODE;
 }
@@ -154,15 +158,22 @@ export function describeKeenError(
  * Core's `ApiError` keeps the request body (an event can hold anything the
  * caller recorded) and the response body (whose message can quote the key or
  * echo input). The error is rebuilt as an `ApiError` with the same status and
- * rate-limit fields, the body cut to `{ error_code }` and the sent body dropped.
+ * rate-limit fields, the body cut to `{ error_code }`, and the sent body and
+ * query dropped: a dataset read's `index_by` can be a customer value, so the
+ * URL keeps only its path.
  */
 function sanitizeApiError(error: ApiError): ApiError {
-	const { body: _body, formData: _formData, ...request } = error.request;
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
 	const code = errorFields(error.body).code;
 	return new ApiError(
 		request,
 		{
-			url: error.url,
+			url: error.url.split('?')[0] ?? error.url,
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -234,6 +245,7 @@ export async function makeKeenRequest(
 	};
 
 	try {
+		// unknown: the endpoint's zod output schema parses the body.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: KEEN_RATE_LIMIT_CONFIG,
 		});

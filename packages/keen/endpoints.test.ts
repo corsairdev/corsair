@@ -681,6 +681,7 @@ describe('savedQueries.list', () => {
 	it('GETs every saved query', async () => {
 		respond(savedQueries);
 
+		// unknown[]: the test only counts the saved queries, not their fields.
 		const result = (await invoke(SavedQueries.list, {})) as {
 			queries: unknown[];
 		};
@@ -980,6 +981,25 @@ describe('datasets.result', () => {
 			index_by: '{"country":"US"}',
 			timeframe: 'this_7_days',
 		});
+	});
+
+	// index_by can be a customer value (an email, an account), so a failed read
+	// keeps neither the query nor the URL's query string on the error.
+	it('keeps the index_by value off the error when the read fails', async () => {
+		respond({ error_code: 'ResourceNotFoundError', message: 'nope' }, 404);
+
+		const error = await caught(
+			invoke(Datasets.result, {
+				datasetName: 'count-purchases-by-country-daily',
+				index_by: { email: 'person@example.com' },
+				timeframe: 'this_7_days',
+			}),
+		);
+
+		expect(error).toMatchObject({ status: 404 });
+		expect((error as { url: string }).url).not.toContain('?');
+		expect(JSON.stringify(error)).not.toContain('person');
+		expect(String(error)).not.toContain('person');
 	});
 
 	it('sends a single string index value as it is', async () => {
