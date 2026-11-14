@@ -191,6 +191,27 @@ describe('redaction helpers', () => {
 		},
 	);
 
+	it.each([
+		['password: Bearer (authentication failed)', 'Bearer'],
+		['token: Basic session_secret', 'session_secret'],
+		['apiKey=Bearer session_secret', 'session_secret'],
+	])(
+		'redacts a %s value even when it starts like an auth scheme',
+		(message, hidden) => {
+			const result = redactCredentials({ message }) as { message: string };
+			expect(result.message).not.toContain(hidden);
+			expect(result.message).toContain('[redacted]');
+		},
+	);
+
+	it('keeps redacting a plain Authorization value with no scheme', () => {
+		expect(redactCredentials({ message: 'authorization: raw_secret' })).toEqual(
+			{
+				message: 'authorization: [redacted]',
+			},
+		);
+	});
+
 	it('redacts in-place on ApiError without replacing the instance', () => {
 		const error = apiError(
 			401,
