@@ -151,6 +151,8 @@ function readErrorField(body: unknown, key: string): unknown {
 	return Object.getOwnPropertyDescriptor(body, key)?.value;
 }
 
+const EMAIL_PATTERN = /[^\s@<>"'(),;:]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g;
+
 function redactProviderText(
 	text: string,
 	credentials: DeployHQCredentials,
@@ -159,7 +161,12 @@ function redactProviderText(
 	for (const secret of [credentials.apiKey, credentials.username]) {
 		if (secret) safeText = safeText.split(secret).join('[redacted]');
 	}
-	return safeText;
+	// A reason can name another user or a customer, so no email address leaves.
+	// Callers keep at most MAX_PROVIDER_DETAIL_LENGTH characters, so the scan is
+	// bounded first.
+	return safeText
+		.slice(0, MAX_PROVIDER_DETAIL_LENGTH * 4)
+		.replace(EMAIL_PATTERN, '[redacted]');
 }
 
 const MAX_PROVIDER_DETAIL_LENGTH = 300;

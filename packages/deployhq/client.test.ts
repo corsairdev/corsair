@@ -262,6 +262,30 @@ describe('DeployHQ client', () => {
 		},
 	);
 
+	// A reason can name someone other than the caller, so every email address is
+	// redacted, not only the configured username.
+	it('redacts any email address in a provider reason', async () => {
+		mockedFetch.mockResolvedValueOnce(
+			jsonResponse({ error: 'Cannot invite customer@example.org' }, 422),
+		);
+		const error: unknown = await makeDeployHQRequest(
+			'/users',
+			{
+				accountSubdomain: 'demo-account',
+				username: 'agent@example.com',
+				apiKey: 'secret-api-key',
+			},
+			{ method: 'POST', body: { user: { email: 'customer@example.org' } } },
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(DeployHQAPIError);
+		if (error instanceof Error) {
+			expect(error.message).toBe(
+				'DeployHQ request failed with HTTP 422: Cannot invite [redacted]',
+			);
+		}
+	});
+
 	it('extracts Retry-After on 429 without retrying a non-idempotent write', async () => {
 		mockedFetch.mockResolvedValueOnce(
 			jsonResponse({ error_code: 'rate_limited' }, 429, { 'Retry-After': '4' }),
