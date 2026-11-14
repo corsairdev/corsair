@@ -249,6 +249,8 @@ async function makeBinaryDeployHQRequest(
 	credentials: DeployHQCredentials,
 	options: DeployHQRequestOptions,
 	authorization: string,
+	// `unknown` because the result is either the binary envelope or a JSON string,
+	// and the operation's output schema narrows it.
 ): Promise<unknown> {
 	const url = new URL(endpoint, baseUrl);
 	for (const [name, value] of Object.entries(options.query ?? {})) {
