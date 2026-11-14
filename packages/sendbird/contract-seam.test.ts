@@ -25,6 +25,13 @@ const user = { user_id: 'user 1', nickname: 'A', role: null };
 const channel = { channel_url: 'room 1', last_message: null, members: [user] };
 const message = { message_id: 42, type: 'MESG', message: 'Hello', user };
 const path = { channel_type: 'group_channels' as const, channel_url: 'room 1' };
+// The plugin writes the query string itself (Sendbird's list filters need raw commas).
+const qs = (query?: object) =>
+	query
+		? `?${Object.entries(query)
+				.map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`)
+				.join('&')}`
+		: '';
 // A closure retains each endpoint's input/output types even in a heterogeneous table.
 function fixture<K extends keyof typeof sendbirdEndpointSchemas, Input, Output>(
 	id: K,
@@ -214,10 +221,10 @@ describe('Sendbird public request seam', () => {
 			expect(config.HEADERS).toEqual({ 'Api-Token': 'secret' });
 			expect(options).toMatchObject({
 				method: fixture.method,
-				url: fixture.url,
+				url: fixture.url + qs('query' in fixture ? fixture.query : undefined),
 				body: 'body' in fixture ? fixture.body : undefined,
-				query: 'query' in fixture ? fixture.query : undefined,
 			});
+			expect(options.query).toBeUndefined();
 			// Core's default 429 retries (R8) stay on: no plugin override.
 			expect(transport?.rateLimitConfig).toBeUndefined();
 		},
@@ -285,9 +292,32 @@ describe('Sendbird public request seam', () => {
 			next_limit: 5,
 		});
 		expect(mockRequest.mock.calls[0][1]).toMatchObject({
-			url: '/open_channels/room/messages',
-			query: { message_ts: 1234, prev_limit: 0, next_limit: 5 },
+			url: '/open_channels/room/messages?message_ts=1234&prev_limit=0&next_limit=5',
 		});
+	});
+	// Live run 11-15: Sendbird returns no users for user_ids=a%2Cb, both for user_ids=a,b.
+	it('keeps the commas in comma-separated filters raw and encodes each item', async () => {
+		mockRequest.mockResolvedValue({ users: [], next: '' });
+		await groups.users.list(ctx, {
+			user_ids: 'user 1,user&2',
+			nickname: 'a,b',
+			limit: 5,
+		});
+		expect(mockRequest.mock.calls[0][1]).toMatchObject({
+			url: '/users?limit=5&user_ids=user%201,user%262&nickname=a%2Cb',
+		});
+		expect(mockRequest.mock.calls[0][1].query).toBeUndefined();
+		mockRequest.mockClear();
+		mockRequest.mockResolvedValue({ channels: [], next: '' });
+		await groups.channels.list(ctx, {
+			channel_urls: 'room-1,room-2',
+			custom_types: 'x,y',
+			members_include_in: 'a,b',
+			show_member: true,
+		});
+		expect(mockRequest.mock.calls[0][1].url).toBe(
+			'/group_channels?show_member=true&custom_types=x,y&channel_urls=room-1,room-2&members_include_in=a,b',
+		);
 	});
 	it('fails output validation instead of returning a malformed resource', async () => {
 		mockRequest.mockResolvedValue({ nickname: 'missing user ID' });

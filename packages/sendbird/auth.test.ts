@@ -138,7 +138,8 @@ describe('Sendbird tenant credentials', () => {
 			});
 			const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 			expect(url).toContain('token=page%2B%2F%3D');
-			expect(url).toContain('user_ids=user%201%2Cuser%2B2');
+			// Sendbird ignores an encoded comma (%2C) in list filters (live run 11-15).
+			expect(url).toContain('user_ids=user%201,user%2B2');
 			expect(url).toContain('show_bot=false');
 			expect(init.body).toBeUndefined();
 		} finally {
