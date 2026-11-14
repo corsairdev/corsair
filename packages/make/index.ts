@@ -219,11 +219,12 @@ const makeEndpointMeta = {
 		description: 'Add new buildtime variables to scenario metadata',
 	},
 	'scenarios.updateBuildVariables': {
-		riskLevel: 'write',
-		description: 'Update buildtime variables in scenario metadata',
+		riskLevel: 'destructive',
+		description:
+			'Replace buildtime variables in scenario metadata (variables left out are overwritten)',
 	},
 	'scenarios.deleteBuildVariable': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete buildtime variable',
 	},
 	'scenarios.listAiAgents': {
