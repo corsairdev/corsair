@@ -162,9 +162,8 @@ describe('Stack Exchange API schemas', () => {
 			}).parameters,
 		).toMatchObject({ favorite_tags: ['javascript', 'typescript'] });
 		expect(
-			SiteReadInputSchema.parse({
+			NetworkReadInputSchema.parse({
 				route: 'users-network-activity',
-				site: 'stackoverflow',
 				pathParams: { id: 1 },
 				parameters: { types: 'posts;badges' },
 			}).parameters,

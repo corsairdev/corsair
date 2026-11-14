@@ -91,8 +91,6 @@ const SITE_READ = {
 	'me-favorites': ['me/favorites', 'user'],
 	'mentions-on-users': ['users/{ids}/mentioned', 'none'],
 	'me-mentioned': ['me/mentioned', 'user'],
-	'users-network-activity': ['users/{id}/network-activity', 'none'],
-	'me-network-activity': ['me/network-activity', 'user'],
 	'user-notifications': ['users/{id}/notifications', 'read_inbox'],
 	'user-unread-notifications': [
 		'users/{id}/notifications/unread',
@@ -205,6 +203,10 @@ const SITE_WRITE = {
 
 const NETWORK_READ = {
 	'achievements-on-user': ['users/{id}/achievements', 'private_info'],
+	// The docs list these under per-site Users, but the API answers
+	// "This method does not accept a `site` parameter" (live 11-15).
+	'users-network-activity': ['users/{id}/network-activity', 'none'],
+	'me-network-activity': ['me/network-activity', 'user'],
 	errors: ['errors', 'none'],
 	'simulate-error': ['errors/{id}', 'none'],
 	'read-filter': ['filters/{filters}', 'none'],

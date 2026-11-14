@@ -4,12 +4,15 @@ import { z } from 'zod';
 import { ROUTE_GROUPS } from './endpoints/routes';
 
 // Snapshot of every v2.3 method page on api.stackexchange.com/docs (11-15):
-// the page's own `var method`, POST flag, access_token and scope parameters.
+// the page's own `var method`, POST flag, access_token and scope parameters,
+// and whether the method takes `site` (the docs index section, corrected by
+// the live API for the two network-activity methods).
 const DocsMethodSchema = z.object({
 	path: z.string(),
 	method: z.enum(['GET', 'POST']),
 	token: z.boolean(),
 	scopes: z.array(z.string()),
+	site: z.boolean(),
 });
 const docsMethods = z
 	.record(z.string(), DocsMethodSchema)
@@ -50,6 +53,17 @@ describe('route catalog matches the Stack Exchange v2.3 docs', () => {
 				id: route.id,
 				method: route.methods.includes(doc.method),
 			}).toEqual({ id: route.id, method: true });
+		}
+	});
+
+	it('sends site only to per-site methods', () => {
+		for (const route of routes) {
+			const doc = docsMethods[route.id];
+			if (!doc) continue;
+			expect({ id: route.id, site: route.site }).toEqual({
+				id: route.id,
+				site: doc.site,
+			});
 		}
 	});
 
