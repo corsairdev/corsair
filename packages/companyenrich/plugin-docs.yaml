@@ -1,6 +1,16 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: CompanyEnrich
 description: B2B company and people data enrichment — look up firms by domain or properties, find work emails, and search or count companies and people with filters, semantic and lookalike queries.
+examples:
+  read:
+    path: account.me
+    title: Check the credit balance
+    args: {}
+  write:
+    path: companies.enrichByDomain
+    title: Enrich a company by domain (1 credit)
+    args:
+      domain: acme.example
 apiExamples:
   account.me: {}
   companies.autocomplete:

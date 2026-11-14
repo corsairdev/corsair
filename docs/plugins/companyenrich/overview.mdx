@@ -94,7 +94,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.me`**
+**Check the credit balance**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -102,9 +102,12 @@ await tenant.companyenrich.api.account.me({});
 ```
 
 
-**Write**
+**Enrich a company by domain (1 credit)**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/companyenrich/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.companyenrich.api.companies.enrichByDomain({ domain: 'acme.example' });
+```
 
 
 See the full list on the [API](/plugins/companyenrich/api) page.
