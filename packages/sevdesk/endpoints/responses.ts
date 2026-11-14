@@ -33,6 +33,8 @@ const stringLike = z.union([z.string(), z.number()]);
 const numberLike = z.union([z.number(), z.string()]);
 const booleanLike = z.union([z.boolean(), z.string(), z.number()]);
 
+// `unknown` because the value is a literal or enum option from the generated schema, which can be a
+// string, number, boolean or null; the checks below narrow it.
 function scalarFor(value: unknown): z.ZodType {
 	if (typeof value === 'number') return numberLike;
 	if (typeof value === 'boolean') return booleanLike;
@@ -109,7 +111,8 @@ export function toResponseSchema(schema: z.core.$ZodType): z.ZodType {
 		);
 	}
 	if (isScalar(schema)) return scalarSchema(schema);
-	// JSON values and `undefined` are kept as generated.
+	// JSON values and `undefined` are kept as generated. `z.unknown()` is only the fallback for a non-Zod
+	// input, which accepts any value the way the generated schema would have.
 	return schema instanceof z.ZodType ? schema : z.unknown();
 }
 

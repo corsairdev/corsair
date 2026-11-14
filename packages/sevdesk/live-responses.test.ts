@@ -159,6 +159,7 @@ const invoice = {
 };
 
 let fetchSpy: jest.SpyInstance;
+// `unknown` because tests feed both valid and deliberately malformed Sevdesk payloads; it is only serialized.
 function respond(body: unknown, status = 200): void {
 	fetchSpy.mockResolvedValueOnce(
 		new Response(JSON.stringify(body), {
@@ -339,6 +340,7 @@ describe('sevDesk live response shapes', () => {
 		respond({ objects: [{ ...contact, category: 'Private Customer' }] });
 		const caught = await sevdeskEndpointsNested.contact
 			.getContactById(ctx, { path: { contactId: 200001 } })
+			// `unknown` because a rejection can carry any value; the assertions below narrow it to Error.
 			.catch((error: unknown) => error);
 		expect(caught).toBeInstanceOf(Error);
 		if (!(caught instanceof Error)) throw new Error('expected an Error');
