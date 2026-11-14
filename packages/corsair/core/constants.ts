@@ -162,6 +162,7 @@ export const BaseProviders = [
 	'cloudconvert',
 	'cloudflare',
 	'cloudflareapikey',
+	'cloudflarebrowserrendering',
 	'cloudinary',
 	'coassemble',
 	'coda',
@@ -698,6 +699,7 @@ export const ProviderDisplayNames = {
 	cloudconvert: 'CloudConvert',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
+	cloudflarebrowserrendering: 'Cloudflare Browser Run',
 	cloudinary: 'Cloudinary',
 	coassemble: 'Coassemble',
 	coda: 'Coda',
@@ -1241,6 +1243,7 @@ export type AllProviders =
 	| 'cloudconvert'
 	| 'cloudflare'
 	| 'cloudflareapikey'
+	| 'cloudflarebrowserrendering'
 	| 'cloudinary'
 	| 'coassemble'
 	| 'coda'
