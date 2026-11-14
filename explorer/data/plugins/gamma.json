@@ -1,0 +1,793 @@
+{
+  "id": "gamma",
+  "displayName": "Gamma",
+  "description": "Generate presentations with Gamma - start a generation from text or a multi-page outline, follow it to completion, read and export the finished gamma, and browse the workspace's themes and folders.",
+  "npmPackageName": "@corsair-dev/gamma",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gamma.api.agent.generate",
+      "shortPath": "agent.generate",
+      "description": "Start a Gamma 5 agent generation from one brief, with a theme, template, quality preset and up to 10 source URLs. Spends credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "The brief: what to generate. The only required field."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "presentation | document | social",
+            "description": "Defaults to `presentation`. A webpage needs `generations.create`."
+          },
+          {
+            "key": "numCards",
+            "optional": true,
+            "type": "number",
+            "description": "Target cards, capped by the plan’s maximum."
+          },
+          {
+            "key": "themeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string",
+            "description": "An accessible workspace template."
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "lite | standard | max",
+            "description": "A quality preset; `max` spends more credits."
+          },
+          {
+            "key": "additionalInstructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exportAs",
+            "optional": true,
+            "type": "pdf | pptx | png"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceUrls",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 10 pages the agent reads as source material."
+          },
+          {
+            "key": "disableConnectors",
+            "optional": true,
+            "type": "boolean",
+            "description": "Opt this run out of the workspace’s connectors."
+          },
+          {
+            "key": "sharingOptions",
+            "optional": true,
+            "type": "{ workspaceAccess?: comment | edit | fullAccess | noAccess | view, externalAccess?: comment | edit | noAccess | view, emailOptions?: { access?: comment | edit | fullAccess | view, recipients: string[] } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ code: string, message?: string | null }[] | null",
+            "description": "Options Gamma ignored or could not apply. Keep them: the status read does not always repeat them."
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.agent.get",
+      "shortPath": "agent.get",
+      "description": "Where an agent generation stands, with the same terminal states as a Classic one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generationId",
+            "optional": false,
+            "type": "string",
+            "description": "The `generationId` a create returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "`pending` is not final; `completed` and `failed` are."
+          },
+          {
+            "key": "gamma",
+            "optional": true,
+            "type": "{ gammaId: string, gammaUrl?: string | null, title?: string | null } | null",
+            "description": "The generated gamma. Can appear while pending, once the document exists."
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ summary?: string | null } | null",
+            "description": "The agent’s summary of what it made, once completed."
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "{ done?: number | null, total?: number | null, percent?: number | null } | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ message?: string | null, statusCode?: number | null, reason?: string | null } | null"
+          },
+          {
+            "key": "exportUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A download link for the export, valid for about a week. Anyone holding it can download the file, so treat it as a secret and do not log it."
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ code: string, message?: string | null }[] | null"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "{ deducted?: number | null, remaining?: number | null } | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.exports.get",
+      "shortPath": "exports.get",
+      "description": "Where an export stands. `completed` carries a download URL that works for anyone holding it, for about a week",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exportId",
+            "optional": false,
+            "type": "string",
+            "description": "The `exportId` the export returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exportId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gammaId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "exportAs",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "`pending` is not final; `completed` and `failed` are."
+          },
+          {
+            "key": "exportUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A download link valid about a week. Anyone holding it can download the file, so treat it as a secret and do not log it."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ message?: string | null, statusCode?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.exports.start",
+      "shortPath": "exports.start",
+      "description": "Start an export of an existing gamma to PDF, PPTX or PNG, returning an `exportId`. A PNG export is a zip of one image per card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gammaId",
+            "optional": false,
+            "type": "string",
+            "description": "The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL."
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "pdf | pptx | png",
+            "description": "Sent as Gamma’s `exportAs`, which is required. A `png` export is a zip of one image per card."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exportId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "The folders the caller can see. Some are view-only, and placing a gamma with `folderId` needs edit access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by name."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "The `nextCursor` of the page before."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.gammas.archive",
+      "shortPath": "gammas.archive",
+      "description": "Archive a gamma. Idempotent, and reversible from the Gamma app, so it is not destructive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gammaId",
+            "optional": false,
+            "type": "string",
+            "description": "The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "gamma_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.gammas.delete",
+      "shortPath": "gammas.delete",
+      "description": "Delete a gamma permanently. Needs a workspace admin role",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gammaId",
+            "optional": false,
+            "type": "string",
+            "description": "The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "`deleted` once Gamma removed it."
+          },
+          {
+            "key": "gammaId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.gammas.get",
+      "shortPath": "gammas.get",
+      "description": "One gamma’s title, author, folder, theme, archive state and thumbnail",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gammaId",
+            "optional": false,
+            "type": "string",
+            "description": "The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`regular` or `template`."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnailUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Usually signed and valid about a week, so re-read rather than store it."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ name?: string | null, avatarUrl?: string | null } | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "themeId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.gammas.search",
+      "shortPath": "gammas.search",
+      "description": "Full-text search over the gammas the caller can read. Needs `q` or a filter (`createdBy`, `updatedAfter`, `updatedBefore`)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Full-text query over titles and body text. Optional only when `createdBy`, `updatedAfter` or `updatedBefore` is set."
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string",
+            "description": "Only gammas this user created: `me`, an email address or a user ID."
+          },
+          {
+            "key": "updatedAfter",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updatedBefore",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hits",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, url?: string | null, highlight?: string | null, createdBy?: string | null, updatedTime?: string | null, archived?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.generations.create",
+      "shortPath": "generations.create",
+      "description": "Start a Classic generation from text or a `pages` array, at once returning a `generationId` to poll. Spends credits. Use it for webpages and multi-page gammas; the agent route covers a single new presentation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inputText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ inputText: string, title?: string, textMode?: generate | condense | preserve, format?: presentation | document | social | webpage, cardSplit?: auto | inputTextBreaks, additionalInstructions?: string, numCards?: number, path?: string, textOptions?: { amount?: brief | medium | detailed | extensive, language?: string, tone?: string, audience?: string }, imageOptions?: { source?: aiGenerated | giphy | noImages | pexels | pictographic | placeholder | themeAccent | webAllImages | webFreeToUse | webFreeToUseCommercially, model?: string, style?: string } }[]",
+            "description": "A multi-page gamma. Takes precedence over the per-page fields at the top level."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "presentation | document | social | webpage"
+          },
+          {
+            "key": "textMode",
+            "optional": true,
+            "type": "generate | condense | preserve"
+          },
+          {
+            "key": "cardSplit",
+            "optional": true,
+            "type": "auto | inputTextBreaks"
+          },
+          {
+            "key": "exportAs",
+            "optional": true,
+            "type": "pdf | pptx | png",
+            "description": "Export automatically once the gamma is done. A `png` export is a zip of one image per card."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additionalInstructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean",
+            "description": "Publish a multi-page gamma as a site once every page succeeds."
+          },
+          {
+            "key": "numCards",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "themeId",
+            "optional": true,
+            "type": "string",
+            "description": "An `id` from `themes.list`."
+          },
+          {
+            "key": "textOptions",
+            "optional": true,
+            "type": "{ amount?: brief | medium | detailed | extensive, language?: string, tone?: string, audience?: string }"
+          },
+          {
+            "key": "imageOptions",
+            "optional": true,
+            "type": "{ source?: aiGenerated | giphy | noImages | pexels | pictographic | placeholder | themeAccent | webAllImages | webFreeToUse | webFreeToUseCommercially, model?: string, style?: string }"
+          },
+          {
+            "key": "cardOptions",
+            "optional": true,
+            "type": "{ dimensions?: 16x9 | 1x1 | 4x3 | 4x5 | 9x16 | a4 | fluid | letter | pageless, headerFooter?: { topLeft?: { type: cardNumber | image | text, source?: custom | themeLogo, src?: string, value?: string, size?: sm | md | lg | xl }, topCenter?: { type: cardNumber | image | text, source?: custom | themeLogo, src?: string, value?: string, size?: sm | md | lg | xl }, topRight?: { type: cardNumber | image | text, source?: custom | themeLogo, src?: string, value?: string, size?: sm | md | lg | xl }, bottomLeft?: { type: cardNumber | image | text, source?: custom | themeLogo, src?: string, value?: string, size?: sm | md | lg | xl }, bottomCenter?: { type: cardNumber | image | text, source?: custom | themeLogo, src?: string, value?: string, size?: sm | md | lg | xl }, bottomRight?: { type: cardNumber | image | text, source?: custom | themeLogo, src?: string, value?: string, size?: sm | md | lg | xl }, hideFromFirstCard?: boolean, hideFromLastCard?: boolean } }"
+          },
+          {
+            "key": "sharingOptions",
+            "optional": true,
+            "type": "{ workspaceAccess?: comment | edit | fullAccess | noAccess | view, externalAccess?: comment | edit | noAccess | view, emailOptions?: { access?: comment | edit | fullAccess | view, recipients: string[] } }"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string",
+            "description": "The folder to place the gamma in."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string | null",
+            "description": "File-level warnings, such as an option Gamma ignored."
+          },
+          {
+            "key": "pageWarnings",
+            "optional": true,
+            "type": "(string | null)[] | null",
+            "description": "One entry per requested page, index-aligned with `pages`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.generations.get",
+      "shortPath": "generations.get",
+      "description": "Where a Classic generation stands: `pending` is not final, `completed` carries the gamma ID, URL and any export URL, `failed` carries the error",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generationId",
+            "optional": false,
+            "type": "string",
+            "description": "The `generationId` a create returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "`pending` is not final; `completed` and `failed` are."
+          },
+          {
+            "key": "gammaId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set once the generation completes."
+          },
+          {
+            "key": "gammaUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ message?: string | null, statusCode?: number | null } | null"
+          },
+          {
+            "key": "exportUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A download link for the export, valid for about a week. Anyone holding it can download the file, so treat it as a secret and do not log it."
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "{ deducted?: number | null, remaining?: number | null } | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ status?: string | null, gammaId?: string | null, gammaUrl?: string | null, error?: { message?: string | null, statusCode?: number | null } | null, exportUrl?: string | null }[] | null",
+            "description": "Per-page results, only for a multi-page generation."
+          }
+        ]
+      }
+    },
+    {
+      "path": "gamma.api.themes.list",
+      "shortPath": "themes.list",
+      "description": "Workspace and official themes, with the ID a generation takes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by name."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "The `nextCursor` of the page before."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "standard | custom",
+            "description": "`standard` for Gamma’s own themes, `custom` for the workspace’s."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "The `after` for the next page; null when there is none."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

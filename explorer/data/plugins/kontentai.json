@@ -1,0 +1,375 @@
+{
+  "id": "kontentai",
+  "displayName": "Kontent.ai",
+  "description": "Headless content delivery with Kontent.ai - read published content items by type, language, collection or filter, along with their content types, taxonomy terms and languages, from the Delivery API.",
+  "npmPackageName": "@corsair-dev/kontentai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "delivery_api_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kontentai.api.items.get",
+      "shortPath": "items.get",
+      "description": "One content item by codename, with its elements and, on request, its linked items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "codename",
+            "optional": false,
+            "type": "string",
+            "description": "The item, type or taxonomy codename, such as `about_us`."
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number",
+            "description": "How deep to resolve linked items: `0` returns no `modular_content`, `1` and `2` go deeper. Kontent clamps anything outside 0 to 2 without saying so."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Read the item in this language codename. An untranslated item falls back to another language; check `system.language` on the answer."
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these element codenames. Sent as one comma-separated `elements` value."
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Read the latest version, including unpublished content, from the Preview API. Needs a Delivery API key with preview access stored on the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ system: { id: string, name?: string | null, codename?: string | null, language?: string | null, type?: string | null, collection?: string | null, sitemap_locations?: string[] | null, last_modified?: string | null, workflow?: string | null, workflow_step?: string | null }, elements?: Record<string, { type: string, name?: string | null, value?: any }> | null }"
+          },
+          {
+            "key": "modular_content",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kontentai.api.items.list",
+      "shortPath": "items.list",
+      "description": "Published content items by type, language, collection or filter, with `depth` deciding how far linked items resolve; `next_skip` gives the next page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Items to skip. Defaults to 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, at most 2000. Without it Kontent returns everything from `skip` on in one answer."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string",
+            "description": "A sort, such as `system.last_modified` or `elements.price[asc]`. Suffix the field with `[desc]` to reverse it; a `-` prefix is refused with a 400."
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Read the latest version, including unpublished content, from the Preview API. Needs a Delivery API key with preview access stored on the account."
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number",
+            "description": "How deep to resolve linked items: `0` returns no `modular_content`, `1` and `2` go deeper. Kontent clamps anything outside 0 to 2 without saying so."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Only items of this content type codename, sent as `system.type`."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Read content in this language codename, such as `es-ES`. Items not translated into it fall back to another language; add `system.language=es-ES` to `in_filter` to drop them."
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string",
+            "description": "Only this collection codename, sent as `system.collection`."
+          },
+          {
+            "key": "in_filter",
+            "optional": true,
+            "type": "string",
+            "description": "Kontent filters, such as `elements.price[gt]=10` or `system.type[in]=article,coffee&elements.title[nempty]`. Each `&`-separated filter is sent as its own query parameter, and an item must match all of them."
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these element codenames. Sent as one comma-separated `elements` value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ system: { id: string, name?: string | null, codename?: string | null, language?: string | null, type?: string | null, collection?: string | null, sitemap_locations?: string[] | null, last_modified?: string | null, workflow?: string | null, workflow_step?: string | null }, elements?: Record<string, { type: string, name?: string | null, value?: any }> | null }[]"
+          },
+          {
+            "key": "modular_content",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ skip?: number | null, limit?: number | null, count?: number | null, next_page?: string | null } | null"
+          },
+          {
+            "key": "next_skip",
+            "optional": false,
+            "type": "number | null",
+            "description": "The `skip` for the next page; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kontentai.api.languages.list",
+      "shortPath": "languages.list",
+      "description": "The environment’s languages, each with the codename to read content in",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Items to skip. Defaults to 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, at most 2000. Without it Kontent returns everything from `skip` on in one answer."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string",
+            "description": "A sort, such as `system.last_modified` or `elements.price[asc]`. Suffix the field with `[desc]` to reverse it; a `-` prefix is refused with a 400."
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Read the latest version, including unpublished content, from the Preview API. Needs a Delivery API key with preview access stored on the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "languages",
+            "optional": false,
+            "type": "{ system: { id: string, name?: string | null, codename?: string | null } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ skip?: number | null, limit?: number | null, count?: number | null, next_page?: string | null } | null"
+          },
+          {
+            "key": "next_skip",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kontentai.api.taxonomies.list",
+      "shortPath": "taxonomies.list",
+      "description": "The taxonomy groups with their nested terms, which an item’s taxonomy element points at",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Items to skip. Defaults to 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, at most 2000. Without it Kontent returns everything from `skip` on in one answer."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string",
+            "description": "A sort, such as `system.last_modified` or `elements.price[asc]`. Suffix the field with `[desc]` to reverse it; a `-` prefix is refused with a 400."
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Read the latest version, including unpublished content, from the Preview API. Needs a Delivery API key with preview access stored on the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taxonomies",
+            "optional": false,
+            "type": "{ system: { id: string, name?: string | null, codename?: string | null, last_modified?: string | null }, terms?: { name?: string | null, codename?: string | null, terms?: (recursive)[] | null }[] | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ skip?: number | null, limit?: number | null, count?: number | null, next_page?: string | null } | null"
+          },
+          {
+            "key": "next_skip",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kontentai.api.types.get",
+      "shortPath": "types.get",
+      "description": "One content type by codename, with its element definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "codename",
+            "optional": false,
+            "type": "string",
+            "description": "The item, type or taxonomy codename, such as `about_us`."
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Read the latest version, including unpublished content, from the Preview API. Needs a Delivery API key with preview access stored on the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "{ system: { id: string, name?: string | null, codename?: string | null, last_modified?: string | null }, elements?: Record<string, { type: string, name?: string | null, taxonomy_group?: string | null, options?: { name?: string | null, codename?: string | null }[] | null }> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kontentai.api.types.list",
+      "shortPath": "types.list",
+      "description": "The content types, each with the element definitions an item of that type carries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Items to skip. Defaults to 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, at most 2000. Without it Kontent returns everything from `skip` on in one answer."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string",
+            "description": "A sort, such as `system.last_modified` or `elements.price[asc]`. Suffix the field with `[desc]` to reverse it; a `-` prefix is refused with a 400."
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Read the latest version, including unpublished content, from the Preview API. Needs a Delivery API key with preview access stored on the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "types",
+            "optional": false,
+            "type": "{ system: { id: string, name?: string | null, codename?: string | null, last_modified?: string | null }, elements?: Record<string, { type: string, name?: string | null, taxonomy_group?: string | null, options?: { name?: string | null, codename?: string | null }[] | null }> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ skip?: number | null, limit?: number | null, count?: number | null, next_page?: string | null } | null"
+          },
+          {
+            "key": "next_skip",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

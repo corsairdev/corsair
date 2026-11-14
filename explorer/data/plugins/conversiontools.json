@@ -1,0 +1,692 @@
+{
+  "id": "conversiontools",
+  "displayName": "Conversion Tools",
+  "description": "Create and manage Conversion Tools file-conversion tasks, uploads, binary downloads, converter discovery, task status, and retention through its REST API.",
+  "npmPackageName": "@corsair-dev/conversiontools",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "conversiontools.api.account.getConfig",
+      "shortPath": "account.getConfig",
+      "description": "Get account-specific converter configuration. https://api.conversiontools.io/openapi.yaml",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ conversions?: { type: string, title?: string, options?: { key: string, title?: string, type?: string | boolean | enum | number | string, values?: { value: string, label?: string }[], default?: JsonValue, placeholder?: string }[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.account.getInfo",
+      "shortPath": "account.getInfo",
+      "description": "Get authenticated account information. https://api.conversiontools.io/openapi.yaml",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.account.verify",
+      "shortPath": "account.verify",
+      "description": "Verify the API token at the API root. https://conversiontools.io/llms-full.txt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.conversions.get",
+      "shortPath": "conversions.get",
+      "description": "Get one conversion type and its options. https://api.conversiontools.io/openapi.yaml",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "conversion",
+            "optional": false,
+            "type": "{ type: string, title: string, input_format: string, output_format: string, input_aliases?: string[], output_aliases?: string[], ai?: boolean, options?: { key: string, title?: string, type?: string | boolean | enum | number | string, values?: { value: string, label?: string }[], default?: JsonValue, placeholder?: string }[], file_inputs?: { key: string, description?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.conversions.list",
+      "shortPath": "conversions.list",
+      "description": "List conversion types with optional format and AI filters. https://conversiontools.io/api-documentation#building-a-connector",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "conversions",
+            "optional": false,
+            "type": "{ type: string, title: string, input_format: string, output_format: string, input_aliases?: string[], output_aliases?: string[], ai?: boolean, options?: { key: string, title?: string, type?: string | boolean | enum | number | string, values?: { value: string, label?: string }[], default?: JsonValue, placeholder?: string }[], file_inputs?: { key: string, description?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.files.createDownloadLink",
+      "shortPath": "files.createDownloadLink",
+      "description": "Mint a temporary download credential for a file. https://conversiontools.io/llms-full.txt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal file ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal file ID"
+          },
+          {
+            "key": "download_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal temporary download ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.files.createUploadSession",
+      "shortPath": "files.createUploadSession",
+      "description": "Create a one-time upload session for a large file. https://conversiontools.io/llms-full.txt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upload_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal file ID"
+          },
+          {
+            "key": "expires_in",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.files.downloadById",
+      "shortPath": "files.downloadById",
+      "description": "Download file bytes by file ID as base64 with response metadata. https://conversiontools.io/llms-full.txt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal file ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "Raw file bytes encoded as base64 for JSON-safe output; downloads are limited to 10 MiB. Use a temporary download link for larger files."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The response Content-Type"
+          },
+          {
+            "key": "contentDisposition",
+            "optional": true,
+            "type": "string",
+            "description": "The response Content-Disposition, when provided"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number",
+            "description": "Downloaded byte length"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.files.downloadFromLink",
+      "shortPath": "files.downloadFromLink",
+      "description": "Download file bytes using a temporary download ID; the ID is sent without API-key auth. https://conversiontools.io/llms-full.txt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "download_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal temporary download ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "Raw file bytes encoded as base64 for JSON-safe output; downloads are limited to 10 MiB. Use a temporary download link for larger files."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The response Content-Type"
+          },
+          {
+            "key": "contentDisposition",
+            "optional": true,
+            "type": "string",
+            "description": "The response Content-Disposition, when provided"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number",
+            "description": "Downloaded byte length"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.files.getInfo",
+      "shortPath": "files.getInfo",
+      "description": "Get file metadata and a text preview when available. https://api.conversiontools.io/openapi.yaml",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal file ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previewData",
+            "optional": true,
+            "type": "string | string[] | null"
+          },
+          {
+            "key": "detectedFormat",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file as multipart form data. https://conversiontools.io/api-documentation#upload-file-to-server",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal file ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.files.uploadToSession",
+      "shortPath": "files.uploadToSession",
+      "description": "Upload raw file bytes to a one-time session URL. https://conversiontools.io/llms-full.txt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal file ID"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create an asynchronous conversion task. https://conversiontools.io/api-documentation#run-conversion-task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal task ID"
+          },
+          {
+            "key": "sandbox",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get the current state of a conversion task. https://conversiontools.io/api-documentation#get-task-status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal task ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "PENDING | RUNNING | SUCCESS | ERROR | string"
+          },
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string | null",
+            "description": "32-character lowercase hexadecimal file ID"
+          },
+          {
+            "key": "conversionProgress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "conversionResult",
+            "optional": true,
+            "type": "{ message?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List recent tasks, optionally filtered by status, with page and limit (up to 100 a page). https://api.conversiontools.io/openapi.yaml",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "PENDING | RUNNING | SUCCESS | ERROR"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Tasks per page, 1 to 100 (default 50)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, type?: string, status?: PENDING | RUNNING | SUCCESS | ERROR | string, error?: string | null, url?: string | null, dateCreated?: string, dateFinished?: string | null, conversionProgress?: number, fileSource?: { id?: string, name?: string, size?: number, exists?: boolean }, fileResult?: { id?: string, name?: string, size?: number, exists?: boolean } | null, retentionMode?: standard_24h | ttl_15m | string, cleanupStatus?: none | scheduled | running | completed | failed | string, dateDeleted?: string | null, dateExpires?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, limit: number, total: number, totalPages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.tasks.remove",
+      "shortPath": "tasks.remove",
+      "description": "Permanently schedule deletion of task files. https://api.conversiontools.io/openapi.yaml",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal task ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateDeleted",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "conversiontools.api.tasks.updateRetention",
+      "shortPath": "tasks.updateRetention",
+      "description": "Update task file retention mode. https://api.conversiontools.io/openapi.yaml",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string",
+            "description": "32-character lowercase hexadecimal task ID"
+          },
+          {
+            "key": "retentionMode",
+            "optional": false,
+            "type": "standard_24h | ttl_15m"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "retentionMode",
+            "optional": false,
+            "type": "standard_24h | ttl_15m | string"
+          },
+          {
+            "key": "dateExpires",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

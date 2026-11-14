@@ -1,0 +1,1075 @@
+{
+  "id": "cloudflarebrowserrendering",
+  "displayName": "Cloudflare Browser Run",
+  "description": "Render and inspect pages, capture screenshots and PDFs, crawl sites, and manage Browser Rendering sessions and targets through REST.",
+  "npmPackageName": "@corsair-dev/cloudflarebrowserrendering",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cloudflarebrowserrendering.api.accessibilityTree.capture",
+      "shortPath": "accessibilityTree.capture",
+      "description": "Capture a page accessibility tree: https://developers.cloudflare.com/browser-run/quick-actions/accessibility-tree-endpoint/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string, interestingOnly?: boolean, root?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accessibilityTree",
+            "optional": false,
+            "type": "{ role: string } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.browser.close",
+      "shortPath": "browser.close",
+      "description": "Close a Browser Rendering session: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/delete/.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.browser.create",
+      "shortPath": "browser.create",
+      "description": "Acquire a browser session with optional guardrails: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/create/.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keepAlive",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lab",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "liveViewUrlExpiresInMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "targets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "guardrails",
+            "optional": true,
+            "type": "{ allowedDomains?: string[], allowedDomainSets?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webSocketDebuggerUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.browser.liveView.create",
+      "shortPath": "browser.liveView.create",
+      "description": "Mint time-limited browser live-view URLs: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/live_view/methods/create/.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiresInMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "guardrails",
+            "optional": true,
+            "type": "{ mode: readonly }"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "devtools | tab | full"
+          },
+          {
+            "key": "targetId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "devtoolsFrontendUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": false,
+            "type": "{ mode: string, guardrails?: { mode: string } }"
+          },
+          {
+            "key": "webSocketDebuggerUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.browser.protocol",
+      "shortPath": "browser.protocol",
+      "description": "Retrieve the dynamic Chrome DevTools Protocol schema: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/protocol/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ domain: string, commands?: Record<string, JsonValue>[], dependencies?: string[], events?: Record<string, JsonValue>[], experimental?: boolean, types?: Record<string, JsonValue>[] }[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "{ major: string, minor: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.browser.version",
+      "shortPath": "browser.version",
+      "description": "Get browser and DevTools version metadata: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/version/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Browser",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Protocol-Version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "User-Agent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "V8-Version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "WebKit-Version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webSocketDebuggerUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.content.fetch",
+      "shortPath": "content.fetch",
+      "description": "Fetch rendered HTML through Browser Run Quick Actions: https://developers.cloudflare.com/browser-run/quick-actions/content-endpoint/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.crawl.cancel",
+      "shortPath": "crawl.cancel",
+      "description": "Cancel an active crawl job: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.crawl.get",
+      "shortPath": "crawl.get",
+      "description": "Get crawl status or paginated results: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | completed | disallowed | skipped | errored | cancelled"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "browserSecondsUsed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "finished",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ status: string, url: string, html?: string, json?: Record<string, JsonValue>, markdown?: string, metadata?: { status: number, url: string, lastModified?: string, title?: string }, outcome?: string }[]"
+          },
+          {
+            "key": "robots",
+            "optional": true,
+            "type": "{ origin: string, state: string, status?: number }[]"
+          },
+          {
+            "key": "skipped",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.crawl.start",
+      "shortPath": "crawl.start",
+      "description": "Start an asynchronous site crawl: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, url: string, browser?: kitesurf, depth?: number, formats?: (html | markdown | json)[], crawlPurposes?: (search | ai-input | ai-train)[], contentUse?: reference | full, jsonOptions?: { custom_ai?: { authorization?: string, model: string }[], prompt?: string, response_format?: { type: json_schema, json_schema: Record<string, JsonValue> } }, limit?: number, maxAge?: number, modifiedSince?: number, options?: { includeExternalLinks?: boolean, includePatterns?: string[], excludePatterns?: string[], includeSubdomains?: boolean }, render?: boolean, source?: all | sitemaps | links }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.json.extract",
+      "shortPath": "json.extract",
+      "description": "Extract structured page data using a prompt or JSON schema: https://developers.cloudflare.com/browser-run/quick-actions/json-endpoint/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string, custom_ai?: { authorization?: string, model: string }[], prompt?: string, response_format?: { type: json_schema, json_schema: Record<string, JsonValue> } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.links.list",
+      "shortPath": "links.list",
+      "description": "Retrieve links from a rendered page: https://developers.cloudflare.com/browser-run/quick-actions/links-endpoint/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string, excludeExternalLinks?: boolean, visibleLinksOnly?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.markdown.convert",
+      "shortPath": "markdown.convert",
+      "description": "Convert rendered page content to Markdown: https://developers.cloudflare.com/browser-run/quick-actions/markdown-endpoint/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.pdf.render",
+      "shortPath": "pdf.render",
+      "description": "Render a page to JSON-safe base64 PDF data: https://developers.cloudflare.com/browser-run/quick-actions/pdf-endpoint/.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "kitesurf"
+          },
+          {
+            "key": "cacheTTL",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string, pdfOptions?: { displayHeaderFooter?: boolean, footerTemplate?: string, format?: letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6, headerTemplate?: string, height?: string | number, landscape?: boolean, margin?: { bottom?: string | number, left?: string | number, right?: string | number, top?: string | number }, omitBackground?: boolean, outline?: boolean, pageRanges?: string, preferCSSPageSize?: boolean, printBackground?: boolean, scale?: number, tagged?: boolean, timeout?: number, width?: string | number } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.scrape.extract",
+      "shortPath": "scrape.extract",
+      "description": "Extract selected HTML elements: https://developers.cloudflare.com/browser-run/quick-actions/scrape-endpoint/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string, elements: { selector: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ results: { attributes: { name: string, value: string }[], height: number, html: string, left: number, text: string, top: number, width: number }[], selector: string }[]"
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.screenshot.capture",
+      "shortPath": "screenshot.capture",
+      "description": "Capture a screenshot as JSON-safe base64 data: https://developers.cloudflare.com/browser-run/quick-actions/screenshot-endpoint/.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "kitesurf"
+          },
+          {
+            "key": "cacheTTL",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string, screenshotOptions?: { captureBeyondViewport?: boolean, clip?: { height: number, width: number, x: number, y: number, scale?: number }, fromSurface?: boolean, fullPage?: boolean, omitBackground?: boolean, optimizeForSpeed?: boolean, quality?: number, type?: png | jpeg | webp }, scrollPage?: boolean, selector?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.sessions.get",
+      "shortPath": "sessions.get",
+      "description": "Get details for a Browser Rendering session: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/session/methods/get/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "closeReason",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "closeReasonText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionEndTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionStartTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "devtoolsFrontendUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastUpdated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webSocketDebuggerUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.sessions.list",
+      "shortPath": "sessions.list",
+      "description": "List active Browser Rendering sessions: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/session/methods/list/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ sessionId: string, closeReason?: number, closeReasonText?: string, connectionEndTime?: number, connectionId?: string, connectionStartTime?: number, devtoolsFrontendUrl?: string, endTime?: number, lastUpdated?: number, startTime?: number, webSocketDebuggerUrl?: string }[]"
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.snapshot.capture",
+      "shortPath": "snapshot.capture",
+      "description": "Capture multiple page formats in one request: https://developers.cloudflare.com/browser-run/quick-actions/snapshot/.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ actionTimeout?: number, addScriptTag?: { id?: string, content?: string, type?: string, url?: string }[], addStyleTag?: { content?: string, url?: string }[], allowRequestPattern?: string[], allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], authenticate?: { password: string, username: string }, bestAttempt?: boolean, cookies?: { name: string, value: string, domain?: string, expires?: number, httpOnly?: boolean, partitionKey?: string, path?: string, priority?: Low | Medium | High, sameParty?: boolean, sameSite?: Strict | Lax | None, secure?: boolean, sourcePort?: number, sourceScheme?: Unset | NonSecure | Secure, url?: string }[], emulateMediaType?: string, gotoOptions?: { referer?: string, referrerPolicy?: string, timeout?: number, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[] }, rejectRequestPattern?: string[], rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[], setExtraHTTPHeaders?: Record<string, string>, setJavaScriptEnabled?: boolean, viewport?: { height: number, width: number, deviceScaleFactor?: number, hasTouch?: boolean, isLandscape?: boolean, isMobile?: boolean }, waitForSelector?: { selector: string, hidden?: true, timeout?: number, visible?: true }, waitForTimeout?: number, html?: string, url?: string, userAgent?: string, formats?: (content | screenshot | markdown | accessibilityTree)[], screenshotOptions?: { captureBeyondViewport?: boolean, clip?: { height: number, width: number, x: number, y: number, scale?: number }, fromSurface?: boolean, fullPage?: boolean, omitBackground?: boolean, optimizeForSpeed?: boolean, quality?: number, type?: png | jpeg | webp } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accessibilityTree",
+            "optional": true,
+            "type": "{ role: string }"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.targets.activate",
+      "shortPath": "targets.activate",
+      "description": "Activate a browser target: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/activate/.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.targets.close",
+      "shortPath": "targets.close",
+      "description": "Close a browser target: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/close/.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.targets.create",
+      "shortPath": "targets.create",
+      "description": "Open a browser tab: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/create/.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "liveViewUrlExpiresInMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "devtoolsFrontendUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webSocketDebuggerUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.targets.get",
+      "shortPath": "targets.get",
+      "description": "Get a debuggable target by ID: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/get/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "devtoolsFrontendUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webSocketDebuggerUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflarebrowserrendering.api.targets.list",
+      "shortPath": "targets.list",
+      "description": "List debuggable browser targets: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/list/.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "liveViewUrlExpiresInMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, type: string, url: string, description?: string, devtoolsFrontendUrl?: string, title?: string, webSocketDebuggerUrl?: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -128,6 +128,10 @@
   "discord": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/discord.svg"
   },
+  "documenso": {
+    "from": "https://media.brand.dev/9521d660-0c58-4ab5-98c7-111a3ed5617a.svg",
+    "note": "found with the context.dev Brand API for documenso.com"
+  },
   "docusign": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/docusign.svg"
   },
@@ -169,6 +173,10 @@
   },
   "flutterwave": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/flutterwave.svg"
+  },
+  "gamma": {
+    "from": "https://media.brand.dev/a557eb51-bb9f-4d73-b7fc-9a74f7127a78.svg",
+    "note": "found with the context.dev Brand API for gamma.app"
   },
   "gemini": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/gemini.svg"
@@ -241,6 +249,18 @@
   },
   "intercom": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/intercom.svg"
+  },
+  "keyword": {
+    "from": "https://media.brand.dev/ca427665-f4ca-4a40-a7f6-a24bf4c040df.svg",
+    "note": "found with the context.dev Brand API for keyword.com"
+  },
+  "kontentai": {
+    "from": "https://media.brand.dev/c13dd12c-bd7e-4520-93bb-7c9e223130b6.svg",
+    "note": "found with the context.dev Brand API for kontent.ai"
+  },
+  "krakenio": {
+    "from": "https://media.brand.dev/3d940d50-60b4-4db3-abee-2665d088bcac.svg",
+    "note": "found with the context.dev Brand API for kraken.io"
   },
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
