@@ -288,6 +288,7 @@ export const BaseProviders = [
 	'higgsfield',
 	'hookdeck',
 	'htmltoimage',
+	'hubplanner',
 	'hubspot',
 	'huggingface',
 	'humanitix',
@@ -823,6 +824,7 @@ export const ProviderDisplayNames = {
 	higgsfield: 'Higgsfield',
 	hookdeck: 'Hookdeck',
 	htmltoimage: 'HtmlToImage',
+	hubplanner: 'Hub Planner',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
 	humanitix: 'Humanitix',
@@ -1365,6 +1367,7 @@ export type AllProviders =
 	| 'higgsfield'
 	| 'hookdeck'
 	| 'htmltoimage'
+	| 'hubplanner'
 	| 'hubspot'
 	| 'huggingface'
 	| 'humanitix'
