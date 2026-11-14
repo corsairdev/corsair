@@ -121,10 +121,22 @@ const flyMetadataDefinitions = {
 	'account.viewer': operations.account.viewer,
 	'platform.nearestRegion': operations.platform.nearestRegion,
 } satisfies RequiredPluginEndpointMeta<typeof flyEndpoints>;
+// Deletes and the password reset cannot be undone; core adds "(irreversible)" to approvals.
+const irreversibleOperations = new Set([
+	'organizations.delete',
+	'wireguard.removePeer',
+	'addOns.delete',
+	'addOns.resetPassword',
+	'thirdParty.delete',
+]);
 const flyEndpointMeta = Object.fromEntries(
 	Object.entries(flyMetadataDefinitions).map(([path, definition]) => [
 		path,
-		{ riskLevel: definition.riskLevel, description: definition.description },
+		{
+			riskLevel: definition.riskLevel,
+			description: definition.description,
+			...(irreversibleOperations.has(path) ? { irreversible: true } : {}),
+		},
 	]),
 );
 export const flyEndpointSchemas = meta.schemas;

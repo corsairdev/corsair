@@ -18,14 +18,14 @@ pnpm add @corsair-dev/fly
 |-----------|--------------|------|-------------|
 | `account.userOnlyToken` | `fly.api.account.userOnlyToken` | `read` | Check whether the token is user-only |
 | `account.viewer` | `fly.api.account.viewer` | `read` | Get the current token principal |
-| `addOns.create` | `fly.api.addOns.create` | `write` | Create an add-on |
+| `addOns.create` | `fly.api.addOns.create` | `destructive` | Create an add-on |
 | `addOns.delete` | `fly.api.addOns.delete` | `destructive` | Delete an add-on |
 | `addOns.get` | `fly.api.addOns.get` | `read` | Get an add-on |
 | `addOns.list` | `fly.api.addOns.list` | `read` | List add-ons |
 | `addOns.plans` | `fly.api.addOns.plans` | `read` | List add-on plans |
 | `addOns.provider` | `fly.api.addOns.provider` | `read` | Get an add-on provider |
-| `addOns.resetPassword` | `fly.api.addOns.resetPassword` | `write` | Reset an add-on password |
-| `addOns.update` | `fly.api.addOns.update` | `write` | Update an add-on |
+| `addOns.resetPassword` | `fly.api.addOns.resetPassword` | `destructive` | Reset an add-on password |
+| `addOns.update` | `fly.api.addOns.update` | `destructive` | Update an add-on |
 | `apps.get` | `fly.api.apps.get` | `read` | Get a Fly app |
 | `apps.list` | `fly.api.apps.list` | `read` | List Fly apps |
 | `apps.nameAvailable` | `fly.api.apps.nameAvailable` | `read` | Check app name availability |

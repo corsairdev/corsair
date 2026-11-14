@@ -455,7 +455,8 @@ export const operations = {
 			}),
 			z.object({ addOn, clientMutationId: z.string().nullable() }),
 			`addOn { ${addOnFields} } clientMutationId`,
-			'write',
+			// Provisions a billed add-on (a purchase under R8).
+			'destructive',
 			'Create an add-on',
 		),
 		update: mutation(
@@ -473,7 +474,8 @@ export const operations = {
 			}),
 			z.object({ addOn, clientMutationId: z.string().nullable() }),
 			`addOn { ${addOnFields} } clientMutationId`,
-			'write',
+			// planId switches the billed plan (a purchase under R8).
+			'destructive',
 			'Update an add-on',
 		),
 		delete: mutation(
@@ -499,7 +501,8 @@ export const operations = {
 			z.object({ name: id, clientMutationId }),
 			z.object({ addOn, clientMutationId: z.string().nullable() }),
 			`addOn { ${addOnFields} } clientMutationId`,
-			'write',
+			// The old password stops working and cannot be restored.
+			'destructive',
 			'Reset an add-on password',
 		),
 	},
