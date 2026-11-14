@@ -15,7 +15,7 @@ pnpm add @corsair-dev/fomo
 | `application.get` | `fomo.api.application.get` | `read` | Get Fomo application settings |
 | `application.getStats` | `fomo.api.application.getStats` | `read` | Get notification statistics and conversion data |
 | `application.update` | `fomo.api.application.update` | `write` | Update Fomo application settings |
-| `events.create` | `fomo.api.events.create` | `write` | Create a new Fomo event notification |
+| `events.create` | `fomo.api.events.create` | `destructive` | Create a new Fomo event notification |
 | `events.delete` | `fomo.api.events.delete` | `destructive` | Delete a Fomo event by ID |
 | `events.get` | `fomo.api.events.get` | `read` | Retrieve a Fomo event by ID |
 | `events.list` | `fomo.api.events.list` | `read` | List Fomo events with optional pagination |
