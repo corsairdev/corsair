@@ -44,18 +44,65 @@ export function squareErrors(error: unknown): SquareErrorEntry[] {
 	return parsed.success ? parsed.data.errors : [];
 }
 
+/** A system error code such as ECONNRESET or UND_ERR_CONNECT_TIMEOUT. */
+const SYSTEM_CODE = /^[A-Z][A-Z0-9_]{1,63}$/;
+
+/** A JavaScript error name such as TypeError or AbortError. */
+const ERROR_NAME = /^[A-Za-z]{1,64}$/;
+
+/**
+ * The `code` of a failure, or of its cause (undici puts it there), when it
+ * looks like a system error code; anything else is dropped.
+ */
+// unknown: a rejection, or its cause, can be any value.
+function systemCode(failure: unknown): string | undefined {
+	const nested =
+		typeof failure === 'object' && failure !== null && 'cause' in failure
+			? failure.cause
+			: undefined;
+	for (const candidate of [failure, nested]) {
+		if (typeof candidate !== 'object' || candidate === null) continue;
+		const code = 'code' in candidate ? candidate.code : undefined;
+		if (typeof code === 'string' && SYSTEM_CODE.test(code)) return code;
+	}
+	return undefined;
+}
+
 /**
  * The request got no response from Square: the connection dropped or timed
- * out. Square may or may not have run it. The original error is the `cause`.
+ * out. Square may or may not have run it. The message and `cause` carry only
+ * the failure's error name and system code: fetch's own messages can quote
+ * the request's headers, the access token included.
  */
 export class SquareNetworkError extends Error {
 	// unknown: whatever fetch rejected with (a TypeError, a DOMException, ...).
-	constructor(cause: unknown) {
-		super(
-			`Square request got no response: ${cause instanceof Error ? cause.message : String(cause)}`,
-			{ cause },
-		);
+	// Only its name and system code are read; its message is never kept.
+	constructor(failure: unknown) {
+		const name =
+			failure instanceof Error && ERROR_NAME.test(failure.name)
+				? failure.name
+				: 'Error';
+		const code = systemCode(failure);
+		const label = code ? `${name} ${code}` : name;
+		const cause = Object.assign(new Error(label), {
+			name,
+			...(code ? { code } : {}),
+		});
+		super(`Square request got no response (${label})`, { cause });
 		this.name = 'SquareNetworkError';
+	}
+}
+
+/**
+ * Refuses a token with a CR, LF or NUL, which no HTTP header can carry. fetch
+ * would reject it with a message that quotes the header, token and all, so it
+ * is stopped here with a message that does not.
+ */
+function assertSendableToken(token: string): void {
+	if (/[\r\n\0]/.test(token)) {
+		throw new Error(
+			'The Square access token contains a line break or control character; check how it was stored.',
+		);
 	}
 }
 
@@ -79,7 +126,8 @@ export type SquareRequestOptions = {
  * times and honours Retry-After; any other failure is thrown as core's
  * ApiError, unchanged, so its status and retryAfter reach the error handlers
  * and core. A request that got no response at all becomes a
- * SquareNetworkError. Whether a 5xx or a network failure is retried is the
+ * SquareNetworkError. A token no header can carry is refused before
+ * anything is sent. Whether a 5xx or a network failure is retried is the
  * error handlers' call (error-handlers.ts), by operation.
  */
 export async function makeSquareRequest<T>(
@@ -120,6 +168,7 @@ export async function makeSquareRequest<T>(
 				: {}),
 	};
 
+	assertSendableToken(token);
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {

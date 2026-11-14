@@ -137,19 +137,84 @@ describe('Square errors reach the caller as core’s ApiError', () => {
 		});
 	});
 
-	it('names a dropped connection as a network failure and keeps the cause', async () => {
+	it('names a dropped connection by its error name and system code only', async () => {
 		await withClient(async ({ corsair }) => {
-			const dropped = new TypeError('fetch failed');
-			fetchMock.mockRejectedValue(dropped);
+			fetchMock.mockRejectedValue(
+				new TypeError('fetch failed', { cause: { code: 'ECONNRESET' } }),
+			);
 
 			const error = await failure(() =>
 				corsair.square.api.customers.create({ given_name: 'Ada' }),
 			);
 
 			expect(error).toBeInstanceOf(SquareNetworkError);
-			expect(error).toMatchObject({ cause: dropped });
+			expect(error).toMatchObject({
+				message: 'Square request got no response (TypeError ECONNRESET)',
+				cause: { name: 'TypeError', code: 'ECONNRESET' },
+			});
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		});
+	});
+});
+
+describe('Square access tokens stay out of error messages', () => {
+	const SECRET = 'EAAAsecret-part-of-the-token';
+
+	/** Every message along an error's cause chain, joined. */
+	// unknown: a rejection and its causes can be any value.
+	function messages(error: unknown): string {
+		const seen: string[] = [];
+		let current: unknown = error;
+		while (current instanceof Error) {
+			seen.push(current.message, String(Object.values(current)));
+			current = current.cause;
+		}
+		if (current !== undefined) seen.push(JSON.stringify(current));
+		return seen.join('\n');
+	}
+
+	it('refuses a token with a line break before sending, without quoting it', async () => {
+		await withClient(async ({ corsair }) => {
+			await corsair.square.keys.set_api_key(`${SECRET}\nX-Injected: 1`);
+
+			const error = await failure(() => corsair.square.api.locations.list({}));
+
+			expect(error).toBeInstanceOf(Error);
+			expect(error).not.toBeInstanceOf(SquareNetworkError);
+			expect(error).toMatchObject({
+				message:
+					'The Square access token contains a line break or control character; check how it was stored.',
+			});
+			expect(messages(error)).not.toContain('secret-part');
+			expect(fetchMock).not.toHaveBeenCalled();
+		});
+	});
+
+	it('does not copy a failure’s message, which can quote the Authorization header', () => {
+		// Node's Headers rejects a bad value with a message that includes it.
+		const error = new SquareNetworkError(
+			new TypeError(
+				`Headers.append: "Bearer ${SECRET}" is an invalid header value.`,
+			),
+		);
+
+		expect(error.message).toBe('Square request got no response (TypeError)');
+		expect(messages(error)).not.toContain('secret-part');
+	});
+
+	it('reads the system code from a nested cause, as undici reports it', () => {
+		const error = new SquareNetworkError(
+			new TypeError('fetch failed', {
+				cause: Object.assign(new Error(`connect to ${SECRET}`), {
+					code: 'UND_ERR_CONNECT_TIMEOUT',
+				}),
+			}),
+		);
+
+		expect(error.message).toBe(
+			'Square request got no response (TypeError UND_ERR_CONNECT_TIMEOUT)',
+		);
+		expect(messages(error)).not.toContain('secret-part');
 	});
 });
 
@@ -346,6 +411,23 @@ describe('Square 5xx and network failures: replayed only for reads and required-
 			);
 
 			expect(fetchMock).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	it('resends a GET after the connection drops', async () => {
+		await withClient(async ({ corsair }) => {
+			jest.useFakeTimers();
+			fetchMock
+				.mockRejectedValueOnce(
+					new TypeError('fetch failed', { cause: { code: 'ECONNRESET' } }),
+				)
+				.mockResolvedValueOnce(jsonResponse({ locations: [] }));
+
+			const pending = corsair.square.api.locations.list({});
+			await jest.advanceTimersByTimeAsync(10_000);
+
+			await expect(pending).resolves.toEqual({ locations: [] });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		});
 	});
 

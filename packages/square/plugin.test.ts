@@ -52,10 +52,12 @@ const IRREVERSIBLE = [
 ];
 
 // R8: an operation that spends money, sends a message or can't be undone is
-// destructive. These six have a way back (a refund, a cancel, a new key), so
-// they are destructive without being irreversible.
+// destructive. These eight have a way back (a refund, a cancel, a new key, a
+// later edit), so they are destructive without being irreversible.
 const DESTRUCTIVE_WITH_UNDO = [
+	'invoices.createAttachment',
 	'invoices.publish',
+	'invoices.update',
 	'orders.pay',
 	'payments.complete',
 	'payments.create',
@@ -76,6 +78,17 @@ const MONEY_MOVING = [
 	'payments.refund',
 	'payments.update',
 ] as const;
+
+// Square's invoice guides: after these calls Square emails or texts the
+// customer, per the invoice's delivery_method. R8: sending a message is
+// destructive.
+const NOTIFIES_CUSTOMER = [
+	'invoices.createAttachment',
+	'invoices.deleteAttachment',
+	'invoices.update',
+] as const;
+const NOTIFIES_CUSTOMER_FACT =
+	"Notifies the customer by email or text message when the invoice's delivery_method is EMAIL or SMS; the API has no option to skip this.";
 
 type Node = z.core.$ZodType;
 
@@ -168,9 +181,9 @@ describe('Square plugin definition', () => {
 
 	it('classifies operations as the API inventory does', () => {
 		expect(by('read')).toHaveLength(56);
-		expect(by('write')).toHaveLength(37);
+		expect(by('write')).toHaveLength(35);
 		expect(by('destructive')).toEqual(DESTRUCTIVE);
-		expect(DESTRUCTIVE).toHaveLength(30);
+		expect(DESTRUCTIVE).toHaveLength(32);
 	});
 
 	it('marks irreversible only destructive operations', () => {
@@ -204,6 +217,19 @@ describe('Square plugin definition', () => {
 		}
 		// Storing a card moves nothing; later charges are payments.create.
 		expect(meta['cards.create'].riskLevel).toBe('write');
+	});
+
+	it('marks the invoice calls that notify the customer destructive, and says so', () => {
+		const saying = Object.entries(meta)
+			.filter(([, entry]) => entry.description.includes(NOTIFIES_CUSTOMER_FACT))
+			.map(([op]) => op)
+			.sort();
+		expect(saying).toEqual(NOTIFIES_CUSTOMER);
+		for (const op of NOTIFIES_CUSTOMER) {
+			expect(meta[op].riskLevel).toBe('destructive');
+		}
+		// Deleting a draft notifies no one; cancelling already says it can't be undone.
+		expect(meta['invoices.delete'].description).not.toContain('Notifies');
 	});
 
 	it('carries the facts an agent needs before it acts', () => {

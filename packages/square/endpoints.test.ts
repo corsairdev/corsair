@@ -2487,6 +2487,7 @@ describe('Square request details', () => {
 			],
 			accepted_payment_methods: { card: true },
 		};
+		// unknown: the invoice fixture's fields have different types; only the keys matter here.
 		const without = (from: Record<string, unknown>, field: string) =>
 			Object.fromEntries(Object.entries(from).filter(([k]) => k !== field));
 

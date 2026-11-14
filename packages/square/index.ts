@@ -707,9 +707,9 @@ export const squareEndpointMeta = {
 			'Uploads text to use as evidence for a dispute challenge. Requires idempotency_key; pass the same key to retry safely.',
 	},
 	'invoices.createAttachment': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Uploads a file and attaches it to an invoice. This endpoint accepts HTTP multipart/form-data file uploads with a JSON `request` part and a `file` part. Pass the same idempotency_key to retry safely.',
+			"Uploads a file and attaches it to an invoice. This endpoint accepts HTTP multipart/form-data file uploads with a JSON `request` part and a `file` part. Notifies the customer by email or text message when the invoice's delivery_method is EMAIL or SMS; the API has no option to skip this. Pass the same idempotency_key to retry safely.",
 	},
 	'locations.create': {
 		riskLevel: 'write',
@@ -761,7 +761,7 @@ export const squareEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Removes an attachment from an invoice and permanently deletes the file. Attachments can be removed only from invoices in the `DRAFT`, `SCHEDULED`, `UNPAID`, or `PARTIALLY_PAID` state. Cannot be undone.',
+			"Removes an attachment from an invoice and permanently deletes the file. Attachments can be removed only from invoices in the `DRAFT`, `SCHEDULED`, `UNPAID`, or `PARTIALLY_PAID` state. Notifies the customer by email or text message when the invoice's delivery_method is EMAIL or SMS; the API has no option to skip this. Cannot be undone.",
 	},
 	'customAttributes.location.delete': {
 		riskLevel: 'destructive',
@@ -1138,9 +1138,9 @@ export const squareEndpointMeta = {
 			"Publishes the specified draft invoice. Sends the invoice to the customer and may charge the card on file; cancel with invoices.cancel. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Moves money. Pass the same idempotency_key to retry safely.",
 	},
 	'invoices.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Updates an invoice. This endpoint supports sparse updates, so you only need to specify the fields you want to change along with the required `version` field. Some restrictions apply to updating invoices. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Pass the same idempotency_key to retry safely.",
+			"Updates an invoice. This endpoint supports sparse updates, so you only need to specify the fields you want to change along with the required `version` field. Some restrictions apply to updating invoices. Notifies the customer by email or text message when the invoice's delivery_method is EMAIL or SMS; the API has no option to skip this. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Pass the same idempotency_key to retry safely.",
 	},
 	'invoices.search': {
 		riskLevel: 'read',
