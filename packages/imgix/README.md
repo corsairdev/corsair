@@ -20,7 +20,7 @@ pnpm add @corsair-dev/imgix
 | `assets.get` | `imgix.api.assets.get` | `read` | Retrieve details, technical metadata, and custom fields for an asset |
 | `assets.update` | `imgix.api.assets.update` | `write` | Update custom fields or metadata for an asset in the Asset Manager |
 | `assets.addFromOrigin` | `imgix.api.assets.addFromOrigin` | `write` | Queue an existing origin asset to be indexed into the Imgix Asset Manager (imgix answers 202 with no body, returned as {}) |
-| `assets.upload` | `imgix.api.assets.upload` | `write` | Upload a file directly to the origin via Imgix Asset Manager |
+| `assets.upload` | `imgix.api.assets.upload` | `destructive` | Upload a file directly to the origin via Imgix Asset Manager; with overwrite: true it replaces the existing file at that path |
 | `uploadSessions.create` | `imgix.api.uploadSessions.create` | `write` | Initialize an upload session and receive a presigned URL for large asset upload |
 | `uploadSessions.getStatus` | `imgix.api.uploadSessions.getStatus` | `read` | Retrieve the status of an ongoing or finalized asset upload session |
 | `uploadSessions.close` | `imgix.api.uploadSessions.close` | `write` | Close an upload session to trigger immediate asset processing |

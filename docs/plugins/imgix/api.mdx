@@ -82,7 +82,7 @@ await corsair.imgix.api.assets.get({ source_id: 'src_1234567890abcdef', origin_p
 |------|------|----------|-------------|
 | `source_id` | `string` | Yes | — |
 | `origin_path` | `string` | Yes | — |
-| `fields` | `string` | No | — |
+| `fields` | `string` | No | Comma-separated asset fields to return, sent as fields[assets] |
 
 
 
@@ -155,9 +155,9 @@ await corsair.imgix.api.assets.list({ source_id: 'src_1234567890abcdef', page_si
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `source_id` | `string` | Yes | — |
-| `filter` | `string` | No | — |
+| `filter` | `Record<string, string \| number \| boolean>` | No | Asset field filters, sent as filter[&lt;field&gt;]=&lt;value&gt; and ANDed, e.g. &#123; origin_path: "photos/", file_type: "image", colors: "8ca091" &#125; |
 | `sort` | `string` | No | — |
-| `fields` | `string` | No | — |
+| `fields` | `string` | No | Comma-separated asset fields to return, sent as fields[assets] |
 | `page_cursor` | `string` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -326,9 +326,9 @@ await corsair.imgix.api.assets.update({
 
 `assets.upload`
 
-Upload a file directly to the origin via Imgix Asset Manager
+Upload a file directly to the origin via Imgix Asset Manager; with overwrite: true it replaces the existing file at that path
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.imgix.api.assets.upload({ source_id: 'src_1234567890abcdef', origin_path: 'uploads/banner.png', content_base64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==' });
@@ -839,7 +839,7 @@ await corsair.imgix.api.sources.create({ name: "Production Image Store", deploym
 | `azure_service_type` | `blob \| file` | No | — |
 | `access_key_id` | `string` | No | — |
 | `bucket_name` | `string` | No | — |
-| `endpoint_url` | `string` | No | — |
+| `endpoint_url` | `string` | No | S3-compatible endpoint host, e.g. sfo3.digitaloceanspaces.com (imgix documents it without a scheme) |
 | `region` | `string` | No | — |
 | `secret_key` | `string` | No | — |
 | `storage_provider` | `DigitalOcean \| Linode \| Wasabi \| R2` | No | — |
