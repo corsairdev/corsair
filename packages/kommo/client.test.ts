@@ -215,7 +215,7 @@ describe('makeKommoRequest', () => {
 	});
 
 	it('clears both bodies, so a submitted contact cannot follow the error into a log', async () => {
-		respond({ title: 'Bad Request', detail: 'name: Jordan Lee' }, 400);
+		respond({ title: 'Bad Request', detail: 'Request validation failed' }, 400);
 
 		const error = (await makeKommoRequest(API_KEY, SUBDOMAIN, {
 			method: 'POST',
@@ -227,6 +227,34 @@ describe('makeKommoRequest', () => {
 		expect(error.body).toBeUndefined();
 		expect(error.request.body).toBeUndefined();
 		expect(JSON.stringify(error.request)).not.toContain('jordan@example.com');
+	});
+
+	// Core quotes the whole body in the message for a status it has no name for.
+	it('keeps an error body without a reason out of the message', async () => {
+		respond(
+			{
+				'validation-errors': [
+					{
+						request_id: '0',
+						errors: [{ path: 'email', value: 'jordan@example.com' }],
+					},
+				],
+			},
+			422,
+		);
+
+		const error = (await makeKommoRequest(API_KEY, SUBDOMAIN, {
+			method: 'POST',
+			path: '/contacts',
+			body: [{ name: 'Jordan Lee', email: 'jordan@example.com' }],
+		}).catch((caught: unknown) => caught)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(422);
+		expect(error.message).toMatch(/^Kommo 422: /);
+		expect(JSON.stringify({ ...error, message: error.message })).not.toContain(
+			'jordan@example.com',
+		);
 	});
 
 	it('keeps a Retry-After header as milliseconds', async () => {

@@ -167,18 +167,34 @@ export async function makeKommoRequest(
 			rateLimitConfig: KOMMO_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// Core's ApiError goes through as the same instance, so the handlers
-		// still read its status and retryAfter. Its message becomes Kommo's own
-		// reason, and both bodies are cleared: the request body is the submitted
-		// lead or contact, with the customer's name, phone and email, and core
-		// would otherwise quote an unrecognised error body in the message.
+		// Core's ApiError is rebuilt without anything the request or Kommo's
+		// answer could echo: the request body is the submitted lead or contact,
+		// with the customer's name, phone and email, and core quotes an
+		// unrecognised error body in its message. Status, statusText and the
+		// rate-limit fields stay, so the handlers read them as before. The
+		// message is Kommo's own reason, or the status text when it sent none.
 		if (error instanceof ApiError) {
-			Object.assign(error, {
-				message: describeKommoError(error.status, error.body, error.message),
-				body: undefined,
-				request: { ...error.request, body: undefined, formData: undefined },
-			});
-			throw error;
+			throw new ApiError(
+				{ ...error.request, body: undefined, formData: undefined },
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: undefined,
+				},
+				describeKommoError(
+					error.status,
+					error.body,
+					error.statusText || 'request failed',
+				),
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
