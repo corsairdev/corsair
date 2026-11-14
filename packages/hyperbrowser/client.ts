@@ -115,7 +115,11 @@ export function redactApiErrorInPlace(
 		error.message = redactSecretsInString(error.message, secrets);
 	}
 	if (error.statusText) {
-		error.statusText = redactSecretsInString(error.statusText, secrets);
+		// `unknown` because statusText is declared readonly on ApiError's public interface.
+		(error as { statusText: string }).statusText = redactSecretsInString(
+			error.statusText,
+			secrets,
+		);
 	}
 	if (error.body !== undefined) {
 		// `unknown` because ApiError body holds untyped error JSON that is mutated in-place.
