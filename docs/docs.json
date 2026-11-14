@@ -3342,6 +3342,14 @@
                 ]
               },
               {
+                "group": "Parallel",
+                "pages": [
+                  "plugins/parallel/overview",
+                  "plugins/parallel/api",
+                  "plugins/parallel/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
