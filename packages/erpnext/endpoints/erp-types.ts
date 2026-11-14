@@ -142,20 +142,33 @@ const ErpMakeDeliveryNoteInputSchema = z
 	.strict();
 
 // POST /api/method/erpnext.selling.doctype.sales_order.sales_order.
-// make_purchase_order — the mapper signature is make_purchase_order(source_name,
-// selected_items=None, target_doc=None) (sales_order.py on version-15 and version-16). Frappe parses
-// selected_items with frappe.parse_json, which accepts both a JSON string and
-// a JSON array, so the schema models the union the provider declares.
+// make_purchase_order — make_purchase_order(source_name, selected_items=None,
+// target_doc=None) on version-15 and version-16. Each selected item is a row
+// object: the Sales Order Item row `name` (or its `item_code`) and the
+// `supplier` the purchase order goes to (get_purchase_order_item_map reads
+// item.get("name"), item.get("item_code") and item.get("supplier")); one draft
+// purchase order comes back per supplier. A JSON string of the same array is
+// also accepted (json.loads server-side).
+const ErpPurchaseOrderSelectedItemSchema = z
+	.object({
+		name: z.string().min(1).optional(),
+		item_code: z.string().min(1).optional(),
+		supplier: z.string().min(1),
+	})
+	.refine((item) => Boolean(item.name || item.item_code), {
+		message:
+			'each selected item needs the Sales Order Item row name or its item_code',
+	});
+
 const ErpMakePurchaseOrderInputSchema = z
 	.object({
 		body: z
 			.object({
 				source_name: z.string().min(1),
 				selected_items: z
-					.union([z.string(), z.array(z.string())])
-					.optional()
+					.union([z.string(), z.array(ErpPurchaseOrderSelectedItemSchema)])
 					.describe(
-						'Sales Order Item row names to map, for example ["SO-00001-0001"]; a JSON array string or an array both parse server-side',
+						'Rows to order, for example [{"name":"<Sales Order Item row name>","supplier":"<Supplier>"}]; one draft purchase order per supplier. Without rows ERPNext returns nothing',
 					),
 				target_doc: z.string().optional(),
 			})

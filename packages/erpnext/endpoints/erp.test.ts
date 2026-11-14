@@ -109,7 +109,7 @@ const INPUT_FIXTURES: Record<ErpOperationKey, unknown> = {
 	'erp.makePurchaseOrder': {
 		body: {
 			source_name: 'SO-00001',
-			selected_items: ['SO-00001-0001'],
+			selected_items: [{ name: 'a1b2c3d4e5', supplier: 'Acme Supplies' }],
 		},
 	},
 	'erp.makeStockEntry': {
@@ -289,7 +289,7 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.sales_order.make_purchase_order',
 		body: {
 			source_name: 'SO-00001',
-			selected_items: ['SO-00001-0001'],
+			selected_items: [{ name: 'a1b2c3d4e5', supplier: 'Acme Supplies' }],
 		},
 		authHeader: AUTH_HEADER,
 	},
@@ -463,7 +463,30 @@ describe('ERPNext erp endpoint contract', () => {
 		{
 			key: 'erp.makePurchaseOrder' as ErpOperationKey,
 			name: 'a body without source_name',
-			input: { body: { selected_items: ['SO-00001-0001'] } },
+			input: {
+				body: {
+					selected_items: [{ name: 'a1b2c3d4e5', supplier: 'Acme Supplies' }],
+				},
+			},
+		},
+		{
+			// Live ERPNext v16: a bare row-name string reached item.get() and
+			// failed with AttributeError ('str' object has no attribute 'get').
+			key: 'erp.makePurchaseOrder' as ErpOperationKey,
+			name: 'selected items as bare row names',
+			input: {
+				body: { source_name: 'SO-00001', selected_items: ['a1b2c3d4e5'] },
+			},
+		},
+		{
+			key: 'erp.makePurchaseOrder' as ErpOperationKey,
+			name: 'a selected item without its supplier',
+			input: {
+				body: {
+					source_name: 'SO-00001',
+					selected_items: [{ name: 'a1b2c3d4e5' }],
+				},
+			},
 		},
 		{
 			key: 'erp.makeStockEntry' as ErpOperationKey,
