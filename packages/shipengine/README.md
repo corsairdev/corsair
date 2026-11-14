@@ -16,6 +16,10 @@ The official [usage and rate limits](https://docs.shipstation.com/apis/shipengin
 
 The provider documents no per-request credit schedule for this API. **Buying labels is billable**: ShipStation wallet-carrier label costs are deducted from the account balance; connected merchant carrier accounts bill under their carrier terms. Return-label purchase, batch label processing, and `POST /v1/batches` with `process_labels.create_batch_and_process_labels` can also buy labels. Funding carrier or Shipsurance balances spends money, and carrier pickup scheduling may carry carrier fees. These operations are marked `destructive` in Corsair metadata. Rate quotes and address validation are read-only and do not purchase labels. Check current provider pricing and carrier terms before production use.
 
+## Live API gaps (sandbox run, 2026-11-15)
+
+These operations are in ShipEngine's OpenAPI definition, but the live API did not serve them: `PUT /v1/batches/{batch_id}` (405 Method not allowed), `PUT /v1/warehouses/{warehouse_id}/settings` and `GET /v1/shipments/{shipment_id}/tags` (404 No route matched), and `PUT /v1/shipments/recognize` (400, the path is read as a shipment id). `PUT /v1/account/settings/images/{label_image_id}` answered 500. The plugin keeps them as documented and returns ShipEngine's error unchanged. A shipment's tags come back on `shipments.getShipmentById`.
+
 ## Binary files and upload flows
 
 `GET /v1/downloads/{dir}/{subdir}/{filename}` returns PDF, PNG, or ZPL bytes. Corsair's shared JSON transport decodes non-JSON responses as text, so this operation uses a plugin-local fetch path that preserves bytes, validates the media type, honors `Retry-After`, and returns `{ kind: 'binary', contentType, base64, byteLength }`. Downloads larger than **50 MiB** are rejected by a safety limit.
