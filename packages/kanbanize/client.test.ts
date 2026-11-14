@@ -1,4 +1,10 @@
-import { kanbanizeBaseUrl, makeKanbanizeRequest, queryFor } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	kanbanizeBaseUrl,
+	kanbanizeErrorCode,
+	makeKanbanizeRequest,
+	queryFor,
+} from './client';
 
 const API_KEY = 'bm-test-key';
 const SUBDOMAIN = 'acme';
@@ -158,13 +164,30 @@ describe('makeKanbanizeRequest', () => {
 				path: '/boards/1',
 			}),
 		).rejects.toMatchObject({
-			name: 'KanbanizeAPIError',
+			name: 'ApiError',
 			status: 404,
-			code: 'B001',
-			reference: 'GE-B001',
+			body: { error: { code: 'B001', reference: 'GE-B001' } },
 			message: 'Businessmap 404 B001: Board not found (reference GE-B001)',
+			request: { method: 'GET' },
+		});
+	});
+
+	it('uses a fixed message when the body has none, not the raw body', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('upstream said: card secret-description', {
+				status: 504,
+				headers: { 'Content-Type': 'text/plain' },
+			}),
+		);
+
+		const error = await makeKanbanizeRequest(API_KEY, SUBDOMAIN, {
 			method: 'GET',
-			transport: false,
+			path: '/boards/1',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toMatchObject({
+			status: 504,
+			message: 'Businessmap 504: Businessmap request failed',
 		});
 	});
 
@@ -229,19 +252,29 @@ describe('makeKanbanizeRequest', () => {
 		expect(require('node:util').inspect(error)).not.toContain(API_KEY);
 	});
 
-	it('keeps no body on the error', async () => {
+	it('stays core ApiError without the sent body or the echoed details', async () => {
 		respond(
-			{ error: { code: 'V001', message: 'Bad', details: { x: 1 } } },
+			{
+				error: {
+					code: 'V001',
+					message: 'Bad',
+					details: { description: 'secret-description' },
+				},
+			},
 			400,
 		);
 
-		// unknown: the rejection is an error whose fields the assertions read.
-		const error = (await makeKanbanizeRequest(API_KEY, SUBDOMAIN, {
+		const error = await makeKanbanizeRequest(API_KEY, SUBDOMAIN, {
 			method: 'POST',
 			path: '/cards',
-		}).catch((caught: unknown) => caught)) as Error;
+			body: { title: 'x', description: 'secret-description' },
+		}).catch((caught: unknown) => caught);
 
-		expect(error).not.toHaveProperty('body');
+		expect(error).toBeInstanceOf(ApiError);
+		expect(kanbanizeErrorCode(error)).toBe('V001');
+		expect(require('node:util').inspect(error, { depth: 10 })).not.toContain(
+			'secret-description',
+		);
 	});
 
 	it('marks a transport failure and keeps the method', async () => {
@@ -253,7 +286,7 @@ describe('makeKanbanizeRequest', () => {
 				path: '/cards/1',
 			}),
 		).rejects.toMatchObject({
-			status: undefined,
+			name: 'KanbanizeAPIError',
 			transport: true,
 			method: 'PATCH',
 			message: 'fetch failed',

@@ -72,18 +72,12 @@ const KANBANIZE_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * details } }`. `code` is a four-character identifier, and `details` names the
  * values that caused it.
  *
- * The body is not kept on the error: a card create echoes the request back in
- * `details`, and that can carry a card description a caller would rather not
- * see in a log line.
+ * An HTTP error stays core's `ApiError` (see `sanitizeApiError`), so its status,
+ * Retry-After and rate-limit fields reach core and the error handlers.
+ * `KanbanizeAPIError` covers only failures that got no answer: a reset, DNS
+ * failure, abort or timeout, and a subdomain that cannot be a host.
  */
 export class KanbanizeAPIError extends Error {
-	readonly status?: number;
-	/** Businessmap's four-character code, such as `B001` or `RL02`. */
-	readonly code?: string;
-	/** Support reference for the same failure. */
-	readonly reference?: string;
-	/** Milliseconds to wait, from a Retry-After header or the body's `retry_after`. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
 	readonly transport: boolean;
@@ -94,14 +88,6 @@ export class KanbanizeAPIError extends Error {
 		options: {
 			/** A transport failure (timeout, DNS). It carries no request or response body. */
 			cause?: Error;
-			/**
-			 * The failed API call. Its status, code and retry fields are copied;
-			 * the error itself is not kept, because it holds the request body (a
-			 * card description) and the response body.
-			 */
-			apiError?: ApiError;
-			status?: number;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -109,36 +95,78 @@ export class KanbanizeAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KanbanizeAPIError';
-		const apiError = options.apiError;
-		const fields = errorObject(apiError?.body);
-		this.status = options.status ?? apiError?.status;
-		this.code = fields.code;
-		this.reference = fields.reference;
-		// The body's seconds win only when no header carried a delay.
-		this.retryAfter =
-			options.retryAfter ??
-			apiError?.retryAfter ??
-			(fields.retryAfter !== undefined ? fields.retryAfter * 1000 : undefined);
-		this.method = options.method ?? apiError?.request.method;
+		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return (
-			this.status === 429 ||
-			(this.code !== undefined && RATE_LIMIT_CODES.has(this.code))
-		);
-	}
+/** Businessmap's four-character code on an HTTP error, such as `B001` or `RL02`. */
+export function kanbanizeErrorCode(error: unknown): string | undefined {
+	return error instanceof ApiError ? errorObject(error.body).code : undefined;
+}
 
-	/** A key that Businessmap rejected: the wrong key, or one since regenerated. */
-	get isAuthError(): boolean {
-		return (
-			this.status === 401 ||
-			this.code === INVALID_KEY_CODE ||
-			this.code === LOGIN_REQUIRED_CODE
-		);
-	}
+/** True for a 429 or a body carrying RL01 or RL02. */
+export function isKanbanizeRateLimit(error: unknown): boolean {
+	if (!(error instanceof ApiError)) return false;
+	const code = kanbanizeErrorCode(error);
+	return (
+		error.status === 429 || (code !== undefined && RATE_LIMIT_CODES.has(code))
+	);
+}
+
+/** A key that Businessmap rejected: the wrong key, or one since regenerated. */
+export function isKanbanizeAuthError(error: unknown): boolean {
+	if (!(error instanceof ApiError)) return false;
+	const code = kanbanizeErrorCode(error);
+	return (
+		error.status === 401 ||
+		code === INVALID_KEY_CODE ||
+		code === LOGIN_REQUIRED_CODE
+	);
+}
+
+/**
+ * Core's `ApiError` keeps the request body (a card description, say), and
+ * Businessmap's `details` echoes a card create's request back. The error is
+ * rebuilt as an `ApiError` with the same status and rate-limit fields, the
+ * body cut down to `{ error: { code, message, reference } }`, the sent body
+ * dropped, and the body's `retry_after` seconds used when no header gave one.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const { body: _body, formData: _formData, ...request } = error.request;
+	const fields = errorObject(error.body);
+	return new ApiError(
+		request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: {
+				error: {
+					code: fields.code,
+					message: fields.message,
+					reference: fields.reference,
+				},
+			},
+		},
+		describeKanbanizeError(
+			error.status,
+			error.body,
+			'Businessmap request failed',
+		),
+		{
+			retryAfter:
+				error.retryAfter ??
+				(fields.retryAfter !== undefined
+					? fields.retryAfter * 1000
+					: undefined),
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /** The message Businessmap wrapped, with the status and code in front. */
@@ -214,12 +242,7 @@ export async function makeKanbanizeRequest(
 			rateLimitConfig: KANBANIZE_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new KanbanizeAPIError(
-				describeKanbanizeError(error.status, error.body, error.message),
-				{ apiError: error },
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new KanbanizeAPIError(error.message, {

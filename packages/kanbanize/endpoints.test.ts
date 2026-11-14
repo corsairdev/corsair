@@ -1,5 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
-import { KanbanizeAPIError } from './client';
+import {
+	isKanbanizeAuthError,
+	isKanbanizeRateLimit,
+	KanbanizeAPIError,
+	kanbanizeErrorCode,
+} from './client';
 import {
 	Account,
 	Boards,
@@ -221,8 +226,7 @@ describe('boards.get', () => {
 			invoke(Boards.get, { board_id: 12049702 }),
 		).rejects.toMatchObject({
 			status: 404,
-			code: 'B001',
-			reference: 'GE-B001',
+			body: { error: { code: 'B001', reference: 'GE-B001' } },
 			message:
 				"Businessmap 404 B001: A board with id 1'204'9702 does not exist. (reference GE-B001)",
 		});
@@ -341,7 +345,7 @@ describe('boards.delete', () => {
 
 		await expect(invoke(Boards.remove, { board_id: 1 })).rejects.toMatchObject({
 			status: 404,
-			code: 'B001',
+			body: { error: { code: 'B001' } },
 		});
 		expect(mockLog).not.toHaveBeenCalled();
 	});
@@ -933,6 +937,54 @@ describe('cards.update', () => {
 		});
 	});
 
+	it('clears the owner and deadline with null', async () => {
+		respond({ data: card });
+
+		await invoke(Cards.update, {
+			card_id: 539522,
+			owner_user_id: null,
+			deadline: null,
+			size: null,
+			type_id: null,
+			custom_id: null,
+		});
+
+		expect(lastRequest().body).toEqual({
+			owner_user_id: null,
+			deadline: null,
+			size: null,
+			type_id: null,
+			custom_id: null,
+		});
+	});
+
+	it('selects a dropdown option without a scalar value', async () => {
+		respond({ data: card });
+
+		await invoke(Cards.update, {
+			card_id: 539522,
+			custom_fields_to_add_or_update: [
+				{ field_id: 8, selected_values_to_add_or_update: [{ value_id: 2 }] },
+			],
+		});
+
+		expect(lastRequest().body).toEqual({
+			custom_fields_to_add_or_update: [
+				{ field_id: 8, selected_values_to_add_or_update: [{ value_id: 2 }] },
+			],
+		});
+	});
+
+	it('refuses a custom field entry that changes nothing', async () => {
+		await expect(
+			invoke(Cards.update, {
+				card_id: 539522,
+				custom_fields_to_add_or_update: [{ field_id: 8 }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('archives a card with the flag as 1', async () => {
 		respond({ data: { ...card, section: 5 } });
 
@@ -961,7 +1013,10 @@ describe('cards.update', () => {
 
 		await expect(
 			invoke(Cards.update, { card_id: 539522, column_id: 15877 }),
-		).rejects.toMatchObject({ status: 409, code: 'L001' });
+		).rejects.toMatchObject({
+			status: 409,
+			body: { error: { code: 'L001' } },
+		});
 	});
 
 	it.each([
@@ -1268,9 +1323,9 @@ describe('error envelopes', () => {
 
 		await expect(invoke(Boards.list, {})).rejects.toMatchObject({
 			status: 401,
-			code: 'A001',
+			body: { error: { code: 'A001' } },
 			message: 'Businessmap 401 A001: Invalid API Key.',
-			method: 'GET',
+			request: { method: 'GET' },
 		});
 	});
 
@@ -1279,14 +1334,15 @@ describe('error envelopes', () => {
 
 		const error = await caught(invoke(Boards.list, {}));
 
-		expect(error).toMatchObject({ code: 'A002', isAuthError: true });
+		expect(kanbanizeErrorCode(error)).toBe('A002');
+		expect(isKanbanizeAuthError(error)).toBe(true);
 	});
 
 	it('keeps the reference when the body carries one', async () => {
 		respond(notLoggedIn, 401);
 
 		await expect(invoke(Boards.list, {})).rejects.toMatchObject({
-			reference: 'GE-A002',
+			body: { error: { reference: 'GE-A002' } },
 		});
 	});
 
@@ -1295,12 +1351,9 @@ describe('error envelopes', () => {
 
 		const error = await caught(invoke(Boards.list, {}));
 
-		expect(error).toMatchObject({
-			status: 429,
-			code: 'RL02',
-			retryAfter: 58_000,
-			isRateLimit: true,
-		});
+		expect(error).toMatchObject({ status: 429, retryAfter: 58_000 });
+		expect(kanbanizeErrorCode(error)).toBe('RL02');
+		expect(isKanbanizeRateLimit(error)).toBe(true);
 	});
 
 	it('treats a 429 with no body code as a rate limit', async () => {
@@ -1308,7 +1361,8 @@ describe('error envelopes', () => {
 
 		const error = await caught(invoke(Boards.list, {}));
 
-		expect(error).toMatchObject({ status: 429, isRateLimit: true });
+		expect(error).toMatchObject({ status: 429 });
+		expect(isKanbanizeRateLimit(error)).toBe(true);
 	});
 
 	it('surfaces an invalid field with the value it rejected', async () => {
@@ -1321,7 +1375,10 @@ describe('error envelopes', () => {
 				lane_id: 9838,
 				priority: 1,
 			}),
-		).rejects.toMatchObject({ status: 400, code: 'V001' });
+		).rejects.toMatchObject({
+			status: 400,
+			body: { error: { code: 'V001' } },
+		});
 	});
 
 	it('keeps the key out of the error', async () => {
@@ -1331,14 +1388,6 @@ describe('error envelopes', () => {
 
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
 		expect(String(error)).not.toContain(API_KEY);
-	});
-
-	it('keeps no body on the error, so a card body cannot follow it into a log', async () => {
-		respond(invalidField, 400);
-
-		const error = await caught(invoke(Boards.list, {}));
-
-		expect(error).not.toHaveProperty('body');
 	});
 
 	it('keeps neither the card body it sent nor the echoed reply anywhere on the error', async () => {
@@ -1362,7 +1411,11 @@ describe('error envelopes', () => {
 			}),
 		);
 
-		expect(error).toMatchObject({ status: 400, code: 'V001', method: 'POST' });
+		expect(error).toMatchObject({
+			status: 400,
+			body: { error: { code: 'V001' } },
+			request: { method: 'POST' },
+		});
 		expect((error as Error).cause).toBeUndefined();
 		expect(JSON.stringify(error)).not.toContain('secret plan table');
 		expect(String(error)).not.toContain('secret plan table');

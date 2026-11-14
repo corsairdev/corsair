@@ -101,7 +101,10 @@ describe('retry behaviour', () => {
 					.catch((caught: unknown) => caught),
 			);
 
-			expect(error).toMatchObject({ status: 429, code: 'RL02' });
+			expect(error).toMatchObject({
+				status: 429,
+				body: { error: { code: 'RL02' } },
+			});
 			// One attempt plus three retries.
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
@@ -177,7 +180,7 @@ describe('retry behaviour', () => {
 			respond(invalidKey, 401);
 
 			await expect(corsair.kanbanize.api.boards.list({})).rejects.toMatchObject(
-				{ status: 401, code: 'A001' },
+				{ status: 401, body: { error: { code: 'A001' } } },
 			);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {

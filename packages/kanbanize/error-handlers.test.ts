@@ -1,20 +1,36 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import { KanbanizeAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An answered request fails as core's ApiError, as the client throws it, with
+// the code in `{ error: { code } }`; one that got no answer fails as
+// KanbanizeAPIError.
 function apiError(options: {
 	status?: number;
 	code?: string;
-	method?: string;
+	method?: ApiRequestOptions['method'];
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	const error = new KanbanizeAPIError('failed', options);
-	// The code comes from a response body in production, so it is set here the
-	// way the constructor sets it after reading `{ error: { code } }`.
-	if (options.code) Object.assign(error, { code: options.code });
-	return error;
+}): Error {
+	const method = options.method ?? 'GET';
+	if (options.status === undefined) {
+		return new KanbanizeAPIError('failed', { ...options, method });
+	}
+	return new ApiError(
+		{ method, url: '/boards' },
+		{
+			url: 'https://acme.kanbanize.com/api/v2/boards',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { error: { code: options.code } },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**

@@ -1,12 +1,19 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { KanbanizeAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isKanbanizeRateLimit,
+	KanbanizeAPIError,
+	kanbanizeErrorCode,
+} from './client';
 
+// Businessmap's HTTP errors arrive as core's ApiError; KanbanizeAPIError is a
+// request that got no answer, so it has no status.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KanbanizeAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 function codeOf(error: Error): string | undefined {
-	return error instanceof KanbanizeAPIError ? error.code : undefined;
+	return kanbanizeErrorCode(error);
 }
 
 // Businessmap documents nine statuses and a four-character code on each. The
@@ -18,12 +25,11 @@ export const errorHandlers = {
 	// `retryAfter`. A gateway's bare 429 has no body code, so the status alone
 	// has to match as well.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof KanbanizeAPIError && error.isRateLimit,
+		match: (error: Error) => isKanbanizeRateLimit(error),
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof KanbanizeAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -72,9 +78,9 @@ export const errorHandlers = {
 	// leave a duplicate.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof KanbanizeAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

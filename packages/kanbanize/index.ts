@@ -593,7 +593,12 @@ export function kanbanize<const T extends KanbanizePluginOptions>(
 	} satisfies InternalKanbanizePlugin;
 }
 
-export { KanbanizeAPIError } from './client';
+export {
+	isKanbanizeAuthError,
+	isKanbanizeRateLimit,
+	KanbanizeAPIError,
+	kanbanizeErrorCode,
+} from './client';
 
 export type {
 	ApiLimitsInput,
