@@ -229,6 +229,7 @@ export const BaseProviders = [
 	'esignatures',
 	'esputnik',
 	'eventbrite',
+	'eventee',
 	'eventzilla',
 	'everhour',
 	'exa',
@@ -764,6 +765,7 @@ export const ProviderDisplayNames = {
 	esignatures: 'eSignatures',
 	esputnik: 'eSputnik',
 	eventbrite: 'Eventbrite',
+	eventee: 'Eventee',
 	eventzilla: 'Eventzilla',
 	everhour: 'Everhour',
 	exa: 'Exa',
@@ -1306,6 +1308,7 @@ export type AllProviders =
 	| 'esignatures'
 	| 'esputnik'
 	| 'eventbrite'
+	| 'eventee'
 	| 'eventzilla'
 	| 'everhour'
 	| 'exa'

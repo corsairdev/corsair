@@ -1930,6 +1930,14 @@
                 ]
               },
               {
+                "group": "Eventee",
+                "pages": [
+                  "plugins/eventee/overview",
+                  "plugins/eventee/api",
+                  "plugins/eventee/database"
+                ]
+              },
+              {
                 "group": "Eventzilla",
                 "pages": [
                   "plugins/eventzilla/overview",
