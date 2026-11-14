@@ -84,4 +84,4 @@ apiExamples:
   webhooks.delete:
     call: "{ webhookId: 'whk_01H9Xa8F5dN6mP3q' }"
   cashLocations.list:
-    call: "{ limit: 50 }"
+    call: "{ provider: 'retail', latitude: 47.6062, longitude: -122.3321, radius: 10, flow: 'cash_in', limit: 50 }"

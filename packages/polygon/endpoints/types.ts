@@ -1204,12 +1204,37 @@ export const CashLocationSchema = z
 		distanceUnit: z.string().nullish(),
 		buyAllowed: z.boolean().nullish(),
 		sellAllowed: z.boolean().nullish(),
+		hours: z.string().nullish(),
+		supportedAssets: z.array(z.string()).nullish(),
+		maxTransaction: z.string().nullish(),
+		maxDailyPerCustomer: z.string().nullish(),
 	})
 	.loose();
 
 export type PolygonCashLocation = z.infer<typeof CashLocationSchema>;
 
 const CashLocationsListInputSchema = z.object({
+	provider: z
+		.string()
+		.min(1)
+		.describe('The cash provider configuration to query, as set up for this project.'),
+	latitude: z.number().min(-90).max(90).describe('Search center latitude.'),
+	longitude: z.number().min(-180).max(180).describe('Search center longitude.'),
+	radius: z
+		.number()
+		.positive()
+		.max(100)
+		.optional()
+		.describe('Search radius in miles, above 0 and at most 100.'),
+	flow: z
+		.enum(['cash_in', 'cash_out'])
+		.optional()
+		.describe('Only locations that take deposits (`cash_in`) or pay out (`cash_out`).'),
+	customerId: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Scope availability to one `cst_` customer.'),
 	...listQueryFields,
 });
 

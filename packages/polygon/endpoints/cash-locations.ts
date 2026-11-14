@@ -14,10 +14,30 @@ export const list: PolygonEndpoints['cashLocationsList'] = (ctx, input) =>
 			output: Outputs.cashLocationsList,
 		},
 		input,
-		({ limit, startingAfter, endingBefore }) => ({
+		({
+			provider,
+			latitude,
+			longitude,
+			radius,
+			flow,
+			customerId,
+			limit,
+			startingAfter,
+			endingBefore,
+		}) => ({
 			method: 'GET',
 			path: '/cash-locations',
-			query: { limit, startingAfter, endingBefore },
+			query: {
+				provider,
+				latitude,
+				longitude,
+				radius,
+				flow,
+				customerId,
+				limit,
+				startingAfter,
+				endingBefore,
+			},
 		}),
 		{ log: (_, result) => ({ count: result.data.length }) },
 	);

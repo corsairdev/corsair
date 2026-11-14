@@ -475,16 +475,39 @@ describe('webhooks endpoints', () => {
 });
 
 describe('cashLocations endpoints', () => {
-	it('cashLocations.list pages the location catalog', async () => {
+	it('cashLocations.list sends the provider and coordinates OMS requires', async () => {
 		mockedRequest.mockResolvedValue({ data: [], hasMore: false });
 
-		await CashLocations.list(ctx, { limit: 50 });
+		await CashLocations.list(ctx, {
+			provider: 'retail',
+			latitude: 47.6,
+			longitude: -122.3,
+			radius: 10,
+			flow: 'cash_in',
+			limit: 50,
+		});
 
 		expect(sentRequest()).toEqual({
 			method: 'GET',
 			path: '/cash-locations',
-			query: { limit: 50, startingAfter: undefined, endingBefore: undefined },
+			query: {
+				provider: 'retail',
+				latitude: 47.6,
+				longitude: -122.3,
+				radius: 10,
+				flow: 'cash_in',
+				customerId: undefined,
+				limit: 50,
+				startingAfter: undefined,
+				endingBefore: undefined,
+			},
 		});
+	});
+
+	it('cashLocations.list refuses a call without the required search center', async () => {
+		// GET /cash-locations marks provider, latitude and longitude required.
+		await expect(CashLocations.list(ctx, { limit: 50 })).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });
 
