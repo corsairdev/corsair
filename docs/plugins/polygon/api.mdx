@@ -1,7 +1,7 @@
 ---
-title: "Polygon API reference"
+title: "Polygon OMS API reference"
 sidebarTitle: "API"
-description: "API reference for the Polygon plugin in Corsair: every `polygon.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+description: "API reference for the Polygon OMS plugin in Corsair: every `polygon.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
 
 <Info>
@@ -19,13 +19,19 @@ List the retail cash locations in range, nearest first, with cursor paging
 **Risk:** `read`
 
 ```ts
-await corsair.polygon.api.cashLocations.list({ limit: 50 });
+await corsair.polygon.api.cashLocations.list({ provider: 'retail', latitude: 47.6062, longitude: -122.3321, radius: 10, flow: 'cash_in', limit: 50 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `provider` | `string` | Yes | The cash provider configuration to query, as set up for this project. |
+| `latitude` | `number` | Yes | Search center latitude. |
+| `longitude` | `number` | Yes | Search center longitude. |
+| `radius` | `number` | No | Search radius in miles, above 0 and at most 100. |
+| `flow` | `cash_in \| cash_out` | No | Only locations that take deposits (`cash_in`) or pay out (`cash_out`). |
+| `customerId` | `string` | No | Scope availability to one `cst_` customer. |
 | `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
 | `startingAfter` | `string` | No | The previous page's `nextCursor`. |
 | `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
@@ -65,7 +71,11 @@ await corsair.polygon.api.cashLocations.list({ limit: 50 });
   distance?: number | null,
   distanceUnit?: string | null,
   buyAllowed?: boolean | null,
-  sellAllowed?: boolean | null
+  sellAllowed?: boolean | null,
+  hours?: string | null,
+  supportedAssets?: string[] | null,
+  maxTransaction?: string | null,
+  maxDailyPerCustomer?: string | null
 }[]
 ```
 </Accordion>
@@ -152,7 +162,7 @@ await corsair.polygon.api.customers.create({ type: 'individual', firstName: 'Jan
 | `hold` | `object \| null` | No | — |
 | `failure` | `object \| null` | No | — |
 | `signedAgreement` | `boolean \| null` | No | — |
-| `endorsements` | `string[] \| null` | No | — |
+| `endorsements` | `object[] \| null` | No | — |
 | `metadata` | `Record<string, string> \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
@@ -163,7 +173,7 @@ await corsair.polygon.api.customers.create({ type: 'individual', firstName: 'Jan
 ```ts
 {
   code?: string | null,
-  reason?: string | null
+  message?: string | null
 } | null
 ```
 </Accordion>
@@ -173,8 +183,26 @@ await corsair.polygon.api.customers.create({ type: 'individual', firstName: 'Jan
 ```ts
 {
   code?: string | null,
-  reason?: string | null
+  message?: string | null,
+  retryable?: boolean | null
 } | null
+```
+</Accordion>
+
+<Accordion title="endorsements full type">
+
+```ts
+{
+  type?: string | null,
+  status?: string | null,
+  requirements?: {
+  } | null,
+  failure?: {
+    code?: string | null,
+    message?: string | null,
+    retryable?: boolean | null
+  } | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -223,7 +251,7 @@ await corsair.polygon.api.customers.delete({ customerId: 'cst_vfa0nxw6zvyws9g237
 | `hold` | `object \| null` | No | — |
 | `failure` | `object \| null` | No | — |
 | `signedAgreement` | `boolean \| null` | No | — |
-| `endorsements` | `string[] \| null` | No | — |
+| `endorsements` | `object[] \| null` | No | — |
 | `metadata` | `Record<string, string> \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
@@ -234,7 +262,7 @@ await corsair.polygon.api.customers.delete({ customerId: 'cst_vfa0nxw6zvyws9g237
 ```ts
 {
   code?: string | null,
-  reason?: string | null
+  message?: string | null
 } | null
 ```
 </Accordion>
@@ -244,8 +272,26 @@ await corsair.polygon.api.customers.delete({ customerId: 'cst_vfa0nxw6zvyws9g237
 ```ts
 {
   code?: string | null,
-  reason?: string | null
+  message?: string | null,
+  retryable?: boolean | null
 } | null
+```
+</Accordion>
+
+<Accordion title="endorsements full type">
+
+```ts
+{
+  type?: string | null,
+  status?: string | null,
+  requirements?: {
+  } | null,
+  failure?: {
+    code?: string | null,
+    message?: string | null,
+    retryable?: boolean | null
+  } | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -294,7 +340,7 @@ await corsair.polygon.api.customers.get({ customerId: 'cst_vfa0nxw6zvyws9g237jrx
 | `hold` | `object \| null` | No | — |
 | `failure` | `object \| null` | No | — |
 | `signedAgreement` | `boolean \| null` | No | — |
-| `endorsements` | `string[] \| null` | No | — |
+| `endorsements` | `object[] \| null` | No | — |
 | `metadata` | `Record<string, string> \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
@@ -305,7 +351,7 @@ await corsair.polygon.api.customers.get({ customerId: 'cst_vfa0nxw6zvyws9g237jrx
 ```ts
 {
   code?: string | null,
-  reason?: string | null
+  message?: string | null
 } | null
 ```
 </Accordion>
@@ -315,8 +361,26 @@ await corsair.polygon.api.customers.get({ customerId: 'cst_vfa0nxw6zvyws9g237jrx
 ```ts
 {
   code?: string | null,
-  reason?: string | null
+  message?: string | null,
+  retryable?: boolean | null
 } | null
+```
+</Accordion>
+
+<Accordion title="endorsements full type">
+
+```ts
+{
+  type?: string | null,
+  status?: string | null,
+  requirements?: {
+  } | null,
+  failure?: {
+    code?: string | null,
+    message?: string | null,
+    retryable?: boolean | null
+  } | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -347,8 +411,7 @@ await corsair.polygon.api.customers.list({ status: 'active', limit: 20 });
 | `createdAfter` | `string` | No | Only customers created after this ISO 8601 timestamp. |
 | `createdBefore` | `string` | No | Only customers created before this ISO 8601 timestamp. |
 | `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
-| `startingAfter` | `string` | No | The previous page's `nextCursor`. |
-| `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
+| `cursor` | `string` | No | The previous page's `cursor`. |
 
 
 
@@ -358,7 +421,7 @@ await corsair.polygon.api.customers.list({ status: 'active', limit: 20 });
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
-| `cursor` | `string \| null` | No | The next page cursor. While `hasMore` is true, pass it as `startingAfter`; it is absent on the last page. |
+| `cursor` | `string \| null` | No | The next page cursor. While `hasMore` is true, pass it back as `cursor`; it is absent on the last page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -380,14 +443,25 @@ await corsair.polygon.api.customers.list({ status: 'active', limit: 20 });
   status?: string | null,
   hold?: {
     code?: string | null,
-    reason?: string | null
+    message?: string | null
   } | null,
   failure?: {
     code?: string | null,
-    reason?: string | null
+    message?: string | null,
+    retryable?: boolean | null
   } | null,
   signedAgreement?: boolean | null,
-  endorsements?: string[] | null,
+  endorsements?: {
+    type?: string | null,
+    status?: string | null,
+    requirements?: {
+    } | null,
+    failure?: {
+      code?: string | null,
+      message?: string | null,
+      retryable?: boolean | null
+    } | null
+  }[] | null,
   metadata?: Record<string, string> | null,
   createdAt?: string | null,
   updatedAt?: string | null
@@ -475,7 +549,7 @@ await corsair.polygon.api.customers.update({ customerId: 'cst_vfa0nxw6zvyws9g237
 | `hold` | `object \| null` | No | — |
 | `failure` | `object \| null` | No | — |
 | `signedAgreement` | `boolean \| null` | No | — |
-| `endorsements` | `string[] \| null` | No | — |
+| `endorsements` | `object[] \| null` | No | — |
 | `metadata` | `Record<string, string> \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
@@ -486,7 +560,7 @@ await corsair.polygon.api.customers.update({ customerId: 'cst_vfa0nxw6zvyws9g237
 ```ts
 {
   code?: string | null,
-  reason?: string | null
+  message?: string | null
 } | null
 ```
 </Accordion>
@@ -496,8 +570,26 @@ await corsair.polygon.api.customers.update({ customerId: 'cst_vfa0nxw6zvyws9g237
 ```ts
 {
   code?: string | null,
-  reason?: string | null
+  message?: string | null,
+  retryable?: boolean | null
 } | null
+```
+</Accordion>
+
+<Accordion title="endorsements full type">
+
+```ts
+{
+  type?: string | null,
+  status?: string | null,
+  requirements?: {
+  } | null,
+  failure?: {
+    code?: string | null,
+    message?: string | null,
+    retryable?: boolean | null
+  } | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -603,7 +695,7 @@ Price a transfer: set the amount on one side and OMS calculates the other. Nothi
 **Risk:** `write`
 
 ```ts
-await corsair.polygon.api.quotes.create({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', source: { type: 'walletCrypto', details: { id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn', asset: 'usdc', network: 'polygon' }, amount: '100.00' }, destination: { type: 'bankUs', details: { id: 'ext_fky491gakzj0dd46qb6whsr2vq', asset: 'usd' } } });
+await corsair.polygon.api.quotes.create({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', source: { type: 'walletCrypto', details: { id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn', asset: 'usdc', network: 'polygon' }, amount: '100.00' }, destination: { type: 'bankUs', details: { id: 'ext_fky491gakzj0dd46qb6whsr2vq', asset: 'usd', network: 'ach' } } });
 ```
 
 **Input**
@@ -679,6 +771,7 @@ await corsair.polygon.api.quotes.create({ customerId: 'cst_vfa0nxw6zvyws9g237jrx
   details: {
     id: string,
     asset: usd,
+    network: ach | achSameDay | wire | rtp | instant | intraBank,
     memo?: string
   },
   amount?: string
@@ -696,8 +789,7 @@ await corsair.polygon.api.quotes.create({ customerId: 'cst_vfa0nxw6zvyws9g237jrx
     cashLocationId: string,
     cashLocationReference: string,
     amount: string
-  },
-  amount?: string
+  }
 }
 ```
 </Accordion>
@@ -1233,12 +1325,12 @@ await corsair.polygon.api.wallets.balance({ id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn'
 
 `wallets.create`
 
-Create a wallet for an asset on a chain
+Create a custodial, noncustodial or fiat wallet for a customer. OMS has no route to delete a wallet, so a live wallet stays on the customer
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.polygon.api.wallets.create({ asset: 'usdc', chain: 'polygon' });
+await corsair.polygon.api.wallets.create({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', type: 'custodial', details: { network: 'polygon', asset: 'usdc' } });
 ```
 
 **Input**
@@ -1246,8 +1338,24 @@ await corsair.polygon.api.wallets.create({ asset: 'usdc', chain: 'polygon' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `idempotencyKey` | `string` | No | Idempotency key for this write. Send the same value again to retry the same logical attempt rather than creating a second one; one is generated when omitted. |
-| `asset` | `string` | Yes | The asset the wallet holds, such as `usdc`. |
-| `chain` | `string` | Yes | The chain the wallet lives on. |
+| `customerId` | `string` | Yes | The `cst_` customer who owns the wallet. |
+| `type` | `custodial \| noncustodial \| fiat` | Yes | `custodial` needs `details.network` and `details.asset`; `noncustodial` needs `details.networkFamily`; `fiat` needs `details.asset: usd`. |
+| `details` | `object` | Yes | — |
+| `label` | `string` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+<AccordionGroup>
+<Accordion title="details full type">
+
+```ts
+{
+  network?: ethereum | polygon | base | solana | tron | bnb,
+  asset?: string,
+  networkFamily?: evm | solana | tron
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1257,13 +1365,70 @@ await corsair.polygon.api.wallets.create({ asset: 'usdc', chain: 'polygon' });
 |------|------|----------|-------------|
 | `id` | `string \| null` | No | — |
 | `object` | `string \| null` | No | — |
-| `customer` | `string \| null` | No | — |
-| `custodyType` | `string \| null` | No | `custodial` or `embedded`. |
-| `blockchainAddress` | `string \| null` | No | — |
-| `networkFamily` | `string \| null` | No | — |
-| `status` | `string \| null` | No | `preallocated`, `active` or `suspended`. |
+| `type` | `string \| null` | No | `walletCrypto` or `walletFiat`. |
+| `customer` | `object \| null` | No | — |
+| `status` | `string \| null` | No | `pending`, `active`, `frozen`, `suspended` or `closed`. |
+| `asset` | `string \| null` | No | — |
+| `network` | `string \| null` | No | Crypto wallets only. |
+| `address` | `string \| null` | No | Crypto wallets only. |
+| `routing` | `object \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `balances` | `object[] \| null` | No | — |
+| `metadata` | `object \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
+| `operationId` | `string \| null` | No | — |
+| `customerId` | `string \| null` | No | — |
+| `walletId` | `string \| null` | No | — |
+| `pairs` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="routing full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="balances full type">
+
+```ts
+{
+  asset?: string | null,
+  network?: string | null,
+  balance?: string | null,
+  estimatedValueUsd?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="pairs full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1295,13 +1460,58 @@ await corsair.polygon.api.wallets.get({ id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn' });
 |------|------|----------|-------------|
 | `id` | `string \| null` | No | — |
 | `object` | `string \| null` | No | — |
-| `customer` | `string \| null` | No | — |
-| `custodyType` | `string \| null` | No | `custodial` or `embedded`. |
-| `blockchainAddress` | `string \| null` | No | — |
-| `networkFamily` | `string \| null` | No | — |
-| `status` | `string \| null` | No | `preallocated`, `active` or `suspended`. |
+| `type` | `string \| null` | No | `walletCrypto` or `walletFiat`. |
+| `customer` | `object \| null` | No | — |
+| `status` | `string \| null` | No | `pending`, `active`, `frozen`, `suspended` or `closed`. |
+| `asset` | `string \| null` | No | — |
+| `network` | `string \| null` | No | Crypto wallets only. |
+| `address` | `string \| null` | No | Crypto wallets only. |
+| `routing` | `object \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `label` | `string \| null` | No | — |
+| `balances` | `object[] \| null` | No | — |
+| `metadata` | `object \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="routing full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="balances full type">
+
+```ts
+{
+  asset?: string | null,
+  network?: string | null,
+  balance?: string | null,
+  estimatedValueUsd?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1324,7 +1534,7 @@ await corsair.polygon.api.wallets.list({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `customerId` | `string` | No | Scope to one `cst_` customer. |
-| `type` | `string` | No | A wallet variant, such as `custodial` or `fiat`. |
+| `type` | `custodial \| noncustodial \| fiat` | No | Only wallets of this kind. |
 | `search` | `string` | No | Matches a wallet id or an on-chain address. |
 | `orderBy` | `string` | No | Orders by the balance's estimated USD value. |
 | `order` | `asc \| desc` | No | Balance sort direction. Needs `orderBy`. |
@@ -1353,11 +1563,26 @@ await corsair.polygon.api.wallets.list({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn
 {
   id?: string | null,
   object?: string | null,
-  customer?: string | null,
-  custodyType?: string | null,
-  blockchainAddress?: string | null,
-  networkFamily?: string | null,
+  type?: string | null,
+  customer?: {
+    id?: string | null
+  } | null,
   status?: string | null,
+  asset?: string | null,
+  network?: string | null,
+  address?: string | null,
+  routing?: {
+  } | null,
+  provider?: string | null,
+  label?: string | null,
+  balances?: {
+    asset?: string | null,
+    network?: string | null,
+    balance?: string | null,
+    estimatedValueUsd?: string | null
+  }[] | null,
+  metadata?: {
+  } | null,
   createdAt?: string | null,
   updatedAt?: string | null
 }[]

@@ -3423,7 +3423,7 @@
                 ]
               },
               {
-                "group": "Polygon",
+                "group": "Polygon OMS",
                 "pages": [
                   "plugins/polygon/overview",
                   "plugins/polygon/api",
