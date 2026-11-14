@@ -2,12 +2,18 @@ import { AuthMissingError } from 'corsair/core';
 import { kommo, kommoEndpointSchemas } from './index';
 
 // The key builder only reads authType and keys.
-function keyContext(apiKey: string | null) {
+function keyContext(
+	apiKey: string | null,
+	subdomain: string | null = 'corsairtests',
+) {
 	return {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
-		keys: { get_api_key: jest.fn().mockResolvedValue(apiKey) },
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue(apiKey),
+			get_subdomain: jest.fn().mockResolvedValue(subdomain),
+		},
 	};
 }
 
@@ -141,6 +147,17 @@ describe('kommo key builder', () => {
 		await expect(buildKey(kommo(), keyContext(null))).rejects.toBeInstanceOf(
 			AuthMissingError,
 		);
+	});
+
+	it('asks for the subdomain in the key builder when the account has none', async () => {
+		// A key-builder auth error is the one core turns into a connect link, so
+		// a key without a subdomain must fail here, not later in the endpoint.
+		await expect(
+			buildKey(kommo(), keyContext('stored-key', null)),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(
+			buildKey(kommo({ subdomain: 'acme' }), keyContext('stored-key', null)),
+		).resolves.toBe('stored-key');
 	});
 
 	it('refuses webhook keys', async () => {

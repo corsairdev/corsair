@@ -289,6 +289,15 @@ export function kommo<const T extends KommoPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
+				// A key without a subdomain can't reach any Kommo host. Failing here,
+				// not in the endpoint, lets core hand back a connect link.
+				if (res && !options.subdomain && !(await ctx.keys.get_subdomain())) {
+					throw new AuthMissingError(
+						'kommo',
+						'api_key',
+						'Kommo subdomain is not set: connect the account with its subdomain (acme for acme.kommo.com) or set the subdomain option.',
+					);
+				}
 				if (res) return res;
 			}
 
