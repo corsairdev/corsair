@@ -96,26 +96,6 @@ function buildPath(
 	});
 }
 
-function safeApiError(error: ApiError): ApiError {
-	return new ApiError(
-		{ method: error.request.method, url: 'https://api.shipengine.com' },
-		{
-			url: 'https://api.shipengine.com',
-			ok: false,
-			status: error.status,
-			statusText: error.statusText,
-			body: undefined,
-		},
-		`ShipEngine API request failed with HTTP ${error.status}`,
-		{
-			retryAfter: error.retryAfter,
-			rateLimitReset: error.rateLimitReset,
-			rateLimitRemaining: error.rateLimitRemaining,
-			rateLimitLimit: error.rateLimitLimit,
-		},
-	);
-}
-
 function parseRetryAfter(response: Response): number | undefined {
 	const value = response.headers.get('retry-after');
 	if (!value) return undefined;
@@ -297,7 +277,7 @@ export async function makeShipEngineRequest(
 		);
 	} catch (error: unknown) {
 		// `unknown` because JavaScript promises may reject with any value; ApiError is narrowed before handling.
-		if (error instanceof ApiError) throw safeApiError(error);
+		if (error instanceof ApiError) throw error;
 		throw new Error('ShipEngine API request failed');
 	}
 }

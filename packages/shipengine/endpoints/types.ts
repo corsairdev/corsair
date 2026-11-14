@@ -104,7 +104,8 @@ const shipEngineSchema31 = z
 		image_data: shipEngineSchema28.optional(),
 	})
 	.strict();
-const shipEngineSchema32 = z.string().min(0).max(0);
+// OpenAPI models these 204 responses as an empty string, while Corsair's transport returns undefined for HTTP 204.
+const shipEngineSchema32 = z.union([z.string().max(0), z.undefined()]);
 const shipEngineSchema34 = z.string().min(1);
 const shipEngineSchema36 = z.string().nullable();
 const shipEngineSchema37 = z.string().min(1).nullable();
@@ -671,10 +672,14 @@ const shipEngineSchema141 = z.number().min(0);
 const shipEngineSchema142 = shipEngineSchema90.nullable();
 const shipEngineSchema145 = shipEngineSchema90;
 const shipEngineSchema146 = z.string().min(1);
+// The official List Carrier Services route example returns codes such as `stamps_com`; its OpenAPI schema incorrectly annotates carrier_code with the se_id shape.
+const shipEngineCarrierCodeSchema = z
+	.string()
+	.regex(/^[a-z0-9]+(_[a-z0-9]+)*$/);
 const shipEngineSchema144 = z
 	.object({
 		carrier_id: shipEngineSchema89.optional(),
-		carrier_code: shipEngineSchema145.optional(),
+		carrier_code: shipEngineCarrierCodeSchema.optional(),
 		service_code: shipEngineSchema146.optional(),
 		name: shipEngineSchema146.optional(),
 		domestic: shipEngineSchema140.optional(),
@@ -3414,7 +3419,7 @@ const shipEngineSchema541 = z
 	})
 	.strict();
 const shipEngineSchema540 = z.array(shipEngineSchema541);
-const shipEngineSchema542 = shipEngineSchema90;
+const shipEngineSchema542 = shipEngineSchema21;
 const shipEngineSchema544 = z.union([
 	z.literal('working'),
 	z.literal('completed'),

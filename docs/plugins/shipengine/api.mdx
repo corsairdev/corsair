@@ -99,7 +99,7 @@ Delete Account Image By Id deletes, disconnects, cancels, or otherwise changes a
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -295,7 +295,7 @@ await corsair.shipengine.api.account.updateAccountSettingsImagesById({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -543,7 +543,7 @@ await corsair.shipengine.api.batches.addToBatch({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -552,9 +552,9 @@ await corsair.shipengine.api.batches.addToBatch({
 
 `batches.createBatch`
 
-Create A Batch
+Create a batch. Setting process_labels.create_batch_and_process_labels purchases labels and may charge the account.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.shipengine.api.batches.createBatch({
@@ -567,6 +567,8 @@ await corsair.shipengine.api.batches.createBatch({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `object` | Yes | — |
+
+The optional process_labels.create_batch_and_process_labels flag processes label purchases as part of batch creation and can incur carrier charges. This endpoint is marked destructive.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -741,7 +743,7 @@ Delete Batch By Id deletes, disconnects, cancels, or otherwise changes an accoun
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -1311,7 +1313,7 @@ Process Batch ID Labels purchases one or more carrier labels and can incur shipp
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -1361,7 +1363,7 @@ await corsair.shipengine.api.batches.removeFromBatch({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -1399,7 +1401,7 @@ await corsair.shipengine.api.batches.updateBatch({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -1416,8 +1418,8 @@ Connect a carrier account
 
 ```ts
 await corsair.shipengine.api.carrierAccounts.connectCarrier({
-	path: { carrier_name: 'example' },
-	body: { nickname: 'Stamps.com', username: 'x', password: 'example-credential' },
+	path: { carrier_name: 'access_worldwide' },
+	body: { nickname: 'example', username: 'x', password: 'example-credential' },
 });
 ```
 
@@ -1658,7 +1660,7 @@ Disconnect a carrier
 
 ```ts
 await corsair.shipengine.api.carrierAccounts.disconnectCarrier({
-	path: { carrier_name: 'example', carrier_id: 'se-28529731' },
+	path: { carrier_name: 'access_worldwide', carrier_id: 'se-28529731' },
 });
 ```
 
@@ -1684,7 +1686,7 @@ Disconnect a carrier deletes, disconnects, cancels, or otherwise changes an acco
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -1699,7 +1701,7 @@ Get carrier settings
 
 ```ts
 await corsair.shipengine.api.carrierAccounts.getCarrierSettings({
-	path: { carrier_name: 'example', carrier_id: 'se-28529731' },
+	path: { carrier_name: 'dhl_express', carrier_id: 'se-28529731' },
 });
 ```
 
@@ -1778,7 +1780,7 @@ Update carrier settings
 
 ```ts
 await corsair.shipengine.api.carrierAccounts.updateCarrierSettings({
-	path: { carrier_name: 'example', carrier_id: 'se-28529731' },
+	path: { carrier_name: 'dhl_express', carrier_id: 'se-28529731' },
 	body: {},
 });
 ```
@@ -1847,7 +1849,7 @@ await corsair.shipengine.api.carrierAccounts.updateCarrierSettings({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -1958,7 +1960,7 @@ Disconnect Carrier by ID deletes, disconnects, cancels, or otherwise changes an 
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -2298,6 +2300,8 @@ await corsair.shipengine.api.carriers.listCarrierServices({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `object` | Yes | — |
+
+The provider's List Carrier Services route example returns carrier_code values such as stamps_com. The OpenAPI se_id pattern on this field conflicts with that route example; the plugin validates it as a carrier code.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -7083,7 +7087,7 @@ Delete A Custom Package By ID deletes, disconnects, cancels, or otherwise change
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -7244,7 +7248,7 @@ await corsair.shipengine.api.packageTypes.updatePackageType({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -9027,7 +9031,7 @@ Cancel a Shipment deletes, disconnects, cancels, or otherwise changes an account
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -11861,7 +11865,7 @@ Remove Tag from Shipment deletes, disconnects, cancels, or otherwise changes an 
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -12731,7 +12735,7 @@ Delete Tag deletes, disconnects, cancels, or otherwise changes an account resour
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -12808,7 +12812,7 @@ await corsair.shipengine.api.tags.renameTag({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -12981,7 +12985,7 @@ This starts provider tracking subscriptions. Webhook receiving/management remain
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -13021,7 +13025,7 @@ This stops provider tracking subscriptions. Webhook receiving/management remains
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -13191,7 +13195,7 @@ Delete Warehouse By ID deletes, disconnects, cancels, or otherwise changes an ac
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -13435,7 +13439,7 @@ await corsair.shipengine.api.warehouses.updateWarehouse({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---
@@ -13484,7 +13488,7 @@ await corsair.shipengine.api.warehouses.updateWarehouseSettings({
 
 
 
-**Output:** `string`
+**Output:** `string \| undefined`
 
 
 ---

@@ -5,6 +5,7 @@ apiNotes:
   "account.deleteAccountImageById": "Delete Account Image By Id deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
   "batches.deleteBatch": "Delete Batch By Id deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
   "batches.processBatch": "Process Batch ID Labels purchases one or more carrier labels and can incur shipping charges. ShipStation wallet-carrier costs are deducted from the account balance; merchant carrier accounts follow carrier billing terms. Verify the rate before using a production key."
+  "batches.createBatch": "The optional process_labels.create_batch_and_process_labels flag processes label purchases as part of batch creation and can incur carrier charges. This endpoint is marked destructive."
   "carriers.disconnectCarrierById": "Disconnect Carrier by ID deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
   "carriers.addFundsToCarrier": "Add Funds To Carrier transfers money into a carrier or Shipsurance balance. Confirm the amount and funding account before using a production key."
   "carrierAccounts.disconnectCarrier": "Disconnect a carrier deletes, disconnects, cancels, or otherwise changes an account resource in a way that may be difficult to reverse. Verify the target before calling."
@@ -27,6 +28,7 @@ apiNotes:
   "tracking.startTracking": "This starts provider tracking subscriptions. Webhook receiving/management remains out of scope; no incoming callback handler is registered by this plugin."
   "tracking.stopTracking": "This stops provider tracking subscriptions. Webhook receiving/management remains out of scope; no incoming callback handler is registered by this plugin."
   "tags.createTagByName": "This path-based tag creation operation is deprecated by ShipEngine; use POST /v1/tags (tags.createTag) instead."
+  "carriers.listCarrierServices": "The provider's List Carrier Services route example returns carrier_code values such as stamps_com. The OpenAPI se_id pattern on this field conflicts with that route example; the plugin validates it as a carrier code."
 apiExamples:
   "account.listAccountSettings":
     args: {}
@@ -79,13 +81,13 @@ apiExamples:
   "carriers.listCarrierServices":
     args: {"path":{"carrier_id":"se-28529731"}}
   "carrierAccounts.connectCarrier":
-    args: {"path":{"carrier_name":"example"},"body":{"nickname":"Stamps.com","username":"x","password":"example-credential"}}
+    args: {"path":{"carrier_name":"access_worldwide"},"body":{"nickname":"example","username":"x","password":"example-credential"}}
   "carrierAccounts.disconnectCarrier":
-    args: {"path":{"carrier_name":"example","carrier_id":"se-28529731"}}
+    args: {"path":{"carrier_name":"access_worldwide","carrier_id":"se-28529731"}}
   "carrierAccounts.getCarrierSettings":
-    args: {"path":{"carrier_name":"example","carrier_id":"se-28529731"}}
+    args: {"path":{"carrier_name":"dhl_express","carrier_id":"se-28529731"}}
   "carrierAccounts.updateCarrierSettings":
-    args: {"path":{"carrier_name":"example","carrier_id":"se-28529731"},"body":{}}
+    args: {"path":{"carrier_name":"dhl_express","carrier_id":"se-28529731"},"body":{}}
   "insurance.disconnectInsurer":
     args: {}
   "insurance.connectInsurer":

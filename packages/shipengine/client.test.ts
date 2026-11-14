@@ -73,14 +73,21 @@ describe('ShipEngine client', () => {
 		expect(new Headers(requestInit?.headers).has('Authorization')).toBe(false);
 	});
 
-	it('honors Retry-After retries and sanitizes rate-limit errors', async () => {
+	it('honors Retry-After retries and preserves the core ApiError', async () => {
 		jest.useFakeTimers();
 		const fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(
 			async () =>
 				new Response(
 					JSON.stringify({
-						request_id: 'private-request-id',
-						errors: [{ message: 'private account detail' }],
+						request_id: 'aa3d8e8e-462b-4476-9618-72db7f7b7009',
+						errors: [
+							{
+								error_source: 'shipengine',
+								error_type: 'business_rules',
+								error_code: 'rate_limit_exceeded',
+								message: 'Rate limit exceeded',
+							},
+						],
 					}),
 					{
 						status: 429,
@@ -104,12 +111,21 @@ describe('ShipEngine client', () => {
 		const error = await errorPromise;
 		expect(error).toBeInstanceOf(ApiError);
 		if (!(error instanceof ApiError))
-			throw new Error('Expected sanitized ShipEngine ApiError');
+			throw new Error('Expected the original core ApiError');
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(1000);
-		expect(error.message).toBe('ShipEngine API request failed with HTTP 429');
-		expect(error.body).toBeUndefined();
-		expect(error.message).not.toContain('private');
+		expect(error.body).toEqual({
+			request_id: 'aa3d8e8e-462b-4476-9618-72db7f7b7009',
+			errors: [
+				{
+					error_source: 'shipengine',
+					error_type: 'business_rules',
+					error_code: 'rate_limit_exceeded',
+					message: 'Rate limit exceeded',
+				},
+			],
+		});
+		expect(error.message).not.toContain('test-api-key');
 		expect(fetchMock).toHaveBeenCalledTimes(4);
 	});
 });

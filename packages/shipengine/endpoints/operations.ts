@@ -298,7 +298,8 @@ export const SHIPENGINE_OPERATIONS = {
 		method: 'POST',
 		path: '/v1/batches',
 		summary: 'Create A Batch',
-		description: 'Create a Batch',
+		description:
+			'Create a batch; process_labels.create_batch_and_process_labels can purchase labels and incur shipping charges.',
 		pathParameters: [],
 		queryParameters: [],
 		hasBody: true,
@@ -306,7 +307,7 @@ export const SHIPENGINE_OPERATIONS = {
 		pagination: false,
 		binary: false,
 		tag: 'batches',
-		risk: 'write',
+		risk: 'destructive',
 	},
 	'batches.getBatchByExternalId': {
 		name: 'batches.getBatchByExternalId',

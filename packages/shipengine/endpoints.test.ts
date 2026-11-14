@@ -1521,7 +1521,7 @@ const testOutputs = {
 		],
 		rate_request_id: 'se-28529731',
 		shipment_id: 'se-28529731',
-		created_at: 'se-28529731',
+		created_at: '2026-01-01T00:00:00Z',
 		status: 'working',
 		errors: [
 			{
@@ -1676,7 +1676,8 @@ describe('ShipEngine operations', () => {
 		it(operationName, async () => {
 			const operation = SHIPENGINE_OPERATIONS[operationName];
 			const input = testInputs[operationName];
-			const expectedOutput = testOutputs[operationName];
+			const outputFixture = testOutputs[operationName];
+			const expectedOutput = outputFixture === '' ? undefined : outputFixture;
 			const fetchMock = jest.spyOn(globalThis, 'fetch');
 			if (operation.binary) {
 				fetchMock.mockResolvedValue(

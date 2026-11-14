@@ -86,6 +86,25 @@ describe('ShipEngine schemas', () => {
 				.success,
 		).toBe(false);
 		expect(
+			ShipEngineEndpointOutputSchemas['carriers.listCarrierServices'].safeParse(
+				{
+					services: [
+						{
+							carrier_id: 'se-123456',
+							carrier_code: 'stamps_com',
+							service_code: 'usps_first_class_mail',
+							name: 'USPS First Class Mail',
+						},
+					],
+				},
+			).success,
+		).toBe(true);
+		expect(
+			ShipEngineEndpointOutputSchemas['carriers.listCarrierServices'].safeParse(
+				{ services: [{ carrier_code: 'se-123456' }] },
+			).success,
+		).toBe(false);
+		expect(
 			ShipEngineEndpointOutputSchemas['downloads.downloadFile'].safeParse({
 				kind: 'binary',
 				contentType: 'application/pdf',
@@ -101,5 +120,10 @@ describe('ShipEngine schemas', () => {
 				byteLength: 3,
 			}).success,
 		).toBe(false);
+		expect(
+			ShipEngineEndpointOutputSchemas['batches.processBatch'].safeParse(
+				undefined,
+			).success,
+		).toBe(true);
 	});
 });

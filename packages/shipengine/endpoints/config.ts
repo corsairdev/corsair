@@ -445,7 +445,8 @@ export const shipEngineEndpointMeta = {
 	},
 	'batches.createBatch': {
 		riskLevel: SHIPENGINE_OPERATIONS['batches.createBatch'].risk,
-		description: SHIPENGINE_OPERATIONS['batches.createBatch'].summary,
+		description:
+			'Create a batch. Setting process_labels.create_batch_and_process_labels purchases labels and may charge the account.',
 	},
 	'batches.getBatchByExternalId': {
 		riskLevel: SHIPENGINE_OPERATIONS['batches.getBatchByExternalId'].risk,
