@@ -251,6 +251,7 @@ export const BaseProviders = [
 	'flutterwave',
 	'fluxguard',
 	'followupboss',
+	'fomo',
 	'formbricks',
 	'foursquare',
 	'fundable',
@@ -786,6 +787,7 @@ export const ProviderDisplayNames = {
 	flutterwave: 'Flutterwave',
 	fluxguard: 'Fluxguard',
 	followupboss: 'Follow Up Boss',
+	fomo: 'Fomo',
 	formbricks: 'Formbricks',
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
@@ -1328,6 +1330,7 @@ export type AllProviders =
 	| 'flutterwave'
 	| 'fluxguard'
 	| 'followupboss'
+	| 'fomo'
 	| 'formbricks'
 	| 'foursquare'
 	| 'fundable'

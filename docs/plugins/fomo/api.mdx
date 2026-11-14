@@ -1,0 +1,865 @@
+---
+title: "Fomo API reference"
+sidebarTitle: "API"
+description: "API reference for the Fomo plugin in Corsair: every `fomo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Application
+
+### get
+
+`application.get`
+
+Get Fomo application settings for the token's own site, or pass id to read another site of the same user
+
+**Risk:** `read`
+
+```ts
+await corsair.fomo.api.application.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `page_load` | `number` | No | — |
+| `maximum_per_page` | `number` | No | — |
+| `display_for` | `number` | No | — |
+| `display_interval` | `number` | No | — |
+| `randomize` | `number \| boolean` | No | — |
+| `closable` | `number \| boolean` | No | — |
+| `display_period` | `number` | No | — |
+| `display_threshold` | `number` | No | — |
+| `time_ago_period` | `number` | No | — |
+| `time_ago_threshold` | `number` | No | — |
+| `hide_mobile` | `boolean` | No | — |
+| `loop_notification` | `boolean` | No | — |
+| `position` | `string` | No | — |
+| `theme` | `string` | No | — |
+| `utm_source` | `string` | No | — |
+| `utm_medium` | `string` | No | — |
+| `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `event_types_attributes` | `Record<string, any>[]` | No | — |
+| `stat_application` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### getStats
+
+`application.getStats`
+
+Get notification statistics and conversion data
+
+**Risk:** `read`
+
+```ts
+await corsair.fomo.api.application.getStats({ date_range: { from: '2026-01-01', to: '2026-01-31' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date_range` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="date_range full type">
+
+```ts
+{
+  from: string,
+  to: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graph` | `object` | No | — |
+| `totals` | `object` | No | — |
+| `date_range` | `object` | No | — |
+| `has_ga_conversions` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="graph full type">
+
+```ts
+Record<string, {
+  converted_sale_in_cents?: number,
+  conversions_count?: number,
+  click_count?: number,
+  impr_count?: number,
+  hover_count?: number
+}>
+```
+</Accordion>
+
+<Accordion title="totals full type">
+
+```ts
+{
+  converted_sale_in_cents?: number,
+  conversions_count?: number,
+  click_count?: number,
+  impr_count?: number,
+  hover_count?: number,
+  goal_conversion_count?: number,
+  goal_converted_sale_in_dollars?: number
+}
+```
+</Accordion>
+
+<Accordion title="date_range full type">
+
+```ts
+{
+  from?: string,
+  to?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`application.update`
+
+Update Fomo application settings for the token's own site, or pass id to update another site of the same user
+
+**Risk:** `write`
+
+```ts
+await corsair.fomo.api.application.update({ name: 'My Online Store', position: 'bottom_left', theme: 'theme1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `language` | `string` | No | — |
+| `page_load` | `number` | No | — |
+| `maximum_per_page` | `number` | No | — |
+| `display_for` | `number` | No | — |
+| `display_interval` | `number` | No | — |
+| `randomize` | `number \| boolean` | No | — |
+| `closable` | `number \| boolean` | No | — |
+| `display_period` | `number` | No | — |
+| `display_threshold` | `number` | No | — |
+| `time_ago_period` | `number` | No | — |
+| `time_ago_threshold` | `number` | No | — |
+| `hide_mobile` | `boolean` | No | — |
+| `loop_notification` | `boolean` | No | — |
+| `position` | `bottom_left \| bottom_right \| top_left \| top_right` | No | — |
+| `theme` | `theme1 \| theme2 \| custom` | No | — |
+| `utm_source` | `string` | No | — |
+| `utm_medium` | `string` | No | — |
+| `event_types_attributes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="event_types_attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `page_load` | `number` | No | — |
+| `maximum_per_page` | `number` | No | — |
+| `display_for` | `number` | No | — |
+| `display_interval` | `number` | No | — |
+| `randomize` | `number \| boolean` | No | — |
+| `closable` | `number \| boolean` | No | — |
+| `display_period` | `number` | No | — |
+| `display_threshold` | `number` | No | — |
+| `time_ago_period` | `number` | No | — |
+| `time_ago_threshold` | `number` | No | — |
+| `hide_mobile` | `boolean` | No | — |
+| `loop_notification` | `boolean` | No | — |
+| `position` | `string` | No | — |
+| `theme` | `string` | No | — |
+| `utm_source` | `string` | No | — |
+| `utm_medium` | `string` | No | — |
+| `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `event_types_attributes` | `Record<string, any>[]` | No | — |
+| `stat_application` | `Record<string, any>` | No | — |
+
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Create a new Fomo event; it shows as a social-proof notification on the site's live feed
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fomo.api.events.create({ event_type_id: 123, first_name: 'John', city: 'New York', title: 'Product Purchase', url: 'https://example.com/item' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type_id` | `number \| string` | No | — |
+| `event_type_tag` | `string` | No | — |
+| `url` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `email_address` | `string` | No | — |
+| `ip_address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `province` | `string` | No | — |
+| `country` | `string` | No | — |
+| `title` | `string` | No | — |
+| `image_url` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `custom_event_fields_attributes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_event_fields_attributes full type">
+
+```ts
+{
+  id?: number,
+  key: string,
+  value: string | number | boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `event_type_id` | `number \| string \| null` | No | — |
+| `event_type_tag` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `email_address` | `string \| null` | No | — |
+| `ip_address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `province` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `created_at_to_seconds_from_epoch` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `custom_event_fields_attributes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_event_fields_attributes full type">
+
+```ts
+{
+  id?: number,
+  key: string,
+  value: string | number | boolean
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`events.delete`
+
+Delete a Fomo event by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fomo.api.events.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`events.get`
+
+Retrieve a Fomo event by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fomo.api.events.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `event_type_id` | `number \| string \| null` | No | — |
+| `event_type_tag` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `email_address` | `string \| null` | No | — |
+| `ip_address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `province` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `created_at_to_seconds_from_epoch` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `custom_event_fields_attributes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_event_fields_attributes full type">
+
+```ts
+{
+  id?: number,
+  key: string,
+  value: string | number | boolean
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+List Fomo events with optional pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.fomo.api.events.list({ per: 30, page: 1, show_meta: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `per` | `number` | No | — |
+| `page` | `number` | No | — |
+| `show_meta` | `boolean` | No | — |
+
+
+
+**Output:** `object[] \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  external_id?: string | null,
+  event_type_id?: number | string | null,
+  event_type_tag?: string | null,
+  url?: string | null,
+  first_name?: string | null,
+  email_address?: string | null,
+  ip_address?: string | null,
+  city?: string | null,
+  province?: string | null,
+  country?: string | null,
+  title?: string | null,
+  image_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  created_at_to_seconds_from_epoch?: number | null,
+  message?: string | null,
+  link?: string | null,
+  custom_event_fields_attributes?: {
+    id?: number,
+    key: string,
+    value: string | number | boolean
+  }[] | null
+}[] | {
+  events: {
+    id: number,
+    external_id?: string | null,
+    event_type_id?: number | string | null,
+    event_type_tag?: string | null,
+    url?: string | null,
+    first_name?: string | null,
+    email_address?: string | null,
+    ip_address?: string | null,
+    city?: string | null,
+    province?: string | null,
+    country?: string | null,
+    title?: string | null,
+    image_url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    created_at_to_seconds_from_epoch?: number | null,
+    message?: string | null,
+    link?: string | null,
+    custom_event_fields_attributes?: {
+      id?: number,
+      key: string,
+      value: string | number | boolean
+    }[] | null
+  }[],
+  meta?: {
+    per_page?: number,
+    page?: number,
+    total_count?: number,
+    total_pages?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`events.search`
+
+Search for an event by external_id or email_address
+
+**Risk:** `read`
+
+```ts
+await corsair.fomo.api.events.search({ field: 'email_address', q: 'user@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `email_address \| external_id` | Yes | — |
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `event_type_id` | `number \| string \| null` | No | — |
+| `event_type_tag` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `email_address` | `string \| null` | No | — |
+| `ip_address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `province` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `created_at_to_seconds_from_epoch` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `custom_event_fields_attributes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_event_fields_attributes full type">
+
+```ts
+{
+  id?: number,
+  key: string,
+  value: string | number | boolean
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`events.update`
+
+Update an existing Fomo event by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.fomo.api.events.update({ id: 1, first_name: 'Jane' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `event_type_id` | `number \| string` | No | — |
+| `event_type_tag` | `string` | No | — |
+| `url` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `email_address` | `string` | No | — |
+| `ip_address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `province` | `string` | No | — |
+| `country` | `string` | No | — |
+| `title` | `string` | No | — |
+| `image_url` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `custom_event_fields_attributes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_event_fields_attributes full type">
+
+```ts
+{
+  id?: number,
+  key: string,
+  value: string | number | boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `event_type_id` | `number \| string \| null` | No | — |
+| `event_type_tag` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `email_address` | `string \| null` | No | — |
+| `ip_address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `province` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `created_at_to_seconds_from_epoch` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `custom_event_fields_attributes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_event_fields_attributes full type">
+
+```ts
+{
+  id?: number,
+  key: string,
+  value: string | number | boolean
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a new Fomo event template
+
+**Risk:** `write`
+
+```ts
+await corsair.fomo.api.templates.create({ name: 'New Lead', message: '{{ first_name }} in {{ city }} just downloaded the ebook' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `markdown_enabled` | `boolean` | No | — |
+| `image_url` | `string` | No | — |
+| `use_avatar` | `boolean` | No | — |
+| `use_ip_mapping` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `event_type_tag` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `markdown_enabled` | `boolean \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `use_avatar` | `boolean \| null` | No | — |
+| `use_ip_mapping` | `boolean \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a Fomo event template by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fomo.api.templates.delete({ id: 52 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Retrieve a Fomo event template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fomo.api.templates.get({ id: 52 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `event_type_tag` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `markdown_enabled` | `boolean \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `use_avatar` | `boolean \| null` | No | — |
+| `use_ip_mapping` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List Fomo event templates (event types)
+
+**Risk:** `read`
+
+```ts
+await corsair.fomo.api.templates.list({ per: 20, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `per` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[] \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  event_type_tag?: string | null,
+  name: string,
+  message?: string | null,
+  markdown_enabled?: boolean | null,
+  image_url?: string | null,
+  use_avatar?: boolean | null,
+  use_ip_mapping?: boolean | null
+}[] | {
+  event_types: {
+    id: number,
+    event_type_tag?: string | null,
+    name: string,
+    message?: string | null,
+    markdown_enabled?: boolean | null,
+    image_url?: string | null,
+    use_avatar?: boolean | null,
+    use_ip_mapping?: boolean | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`templates.update`
+
+Update an existing Fomo event template
+
+**Risk:** `write`
+
+```ts
+await corsair.fomo.api.templates.update({ id: 52, name: 'Lead Download' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `message` | `string` | No | — |
+| `markdown_enabled` | `boolean` | No | — |
+| `image_url` | `string` | No | — |
+| `use_avatar` | `boolean` | No | — |
+| `use_ip_mapping` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `event_type_tag` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `markdown_enabled` | `boolean \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `use_avatar` | `boolean \| null` | No | — |
+| `use_ip_mapping` | `boolean \| null` | No | — |
+
+
+
+---
+
