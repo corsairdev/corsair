@@ -12,6 +12,7 @@ jest.mock('corsair/http', () => ({
 	request: jest.fn(),
 }));
 const mockRequest = request as jest.Mock;
+// A partial context: the endpoints read only `key` and `options`, and a full one needs a database.
 const ctx = {
 	key: 'secret',
 	options: { key: 'secret', applicationId: 'app-123' },
@@ -324,6 +325,7 @@ describe('Sendbird public request seam', () => {
 		await expect(groups.users?.get?.(ctx, { user_id: 'u' })).rejects.toThrow();
 	});
 	it('rejects a missing token before contacting Sendbird', async () => {
+		// Same partial context as above, with a blank key.
 		const missing = {
 			...ctx,
 			key: ' ',
@@ -356,6 +358,7 @@ describe('Sendbird public request seam', () => {
 		},
 	);
 	it('rejects invalid application hosts before transport', async () => {
+		// Same partial context as above, with an application ID that is not a bare ID.
 		const bad = {
 			...ctx,
 			options: { key: 'secret', applicationId: 'app.example.com' },

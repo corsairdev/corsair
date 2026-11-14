@@ -16,7 +16,7 @@ async function tenants(options: Parameters<typeof sendbird>[0] = {}) {
 			integration_id: 'sendbird-integration',
 			config: {},
 			dek: undefined,
-		} as never)
+		})
 		.execute();
 	return {
 		testDb,
