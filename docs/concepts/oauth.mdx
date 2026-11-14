@@ -154,6 +154,6 @@ const messages = await tenant.gmail.api.messages.list({ maxResults: 10 });
 
 ## Automatic token refresh
 
-OAuth access tokens expire (typically after 1 hour). Corsair checks token expiry before every API call and refreshes automatically using the stored refresh token. Your code never needs to handle token expiry.
+OAuth access tokens expire (typically after 1 hour). Corsair checks token expiry before every API call and refreshes automatically using the stored refresh token. A read that still comes back 401 gets one more refresh and is repeated. Your code never needs to handle token expiry. It does see a refresh the provider refuses: `AuthMissingError` with `reason: 'revoked'` when the user has withdrawn access and has to reconnect, or `OAuthRefreshError` when your OAuth app's credentials were rejected or the token endpoint failed. See [Expired OAuth tokens](/concepts/error-handling#expired-oauth-tokens).
 
 See [Authentication](/concepts/auth#automatic-token-refresh) for more details.

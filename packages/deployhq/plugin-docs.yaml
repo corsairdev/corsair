@@ -1,0 +1,1453 @@
+{
+  "displayName": "DeployHQ",
+  "description": "Manage DeployHQ accounts, projects, servers, deployments, configuration, users, and deployment resources through its documented REST API.",
+  "recommendedAuth": "api_key",
+  "overviewNote": "Configure the account permalink with the api_key account field account_subdomain or the accountSubdomain plugin option. Authenticated calls use HTTP Basic with the DeployHQ email/username and API key; save the key as Corsair api_key auth and set username in the api_key account fields or plugin option. The API key alone is insufficient. For clients without a database or KEK, provide key, username, and accountSubdomain directly in plugin options and keep credentials in a secret manager. The API guide documents a 40-character API key but no OAuth 2 flow. The OpenAPI document enumerates 216 REST operations, all linked in the package README. Public routes do not send credentials. Writes are not retried; safe GETs use the shared HTTP transport and honor numeric-seconds Retry-After values. The shared transport does not parse HTTP-date Retry-After on JSON routes; fixing that requires shared-core scope. Invoice downloads parse both forms locally. No undocumented pagination or rate limits are assumed. The signup operation posts to `https://api.deployhq.com/api/v1/signup`, so it does not require an existing account subdomain. The [signup guide](https://www.deployhq.com/support/api/signup) shows `https://deployhq.com/api/v1/signup`, but that host answers 301 to www.deployhq.com, which returns 404. SVG status badges are returned as text strings. No inbound webhook contract is documented or implemented.",
+  "apiNotes": {
+    "languageVersions.replaceProjectBuildConfigurationBuildLanguage": "The OpenAPI path requires override_build_configuration_id in the URL, but the parameter list describes the same field as an optional query parameter. This plugin follows the explicit route template and requires the path value; verify this discrepancy with DeployHQ before use.",
+    "languageVersions.updateProjectBuildConfigurationBuildLanguage": "The OpenAPI path requires override_build_configuration_id in the URL, but the parameter list describes the same field as an optional query parameter. This plugin follows the explicit route template and requires the path value; verify this discrepancy with DeployHQ before use.",
+    "projects.listProjectInsights": "The OpenAPI URL `/projects/{id}/insights` contains the path token `{id}`, while its parameter list includes both project_id and id. This implementation follows the URL template and uses its id field; confirm the intended identifier with DeployHQ.",
+    "buildConfigurations.getProjectBuildConfiguration": "The OpenAPI URL `/projects/{project_id}/build_configuration` contains only the `{project_id}` path token, but its parameter list also declares an id path parameter. The extra parameter is omitted because it is not present in the URL template; confirm with DeployHQ.",
+    "security.deleteSecurityApiKey": "The OpenAPI URL `/security/api_keys/{id}` contains the `{id}` path token, but its parameter list declares both identifier and id as path parameters. This implementation uses the URL's id field; confirm the intended identifier with DeployHQ.",
+    "templates.showPublicTemplateTemplatePublic": "The OpenAPI URL `/templates/{id}/public/{id}` repeats the `{id}` path token but defines a single id parameter. The same value is used for both URL occurrences; confirm with DeployHQ whether distinct identifiers are intended.",
+    "projects.statusBadgeStatusBadge": "The parameter list describes an optional identifier that is not present in this route. Use statusBadgeStatusBadgeByIdentifier for the documented URL that includes an identifier.",
+    "invoices.getAccountInvoice": "The route summary says this downloads an invoice PDF, while the OpenAPI response schema declares a JSON string. JSON responses are returned as strings; non-JSON PDF bytes are preserved in a `kind: 'binary'` base64 envelope. The `kind` discriminator is the string literal `'binary'`. Binary responses are capped at 10 MiB by this plugin as a local memory-safety limit, not as a DeployHQ limit.",
+    "globalServers.copyToProjectGlobalServer": "Pass the target project's `identifier` (a UUID) as project_id. The project permalink returns 404 on this route (checked 11-13).",
+    "servers.createProjectServer": "Send the connection fields for the chosen protocol_type inside `server` (for SSH: hostname, username, port, use_ssh_keys or password), as listed in DeployHQ's [create a server guide](https://www.deployhq.com/support/api/servers/create-a-new-server). DeployHQ checks that the host is reachable and answers 422 when it is not.",
+    "environmentVariables.deleteProjectEnvironmentVariable": "DeployHQ answers with 204 No Content, so the operation returns undefined on success.",
+    "templates.createTemplate": "Pass the source project's `identifier` (a UUID) as template.project_id. Without a project_id DeployHQ answers 500 (checked 11-13).",
+    "signup.createSignup": "This public operation posts to `https://api.deployhq.com/api/v1/signup`, not an account subdomain. The [signup guide](https://www.deployhq.com/support/api/signup) shows `https://deployhq.com`, which redirects to a 404. The API key works only after the new account's email address is verified."
+  },
+  "examples": {
+    "write": {
+      "path": "account.replaceAccount",
+      "title": "Update account settings",
+      "args": {
+        "body": {
+          "account": {}
+        }
+      }
+    }
+  },
+  "apiExamples": {
+    "account.getAccount": {},
+    "account.replaceAccount": {
+      "args": {
+        "body": {
+          "account": {}
+        }
+      }
+    },
+    "account.updateAccount": {
+      "args": {
+        "body": {
+          "account": {}
+        }
+      }
+    },
+    "account.billingStatusAccountBillingStatus": {},
+    "invoices.listAccountInvoices": {},
+    "invoices.getAccountInvoice": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "networkAgents.listAgents": {},
+    "networkAgents.createAgent": {
+      "args": {
+        "body": {
+          "agent": {
+            "claim_code": "test"
+          }
+        }
+      }
+    },
+    "networkAgents.replaceAgent": {
+      "args": {
+        "id": "test",
+        "body": {
+          "agent": {}
+        }
+      }
+    },
+    "networkAgents.updateAgent": {
+      "args": {
+        "id": "test",
+        "body": {
+          "agent": {}
+        }
+      }
+    },
+    "networkAgents.deleteAgent": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "networkAgents.revokeAgent": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "signup.createSignup": {
+      "args": {
+        "body": {
+          "email": "test",
+          "password": "test",
+          "terms_accepted": false
+        }
+      }
+    },
+    "beta.createBetumEnrollment": {
+      "args": {
+        "body": {}
+      }
+    },
+    "detection.createDetection": {
+      "args": {
+        "body": {
+          "detection": {}
+        }
+      }
+    },
+    "folders.listFolders": {},
+    "folders.createFolder": {
+      "args": {
+        "body": {
+          "folder": {
+            "name": "test"
+          }
+        }
+      }
+    },
+    "folders.replaceFolder": {
+      "args": {
+        "id": "test",
+        "body": {
+          "folder": {
+            "name": "test"
+          }
+        }
+      }
+    },
+    "folders.updateFolder": {
+      "args": {
+        "id": "test",
+        "body": {
+          "folder": {
+            "name": "test"
+          }
+        }
+      }
+    },
+    "folders.deleteFolder": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalBuildCommands.listGlobalBuildCommands": {},
+    "globalBuildCommands.createGlobalBuildCommand": {
+      "args": {
+        "body": {
+          "build_command": {
+            "command": "test"
+          }
+        }
+      }
+    },
+    "globalBuildCommands.getGlobalBuildCommand": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalBuildCommands.replaceGlobalBuildCommand": {
+      "args": {
+        "id": "test",
+        "body": {
+          "build_command": {
+            "command": "test"
+          }
+        }
+      }
+    },
+    "globalBuildCommands.updateGlobalBuildCommand": {
+      "args": {
+        "id": "test",
+        "body": {
+          "build_command": {
+            "command": "test"
+          }
+        }
+      }
+    },
+    "globalBuildCommands.deleteGlobalBuildCommand": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalConfigFiles.listGlobalConfigFiles": {},
+    "globalConfigFiles.createGlobalConfigFile": {
+      "args": {
+        "body": {
+          "config_file": {}
+        }
+      }
+    },
+    "globalConfigFiles.getGlobalConfigFile": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalConfigFiles.replaceGlobalConfigFile": {
+      "args": {
+        "id": "test",
+        "body": {
+          "config_file": {}
+        }
+      }
+    },
+    "globalConfigFiles.updateGlobalConfigFile": {
+      "args": {
+        "id": "test",
+        "body": {
+          "config_file": {}
+        }
+      }
+    },
+    "globalConfigFiles.deleteGlobalConfigFile": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalEnvironmentVariables.listGlobalEnvironmentVariables": {},
+    "globalEnvironmentVariables.createGlobalEnvironmentVariable": {
+      "args": {
+        "body": {
+          "environment_variable": {
+            "name": "test",
+            "value": "test"
+          }
+        }
+      }
+    },
+    "globalEnvironmentVariables.getGlobalEnvironmentVariable": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalEnvironmentVariables.replaceGlobalEnvironmentVariable": {
+      "args": {
+        "id": "test",
+        "body": {
+          "environment_variable": {}
+        }
+      }
+    },
+    "globalEnvironmentVariables.updateGlobalEnvironmentVariable": {
+      "args": {
+        "id": "test",
+        "body": {
+          "environment_variable": {}
+        }
+      }
+    },
+    "globalEnvironmentVariables.deleteGlobalEnvironmentVariable": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalServers.listGlobalServers": {},
+    "globalServers.createGlobalServer": {
+      "args": {
+        "body": {
+          "server": {}
+        }
+      }
+    },
+    "globalServers.getGlobalServer": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalServers.replaceGlobalServer": {
+      "args": {
+        "id": "test",
+        "body": {
+          "server": {}
+        }
+      }
+    },
+    "globalServers.updateGlobalServer": {
+      "args": {
+        "id": "test",
+        "body": {
+          "server": {}
+        }
+      }
+    },
+    "globalServers.deleteGlobalServer": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalServers.copyToProjectGlobalServer": {
+      "args": {
+        "id": "test",
+        "project_id": "test"
+      }
+    },
+    "globalSshCommands.listGlobalSshCommands": {},
+    "globalSshCommands.createGlobalSshCommand": {
+      "args": {
+        "body": {
+          "command": {
+            "description": "test",
+            "command": "test"
+          }
+        }
+      }
+    },
+    "globalSshCommands.getGlobalSshCommand": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "globalSshCommands.replaceGlobalSshCommand": {
+      "args": {
+        "id": "test",
+        "body": {
+          "command": {}
+        }
+      }
+    },
+    "globalSshCommands.updateGlobalSshCommand": {
+      "args": {
+        "id": "test",
+        "body": {
+          "command": {}
+        }
+      }
+    },
+    "globalSshCommands.deleteGlobalSshCommand": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "hostedResources.listHostedResources": {},
+    "hostedResources.getHostedResource": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "hostedResources.retryProvisionHostedResourceRetryProvision": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "hostedResources.syncHostedResourceSync": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "ipRanges.listIpRanges": {},
+    "languageVersions.listLanguageVersions": {},
+    "managedHosting.listManagedHostingRegions": {},
+    "managedHosting.listManagedHostingSizes": {},
+    "packages.listPackages": {},
+    "profile.getProfile": {},
+    "profile.replaceProfile": {
+      "args": {
+        "body": {
+          "user": {}
+        }
+      }
+    },
+    "profile.updateProfile": {
+      "args": {
+        "body": {
+          "user": {}
+        }
+      }
+    },
+    "projects.listProjects": {},
+    "projects.createProject": {
+      "args": {
+        "body": {
+          "project": {}
+        }
+      }
+    },
+    "projects.getProject": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "projects.replaceProject": {
+      "args": {
+        "id": "test",
+        "body": {
+          "project": {}
+        }
+      }
+    },
+    "projects.updateProject": {
+      "args": {
+        "id": "test",
+        "body": {
+          "project": {}
+        }
+      }
+    },
+    "projects.deleteProject": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "projects.aiDeploymentOverviewProject": {
+      "args": {
+        "id": "test",
+        "body": {
+          "end_ref": "test"
+        }
+      }
+    },
+    "projects.listProjectInsights": {
+      "args": {
+        "id": "test",
+        "period": "test"
+      }
+    },
+    "projects.regenerateKeyProjectRegenerateKey": {
+      "args": {
+        "id": "test",
+        "body": {}
+      }
+    },
+    "projects.starProject": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "projects.undeployedChangesProjectUndeployedChange": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "projects.uploadKeyProject": {
+      "args": {
+        "id": "test",
+        "body": {
+          "project": {
+            "custom_private_key": "test"
+          }
+        }
+      }
+    },
+    "automaticDeployments.listProjectAutoDeployments": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "automaticDeployments.createProjectAutoDeployment": {
+      "args": {
+        "project_id": "test",
+        "body": {}
+      }
+    },
+    "buildCacheFiles.listProjectBuildCacheFiles": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "buildCacheFiles.createProjectBuildCacheFile": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "build_cache_file": {
+            "path": "test"
+          }
+        }
+      }
+    },
+    "buildCacheFiles.replaceProjectBuildCacheFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "build_cache_file": {
+            "path": "test"
+          }
+        }
+      }
+    },
+    "buildCacheFiles.updateProjectBuildCacheFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "build_cache_file": {
+            "path": "test"
+          }
+        }
+      }
+    },
+    "buildCacheFiles.deleteProjectBuildCacheFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "buildCommands.listProjectBuildCommands": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "buildCommands.createProjectBuildCommand": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "build_command": {
+            "command": "test"
+          }
+        }
+      }
+    },
+    "buildCommands.linkGlobalProjectBuildCommandLinkGlobal": {
+      "args": {
+        "project_id": "test",
+        "build_command_id": "test"
+      }
+    },
+    "buildCommands.unlinkGlobalProjectBuildCommandUnlinkGlobal": {
+      "args": {
+        "project_id": "test",
+        "build_command_id": "test"
+      }
+    },
+    "buildCommands.replaceProjectBuildCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "build_command": {
+            "command": "test"
+          }
+        }
+      }
+    },
+    "buildCommands.updateProjectBuildCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "build_command": {
+            "command": "test"
+          }
+        }
+      }
+    },
+    "buildCommands.deleteProjectBuildCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "buildConfigurations.getProjectBuildConfiguration": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "buildConfigurations.listProjectBuildConfigurations": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "buildConfigurations.createProjectBuildConfiguration": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "buildConfigurations.getProjectBuildConfigurationById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "buildConfigurations.replaceProjectBuildConfiguration": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "build_environment": {}
+        }
+      }
+    },
+    "buildConfigurations.updateProjectBuildConfiguration": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "build_environment": {}
+        }
+      }
+    },
+    "buildConfigurations.deleteProjectBuildConfiguration": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "languageVersions.replaceProjectBuildConfigurationBuildLanguage": {
+      "args": {
+        "project_id": "test",
+        "override_build_configuration_id": "test",
+        "id": "test",
+        "body": {
+          "build_environment": {
+            "version": "test"
+          }
+        }
+      }
+    },
+    "languageVersions.updateProjectBuildConfigurationBuildLanguage": {
+      "args": {
+        "project_id": "test",
+        "override_build_configuration_id": "test",
+        "id": "test",
+        "body": {
+          "build_environment": {
+            "version": "test"
+          }
+        }
+      }
+    },
+    "buildKnownHosts.listProjectBuildKnownHosts": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "buildKnownHosts.createProjectBuildKnownHost": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "build_known_host": {
+            "hostname": "test",
+            "public_key": "test"
+          }
+        }
+      }
+    },
+    "buildKnownHosts.deleteProjectBuildKnownHost": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "languageVersions.replaceProjectBuildLanguage": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "override_build_configuration_id": "test",
+        "body": {
+          "build_environment": {
+            "version": "test"
+          }
+        }
+      }
+    },
+    "languageVersions.updateProjectBuildLanguage": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "override_build_configuration_id": "test",
+        "body": {
+          "build_environment": {
+            "version": "test"
+          }
+        }
+      }
+    },
+    "sshCommands.listProjectCommands": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "sshCommands.createProjectCommand": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "command": {
+            "description": "test",
+            "command": "test",
+            "timing": "test",
+            "timeout": 1
+          }
+        }
+      }
+    },
+    "sshCommands.linkGlobalProjectCommandLinkGlobal": {
+      "args": {
+        "project_id": "test",
+        "command_id": "test"
+      }
+    },
+    "sshCommands.unlinkGlobalProjectCommandUnlinkGlobal": {
+      "args": {
+        "project_id": "test",
+        "command_id": "test"
+      }
+    },
+    "sshCommands.getProjectCommandById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "sshCommands.replaceProjectCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "command": {}
+        }
+      }
+    },
+    "sshCommands.updateProjectCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "command": {}
+        }
+      }
+    },
+    "sshCommands.deleteProjectCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "configFiles.listProjectConfigFiles": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "configFiles.createProjectConfigFile": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "config_file": {}
+        }
+      }
+    },
+    "configFiles.getProjectConfigFileById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "configFiles.replaceProjectConfigFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "config_file": {}
+        }
+      }
+    },
+    "configFiles.updateProjectConfigFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "config_file": {}
+        }
+      }
+    },
+    "configFiles.deleteProjectConfigFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "deploymentChecks.listProjectDeploymentChecks": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "deploymentChecks.createProjectDeploymentCheck": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "deployment_check": {
+            "name": "test",
+            "stage": "test",
+            "check_type": "test"
+          }
+        }
+      }
+    },
+    "deploymentChecks.getProjectDeploymentCheckById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "deploymentChecks.replaceProjectDeploymentCheck": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "deployment_check": {}
+        }
+      }
+    },
+    "deploymentChecks.updateProjectDeploymentCheck": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "deployment_check": {}
+        }
+      }
+    },
+    "deploymentChecks.deleteProjectDeploymentCheck": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "deployments.listProjectDeployments": {
+      "args": {
+        "project_id": "test",
+        "page": 1,
+        "per_page": 1,
+        "to": "test",
+        "currently_running": "test"
+      }
+    },
+    "deployments.createProjectDeployment": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "deployment": {}
+        }
+      }
+    },
+    "deployments.listProjectDeploymentStepLogs": {
+      "args": {
+        "project_id": "test",
+        "deployment_id": "test",
+        "step_id": "test",
+        "before": 1,
+        "download": false
+      }
+    },
+    "deployments.getProjectDeploymentById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "deployments.abortProjectDeployment": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "deployments.retryProjectDeploymentRetry": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "deployments.rollbackProjectDeployment": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "mode": "test",
+        "copy_config_files": false,
+        "run_build_commands": false
+      }
+    },
+    "environmentVariables.listProjectEnvironmentVariables": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "environmentVariables.createProjectEnvironmentVariable": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "environment_variable": {
+            "name": "test",
+            "value": "test"
+          }
+        }
+      }
+    },
+    "environmentVariables.getProjectEnvironmentVariableById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "environmentVariables.replaceProjectEnvironmentVariable": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "environment_variable": {}
+        }
+      }
+    },
+    "environmentVariables.updateProjectEnvironmentVariable": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "environment_variable": {}
+        }
+      }
+    },
+    "environmentVariables.deleteProjectEnvironmentVariable": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "excludedFiles.listProjectExcludedFiles": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "excludedFiles.createProjectExcludedFile": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "excluded_file": {
+            "path": "test"
+          }
+        }
+      }
+    },
+    "excludedFiles.getProjectExcludedFileById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "excludedFiles.replaceProjectExcludedFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "excluded_file": {
+            "path": "test"
+          }
+        }
+      }
+    },
+    "excludedFiles.updateProjectExcludedFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "excluded_file": {
+            "path": "test"
+          }
+        }
+      }
+    },
+    "excludedFiles.deleteProjectExcludedFile": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "integrations.listProjectIntegrations": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "integrations.createProjectIntegration": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "integration": {
+            "hook_type": "test"
+          }
+        }
+      }
+    },
+    "integrations.getProjectIntegrationById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "integrations.replaceProjectIntegration": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "integration": {}
+        }
+      }
+    },
+    "integrations.updateProjectIntegration": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "integration": {}
+        }
+      }
+    },
+    "integrations.deleteProjectIntegration": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "languageVersions.listProjectLanguageVersions": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "repositories.getProjectRepository": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "repositories.createProjectRepository": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "repository": {}
+        }
+      }
+    },
+    "repositories.replaceProjectRepository": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "repository": {}
+        }
+      }
+    },
+    "repositories.updateProjectRepository": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "repository": {}
+        }
+      }
+    },
+    "repositories.branchesProjectRepository": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "repositories.commitInfoProjectRepository": {
+      "args": {
+        "project_id": "test",
+        "commit": "test"
+      }
+    },
+    "repositories.latestRevisionProjectRepository": {
+      "args": {
+        "project_id": "test",
+        "branch": "test"
+      }
+    },
+    "repositories.recentCommitsProjectRepository": {
+      "args": {
+        "project_id": "test",
+        "branch": "test",
+        "update": "test"
+      }
+    },
+    "scheduledDeployments.listProjectScheduledDeployments": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "scheduledDeployments.createProjectScheduledDeployment": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "scheduled_deployment": {
+            "server_identifier": "test",
+            "frequency": "test"
+          }
+        }
+      }
+    },
+    "scheduledDeployments.getProjectScheduledDeploymentById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "scheduledDeployments.replaceProjectScheduledDeployment": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "scheduled_deployment": {}
+        }
+      }
+    },
+    "scheduledDeployments.updateProjectScheduledDeployment": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "scheduled_deployment": {}
+        }
+      }
+    },
+    "scheduledDeployments.deleteProjectScheduledDeployment": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "serverGroups.listProjectServerGroups": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "serverGroups.createProjectServerGroup": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "server_group": {}
+        }
+      }
+    },
+    "serverGroups.getProjectServerGroupById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "serverGroups.replaceProjectServerGroup": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "server_group": {}
+        }
+      }
+    },
+    "serverGroups.updateProjectServerGroup": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "server_group": {}
+        }
+      }
+    },
+    "serverGroups.deleteProjectServerGroup": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "servers.listProjectServers": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "servers.createProjectServer": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "server": {}
+        }
+      }
+    },
+    "servers.getProjectServerById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "servers.replaceProjectServer": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "server": {}
+        }
+      }
+    },
+    "servers.updateProjectServer": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "server": {}
+        }
+      }
+    },
+    "servers.deleteProjectServer": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "servers.resetHostKeyProjectServer": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "servers.serverMetricsProjectServerServerMetric": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "testAccess.createProjectServerTestAccess": {
+      "args": {
+        "project_id": "test",
+        "server_id": "test"
+      }
+    },
+    "sshCommands.listProjectSshCommands": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "sshCommands.createProjectSshCommand": {
+      "args": {
+        "project_id": "test",
+        "body": {
+          "command": {
+            "description": "test",
+            "command": "test",
+            "timing": "test",
+            "timeout": 1
+          }
+        }
+      }
+    },
+    "sshCommands.getProjectSshCommandById": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "sshCommands.replaceProjectSshCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "command": {}
+        }
+      }
+    },
+    "sshCommands.updateProjectSshCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test",
+        "body": {
+          "command": {}
+        }
+      }
+    },
+    "sshCommands.deleteProjectSshCommand": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "testAccess.createProjectTestAccess": {
+      "args": {
+        "project_id": "test"
+      }
+    },
+    "testAccess.getProjectTestAccess": {
+      "args": {
+        "project_id": "test",
+        "id": "test"
+      }
+    },
+    "account.resetPasswordSubmitReset": {
+      "args": {
+        "body": {
+          "email_address": "test"
+        }
+      }
+    },
+    "security.createSecurityApiKey": {
+      "args": {
+        "body": {
+          "api_key": {
+            "description": "test"
+          }
+        }
+      }
+    },
+    "security.deleteSecurityApiKey": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "sshKeys.listSshKeys": {},
+    "sshKeys.createSshKey": {
+      "args": {
+        "body": {
+          "key_pair": {
+            "title": "test"
+          }
+        }
+      }
+    },
+    "sshKeys.deleteSshKey": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "sshKeys.downloadPrivateKeySshKeyDownloadPrivateKey": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "teams.listTeams": {},
+    "teams.createTeam": {
+      "args": {
+        "body": {
+          "team": {
+            "name": "test"
+          }
+        }
+      }
+    },
+    "teams.getTeam": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "teams.replaceTeam": {
+      "args": {
+        "id": "test",
+        "body": {
+          "team": {}
+        }
+      }
+    },
+    "teams.updateTeam": {
+      "args": {
+        "id": "test",
+        "body": {
+          "team": {}
+        }
+      }
+    },
+    "teams.deleteTeam": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "templates.listTemplates": {},
+    "templates.createTemplate": {
+      "args": {
+        "body": {
+          "template": {
+            "name": "sample",
+            "project_id": "00000000-0000-0000-0000-000000000000"
+          }
+        }
+      }
+    },
+    "templates.publicTemplatesTemplate": {
+      "args": {
+        "framework_type": "test"
+      }
+    },
+    "templates.replaceTemplate": {
+      "args": {
+        "id": "test",
+        "body": {
+          "template": {}
+        }
+      }
+    },
+    "templates.updateTemplate": {
+      "args": {
+        "id": "test",
+        "body": {
+          "template": {}
+        }
+      }
+    },
+    "templates.deleteTemplate": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "templates.showPublicTemplateTemplatePublic": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "users.listUsers": {},
+    "users.createUser": {
+      "args": {
+        "body": {
+          "user": {
+            "first_name": "test",
+            "email_address": "test"
+          }
+        }
+      }
+    },
+    "users.getUser": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "users.replaceUser": {
+      "args": {
+        "id": "test",
+        "body": {
+          "user": {}
+        }
+      }
+    },
+    "users.updateUser": {
+      "args": {
+        "id": "test",
+        "body": {
+          "user": {}
+        }
+      }
+    },
+    "users.deleteUser": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "users.resendInvitationUserResendInvitation": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "zones.listZones": {},
+    "projects.statusBadgeStatusBadge": {
+      "args": {
+        "id": "test"
+      }
+    },
+    "projects.statusBadgeStatusBadgeByIdentifier": {
+      "args": {
+        "id": "test",
+        "identifier": "test"
+      }
+    }
+  }
+}
