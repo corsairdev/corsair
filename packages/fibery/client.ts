@@ -56,22 +56,71 @@ function parseRetryAfter(header: string | null): number | undefined {
 		: undefined;
 }
 
+function redactKey(text: string, apiKey: string | undefined): string {
+	return text
+		.replaceAll(apiKey || '\u0000', '[REDACTED]')
+		.replace(/(?:Token|Bearer)\s+\S+/gi, '[REDACTED]');
+}
+
+// Core's ApiError goes through (R8) so its status, retryAfter and rate-limit fields reach core (OAuth
+// refresh on 401) and the error handlers. It is rebuilt without the sent command, the query, the URL's
+// query string and Fibery's reply, which can echo entity field values.
+function sanitizedApiError(
+	error: ApiError,
+	apiKey: string | undefined,
+): ApiError {
+	const url = new URL(error.url);
+	url.search = '';
+	return new ApiError(
+		{
+			...error.request,
+			body: undefined,
+			formData: undefined,
+			query: undefined,
+		},
+		{
+			url: url.toString(),
+			ok: false,
+			status: error.status,
+			statusText: redactKey(error.statusText ?? '', apiKey),
+			body: undefined,
+		},
+		`Fibery request failed with HTTP ${error.status}.`,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+function httpError(
+	path: string,
+	baseUrl: string,
+	method: 'GET' | 'POST',
+	response: Response,
+	message: string,
+): ApiError {
+	return new ApiError(
+		{ method, url: path },
+		{
+			url: `${baseUrl}${path}`,
+			ok: false,
+			status: response.status,
+			statusText: '',
+			body: undefined,
+		},
+		message,
+		{ retryAfter: parseRetryAfter(response.headers.get('retry-after')) },
+	);
+}
+
 // `unknown` because JavaScript can throw values that are not Error instances.
-function safeError(error: unknown, apiKey: string | undefined): FiberyAPIError {
-	if (error instanceof ApiError) {
-		return new FiberyAPIError(
-			`Fibery request failed with HTTP ${error.status}.`,
-			error.status,
-			undefined,
-			error.retryAfter,
-		);
-	}
+function safeError(error: unknown, apiKey: string | undefined): Error {
+	if (error instanceof ApiError) return sanitizedApiError(error, apiKey);
 	if (error instanceof Error) {
-		return new FiberyAPIError(
-			error.message
-				.replaceAll(apiKey ?? '\u0000', '[REDACTED]')
-				.replace(/(?:Token|Bearer)\s+\S+/gi, '[REDACTED]'),
-		);
+		return new FiberyAPIError(redactKey(error.message, apiKey));
 	}
 	return new FiberyAPIError('Unknown Fibery API error.');
 }
@@ -190,6 +239,7 @@ export async function makeFiberyJsonRpc(
 	});
 	const rpcResponse = z
 		.object({
+			jsonrpc: z.literal('2.0'),
 			result: z.json().optional(),
 			error: z
 				.object({ code: z.number(), message: z.string() })
@@ -246,13 +296,13 @@ export async function makeFiberyBinaryRequest(
 			signal: AbortSignal.timeout(20_000),
 		});
 		if (!response.ok) {
-			const retryAfter = parseRetryAfter(response.headers.get('retry-after'));
 			await response.body?.cancel().catch(() => undefined);
-			throw new FiberyAPIError(
+			throw httpError(
+				path,
+				config.BASE,
+				method,
+				response,
 				`Fibery file request failed with HTTP ${response.status}.`,
-				response.status,
-				undefined,
-				retryAfter,
 			);
 		}
 		const bytes = new Uint8Array(await response.arrayBuffer());
@@ -292,13 +342,13 @@ export async function makeFiberyFileUpload(
 			signal: AbortSignal.timeout(20_000),
 		});
 		if (!response.ok) {
-			const retryAfter = parseRetryAfter(response.headers.get('retry-after'));
 			await response.body?.cancel().catch(() => undefined);
-			throw new FiberyAPIError(
+			throw httpError(
+				'/api/files',
+				config.BASE,
+				'POST',
+				response,
 				`Fibery file upload failed with HTTP ${response.status}.`,
-				response.status,
-				undefined,
-				retryAfter,
 			);
 		}
 		// `unknown` because provider JSON is untrusted until the output schema validates it.

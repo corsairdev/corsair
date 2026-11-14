@@ -239,10 +239,63 @@ describe('Fibery HTTP client', () => {
 		const error = await makeFiberyRequest('/api/commands', 'token', {
 			workspaceUrl,
 		}).catch((caught: unknown) => caught);
-		// `unknown` because a rejected promise has no static error type; the assertion narrows it.
-		if (!(error instanceof Error))
-			throw new Error('Expected a sanitized Error.');
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error).toMatchObject({ status: 401 });
+		if (!(error instanceof ApiError))
+			throw new Error('Expected core ApiError.');
 		expect(error.message).not.toContain('token');
+		expect(error.body).toBeUndefined();
+	});
+
+	it("passes core's ApiError through without the sent command, query or reply", async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/api/commands',
+					query: { q: 'jane@example.com' },
+					body: {
+						command: 'fibery.entity/create',
+						args: { 'CRM/Email': 'jane@example.com' },
+					},
+				},
+				{
+					url: `${workspaceUrl}/api/commands?q=jane%40example.com`,
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					body: { message: 'jane@example.com rejected' },
+				},
+				'jane@example.com rejected',
+				{ retryAfter: 1500, rateLimitRemaining: 0 },
+			),
+		);
+		const error = await makeFiberyRequest('/api/commands', 'api-secret', {
+			workspaceUrl,
+			method: 'POST',
+		}).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError))
+			throw new Error('Expected core ApiError.');
+		expect(error).toMatchObject({
+			status: 429,
+			retryAfter: 1500,
+			rateLimitRemaining: 0,
+		});
+		expect(error.url).toBe(`${workspaceUrl}/api/commands`);
+		expect(error.request.body).toBeUndefined();
+		expect(error.request.query).toBeUndefined();
+		expect(JSON.stringify({ ...error, message: error.message })).not.toContain(
+			'jane',
+		);
+	});
+
+	it('rejects a JSON-RPC answer that is not a 2.0 envelope', async () => {
+		mockRequest.mockResolvedValue({});
+		await expect(
+			makeFiberyJsonRpc('delete-views', { ids: [] }, 'api-secret', {
+				workspaceUrl,
+			}),
+		).rejects.toThrow('invalid JSON-RPC response');
 	});
 });
