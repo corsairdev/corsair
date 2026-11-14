@@ -13,6 +13,9 @@ import {
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.FATHOM_API_KEY ?? '';
+if (LIVE_KEY.length === 0) {
+	console.warn('Skipping Fathom live API tests: FATHOM_API_KEY is not set.');
+}
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Fathom live API smoke tests (env-gated)', () => {

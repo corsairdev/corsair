@@ -17,6 +17,8 @@ jest.mock('./client', () => {
 const mockedRequest = jest.mocked(client.makeFathomRequest);
 jest.mocked(logEventFromContext);
 
+// unknown: the endpoints read only key, $getAccountId and options here, so the
+// test builds that subset instead of a full plugin context.
 const ctx = {
 	endpoints: {},
 	$getAccountId: () => Promise.resolve('test-account'),
