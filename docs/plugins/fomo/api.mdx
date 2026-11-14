@@ -166,6 +166,7 @@ await corsair.fomo.api.application.update({ name: 'My Online Store', position: '
 | `id` | `number \| string` | No | — |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
+| `language` | `string` | No | — |
 | `page_load` | `number` | No | — |
 | `maximum_per_page` | `number` | No | — |
 | `display_for` | `number` | No | — |
@@ -182,6 +183,20 @@ await corsair.fomo.api.application.update({ name: 'My Online Store', position: '
 | `theme` | `theme1 \| theme2 \| custom` | No | — |
 | `utm_source` | `string` | No | — |
 | `utm_medium` | `string` | No | — |
+| `event_types_attributes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="event_types_attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -225,7 +240,7 @@ await corsair.fomo.api.application.update({ name: 'My Online Store', position: '
 
 Create a new Fomo event; it shows as a social-proof notification on the site's live feed
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.fomo.api.events.create({ event_type_id: 123, first_name: 'John', city: 'New York', title: 'Product Purchase', url: 'https://example.com/item' });
