@@ -1,306 +1,315 @@
 export const EncodianEndpointMeta = {
 	'barcodes.createBarcode': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Barcode - Create',
 	},
 	'barcodes.readBarcodeFromDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Barcode - Read from Document',
 	},
 	'barcodes.aiBarcodeRead': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Barcode - Read (AI)',
 	},
 	'barcodes.readBarcodeFromImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Barcode - Read from Image',
 	},
 	'barcodes.createQrCode': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QR Code - Create',
 	},
 	'barcodes.readQrCodeFromDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QR Code - Read from Document',
 	},
 	'barcodes.readQrCodeFromImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QR Code - Read from Image',
 	},
 	'barcodes.createSwissQrCode': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Swiss QR Code - Create',
 	},
 	'barcodes.readSwissQrCodesFromDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Swiss QR Code - Read from Document',
 	},
 	'barcodes.readSwissQrCodeFromImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Swiss QR Code - Read from Image',
 	},
-	'conversion.convertCad': { riskLevel: 'write', description: 'Convert - CAD' },
+	'conversion.convertCad': {
+		riskLevel: 'destructive',
+		description: 'Convert - CAD',
+	},
 	'conversion.convertMailMessage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - Email',
 	},
 	'conversion.convertExcel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - Excel',
 	},
 	'conversion.basicConversion': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - File to PDF',
 	},
 	'conversion.convertHeicToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - HEIC to PDF',
 	},
 	'conversion.htmlToImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - HTML to Image',
 	},
 	'conversion.htmlToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - HTML to PDF',
 	},
 	'conversion.htmlToPDFV2': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - HTML to PDF (V2)',
 	},
 	'conversion.htmlToWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - HTML to Word',
 	},
 	'conversion.convertImageToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - Image to PDF',
 	},
 	'conversion.convertJsonToExcel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - JSON to Excel',
 	},
 	'conversion.convertPdfToExcel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - PDF to Excel',
 	},
 	'conversion.convertPdfToImages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - PDF to Images',
 	},
 	'conversion.convertPdfToJpg': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - PDF to JPG',
 	},
 	'conversion.convertToPdfA': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - PDF to PDFA',
 	},
 	'conversion.convertPdfToPng': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - PDF to PNG',
 	},
 	'conversion.convertPdfToTiff': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - PDF to TIFF',
 	},
 	'conversion.convertPdfToWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - PDF to Word',
 	},
 	'conversion.convertPowerPoint': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - PowerPoint',
 	},
 	'conversion.textToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - Text to PDF',
 	},
 	'conversion.convertVisio': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - Visio',
 	},
 	'conversion.convertWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - Word',
 	},
 	'conversion.wordToPdfForm': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Convert - Word to PDF Form',
 	},
-	'excel.parseCsv': { riskLevel: 'write', description: 'CSV - Parse' },
+	'excel.parseCsv': { riskLevel: 'destructive', description: 'CSV - Parse' },
 	'excel.excelAddImageHeaderOrFooter': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Add Image Header or Footer',
 	},
 	'excel.addRowsToExcel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Add Rows',
 	},
 	'excel.excelAddTextHeadersAndFooters': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Add Text Header or Footer',
 	},
 	'excel.excelWatermarkText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Add Text Watermark',
 	},
 	'excel.deleteRowsFromExcel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Delete Rows',
 	},
 	'excel.deleteExcelWorksheets': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Delete Worksheets',
 	},
 	'excel.getRowsFromExcel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Extract Rows',
 	},
 	'excel.extractExcelWorksheets': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Extract Worksheets',
 	},
 	'excel.mergeArrayOfExcelDocuments': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Merge Files',
 	},
 	'excel.mergeExcelRows': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Merge Rows',
 	},
 	'excel.excelMergeWorksheets': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Merge Worksheets',
 	},
 	'excel.populateExcel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Populate',
 	},
 	'excel.excelRemoveHeadersAndFooters': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Remove Headers and Footers',
 	},
 	'excel.excelWatermarkTextRemove': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Remove Text Watermark',
 	},
 	'excel.excelRenameWorksheets': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Rename Worksheets',
 	},
 	'excel.excelReplaceText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Replace Text',
 	},
-	'excel.secureExcel': { riskLevel: 'write', description: 'Excel - Secure' },
+	'excel.secureExcel': {
+		riskLevel: 'destructive',
+		description: 'Excel - Secure',
+	},
 	'excel.excelSeparateWorksheets': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Separate Worksheets',
 	},
-	'excel.unlockExcel': { riskLevel: 'write', description: 'Excel - Unlock' },
+	'excel.unlockExcel': {
+		riskLevel: 'destructive',
+		description: 'Excel - Unlock',
+	},
 	'excel.updateRowsInExcel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Excel - Update Rows',
 	},
 	'general.aiProcessBankCheckUs': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Bank Check (US)',
 	},
 	'general.aiProcessBankStatementUs': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Bank Statement (US)',
 	},
 	'general.aiProcessContract': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Contract',
 	},
 	'general.aiProcessCreditCard': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Credit Card',
 	},
 	'general.aiProcessHealthInsuranceCardUs': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Health Insurance Card (US)',
 	},
 	'general.aiProcessIDDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process ID Document',
 	},
 	'general.aiProcessInvoice': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Invoice',
 	},
 	'general.aiProcessMarriageCertificateUs': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Marriage Certificate (US)',
 	},
 	'general.aiProcessMortgageUs': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Mortgage Document (US)',
 	},
 	'general.aiProcessPayStubUs': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Pay Stub (US)',
 	},
 	'general.aiProcessReceipt': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Receipt',
 	},
 	'general.aiProcessTaxUs': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Process Tax Document (US)',
 	},
 	'general.aiRunPromptText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI – Run Prompt (Text)',
 	},
 	'general.aiSpeechToText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Speech to Text',
 	},
 	'general.aiTranslateFile': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Translate File',
 	},
 	'general.aiTranslateTextMultiple': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Translate Text (Multiple)',
 	},
 	'general.aiTranslateText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'AI - Translate Text (Single)',
 	},
 	'general.addToZip': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Archive (ZIP) - Create',
 	},
 	'general.extractFromArchive': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Archive (ZIP) - Extract',
 	},
 	'general.extractFromArchiveV2': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Archive (ZIP) - Extract (V2)',
 	},
 	'general.getEmailAttachments': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Email - Extract Attachments',
 	},
 	'general.getEmailInfo': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Email - Extract Metadata',
 	},
 	'general.searchAndReplaceText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'File - Search and Replace Text',
 	},
 	'general.searchAndReplaceTextWithImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'File - Replace Text with Image',
 	},
 	'general.buyAdditionalCredits': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Subscription - Buy Additional Credits (charges the subscription for extra Flowr credits)',
 	},
@@ -313,644 +322,668 @@ export const EncodianEndpointMeta = {
 		description: 'Subscription - Trigr Status',
 	},
 	'image.addImageWatermarkToImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Add Image Watermark',
 	},
 	'image.addTextWatermarkToImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Add Text Watermark',
 	},
 	'image.imageCleanUpDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Clean Up (Document)',
 	},
 	'image.imageCleanUpPhoto': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Clean Up (Photo)',
 	},
 	'image.compressImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Compress',
 	},
 	'image.imageConvertFormat': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Convert Format',
 	},
 	'image.imageConvertToGrayscale': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Convert to Grayscale',
 	},
-	'image.cropImage': { riskLevel: 'write', description: 'Image - Crop' },
+	'image.cropImage': { riskLevel: 'destructive', description: 'Image - Crop' },
 	'image.getImageInfo': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Extract Metadata',
 	},
 	'image.imageExtractText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Extract Text (AI OCR)',
 	},
-	'image.flipImage': { riskLevel: 'write', description: 'Image - Flip' },
+	'image.flipImage': { riskLevel: 'destructive', description: 'Image - Flip' },
 	'image.imageRemoveExifTags': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Remove EXIF Tags',
 	},
-	'image.resizeImage': { riskLevel: 'write', description: 'Image - Resize' },
-	'image.rotateImage': { riskLevel: 'write', description: 'Image - Rotate' },
+	'image.resizeImage': {
+		riskLevel: 'destructive',
+		description: 'Image - Resize',
+	},
+	'image.rotateImage': {
+		riskLevel: 'destructive',
+		description: 'Image - Rotate',
+	},
 	'image.rotateImageByExifData': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Image - Rotate by EXIF Data',
 	},
 	'pdf.addAttachmentsToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Add Attachments',
 	},
 	'pdf.addHtmlHeaderFooter': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Add HTML Header or Footer',
 	},
 	'pdf.addImageWatermark': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Add Image Watermark',
 	},
 	'pdf.addImageWatermarkAdvanced': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Add Image Watermark (Advanced)',
 	},
 	'pdf.addPageNumbers': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Add Page Numbers',
 	},
 	'pdf.addTextWatermark': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Add Text Watermark',
 	},
 	'pdf.addTextWatermarkAdvanced': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Add Text Watermark (Advanced)',
 	},
 	'pdf.aiOcrPdfDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Apply OCR (AI)',
 	},
 	'pdf.ocrPdfDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Apply OCR (Standard)',
 	},
 	'pdf.pdfCheckPassword': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Check Password Protection',
 	},
-	'pdf.compressPdf': { riskLevel: 'write', description: 'PDF - Compress' },
+	'pdf.compressPdf': {
+		riskLevel: 'destructive',
+		description: 'PDF - Compress',
+	},
 	'pdf.pdfCreateZUGFeRDInvoice': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Create ZUGFeRD Invoice',
 	},
 	'pdf.pdfDeleteBlankPages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Delete Blank Pages',
 	},
 	'pdf.deletePdfPages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Delete Pages',
 	},
 	'pdf.extractAttachmentsFromPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Attachments',
 	},
 	'pdf.getPdfFormData': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Form Data',
 	},
 	'pdf.pdfExtractHyperlinks': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Hyperlinks',
 	},
 	'pdf.extractImagesAll': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Images',
 	},
 	'pdf.extractImages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Images from Regions',
 	},
 	'pdf.getPdfDocumentInfo': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Metadata',
 	},
 	'pdf.extractPdfPages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Pages',
 	},
 	'pdf.extractPdfPagesByText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Pages by Text',
 	},
 	'pdf.pdfExtractTableData': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Table Data',
 	},
 	'pdf.getPdfTextLayer': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Text',
 	},
 	'pdf.pdfExtractTextByPage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Text by Page',
 	},
 	'pdf.extractTextRegions': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Extract Text from Regions',
 	},
-	'pdf.fillPdfForm': { riskLevel: 'write', description: 'PDF - Fill Form' },
-	'pdf.flattenPdf': { riskLevel: 'write', description: 'PDF - Flatten' },
+	'pdf.fillPdfForm': {
+		riskLevel: 'destructive',
+		description: 'PDF - Fill Form',
+	},
+	'pdf.flattenPdf': { riskLevel: 'destructive', description: 'PDF - Flatten' },
 	'pdf.pdfFlattenFields': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Flatten Fields',
 	},
 	'pdf.pdfGenerateBookmarks': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Generate Bookmarks',
 	},
 	'pdf.insertHtmlToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Insert HTML',
 	},
 	'pdf.pdfInsertPages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Insert Pages',
 	},
 	'pdf.pdfInsertToc': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Insert Table of Contents',
 	},
-	'pdf.pdfLinearize': { riskLevel: 'write', description: 'PDF - Linearize' },
+	'pdf.pdfLinearize': {
+		riskLevel: 'destructive',
+		description: 'PDF - Linearize',
+	},
 	'pdf.mergeArrayOfDocumentsToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Merge Files',
 	},
 	'pdf.mergeDocumentsToPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Merge Specific Files',
 	},
-	'pdf.redactPdf': { riskLevel: 'write', description: 'PDF - Redact' },
+	'pdf.redactPdf': { riskLevel: 'destructive', description: 'PDF - Redact' },
 	'pdf.pdfRemoveDigitalSignature': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Remove Digital Signature',
 	},
 	'pdf.removeWatermarksFromPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Remove Watermarks',
 	},
-	'pdf.repairPdf': { riskLevel: 'write', description: 'PDF - Repair' },
+	'pdf.repairPdf': { riskLevel: 'destructive', description: 'PDF - Repair' },
 	'pdf.pdfReplaceTextWithImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Replace Text with Image',
 	},
-	'pdf.resizePdf': { riskLevel: 'write', description: 'PDF - Resize' },
+	'pdf.resizePdf': { riskLevel: 'destructive', description: 'PDF - Resize' },
 	'pdf.rotatePdfPages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Rotate Pages',
 	},
 	'pdf.pdfSearchAndReplaceText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Replace Text',
 	},
-	'pdf.securePdfDocument': { riskLevel: 'write', description: 'PDF - Secure' },
+	'pdf.securePdfDocument': {
+		riskLevel: 'destructive',
+		description: 'PDF - Secure',
+	},
 	'pdf.pdfSetMetadata': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Set Metadata',
 	},
 	'pdf.setPdfPrivileges': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Set Privileges',
 	},
-	'pdf.signPdf': { riskLevel: 'write', description: 'PDF - Sign' },
-	'pdf.splitDocument': { riskLevel: 'write', description: 'PDF - Split' },
+	'pdf.signPdf': { riskLevel: 'destructive', description: 'PDF - Sign' },
+	'pdf.splitDocument': { riskLevel: 'destructive', description: 'PDF - Split' },
 	'pdf.splitPdfByBarcode': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Split by Barcode',
 	},
 	'pdf.splitPdfByText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Split by Text',
 	},
-	'pdf.unlockPdfDocument': { riskLevel: 'write', description: 'PDF - Unlock' },
+	'pdf.unlockPdfDocument': {
+		riskLevel: 'destructive',
+		description: 'PDF - Unlock',
+	},
 	'pdf.pdfUpdateHyperlinks': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Update Hyperlinks',
 	},
 	'pdf.validatePdfTextLayer': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PDF - Validate Text Layer',
 	},
 	'powerPoint.compressPowerPoint': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PowerPoint - Compress',
 	},
 	'powerPoint.powerPointDeleteSlides': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PowerPoint - Delete Slides',
 	},
 	'powerPoint.mergePresentations': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PowerPoint - Merge Files',
 	},
 	'powerPoint.populatePowerPoint': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PowerPoint - Populate',
 	},
 	'powerPoint.powerPointSearchAndReplaceText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PowerPoint - Replace Text',
 	},
 	'powerPoint.powerPointSplit': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'PowerPoint - Split',
 	},
 	'utilities.aesEncryption': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - AES Encryption',
 	},
 	'utilities.aesDecryption': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - AES Decryption',
 	},
 	'utilities.arrayAddItems': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Add Items',
 	},
 	'utilities.arrayCombine': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Combine',
 	},
 	'utilities.arrayContainsValue': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Contains Value',
 	},
 	'utilities.arrayCountItems': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Count Items',
 	},
 	'utilities.arrayFilterItems': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Filter Items',
 	},
 	'utilities.arrayGetItems': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Get Item(s)',
 	},
 	'utilities.arrayFilterItemsViaRegex': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Filter Items via Regex',
 	},
 	'utilities.arrayMerge': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Merge',
 	},
 	'utilities.arrayRemoveDuplicates': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Remove Duplicates',
 	},
 	'utilities.arrayRemoveItems': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Remove Items',
 	},
 	'utilities.arrayRemoveItemsRegex': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Remove Items via Regex',
 	},
 	'utilities.arrayReplaceValues': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Replace Values',
 	},
 	'utilities.arrayReverseItems': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Reverse Items',
 	},
 	'utilities.arraySortItems': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Sort Items',
 	},
 	'utilities.arraySplitItems': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array Split Items',
 	},
 	'utilities.arrayConvertToJson': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array to JSON',
 	},
 	'utilities.arrayConvertToXml': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Array to XML',
 	},
 	'utilities.calculateDate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Calculate Date',
 	},
 	'utilities.cleanString': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Clean Text',
 	},
 	'utilities.compareText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Compare Text',
 	},
 	'utilities.concatenateText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Concatenate Text',
 	},
 	'utilities.convertJsonToXml': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Convert JSON To XML',
 	},
 	'utilities.convertTimeZoneEnc': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Convert Time Zone',
 	},
 	'utilities.convertXmlToJson': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Convert XML to JSON',
 	},
 	'utilities.createGuid': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Create GUID',
 	},
 	'utilities.createHashCodeV2': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Create Hash Code',
 	},
 	'utilities.createHMACV2': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Create HMAC',
 	},
 	'utilities.createJwt': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Create JWT',
 	},
 	'utilities.escapeHtml': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Escape HTML',
 	},
 	'utilities.extractEmailAddressesFromText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Extract Email Addresses from Text',
 	},
 	'utilities.extractTextBetweenValues': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Extract Text between Values',
 	},
 	'utilities.extractAllTextInstancesBetweenValues': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Extract Text Instances between Values',
 	},
 	'utilities.extractUrlsFromText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: "Utility - Extract URL's from Text",
 	},
 	'utilities.formatDate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Format Date',
 	},
 	'utilities.formatTextCase': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Format Text Case',
 	},
 	'utilities.generatePassword': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Generate Password',
 	},
 	'utilities.generateRandomNumber': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Generate Random Number',
 	},
 	'utilities.getDateTimeDifference': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Get Date and Time Difference',
 	},
 	'utilities.getFileExtension': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Get File Extension',
 	},
 	'utilities.getFileFormat': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Get File Format',
 	},
 	'utilities.parseHtmlTable': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Parse HTML Table',
 	},
 	'utilities.removeDiacritics': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Remove Diacritics',
 	},
 	'utilities.removeTextBetweenValues': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Remove Text between Values',
 	},
 	'utilities.removeWhitespaceFromText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Remove Whitespace from Text',
 	},
 	'utilities.replaceValueWithRegex': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Replace Value with Regex',
 	},
 	'utilities.replaceValueWithText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Replace Value with Text',
 	},
 	'utilities.rsaEncryption': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - RSA Encryption',
 	},
 	'utilities.rsaDecryption': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - RSA Decryption',
 	},
 	'utilities.createRsaKeyPair': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - RSA Create Key Pair',
 	},
 	'utilities.regexSearchTextV2': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Search Text (Regex)',
 	},
 	'utilities.splitText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Split Text',
 	},
 	'utilities.splitTextViaRegex': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Split Text via Regex',
 	},
 	'utilities.textContainsValue': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Text Contains Value',
 	},
 	'utilities.trimText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Trim Text',
 	},
 	'utilities.unescapeHtml': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Unescape HTML',
 	},
 	'utilities.validateEmailAddress': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Validate Email Address',
 	},
 	'utilities.validateGuid': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Validate GUID',
 	},
 	'utilities.validateJson': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Validate JSON',
 	},
 	'utilities.validateUrlAvailability': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Validate URL Availability',
 	},
 	'utilities.validateUrlSyntax': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Utility - Validate URL Syntax',
 	},
 	'word.addHtmlHeaderFooterWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Add Headers and Footers',
 	},
 	'word.addImageWatermarkWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Add Image Watermark',
 	},
 	'word.wordAddPageNumbers': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Add Page Numbers',
 	},
 	'word.addTextWatermarkWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Add Text Watermark',
 	},
 	'word.compareWordDocuments': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Compare',
 	},
 	'word.deleteWordPages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Delete Pages',
 	},
 	'word.disableTrackedChanges': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Disable Tracked Changes',
 	},
 	'word.enableTrackedChanges': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Enable Tracked Changes',
 	},
 	'word.wordExtractFieldData': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Extract Field Data',
 	},
 	'word.wordExtractFiles': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Extract Files',
 	},
 	'word.wordExtractImages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Extract Images',
 	},
 	'word.wordExtractMetadata': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Extract Metadata',
 	},
 	'word.extractWordPages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Extract Pages',
 	},
 	'word.getTextFromWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Extract Text',
 	},
 	'word.getTrackedChanges': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Extract Tracked Changes',
 	},
 	'word.wordInsertText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Insert Text',
 	},
 	'word.manageTrackedChanges': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Manage Tracked Changes',
 	},
 	'word.mergeArrayOfDocumentsToWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Merge Files',
 	},
 	'word.optimiseWordDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Optimise',
 	},
 	'word.populateWordDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Populate',
 	},
 	'word.removeHeaderFooterWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Remove Headers and Footers',
 	},
 	'word.removeWordTableOfContents': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Remove Table of Contents',
 	},
 	'word.removeWatermarksFromWord': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Remove Watermark',
 	},
 	'word.wordSearchAndReplaceText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Replace Text',
 	},
 	'word.wordReplaceTextWithImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Replace Text With Image',
 	},
 	'word.secureWordDocument': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Secure',
 	},
 	'word.wordSetMetadata': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Set Metadata',
 	},
-	'word.splitWordDocument': { riskLevel: 'write', description: 'Word - Split' },
+	'word.splitWordDocument': {
+		riskLevel: 'destructive',
+		description: 'Word - Split',
+	},
 	'word.wordSplitByText': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Split by Text',
 	},
-	'word.wordUnlock': { riskLevel: 'write', description: 'Word - Unlock' },
+	'word.wordUnlock': { riskLevel: 'destructive', description: 'Word - Unlock' },
 	'word.searchAndReplaceHyperlink': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Update Hyperlinks',
 	},
 	'word.updateWordTableOfContents': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Word - Update Table of Contents',
 	},
 	'sign.envelopeCreateSingle': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Envelope - Sign Single File',
 	},
 	'sign.envelopeCreateSingleWithStages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Envelope - Sign Single File with Stages',
 	},
 	'sign.envelopeCreateMultiple': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Envelope - Sign Multiple Files',
 	},
 	'sign.envelopeCreateMultipleWithStages': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Envelope - Sign Multiple Files with Stages',
 	},
 	'sign.envelopeGetStatus': {
@@ -966,11 +999,11 @@ export const EncodianEndpointMeta = {
 		description: 'Deliverable - Download Audit Trail',
 	},
 	'sign.recipientCreateSingle': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Recipient - Add',
 	},
 	'sign.recipientCreateMultiple': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Recipient - Add Multiple',
 	},
 	'sign.recipientDeleteSingle': {

@@ -152,9 +152,36 @@ describe('Encodian operation schemas', () => {
 		},
 	);
 
-	it('keeps buying credits at write risk, like other purchases', () => {
+	it('marks every credit-spending, purchasing or sending operation destructive', () => {
+		// Encodian bills every Flowr action in credits except the two
+		// subscription-status calls; Sign reads are not billed per call.
+		const notBilled = new Set([
+			'general.getSubscriptionStatus',
+			'trigr.getTrigrSubscriptionStatus',
+			'sign.envelopeGetStatus',
+			'sign.envelopeDownloadSignedDocuments',
+			'sign.envelopeDownloadAuditTrail',
+			'sign.recipientGetSingle',
+			'sign.recipientListAll',
+		]);
+		for (const [operationId, meta] of Object.entries(EncodianEndpointMeta)) {
+			if (notBilled.has(operationId)) {
+				expect([operationId, meta.riskLevel]).not.toEqual([
+					operationId,
+					'destructive',
+				]);
+			} else {
+				expect([operationId, meta.riskLevel]).toEqual([
+					operationId,
+					'destructive',
+				]);
+			}
+		}
 		expect(EncodianEndpointMeta['general.buyAdditionalCredits'].riskLevel).toBe(
-			'write',
+			'destructive',
+		);
+		expect(EncodianEndpointMeta['sign.envelopeCreateSingle'].riskLevel).toBe(
+			'destructive',
 		);
 	});
 

@@ -43,7 +43,9 @@ The ten specifications expose 363 route operations in total. The 262 operations 
 - Internal dynamic-schema and operation-status endpoints are not exposed; they are connector plumbing, not Flowr actions.
 - Webhook/trigger routes are excluded by scope. This plugin registers no webhooks.
 - `Utilities.SendHttpRequest` is excluded because it proxies caller-supplied URLs and credentials, creating arbitrary outbound-request/SSRF risk.
-- The Flowr API also exposes subscription credit purchase; this operation is included at `write` risk (like other purchases) and is not automatically retried. It charges the subscription.
+- Every Flowr action spends Encodian credits (1 credit for a standard action, 0.05 for a utility action, more for AI actions), so all of them are `destructive`. Only the two subscription-status calls are free (`read`).
+- The Flowr API also exposes subscription credit purchase; it is `destructive` and is not automatically retried. It charges the subscription.
+- Sign operations that create envelopes or add recipients email the signers and are `destructive`; deleting a recipient is `destructive` too.
 - The catalog listing is not the coverage source; official Swagger specifications are.
 
 ## Official references
