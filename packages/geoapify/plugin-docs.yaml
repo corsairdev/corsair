@@ -15,7 +15,7 @@ overviewNote: |
   - **The EU host exists.** `region: 'eu'` sends the request to `api-eu.geoapify.com`, where processing stays in the European Union. It takes the same operations and the same key.
   - **`limit` has a per-API maximum.** It is 100 on the geocoding routes and 500 on places, and the plugin rejects a larger value before the request rather than letting the gateway answer 400.
   - **A 429 is not always a burst.** It covers an exhausted quota too. The plugin does not retry `Quota exceeded`, which only fails again until the credits reset; a burst is retried with backoff and honours `Retry-After`.
-  - **Every call spends credits.** Geoapify charges credits per request (1 for a geocode, one per waypoint pair for a route, up to 1,000 for a matrix). The plugin rules mark credit-spending calls `destructive`, so all of them are, even though none changes anything on Geoapify's side.
+  - **Geocoding is a read.** Every operation here computes an answer and changes nothing on Geoapify's side, so all of them are `read`. Each request still uses credits: 1 for a geocode, one per waypoint pair for a route, up to 1,000 for a matrix.
 examples:
   read:
     path: geocode.forward

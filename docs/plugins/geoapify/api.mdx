@@ -16,7 +16,7 @@ description: "API reference for the Geoapify plugin in Corsair: every `geoapify.
 
 Read the administrative boundaries a place belongs to, such as its city, county and country
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geo.boundaries({ lat: 52.5, lon: 13.4, boundaries: ['administrative', 'postal_code'] });
@@ -70,7 +70,7 @@ Identify the place by `id`, by `lat`/`lon`, or by `osm_id` with `osm_type`.
 
 Sample the terrain elevation at one or more points, in metres or feet
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geo.elevation({ locations: [{ lat: 52.5, lon: 13.4 }] });
@@ -131,7 +131,7 @@ await corsair.geoapify.api.geo.elevation({ locations: [{ lat: 52.5, lon: 13.4 }]
 
 Locate an IP address, or the caller when none is given, returning its country, city and coordinates
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geo.ip({ ip: '54.201.16.177' });
@@ -182,7 +182,7 @@ await corsair.geoapify.api.geo.ip({ ip: '54.201.16.177' });
 
 Search postcodes by a prefix or a spatial filter, which is what a postcode autocomplete needs
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geo.postcodeList({ text: '1011', countrycode: 'de' });
@@ -241,7 +241,7 @@ await corsair.geoapify.api.geo.postcodeList({ text: '1011', countrycode: 'de' })
 
 Look up a postcode, returning its coordinates and the places it covers
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geo.postcodeSearch({ postcode: '10115', countrycode: 'de' });
@@ -298,7 +298,7 @@ await corsair.geoapify.api.geo.postcodeSearch({ postcode: '10115', countrycode: 
 
 Read the time zone at a point, including whether daylight saving applies at a given moment
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geo.timezone({ lat: 52.5, lon: 13.4 });
@@ -360,7 +360,7 @@ await corsair.geoapify.api.geo.timezone({ lat: 52.5, lon: 13.4 });
 
 Suggest addresses from a partial one as a user types, which is what a search box needs
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geocode.autocomplete({ text: '10 Downing', countrycodes: ['gb'] });
@@ -459,7 +459,7 @@ await corsair.geoapify.api.geocode.autocomplete({ text: '10 Downing', countrycod
 
 Turn an address or place name into coordinates, a formatted address and its components, with a confidence for the match
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geocode.forward({ text: 'Berlin', countrycodes: ['de'], limit: 3 });
@@ -560,7 +560,7 @@ Always asks for `format: json`, so matches are under `results`.
 
 Turn a latitude and longitude into the address at that point, with its full set of components
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.geocode.reverse({ lat: 52.5, lon: 13.4 });
@@ -660,7 +660,7 @@ await corsair.geoapify.api.geocode.reverse({ lat: 52.5, lon: 13.4 });
 
 Read one place by its ID, with its address, categories, contact details and opening hours
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.places.details({ id: '51289a4b5f3d4d0f4058f2e9c8a1b7d6' });
@@ -765,7 +765,7 @@ await corsair.geoapify.api.places.details({ id: '51289a4b5f3d4d0f4058f2e9c8a1b7d
 
 Find places by category within an area, such as restaurants inside a circle, with the details each place carries
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.places.search({ categories: ['catering.restaurant'], filter: 'circle:13.4,52.5,1000' });
@@ -880,7 +880,7 @@ A v2 route, so it always answers a feature collection under `features`.
 
 Calculate the area reachable from a point within a time or distance, one polygon per range. A slow calculation returns only an id to read it with later
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.routing.isoline({ lat: 52.5, lon: 13.4, type: 'time', range: [300, 600] });
@@ -946,7 +946,7 @@ await corsair.geoapify.api.routing.isoline({ lat: 52.5, lon: 13.4, type: 'time',
 
 Calculate the time and distance between every source and target, one row per source. A pair with no route has null distance and time
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.routing.matrix({ mode: 'drive', sources: [{ lat: 52.5163, lon: 13.3777 }], targets: [{ lat: 52.52, lon: 13.405 }] });
@@ -1047,7 +1047,7 @@ Points are `{ lat, lon }`. A pair with no route has `null` distance and time, an
 
 Calculate a route between waypoints, with distance, time and optional turn-by-turn steps and geometry
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.geoapify.api.routing.route({ waypoints: ['52.5163,13.3777', '52.52,13.405'], mode: 'drive' });
