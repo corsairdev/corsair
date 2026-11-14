@@ -250,7 +250,7 @@ export const paymentRequired = {
 	type: 'https://httpstatus.es/402',
 	title: 'Payment Required',
 	status: 402,
-	detail: 'This feature is not available on your plan',
+	detail: 'Payment required',
 };
 
 /** Too many requests. */

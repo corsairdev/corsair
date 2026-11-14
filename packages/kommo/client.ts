@@ -15,6 +15,14 @@ export function kommoBaseUrl(subdomain: string): string {
 	return `https://${subdomain}.kommo.com/api/v4`;
 }
 
+// One DNS label: letters, digits and inner hyphens. Anything else (a dot, a
+// slash, an `@`) could move the request, and the bearer token, to another host.
+const SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i;
+
+export function isValidSubdomain(subdomain: string): boolean {
+	return SUBDOMAIN_PATTERN.test(subdomain);
+}
+
 // Kommo documents 2 requests a second and a burst of 7, and answers 429 when
 // either is exceeded. error-handlers.ts owns the retry, so the client makes one
 // attempt and only reads Retry-After into the error.
@@ -55,18 +63,11 @@ export function readProblem(body: unknown): {
 }
 
 /**
- * A Kommo failure.
- *
- * The body is dropped rather than kept as `cause`: a lead or contact create
- * echoes the submitted entity back in `detail` on a validation failure, and that
- * entity carries the customer's name, phone and email.
+ * A Kommo failure that never got an HTTP answer: a dropped connection, a
+ * timeout, or a call refused before it was sent (no subdomain). An HTTP error
+ * reaches the handlers as core's `ApiError`.
  */
 export class KommoAPIError extends Error {
-	readonly status?: number;
-	/** The message Kommo put in `detail`, or its `title` when detail is absent. */
-	readonly detail?: string;
-	/** Milliseconds from a Retry-After header, when Kommo sent one. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
 	readonly transport: boolean;
@@ -76,9 +77,6 @@ export class KommoAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			detail?: string;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -86,31 +84,9 @@ export class KommoAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KommoAPIError';
-		this.status = options.status;
-		this.detail = options.detail;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** A missing or expired token. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	/** The token works but the user lacks the right for this entity. */
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
-
-	/** Kommo refused the payload, usually a custom field it does not accept. */
-	get isValidationError(): boolean {
-		return this.status === 400 || this.status === 422;
 	}
 }
 
@@ -159,6 +135,12 @@ export async function makeKommoRequest(
 			{ method },
 		);
 	}
+	if (!isValidSubdomain(subdomain)) {
+		throw new KommoAPIError(
+			'The Kommo subdomain must be one label, such as acme for acme.kommo.com',
+			{ method },
+		);
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: kommoBaseUrl(subdomain),
@@ -179,22 +161,24 @@ export async function makeKommoRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
+	let raw: unknown;
 	try {
-		return await request<unknown>(config, requestOptions, {
+		raw = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: KOMMO_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
+		// Core's ApiError goes through as the same instance, so the handlers
+		// still read its status and retryAfter. Its message becomes Kommo's own
+		// reason, and both bodies are cleared: the request body is the submitted
+		// lead or contact, with the customer's name, phone and email, and core
+		// would otherwise quote an unrecognised error body in the message.
 		if (error instanceof ApiError) {
-			const fields = readProblem(error.body);
-			throw new KommoAPIError(
-				describeKommoError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					detail: fields.detail ?? fields.title,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
+			Object.assign(error, {
+				message: describeKommoError(error.status, error.body, error.message),
+				body: undefined,
+				request: { ...error.request, body: undefined, formData: undefined },
+			});
+			throw error;
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
@@ -207,6 +191,23 @@ export async function makeKommoRequest(
 			});
 		}
 		throw new KommoAPIError('Unknown Kommo error', { method, transport: true });
+	}
+	return decodeHalBody(raw);
+}
+
+/**
+ * Kommo answers success as `application/hal+json`, which `corsair/http` does
+ * not treat as JSON and hands back as text. Parse that text here so the output
+ * schema sees an object.
+ */
+// unknown: the body is an untyped HAL document until the output schema runs.
+export function decodeHalBody(raw: unknown): unknown {
+	if (typeof raw !== 'string') return raw;
+	if (raw.trim() === '') return undefined;
+	try {
+		return JSON.parse(raw) as unknown;
+	} catch {
+		return raw;
 	}
 }
 

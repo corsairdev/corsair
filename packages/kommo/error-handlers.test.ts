@@ -1,15 +1,35 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { KommoAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An HTTP failure reaches the handlers as core's ApiError; a request that never
+// got an answer is a KommoAPIError.
 function apiError(options: {
 	status?: number;
 	method?: string;
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new KommoAPIError('failed', options);
+}): Error {
+	if (options.status === undefined) {
+		return new KommoAPIError('failed', options);
+	}
+	return new ApiError(
+		{
+			method: (options.method ?? 'GET') as 'GET',
+			url: '/leads',
+		},
+		{
+			url: 'https://acme.kommo.com/api/v4/leads',
+			ok: false,
+			status: options.status,
+			statusText: 'failed',
+			body: undefined,
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -62,7 +82,7 @@ describe('error handler selection', () => {
 		});
 	});
 
-	it('does not retry a 402, which is a plan block', async () => {
+	it('does not retry a 402, an ended paid or trial period', async () => {
 		await expect(resolve(apiError({ status: 402 }))).resolves.toEqual({
 			maxRetries: 0,
 		});

@@ -1,4 +1,10 @@
-import { describeKommoError, makeKommoRequest, readProblem } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	decodeHalBody,
+	describeKommoError,
+	makeKommoRequest,
+	readProblem,
+} from './client';
 
 const API_KEY = 'kommo-test-token';
 const SUBDOMAIN = 'acme';
@@ -156,29 +162,71 @@ describe('makeKommoRequest', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('turns a problem+json body into one error with its detail', async () => {
+	it('refuses a subdomain that would move the request to another host', async () => {
+		for (const subdomain of [
+			'attacker.example/',
+			'x@attacker.example',
+			'acme.evil',
+			'-acme',
+		]) {
+			await expect(
+				makeKommoRequest(API_KEY, subdomain, { method: 'GET', path: '/leads' }),
+			).rejects.toMatchObject({
+				name: 'KommoAPIError',
+				message: expect.stringContaining('one label'),
+			});
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('decodes a success answered as application/hal+json', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ id: 7, subdomain: 'acme' }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/hal+json' },
+			}),
+		);
+
+		await expect(
+			makeKommoRequest(API_KEY, SUBDOMAIN, { method: 'GET', path: '/account' }),
+		).resolves.toEqual({ id: 7, subdomain: 'acme' });
+	});
+
+	it('passes an HTTP failure through as core ApiError with its status', async () => {
 		respond(
 			{
 				title: 'Bad Request',
 				status: 400,
-				detail: 'Custom field 1928052 is not available',
+				detail: 'Request validation failed',
 			},
 			400,
 		);
 
-		await expect(
-			makeKommoRequest(API_KEY, SUBDOMAIN, {
-				method: 'POST',
-				path: '/leads',
-			}),
-		).rejects.toMatchObject({
-			name: 'KommoAPIError',
-			status: 400,
-			detail: 'Custom field 1928052 is not available',
-			message: 'Kommo 400: Custom field 1928052 is not available',
+		const error = await makeKommoRequest(API_KEY, SUBDOMAIN, {
 			method: 'POST',
-			transport: false,
+			path: '/leads',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			status: 400,
+			message: 'Kommo 400: Request validation failed',
 		});
+	});
+
+	it('clears both bodies, so a submitted contact cannot follow the error into a log', async () => {
+		respond({ title: 'Bad Request', detail: 'name: Jordan Lee' }, 400);
+
+		const error = (await makeKommoRequest(API_KEY, SUBDOMAIN, {
+			method: 'POST',
+			path: '/contacts',
+			body: [{ name: 'Jordan Lee', email: 'jordan@example.com' }],
+		}).catch((caught: unknown) => caught)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.body).toBeUndefined();
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error.request)).not.toContain('jordan@example.com');
 	});
 
 	it('keeps a Retry-After header as milliseconds', async () => {
@@ -194,20 +242,7 @@ describe('makeKommoRequest', () => {
 
 		await expect(
 			makeKommoRequest(API_KEY, SUBDOMAIN, { method: 'GET', path: '/leads' }),
-		).rejects.toMatchObject({ retryAfter: 2000, isRateLimit: true });
-	});
-
-	it('keeps no body on the error and no cause that holds one', async () => {
-		respond({ title: 'Bad Request', detail: 'name: Jordan Lee' }, 400);
-
-		// unknown: the rejection is an error whose fields the assertions read.
-		const error = (await makeKommoRequest(API_KEY, SUBDOMAIN, {
-			method: 'POST',
-			path: '/leads',
-		}).catch((caught: unknown) => caught)) as Error;
-
-		expect(error).not.toHaveProperty('body');
-		expect(error.cause).toBeUndefined();
+		).rejects.toMatchObject({ status: 429, retryAfter: 2000 });
 	});
 
 	it('marks a transport failure and keeps its cause, which never held a body', async () => {
@@ -236,5 +271,14 @@ describe('makeKommoRequest', () => {
 		await expect(
 			makeKommoRequest(API_KEY, SUBDOMAIN, { method: 'GET', path: '/leads' }),
 		).rejects.toMatchObject({ timedOut: true, transport: true });
+	});
+});
+
+describe('decodeHalBody', () => {
+	it('parses JSON text and leaves objects and empty answers alone', () => {
+		expect(decodeHalBody('{"a":1}')).toEqual({ a: 1 });
+		expect(decodeHalBody({ a: 1 })).toEqual({ a: 1 });
+		expect(decodeHalBody(undefined)).toBeUndefined();
+		expect(decodeHalBody('')).toBeUndefined();
 	});
 });

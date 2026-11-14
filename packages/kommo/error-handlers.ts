@@ -1,8 +1,17 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { KommoAPIError } from './client';
 
+// An HTTP failure arrives as core's ApiError; KommoAPIError is a request that
+// never got an answer.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KommoAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	if (error instanceof KommoAPIError) return error.method;
+	return undefined;
 }
 
 // Kommo documents 400, 401, 402, 403, 404 and 429, and answers failures as
@@ -11,12 +20,11 @@ export const errorHandlers = {
 	// Two requests a second with a burst of seven. Kommo sends Retry-After, so
 	// the handler waits that when it arrives and backs off otherwise.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof KommoAPIError && error.isRateLimit,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof KommoAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -25,8 +33,8 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 402 is a paid-feature block: the account's plan does not include this
-	// entity. No retry helps.
+	// 402 means the account's paid or trial period has ended. No retry helps
+	// until the account is renewed.
 	QUOTA_ERROR: {
 		match: (error: Error) => statusOf(error) === 402,
 		handler: async () => ({ maxRetries: 0 }),
@@ -54,9 +62,7 @@ export const errorHandlers = {
 	// arrive once the lead exists, and a retry would create a second one.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof KommoAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
@@ -67,16 +73,14 @@ export const errorHandlers = {
 	TIMEOUT_ERROR: {
 		match: (error: Error) => error instanceof KommoAPIError && error.timedOut,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof KommoAPIError && error.method === 'GET' ? 1 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 1 : 0,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
 	NETWORK_ERROR: {
 		match: (error: Error) => error instanceof KommoAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof KommoAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
