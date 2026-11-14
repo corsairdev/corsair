@@ -28,7 +28,7 @@ function polygonError(
 		errorNumber?: number;
 	} = {},
 ) {
-	const body: Record<string, unknown> = { status };
+	const body: { status: number; error?: string; code?: number } = { status };
 	if (options.code !== undefined) body.error = options.code;
 	if (options.errorNumber !== undefined) body.code = options.errorNumber;
 	return new ApiError(
