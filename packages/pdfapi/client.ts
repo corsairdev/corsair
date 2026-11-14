@@ -80,10 +80,9 @@ export async function makePdfApiRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		// The shared transport builds `Authorization: Bearer <key>` from TOKEN
-		// — the provider's documented scheme.
-		// unknown: asserted at the client seam.
-		headers: { Authorization: `Bearer ${ctx.key}` },
+		// Auth rides in config.HEADERS only: the shared transport merges
+		// config.HEADERS into the outgoing request, and keeping the key out of
+		// requestOptions means a stored ApiError never retains the credential.
 		body: method === 'POST' ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
 	};
