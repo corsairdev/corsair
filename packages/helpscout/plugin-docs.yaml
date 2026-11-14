@@ -1,10 +1,10 @@
 displayName: Help Scout
 description: Manage mailboxes, conversations, customer profiles, threads, tags, saved replies, and reports with Help Scout Mailbox API 2.0.
-recommendedAuth: api_key
+recommendedAuth: oauth_2
 overviewNote: |
-  **Authentication.** Help Scout Mailbox API 2.0 authenticates via OAuth 2 Bearer tokens. Pass your token as `key` in plugin options or configure it via Corsair tenant credentials. All requests send the `Authorization: Bearer <token>` header.
+  **Authentication.** Help Scout has no API keys. Create an app under Your Profile > My Apps and connect it with OAuth 2: Corsair stores the app's id and secret and refreshes the 2-day access token itself (refresh token for authorization-code apps, client-credentials grant otherwise). Passing `key` in plugin options sends that token as is, with no refresh.
 
-  **Rate Limiting.** The Mailbox API enforces rate limits per tenant. The underlying HTTP transport automatically retries 429 responses with exponential backoff honoring the `Retry-After` header.
+  **Rate Limiting.** The Mailbox API enforces rate limits per tenant. Corsair's HTTP transport retries a 429 up to three times, honoring `Retry-After`.
 
   **Resource Identification.** Help Scout numeric IDs are integers or digit strings. Path parameters accept both numbers and numeric strings.
 examples:

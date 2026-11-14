@@ -14,6 +14,11 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
+	getValidHelpScoutAccessToken,
+	HELPSCOUT_AUTH_URL,
+	HELPSCOUT_TOKEN_URL,
+} from './client';
+import {
 	Conversations,
 	Customers,
 	CustomFields,
@@ -36,7 +41,7 @@ import { errorHandlers } from './error-handlers';
 import { HelpScoutSchema } from './schema';
 
 export type HelpScoutPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'oauth_2'>;
 	key?: string;
 	hooks?: InternalHelpScoutPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -367,7 +372,7 @@ export const helpScoutEndpointSchemas = {
 	typeof helpScoutEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
 export const helpScoutEndpointMeta = {
 	'mailboxes.list': {
@@ -595,8 +600,11 @@ export const helpScoutEndpointMeta = {
 	typeof helpScoutEndpointsNested
 >;
 
+// Help Scout has no API keys: apps get 2-day OAuth tokens, refreshed here.
 export const helpScoutAuthConfig = {
-	api_key: {},
+	oauth_2: {
+		account: ['one'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseHelpScoutPlugin<T extends HelpScoutPluginOptions> =
@@ -638,6 +646,14 @@ export function helpscout<const T extends HelpScoutPluginOptions>(
 		authConfig: helpScoutAuthConfig,
 		schema: HelpScoutSchema,
 		options,
+		oauthConfig: {
+			providerName: 'Help Scout',
+			authUrl: HELPSCOUT_AUTH_URL,
+			tokenUrl: HELPSCOUT_TOKEN_URL,
+			// Help Scout apps have no scopes; the redirect URL is set on the app
+			scopes: [],
+			requiresRegisteredRedirect: true,
+		},
 		hooks: options.hooks,
 		endpoints: helpScoutEndpointsNested,
 		webhooks: {},
@@ -647,10 +663,39 @@ export function helpscout<const T extends HelpScoutPluginOptions>(
 		keyBuilder: async (ctx: HelpScoutKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key) return options.key;
-			if (!ctx.keys) throw new AuthMissingError('helpscout', 'api_key');
-			const apiKey = await ctx.keys.get_api_key();
-			if (!apiKey) throw new AuthMissingError('helpscout', 'api_key');
-			return apiKey;
+			if (!ctx.keys || ctx.authType !== 'oauth_2') {
+				throw new AuthMissingError('helpscout', 'oauth_2');
+			}
+			const [accessToken, expiresAt, refreshToken, credentials] =
+				await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+					ctx.keys.get_integration_credentials(),
+				]);
+			if (
+				!accessToken &&
+				(!credentials.client_id || !credentials.client_secret)
+			) {
+				throw new AuthMissingError('helpscout', 'oauth_2');
+			}
+			const result = await getValidHelpScoutAccessToken({
+				accessToken,
+				expiresAt,
+				refreshToken,
+				clientId: credentials.client_id,
+				clientSecret: credentials.client_secret,
+			});
+			if (result.refreshed) {
+				await Promise.all([
+					ctx.keys.set_access_token(result.accessToken),
+					ctx.keys.set_expires_at(String(result.expiresAt)),
+					result.refreshToken
+						? ctx.keys.set_refresh_token(result.refreshToken)
+						: Promise.resolve(),
+				]);
+			}
+			return result.accessToken;
 		},
 	} satisfies InternalHelpScoutPlugin;
 }

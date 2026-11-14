@@ -13,6 +13,147 @@ export class HelpScoutAPIError extends Error {
 }
 
 export const HELPSCOUT_API_BASE = 'https://api.helpscout.net/v2';
+export const HELPSCOUT_AUTH_URL =
+	'https://secure.helpscout.net/authentication/authorizeClientApplication';
+export const HELPSCOUT_TOKEN_URL = 'https://api.helpscout.net/v2/oauth2/token';
+
+export class HelpScoutOAuthError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'HelpScoutOAuthError';
+	}
+}
+
+export type HelpScoutTokenResult = {
+	accessToken: string;
+	refreshToken?: string;
+	expiresAt: number;
+	refreshed: boolean;
+};
+
+async function requestHelpScoutToken(params: {
+	clientId: string;
+	clientSecret: string;
+	grantType: 'client_credentials' | 'refresh_token';
+	refreshToken?: string;
+}): Promise<{
+	access_token: string;
+	refresh_token?: string;
+	expires_in: number;
+}> {
+	const body = new URLSearchParams({
+		grant_type: params.grantType,
+		client_id: params.clientId,
+		client_secret: params.clientSecret,
+	});
+	if (params.grantType === 'refresh_token' && params.refreshToken) {
+		body.set('refresh_token', params.refreshToken);
+	}
+	let response: Response;
+	try {
+		response = await fetch(HELPSCOUT_TOKEN_URL, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body,
+			signal: AbortSignal.timeout(20_000),
+		});
+	} catch (error) {
+		throw new HelpScoutOAuthError(
+			error instanceof Error
+				? error.message
+				: 'Failed to obtain Help Scout access token',
+		);
+	}
+	let json: {
+		access_token?: string;
+		refresh_token?: string;
+		expires_in?: number;
+		error?: string;
+		error_description?: string;
+	} = {};
+	try {
+		const text = await response.text();
+		if (text) json = JSON.parse(text) as typeof json;
+	} catch {
+		// non-JSON error page; handled below
+	}
+	if (
+		!response.ok ||
+		!json.access_token ||
+		typeof json.expires_in !== 'number'
+	) {
+		throw new HelpScoutOAuthError(
+			json.error_description ||
+				json.error ||
+				`Failed to obtain Help Scout access token (${response.status})`,
+		);
+	}
+	return {
+		access_token: json.access_token,
+		refresh_token: json.refresh_token,
+		expires_in: json.expires_in,
+	};
+}
+
+/**
+ * Help Scout access tokens last 2 days. Refreshes with the refresh token
+ * (authorization-code apps) or the client-credentials grant (private apps).
+ * https://developer.helpscout.com/mailbox-api/overview/authentication/
+ */
+export async function getValidHelpScoutAccessToken({
+	accessToken,
+	expiresAt,
+	refreshToken,
+	clientId,
+	clientSecret,
+	forceRefresh = false,
+}: {
+	accessToken?: string | null;
+	expiresAt?: string | null;
+	refreshToken?: string | null;
+	clientId?: string | null;
+	clientSecret?: string | null;
+	forceRefresh?: boolean;
+}): Promise<HelpScoutTokenResult> {
+	const now = Math.floor(Date.now() / 1000);
+	const bufferSeconds = 5 * 60;
+	if (
+		!forceRefresh &&
+		accessToken &&
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
+	) {
+		return {
+			accessToken,
+			refreshToken: refreshToken ?? undefined,
+			expiresAt: Number(expiresAt),
+			refreshed: false,
+		};
+	}
+	if (!clientId || !clientSecret) {
+		throw new HelpScoutOAuthError(
+			'Help Scout client_id and client_secret are required',
+		);
+	}
+	const token = refreshToken
+		? await requestHelpScoutToken({
+				clientId,
+				clientSecret,
+				grantType: 'refresh_token',
+				refreshToken,
+			})
+		: await requestHelpScoutToken({
+				clientId,
+				clientSecret,
+				grantType: 'client_credentials',
+			});
+	return {
+		accessToken: token.access_token,
+		refreshToken: token.refresh_token ?? refreshToken ?? undefined,
+		expiresAt: now + token.expires_in,
+		refreshed: true,
+	};
+}
 
 // Help Scout validation errors echo the rejected input (names, emails, text).
 const ECHOED_INPUT_KEYS = new Set(['rejectedvalue']);

@@ -35,10 +35,22 @@ function buildCtx(): HelpScoutContext {
 		keys: {
 			get_dek: () => Promise.resolve('test-dek'),
 			issue_new_dek: () => Promise.resolve('test-dek'),
-			get_api_key: () => Promise.resolve('test-api-key'),
-			set_api_key: () => Promise.resolve(),
 			get_webhook_signature: () => Promise.resolve(null),
 			set_webhook_signature: () => Promise.resolve(),
+			get_access_token: () => Promise.resolve('test-api-key'),
+			set_access_token: () => Promise.resolve(),
+			get_refresh_token: () => Promise.resolve(null),
+			set_refresh_token: () => Promise.resolve(),
+			get_expires_at: () => Promise.resolve(null),
+			set_expires_at: () => Promise.resolve(),
+			get_scope: () => Promise.resolve(null),
+			set_scope: () => Promise.resolve(),
+			get_integration_credentials: () =>
+				Promise.resolve({
+					client_id: null,
+					client_secret: null,
+					redirect_url: null,
+				}),
 		},
 		db: {},
 	};

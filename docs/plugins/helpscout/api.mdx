@@ -19,7 +19,7 @@ Create a new conversation with initial thread
 **Risk:** `destructive`
 
 ```ts
-await corsair.helpscout.api.conversations.create({ subject: 'Support request', type: 'email', mailboxId: 100, customer: { email: 'customer@example.com' }, threads: [{ type: 'customer', text: 'Need assistance' }] });
+await corsair.helpscout.api.conversations.create({ subject: 'Support request', type: 'email', status: 'active', mailboxId: 100, customer: { email: 'customer@example.com' }, threads: [{ type: 'customer', text: 'Need assistance' }] });
 ```
 
 **Input**
@@ -30,9 +30,12 @@ await corsair.helpscout.api.conversations.create({ subject: 'Support request', t
 | `type` | `email \| chat \| phone` | Yes | — |
 | `mailboxId` | `number` | Yes | — |
 | `customer` | `object` | Yes | — |
-| `status` | `active \| pending \| closed \| spam` | No | — |
+| `status` | `active \| pending \| closed \| spam` | Yes | — |
 | `assignTo` | `number` | No | — |
 | `createdAt` | `string` | No | — |
+| `imported` | `boolean` | No | — |
+| `autoReply` | `boolean` | No | — |
+| `user` | `number` | No | — |
 | `threads` | `object[]` | Yes | — |
 | `tags` | `string[]` | No | — |
 | `fields` | `object[]` | No | — |
@@ -84,7 +87,12 @@ await corsair.helpscout.api.conversations.create({ subject: 'Support request', t
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -379,7 +387,7 @@ await corsair.helpscout.api.conversations.list({});
 
 Update fields of a conversation via JSON Patch
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.conversations.update({ conversationId: 1000, op: 'replace', path: '/status', value: 'closed' });
@@ -473,7 +481,7 @@ await corsair.helpscout.api.conversations.updateTags({ conversationId: 1000, tag
 
 Create a new customer profile
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.create({});
@@ -519,8 +527,7 @@ await corsair.helpscout.api.customers.create({});
 
 ```ts
 {
-  address?: string,
-  address2?: string,
+  lines?: string[],
   city?: string,
   state?: string,
   postalCode?: string,
@@ -532,7 +539,12 @@ await corsair.helpscout.api.customers.create({});
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -543,7 +555,7 @@ await corsair.helpscout.api.customers.create({});
 
 Create customer physical address
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.createAddress({ customerId: 200, city: 'Boston', state: 'MA' });
@@ -554,8 +566,7 @@ await corsair.helpscout.api.customers.createAddress({ customerId: 200, city: 'Bo
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `customerId` | `number \| string` | Yes | — |
-| `address` | `string` | No | — |
-| `address2` | `string` | No | — |
+| `lines` | `string[]` | No | — |
 | `city` | `string` | No | — |
 | `state` | `string` | No | — |
 | `postalCode` | `string` | No | — |
@@ -574,7 +585,7 @@ await corsair.helpscout.api.customers.createAddress({ customerId: 200, city: 'Bo
 
 Add a chat handle to a customer
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.createChat({ customerId: 200, value: 'alice_chat', type: 'slack' });
@@ -590,7 +601,12 @@ await corsair.helpscout.api.customers.createChat({ customerId: 200, value: 'alic
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -601,7 +617,7 @@ await corsair.helpscout.api.customers.createChat({ customerId: 200, value: 'alic
 
 Add an email address to a customer
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.createEmail({ customerId: 200, value: 'alice@example.com', type: 'work' });
@@ -617,7 +633,12 @@ await corsair.helpscout.api.customers.createEmail({ customerId: 200, value: 'ali
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -628,7 +649,7 @@ await corsair.helpscout.api.customers.createEmail({ customerId: 200, value: 'ali
 
 Add a phone number to a customer
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.createPhone({ customerId: 200, value: '555-0123', type: 'work' });
@@ -644,7 +665,12 @@ await corsair.helpscout.api.customers.createPhone({ customerId: 200, value: '555
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -655,7 +681,7 @@ await corsair.helpscout.api.customers.createPhone({ customerId: 200, value: '555
 
 Add a social profile to a customer
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.createSocialProfile({ customerId: 200, value: 'https://twitter.com/alice', type: 'twitter' });
@@ -671,7 +697,12 @@ await corsair.helpscout.api.customers.createSocialProfile({ customerId: 200, val
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -682,7 +713,7 @@ await corsair.helpscout.api.customers.createSocialProfile({ customerId: 200, val
 
 Add a website URL to a customer
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.createWebsite({ customerId: 200, value: 'https://example.com' });
@@ -698,7 +729,12 @@ await corsair.helpscout.api.customers.createWebsite({ customerId: 200, value: 'h
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -707,7 +743,7 @@ await corsair.helpscout.api.customers.createWebsite({ customerId: 200, value: 'h
 
 `customers.delete`
 
-Delete a customer profile
+Delete a customer with their conversations and survey responses (cannot be undone)
 
 **Risk:** `destructive`
 
@@ -990,8 +1026,9 @@ await corsair.helpscout.api.customers.list({});
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
 | `email` | `string` | No | — |
+| `modifiedSince` | `string` | No | — |
 | `query` | `string` | No | — |
-| `sortField` | `createdAt \| modifiedAt \| score` | No | — |
+| `sortField` | `createdAt \| firstName \| lastName \| modifiedAt` | No | — |
 | `sortOrder` | `asc \| desc` | No | — |
 | `page` | `number` | No | — |
 
@@ -1114,7 +1151,7 @@ await corsair.helpscout.api.customers.list({});
 
 Partially update customer profile fields
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.patch({ customerId: 200, op: 'replace', path: '/firstName', value: 'Alice' });
@@ -1127,7 +1164,19 @@ await corsair.helpscout.api.customers.patch({ customerId: 200, op: 'replace', pa
 | `customerId` | `number \| string` | Yes | — |
 | `op` | `replace \| add \| remove` | Yes | — |
 | `path` | `string` | Yes | — |
-| `value` | `string \| number \| boolean` | No | — |
+| `value` | `string \| number \| boolean \| string[] \| object` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+string | number | boolean | string[] | {
+  type?: string,
+  value: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1160,6 +1209,11 @@ await corsair.helpscout.api.customers.update({ customerId: 200, firstName: 'Alic
 | `photoUrl` | `string` | No | — |
 | `photoType` | `string` | No | — |
 | `organization` | `string` | No | — |
+| `organizationId` | `number` | No | — |
+| `background` | `string` | No | — |
+| `location` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `age` | `string` | No | — |
 
 
 
@@ -1174,7 +1228,7 @@ await corsair.helpscout.api.customers.update({ customerId: 200, firstName: 'Alic
 
 Update customer physical address
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.updateAddress({ customerId: 200, city: 'Cambridge', state: 'MA' });
@@ -1185,8 +1239,7 @@ await corsair.helpscout.api.customers.updateAddress({ customerId: 200, city: 'Ca
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `customerId` | `number \| string` | Yes | — |
-| `address` | `string` | No | — |
-| `address2` | `string` | No | — |
+| `lines` | `string[]` | No | — |
 | `city` | `string` | No | — |
 | `state` | `string` | No | — |
 | `postalCode` | `string` | No | — |
@@ -1205,7 +1258,7 @@ await corsair.helpscout.api.customers.updateAddress({ customerId: 200, city: 'Ca
 
 Update an existing customer chat handle
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.updateChat({ customerId: 200, chatId: 30, value: 'alice_new_chat', type: 'slack' });
@@ -1233,7 +1286,7 @@ await corsair.helpscout.api.customers.updateChat({ customerId: 200, chatId: 30, 
 
 Update an existing customer email address
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.updateEmail({ customerId: 200, emailId: 10, value: 'alice.smith@example.com', type: 'work' });
@@ -1261,7 +1314,7 @@ await corsair.helpscout.api.customers.updateEmail({ customerId: 200, emailId: 10
 
 Update an existing customer phone number
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.updatePhone({ customerId: 200, phoneId: 20, value: '555-0199', type: 'mobile' });
@@ -1289,7 +1342,7 @@ await corsair.helpscout.api.customers.updatePhone({ customerId: 200, phoneId: 20
 
 Update an existing customer social profile
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.updateSocialProfile({ customerId: 200, profileId: 40, value: 'https://x.com/alice', type: 'twitter' });
@@ -1317,7 +1370,7 @@ await corsair.helpscout.api.customers.updateSocialProfile({ customerId: 200, pro
 
 Update an existing customer website URL
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.customers.updateWebsite({ customerId: 200, websiteId: 50, value: 'https://blog.example.com' });
@@ -1383,7 +1436,7 @@ await corsair.helpscout.api.customFields.list({ mailboxId: 100 });
     order?: number,
     options?: {
       id: number,
-      name: string,
+      label: string,
       order?: number
     }[]
   }[]
@@ -1769,10 +1822,7 @@ await corsair.helpscout.api.reports.getDocs({ start: '2026-01-01T00:00:00Z', end
 | `end` | `string` | Yes | — |
 | `previousStart` | `string` | No | — |
 | `previousEnd` | `string` | No | — |
-| `mailboxes` | `string` | No | — |
-| `tags` | `string` | No | — |
-| `types` | `email \| chat \| phone` | No | — |
-| `folders` | `string` | No | — |
+| `sites` | `string` | No | — |
 
 
 
@@ -1821,7 +1871,7 @@ await corsair.helpscout.api.reports.getEmail({ start: '2026-01-01T00:00:00Z', en
 
 Create a saved reply in a mailbox
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.savedReplies.create({ mailboxId: 100, name: 'Default Greeting', text: 'Hello! How can we assist you today?' });
@@ -1838,7 +1888,12 @@ await corsair.helpscout.api.savedReplies.create({ mailboxId: 100, name: 'Default
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -1991,7 +2046,7 @@ await corsair.helpscout.api.savedReplies.list({ mailboxId: 100 });
 
 Update an existing saved reply
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.savedReplies.update({ mailboxId: 100, savedReplyId: 300, name: 'Updated Greeting' });
@@ -2147,7 +2202,7 @@ await corsair.helpscout.api.tags.list({});
 
 Create a chat thread on a conversation
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.threads.createChat({ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Chat conversation transcript' });
@@ -2187,7 +2242,12 @@ await corsair.helpscout.api.threads.createChat({ conversationId: 1000, customer:
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -2198,7 +2258,7 @@ await corsair.helpscout.api.threads.createChat({ conversationId: 1000, customer:
 
 Create a customer message thread on a conversation
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.threads.createCustomer({ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Follow-up message' });
@@ -2238,7 +2298,12 @@ await corsair.helpscout.api.threads.createCustomer({ conversationId: 1000, custo
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -2249,7 +2314,7 @@ await corsair.helpscout.api.threads.createCustomer({ conversationId: 1000, custo
 
 Create an internal note thread on a conversation
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.threads.createNote({ conversationId: 1000, text: 'Internal team note' });
@@ -2280,7 +2345,12 @@ await corsair.helpscout.api.threads.createNote({ conversationId: 1000, text: 'In
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -2291,7 +2361,7 @@ await corsair.helpscout.api.threads.createNote({ conversationId: 1000, text: 'In
 
 Create a phone call log thread on a conversation
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.threads.createPhone({ conversationId: 1000, customer: { email: 'customer@example.com' }, text: 'Phone conversation summary' });
@@ -2332,7 +2402,12 @@ await corsair.helpscout.api.threads.createPhone({ conversationId: 1000, customer
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -2358,6 +2433,8 @@ await corsair.helpscout.api.threads.createReply({ conversationId: 1000, customer
 | `text` | `string` | Yes | — |
 | `user` | `number` | No | — |
 | `draft` | `boolean` | No | — |
+| `imported` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
 | `status` | `active \| pending \| closed \| spam` | No | — |
 | `assignTo` | `number` | No | — |
 | `cc` | `string[]` | No | — |
@@ -2389,7 +2466,12 @@ await corsair.helpscout.api.threads.createReply({ conversationId: 1000, customer
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
 
 
 ---
@@ -2419,7 +2501,7 @@ await corsair.helpscout.api.threads.getOriginalSource({ conversationId: 1000, th
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `string` | No | — |
+| `original` | `string` | No | — |
 
 
 
@@ -2548,7 +2630,7 @@ await corsair.helpscout.api.threads.list({ conversationId: 1000 });
 
 Update thread text or visibility
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.helpscout.api.threads.update({ conversationId: 1000, threadId: 50, op: 'replace', path: '/text', value: 'Updated thread content' });
