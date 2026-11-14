@@ -39,16 +39,14 @@ const operations = [
 function catalogPaths() {
 	const nested = geocodio().endpoints ?? {};
 	const paths: string[] = [];
-	const walk = (prefix: string, value: Record<string, unknown>) => {
+	const walk = (prefix: string, value: object) => {
 		for (const [name, entry] of Object.entries(value)) {
 			const path = `${prefix}.${name}`;
 			if (typeof entry === 'function') paths.push(path);
-			else if (entry && typeof entry === 'object') {
-				walk(path, entry as Record<string, unknown>);
-			}
+			else if (entry && typeof entry === 'object') walk(path, entry);
 		}
 	};
-	walk('', nested as unknown as Record<string, unknown>);
+	walk('', nested);
 	return paths.map((path) => path.replace(/^\./, '')).sort();
 }
 
