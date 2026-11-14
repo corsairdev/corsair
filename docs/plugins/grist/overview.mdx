@@ -7,7 +7,7 @@ description: "Relational spreadsheet-database platform combining the flexibility
 Use **Grist** through Corsair: one client, typed API calls.
 
 Grist API calls authenticate with an API key via the `Authorization: Bearer <api_key>` header.
-By default requests target `https://docs.getgrist.com/api`. For team sites or self-hosted instances, configure `baseUrl` (e.g. `https://<team>.getgrist.com/api` or `https://<host>/api`).
+Each connected account also stores `base_url`, the Grist site the key belongs to: `https://docs.getgrist.com` for a personal site, `https://<team>.getgrist.com` for a team site, or the HTTPS URL of a self-hosted instance. `/api` is added when missing. The URL must use https and may not contain credentials, a query string or a fragment. Calls fail with a connect prompt until it is set. SDK users can pass `baseUrl` in the plugin options instead.
 
 **What you get:**
 
