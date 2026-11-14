@@ -164,6 +164,7 @@ export const BaseProviders = [
 	'cloudflareapikey',
 	'cloudflarebrowserrendering',
 	'cloudinary',
+	'cloudlayer',
 	'coassemble',
 	'coda',
 	'codacy',
@@ -701,6 +702,7 @@ export const ProviderDisplayNames = {
 	cloudflareapikey: 'Cloudflare API Key',
 	cloudflarebrowserrendering: 'Cloudflare Browser Run',
 	cloudinary: 'Cloudinary',
+	cloudlayer: 'Cloudlayer',
 	coassemble: 'Coassemble',
 	coda: 'Coda',
 	codacy: 'Codacy',
@@ -1245,6 +1247,7 @@ export type AllProviders =
 	| 'cloudflareapikey'
 	| 'cloudflarebrowserrendering'
 	| 'cloudinary'
+	| 'cloudlayer'
 	| 'coassemble'
 	| 'coda'
 	| 'codacy'
