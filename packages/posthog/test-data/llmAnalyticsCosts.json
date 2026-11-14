@@ -1,0 +1,38 @@
+{
+  "cache_key": "cache_309833_85a66570739e45f15361612255ee807d738f90102eb54eeeb6247e7d9a86f1c3",
+  "cache_target_age": "2026-11-12T14:37:53.972686Z",
+  "calculation_trigger": null,
+  "column_formats": null,
+  "columns": [
+    "model",
+    "generations",
+    "input_tokens",
+    "output_tokens",
+    "cost_usd"
+  ],
+  "error": null,
+  "hasMore": null,
+  "is_cached": false,
+  "last_refresh": "2026-11-12T13:37:53.920178Z",
+  "limit": null,
+  "metadata": null,
+  "next_allowed_client_refresh": "2026-11-12T13:38:53.920178Z",
+  "offset": null,
+  "query": null,
+  "query_scan": null,
+  "query_status": null,
+  "resolved_compare_date_range": null,
+  "resolved_date_range": null,
+  "results": [],
+  "timezone": "UTC",
+  "types": [
+    ["model", "Nullable(String)"],
+    ["generations", "UInt64"],
+    ["input_tokens", "Nullable(Float64)"],
+    ["output_tokens", "Nullable(Float64)"],
+    ["cost_usd", "Nullable(Float64)"]
+  ],
+  "used_data_warehouse_sources": null,
+  "warehouse_suggestions": null,
+  "warnings": null
+}
