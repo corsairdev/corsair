@@ -521,6 +521,48 @@ describe('Make responses and settings from the API reference', () => {
 		});
 		expect(timeout).toHaveBeenLastCalledWith(60_000);
 	});
+	it('parses a live clone response with null updatedByUser and isShared', async () => {
+		// Trimmed from a live clone on a Make free plan (eu1, 11-15).
+		const cloned = {
+			scenario: {
+				id: 8578883,
+				name: 'corsair-plugin-test-clone',
+				teamId: 3625807,
+				hookId: null,
+				devices: [],
+				deviceId: null,
+				deviceScope: null,
+				description: '',
+				folderId: null,
+				slots: null,
+				usedPackages: ['util'],
+				scheduling: { type: 'on-demand' },
+				createdByUser: { id: 1, name: 'Test User' },
+				updatedByUser: null,
+				nextExec: null,
+				chainingRole: 'none',
+				type: 'scenario',
+				isShared: null,
+				isActive: false,
+			},
+		};
+		reply(cloned);
+		await expect(
+			endpoints.clone(context(), {
+				...id,
+				organizationId: 9,
+				body: { name: 'corsair-plugin-test-clone', teamId: 7, states: false },
+			}),
+		).resolves.toEqual(cloned);
+	});
+	it('parses the numeric status a live responsive run returns', async () => {
+		// Live response from a responsive run on a Make free plan (eu1, 11-15).
+		const live = { executionId: 'd5ace0f5ff754d34a393a4c558499019', status: 1 };
+		reply(live);
+		await expect(
+			endpoints.run(context(), { ...id, body: { responsive: true } }),
+		).resolves.toEqual(live);
+	});
 	it('marks replace-all and delete of build variables as destructive', () => {
 		const meta = make({ zone: 'eu1' }).endpointMeta!;
 		expect(meta['scenarios.updateBuildVariables']?.riskLevel).toBe(

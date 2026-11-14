@@ -6,7 +6,8 @@ import { z } from 'zod';
 // or installed modules, so a stricter shared value schema would reject valid data.
 // Output enums (scenario type, label colour and scope, entity type, evaluation
 // mode) are plain strings so a value Make adds later does not fail parsing; the
-// documented examples also return null for unset hookId, deviceId and deviceScope.
+// documented examples also return null for unset hookId, deviceId and deviceScope,
+// and a fresh clone returns null for updatedByUser and isShared.
 export const listInput = z
 	.object({
 		teamId: z.number().int().optional(),
@@ -163,6 +164,7 @@ export const listOutput = z
 								email: z.string().optional(),
 							})
 							.passthrough()
+							.nullable()
 							.optional(),
 						updatedByUser: z
 							.object({
@@ -171,6 +173,7 @@ export const listOutput = z
 								email: z.string().optional(),
 							})
 							.passthrough()
+							.nullable()
 							.optional(),
 						nextExec: z.string().nullable().optional(),
 						created: z.string().optional(),
@@ -178,7 +181,7 @@ export const listOutput = z
 						moduleSequenceId: z.number().int().optional(),
 						type: z.string().optional(),
 						chainingRole: z.string().nullable().optional(),
-						isShared: z.boolean().optional(),
+						isShared: z.boolean().nullable().optional(),
 						operations: z.number().int().optional(),
 						centicredits: z.number().int().optional(),
 						transfer: z.number().int().optional(),
@@ -359,6 +362,7 @@ export const createOutput = z
 						email: z.string().optional(),
 					})
 					.passthrough()
+					.nullable()
 					.optional(),
 				updatedByUser: z
 					.object({
@@ -367,6 +371,7 @@ export const createOutput = z
 						email: z.string().optional(),
 					})
 					.passthrough()
+					.nullable()
 					.optional(),
 				nextExec: z.string().nullable().optional(),
 				created: z.string().optional(),
@@ -374,7 +379,7 @@ export const createOutput = z
 				moduleSequenceId: z.number().int().optional(),
 				type: z.string().optional(),
 				chainingRole: z.string().nullable().optional(),
-				isShared: z.boolean().optional(),
+				isShared: z.boolean().nullable().optional(),
 				operations: z.number().int().optional(),
 				centicredits: z.number().int().optional(),
 				transfer: z.number().int().optional(),
@@ -572,6 +577,7 @@ export const getOutput = z
 						email: z.string().optional(),
 					})
 					.passthrough()
+					.nullable()
 					.optional(),
 				updatedByUser: z
 					.object({
@@ -580,6 +586,7 @@ export const getOutput = z
 						email: z.string().optional(),
 					})
 					.passthrough()
+					.nullable()
 					.optional(),
 				nextExec: z.string().nullable().optional(),
 				created: z.string().optional(),
@@ -587,7 +594,7 @@ export const getOutput = z
 				moduleSequenceId: z.number().int().optional(),
 				type: z.string().optional(),
 				chainingRole: z.string().nullable().optional(),
-				isShared: z.boolean().optional(),
+				isShared: z.boolean().nullable().optional(),
 				operations: z.number().int().optional(),
 				centicredits: z.number().int().optional(),
 				transfer: z.number().int().optional(),
@@ -753,6 +760,7 @@ export const updateOutput = z
 						email: z.string().optional(),
 					})
 					.passthrough()
+					.nullable()
 					.optional(),
 				updatedByUser: z
 					.object({
@@ -761,6 +769,7 @@ export const updateOutput = z
 						email: z.string().optional(),
 					})
 					.passthrough()
+					.nullable()
 					.optional(),
 				nextExec: z.string().nullable().optional(),
 				created: z.string().optional(),
@@ -768,7 +777,7 @@ export const updateOutput = z
 				moduleSequenceId: z.number().int().optional(),
 				type: z.string().optional(),
 				chainingRole: z.string().nullable().optional(),
-				isShared: z.boolean().optional(),
+				isShared: z.boolean().nullable().optional(),
 				operations: z.number().int().optional(),
 				centicredits: z.number().int().optional(),
 				transfer: z.number().int().optional(),
@@ -958,6 +967,7 @@ export const cloneOutput = z
 						email: z.string().optional(),
 					})
 					.passthrough()
+					.nullable()
 					.optional(),
 				updatedByUser: z
 					.object({
@@ -966,6 +976,7 @@ export const cloneOutput = z
 						email: z.string().optional(),
 					})
 					.passthrough()
+					.nullable()
 					.optional(),
 				nextExec: z.string().nullable().optional(),
 				created: z.string().optional(),
@@ -973,7 +984,7 @@ export const cloneOutput = z
 				moduleSequenceId: z.number().int().optional(),
 				type: z.string().optional(),
 				chainingRole: z.string().nullable().optional(),
-				isShared: z.boolean().optional(),
+				isShared: z.boolean().nullable().optional(),
 				operations: z.number().int().optional(),
 				centicredits: z.number().int().optional(),
 				transfer: z.number().int().optional(),
@@ -1096,7 +1107,11 @@ export const runInput = z.object({
 		.optional(),
 });
 export const runOutput = z
-	.object({ executionId: z.string().optional(), status: z.string().optional() })
+	.object({
+		executionId: z.string().optional(),
+		// The reference documents "1" | "2" | "3"; the live API returns the number.
+		status: z.union([z.number(), z.string()]).optional(),
+	})
 	.passthrough();
 export const replayInput = z.object({
 	scenarioId: z.number().int(),
