@@ -1651,6 +1651,14 @@
                 ]
               },
               {
+                "group": "CustomJS",
+                "pages": [
+                  "plugins/customjs/overview",
+                  "plugins/customjs/api",
+                  "plugins/customjs/database"
+                ]
+              },
+              {
                 "group": "Cutt.ly",
                 "pages": [
                   "plugins/cuttly/overview",
