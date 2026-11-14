@@ -73,7 +73,7 @@ describeLive('Polygon.io live API', () => {
 		expect(Array.isArray(parsed.results)).toBe(true);
 		// A row the docs print as `{ ticker, name, active, ... }` must parse, which
 		// is what proves the schema matches the wire format.
-		for (const ticker of parsed.results) {
+		for (const ticker of parsed.results ?? []) {
 			expect(TickerSchema.safeParse(ticker).success).toBe(true);
 		}
 	});
@@ -97,7 +97,7 @@ describeLive('Polygon.io live API', () => {
 		const parsed = PolygonioEndpointOutputSchemas.exchanges.parse(raw);
 
 		expect(Array.isArray(parsed.results)).toBe(true);
-		for (const exchange of parsed.results) {
+		for (const exchange of parsed.results ?? []) {
 			expect(ExchangeSchema.safeParse(exchange).success).toBe(true);
 		}
 	});

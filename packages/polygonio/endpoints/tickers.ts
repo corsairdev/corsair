@@ -57,7 +57,7 @@ export const list: PolygonioEndpoints['tickersList'] = (ctx, input) =>
 					limit,
 				},
 			},
-		{ log: (_, result) => ({ count: result.results.length }) },
+		{ log: (_, result) => ({ count: result.results?.length ?? 0 }) },
 	);
 
 export const overview: PolygonioEndpoints['tickerOverview'] = (ctx, input) =>
@@ -91,5 +91,5 @@ export const types: PolygonioEndpoints['tickerTypes'] = (ctx, input) =>
 			path: '/v3/reference/tickers/types',
 			query: { asset_class, locale },
 		}),
-		{ log: (_, result) => ({ count: result.results.length }) },
+		{ log: (_, result) => ({ count: result.results?.length ?? 0 }) },
 	);

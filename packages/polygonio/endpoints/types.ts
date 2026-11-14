@@ -328,7 +328,8 @@ const MoversOutputSchema = z
 	.object({
 		status: StatusSchema,
 		request_id: z.string().nullish(),
-		tickers: z.array(SnapshotTickerSchema),
+		// Documented as optional: a movers call can come back without the list.
+		tickers: z.array(SnapshotTickerSchema).nullish(),
 	})
 	.loose();
 
@@ -441,7 +442,8 @@ export type TickersListInput = z.infer<typeof TickersListInputSchema>;
 const TickersListOutputSchema = z
 	.object({
 		...listEnvelopeFields,
-		results: z.array(TickerSchema),
+		// Documented as optional: a filter with no match can leave it off.
+		results: z.array(TickerSchema).nullish(),
 	})
 	.loose();
 
@@ -533,7 +535,9 @@ export type PolygonioTickerType = z.infer<typeof TickerTypeSchema>;
 const TickerTypesOutputSchema = z
 	.object({
 		...listEnvelopeFields,
-		results: z.array(TickerTypeSchema),
+		// Documented as optional, and the live API answers a ticker-types filter with
+		// no match with `results: null`.
+		results: z.array(TickerTypeSchema).nullish(),
 	})
 	.loose();
 
@@ -625,7 +629,8 @@ export type PolygonioExchange = z.infer<typeof ExchangeSchema>;
 const ExchangesOutputSchema = z
 	.object({
 		...listEnvelopeFields,
-		results: z.array(ExchangeSchema),
+		// Documented as optional: a filter with no match can leave it off.
+		results: z.array(ExchangeSchema).nullish(),
 	})
 	.loose();
 

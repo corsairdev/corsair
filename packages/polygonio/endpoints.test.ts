@@ -30,7 +30,7 @@ describe('response parsing', () => {
 
 		const result = await Tickers.list(ctx, {});
 
-		expect(result.results[0]).toMatchObject({ brand_new_field: 'x' });
+		expect(result.results?.[0]).toMatchObject({ brand_new_field: 'x' });
 	});
 
 	it('accepts a DELAYED status, which a time-limited plan returns', async () => {
@@ -91,6 +91,54 @@ describe('response parsing', () => {
 				to: '2020-01-02',
 			}),
 		).rejects.toThrow();
+	});
+
+	it('accepts a ticker-types answer with results null, which a filter with no match returns', async () => {
+		mockedRequest.mockResolvedValue({
+			results: null,
+			count: 0,
+			status: 'OK',
+			request_id: 'r',
+		});
+
+		const result = await Tickers.types(ctx, {
+			asset_class: 'stocks',
+			locale: 'global',
+		});
+
+		expect(result.results).toBeNull();
+	});
+
+	it('accepts a ticker search that leaves results off', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'OK',
+			count: 0,
+			request_id: 'r',
+		});
+
+		const result = await Tickers.list(ctx, { search: 'no-such-ticker' });
+
+		expect(result.results).toBeUndefined();
+	});
+
+	it('accepts an exchanges answer that leaves results off', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'OK',
+			count: 0,
+			request_id: 'r',
+		});
+
+		const result = await MarketOperations.exchanges(ctx, {});
+
+		expect(result.results).toBeUndefined();
+	});
+
+	it('accepts a movers answer that leaves tickers off', async () => {
+		mockedRequest.mockResolvedValue({ status: 'OK', request_id: 'r' });
+
+		const result = await Snapshots.movers(ctx, { direction: 'gainers' });
+
+		expect(result.tickers).toBeUndefined();
 	});
 
 	it('rejects a snapshot that omits the ticker it is about', async () => {

@@ -54,5 +54,5 @@ export const exchanges: PolygonioEndpoints['exchanges'] = (ctx, input) =>
 				path: '/v3/reference/exchanges',
 				query: { asset_class, locale },
 			},
-		{ log: (_, result) => ({ count: result.results.length }) },
+		{ log: (_, result) => ({ count: result.results?.length ?? 0 }) },
 	);

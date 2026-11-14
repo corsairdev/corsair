@@ -245,7 +245,7 @@ describe('tickers endpoints', () => {
 				limit: 10,
 			},
 		});
-		expect(result.results[0]?.name).toBe('Apple Inc.');
+		expect(result.results?.[0]?.name).toBe('Apple Inc.');
 	});
 
 	it('tickers.list follows nextUrl', async () => {
@@ -295,7 +295,7 @@ describe('tickers endpoints', () => {
 			path: '/v3/reference/tickers/types',
 			query: { asset_class: 'stocks', locale: undefined },
 		});
-		expect(result.results[0]?.code).toBe('CS');
+		expect(result.results?.[0]?.code).toBe('CS');
 	});
 });
 
@@ -363,7 +363,7 @@ describe('market endpoints', () => {
 			path: '/v3/reference/exchanges',
 			query: { asset_class: 'stocks', locale: 'us' },
 		});
-		expect(result.results[0]?.mic).toBe('XNYS');
+		expect(result.results?.[0]?.mic).toBe('XNYS');
 
 		await MarketOperations.exchanges(ctx, {
 			nextUrl: 'https://api.massive.com/v3/reference/exchanges?cursor=next',

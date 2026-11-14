@@ -31,7 +31,7 @@ export const movers: PolygonioEndpoints['movers'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				direction: parsed.direction,
-				count: result.tickers.length,
+				count: result.tickers?.length ?? 0,
 			}),
 		},
 	);
