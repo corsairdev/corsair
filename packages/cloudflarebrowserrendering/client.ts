@@ -174,6 +174,28 @@ const CloudflareRateLimitConfig: RateLimitConfig = {
 	},
 };
 
+function redactTargetUrlQuery(
+	query: ApiRequestOptions['query'],
+): ApiRequestOptions['query'] {
+	if (!query || !('url' in query)) {
+		return query;
+	}
+	return { ...query, url: '[REDACTED]' };
+}
+
+function redactTargetUrlParam(url: string): string {
+	const queryStart = url.indexOf('?');
+	if (queryStart === -1) {
+		return url;
+	}
+	const params = new URLSearchParams(url.slice(queryStart + 1));
+	if (!params.has('url')) {
+		return url;
+	}
+	params.set('url', '[REDACTED]');
+	return `${url.slice(0, queryStart)}?${params.toString()}`;
+}
+
 export async function makeCloudflareBrowserRenderingRequest(
 	path: string,
 	apiToken: string,
@@ -233,11 +255,17 @@ export async function makeCloudflareBrowserRenderingRequest(
 		return response;
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const safeRequest = { ...error.request, body: undefined };
+			// The target URL (targets.create) is customer data and may carry
+			// credentials or a signed query; keep it out of the error.
+			const safeRequest = {
+				...error.request,
+				body: undefined,
+				query: redactTargetUrlQuery(error.request.query),
+			};
 			throw new ApiError(
 				safeRequest,
 				{
-					url: error.url,
+					url: redactTargetUrlParam(error.url),
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,

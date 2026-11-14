@@ -164,6 +164,48 @@ describe('makeCloudflareBrowserRenderingRequest', () => {
 			headersRetryAfterMs: 2500,
 		});
 	});
+	it('scrubs the target URL from ApiErrors and keeps status and retry fields', async () => {
+		const target =
+			'https://user:private-pass@example.com/doc?X-Amz-Signature=private-sig';
+		const failed = new ApiError(
+			{
+				method: 'PUT',
+				url: '/accounts/account-123/browser-run/devtools/browser/session-1/json/new',
+				query: { url: target, liveViewUrlExpiresInMs: 1000 },
+			},
+			{
+				url: `${CLOUDFLARE_BROWSER_RUN_API_BASE}/accounts/account-123/browser-run/devtools/browser/session-1/json/new?url=${encodeURIComponent(target)}&liveViewUrlExpiresInMs=1000`,
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { success: false, errors: [{ code: 429, message: 'limited' }] },
+			},
+			'Too Many Requests',
+			{ retryAfter: 1500 },
+		);
+		mockedRequest.mockRejectedValue(failed);
+
+		const sanitized = await makeCloudflareBrowserRenderingRequest(
+			'/accounts/account-123/browser-run/devtools/browser/session-1/json/new',
+			'test-token',
+			{ method: 'PUT', query: { url: target, liveViewUrlExpiresInMs: 1000 } },
+			// `unknown` because a rejection value has no static type; the
+			// assertions below narrow it to ApiError.
+		).catch((error: unknown) => error);
+		if (!(sanitized instanceof ApiError)) {
+			throw new Error('Expected the sanitized error to remain an ApiError');
+		}
+		const serialized =
+			JSON.stringify(sanitized) + sanitized.url + sanitized.message;
+		expect(serialized).not.toContain('private-pass');
+		expect(serialized).not.toContain('private-sig');
+		expect(serialized).not.toContain('example.com');
+		expect(sanitized.request.query).toMatchObject({
+			liveViewUrlExpiresInMs: 1000,
+		});
+		expect(sanitized).toMatchObject({ status: 429, retryAfter: 1500 });
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(sanitized)).toBe(true);
+	});
 });
 
 describe('makeCloudflareBrowserRenderingBinaryRequest', () => {
