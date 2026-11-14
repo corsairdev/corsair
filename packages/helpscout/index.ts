@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
 	getValidHelpScoutAccessToken,
 	HELPSCOUT_AUTH_URL,
@@ -43,6 +43,15 @@ import { HelpScoutSchema } from './schema';
 export type HelpScoutPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
 	key?: string;
+	/**
+	 * Single-account mode for `oauth_2`: with no refresh token stored, mint a
+	 * client-credentials token from the app's own id and secret (a Help Scout
+	 * private app). That token reaches the account that owns the app, and the id
+	 * and secret are shared by every tenant, so turn this on only when the app
+	 * serves one Help Scout account. Off by default: a tenant without a refresh
+	 * token must connect.
+	 */
+	clientCredentials?: boolean;
 	hooks?: InternalHelpScoutPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof helpScoutEndpointsNested>;
@@ -52,6 +61,9 @@ export type HelpScoutContext = CorsairPluginContext<
 	typeof HelpScoutSchema,
 	HelpScoutPluginOptions
 >;
+
+/** Refresh this long before the recorded expiry. */
+const TOKEN_REFRESH_BUFFER_SECONDS = 5 * 60;
 
 export type HelpScoutKeyBuilderContext =
 	KeyBuilderContext<HelpScoutPluginOptions>;
@@ -666,36 +678,61 @@ export function helpscout<const T extends HelpScoutPluginOptions>(
 			if (!ctx.keys || ctx.authType !== 'oauth_2') {
 				throw new AuthMissingError('helpscout', 'oauth_2');
 			}
-			const [accessToken, expiresAt, refreshToken, credentials] =
-				await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-					ctx.keys.get_integration_credentials(),
-				]);
+			const [credentials, refreshToken] = await Promise.all([
+				ctx.keys.get_integration_credentials(),
+				ctx.keys.get_refresh_token(),
+			]);
+			// Single-account mode only: with no refresh token stored, mint a
+			// client-credentials token from the app's own id and secret. That
+			// token reaches the Help Scout account that owns the app, and every
+			// tenant shares the id and secret, so elsewhere a tenant without a
+			// refresh token gets AuthMissingError and is asked to connect.
 			if (
-				!accessToken &&
-				(!credentials.client_id || !credentials.client_secret)
+				options.clientCredentials === true &&
+				!refreshToken &&
+				credentials.client_id &&
+				credentials.client_secret
 			) {
-				throw new AuthMissingError('helpscout', 'oauth_2');
-			}
-			const result = await getValidHelpScoutAccessToken({
-				accessToken,
-				expiresAt,
-				refreshToken,
-				clientId: credentials.client_id,
-				clientSecret: credentials.client_secret,
-			});
-			if (result.refreshed) {
-				await Promise.all([
-					ctx.keys.set_access_token(result.accessToken),
-					ctx.keys.set_expires_at(String(result.expiresAt)),
-					result.refreshToken
-						? ctx.keys.set_refresh_token(result.refreshToken)
-						: Promise.resolve(),
+				const keys = ctx.keys;
+				const clientId = credentials.client_id;
+				const clientSecret = credentials.client_secret;
+				const mint = async (): Promise<string> => {
+					const token = await getValidHelpScoutAccessToken({
+						clientId,
+						clientSecret,
+						forceRefresh: true,
+					});
+					// Token first, then its expiry: a new expiry beside the old
+					// token would keep a dead token "fresh".
+					await keys.set_access_token(token.accessToken);
+					await keys.set_expires_at(String(token.expiresAt));
+					return token.accessToken;
+				};
+				// unknown: `_refreshAuth` is read by core's request path after a
+				// 401 and is not part of the declared context type.
+				(ctx as Record<string, unknown>)._refreshAuth = mint;
+				const [accessToken, expiresAt] = await Promise.all([
+					keys.get_access_token(),
+					keys.get_expires_at(),
 				]);
+				const now = Math.floor(Date.now() / 1000);
+				if (
+					accessToken &&
+					expiresAt &&
+					Number(expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS
+				) {
+					return accessToken;
+				}
+				return mint();
 			}
-			return result.accessToken;
+			// Authorization-code connections: core refreshes with the refresh
+			// token (Help Scout takes the client id and secret in the form body),
+			// or through Hub when the app secret stays there, and installs the
+			// forced refresh core uses after a 401.
+			return getOAuthAccessToken(ctx, {
+				plugin: 'helpscout',
+				tokenUrl: HELPSCOUT_TOKEN_URL,
+			});
 		},
 	} satisfies InternalHelpScoutPlugin;
 }

@@ -70,7 +70,7 @@ pnpm add @corsair-dev/helpscout
 
 ## Auth
 
-Auth: OAuth 2. Corsair stores your Help Scout app's id and secret and refreshes the 2-day access token.
+Auth: OAuth 2. Corsair refreshes each connection's 2-day access token with its refresh token. `clientCredentials: true` mints tokens from the app's own id and secret instead, for a single Help Scout account.
 
 ## Webhooks
 

@@ -2,7 +2,7 @@ displayName: Help Scout
 description: Manage mailboxes, conversations, customer profiles, threads, tags, saved replies, and reports with Help Scout Mailbox API 2.0.
 recommendedAuth: oauth_2
 overviewNote: |
-  **Authentication.** Help Scout has no API keys. Create an app under Your Profile > My Apps and connect it with OAuth 2: Corsair stores the app's id and secret and refreshes the 2-day access token itself (refresh token for authorization-code apps, client-credentials grant otherwise). Passing `key` in plugin options sends that token as is, with no refresh.
+  **Authentication.** Help Scout has no API keys. Create an app under Your Profile > My Apps and connect each Help Scout account with OAuth 2: Corsair refreshes the 2-day access token with the stored refresh token, and once more after a 401. For a single Help Scout account, `clientCredentials: true` in plugin options mints tokens from the app's own id and secret instead (Help Scout's client-credentials grant), so no connect step is needed; leave it off when tenants connect their own accounts, because those tokens reach the account that owns the app. Passing `key` in plugin options sends that token as is, with no refresh.
 
   **Rate Limiting.** The Mailbox API enforces rate limits per tenant. Corsair's HTTP transport retries a 429 up to three times, honoring `Retry-After`.
 
@@ -78,9 +78,9 @@ apiExamples:
   customers.deletePhone:
     call: "{ customerId: 200, phoneId: 20 }"
   customers.createChat:
-    call: "{ customerId: 200, value: 'alice_chat', type: 'slack' }"
+    call: "{ customerId: 200, value: 'alice_chat', type: 'other' }"
   customers.updateChat:
-    call: "{ customerId: 200, chatId: 30, value: 'alice_new_chat', type: 'slack' }"
+    call: "{ customerId: 200, chatId: 30, value: 'alice_new_chat', type: 'other' }"
   customers.deleteChat:
     call: "{ customerId: 200, chatId: 30 }"
   customers.createSocialProfile:
