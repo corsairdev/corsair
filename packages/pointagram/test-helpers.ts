@@ -27,7 +27,6 @@ export function buildContext(
 		endpoints: {},
 		$getAccountId: () => Promise.resolve('test-account'),
 		key: apiKey,
-		options: { apiUser },
 		authType: 'api_key',
 		keys: {
 			get_dek: () => Promise.resolve('dek'),

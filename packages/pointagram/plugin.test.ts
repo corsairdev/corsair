@@ -118,6 +118,8 @@ describe('pointagram plugin', () => {
 			.sort();
 
 		expect(destructive).toEqual([
+			// players.create invites an online player, and sending a message is destructive.
+			'players.create',
 			'players.delete',
 			'rewardStore.purchase',
 			'rewardStore.revokePurchase',

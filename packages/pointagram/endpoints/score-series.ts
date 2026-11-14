@@ -95,10 +95,12 @@ export const addPoints: PointagramEndpoints['scoreSeriesAddPoints'] = (
 			},
 		}),
 		{
+			// Only the numeric id is logged. A series named in the input is customer
+			// data, so it stays out of the event payload.
 			log: (parsed, result) => ({
 				scoreSeriesId:
 					parsed.scoreseries_id === undefined
-						? parsed.scoreseries_name
+						? undefined
 						: String(parsed.scoreseries_id),
 				transactionId:
 					result.insid === undefined || result.insid === null

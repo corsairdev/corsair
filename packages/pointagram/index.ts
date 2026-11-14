@@ -49,11 +49,6 @@ export type PointagramPluginOptions = {
 	 * calls; this option is the override for scripts and tests.
 	 */
 	key?: string;
-	/**
-	 * The Pointagram login the key belongs to. Prefer the stored account field
-	 * (`api_user`) and use this only to override it.
-	 */
-	apiUser?: string;
 	hooks?: InternalPointagramPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof pointagramEndpointsNested>;
@@ -291,7 +286,10 @@ const pointagramEndpointMeta = {
 		description: 'Read one player by profile id',
 	},
 	'players.create': {
-		riskLevel: 'write',
+		// Creating an online player sends them an invitation, and R8 classifies any
+		// operation that sends a message as destructive. R9 settles that a risk
+		// level is per operation, not per input, so the offline path shares it.
+		riskLevel: 'destructive',
 		description:
 			'Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice',
 	},

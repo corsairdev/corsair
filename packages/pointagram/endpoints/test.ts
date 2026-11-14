@@ -24,7 +24,6 @@ export const credentials: PointagramEndpoints['testCredentials'] = (
 		},
 		input,
 		() => ({ method: 'POST', path: '/test' }),
-		{
-			log: (_, result) => ({ organization: result.organization ?? undefined }),
-		},
+		// The organization is the account's own name, so the event records only
+		// that the pair was checked.
 	);

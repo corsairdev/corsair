@@ -212,8 +212,11 @@ describe('envelope handling', () => {
 			data: {},
 		});
 
-		// The success branch must not paper over the message with an empty object.
-		await expect(Test.credentials(ctx, {})).resolves.toEqual({});
+		// The success branch must not resolve an empty organization for a key
+		// Pointagram says does not work.
+		await expect(Test.credentials(ctx, {})).rejects.toThrow(
+			/rejected the key/i,
+		);
 	});
 });
 

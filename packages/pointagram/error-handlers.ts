@@ -1,26 +1,38 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { PointagramAPIError } from './client';
+import { PointagramAPIError, reportsInvalidCredentials } from './client';
 
 function statusOf(error: Error): number | undefined {
 	if (error instanceof PointagramAPIError) return error.status;
 	return error instanceof ApiError ? error.status : undefined;
 }
 
+function methodOf(error: Error): string | undefined {
+	if (error instanceof PointagramAPIError) return error.method;
+	return error instanceof ApiError ? error.request.method : undefined;
+}
+
+/**
+ * A rejected key, which Pointagram reports as a 404 with "Invalid Credentials".
+ * A bare 401 or 403 lands here too: no endpoint documents one, so a gateway
+ * emitting it is refusing the credential rather than the request.
+ */
+function isAuthRejection(error: Error): boolean {
+	if (error instanceof PointagramAPIError) {
+		return (
+			error.credentialsRejected || error.status === 401 || error.status === 403
+		);
+	}
+	if (!(error instanceof ApiError)) return false;
+	if (error.status === 401 || error.status === 403) return true;
+	return error.status === 404 && reportsInvalidCredentials(error.body);
+}
+
 // Pointagram documents no rate limit and no Retry-After header. Its 404 doubles
 // as the credential rejection, so the body is matched before plain 404s.
 export const errorHandlers = {
-	// A rejected key, which Pointagram reports as a 404 with "Invalid Credentials".
-	// A bare 401 or 403 lands here too: no endpoint documents one, so a gateway
-	// emitting it is refusing the credential rather than the request.
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof PointagramAPIError && error.credentialsRejected) {
-				return true;
-			}
-			const status = statusOf(error);
-			return status === 401 || status === 403;
-		},
+		match: (error: Error) => isAuthRejection(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	RATE_LIMIT_ERROR: {
@@ -28,7 +40,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof PointagramAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -58,8 +70,7 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof PointagramAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof PointagramAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -67,9 +78,7 @@ export const errorHandlers = {
 	// scoreSeries.addPoints is not idempotent without a source_score_id.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PointagramAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

@@ -23,9 +23,10 @@ function apiError(
 	message: string,
 	body?: unknown, // unknown: each test passes one of Pointagram's response shapes.
 	retryAfter?: number,
+	method: 'GET' | 'POST' = 'GET',
 ) {
 	return new ApiError(
-		{ method: 'GET', url: '/players' },
+		{ method, url: '/players' },
 		{
 			url: `${POINTAGRAM_API_BASE}/players`,
 			ok: false,
@@ -117,14 +118,13 @@ describe('makePointagramRequest', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('reports a rejected key as a credential failure, not a missing route', async () => {
-		mockRequest.mockRejectedValue(
-			apiError(404, 'Not Found', {
-				status: 'Error',
-				message: 'Invalid Credentials',
-				data: {},
-			}),
-		);
+	it('lets core ApiError through unchanged, so status and Retry-After stay readable', async () => {
+		const core = apiError(404, 'Not Found', {
+			status: 'Error',
+			message: 'Invalid Credentials',
+			data: {},
+		});
+		mockRequest.mockRejectedValue(core);
 
 		const error = await makePointagramRequest(CREDENTIALS, {
 			method: 'GET',
@@ -134,21 +134,15 @@ describe('makePointagramRequest', () => {
 			(caught) => caught,
 		);
 
-		expect(error).toBeInstanceOf(PointagramAPIError);
-		if (!(error instanceof PointagramAPIError)) return;
-		expect(error.status).toBe(404);
-		expect(error.credentialsRejected).toBe(true);
-		expect(error.transport).toBe(false);
-		expect(error.message).toBe('Pointagram 404: Invalid Credentials');
+		expect(error).toBe(core);
 	});
 
-	it('leaves an honest 404 unmarked, so a missing resource stays distinguishable', async () => {
-		mockRequest.mockRejectedValue(
-			apiError(404, 'Not Found', {
-				status: 'Error',
-				message: 'Player not found',
-			}),
-		);
+	it('keeps a plain 404 distinguishable from a rejected key', async () => {
+		const core = apiError(404, 'Not Found', {
+			status: 'Error',
+			message: 'Player not found',
+		});
+		mockRequest.mockRejectedValue(core);
 
 		const error = await makePointagramRequest(CREDENTIALS, {
 			method: 'GET',
@@ -158,15 +152,12 @@ describe('makePointagramRequest', () => {
 			(caught) => caught,
 		);
 
-		expect(error).toBeInstanceOf(PointagramAPIError);
-		if (!(error instanceof PointagramAPIError)) return;
-		expect(error.credentialsRejected).toBe(false);
-		expect(error.message).toBe('Pointagram 404: Player not found');
+		expect(error).toBe(core);
 	});
 
-	it('keeps status and Retry-After, and drops the failed request that held the key', async () => {
+	it('keeps a 429 with its Retry-After on the core error', async () => {
 		mockRequest.mockRejectedValue(
-			apiError(429, 'Too Many Requests', { status: 'Error' }, 2500),
+			apiError(429, 'Too Many Requests', { status: 'Error' }, 2500, 'POST'),
 		);
 
 		const error = await makePointagramRequest(CREDENTIALS, {
@@ -177,12 +168,12 @@ describe('makePointagramRequest', () => {
 			(caught) => caught,
 		);
 
-		expect(error).toBeInstanceOf(PointagramAPIError);
-		if (!(error instanceof PointagramAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2500);
-		expect(error.method).toBe('POST');
-		// The key rode in a header; nothing on this error may echo it.
+		expect(error.request.method).toBe('POST');
+		// The key rode in a header of the config, never in the request options.
 		expect(JSON.stringify(error)).not.toContain('key-abc');
 		expect(String(error.stack)).not.toContain('key-abc');
 	});
@@ -228,31 +219,33 @@ describe('isCredentialRejection', () => {
 });
 
 describe('resolvePointagramApiUser', () => {
-	it('prefers the option over the stored account field', async () => {
+	it('reads the stored account field', async () => {
 		const value = await resolvePointagramApiUser({
-			options: { apiUser: 'option@example.com' },
-			keys: { get_api_user: async () => 'stored@example.com' },
-		});
-		expect(value).toBe('option@example.com');
-	});
-
-	it('falls back to the stored account field', async () => {
-		const value = await resolvePointagramApiUser({
-			options: {},
 			keys: { get_api_user: async () => 'stored@example.com' },
 		});
 		expect(value).toBe('stored@example.com');
 	});
 
-	it('throws AuthMissingError when neither is set', async () => {
+	it('trims the stored value', async () => {
+		const value = await resolvePointagramApiUser({
+			keys: { get_api_user: async () => '  stored@example.com  ' },
+		});
+		expect(value).toBe('stored@example.com');
+	});
+
+	it('throws AuthMissingError when the account holds nothing', async () => {
 		await expect(
 			resolvePointagramApiUser({
-				options: {},
 				keys: { get_api_user: async () => null },
 			}),
 		).rejects.toBeInstanceOf(AuthMissingError);
 		await expect(
-			resolvePointagramApiUser({ options: {} }),
+			resolvePointagramApiUser({
+				keys: { get_api_user: async () => '   ' },
+			}),
 		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(resolvePointagramApiUser({})).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
 	});
 });

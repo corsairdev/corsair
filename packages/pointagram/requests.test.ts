@@ -58,10 +58,11 @@ describe('test.credentials', () => {
 		expect(sentRequest()).toEqual({ method: 'POST', path: '/test' });
 		expect(sentCredentials()).toEqual(CREDENTIALS);
 		expect(result).toEqual({ organization: 'TestBolaget' });
+		// The organization is the account's own name, so the event omits it.
 		expect(mockedLog).toHaveBeenCalledWith(
 			ctx,
 			'pointagram.test.credentials',
-			{ organization: 'TestBolaget' },
+			{},
 			'completed',
 		);
 	});
@@ -368,10 +369,12 @@ describe('scoreSeries endpoints', () => {
 			},
 		});
 		expect(result.insid).toBe('4011');
+		// A series named in the input is customer data, so only the numeric id is
+		// logged, and this call named the series instead.
 		expect(mockedLog).toHaveBeenCalledWith(
 			ctx,
 			'pointagram.scoreSeries.addPoints',
-			{ scoreSeriesId: 'Points', transactionId: '4011' },
+			{ scoreSeriesId: undefined, transactionId: '4011' },
 			'completed',
 		);
 	});
@@ -642,14 +645,19 @@ describe('rewardStore endpoints', () => {
 });
 
 describe('credential resolution', () => {
-	it('reads Api-User from the account when the option is absent', async () => {
+	it('reads Api-User only from the account, never from plugin options', async () => {
 		mockedRequest.mockResolvedValue({
 			status: 'Ok',
 			data: { teams: [] },
 		});
-		const ctxWithoutOption = { ...ctx, options: {} } as typeof ctx;
+		// A credential left in options must not be picked up: the account field is
+		// the only source R8 allows.
+		const ctxWithOption = {
+			...ctx,
+			options: { apiUser: 'option@example.com' },
+		} as typeof ctx;
 
-		await Teams.list(ctxWithoutOption, {});
+		await Teams.list(ctxWithOption, {});
 
 		expect(sentCredentials()).toEqual({
 			apiKey: 'key-abc',

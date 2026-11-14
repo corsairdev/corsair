@@ -15,7 +15,7 @@ pnpm add @corsair-dev/pointagram
 | `competitions.get` | `pointagram.api.competitions.get` | `read` | Read one competition by id |
 | `competitions.list` | `pointagram.api.competitions.list` | `read` | List competitions, optionally narrowed to one player, id or access key |
 | `competitions.players` | `pointagram.api.competitions.players` | `read` | List the players in a competition with their score and rank |
-| `players.create` | `pointagram.api.players.create` | `write` | Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice |
+| `players.create` | `pointagram.api.players.create` | `destructive` | Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice |
 | `players.delete` | `pointagram.api.players.delete` | `destructive` | Soft delete a player. Pointagram keeps the record for you to anonymize in the app, and refuses to remove admin users |
 | `players.get` | `pointagram.api.players.get` | `read` | Read one player by profile id |
 | `players.list` | `pointagram.api.players.list` | `read` | List players, optionally filtered by name, email or external id, with `next_offset` paging |

@@ -11,15 +11,21 @@ const CONTEXT = {
 	originalError: new Error('placeholder'),
 };
 
-function apiError(status: number, message: string, retryAfter?: number) {
+function apiError(
+	status: number,
+	message: string,
+	body?: unknown, // unknown: each test passes one of Pointagram's response shapes.
+	retryAfter?: number,
+	method: 'GET' | 'POST' = 'GET',
+) {
 	return new ApiError(
-		{ method: 'GET', url: '/players' },
+		{ method, url: '/players' },
 		{
 			url: 'https://app.pointagram.com/api/20/players',
 			ok: false,
 			status,
 			statusText: message,
-			body: {},
+			body: body ?? {},
 		},
 		message,
 		retryAfter === undefined ? undefined : { retryAfter },
@@ -41,14 +47,11 @@ function route(error: Error): string {
 
 describe('Pointagram errorHandlers', () => {
 	it('routes the documented credential rejection to AUTH_ERROR with no retry', async () => {
-		const error = new PointagramAPIError(
-			'Pointagram 404: Invalid Credentials',
-			{
-				status: 404,
-				method: 'GET',
-				credentialsRejected: true,
-			},
-		);
+		const error = apiError(404, 'Not Found', {
+			status: 'Error',
+			message: 'Invalid Credentials',
+			data: {},
+		});
 
 		expect(route(error)).toBe('AUTH_ERROR');
 		await expect(HANDLERS.AUTH_ERROR?.handler(error, CONTEXT)).resolves.toEqual(
@@ -57,9 +60,9 @@ describe('Pointagram errorHandlers', () => {
 	});
 
 	it('routes an ordinary 404 to NOT_FOUND_ERROR, not AUTH_ERROR', async () => {
-		const error = new PointagramAPIError('Pointagram 404: Player not found', {
-			status: 404,
-			method: 'GET',
+		const error = apiError(404, 'Not Found', {
+			status: 'Error',
+			message: 'Player not found',
 		});
 
 		expect(route(error)).toBe('NOT_FOUND_ERROR');
@@ -69,42 +72,18 @@ describe('Pointagram errorHandlers', () => {
 	});
 
 	it('treats a bare 401 or 403 as an auth failure, since no endpoint documents one', async () => {
-		expect(
-			route(
-				new PointagramAPIError('Pointagram 401: Unauthorized', {
-					status: 401,
-					method: 'GET',
-				}),
-			),
-		).toBe('AUTH_ERROR');
-		expect(
-			route(
-				new PointagramAPIError('Pointagram 403: Forbidden', {
-					status: 403,
-					method: 'GET',
-				}),
-			),
-		).toBe('AUTH_ERROR');
+		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
+		expect(route(apiError(403, 'Forbidden'))).toBe('AUTH_ERROR');
 	});
 
 	it('routes a 409 conflict, such as an existing player, to VALIDATION_ERROR', async () => {
-		const error = new PointagramAPIError(
-			'Pointagram 409: Player already exists.',
-			{ status: 409, method: 'POST' },
-		);
-
-		expect(route(error)).toBe('VALIDATION_ERROR');
+		expect(route(apiError(409, 'Conflict'))).toBe('VALIDATION_ERROR');
 	});
 
 	it('routes a 422 to VALIDATION_ERROR', async () => {
-		expect(
-			route(
-				new PointagramAPIError('Pointagram 422: bad field', {
-					status: 422,
-					method: 'POST',
-				}),
-			),
-		).toBe('VALIDATION_ERROR');
+		expect(route(apiError(422, 'Unprocessable Entity'))).toBe(
+			'VALIDATION_ERROR',
+		);
 	});
 
 	it('routes a ZodError to VALIDATION_ERROR with no retry', async () => {
@@ -116,11 +95,7 @@ describe('Pointagram errorHandlers', () => {
 	});
 
 	it('routes a 429 to RATE_LIMIT_ERROR and honours Retry-After', async () => {
-		const error = new PointagramAPIError('Pointagram 429: Too Many Requests', {
-			status: 429,
-			method: 'GET',
-			retryAfter: 2500,
-		});
+		const error = apiError(429, 'Too Many Requests', { status: 'Error' }, 2500);
 
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(
@@ -133,10 +108,7 @@ describe('Pointagram errorHandlers', () => {
 	});
 
 	it('falls back to the backoff strategy when a 429 carries no Retry-After', async () => {
-		const error = new PointagramAPIError('Pointagram 429: Too Many Requests', {
-			status: 429,
-			method: 'GET',
-		});
+		const error = apiError(429, 'Too Many Requests', { status: 'Error' });
 
 		const result = await HANDLERS.RATE_LIMIT_ERROR?.handler(error, CONTEXT);
 		expect(result?.maxRetries).toBe(3);
@@ -164,14 +136,14 @@ describe('Pointagram errorHandlers', () => {
 	});
 
 	it('replays a 5xx on a read and refuses to replay it on a write', async () => {
-		const read = new PointagramAPIError('Pointagram 503: Unavailable', {
-			status: 503,
-			method: 'GET',
-		});
-		const write = new PointagramAPIError('Pointagram 503: Unavailable', {
-			status: 503,
-			method: 'POST',
-		});
+		const read = apiError(503, 'Service Unavailable', { status: 'Error' });
+		const write = apiError(
+			503,
+			'Service Unavailable',
+			{ status: 'Error' },
+			undefined,
+			'POST',
+		);
 
 		expect(route(read)).toBe('SERVER_ERROR');
 		await expect(

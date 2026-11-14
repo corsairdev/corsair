@@ -173,6 +173,17 @@ describe('score series schemas', () => {
 		).toBe(true);
 	});
 
+	it('rejects both points and pointtype_name, which the API treats as one field', () => {
+		expect(
+			ScoreSeriesAddPointsInputSchema.safeParse({
+				player_id: 121212,
+				scoreseries_id: 180,
+				points: 5,
+				pointtype_name: 'Dollar',
+			}).success,
+		).toBe(false);
+	});
+
 	it('caps the history page size at the documented maximum', () => {
 		expect(
 			ScoreSeriesHistoryInputSchema.safeParse({ id: 180, limit: 1000 }).success,
@@ -182,6 +193,21 @@ describe('score series schemas', () => {
 		).toBe(false);
 		expect(
 			ScoreSeriesHistoryInputSchema.safeParse({ id: 180, limit: 0 }).success,
+		).toBe(false);
+	});
+
+	it('round-trips a pagination cursor, which the provider returns as a number too', () => {
+		const page = ScoreSeriesHistoryInputSchema.parse({
+			id: 180,
+			offset: 527947,
+		});
+		expect(page.offset).toBe(527947);
+		expect(
+			ScoreSeriesHistoryInputSchema.safeParse({ id: 180, offset: '527947' })
+				.success,
+		).toBe(true);
+		expect(
+			ScoreSeriesHistoryInputSchema.safeParse({ id: 180, offset: '' }).success,
 		).toBe(false);
 	});
 });

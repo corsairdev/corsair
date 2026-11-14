@@ -5,10 +5,11 @@
 //
 // Every test is a read. They confirm the Custom Api 2.0 envelope, the two
 // credential headers, and that each output schema matches a real response.
+import { ApiError } from 'corsair/http';
 import {
+	isCredentialRejection,
 	makePointagramRequest,
 	POINTAGRAM_API_BASE,
-	PointagramAPIError,
 } from './client';
 import {
 	CompetitionSchema,
@@ -140,11 +141,11 @@ describeLive('Pointagram live API', () => {
 			(caught) => caught,
 		);
 
-		expect(error).toBeInstanceOf(PointagramAPIError);
-		if (!(error instanceof PointagramAPIError)) return;
+		// The HTTP failure is core's ApiError, passed through unchanged.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(404);
-		expect(error.credentialsRejected).toBe(true);
-		expect(error.message).toContain('Invalid Credentials');
+		expect(isCredentialRejection(error.status, error.body)).toBe(true);
 		// The wrong key must not appear anywhere on the error.
 		expect(JSON.stringify(error)).not.toContain('definitely-not-a-key');
 	});

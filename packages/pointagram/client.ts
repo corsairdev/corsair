@@ -80,28 +80,32 @@ export function readEnvelopeMessage(
 	return readString(asRecord(body), 'message');
 }
 
-/** True when the body is Pointagram's credential rejection. */
+/** True when the envelope's message is Pointagram's credential rejection. */
+export function reportsInvalidCredentials(
+	body: unknown, // unknown: the provider's response body before validation.
+): boolean {
+	const message = readEnvelopeMessage(body);
+	return message !== undefined && INVALID_CREDENTIALS.test(message);
+}
+
+/** True when the response is Pointagram's credential rejection. */
 export function isCredentialRejection(
 	status: number | undefined,
 	body: unknown, // unknown: the provider's response body before validation.
 ): boolean {
 	if (status !== 404 && status !== 401 && status !== 403) return false;
-	const message = readEnvelopeMessage(body);
-	return message !== undefined && INVALID_CREDENTIALS.test(message);
+	return reportsInvalidCredentials(body);
 }
 
 /**
- * Pointagram errors carry status and message only; the key rides in a header of
- * the failed request, so the core `ApiError` (and anything that inspects it) is
- * kept off this error entirely rather than attached as a cause.
- *
- * A 2xx body with `status: "Error"` is a failure too; `errorFromEnvelope` builds
- * the same error from it, with no HTTP status.
+ * The failure shapes core's `ApiError` cannot carry: a dropped connection, and a
+ * 2xx body with `status: "Error"`, which has no HTTP status at all. Both build
+ * this error; a real HTTP failure keeps core's `ApiError` (see
+ * {@link makePointagramRequest}) so its status and Retry-After stay readable.
  */
 export class PointagramAPIError extends Error {
+	/** Unset on an envelope failure, which arrived over HTTP 200. */
 	readonly status?: number;
-	/** Milliseconds from a Retry-After header, when Pointagram sent one. */
-	readonly retryAfter?: number;
 	/** The request method, so handlers can refuse to replay a write. */
 	readonly method?: string;
 	/** Set when the request never reached Pointagram (DNS, reset, abort). */
@@ -114,7 +118,6 @@ export class PointagramAPIError extends Error {
 		options: {
 			cause?: Error;
 			status?: number;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			credentialsRejected?: boolean;
@@ -123,24 +126,10 @@ export class PointagramAPIError extends Error {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'PointagramAPIError';
 		this.status = options.status;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.credentialsRejected = options.credentialsRejected ?? false;
 	}
-}
-
-/**
- * Builds the error message from the fields Pointagram documents. A 404 with no
- * envelope is a plain missing route, so it keeps the HTTP status in the text.
- */
-export function describePointagramError(
-	status: number | undefined,
-	body: unknown, // unknown: the provider's response body before validation.
-	fallback: string,
-): string {
-	const message = readEnvelopeMessage(body) ?? fallback;
-	return status !== undefined ? `Pointagram ${status}: ${message}` : message;
 }
 
 /**
@@ -190,15 +179,11 @@ export function segment(value: string | number): string {
 /**
  * Reads `Api-User`. It is a second credential rather than part of the key, so it
  * lives on the account next to `api_key` and is read through the account key
- * manager, with the plugin option as an override for tests and scripts.
+ * manager; the client never reads a credential from `ctx.options`.
  */
 export async function resolvePointagramApiUser(ctx: {
-	options?: { apiUser?: string };
 	keys?: { get_api_user?: () => Promise<string | null | undefined> };
 }): Promise<string> {
-	const fromOptions = ctx.options?.apiUser?.trim();
-	if (fromOptions) return fromOptions;
-
 	const stored = ctx.keys?.get_api_user ? await ctx.keys.get_api_user() : null;
 	const trimmed = stored?.trim();
 	if (!trimmed) {
@@ -248,17 +233,10 @@ export async function makePointagramRequest(
 			rateLimitConfig: POINTAGRAM_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new PointagramAPIError(
-				describePointagramError(error.status, error.body, error.statusText),
-				{
-					status: error.status,
-					retryAfter: error.retryAfter,
-					method,
-					credentialsRejected: isCredentialRejection(error.status, error.body),
-				},
-			);
-		}
+		// A real HTTP failure keeps core's ApiError: its status and Retry-After are
+		// what the handlers match and what core reads. Only a failure core cannot
+		// express becomes a PointagramAPIError below.
+		if (error instanceof ApiError) throw error;
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new PointagramAPIError(error.message, {

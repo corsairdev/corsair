@@ -5,8 +5,10 @@ import type { PointagramCredentials, PointagramRequest } from '../client';
 import {
 	errorFromEnvelope,
 	makePointagramRequest,
+	PointagramAPIError,
 	readEnvelopeMessage,
 	readEnvelopeStatus,
+	reportsInvalidCredentials,
 	resolvePointagramApiUser,
 } from '../client';
 
@@ -69,8 +71,20 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	if (!isSuccessEnvelope(envelope)) {
 		// A 2xx body with neither `status: "Ok"` nor `status: "Error"` is not a
 		// success, and it must not reach the output schema as if it were.
-		throw new Error(
+		throw new PointagramAPIError(
 			`Pointagram returned an unrecognised envelope: ${readEnvelopeMessage(envelope) ?? 'no message'}`,
+			{ method: request.method },
+		);
+	}
+
+	// A key Pointagram accepted at the transport level but rejected in the body.
+	// The docs describe a bad key as a 404 `Error` envelope, so an `Ok` envelope
+	// carrying the credential message is not a success either: reading it as one
+	// would hand back an empty organization for a key that does not work.
+	if (reportsInvalidCredentials(envelope)) {
+		throw new PointagramAPIError(
+			`Pointagram rejected the key: ${readEnvelopeMessage(envelope)}`,
+			{ method: request.method, credentialsRejected: true },
 		);
 	}
 

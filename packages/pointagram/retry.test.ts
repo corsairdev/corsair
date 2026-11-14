@@ -1,6 +1,7 @@
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { POINTAGRAM_API_BASE, PointagramAPIError } from './client';
+import { POINTAGRAM_API_BASE } from './client';
 import { pointagram } from './index';
 
 async function createClient(options: Parameters<typeof pointagram>[0]) {
@@ -31,6 +32,19 @@ function respond(
 }
 
 const teamsPage = { status: 'Ok', message: 'ok', data: { teams: [] } };
+
+/**
+ * Stores the account credentials. `Api-User` is read only from the account, so a
+ * test that calls an endpoint has to prime it the way setup would.
+ */
+async function primeAccount(
+	corsair: Awaited<ReturnType<typeof createClient>>['corsair'],
+	apiKey: string,
+) {
+	await corsair.pointagram.keys.issue_new_dek();
+	await corsair.pointagram.keys.set_api_key(apiKey);
+	await corsair.pointagram.keys.set_api_user('ops@example.com');
+}
 
 beforeEach(() => {
 	fetchMock = jest.spyOn(globalThis, 'fetch');
@@ -77,12 +91,13 @@ describe('Pointagram plugin through createCorsair', () => {
 		}
 	});
 
-	it('reads teams with the configured key and user', async () => {
+	it('reads teams with the configured key and the account user', async () => {
 		const { corsair, testDb } = await createClient({
 			key: 'pg-inline-key',
-			apiUser: 'ops@example.com',
 		});
 		try {
+			await corsair.pointagram.keys.issue_new_dek();
+			await corsair.pointagram.keys.set_api_user('ops@example.com');
 			respond({
 				status: 'Ok',
 				message: 'Teams retrieved successfully',
@@ -94,7 +109,9 @@ describe('Pointagram plugin through createCorsair', () => {
 			expect(result.teams[0]?.name).toBe('The Bulls');
 			const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 			expect(url).toBe(`${POINTAGRAM_API_BASE}/teams`);
-			expect(new Headers(init.headers).get('Api-Key')).toBe('pg-inline-key');
+			const headers = new Headers(init.headers);
+			expect(headers.get('Api-Key')).toBe('pg-inline-key');
+			expect(headers.get('Api-User')).toBe('ops@example.com');
 		} finally {
 			testDb.cleanup();
 		}
@@ -102,11 +119,9 @@ describe('Pointagram plugin through createCorsair', () => {
 
 	it('retries a 429 on a read and returns the next response', async () => {
 		jest.useFakeTimers();
-		const { corsair, testDb } = await createClient({
-			key: 'pg-inline-key',
-			apiUser: 'ops@example.com',
-		});
+		const { corsair, testDb } = await createClient({});
 		try {
+			await primeAccount(corsair, 'pg-inline-key');
 			respond({ status: 'Error', message: 'Too many requests' }, 429, {
 				'Retry-After': '1',
 			});
@@ -126,11 +141,9 @@ describe('Pointagram plugin through createCorsair', () => {
 
 	it('gives up after the retry budget is spent', async () => {
 		jest.useFakeTimers();
-		const { corsair, testDb } = await createClient({
-			key: 'pg-inline-key',
-			apiUser: 'ops@example.com',
-		});
+		const { corsair, testDb } = await createClient({});
 		try {
+			await primeAccount(corsair, 'pg-inline-key');
 			// Four responses: the first call plus the three retries the handler allows.
 			for (let attempt = 0; attempt < 4; attempt += 1) {
 				respond({ status: 'Error', message: 'Too many requests' }, 429, {
@@ -145,7 +158,7 @@ describe('Pointagram plugin through createCorsair', () => {
 			await jest.advanceTimersByTimeAsync(30_000);
 			const error = await pending;
 
-			expect(error).toBeInstanceOf(PointagramAPIError);
+			expect(error).toBeInstanceOf(ApiError);
 			expect(error).toMatchObject({ status: 429 });
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
@@ -155,11 +168,9 @@ describe('Pointagram plugin through createCorsair', () => {
 	});
 
 	it('does not replay a write after a 5xx', async () => {
-		const { corsair, testDb } = await createClient({
-			key: 'pg-inline-key',
-			apiUser: 'ops@example.com',
-		});
+		const { corsair, testDb } = await createClient({});
 		try {
+			await primeAccount(corsair, 'pg-inline-key');
 			respond({ status: 'Error', message: 'Server error' }, 503);
 
 			await expect(
@@ -168,7 +179,7 @@ describe('Pointagram plugin through createCorsair', () => {
 					scoreseries_id: 180,
 					points: 5,
 				}),
-			).rejects.toBeInstanceOf(PointagramAPIError);
+			).rejects.toBeInstanceOf(ApiError);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
@@ -177,11 +188,9 @@ describe('Pointagram plugin through createCorsair', () => {
 
 	it('replays a 5xx on a read', async () => {
 		jest.useFakeTimers();
-		const { corsair, testDb } = await createClient({
-			key: 'pg-inline-key',
-			apiUser: 'ops@example.com',
-		});
+		const { corsair, testDb } = await createClient({});
 		try {
+			await primeAccount(corsair, 'pg-inline-key');
 			respond({ status: 'Error', message: 'Server error' }, 503);
 			respond(teamsPage);
 
@@ -198,11 +207,9 @@ describe('Pointagram plugin through createCorsair', () => {
 	});
 
 	it('does not retry a rejected key, which Pointagram reports as a 404', async () => {
-		const { corsair, testDb } = await createClient({
-			key: 'pg-wrong-key',
-			apiUser: 'ops@example.com',
-		});
+		const { corsair, testDb } = await createClient({});
 		try {
+			await primeAccount(corsair, 'pg-wrong-key');
 			respond(
 				{ status: 'Error', message: 'Invalid Credentials', data: {} },
 				404,
@@ -213,10 +220,11 @@ describe('Pointagram plugin through createCorsair', () => {
 				(caught) => caught,
 			);
 
-			expect(error).toBeInstanceOf(PointagramAPIError);
-			expect(error).toMatchObject({ status: 404, credentialsRejected: true });
+			// Core's ApiError passes through, so the 404 stays readable as one.
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).toMatchObject({ status: 404 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
-			// The key rode in a header, so nothing on the error may repeat it.
+			// The key rode in a header of the config, so nothing echoes it.
 			expect(JSON.stringify(error)).not.toContain('pg-wrong-key');
 		} finally {
 			testDb.cleanup();
@@ -224,11 +232,9 @@ describe('Pointagram plugin through createCorsair', () => {
 	});
 
 	it('stops on a 200 envelope that reports an error', async () => {
-		const { corsair, testDb } = await createClient({
-			key: 'pg-inline-key',
-			apiUser: 'ops@example.com',
-		});
+		const { corsair, testDb } = await createClient({});
 		try {
+			await primeAccount(corsair, 'pg-inline-key');
 			respond({
 				status: 'Error',
 				message: 'Player already exists.',

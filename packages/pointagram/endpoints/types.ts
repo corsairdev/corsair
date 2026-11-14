@@ -112,11 +112,13 @@ const pageLimitSchema = z
 		`Page size. Defaults to ${POINTAGRAM_DEFAULT_PAGE_SIZE}, and the maximum is ${POINTAGRAM_MAX_PAGE_SIZE}.`,
 	);
 
+// The provider documents `offset` as the previous page's last row ID, and the
+// `next_offset` it answers with is a string or a number, so a caller can pass
+// the returned cursor straight back.
 const pageOffsetSchema = z
-	.string()
-	.min(1)
+	.union([z.string().min(1), z.number().int()])
 	.optional()
-	.describe("The previous page's `pagination.next_offset`.");
+	.describe("The previous page's `pagination.next_offset`, unchanged.");
 
 const PlayersListInputSchema = z.object({
 	search_by: searchBySchema,
@@ -500,6 +502,15 @@ export const ScoreSeriesAddPointsInputSchema = z
 				code: 'custom',
 				message: 'Supply points or pointtype_name.',
 				path: ['points'],
+			});
+		} else if (
+			value.points !== undefined &&
+			value.pointtype_name !== undefined
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Supply either points or pointtype_name, not both.',
+				path: ['pointtype_name'],
 			});
 		}
 	});

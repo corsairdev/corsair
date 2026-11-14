@@ -3,7 +3,7 @@ description: Gamification platform for scoring teams and players, running compet
 domain: pointagram.com
 recommendedAuth: api_key
 overviewNote: |
-  Pointagram authenticates every call with two headers, and the plugin sends both for you: `Api-Key` is the integration key, and `Api-User` is the Pointagram login (email address) the key belongs to. Add a Custom Integration under Settings, Integrations, click Create Credentials, then Show Key; the key is a password, so keep it out of code. The plugin reads `api_user` from the account; `test.credentials` confirms the pair without touching tenant data.
+  Pointagram authenticates every call with two headers, and the plugin sends both for you: `Api-Key` is the integration key, and `Api-User` is the Pointagram login (email address) the key belongs to. Add a Custom Integration under Settings, Integrations, click Create Credentials, then Show Key; the key is a password, so keep it out of code. Both values are read from the account, never from plugin options; `test.credentials` confirms the pair without touching tenant data.
 
   Things to know before you score anything:
 

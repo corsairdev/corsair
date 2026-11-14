@@ -164,7 +164,7 @@ await corsair.pointagram.api.competitions.players({ id: 3545 });
 
 Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pointagram.api.players.create({ player_name: 'Axl Rose', player_email: 'axl@pointagram.com', player_external_id: '121212', offline: '0' });
@@ -280,7 +280,7 @@ await corsair.pointagram.api.players.list({ limit: 25, offset: '527947' });
 | `search_by` | `string` | No | Which player field the filter is matched against. The docs name Email, Name and External Id. |
 | `filter` | `string` | No | Search value, matched against `search_by`. |
 | `limit` | `number` | No | Page size. Defaults to 50, and the maximum is 1000. |
-| `offset` | `string` | No | The previous page's `pagination.next_offset`. |
+| `offset` | `string \| number` | No | The previous page's `pagination.next_offset`, unchanged. |
 
 
 
@@ -811,7 +811,7 @@ await corsair.pointagram.api.scoreSeries.history({ id: 180, time_from: '2026-01-
 | `time_to` | `string` | No | UTC end, such as 2022-12-05 23:00:00. |
 | `show_revoked` | `boolean` | No | Include points that were revoked, which are hidden by default. |
 | `limit` | `number` | No | Page size. Defaults to 50, and the maximum is 1000. |
-| `offset` | `string` | No | The previous page's `pagination.next_offset`. |
+| `offset` | `string \| number` | No | The previous page's `pagination.next_offset`, unchanged. |
 
 <AccordionGroup>
 <Accordion title="tags_filter full type">
