@@ -14,7 +14,7 @@ pnpm add @corsair-dev/polygonio
 |-----------|--------------|------|-------------|
 | `aggregates.bars` | `polygonio.api.aggregates.bars` | `read` | Read historical OHLC and volume bars for a ticker over a custom range and window size, with `next_url` paging |
 | `aggregates.dailySummary` | `polygonio.api.aggregates.dailySummary` | `read` | Read one ticker's open and close for a date, with any pre-market and after-hours prices |
-| `aggregates.marketSummary` | `polygonio.api.aggregates.marketSummary` | `read` | Read every US stock's OHLC and volume for one trading date, with `next_url` paging |
+| `aggregates.marketSummary` | `polygonio.api.aggregates.marketSummary` | `read` | Read every US stock's OHLC and volume for one trading date, in a single page |
 | `aggregates.previousDay` | `polygonio.api.aggregates.previousDay` | `read` | Read the previous trading day's open, high, low, close and volume |
 | `market.exchanges` | `polygonio.api.market.exchanges` | `read` | List the known exchanges with their MICs, names and asset classes |
 | `market.holidays` | `polygonio.api.market.holidays` | `read` | Read upcoming market holidays with their closed or early-close hours |

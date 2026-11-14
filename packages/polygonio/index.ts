@@ -172,7 +172,7 @@ const polygonioEndpointMeta = {
 	'aggregates.marketSummary': {
 		riskLevel: 'read',
 		description:
-			"Read every US stock's OHLC and volume for one trading date, with `next_url` paging",
+			"Read every US stock's OHLC and volume for one trading date, in a single page",
 	},
 	'snapshots.snapshot': {
 		riskLevel: 'read',
@@ -290,6 +290,7 @@ export type {
 	PolygonioMarketHoliday,
 	PolygonioSnapshotTicker,
 	PolygonioTicker,
+	PolygonioTickerDetails,
 	PolygonioTickerType,
 	PreviousDayInput,
 	SnapshotInput,

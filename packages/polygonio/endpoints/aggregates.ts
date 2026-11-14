@@ -80,17 +80,10 @@ export const marketSummary: PolygonioEndpoints['marketSummary'] = (
 			output: Outputs.marketSummary,
 		},
 		input,
-		(parsed) => {
-			if (parsed.nextUrl !== undefined) return nextPageRequest(parsed.nextUrl);
-			const { date, ...query } = parsed;
-			if (date === undefined) {
-				throw new Error('marketSummary was parsed without a date');
-			}
-			return {
-				method: 'GET',
-				path: `/v2/aggs/grouped/locale/us/market/stocks/${segment(date)}`,
-				query,
-			};
-		},
+		({ date, adjusted, include_otc }) => ({
+			method: 'GET',
+			path: `/v2/aggs/grouped/locale/us/market/stocks/${segment(date)}`,
+			query: { adjusted, include_otc },
+		}),
 		{ log: (_, result) => ({ count: result.results?.length ?? 0 }) },
 	);

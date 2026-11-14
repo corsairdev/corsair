@@ -148,13 +148,15 @@ describe('aggregates endpoints', () => {
 
 		const result = await Aggregates.marketSummary(ctx, {
 			date: '2023-07-05',
-			limit: 10,
+			include_otc: true,
 		});
 
+		// The grouped route documents only `adjusted` and `include_otc`, and
+		// answers every ticker in one page (10,797 rows live, no `next_url`).
 		expect(sentRequest()).toEqual({
 			method: 'GET',
 			path: '/v2/aggs/grouped/locale/us/market/stocks/2023-07-05',
-			query: { adjusted: undefined, sort: undefined, limit: 10 },
+			query: { adjusted: undefined, include_otc: true },
 		});
 		expect(result.results?.[0]?.T).toBe('AAPL');
 	});

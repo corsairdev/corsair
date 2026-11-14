@@ -17,7 +17,7 @@ const StatusSchema = z
 
 /**
  * The fields every list response shares. `next_url` is absolute and already
- * carries the cursor, so it is passed to `nextPage` as the whole next request.
+ * carries the cursor, so it is passed back as `nextUrl` for the whole next request.
  */
 const listEnvelopeFields = {
 	status: StatusSchema,
@@ -27,7 +27,7 @@ const listEnvelopeFields = {
 		.string()
 		.nullish()
 		.describe(
-			'Present while another page exists; pass it to the matching `nextPage`.',
+			'Present while another page exists; pass it back to the same operation as `nextUrl`.',
 		),
 };
 
@@ -35,6 +35,7 @@ const listEnvelopeFields = {
 
 /** The time windows the aggregates routes accept. */
 export const POLYGONIO_TIMESPANS = [
+	'second',
 	'minute',
 	'hour',
 	'day',
@@ -205,7 +206,7 @@ const DailySummaryOutputSchema = z
 		status: StatusSchema,
 		request_id: z.string().nullish(),
 		symbol: z.string().nullish(),
-		from: z.string().nullish().describe('The trading date OMS resolved.'),
+		from: z.string().nullish().describe('The trading date.'),
 		open: z.number().nullish(),
 		high: z.number().nullish(),
 		low: z.number().nullish(),
@@ -218,33 +219,23 @@ const DailySummaryOutputSchema = z
 
 export type DailySummaryOutput = z.infer<typeof DailySummaryOutputSchema>;
 
-const MarketSummaryInputSchema = z
-	.object({
-		nextUrl: z
-			.string()
-			.min(1)
-			.optional()
-			.describe(
-				"The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so `date` is not required.",
-			),
-		date: z
-			.string()
-			.min(1)
-			.optional()
-			.describe(
-				'The trading date, as YYYY-MM-DD. A non-trading date returns no rows.',
-			),
-		...aggregatesInputFields,
-	})
-	.superRefine((value, ctx) => {
-		if (value.nextUrl === undefined && value.date === undefined) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Supply nextUrl or date.',
-				path: ['date'],
-			});
-		}
-	});
+/**
+ * The grouped daily route documents only `adjusted` and `include_otc`, and it
+ * answers every ticker for the date in one page, with no `next_url`.
+ */
+const MarketSummaryInputSchema = z.object({
+	date: z
+		.string()
+		.min(1)
+		.describe(
+			'The trading date, as YYYY-MM-DD. A non-trading date returns no rows.',
+		),
+	adjusted: aggregatesInputFields.adjusted,
+	include_otc: z
+		.boolean()
+		.optional()
+		.describe('Include OTC securities. The API excludes them by default.'),
+});
 
 export type MarketSummaryInput = z.infer<typeof MarketSummaryInputSchema>;
 
@@ -380,7 +371,7 @@ export const TickersListInputSchema = z.object({
 		.string()
 		.min(1)
 		.optional()
-		.describe('A ticker type code, as `tickerTypes.list` reports them.'),
+		.describe('A ticker type code, as `tickers.types` reports them.'),
 	market: z
 		.string()
 		.min(1)
@@ -469,10 +460,49 @@ const TickerOverviewInputSchema = z.object({
 
 export type TickerOverviewInput = z.infer<typeof TickerOverviewInputSchema>;
 
+/**
+ * One ticker's details. The overview adds company fields to the list row; all
+ * are optional because ETFs, funds and delisted tickers leave most of them off.
+ */
+export const TickerDetailsSchema = TickerSchema.extend({
+	description: z.string().nullish(),
+	homepage_url: z.string().nullish(),
+	market_cap: z.number().nullish(),
+	total_employees: z.number().nullish(),
+	phone_number: z.string().nullish(),
+	sic_code: z.string().nullish(),
+	sic_description: z.string().nullish(),
+	round_lot: z.number().nullish(),
+	ticker_root: z.string().nullish(),
+	ticker_suffix: z.string().nullish(),
+	share_class_shares_outstanding: z.number().nullish(),
+	weighted_shares_outstanding: z.number().nullish(),
+	address: z
+		.object({
+			address1: z.string().nullish(),
+			address2: z.string().nullish(),
+			city: z.string().nullish(),
+			state: z.string().nullish(),
+			postal_code: z.string().nullish(),
+		})
+		.loose()
+		.nullish(),
+	branding: z
+		.object({
+			logo_url: z.string().nullish(),
+			icon_url: z.string().nullish(),
+		})
+		.loose()
+		.nullish()
+		.describe('Image URLs; fetching one needs the API key as well.'),
+}).loose();
+
+export type PolygonioTickerDetails = z.infer<typeof TickerDetailsSchema>;
+
 const TickerOverviewOutputSchema = z
 	.object({
 		...listEnvelopeFields,
-		results: TickerSchema,
+		results: TickerDetailsSchema,
 	})
 	.loose();
 

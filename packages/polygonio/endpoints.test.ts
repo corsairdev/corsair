@@ -140,12 +140,8 @@ describe('input validation before the request', () => {
 			nextUrl:
 				'https://api.massive.com/v2/aggs/ticker/AAPL/range/1/day/1/2?cursor=abc',
 		});
-		await Aggregates.marketSummary(ctx, {
-			nextUrl:
-				'https://api.massive.com/v2/aggs/grouped/locale/us/market/stocks/2023-07-05?cursor=abc',
-		});
 
-		expect(mockedRequest).toHaveBeenCalledTimes(2);
+		expect(mockedRequest).toHaveBeenCalledTimes(1);
 	});
 
 	it('rejects bars with neither nextUrl nor the first-page filters', async () => {
@@ -155,9 +151,9 @@ describe('input validation before the request', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('rejects marketSummary with neither nextUrl nor a date', async () => {
-		await expect(Aggregates.marketSummary(ctx, {})).rejects.toThrow(
-			/Supply nextUrl or date/,
+	it('rejects marketSummary without a date', async () => {
+		await expect(Aggregates.marketSummary(ctx, {} as never)).rejects.toThrow(
+			/date/,
 		);
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});

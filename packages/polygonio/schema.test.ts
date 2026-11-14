@@ -6,6 +6,7 @@ import {
 	POLYGONIO_MOVER_DIRECTIONS,
 	POLYGONIO_TIMESPANS,
 	SnapshotTickerSchema,
+	TickerDetailsSchema,
 	TickersListInputSchema,
 } from './endpoints/types';
 import { PolygonioSchema } from './schema';
@@ -46,6 +47,7 @@ describe('aggregate bars', () => {
 
 	it('pins the documented timespans', () => {
 		expect(POLYGONIO_TIMESPANS).toEqual([
+			'second',
 			'minute',
 			'hour',
 			'day',
@@ -54,6 +56,18 @@ describe('aggregate bars', () => {
 			'quarter',
 			'year',
 		]);
+	});
+
+	it('accepts second bars, which the custom-bars route documents', () => {
+		expect(
+			BarsInputSchema.safeParse({
+				ticker: 'AAPL',
+				multiplier: 1,
+				timespan: 'second',
+				from: '2025-01-02',
+				to: '2025-01-02',
+			}).success,
+		).toBe(true);
 	});
 
 	it('requires the range on a bars call', () => {
@@ -183,5 +197,44 @@ describe('market operations', () => {
 				url: 'https://www.nyse.com',
 			}).success,
 		).toBe(true);
+	});
+});
+
+describe('ticker details', () => {
+	// Trimmed from a live tickers.overview answer for AAPL (11-15).
+	const live = {
+		ticker: 'AAPL',
+		name: 'Apple Inc.',
+		market: 'stocks',
+		locale: 'us',
+		primary_exchange: 'XNAS',
+		type: 'CS',
+		active: true,
+		currency_name: 'usd',
+		cik: '0000320193',
+		market_cap: 3.9e12,
+		homepage_url: 'https://www.apple.com',
+		total_employees: 166000,
+		list_date: '1980-12-12',
+		sic_code: '3571',
+		sic_description: 'ELECTRONIC COMPUTERS',
+		round_lot: 100,
+		weighted_shares_outstanding: 14.7e9,
+		address: { address1: 'ONE APPLE PARK WAY', city: 'CUPERTINO', state: 'CA' },
+		branding: {
+			logo_url:
+				'https://api.polygon.io/v1/reference/company-branding/x/logo.svg',
+		},
+	};
+
+	it('declares the company fields the overview adds to a ticker row', () => {
+		const parsed = TickerDetailsSchema.parse(live);
+
+		expect(parsed.market_cap).toBe(3.9e12);
+		expect(parsed.address?.city).toBe('CUPERTINO');
+		expect(parsed.branding?.logo_url).toContain('logo.svg');
+		expect(Object.keys(TickerDetailsSchema.shape)).toEqual(
+			expect.arrayContaining(['market_cap', 'total_employees', 'sic_code']),
+		);
 	});
 });
