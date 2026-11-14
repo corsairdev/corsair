@@ -6,7 +6,7 @@ description: "Social media scheduling API for publishing, scheduling and managin
 
 Use **Postiz** through Corsair: one client, typed API calls.
 
-Postiz schedules and publishes to more than thirty social platforms from one place. Create a key in Developer settings and paste it in; it travels in the `Authorization` header with no scheme prefix. For a self-hosted instance, also set the account's `base_url` to the instance's https URL, such as `https://postiz.example.com` (the plugin adds `/api/public/v1`); leave it empty for Postiz Cloud. The `baseUrl` plugin option does the same for an inline key.
+Postiz schedules and publishes to more than thirty social platforms from one place. Create a key in Developer settings and paste it in; it travels in the `Authorization` header with no scheme prefix. For a self-hosted instance, also set the account's `base_url` to the instance's https URL, such as `https://postiz.example.com` (the plugin adds `/api/public/v1`). For Postiz Cloud, set it to `https://api.postiz.com`. An empty `base_url` also reaches Cloud, but Corsair then reports the account as partly set up. The `baseUrl` plugin option does the same for an inline key.
 
 What to know before you publish:
 

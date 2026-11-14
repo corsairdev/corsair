@@ -26,7 +26,7 @@ pnpm add @corsair-dev/postiz
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use. For a self-hosted Postiz, set the account's `base_url` to the instance's https URL; leave it empty for Postiz Cloud.
+Auth: API key. Corsair prompts your tenant for credentials on first use. For a self-hosted Postiz, set the account's `base_url` to the instance's https URL. For Postiz Cloud, set it to `https://api.postiz.com`; an empty value also reaches Cloud, but Corsair then reports the account as partly set up.
 
 ## Webhooks
 

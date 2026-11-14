@@ -26,7 +26,9 @@ import { PostizSchema } from './schema';
 
 /**
  * `base_url` is the instance URL for a self-hosted Postiz, such as
- * `https://postiz.example.com`. Leave it empty for Postiz Cloud.
+ * `https://postiz.example.com`, or `https://api.postiz.com` for Postiz Cloud.
+ * Empty also reaches Cloud, but core treats every account field as required,
+ * so an empty `base_url` leaves the account status `partial`.
  */
 export const postizAuthConfig = {
 	api_key: {
