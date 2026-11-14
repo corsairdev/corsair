@@ -4041,6 +4041,8 @@ describe('Shortcut live API responses', () => {
 describe('Shortcut response enums', () => {
 	it('accepts values Shortcut adds to response enums later', () => {
 		const fields = structuredClone(ShortcutTestOutputs['listCustomFields']);
+		// unknown: the fixture is typed with the known enum values, and this test
+		// writes one Shortcut could add later, which that type does not allow.
 		for (const field of fields as unknown as Record<string, unknown>[]) {
 			field.field_type = 'number';
 		}
@@ -4049,6 +4051,7 @@ describe('Shortcut response enums', () => {
 				.success,
 		).toBe(true);
 		const member = structuredClone(ShortcutTestOutputs['getMember']);
+		// unknown: same reason, a member state outside the typed enum.
 		(member as unknown as Record<string, unknown>).state = 'suspended';
 		expect(
 			ShortcutEndpointOutputSchemas['getMember'].safeParse(member).success,
