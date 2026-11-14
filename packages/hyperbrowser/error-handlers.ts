@@ -7,7 +7,13 @@ export const errorHandlers = {
 	INSUFFICIENT_CREDITS_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 402) return true;
-			const msg = error.message.toLowerCase();
+			// Core sets a 429's message to "Too Many Requests"; the provider's reason
+			// (for example an exhausted quota) is only in the body.
+			const bodyText =
+				error instanceof ApiError && error.body !== undefined
+					? JSON.stringify(error.body)
+					: '';
+			const msg = `${error.message} ${bodyText}`.toLowerCase();
 			return (
 				msg.includes('insufficient credits') ||
 				msg.includes('insufficient_credits') ||

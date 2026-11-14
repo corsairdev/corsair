@@ -66,6 +66,21 @@ describe('Hyperbrowser errorHandlers', () => {
 		);
 	});
 
+	it('does not retry a 429 whose body reports an exhausted quota', () => {
+		const error = new ApiError(
+			{ method: 'POST', url: '/api/scrape' },
+			{
+				url: 'https://api.hyperbrowser.ai/api/scrape',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { message: 'Monthly quota exceeded' },
+			},
+			'Too Many Requests',
+		);
+		expect(route(error)).toBe('INSUFFICIENT_CREDITS_ERROR');
+	});
+
 	it('routes 401 and 403 to AUTH_ERROR with no retries', async () => {
 		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
 		expect(route(apiError(403, 'Forbidden'))).toBe('AUTH_ERROR');

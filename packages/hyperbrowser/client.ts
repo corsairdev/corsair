@@ -126,11 +126,12 @@ export function redactApiErrorInPlace(
 		(error as { body: unknown }).body = redactCredentials(error.body, secrets);
 	}
 	if (error.request?.body !== undefined) {
-		// `unknown` because request body holds untyped payload JSON that is mutated in-place.
-		(error.request as { body: unknown }).body = redactCredentials(
-			error.request.body,
-			secrets,
-		);
+		// Drop the echoed request body: it can carry extract prompts, target URLs and
+		// proxy credentials. Method, url and query stay for diagnostics.
+		(error as { request: ApiRequestOptions }).request = {
+			...error.request,
+			body: undefined,
+		};
 	}
 	return error;
 }

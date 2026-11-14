@@ -124,9 +124,32 @@ describe('makeHyperbrowserRequest', () => {
 			error: 'Quota exceeded for key [redacted]',
 			apiKey: '[redacted]',
 		});
-		expect(rawError.request.body).toEqual({
-			proxyServerPassword: '[redacted]',
-		});
+		expect(rawError.request.body).toBeUndefined();
+		expect(rawError.request.url).toBe('/api/session');
+	});
+
+	it('drops the request body (extract prompts, URLs) from a rethrown ApiError', async () => {
+		const rawError = apiError(
+			400,
+			'Bad Request',
+			undefined,
+			{
+				error: 'invalid schema',
+			},
+			{
+				urls: ['https://example.com'],
+				prompt: 'Find the contact for jane@example.com',
+			},
+		);
+		mockRequest.mockRejectedValue(rawError);
+
+		await makeHyperbrowserRequest('/api/extract', 'hb_secret_123', {
+			method: 'POST',
+		}).catch(() => undefined);
+
+		expect(rawError.status).toBe(400);
+		expect(JSON.stringify(rawError.request)).not.toContain('jane@example.com');
+		expect(rawError.request.body).toBeUndefined();
 	});
 });
 
@@ -170,7 +193,7 @@ describe('redaction helpers', () => {
 		expect(returned).toBe(error);
 		expect(error.message).toBe('Invalid key [redacted]');
 		expect(error.body).toEqual({ message: 'Key [redacted] is unauthorized' });
-		expect(error.request.body).toEqual({ token: '[redacted]' });
+		expect(error.request.body).toBeUndefined();
 	});
 
 	it('redacts proxyServerPassword and sensitive fields from error.message when echoed in transport errors', () => {
@@ -185,7 +208,7 @@ describe('redaction helpers', () => {
 		redactApiErrorInPlace(error, 'some_api_key');
 		expect(error.message).not.toContain('super_secret_proxy_pass');
 		expect(error.message).toContain('[redacted]');
-		expect(error.request.body).toEqual({ proxyServerPassword: '[redacted]' });
+		expect(error.request.body).toBeUndefined();
 	});
 });
 
