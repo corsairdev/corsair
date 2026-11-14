@@ -237,8 +237,9 @@ export const imgixEndpointMeta = {
 			'Queue an existing origin asset to be indexed into the Imgix Asset Manager (imgix answers 202 with no body, returned as {})',
 	},
 	'assets.upload': {
-		riskLevel: 'write',
-		description: 'Upload a file directly to the origin via Imgix Asset Manager',
+		riskLevel: 'destructive',
+		description:
+			'Upload a file directly to the origin via Imgix Asset Manager; with overwrite: true it replaces the existing file at that path',
 	},
 	'uploadSessions.create': {
 		riskLevel: 'write',
