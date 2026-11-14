@@ -110,3 +110,49 @@ describe('Google Tasks OAuth client', () => {
 		fetchMock.mockRestore();
 	});
 });
+
+function unauthorized(): ApiError {
+	return new ApiError(
+		{ method: 'POST', url: '/tasks/v1/lists/list-1/tasks' },
+		{
+			url: 'https://tasks.googleapis.com/tasks/v1/lists/list-1/tasks',
+			ok: false,
+			status: 401,
+			statusText: 'Unauthorized',
+			body: { error: { code: 401, status: 'UNAUTHENTICATED' } },
+		},
+		'Unauthorized',
+	);
+}
+
+describe('Google Tasks 401 refresh', () => {
+	beforeEach(() => mockedRequest.mockReset());
+
+	it('refreshes the token once and retries only the failed request', async () => {
+		mockedRequest
+			.mockRejectedValueOnce(unauthorized())
+			.mockResolvedValueOnce({ id: 'task-1' });
+		const refresh = jest.fn().mockResolvedValue('fresh-token');
+		await expect(
+			makeGoogleTasksRequest(
+				'/tasks/v1/lists/list-1/tasks',
+				{ key: 'stale-token', _refreshAuth: refresh },
+				{ method: 'POST', body: { title: 'x' } },
+			),
+		).resolves.toEqual({ id: 'task-1' });
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+		expect(mockedRequest.mock.calls[1]?.[0].HEADERS).toMatchObject({
+			Authorization: 'Bearer fresh-token',
+		});
+	});
+
+	it('does not refresh on other errors or without a refresher', async () => {
+		const failure = unauthorized();
+		mockedRequest.mockRejectedValue(failure);
+		await expect(
+			makeGoogleTasksRequest('/tasks/v1/users/@me/lists', { key: 't' }),
+		).rejects.toBe(failure);
+		expect(mockedRequest).toHaveBeenCalledTimes(1);
+	});
+});
