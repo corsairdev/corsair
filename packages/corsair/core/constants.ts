@@ -209,7 +209,9 @@ export const BaseProviders = [
 	'deployhq',
 	'desktime',
 	'devinmcp',
+	'dialpad',
 	'diffbot',
+	'digicert',
 	'digitalocean',
 	'discord',
 	'dnsfilter',
@@ -228,15 +230,20 @@ export const BaseProviders = [
 	'dropboxsign',
 	'dropcontact',
 	'dynapictures',
+	'e2b',
 	'elevenlabs',
+	'elorus',
 	'emailoctopus',
 	'emelia',
+	'encodian',
+	'endorsal',
 	'enginemailer',
 	'enigma',
 	'epicgames',
 	'esignatures',
 	'esputnik',
 	'eventbrite',
+	'eventee',
 	'eventzilla',
 	'everhour',
 	'exa',
@@ -246,23 +253,38 @@ export const BaseProviders = [
 	'facebook',
 	'fal',
 	'faraday',
+	'fathom',
+	'felt',
+	'fibery',
 	'fidel',
 	'figma',
 	'filevine',
 	'filloutforms',
 	'finage',
 	'finerworks',
+	'finmei',
+	'fireberry',
 	'firecrawl',
 	'fireflies',
 	'fixer',
 	'flexisign',
 	'flutterwave',
 	'fluxguard',
+	'folk',
 	'followupboss',
+	'fomo',
 	'formbricks',
+	'formdesk',
 	'foursquare',
 	'fundable',
 	'gemini',
+	'gagelist',
+	'gamma',
+	'gatherup',
+	'genderapi',
+	'genderapiio',
+	'genderize',
+	'geoapify',
 	'giphy',
 	'github',
 	'gitlab',
@@ -312,7 +334,10 @@ export const BaseProviders = [
 	'intercom',
 	'jigsawstack',
 	'jira',
+	'kadoa',
 	'kaggle',
+	'kanbanize',
+	'keen',
 	'keenable',
 	'keyword',
 	'kibana',
@@ -322,6 +347,9 @@ export const BaseProviders = [
 	'klazify',
 	'kling',
 	'knack',
+	'kofi',
+	'kontentai',
+	'krakenio',
 	'leexi',
 	'leiga',
 	'lemonsqueezy',
@@ -756,7 +784,9 @@ export const ProviderDisplayNames = {
 	deployhq: 'DeployHQ',
 	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
+	dialpad: 'Dialpad',
 	diffbot: 'Diffbot',
+	digicert: 'DigiCert',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dnsfilter: 'DNSFilter',
@@ -775,15 +805,20 @@ export const ProviderDisplayNames = {
 	dropboxsign: 'Dropbox Sign',
 	dropcontact: 'Dropcontact',
 	dynapictures: 'Dynapictures',
+	e2b: 'E2B',
 	elevenlabs: 'ElevenLabs',
+	elorus: 'Elorus',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	encodian: 'Encodian',
+	endorsal: 'Endorsal',
 	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
 	esputnik: 'eSputnik',
 	eventbrite: 'Eventbrite',
+	eventee: 'Eventee',
 	eventzilla: 'Eventzilla',
 	everhour: 'Everhour',
 	exa: 'Exa',
@@ -793,23 +828,38 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	fal: 'fal',
 	faraday: 'Faraday',
+	fathom: 'Fathom',
+	felt: 'Felt',
+	fibery: 'Fibery',
 	fidel: 'Fidel',
 	figma: 'Figma',
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
 	finage: 'Finage',
 	finerworks: 'FinerWorks',
+	finmei: 'Finmei',
+	fireberry: 'Fireberry',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	fixer: 'Fixer',
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
 	fluxguard: 'Fluxguard',
+	folk: 'Folk',
 	followupboss: 'Follow Up Boss',
+	fomo: 'Fomo',
 	formbricks: 'Formbricks',
+	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
+	gagelist: 'Gagelist',
+	gamma: 'Gamma',
+	gatherup: 'GatherUp',
+	genderapi: 'Gender API',
+	genderapiio: 'GenderAPI.io',
+	genderize: 'Genderize',
+	geoapify: 'Geoapify',
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
@@ -859,7 +909,10 @@ export const ProviderDisplayNames = {
 	intercom: 'Intercom',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
+	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
+	kanbanize: 'Kanbanize',
+	keen: 'Keen',
 	keenable: 'Keenable',
 	keyword: 'Keyword',
 	kibana: 'Kibana',
@@ -869,6 +922,9 @@ export const ProviderDisplayNames = {
 	klazify: 'Klazify',
 	kling: 'Kling',
 	knack: 'Knack',
+	kofi: 'Ko-fi',
+	kontentai: 'Kontent.ai',
+	krakenio: 'Kraken.io',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
 	lemonsqueezy: 'Lemon Squeezy',
@@ -1310,7 +1366,9 @@ export type AllProviders =
 	| 'deployhq'
 	| 'desktime'
 	| 'devinmcp'
+	| 'dialpad'
 	| 'diffbot'
+	| 'digicert'
 	| 'digitalocean'
 	| 'discord'
 	| 'dnsfilter'
@@ -1329,15 +1387,20 @@ export type AllProviders =
 	| 'dropboxsign'
 	| 'dropcontact'
 	| 'dynapictures'
+	| 'e2b'
 	| 'elevenlabs'
+	| 'elorus'
 	| 'emailoctopus'
 	| 'emelia'
+	| 'encodian'
+	| 'endorsal'
 	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
 	| 'esignatures'
 	| 'esputnik'
 	| 'eventbrite'
+	| 'eventee'
 	| 'eventzilla'
 	| 'everhour'
 	| 'exa'
@@ -1347,23 +1410,38 @@ export type AllProviders =
 	| 'facebook'
 	| 'fal'
 	| 'faraday'
+	| 'fathom'
+	| 'felt'
+	| 'fibery'
 	| 'fidel'
 	| 'figma'
 	| 'filevine'
 	| 'filloutforms'
 	| 'finage'
 	| 'finerworks'
+	| 'finmei'
+	| 'fireberry'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'fixer'
 	| 'flexisign'
 	| 'flutterwave'
 	| 'fluxguard'
+	| 'folk'
 	| 'followupboss'
+	| 'fomo'
 	| 'formbricks'
+	| 'formdesk'
 	| 'foursquare'
 	| 'fundable'
 	| 'gemini'
+	| 'gagelist'
+	| 'gamma'
+	| 'gatherup'
+	| 'genderapi'
+	| 'genderapiio'
+	| 'genderize'
+	| 'geoapify'
 	| 'giphy'
 	| 'github'
 	| 'gitlab'
@@ -1413,7 +1491,10 @@ export type AllProviders =
 	| 'intercom'
 	| 'jigsawstack'
 	| 'jira'
+	| 'kadoa'
 	| 'kaggle'
+	| 'kanbanize'
+	| 'keen'
 	| 'keenable'
 	| 'keyword'
 	| 'kibana'
@@ -1423,6 +1504,9 @@ export type AllProviders =
 	| 'klazify'
 	| 'kling'
 	| 'knack'
+	| 'kofi'
+	| 'kontentai'
+	| 'krakenio'
 	| 'leexi'
 	| 'leiga'
 	| 'lemonsqueezy'

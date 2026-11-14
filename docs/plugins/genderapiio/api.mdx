@@ -1,0 +1,459 @@
+---
+title: "GenderAPI.io API reference"
+sidebarTitle: "API"
+description: "API reference for the GenderAPI.io plugin in Corsair: every `genderapiio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### capabilities
+
+`account.capabilities`
+
+Read the deployment version, the AI availability and the batch limit. This route is free
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapiio.api.account.capabilities({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | Yes | — |
+| `documentation` | `string` | No | — |
+| `capabilities` | `object` | No | — |
+| `billing_consistency` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="capabilities full type">
+
+```ts
+{
+  ai?: boolean,
+  forceToGenderize?: boolean,
+  max_batch_items?: number,
+  shared_v1_keys_and_credits?: boolean,
+  ip_trial?: {
+    credits: number,
+    period_hours: number
+  },
+  default_ai_mode?: {
+    single: string,
+    batch: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### errorCatalog
+
+`account.errorCatalog`
+
+Read every error code with the statuses it uses and what a caller should do about it. This route is free
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapiio.api.account.errorCatalog({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errors` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+Record<string, {
+  code: string,
+  http_statuses: number[],
+  action: string,
+  description: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`account.usage`
+
+Read the shared balance, the trial reset time and whether this call used a key or the IP trial. This route is free
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapiio.api.account.usage({});
+```
+
+**Input:** _empty object_
+
+Free, and `meta.access.mode` tells an IP trial from a keyed call.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  remaining_credits: number,
+  expires_at: string | null,
+  resets_at?: string | null,
+  limit?: number | null,
+  period_seconds?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string,
+  duration_ms?: number,
+  access?: {
+    mode: string,
+    reason?: string | null
+  },
+  usage?: {
+    charged_credits?: number | null,
+    remaining_credits?: number | null,
+    billing_status?: string,
+    resets_at?: string | null,
+    limit?: number | null,
+    period_seconds?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Gender
+
+### batch
+
+`gender.batch`
+
+Infer gender for up to 50 names, emails or usernames in one request. An item can fail on its own, and only successful items are billed
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapiio.api.gender.batch({ items: [{ type: 'name', value: 'Sophia' }, { type: 'name', value: 'Michael', country: 'US' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Items to infer, answered in the same order, each with its own charge. An item can fail without failing the batch |
+| `ai_mode` | `off \| fallback \| always` | No | Applies to every item without its own `ai_mode`. A batch defaults to `off`, where a single request defaults to `fallback` |
+
+Up to 50 items (10 on the IP trial); defaults to `ai_mode: off`, unlike a single request.
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  type: name | email | username,
+  value: string,
+  country?: string,
+  forceToGenderize?: boolean,
+  ai_mode?: off | fallback | always
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  index: number,
+  id?: string,
+  charged_credits?: number,
+  data?: {
+    input: {
+      type: name | email | username,
+      value: string,
+      country?: string | null,
+      forceToGenderize?: boolean
+    },
+    name: string | null,
+    gender: string | null,
+    country: string | null,
+    confidence: number | null,
+    confidence_kind: string | null,
+    sample_count: number | null,
+    source: string,
+    result_status?: string | null,
+    reason?: string | null,
+    country_source?: string | null,
+    match?: {
+      name: string | null,
+      method: string | null,
+      scope: string | null,
+      country: string | null
+    }
+  },
+  error?: {
+    code?: string,
+    status?: number,
+    title?: string,
+    detail?: string,
+    action?: string,
+    errors?: {
+      pointer?: string,
+      message?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string,
+  duration_ms?: number,
+  access?: {
+    mode: string,
+    reason?: string | null
+  },
+  usage?: {
+    charged_credits?: number | null,
+    remaining_credits?: number | null,
+    billing_status?: string,
+    resets_at?: string | null,
+    limit?: number | null,
+    period_seconds?: number | null
+  },
+  summary?: {
+    total: number,
+    succeeded: number,
+    identified: number,
+    unknown: number,
+    failed: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### infer
+
+`gender.infer`
+
+Infer gender from a name, an email address or a username, with a confidence, the source that answered (dataset or AI) and the credits it cost
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapiio.api.gender.infer({ type: 'name', value: 'Sophia', country: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `name \| email \| username` | Yes | What the value is: a first or full name, an email address, or a username or nickname |
+| `value` | `string` | Yes | The name, email address or username to infer from |
+| `country` | `string` | No | Scopes the lookup to one country, which changes the answer for names such as Kim |
+| `ai_mode` | `off \| fallback \| always` | No | `fallback` lets AI answer when the dataset cannot (1 credit in total); `off` is dataset only; `always` forces AI (2 credits) |
+| `forceToGenderize` | `boolean` | No | Resolves more names by falling back to nickname-based AI. A dataset hit costs 1 credit, an AI one 2. Cannot be combined with `ai_mode` `off` or `always` |
+
+`ai_mode` defaults to `fallback` here (1 credit in total); `always` costs 2.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input: {
+    type: name | email | username,
+    value: string,
+    country?: string | null,
+    forceToGenderize?: boolean
+  },
+  name: string | null,
+  gender: string | null,
+  country: string | null,
+  confidence: number | null,
+  confidence_kind: string | null,
+  sample_count: number | null,
+  source: string,
+  result_status?: string | null,
+  reason?: string | null,
+  country_source?: string | null,
+  match?: {
+    name: string | null,
+    method: string | null,
+    scope: string | null,
+    country: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string,
+  duration_ms?: number,
+  access?: {
+    mode: string,
+    reason?: string | null
+  },
+  usage?: {
+    charged_credits?: number | null,
+    remaining_credits?: number | null,
+    billing_status?: string,
+    resets_at?: string | null,
+    limit?: number | null,
+    period_seconds?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Phone
+
+### validate
+
+`phone.validate`
+
+Validate and format a phone number, returning its E.164 form, country and calling code
+
+**Risk:** `read`
+
+```ts
+await corsair.genderapiio.api.phone.validate({ number: '+14155552671', country: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | The phone number, with or without a country calling code |
+| `country` | `string` | No | The country to parse the number in, when it has no calling code |
+
+Returns the E.164 form, or null when the number cannot be formatted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  valid: boolean,
+  possible: boolean,
+  e164: string | null,
+  country: string | null,
+  country_calling_code: number | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  request_id: string,
+  duration_ms?: number,
+  access?: {
+    mode: string,
+    reason?: string | null
+  },
+  usage?: {
+    charged_credits?: number | null,
+    remaining_credits?: number | null,
+    billing_status?: string,
+    resets_at?: string | null,
+    limit?: number | null,
+    period_seconds?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
