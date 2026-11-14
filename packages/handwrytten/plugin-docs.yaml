@@ -1,0 +1,22 @@
+displayName: Handwrytten
+description: Automated handwritten notes, cards, and direct mail platform using robotics with real pens.
+domain: handwrytten.com
+examples:
+  read:
+    path: cards.list
+    title: List available greeting cards
+  write:
+    path: orders.sendSingle
+    title: Send a personalized handwritten note
+    args:
+      card_id: 101
+      message: 'Thank you for your partnership and support!'
+      recipient_first_name: Jane
+      recipient_last_name: Doe
+      recipient_address1: '123 Main St'
+      recipient_city: Austin
+      recipient_state: TX
+      recipient_zip: '78701'
+overviewNote: |
+  Authenticate with your Handwrytten API key generated on the [Integrations](https://app.handwrytten.com/integrations) page.
+  Requests pass the key directly in the `Authorization` header without a `Bearer` prefix. You can toggle Test Mode in your Handwrytten dashboard during development to simulate orders without fulfillment charges.
