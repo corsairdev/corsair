@@ -617,7 +617,7 @@ const documensoEndpointMeta = {
 		description: 'POST /envelope/create — Create envelope.',
 	},
 	'envelopes.use.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'POST /envelope/use — Use envelope.',
 	},
 	'envelopes.update.post': {
@@ -637,11 +637,11 @@ const documensoEndpointMeta = {
 		description: 'POST /envelope/duplicate — Duplicate envelope.',
 	},
 	'envelopes.distribute.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'POST /envelope/distribute — Distribute envelope.',
 	},
 	'envelopes.redistribute.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'POST /envelope/redistribute — Redistribute envelope.',
 	},
 	'documents.get.get': {
@@ -674,12 +674,12 @@ const documensoEndpointMeta = {
 		description: 'POST /document/duplicate — [Deprecated] Duplicate document.',
 	},
 	'documents.distribute.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'POST /document/distribute — [Deprecated] Distribute document.',
 	},
 	'documents.redistribute.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'POST /document/redistribute — [Deprecated] Redistribute document.',
 	},
@@ -887,7 +887,7 @@ const documensoEndpointMeta = {
 		description: 'POST /template/delete — [Deprecated] Delete template.',
 	},
 	'templates.use.post': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'POST /template/use — [Deprecated] Use template.',
 	},
 	'templates.directLinks.create.post': {

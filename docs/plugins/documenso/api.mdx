@@ -1172,7 +1172,7 @@ Deprecated Documenso v2 route (`POST /document/delete`); use the corresponding e
 
 POST /document/distribute — [Deprecated] Distribute document.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.documenso.api.documents.distribute.post({ documentId: 1 });
@@ -4603,7 +4603,7 @@ Deprecated Documenso v2 route (`POST /document/recipient/update-many`); use the 
 
 POST /document/redistribute — [Deprecated] Redistribute document.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.documenso.api.documents.redistribute.post({
@@ -6400,7 +6400,7 @@ await corsair.documenso.api.envelopes.delete.post({ envelopeId: 'sample' });
 
 POST /envelope/distribute — Distribute envelope.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.documenso.api.envelopes.distribute.post({ envelopeId: 'sample' });
@@ -9288,7 +9288,7 @@ await corsair.documenso.api.envelopes.recipients.updateMany.post({
 
 POST /envelope/redistribute — Redistribute envelope.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.documenso.api.envelopes.redistribute.post({
@@ -9492,7 +9492,7 @@ await corsair.documenso.api.envelopes.update.post({ envelopeId: 'sample' });
 
 POST /envelope/use — Use envelope.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.documenso.api.envelopes.use.post({
@@ -14104,7 +14104,7 @@ Deprecated Documenso v2 route (`POST /template/update`); use the corresponding e
 
 POST /template/use — [Deprecated] Use template.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.documenso.api.templates.use.post({
