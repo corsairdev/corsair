@@ -304,6 +304,7 @@ export const BaseProviders = [
 	'jigsawstack',
 	'jira',
 	'kaggle',
+	'keen',
 	'keenable',
 	'kibana',
 	'klaviyo',
@@ -839,6 +840,7 @@ export const ProviderDisplayNames = {
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
+	keen: 'Keen',
 	keenable: 'Keenable',
 	kibana: 'Kibana',
 	klaviyo: 'Klaviyo',
@@ -1381,6 +1383,7 @@ export type AllProviders =
 	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
+	| 'keen'
 	| 'keenable'
 	| 'kibana'
 	| 'klaviyo'

@@ -1,0 +1,82 @@
+displayName: Keen
+description: Event analytics with Keen - record single events and batches, inspect the collections and property types Keen inferred, run count, sum, average and the rest of its analyses, and manage saved queries and cached datasets.
+domain: keen.io
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Keen under your project's Access Keys. Each project has a master, write and read key; which one you connect with decides what the plugin can do. Connect the master key to use every operation: listing, reading, creating and deleting saved queries and deleting datasets need it.
+
+  Two credentials are needed before the first call:
+
+  - **The project ID**, which is part of every request path. Connect delivers it beside the key; the `projectId` plugin option overrides it.
+  - **The key itself**, sent bare in the `Authorization` header. Keen adds no `Bearer` scheme, and a key with one is rejected.
+
+  Things to know before you call:
+
+  - **A read key cannot write, and a write key cannot read.** Keen answers 403 when the key's kind does not permit the call. The plugin cannot tell which kind arrived, so a 403 usually means the key is the wrong kind rather than the wrong key.
+  - **Events take a moment to be queryable.** Keen acknowledges `events.record` at once but says it can take up to 10 seconds before the event appears in a query.
+  - **`events.recordMany` partly succeeds.** It answers one result per event, keyed by collection, and an entry with `success: false` was not stored. Keen recommends batches of 5,000 or less.
+  - **Queries are POSTs but read nothing back into Keen.** `queries.run` and `queries.multiAnalysis` send the analysis as a body. Because the method is POST, they are not replayed after a 5xx; a count that failed mid-way is safe to send again, and the caller can.
+  - **A query has five minutes.** Past that Keen stops it and answers 504 `QueryIncompleteError`. The plugin raises `isQueryIncomplete` and does not retry, because the same query would take as long again; narrow the timeframe instead.
+  - **Every analysis but `count` and `funnel` needs a `target_property`**, and `percentile` also needs its `percentile` value. A `funnel` takes `steps`, each with its own `event_collection` and `actor_property`, instead of a top-level collection. These are checked before the request, so a malformed analysis costs no call.
+  - **Cached results.** A saved query's `refresh_rate` is `0` (no cache) or 14400 to 86400 seconds (four to 24 hours). `savedQueries.result` reads the cached answer, which is what makes a dashboard load instantly.
+  - **Datasets page by cursor.** `datasets.list` returns `next_after_name`, read out of Keen's `next_page_url`; pass it back as `after_name`.
+  - **Rate limits are per project, not per key.** A 429 blocks that endpoint category for the next minute, and Keen sends no `Retry-After`, so the plugin waits a minute before its next attempt.
+  - **Webhooks.** The plugin does not receive Keen webhooks; none are configured here.
+examples:
+  read:
+    path: queries.multiAnalysis
+    title: Count purchases and sum revenue in the last week
+    args:
+      event_collection: purchases
+      analyses:
+        purchases:
+          analysis_type: count
+        revenue:
+          analysis_type: sum
+          target_property: price
+      timeframe: this_7_days
+  write:
+    path: events.record
+    title: Record a purchase
+    args:
+      collection: purchases
+      event:
+        item: Avocado
+        number_of_items: 10
+apiExamples:
+  events.record:
+    call: "{ collection: 'purchases', event: { item: 'Avocado', number_of_items: 10, user: { name: 'John Smith' } } }"
+  events.recordMany:
+    call: "{ events: { purchases: [{ item: 'Avocado' }, { item: 'Lime' }], signups: [{ username: 'lloyd' }] } }"
+  collections.list: {}
+  collections.get:
+    call: "{ collection: 'purchases' }"
+  properties.get:
+    call: "{ collection: 'purchases', property: 'item.price' }"
+  queries.run:
+    call: "{ analysis_type: 'sum', event_collection: 'purchases', target_property: 'price', timeframe: 'this_14_days', filters: [{ property_name: 'price', operator: 'gte', property_value: 1 }], group_by: ['platform'] }"
+  queries.multiAnalysis:
+    call: "{ event_collection: 'purchases', analyses: { purchases: { analysis_type: 'count' }, revenue: { analysis_type: 'sum', target_property: 'price' } }, timeframe: 'this_7_days' }"
+  savedQueries.list: {}
+  savedQueries.get:
+    call: "{ queryName: 'weekly-purchases' }"
+  savedQueries.create:
+    call: "{ queryName: 'weekly-purchases', refresh_rate: 0, query: { analysis_type: 'count', event_collection: 'purchases', timeframe: 'this_7_days' }, metadata: { display_name: 'Purchases (past week)' } }"
+  savedQueries.result:
+    call: "{ queryName: 'weekly-purchases' }"
+  savedQueries.delete:
+    call: "{ queryName: 'weekly-purchases' }"
+  datasets.list:
+    call: "{ limit: 10 }"
+  datasets.get:
+    call: "{ datasetName: 'count-purchases-by-country-daily' }"
+  datasets.result:
+    call: "{ datasetName: 'count-purchases-by-country-daily', index_by: { country: 'US' }, timeframe: 'this_7_days' }"
+  datasets.delete:
+    call: "{ datasetName: 'count-purchases-by-country-daily' }"
+apiNotes:
+  queries.run: 'Every analysis but `count` and `funnel` needs a `target_property`; `percentile` also needs `percentile`. Both are checked before the request.'
+  events.recordMany: 'Answers one result per event, keyed by collection. An entry with `success: false` was not stored.'
+  datasets.list: 'Pages by cursor. Pass `next_after_name` back as `after_name`; it is null on the last page.'
+  savedQueries.create: 'A PUT keyed by name, so the same name replaces the definition. `refresh_rate` is 0, or 14400 to 86400 seconds.'
+  datasets.result: 'Both `index_by` and `timeframe` are required. A string `index_by` goes as it is; an object (several index properties, or a number or boolean value) and an absolute timeframe are sent JSON-encoded.'

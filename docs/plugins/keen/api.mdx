@@ -1,0 +1,997 @@
+---
+title: "Keen API reference"
+sidebarTitle: "API"
+description: "API reference for the Keen plugin in Corsair: every `keen.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Collections
+
+### get
+
+`collections.get`
+
+One collection’s property names and their inferred types
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.collections.get({ collection: 'purchases' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `string` | Yes | The event collection, such as `purchases`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `Record<string, string> \| null` | No | Property name to inferred type: `num`, `string`, `bool` and so on. |
+| `url` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`collections.list`
+
+Every event collection on the project, with its properties and types
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.collections.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  properties?: Record<string, string> | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Datasets
+
+### delete
+
+`datasets.delete`
+
+Delete a cached dataset and its computed rows; it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.keen.api.datasets.delete({ datasetName: 'count-purchases-by-country-daily' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetName` | `string` | Yes | The cached dataset name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | The resource is gone. |
+
+
+
+---
+
+### get
+
+`datasets.get`
+
+One cached dataset’s definition, including how far behind its computation is
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.datasets.get({ datasetName: 'count-purchases-by-country-daily' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetName` | `string` | Yes | The cached dataset name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| null` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `dataset_name` | `string` | Yes | — |
+| `display_name` | `string \| null` | No | — |
+| `query` | `Record<string, any> \| null` | No | — |
+| `index_by` | `string \| string[] \| null` | No | — |
+| `last_scheduled_date` | `string \| null` | No | — |
+| `latest_subtimeframe_available` | `string \| null` | No | — |
+| `milliseconds_behind` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`datasets.list`
+
+Cached dataset definitions, paged by `after_name`; `next_after_name` carries the cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.datasets.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Datasets per page. Defaults to 10, and Keen allows at most 100. |
+| `after_name` | `string` | No | The dataset name the next page starts after. Keen’s `next_page_url` names it. |
+
+Pages by cursor. Pass `next_after_name` back as `after_name`; it is null on the last page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasets` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | The next page while more remain; absent on the last page. |
+| `next_after_name` | `string \| null` | Yes | The `after_name` for the next page, read out of `next_page_url`; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="datasets full type">
+
+```ts
+{
+  project_id?: string | null,
+  organization_id?: string | null,
+  dataset_name: string,
+  display_name?: string | null,
+  query?: Record<string, any> | null,
+  index_by?: string | string[] | null,
+  last_scheduled_date?: string | null,
+  latest_subtimeframe_available?: string | null,
+  milliseconds_behind?: number | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### result
+
+`datasets.result`
+
+A cached dataset’s computed rows, selected by the values of its `index_by` properties
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.datasets.result({ datasetName: 'count-purchases-by-country-daily', index_by: { country: 'US' }, timeframe: 'this_7_days' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetName` | `string` | Yes | The cached dataset name. |
+| `index_by` | `string \| Record<string, string \| number \| boolean>` | Yes | The index value that selects the rows: a string for a single string index property, or an object of property name to value when there are several or the value is not a string. |
+| `timeframe` | `string \| object` | Yes | A relative timeframe in the dataset’s own unit, or an absolute window that lines up with its intervals. |
+
+Both `index_by` and `timeframe` are required. A string `index_by` goes as it is; an object (several index properties, or a number or boolean value) and an absolute timeframe are sent JSON-encoded.
+
+<AccordionGroup>
+<Accordion title="timeframe full type">
+
+```ts
+string | {
+  start: string,
+  end: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `number \| string \| boolean \| null \| (number \| string \| boolean \| null \| Record<string, any>)[] \| Record<string, any>` | Yes | — |
+
+
+
+---
+
+## Events
+
+### record
+
+`events.record`
+
+Record one event in a collection; Keen answers `created` and takes up to 10 seconds to make it queryable
+
+**Risk:** `write`
+
+```ts
+await corsair.keen.api.events.record({ collection: 'purchases', event: { item: 'Avocado', number_of_items: 10, user: { name: 'John Smith' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `string` | Yes | The event collection, such as `purchases`. |
+| `event` | `Record<string, any>` | Yes | The event body. Its keys become properties. `keen.timestamp` overrides when Keen records it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `boolean` | Yes | — |
+
+
+
+---
+
+### recordMany
+
+`events.recordMany`
+
+Record events across one or more collections in one request, with a result per event. Keen recommends batches of 5,000 or less
+
+**Risk:** `write`
+
+```ts
+await corsair.keen.api.events.recordMany({ events: { purchases: [{ item: 'Avocado' }, { item: 'Lime' }], signups: [{ username: 'lloyd' }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `Record<string, Record<string, any>[]>` | Yes | Collection name to events. Keen recommends batches of 5,000 or less. |
+
+Answers one result per event, keyed by collection. An entry with `success: false` was not stored.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, {
+  success: boolean
+}[]>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Properties
+
+### get
+
+`properties.get`
+
+The type Keen inferred for one property, such as `num` or `string`
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.properties.get({ collection: 'purchases', property: 'item.price' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `string` | Yes | The event collection, such as `purchases`. |
+| `property` | `string` | Yes | The property name, which may contain dots, such as `item.price`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property_name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+## Queries
+
+### multiAnalysis
+
+`queries.multiAnalysis`
+
+Run up to 10 analyses over one collection in one request, each under its own label
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.queries.multiAnalysis({ event_collection: 'purchases', analyses: { purchases: { analysis_type: 'count' }, revenue: { analysis_type: 'sum', target_property: 'price' } }, timeframe: 'this_7_days' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_collection` | `string` | Yes | The event collection, such as `purchases`. |
+| `analyses` | `object` | Yes | Label to analysis. Each label becomes a key in the result. Keen allows at most 10 analyses per request. |
+| `timeframe` | `string \| object` | No | A relative name, or an object with `start` and `end`. |
+| `interval` | `minutely \| hourly \| daily \| weekly \| monthly \| yearly` | No | — |
+| `timezone` | `string` | No | — |
+| `filters` | `object[]` | No | — |
+| `group_by` | `(string \| Record<string, any>)[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="analyses full type">
+
+```ts
+Record<string, {
+  analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel,
+  event_collection?: string,
+  steps?: {
+    event_collection: string,
+    actor_property: string,
+    timeframe?: string | {
+      start: string,
+      end: string
+    },
+    timezone?: string,
+    filters?: (
+      {
+        operator: or,
+        operands: {
+          property_name: string,
+          operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+          property_value: any
+        }[]
+      } | {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }
+    )[],
+    optional?: boolean,
+    inverted?: boolean,
+    with_actors?: boolean
+  }[],
+  target_property?: string,
+  timeframe?: string | {
+    start: string,
+    end: string
+  },
+  interval?: minutely | hourly | daily | weekly | monthly | yearly,
+  timezone?: string,
+  filters?: (
+    {
+      operator: or,
+      operands: {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }[]
+    } | {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }
+  )[],
+  group_by?: (string | Record<string, any>)[],
+  order_by?: {
+    property_name: string,
+    direction: ASC | DESC
+  }[],
+  limit?: number,
+  percentile?: number | null,
+  include_metadata?: boolean
+}>
+```
+</Accordion>
+
+<Accordion title="timeframe full type">
+
+```ts
+string | {
+  start: string,
+  end: string
+}
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+(
+  {
+    operator: or,
+    operands: {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }[]
+  } | {
+    property_name: string,
+    operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+    property_value: any
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, any> \| Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### run
+
+`queries.run`
+
+Run one analysis (`count`, `sum`, `average`, `count_unique`, `percentile` and the rest) over a collection, with filters, grouping and intervals
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.queries.run({ analysis_type: 'sum', event_collection: 'purchases', target_property: 'price', timeframe: 'this_14_days', filters: [{ property_name: 'price', operator: 'gte', property_value: 1 }], group_by: ['platform'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `analysis_type` | `count \| count_unique \| minimum \| maximum \| sum \| average \| median \| percentile \| select_unique \| standard_deviation \| funnel` | Yes | — |
+| `event_collection` | `string` | No | The collection to analyze. Required for every analysis but `funnel`, whose steps name their own; inside a multi-analysis it comes from the outer request. |
+| `steps` | `object[]` | No | Required for `funnel`: the steps, in order. |
+| `target_property` | `string` | No | Required for every analysis except `count` and `funnel`. |
+| `timeframe` | `string \| object` | No | A relative name, or an object with `start` and `end`. |
+| `interval` | `minutely \| hourly \| daily \| weekly \| monthly \| yearly` | No | Split the result into one value per interval. |
+| `timezone` | `string` | No | IANA timezone for interval boundaries, such as `US/Pacific`. |
+| `filters` | `object[]` | No | — |
+| `group_by` | `(string \| Record<string, any>)[]` | No | A property name, or a buckets or ranges object; all in Keen’s own shape. |
+| `order_by` | `object[]` | No | — |
+| `limit` | `number` | No | Maximum group rows to return. |
+| `percentile` | `number \| null` | No | Required for `percentile`: the percentile to read, 0 to 100. |
+| `include_metadata` | `boolean` | No | — |
+
+Every analysis but `count` and `funnel` needs a `target_property`; `percentile` also needs `percentile`. Both are checked before the request.
+
+<AccordionGroup>
+<Accordion title="steps full type">
+
+```ts
+{
+  event_collection: string,
+  actor_property: string,
+  timeframe?: string | {
+    start: string,
+    end: string
+  },
+  timezone?: string,
+  filters?: (
+    {
+      operator: or,
+      operands: {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }[]
+    } | {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }
+  )[],
+  optional?: boolean,
+  inverted?: boolean,
+  with_actors?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="timeframe full type">
+
+```ts
+string | {
+  start: string,
+  end: string
+}
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+(
+  {
+    operator: or,
+    operands: {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }[]
+  } | {
+    property_name: string,
+    operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+    property_value: any
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="order_by full type">
+
+```ts
+{
+  property_name: string,
+  direction: ASC | DESC
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `number \| string \| boolean \| null \| (number \| string \| boolean \| null \| Record<string, any>)[] \| Record<string, any>` | Yes | — |
+
+
+
+---
+
+## Saved Queries
+
+### create
+
+`savedQueries.create`
+
+Create or replace a saved query by name, with the refresh rate that caches its result
+
+**Risk:** `write`
+
+```ts
+await corsair.keen.api.savedQueries.create({ queryName: 'weekly-purchases', refresh_rate: 0, query: { analysis_type: 'count', event_collection: 'purchases', timeframe: 'this_7_days' }, metadata: { display_name: 'Purchases (past week)' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queryName` | `string` | Yes | The saved query name, which is also its identifier. |
+| `query` | `object` | Yes | One analysis, or a multi-analysis with `analysis_type: multi_analysis` and its `analyses` map. |
+| `refresh_rate` | `number` | Yes | Seconds between refreshes. `0` caches nothing; a cached query refreshes every 14400 (four hours) to 86400 (24 hours) seconds. |
+| `metadata` | `object` | No | — |
+
+A PUT keyed by name, so the same name replaces the definition. `refresh_rate` is 0, or 14400 to 86400 seconds.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  event_collection: string,
+  analyses: Record<string, {
+    analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel,
+    event_collection?: string,
+    steps?: {
+      event_collection: string,
+      actor_property: string,
+      timeframe?: string | {
+        start: string,
+        end: string
+      },
+      timezone?: string,
+      filters?: (
+        {
+          operator: or,
+          operands: {
+            property_name: string,
+            operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+            property_value: any
+          }[]
+        } | {
+          property_name: string,
+          operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+          property_value: any
+        }
+      )[],
+      optional?: boolean,
+      inverted?: boolean,
+      with_actors?: boolean
+    }[],
+    target_property?: string,
+    timeframe?: string | {
+      start: string,
+      end: string
+    },
+    interval?: minutely | hourly | daily | weekly | monthly | yearly,
+    timezone?: string,
+    filters?: (
+      {
+        operator: or,
+        operands: {
+          property_name: string,
+          operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+          property_value: any
+        }[]
+      } | {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }
+    )[],
+    group_by?: (string | Record<string, any>)[],
+    order_by?: {
+      property_name: string,
+      direction: ASC | DESC
+    }[],
+    limit?: number,
+    percentile?: number | null,
+    include_metadata?: boolean
+  }>,
+  timeframe?: string | {
+    start: string,
+    end: string
+  },
+  interval?: minutely | hourly | daily | weekly | monthly | yearly,
+  timezone?: string,
+  filters?: (
+    {
+      operator: or,
+      operands: {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }[]
+    } | {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }
+  )[],
+  group_by?: (string | Record<string, any>)[],
+  analysis_type: multi_analysis
+} | {
+  analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel,
+  event_collection?: string,
+  steps?: {
+    event_collection: string,
+    actor_property: string,
+    timeframe?: string | {
+      start: string,
+      end: string
+    },
+    timezone?: string,
+    filters?: (
+      {
+        operator: or,
+        operands: {
+          property_name: string,
+          operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+          property_value: any
+        }[]
+      } | {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }
+    )[],
+    optional?: boolean,
+    inverted?: boolean,
+    with_actors?: boolean
+  }[],
+  target_property?: string,
+  timeframe?: string | {
+    start: string,
+    end: string
+  },
+  interval?: minutely | hourly | daily | weekly | monthly | yearly,
+  timezone?: string,
+  filters?: (
+    {
+      operator: or,
+      operands: {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }[]
+    } | {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }
+  )[],
+  group_by?: (string | Record<string, any>)[],
+  order_by?: {
+    property_name: string,
+    direction: ASC | DESC
+  }[],
+  limit?: number,
+  percentile?: number | null,
+  include_metadata?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  display_name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query_name` | `string` | Yes | — |
+| `refresh_rate` | `number \| null` | No | — |
+| `query` | `Record<string, any> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `created_date` | `string \| null` | No | — |
+| `last_modified_date` | `string \| null` | No | — |
+| `user_last_modified_date` | `string \| null` | No | — |
+| `run_information` | `Record<string, any> \| null` | No | — |
+| `urls` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="urls full type">
+
+```ts
+{
+  cached_query_url?: string | null,
+  cached_query_results_url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`savedQueries.delete`
+
+Delete a saved query and its cached result; it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.keen.api.savedQueries.delete({ queryName: 'weekly-purchases' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queryName` | `string` | Yes | The saved query name, which is also its identifier. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | The resource is gone. |
+
+
+
+---
+
+### get
+
+`savedQueries.get`
+
+One saved query’s definition
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.savedQueries.get({ queryName: 'weekly-purchases' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queryName` | `string` | Yes | The saved query name, which is also its identifier. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query_name` | `string` | Yes | — |
+| `refresh_rate` | `number \| null` | No | — |
+| `query` | `Record<string, any> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `created_date` | `string \| null` | No | — |
+| `last_modified_date` | `string \| null` | No | — |
+| `user_last_modified_date` | `string \| null` | No | — |
+| `run_information` | `Record<string, any> \| null` | No | — |
+| `urls` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="urls full type">
+
+```ts
+{
+  cached_query_url?: string | null,
+  cached_query_results_url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`savedQueries.list`
+
+Every saved query on the project, with its definition and refresh rate
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.savedQueries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="queries full type">
+
+```ts
+{
+  query_name: string,
+  refresh_rate?: number | null,
+  query?: Record<string, any> | null,
+  metadata?: Record<string, any> | null,
+  created_date?: string | null,
+  last_modified_date?: string | null,
+  user_last_modified_date?: string | null,
+  run_information?: Record<string, any> | null,
+  urls?: {
+    cached_query_url?: string | null,
+    cached_query_results_url?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### result
+
+`savedQueries.result`
+
+The cached result of a saved query, which is what makes a dashboard load instantly
+
+**Risk:** `read`
+
+```ts
+await corsair.keen.api.savedQueries.result({ queryName: 'weekly-purchases' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queryName` | `string` | Yes | The saved query name, which is also its identifier. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query_name` | `string` | Yes | — |
+| `result` | `number \| string \| boolean \| null \| (number \| string \| boolean \| null \| Record<string, any>)[] \| Record<string, any>` | Yes | — |
+| `refresh_rate` | `number \| null` | No | — |
+| `query` | `Record<string, any> \| null` | No | — |
+| `created_date` | `string \| null` | No | — |
+| `last_modified_date` | `string \| null` | No | — |
+| `urls` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="urls full type">
+
+```ts
+{
+  cached_query_url?: string | null,
+  cached_query_results_url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
