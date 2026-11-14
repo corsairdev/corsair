@@ -910,7 +910,7 @@ await corsair.kadoa.api.workflows.connectors({ workflowId: '7f3c1a2e-9b4d-4c6e-8
 
 Create a workflow from a prompt, an existing schema, inline entity and fields, or a template; every URL must belong to one website. Spends Kadoa credits once it runs
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.kadoa.api.workflows.create({ urls: ['https://acme.example/products'], name: 'Product Catalog', userPrompt: 'Collect every product name, price and stock status from the listing.', interval: 'DAILY' });
@@ -1477,7 +1477,7 @@ await corsair.kadoa.api.workflows.pause({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2
 
 Unpause a paused workflow, or resume a preview or error workflow; a 202 means a fresh preview run was started and returned a jobId
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.kadoa.api.workflows.resume({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
@@ -1510,7 +1510,7 @@ A 202 means the preview was stale, so a fresh preview run started and its `jobId
 
 Start a run and get a jobId back at once; spends Kadoa credits. Follow it with workflows.jobStatus(&#123; workflowId, jobId &#125;), or read the result with workflows.data
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.kadoa.api.workflows.run({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', limit: 100 });

@@ -258,8 +258,9 @@ const kadoaEndpointMeta = {
 		description:
 			'One workflow with its sources, schema, schedule, latest run state and pending fields',
 	},
+	// create, run and resume spend Kadoa credits, which R8 marks destructive.
 	'workflows.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a workflow from a prompt, an existing schema, inline entity and fields, or a template; every URL must belong to one website. Spends Kadoa credits once it runs',
 	},
@@ -275,7 +276,7 @@ const kadoaEndpointMeta = {
 			'Delete a workflow along with its run history and stored data; it cannot be restored',
 	},
 	'workflows.run': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Start a run and get a jobId back at once; spends Kadoa credits. Follow it with workflows.jobStatus({ workflowId, jobId }), or read the result with workflows.data',
 	},
@@ -285,7 +286,7 @@ const kadoaEndpointMeta = {
 			'Pause a workflow so its schedule stops starting runs; workflows.resume turns it back on',
 	},
 	'workflows.resume': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Unpause a paused workflow, or resume a preview or error workflow; a 202 means a fresh preview run was started and returned a jobId',
 	},

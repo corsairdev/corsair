@@ -27,7 +27,7 @@ pnpm add @corsair-dev/kadoa
 | `variables.list` | `kadoa.api.variables.list` | `read` | Team variables with their keys and values, optionally limited to one workflow’s; a secret’s value is never returned |
 | `variables.update` | `kadoa.api.variables.update` | `write` | Change a variable’s key or value; a stored value cannot change type, and a secret’s new value is written only |
 | `workflows.connectors` | `kadoa.api.workflows.connectors` | `read` | Destinations that receive this workflow’s results after each run, with the format each takes |
-| `workflows.create` | `kadoa.api.workflows.create` | `write` | Create a workflow from a prompt, an existing schema, inline entity and fields, or a template; every URL must belong to one website. Spends Kadoa credits once it runs |
+| `workflows.create` | `kadoa.api.workflows.create` | `destructive` | Create a workflow from a prompt, an existing schema, inline entity and fields, or a template; every URL must belong to one website. Spends Kadoa credits once it runs |
 | `workflows.data` | `kadoa.api.workflows.data` | `read` | Extracted rows of a workflow’s latest published run, with filters, sorting and paging; `limit: 0` streams every row at once |
 | `workflows.delete` | `kadoa.api.workflows.delete` | `destructive` | Delete a workflow along with its run history and stored data; it cannot be restored |
 | `workflows.get` | `kadoa.api.workflows.get` | `read` | One workflow with its sources, schema, schedule, latest run state and pending fields |
@@ -35,8 +35,8 @@ pnpm add @corsair-dev/kadoa
 | `workflows.jobStatus` | `kadoa.api.workflows.jobStatus` | `read` | Where a run stands: IN_PROGRESS, FINISHED, FAILED, NOT_SUPPORTED or FAILED_INSUFFICIENT_FUNDS, with any errors |
 | `workflows.list` | `kadoa.api.workflows.list` | `read` | List workflows by name, ID, state or tag, with paging by skip; `statusFilters: ["group:attention"]` returns the ones waiting on you |
 | `workflows.pause` | `kadoa.api.workflows.pause` | `write` | Pause a workflow so its schedule stops starting runs; workflows.resume turns it back on |
-| `workflows.resume` | `kadoa.api.workflows.resume` | `write` | Unpause a paused workflow, or resume a preview or error workflow; a 202 means a fresh preview run was started and returned a jobId |
-| `workflows.run` | `kadoa.api.workflows.run` | `write` | Start a run and get a jobId back at once; spends Kadoa credits. Follow it with workflows.jobStatus({ workflowId, jobId }), or read the result with workflows.data |
+| `workflows.resume` | `kadoa.api.workflows.resume` | `destructive` | Unpause a paused workflow, or resume a preview or error workflow; a 202 means a fresh preview run was started and returned a jobId |
+| `workflows.run` | `kadoa.api.workflows.run` | `destructive` | Start a run and get a jobId back at once; spends Kadoa credits. Follow it with workflows.jobStatus({ workflowId, jobId }), or read the result with workflows.data |
 | `workflows.schedule` | `kadoa.api.workflows.schedule` | `write` | Set when a workflow’s next run starts, as a UTC time; the workflow needs a schedule for this to work |
 | `workflows.stop` | `kadoa.api.workflows.stop` | `write` | Stop the workflow’s active run; queued steps are dropped and the step already running may finish |
 | `workflows.updateMetadata` | `kadoa.api.workflows.updateMetadata` | `write` | Change a workflow’s name, description, tags, sources, record limit, schedule, location or monitored fields |
