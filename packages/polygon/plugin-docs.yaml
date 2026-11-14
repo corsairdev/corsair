@@ -1,0 +1,87 @@
+displayName: Polygon
+description: OMS payments API for moving money between crypto and fiat, with quotes, transfers, wallets, customers and webhooks.
+domain: polygon.technology
+recommendedAuth: api_key
+overviewNote: |
+  Polygon OMS takes a key and secret pair and mints a 60-minute bearer token from them, and the plugin does the exchange for you. Create a project and an API key in the OMS dashboard, then copy the secret at creation time, because OMS shows it once and stores only a hash. Both values are stored on the account: the key as `api_key` and the secret as `api_secret`. Set `environment: 'sandbox'` to reach the sandbox host, whose `sk_sdbx_` keys simulate every transfer.
+
+  Things to know before money moves:
+
+  - **Two steps, not one.** `quotes.create` prices a transfer and locks the rate for a few minutes. `transactions.create` accepts that quote and starts the transfer. Nothing moves until the second call, which is why the plugin marks the quote a write and the transaction destructive.
+  - **One amount, one side.** Set the amount on the source or the destination, never both: OMS calculates the other side. The plugin rejects a call that sets both or neither before it is sent.
+  - **Idempotency.** OMS requires an `Idempotency-Key` header on every non-auth POST. The plugin generates one per call; pass `idempotencyKey` in the input to reuse it, which is what makes a retried transfer the same attempt rather than a second one.
+  - **Personal data is write-only.** A customer accepts `birthDate`, `residentialAddress`, `ipAddress` and identifying documents, and OMS never returns them. Reads show the onboarding `status` and, when something is outstanding, a `hold`.
+  - **Networks are names, not numbers.** Pass `polygon` or `ethereum`; OMS rejects the numeric chain ids. `networks.list` reports what this project can actually route.
+  - **Balances can be negative.** `wallets.balance` mirrors the provider, so a clawback after funds were spent reads as a negative string.
+  - **Webhooks.** The plugin registers, reads, updates and deletes OMS webhook endpoints, including the one-time HMAC signing key from `webhooks.create`. It does not handle inbound deliveries.
+references:
+  - title: Polygon OMS API reference
+    url: https://docs.polygon.technology/api-reference/overview
+  - title: OpenAPI specification
+    url: https://docs.polygon.technology/api-reference/openapi.yaml
+examples:
+  read:
+    path: networks.list
+    title: List the networks this project can route
+    args:
+      limit: 20
+  write:
+    path: quotes.create
+    title: Price a USDC to USD bank payout
+    args:
+      customerId: cst_vfa0nxw6zvyws9g237jrxn4y7k
+      source:
+        type: walletCrypto
+        details:
+          id: wlt_5h4jzzpr9xre3bamd9ca7qyghn
+          asset: usdc
+          network: polygon
+        amount: '100.00'
+      destination:
+        type: bankUs
+        details:
+          id: ext_fky491gakzj0dd46qb6whsr2vq
+          asset: usd
+apiExamples:
+  customers.list:
+    call: "{ status: 'active', limit: 20 }"
+  customers.get:
+    call: "{ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k' }"
+  customers.create:
+    call: "{ type: 'individual', firstName: 'Jane', lastName: 'Smith', email: 'jane@example.com', nationality: 'US' }"
+  customers.update:
+    call: "{ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', phone: '+12125551234' }"
+  customers.delete:
+    call: "{ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k' }"
+  wallets.list:
+    call: "{ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', limit: 20 }"
+  wallets.get:
+    call: "{ id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn' }"
+  wallets.create:
+    call: "{ asset: 'usdc', chain: 'polygon' }"
+  wallets.balance:
+    call: "{ id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn' }"
+  networks.list:
+    call: "{ limit: 20 }"
+  quotes.create:
+    call: "{ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', source: { type: 'walletCrypto', details: { id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn', asset: 'usdc', network: 'polygon' }, amount: '100.00' }, destination: { type: 'bankUs', details: { id: 'ext_fky491gakzj0dd46qb6whsr2vq', asset: 'usd' } } }"
+  quotes.get:
+    call: "{ quoteId: 'qt_0gq9aesz4wb5etdv88z1j61qcm' }"
+  transactions.list:
+    call: "{ status: ['processing', 'completed'], limit: 20 }"
+  transactions.get:
+    call: "{ transactionId: 'txn_01h9xd' }"
+  transactions.create:
+    call: "{ quoteId: 'qt_0gq9aesz4wb5etdv88z1j61qcm', metadata: { orderId: 'order_12345' } }"
+  webhooks.list:
+    call: "{ limit: 20 }"
+  webhooks.get:
+    call: "{ webhookId: 'whk_01H9Xa8F5dN6mP3q' }"
+  webhooks.create:
+    call: "{ url: 'https://partner.example/webhooks', subscriptions: ['transaction.settled'], timeoutMs: 5000 }"
+  webhooks.update:
+    call: "{ webhookId: 'whk_01H9Xa8F5dN6mP3q', timeoutMs: 8000 }"
+  webhooks.delete:
+    call: "{ webhookId: 'whk_01H9Xa8F5dN6mP3q' }"
+  cashLocations.list:
+    call: "{ limit: 50 }"
