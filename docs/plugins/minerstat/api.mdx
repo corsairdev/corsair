@@ -1,0 +1,590 @@
+---
+title: "Minerstat API reference"
+sidebarTitle: "API"
+description: "API reference for the Minerstat plugin in Corsair: every `minerstat.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Algorithms
+
+### get
+
+`algorithms.get`
+
+Get algorithms
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.algorithms.get({ slug: 'sha-256' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `algorithm` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="algorithm full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  unit: string,
+  coins: {
+    slug: string,
+    symbol: string,
+    name?: string,
+    algorithm?: string,
+    networkHashrate?: number | null,
+    difficulty?: number | null,
+    blockReward?: number | null,
+    blockTimeSeconds?: number | null,
+    priceUsd?: number | null,
+    marketCapUsd?: number | null,
+    volume24hUsd?: number | null,
+    confidence?: number | null,
+    dataUpdatedAt?: string | null
+  }[],
+  hardware: {
+    slug: string,
+    name: string,
+    type: ASIC | GPU | CPU | FPGA,
+    hashrateHs: number,
+    powerWatts: number | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`algorithms.list`
+
+List algorithms
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.algorithms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generatedAt` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `count` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `notice` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  unit: string,
+  coins: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Coins
+
+### get
+
+`coins.get`
+
+Get coins
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.coins.get({ slug: 'btc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generatedAt` | `string` | Yes | — |
+| `dataUpdatedAt` | `string \| null` | Yes | — |
+| `confidence` | `number` | Yes | — |
+| `coin` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="coin full type">
+
+```ts
+{
+  slug: string,
+  symbol: string,
+  name?: string,
+  algorithm?: string,
+  networkHashrate?: number | null,
+  difficulty?: number | null,
+  blockReward?: number | null,
+  blockTimeSeconds?: number | null,
+  priceUsd?: number | null,
+  marketCapUsd?: number | null,
+  volume24hUsd?: number | null,
+  confidence?: number | null,
+  dataUpdatedAt?: string | null,
+  website: string | null,
+  explorerUrl: string | null,
+  consensusType: string | null,
+  coinType: coin | pool,
+  circulatingSupply: number | null,
+  maxSupply: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`coins.history`
+
+History coins
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.coins.history({ slug: 'btc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coin` | `string` | Yes | — |
+| `symbol` | `string` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `count` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  t: string,
+  difficulty: number | null,
+  networkHashrate: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`coins.list`
+
+List coins
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.coins.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `algorithm` | `string` | No | — |
+| `verified` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generatedAt` | `string` | No | — |
+| `offset` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `count` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `notice` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  slug: string,
+  symbol: string,
+  name?: string,
+  algorithm?: string,
+  networkHashrate?: number | null,
+  difficulty?: number | null,
+  blockReward?: number | null,
+  blockTimeSeconds?: number | null,
+  priceUsd?: number | null,
+  marketCapUsd?: number | null,
+  volume24hUsd?: number | null,
+  confidence?: number | null,
+  dataUpdatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Hardware
+
+### get
+
+`hardware.get`
+
+Get hardware
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.hardware.get({ slug: 'nvidia-geforce-rtx-4090' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hardware` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hardware full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  manufacturer: string,
+  type: ASIC | GPU | CPU | FPGA,
+  defaultPowerWatts: number | null,
+  releaseDate: string | null,
+  specs: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`hardware.list`
+
+List hardware
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.hardware.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `ASIC \| GPU \| CPU \| FPGA` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generatedAt` | `string` | No | — |
+| `offset` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `count` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `notice` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  slug: string,
+  manufacturer: string,
+  model: string,
+  type: ASIC | GPU | CPU | FPGA,
+  powerWatts: number | null,
+  releaseDate: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pools
+
+### get
+
+`pools.get`
+
+Get pools
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.pools.get({ slug: 'f2pool' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pool` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pool full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  website: string | null,
+  type?: string,
+  founded: string | null,
+  coins: {
+    coin: string,
+    symbol: string,
+    algorithm: string,
+    fee: number | null,
+    payoutScheme: string | null,
+    minPayout: number | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pools.list`
+
+List pools
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.pools.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generatedAt` | `string` | No | — |
+| `offset` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `count` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `notice` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  website: string | null,
+  type?: string,
+  defaultFee: number | null,
+  coins: number,
+  lastOkAt: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profitability
+
+### rank
+
+`profitability.rank`
+
+Rank profitability
+
+**Risk:** `read`
+
+```ts
+await corsair.minerstat.api.profitability.rank({ hardware: 'nvidia-geforce-rtx-4090', electricity: 0.1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hardware` | `string` | No | — |
+| `hashrate` | `number` | No | — |
+| `algorithm` | `string` | No | — |
+| `power` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `electricity` | `number` | No | — |
+| `poolFee` | `number` | No | — |
+| `verifiedOnly` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `window` | `current \| 6h \| 24h \| 3d` | No | — |
+
+Requires the Enterprise plan. Use hardware for preset mode, or hashrate and algorithm for manual mode.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hardware` | `object \| null` | Yes | — |
+| `electricityPrice` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hardware full type">
+
+```ts
+{
+  slug: string,
+  name: string
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  coin: {
+    slug: string,
+    symbol: string,
+    name?: string,
+    algorithm: string
+  },
+  coinsPerDay: number,
+  revenuePerDay: number,
+  electricityPerDay: number,
+  profitPerDay: number,
+  profitMargin: number | null,
+  breakEvenElectricityPrice: number | null,
+  confidenceScore: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

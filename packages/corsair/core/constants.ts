@@ -331,6 +331,7 @@ export const BaseProviders = [
 	'mem0',
 	'memberspot',
 	'merriamwebsterdict',
+	'minerstat',
 	'minimax',
 	'miro',
 	'missive',
@@ -866,6 +867,7 @@ export const ProviderDisplayNames = {
 	mem0: 'Mem0',
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
+	minerstat: 'Minerstat',
 	minimax: 'MiniMax',
 	miro: 'Miro',
 	missive: 'Missive',
@@ -1408,6 +1410,7 @@ export type AllProviders =
 	| 'mem0'
 	| 'memberspot'
 	| 'merriamwebsterdict'
+	| 'minerstat'
 	| 'minimax'
 	| 'miro'
 	| 'missive'
