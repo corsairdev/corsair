@@ -375,7 +375,7 @@ export const svixEndpointMeta = {
 	},
 	'endpoints.patch': { riskLevel: 'write', description: 'Patch Endpoint' },
 	'endpoints.mcpEventsSubscribe': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Subscribe to MCP Events',
 	},
 	'endpoints.mcpEventsUnsubscribe': {

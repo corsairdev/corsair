@@ -1063,7 +1063,7 @@ await corsair.svix.api.endpoints.list({});
 
 Subscribe to MCP Events
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.svix.api.endpoints.mcpEventsSubscribe({});
@@ -2324,7 +2324,7 @@ await corsair.svix.api.messages.pollerConsumerPoll({});
 |------|------|----------|-------------|
 | `app_id` | `string & string` | Yes | — |
 | `sink_id` | `string & string` | Yes | — |
-| `consumer_id` | `string & string` | Yes | — |
+| `consumer_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `iterator` | `string \| null` | No | — |
 
@@ -2379,7 +2379,7 @@ await corsair.svix.api.messages.pollerConsumerSeek({});
 |------|------|----------|-------------|
 | `app_id` | `string & string` | Yes | — |
 | `sink_id` | `string & string` | Yes | — |
-| `consumer_id` | `string & string` | Yes | — |
+| `consumer_id` | `string` | Yes | — |
 | `idempotencyKey` | `string` | No | — |
 | `body` | `object` | Yes | — |
 

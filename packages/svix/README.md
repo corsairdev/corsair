@@ -34,7 +34,7 @@ pnpm add @corsair-dev/svix
 | `endpoints.getSecret` | `svix.api.endpoints.getSecret` | `read` | Get Endpoint Secret |
 | `endpoints.getStats` | `svix.api.endpoints.getStats` | `read` | Endpoint Stats |
 | `endpoints.list` | `svix.api.endpoints.list` | `read` | List Endpoints |
-| `endpoints.mcpEventsSubscribe` | `svix.api.endpoints.mcpEventsSubscribe` | `write` | Subscribe to MCP Events |
+| `endpoints.mcpEventsSubscribe` | `svix.api.endpoints.mcpEventsSubscribe` | `destructive` | Subscribe to MCP Events |
 | `endpoints.mcpEventsUnsubscribe` | `svix.api.endpoints.mcpEventsUnsubscribe` | `destructive` | Unsubscribe from MCP Events |
 | `endpoints.patch` | `svix.api.endpoints.patch` | `write` | Patch Endpoint |
 | `endpoints.patchHeaders` | `svix.api.endpoints.patchHeaders` | `write` | Patch Endpoint Headers |
