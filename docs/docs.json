@@ -2700,6 +2700,15 @@
                 ]
               },
               {
+                "group": "Ko-fi",
+                "pages": [
+                  "plugins/kofi/overview",
+                  "plugins/kofi/api",
+                  "plugins/kofi/database",
+                  "plugins/kofi/webhooks"
+                ]
+              },
+              {
                 "group": "Leexi",
                 "pages": [
                   "plugins/leexi/overview",
