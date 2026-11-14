@@ -1,0 +1,137 @@
+---
+title: "Hyperbrowser plugin"
+sidebarTitle: "Overview"
+description: "Fast cloud browsers for AI agents, web scraping, multi-page crawling, searching, and structured data extraction."
+---
+
+Use **Hyperbrowser** through Corsair: one client, typed API calls.
+
+Hyperbrowser provides managed cloud browser sessions and web automation APIs. Authenticate requests using an API key passed in the `x-api-key` header. Get an API key from the Hyperbrowser dashboard at https://app.hyperbrowser.ai/.
+
+Key features:
+- **Browser Sessions**: Launch headless or headed browser sessions with Playwright, Puppeteer, stealth anti-bot protection, residential proxies, and automatic CAPTCHA solving.
+- **Persistent Profiles**: Maintain persistent browser cookies, local storage, and authentication state across multiple browser sessions.
+- **Web Scraping & Extraction**: Asynchronous jobs for scraping single pages, batch scraping URL sets, multi-page web crawling, and extracting structured data with AI.
+- **Web Search & Fetch**: Fetch rendered web pages in markdown, HTML, or screenshot formats, and search the web with clean structured results.
+
+Credit consumption: Operations that launch browser sessions, trigger CAPTCHA evaluations, or start scrape/crawl/extract jobs consume compute credits according to your Hyperbrowser plan.
+
+**What you get:**
+
+- 31 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/hyperbrowser better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/hyperbrowser better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/hyperbrowser better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/hyperbrowser better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { hyperbrowser } from '@corsair-dev/hyperbrowser';
+
+export const corsair = createCorsair({
+	plugins: [
+		hyperbrowser(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Hyperbrowser API key before the first call: `pnpm corsair setup --plugin=hyperbrowser --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+hyperbrowser()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'hyperbrowser',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List browser profiles**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.hyperbrowser.api.profiles.list({});
+```
+
+
+**Search the web**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.hyperbrowser.api.web.search({ query: 'Hyperbrowser documentation' });
+```
+
+
+See the full list on the [API](/plugins/hyperbrowser/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/hyperbrowser/api">
+    Every `hyperbrowser.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

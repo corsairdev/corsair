@@ -1,0 +1,1603 @@
+---
+title: "Hyperbrowser API reference"
+sidebarTitle: "API"
+description: "API reference for the Hyperbrowser plugin in Corsair: every `hyperbrowser.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Crawl
+
+### create
+
+`crawl.create`
+
+Start an asynchronous multi-page crawl job (consumes compute credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.crawl.create({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `maxPages` | `number` | No | — |
+| `followLinks` | `boolean` | No | — |
+| `ignoreSitemap` | `boolean` | No | — |
+| `excludePatterns` | `string[]` | No | — |
+| `includePatterns` | `string[]` | No | — |
+| `sessionOptions` | `object` | No | — |
+| `scrapeOptions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessionOptions full type">
+
+```ts
+{
+  useUltraStealth?: boolean,
+  useStealth?: boolean,
+  useProxy?: boolean,
+  proxyServer?: string,
+  proxyServerPassword?: string,
+  proxyServerUsername?: string,
+  proxyCountry?: string,
+  proxyState?: string,
+  proxyCity?: string | null,
+  region?: string,
+  operatingSystems?: string[],
+  device?: string[],
+  platform?: string[],
+  locales?: string[],
+  screen?: {
+    width?: number,
+    height?: number,
+    deviceScaleFactor?: number
+  },
+  solveCaptchas?: boolean,
+  solverType?: visual,
+  adblock?: boolean,
+  trackers?: boolean,
+  annoyances?: boolean,
+  enableWebRecording?: boolean,
+  enableVideoWebRecording?: boolean,
+  profile?: {
+    id?: string,
+    persistChanges?: boolean
+  },
+  acceptCookies?: boolean,
+  staticIpId?: string,
+  saveDownloads?: boolean,
+  extensionIds?: string[],
+  urlBlocklist?: string[],
+  browserArgs?: string[],
+  timeoutMinutes?: number,
+  enableWindowManager?: boolean,
+  enableWindowManagerTaskbar?: boolean,
+  viewOnlyLiveView?: boolean,
+  disablePasswordManager?: boolean,
+  enableAlwaysOpenPdfExternally?: boolean,
+  disablePostQuantumKeyAgreement?: boolean,
+  enableWebMcp?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="scrapeOptions full type">
+
+```ts
+{
+  formats?: (html | links | markdown | screenshot)[],
+  includeTags?: string[],
+  excludeTags?: string[],
+  onlyMainContent?: boolean,
+  waitFor?: number,
+  timeout?: number,
+  waitUntil?: load | domcontentloaded | networkidle
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+### createWeb
+
+`crawl.createWeb`
+
+Start an asynchronous web crawl job using the Web API engine (consumes compute credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.crawl.createWeb({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `stealth` | `none \| auto \| ultra` | No | — |
+| `crawlOptions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="crawlOptions full type">
+
+```ts
+{
+  maxPages?: number,
+  followLinks?: boolean,
+  ignoreSitemap?: boolean,
+  excludePatterns?: string[],
+  includePatterns?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`crawl.get`
+
+Get crawl job status and crawled pages data by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.crawl.get({ id: 'crawl_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `batchSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `error` | `string \| null` | No | — |
+| `totalCrawledPages` | `number` | No | — |
+| `totalPageBatches` | `number` | No | — |
+| `currentPageBatch` | `number` | No | — |
+| `batchSize` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url: string,
+  status: completed | failed,
+  error?: string | null,
+  markdown?: string,
+  html?: string,
+  links?: string[],
+  screenshot?: string,
+  metadata?: Record<string, string | string[]>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`crawl.getStatus`
+
+Get the current status of an asynchronous crawl job by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.crawl.getStatus({ id: 'crawl_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+
+
+
+---
+
+### getWeb
+
+`crawl.getWeb`
+
+Get web crawl job status and crawled page data by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.crawl.getWeb({ id: 'crawl_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `batchSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `error` | `string \| null` | No | — |
+| `totalPages` | `number` | No | — |
+| `totalPageBatches` | `number` | No | — |
+| `currentPageBatch` | `number` | No | — |
+| `batchSize` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url: string,
+  status: completed | failed | pending | running,
+  error?: string | null,
+  markdown?: string,
+  html?: string,
+  links?: string[],
+  screenshot?: string,
+  json?: Record<string, any>,
+  metadata?: Record<string, string | string[]>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWebStatus
+
+`crawl.getWebStatus`
+
+Get the current status of an asynchronous web crawl job by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.crawl.getWebStatus({ id: 'crawl_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+
+
+
+---
+
+## Extract
+
+### create
+
+`extract.create`
+
+Start an AI structured data extraction job across URLs (consumes compute credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.extract.create({ urls: ['https://example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+| `systemPrompt` | `string` | No | — |
+| `maxLinks` | `number` | No | — |
+| `prompt` | `string` | No | — |
+| `schema` | `Record<string, any>` | No | — |
+| `sessionOptions` | `object` | No | — |
+| `waitFor` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessionOptions full type">
+
+```ts
+{
+  useUltraStealth?: boolean,
+  useStealth?: boolean,
+  useProxy?: boolean,
+  proxyServer?: string,
+  proxyServerPassword?: string,
+  proxyServerUsername?: string,
+  proxyCountry?: string,
+  proxyState?: string,
+  proxyCity?: string | null,
+  region?: string,
+  operatingSystems?: string[],
+  device?: string[],
+  platform?: string[],
+  locales?: string[],
+  screen?: {
+    width?: number,
+    height?: number,
+    deviceScaleFactor?: number
+  },
+  solveCaptchas?: boolean,
+  solverType?: visual,
+  adblock?: boolean,
+  trackers?: boolean,
+  annoyances?: boolean,
+  enableWebRecording?: boolean,
+  enableVideoWebRecording?: boolean,
+  profile?: {
+    id?: string,
+    persistChanges?: boolean
+  },
+  acceptCookies?: boolean,
+  staticIpId?: string,
+  saveDownloads?: boolean,
+  extensionIds?: string[],
+  urlBlocklist?: string[],
+  browserArgs?: string[],
+  timeoutMinutes?: number,
+  enableWindowManager?: boolean,
+  enableWindowManagerTaskbar?: boolean,
+  viewOnlyLiveView?: boolean,
+  disablePasswordManager?: boolean,
+  enableAlwaysOpenPdfExternally?: boolean,
+  disablePostQuantumKeyAgreement?: boolean,
+  enableWebMcp?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`extract.get`
+
+Get the extracted structured data and status of an extract job by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.extract.get({ id: 'extract_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `data` | `Record<string, any>` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### getStatus
+
+`extract.getStatus`
+
+Get the current status of an asynchronous extract job by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.extract.getStatus({ id: 'extract_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+
+
+
+---
+
+## Profiles
+
+### create
+
+`profiles.create`
+
+Create a new persistent browser profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.profiles.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`profiles.delete`
+
+Permanently delete a persistent browser profile by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.profiles.delete({ id: 'prof_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### fork
+
+`profiles.fork`
+
+Fork an existing persistent browser profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.profiles.fork({ id: 'prof_example_123', name: 'Forked Profile' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`profiles.get`
+
+Get persistent browser profile details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.profiles.get({ id: 'prof_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `teamId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`profiles.list`
+
+List persistent browser profiles with optional pagination and name filter
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.profiles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profiles` | `object[]` | No | — |
+| `totalCount` | `number` | No | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  teamId?: string,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scrape
+
+### create
+
+`scrape.create`
+
+Start an asynchronous web scrape job (consumes compute credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.scrape.create({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `sessionOptions` | `object` | No | — |
+| `scrapeOptions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessionOptions full type">
+
+```ts
+{
+  useUltraStealth?: boolean,
+  useStealth?: boolean,
+  useProxy?: boolean,
+  proxyServer?: string,
+  proxyServerPassword?: string,
+  proxyServerUsername?: string,
+  proxyCountry?: string,
+  proxyState?: string,
+  proxyCity?: string | null,
+  region?: string,
+  operatingSystems?: string[],
+  device?: string[],
+  platform?: string[],
+  locales?: string[],
+  screen?: {
+    width?: number,
+    height?: number,
+    deviceScaleFactor?: number
+  },
+  solveCaptchas?: boolean,
+  solverType?: visual,
+  adblock?: boolean,
+  trackers?: boolean,
+  annoyances?: boolean,
+  enableWebRecording?: boolean,
+  enableVideoWebRecording?: boolean,
+  profile?: {
+    id?: string,
+    persistChanges?: boolean
+  },
+  acceptCookies?: boolean,
+  staticIpId?: string,
+  saveDownloads?: boolean,
+  extensionIds?: string[],
+  urlBlocklist?: string[],
+  browserArgs?: string[],
+  timeoutMinutes?: number,
+  enableWindowManager?: boolean,
+  enableWindowManagerTaskbar?: boolean,
+  viewOnlyLiveView?: boolean,
+  disablePasswordManager?: boolean,
+  enableAlwaysOpenPdfExternally?: boolean,
+  disablePostQuantumKeyAgreement?: boolean,
+  enableWebMcp?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="scrapeOptions full type">
+
+```ts
+{
+  formats?: (html | links | markdown | screenshot)[],
+  includeTags?: string[],
+  excludeTags?: string[],
+  onlyMainContent?: boolean,
+  waitFor?: number,
+  timeout?: number,
+  waitUntil?: load | domcontentloaded | networkidle
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+### createBatch
+
+`scrape.createBatch`
+
+Start an asynchronous batch scrape job across multiple URLs (consumes compute credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.scrape.createBatch({ urls: ['https://example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+| `sessionOptions` | `object` | No | — |
+| `scrapeOptions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessionOptions full type">
+
+```ts
+{
+  useUltraStealth?: boolean,
+  useStealth?: boolean,
+  useProxy?: boolean,
+  proxyServer?: string,
+  proxyServerPassword?: string,
+  proxyServerUsername?: string,
+  proxyCountry?: string,
+  proxyState?: string,
+  proxyCity?: string | null,
+  region?: string,
+  operatingSystems?: string[],
+  device?: string[],
+  platform?: string[],
+  locales?: string[],
+  screen?: {
+    width?: number,
+    height?: number,
+    deviceScaleFactor?: number
+  },
+  solveCaptchas?: boolean,
+  solverType?: visual,
+  adblock?: boolean,
+  trackers?: boolean,
+  annoyances?: boolean,
+  enableWebRecording?: boolean,
+  enableVideoWebRecording?: boolean,
+  profile?: {
+    id?: string,
+    persistChanges?: boolean
+  },
+  acceptCookies?: boolean,
+  staticIpId?: string,
+  saveDownloads?: boolean,
+  extensionIds?: string[],
+  urlBlocklist?: string[],
+  browserArgs?: string[],
+  timeoutMinutes?: number,
+  enableWindowManager?: boolean,
+  enableWindowManagerTaskbar?: boolean,
+  viewOnlyLiveView?: boolean,
+  disablePasswordManager?: boolean,
+  enableAlwaysOpenPdfExternally?: boolean,
+  disablePostQuantumKeyAgreement?: boolean,
+  enableWebMcp?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="scrapeOptions full type">
+
+```ts
+{
+  formats?: (html | links | markdown | screenshot)[],
+  includeTags?: string[],
+  excludeTags?: string[],
+  onlyMainContent?: boolean,
+  waitFor?: number,
+  timeout?: number,
+  waitUntil?: load | domcontentloaded | networkidle
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`scrape.get`
+
+Get scrape job status and content data by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.scrape.get({ id: 'job_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+| `data` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  markdown?: string,
+  html?: string,
+  links?: string[],
+  screenshot?: string,
+  metadata?: Record<string, string | string[]>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatch
+
+`scrape.getBatch`
+
+Get results and page data of a batch scrape job by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.scrape.getBatch({ id: 'batch_example_123', page: 1, batchSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `batchSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | No | — |
+| `status` | `pending \| running \| completed \| failed \| stopped` | No | — |
+| `data` | `object[]` | No | — |
+| `error` | `string` | No | — |
+| `totalScrapedPages` | `number` | No | — |
+| `totalPageBatches` | `number` | No | — |
+| `currentPageBatch` | `number` | No | — |
+| `batchSize` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url: string,
+  status: pending | running | completed | failed | stopped,
+  error?: string | null,
+  markdown?: string,
+  html?: string,
+  links?: string[],
+  screenshot?: string,
+  metadata?: Record<string, string | string[]>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatchStatus
+
+`scrape.getBatchStatus`
+
+Get the current status of an asynchronous batch scrape job by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.scrape.getBatchStatus({ id: 'batch_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+
+
+
+---
+
+### getStatus
+
+`scrape.getStatus`
+
+Get the current status of an asynchronous scrape job by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.scrape.getStatus({ id: 'job_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `pending \| running \| completed \| failed \| stopped` | Yes | — |
+
+
+
+---
+
+## Sessions
+
+### create
+
+`sessions.create`
+
+Create and launch a cloud browser session (consumes compute credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.sessions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `useUltraStealth` | `boolean` | No | — |
+| `useStealth` | `boolean` | No | — |
+| `useProxy` | `boolean` | No | — |
+| `proxyServer` | `string` | No | — |
+| `proxyServerPassword` | `string` | No | — |
+| `proxyServerUsername` | `string` | No | — |
+| `proxyCountry` | `string` | No | — |
+| `proxyState` | `string` | No | — |
+| `proxyCity` | `string \| null` | No | — |
+| `region` | `string` | No | — |
+| `operatingSystems` | `string[]` | No | — |
+| `device` | `string[]` | No | — |
+| `platform` | `string[]` | No | — |
+| `locales` | `string[]` | No | — |
+| `screen` | `object` | No | — |
+| `solveCaptchas` | `boolean` | No | — |
+| `solverType` | `visual` | No | — |
+| `adblock` | `boolean` | No | — |
+| `trackers` | `boolean` | No | — |
+| `annoyances` | `boolean` | No | — |
+| `enableWebRecording` | `boolean` | No | — |
+| `enableVideoWebRecording` | `boolean` | No | — |
+| `profile` | `object` | No | — |
+| `acceptCookies` | `boolean` | No | — |
+| `staticIpId` | `string` | No | — |
+| `saveDownloads` | `boolean` | No | — |
+| `extensionIds` | `string[]` | No | — |
+| `urlBlocklist` | `string[]` | No | — |
+| `browserArgs` | `string[]` | No | — |
+| `timeoutMinutes` | `number` | No | — |
+| `enableWindowManager` | `boolean` | No | — |
+| `enableWindowManagerTaskbar` | `boolean` | No | — |
+| `viewOnlyLiveView` | `boolean` | No | — |
+| `disablePasswordManager` | `boolean` | No | — |
+| `enableAlwaysOpenPdfExternally` | `boolean` | No | — |
+| `disablePostQuantumKeyAgreement` | `boolean` | No | — |
+| `enableWebMcp` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="screen full type">
+
+```ts
+{
+  width?: number,
+  height?: number,
+  deviceScaleFactor?: number
+}
+```
+</Accordion>
+
+<Accordion title="profile full type">
+
+```ts
+{
+  id?: string,
+  persistChanges?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `teamId` | `string` | No | — |
+| `status` | `active \| closed \| error \| close-error` | No | — |
+| `startTime` | `string \| null` | No | — |
+| `endTime` | `string \| null` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `creditsUsed` | `number \| null` | No | — |
+| `sessionUrl` | `string` | No | — |
+| `liveUrl` | `string` | No | — |
+| `token` | `string` | No | — |
+| `wsEndpoint` | `string` | No | — |
+| `webdriverEndpoint` | `string` | No | — |
+| `computerActionEndpoint` | `string` | No | — |
+
+
+
+---
+
+### evaluateCaptcha
+
+`sessions.evaluateCaptcha`
+
+Run CAPTCHA evaluation and solving on an active session (consumes credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.sessions.evaluateCaptcha({ id: 'sess_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `captcha` | `string` | No | — |
+| `captchaType` | `string` | No | — |
+| `text` | `string` | No | — |
+| `iterations` | `number` | No | — |
+| `maxIterations` | `number` | No | — |
+| `solverType` | `visual` | No | — |
+| `useUltraStealth` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `captcha` | `string \| null` | No | — |
+| `iterationsRequested` | `number` | No | — |
+| `iterationsRun` | `number` | No | — |
+| `solved` | `boolean` | No | — |
+| `solvedCaptchas` | `string[]` | No | — |
+| `pages` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### get
+
+`sessions.get`
+
+Get cloud browser session details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.sessions.get({ id: 'sess_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `teamId` | `string` | No | — |
+| `status` | `active \| closed \| error \| close-error` | No | — |
+| `startTime` | `string \| null` | No | — |
+| `endTime` | `string \| null` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `creditsUsed` | `number \| null` | No | — |
+| `sessionUrl` | `string` | No | — |
+| `liveUrl` | `string` | No | — |
+| `token` | `string` | No | — |
+| `wsEndpoint` | `string` | No | — |
+| `webdriverEndpoint` | `string` | No | — |
+| `computerActionEndpoint` | `string` | No | — |
+
+
+
+---
+
+### getDownloadsUrl
+
+`sessions.getDownloadsUrl`
+
+Get the downloads archive URL for a browser session
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.sessions.getDownloadsUrl({ id: 'sess_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `not_enabled \| pending \| in_progress \| completed \| failed` | Yes | — |
+| `downloadsUrl` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### getRecordingUrl
+
+`sessions.getRecordingUrl`
+
+Get the web recording replay URL for a browser session
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.sessions.getRecordingUrl({ id: 'sess_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `not_enabled \| pending \| in_progress \| completed \| failed` | Yes | — |
+| `recordingUrl` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### getVideoRecordingUrl
+
+`sessions.getVideoRecordingUrl`
+
+Get the video recording URL for a browser session
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.sessions.getVideoRecordingUrl({ id: 'sess_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `not_enabled \| pending \| in_progress \| completed \| failed` | Yes | — |
+| `recordingUrl` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`sessions.list`
+
+List cloud browser sessions with optional pagination and status filter
+
+**Risk:** `read`
+
+```ts
+await corsair.hyperbrowser.api.sessions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessions` | `object[]` | No | — |
+| `totalCount` | `number` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessions full type">
+
+```ts
+{
+  id?: string,
+  teamId?: string,
+  status?: active | closed | error | close-error,
+  startTime?: string | null,
+  endTime?: string | null,
+  createdAt?: string,
+  updatedAt?: string,
+  creditsUsed?: number | null,
+  sessionUrl?: string,
+  liveUrl?: string,
+  token?: string,
+  wsEndpoint?: string,
+  webdriverEndpoint?: string,
+  computerActionEndpoint?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stop
+
+`sessions.stop`
+
+Stop an active cloud browser session
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.sessions.stop({ id: 'sess_example_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### update
+
+`sessions.update`
+
+Update live configuration of a running browser session
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.sessions.update({ id: 'sess_example_123', type: 'solveCaptchas', params: { solveCaptchas: true } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `profile \| proxy \| screen \| solveCaptchas` | Yes | — |
+| `params` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `solveCaptchas` | `boolean` | No | — |
+| `sessionId` | `string` | No | — |
+| `telemetryReady` | `boolean` | No | — |
+
+
+
+---
+
+## Web
+
+### fetch
+
+`web.fetch`
+
+Fetch web page content in multiple formats using cloud browser (consumes compute credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.web.fetch({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `stealth` | `none \| auto \| ultra` | No | — |
+| `outputs` | `object` | No | — |
+| `browser` | `object` | No | — |
+| `navigation` | `object` | No | — |
+| `cache` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="outputs full type">
+
+```ts
+{
+  formats?: string[],
+  sanitize?: string,
+  includeSelectors?: string[],
+  excludeSelectors?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="browser full type">
+
+```ts
+{
+  profileId?: string,
+  solveCaptchas?: string
+}
+```
+</Accordion>
+
+<Accordion title="navigation full type">
+
+```ts
+{
+  waitUntil?: string,
+  timeoutMs?: number,
+  waitFor?: number
+}
+```
+</Accordion>
+
+<Accordion title="cache full type">
+
+```ts
+{
+  maxAgeSeconds?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `status` | `completed \| failed \| pending \| running` | Yes | — |
+| `error` | `string \| null` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  markdown?: string,
+  html?: string,
+  links?: string[],
+  screenshot?: string,
+  json?: Record<string, any>,
+  metadata?: Record<string, string | string[]>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`web.search`
+
+Search the web with clean structured results (consumes compute credits)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hyperbrowser.api.web.search({ query: 'Hyperbrowser cloud browser' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `maxAgeSeconds` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `status` | `completed \| failed \| pending \| running \| stopped` | Yes | — |
+| `error` | `string \| null` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  query: string,
+  results: {
+    title: string,
+    url: string,
+    description: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

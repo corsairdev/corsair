@@ -2525,6 +2525,14 @@
                 ]
               },
               {
+                "group": "Hyperbrowser",
+                "pages": [
+                  "plugins/hyperbrowser/overview",
+                  "plugins/hyperbrowser/api",
+                  "plugins/hyperbrowser/database"
+                ]
+              },
+              {
                 "group": "ImageKit",
                 "pages": [
                   "plugins/imagekit/overview",
