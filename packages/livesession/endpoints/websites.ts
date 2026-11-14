@@ -4,11 +4,10 @@ import { complete, parseInput, parseOutput } from './helpers';
 import type { LiveSessionEndpointOutputs } from './types';
 
 export const list: LiveSessionEndpoints['websitesList'] = (ctx, rawInput) => {
-	const parsed = parseInput('websitesList', rawInput);
+	parseInput('websitesList', rawInput);
 	return complete(
 		ctx,
 		'livesession.websites.list',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['websitesList']>(
 			'/websites',
 			ctx.key,
@@ -24,7 +23,6 @@ export const create: LiveSessionEndpoints['websitesCreate'] = (
 	return complete(
 		ctx,
 		'livesession.websites.create',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['websitesCreate']>(
 			'/websites',
 			ctx.key,

@@ -78,6 +78,9 @@ export const AlertEventSchema = z
 	})
 	.strict();
 
+// Provider responses may contain additional event fields, unlike strict inputs.
+const AlertEventResponseSchema = AlertEventSchema.loose();
+
 export const CreateAlertInputSchema = z
 	.object({
 		name: z.string().min(1),
@@ -280,7 +283,7 @@ export const AlertSchema = z
 	.object({
 		alert_id: z.string(),
 		name: z.string().optional(),
-		events: z.array(AlertEventSchema).optional(),
+		events: z.array(AlertEventResponseSchema).optional(),
 		provider: AlertProviderSchema.optional(),
 		slack_channel_id: z.string().optional(),
 		webhook_id: z.string().optional(),

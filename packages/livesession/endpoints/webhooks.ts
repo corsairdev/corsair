@@ -4,11 +4,10 @@ import { complete, parseInput, parseOutput } from './helpers';
 import type { LiveSessionEndpointOutputs } from './types';
 
 export const list: LiveSessionEndpoints['webhooksList'] = (ctx, rawInput) => {
-	const parsed = parseInput('webhooksList', rawInput);
+	parseInput('webhooksList', rawInput);
 	return complete(
 		ctx,
 		'livesession.webhooks.list',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['webhooksList']>(
 			'/webhooks',
 			ctx.key,
@@ -24,7 +23,6 @@ export const create: LiveSessionEndpoints['webhooksCreate'] = (
 	return complete(
 		ctx,
 		'livesession.webhooks.create',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['webhooksCreate']>(
 			'/webhooks',
 			ctx.key,
@@ -42,7 +40,6 @@ export const update: LiveSessionEndpoints['webhooksUpdate'] = (
 	return complete(
 		ctx,
 		'livesession.webhooks.update',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['webhooksUpdate']>(
 			`/webhooks/${encodeURIComponent(id)}`,
 			ctx.key,
@@ -59,7 +56,6 @@ export const remove: LiveSessionEndpoints['webhooksDelete'] = (
 	return complete(
 		ctx,
 		'livesession.webhooks.delete',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['webhooksDelete']>(
 			`/webhooks/${encodeURIComponent(parsed.id)}`,
 			ctx.key,

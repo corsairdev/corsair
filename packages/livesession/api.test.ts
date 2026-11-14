@@ -181,7 +181,61 @@ describe('LiveSession HTTP client and endpoints', () => {
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			mockCtx,
 			'livesession.sessions.list',
-			input,
+			{},
+			'completed',
+		);
+	});
+
+	it('lists alerts and preserves extra fields on returned events', async () => {
+		const extendedAlert = {
+			...alert,
+			events: [{ kind: 21, value: '5', provider_extra: 'preserved' }],
+		};
+		mockRequest.mockResolvedValue([extendedAlert]);
+
+		const result = await livesession({
+			key: 'test-token',
+		}).endpoints!.alerts.list(mockCtx, {});
+
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			TOKEN: 'test-token',
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toEqual(
+			expect.objectContaining({ method: 'GET', url: '/alerts' }),
+		);
+		expect(result).toEqual([extendedAlert]);
+	});
+
+	it('does not save webhook URLs or alert customer data in completion events', async () => {
+		mockRequest.mockResolvedValueOnce(webhook);
+		await livesession({ key: 'test-token' }).endpoints!.webhooks.create(
+			mockCtx,
+			{
+				url: 'https://example.com/hook?token=secret',
+				website_id: 'customer-website',
+				version: 'v1.0',
+			},
+		);
+		mockRequest.mockResolvedValueOnce(alert);
+		await livesession({ key: 'test-token' }).endpoints!.alerts.create(mockCtx, {
+			name: 'person@example.com',
+			events: [{ kind: 21, value: 'customer data' }],
+			provider: 'webhooks',
+			webhook_id: 'webhook-1',
+		});
+
+		expect(mockLogEvent).toHaveBeenNthCalledWith(
+			1,
+			mockCtx,
+			'livesession.webhooks.create',
+			{},
+			'completed',
+		);
+		expect(mockLogEvent).toHaveBeenNthCalledWith(
+			2,
+			mockCtx,
+			'livesession.alerts.create',
+			{},
 			'completed',
 		);
 	});

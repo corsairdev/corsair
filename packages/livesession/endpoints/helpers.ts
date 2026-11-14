@@ -61,10 +61,10 @@ export function parseOutput<K extends keyof LiveSessionEndpointOutputs>(
 export async function complete<T>(
 	ctx: LiveSessionContext,
 	operation: string,
-	input: Record<string, unknown>,
 	request: Promise<T>,
 ): Promise<T> {
 	const response = await request;
-	await logEventFromContext(ctx, operation, input, 'completed');
+	// Operation and status are sufficient; request fields can contain customer data.
+	await logEventFromContext(ctx, operation, {}, 'completed');
 	return response;
 }

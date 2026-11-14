@@ -4,11 +4,10 @@ import { complete, parseInput, parseOutput } from './helpers';
 import type { LiveSessionEndpointOutputs } from './types';
 
 export const list: LiveSessionEndpoints['alertsList'] = (ctx, rawInput) => {
-	const parsed = parseInput('alertsList', rawInput);
+	parseInput('alertsList', rawInput);
 	return complete(
 		ctx,
 		'livesession.alerts.list',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['alertsList']>(
 			'/alerts',
 			ctx.key,
@@ -21,7 +20,6 @@ export const create: LiveSessionEndpoints['alertsCreate'] = (ctx, rawInput) => {
 	return complete(
 		ctx,
 		'livesession.alerts.create',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['alertsCreate']>(
 			'/alerts',
 			ctx.key,
@@ -36,7 +34,6 @@ export const update: LiveSessionEndpoints['alertsUpdate'] = (ctx, rawInput) => {
 	return complete(
 		ctx,
 		'livesession.alerts.update',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['alertsUpdate']>(
 			`/alerts/${encodeURIComponent(id)}`,
 			ctx.key,
@@ -50,7 +47,6 @@ export const remove: LiveSessionEndpoints['alertsDelete'] = (ctx, rawInput) => {
 	return complete(
 		ctx,
 		'livesession.alerts.delete',
-		parsed,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['alertsDelete']>(
 			`/alerts/${encodeURIComponent(parsed.id)}`,
 			ctx.key,

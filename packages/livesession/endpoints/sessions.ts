@@ -8,7 +8,6 @@ export const list: LiveSessionEndpoints['sessionsList'] = (ctx, rawInput) => {
 	return complete(
 		ctx,
 		'livesession.sessions.list',
-		rawInput,
 		makeLiveSessionRequest<LiveSessionEndpointOutputs['sessionsList']>(
 			'/sessions',
 			ctx.key,
