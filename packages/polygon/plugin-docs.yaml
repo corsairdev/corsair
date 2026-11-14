@@ -3,7 +3,7 @@ description: OMS payments API for moving money between crypto and fiat, with quo
 domain: polygon.technology
 recommendedAuth: api_key
 overviewNote: |
-  Polygon OMS takes a key and secret pair and mints a 60-minute bearer token from them, and the plugin does the exchange for you. Create a project and an API key in the OMS dashboard, then copy the secret at creation time, because OMS shows it once and stores only a hash. Both values are stored on the account: the key as `api_key` and the secret as `api_secret`. Set `environment: 'sandbox'` to reach the sandbox host, whose `sk_sdbx_` keys simulate every transfer.
+  Polygon OMS takes a key and secret pair and mints a 60-minute bearer token from them, and the plugin does the exchange for you. Create a project and an API key in the OMS dashboard, then copy the secret at creation time, because OMS shows it once and stores only a hash. Both values are stored on the account: the key as `api_key` and the secret as `api_secret`. The key picks the host: `sk_sdbx_` keys go to the sandbox, which simulates every transfer, and `sk_live_` keys to production. Set `environment` in the plugin options to override it.
 
   Things to know before money moves:
 

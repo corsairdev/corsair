@@ -528,15 +528,36 @@ describe('credentials and host', () => {
 		);
 	});
 
-	it('falls back to the stored account credentials', async () => {
+	it('falls back to the stored secret and picks the sandbox host from an sk_sdbx_ key', async () => {
 		mockedRequest.mockResolvedValue({ data: [], hasMore: false });
 		const storedCtx = { ...ctx, options: {} } as typeof ctx;
 
 		await Networks.list(storedCtx, {});
 
-		expect(mockedToken).toHaveBeenCalledWith('live', {
+		// No environment option: the sandbox key must not be sent to the live host.
+		expect(mockedToken).toHaveBeenCalledWith('sandbox', {
 			apiKey: 'sk_sdbx_test',
 			apiSecret: 'secret',
 		});
+	});
+
+	it('sends an sk_live_ key to the live host unless the option says otherwise', async () => {
+		mockedRequest.mockResolvedValue({ data: [], hasMore: false });
+		const liveCtx = buildContext({ apiKey: 'sk_live_test' });
+
+		await Networks.list({ ...liveCtx, options: {} } as typeof ctx, {});
+		expect(mockedToken).toHaveBeenLastCalledWith('live', {
+			apiKey: 'sk_live_test',
+			apiSecret: 'secret',
+		});
+
+		await Networks.list(
+			{ ...liveCtx, options: { environment: 'sandbox' } } as typeof ctx,
+			{},
+		);
+		expect(mockedToken).toHaveBeenLastCalledWith(
+			'sandbox',
+			expect.objectContaining({ apiKey: 'sk_live_test' }),
+		);
 	});
 });

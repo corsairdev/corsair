@@ -54,8 +54,8 @@ export type PolygonPluginOptions = {
 	/** The secret shown once at key creation. Overrides the stored `api_secret`. */
 	apiSecret?: string;
 	/**
-	 * Which OMS host to call. The sandbox simulates transfers and issues
-	 * `sk_sdbx_` keys, so it is the safe default for a new project.
+	 * Which OMS host to call. Without it the key decides: `sk_sdbx_` keys go to
+	 * the sandbox, which simulates every transfer, and other keys go to live.
 	 */
 	environment?: PolygonEnvironment;
 	hooks?: InternalPolygonPlugin['hooks'];

@@ -9,6 +9,7 @@ import type {
 	PolygonRequest,
 } from '../client';
 import {
+	environmentForKey,
 	invalidatePolygonToken,
 	makePolygonRequest,
 	resolvePolygonToken,
@@ -67,8 +68,11 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const environment: PolygonEnvironment = ctx.options?.environment ?? 'live';
 	const credentials = await resolvePolygonCredentials(ctx);
+	const environment: PolygonEnvironment = environmentForKey(
+		credentials.apiKey,
+		ctx.options?.environment,
+	);
 	const accessToken = await resolvePolygonToken(environment, credentials);
 
 	const request = toRequest(parsed);
