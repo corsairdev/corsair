@@ -492,11 +492,14 @@ const BinaryActionOutputSchema = z
 	.object({
 		contentType: z.string(),
 		byteLength: z.number().int().min(0),
+		// Character-class check plus length, not a quantified group: the group
+		// form overflowed V8's stack on base64 of a 4 MiB screenshot.
 		data: z
 			.string()
-			.regex(
-				/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/,
-			),
+			.regex(/^[A-Za-z0-9+/]*={0,2}$/)
+			.refine((value) => value.length % 4 === 0, {
+				message: 'Base64 length must be a multiple of 4',
+			}),
 	})
 	.strict();
 

@@ -389,6 +389,29 @@ describe('Cloudflare Browser Run schema', () => {
 		).toBe(false);
 	});
 
+	it('accepts a large base64 screenshot and still rejects malformed base64', () => {
+		// A full-page screenshot or PDF can be several MB; a quantified-group
+		// regex overflowed the V8 stack on base64 of 4 MiB.
+		const O = CloudflareBrowserRenderingEndpointOutputSchemas;
+		const big = Buffer.alloc(6 * 1024 * 1024, 7).toString('base64');
+		expect(
+			O.screenshotCapture.safeParse({
+				contentType: 'image/png',
+				byteLength: 6 * 1024 * 1024,
+				data: big,
+			}).success,
+		).toBe(true);
+		for (const data of ['aGVsbG8', 'aGV=sbG8', 'aGVsbG8*', 'a===']) {
+			expect(
+				O.pdfRender.safeParse({
+					contentType: 'application/pdf',
+					byteLength: 5,
+					data,
+				}).success,
+			).toBe(false);
+		}
+	});
+
 	it('keeps DevTools outputs working when Cloudflare adds fields or values', () => {
 		const O = CloudflareBrowserRenderingEndpointOutputSchemas;
 		expect(
