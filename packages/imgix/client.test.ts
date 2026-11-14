@@ -44,10 +44,13 @@ describe('makeImgixRequest', () => {
 			VERSION: '1.0.0',
 			HEADERS: expect.objectContaining({
 				Authorization: 'Bearer fixture-key',
-				'Content-Type': 'application/vnd.api+json',
 				Accept: 'application/vnd.api+json, application/json',
 			}),
 		});
+		// Content-Type is left to core, which sets it only when a body is sent
+		expect(mockedRequest.mock.calls[0]?.[0]?.HEADERS).not.toHaveProperty(
+			'Content-Type',
+		);
 		expect(mockedRequest.mock.calls[0]?.[1]).toEqual(
 			expect.objectContaining({
 				method: 'GET',
@@ -77,27 +80,26 @@ describe('makeImgixRequest', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('passes custom query, body, and octet-stream headers correctly', async () => {
+	it('passes custom query, Blob body, and its content type correctly', async () => {
 		mockedRequest.mockResolvedValue({ data: {} });
-		const buffer = Buffer.from('test-image-binary');
+		const buffer = new Blob([Buffer.from('test-image-binary')], {
+			type: 'image/png',
+		});
 
 		await makeImgixRequest('fixture-key', {
 			method: 'POST',
 			path: 'sources/src_123/upload/image.png',
 			query: { overwrite: true },
 			body: buffer,
-			headers: { 'Content-Type': 'application/octet-stream' },
+			headers: { 'Content-Type': 'image/png' },
 		});
 
-		expect(mockedRequest.mock.calls[0]?.[0]?.HEADERS).toMatchObject({
-			'Content-Type': 'application/octet-stream',
-		});
 		expect(mockedRequest.mock.calls[0]?.[1]).toEqual(
 			expect.objectContaining({
 				method: 'POST',
 				url: 'sources/src_123/upload/image.png',
 				body: buffer,
-				mediaType: 'application/octet-stream',
+				mediaType: 'image/png',
 				query: { overwrite: true },
 			}),
 		);
@@ -120,7 +122,7 @@ describe('makeImgixRequest', () => {
 		});
 	});
 
-	it('redacts sensitive credentials from request body in propagated ApiError', async () => {
+	it('drops the request body (credentials, customer data) from a propagated ApiError', async () => {
 		const requestBody = {
 			name: 'My S3 Source',
 			deployment: {
@@ -135,6 +137,7 @@ describe('makeImgixRequest', () => {
 				private_key: 'rsa-private-key-data',
 				token: 'secret-token-val',
 			},
+			custom_fields: { contact_email: 'customer@example.com' },
 		};
 
 		const error = new ApiError(
@@ -172,21 +175,10 @@ describe('makeImgixRequest', () => {
 		if (propagated instanceof ApiError) {
 			expect(propagated.status).toBe(422);
 			expect(propagated.retryAfter).toBe(1200);
-			expect(propagated.request.body).toEqual({
-				name: 'My S3 Source',
-				deployment: {
-					type: 's3',
-					s3_bucket: 'my-bucket',
-					s3_access_key: '[REDACTED]',
-					s3_secret_key: '[REDACTED]',
-					gcs_client_email: '[REDACTED]',
-					gcs_private_key: '[REDACTED]',
-					secure_url_token: '[REDACTED]',
-					azure_access_key: '[REDACTED]',
-					private_key: '[REDACTED]',
-					token: '[REDACTED]',
-				},
-			});
+			expect(propagated.rateLimitRemaining).toBe(5);
+			expect(propagated.request.body).toBeUndefined();
+			expect(JSON.stringify(propagated)).not.toContain('customer@example.com');
+			expect(JSON.stringify(propagated)).not.toContain('top-secret-s3-key');
 		}
 	});
 
@@ -299,6 +291,30 @@ describe('makeImgixRequest', () => {
 			if (sentBody instanceof Blob) {
 				expect(new Uint8Array(await sentBody.arrayBuffer())).toEqual(bytes);
 			}
+		} finally {
+			fetchSpy.mockRestore();
+		}
+	});
+
+	it('sends no Content-Type on a bodyless POST (imgix rejects it as unparseable JSON)', async () => {
+		const actualHttp =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http');
+		mockedRequest.mockImplementation(actualHttp.request);
+		const fetchSpy = jest
+			.spyOn(global, 'fetch')
+			.mockResolvedValue(new Response(null, { status: 202 }));
+
+		try {
+			await makeImgixRequest('fixture-key', {
+				method: 'POST',
+				path: 'sources/src_123/upload-sessions/a.png',
+			});
+			const sentHeaders = fetchSpy.mock.calls[0]?.[1]?.headers;
+			expect(sentHeaders).toBeInstanceOf(Headers);
+			if (sentHeaders instanceof Headers) {
+				expect(sentHeaders.get('Content-Type')).toBeNull();
+			}
+			expect(fetchSpy.mock.calls[0]?.[1]?.body).toBeUndefined();
 		} finally {
 			fetchSpy.mockRestore();
 		}

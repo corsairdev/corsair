@@ -29,67 +29,6 @@ export type ImgixRequest = {
 	headers?: Record<string, string>;
 };
 
-// Sensitive credential fields that may be passed when configuring sources
-// (such as S3 secret access keys, Azure access keys, or GCS private keys).
-const SENSITIVE_REQUEST_FIELDS = new Set([
-	'accesskeyid',
-	'apikey',
-	'authorization',
-	'azureaccesskey',
-	'clientemail',
-	'gcsclientemail',
-	'gcsprivatekey',
-	'password',
-	'privatekey',
-	'projectid',
-	's3accesskey',
-	's3secretkey',
-	'sastoken',
-	'secureurltoken',
-	'secret',
-	'secretaccesskey',
-	'sessiontoken',
-	'storageaccesskey',
-	'token',
-]);
-
-function normalizedFieldName(field: string): string {
-	return field.replace(/[_-]/g, '').toLowerCase();
-}
-
-// `unknown` because provider/request JSON is untrusted until runtime-checked.
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-// `unknown` because request bodies contain arbitrary nested JSON; this helper
-// walks and narrows values recursively without assuming a concrete shape.
-function redactCredentialFields(value: unknown): {
-	value: unknown;
-	changed: boolean;
-} {
-	if (Array.isArray(value)) {
-		const items = value.map(redactCredentialFields);
-		if (!items.some((item) => item.changed)) return { value, changed: false };
-		return { value: items.map((item) => item.value), changed: true };
-	}
-	if (!isRecord(value)) return { value, changed: false };
-
-	let changed = false;
-	const entries = Object.entries(value).map(([field, fieldValue]) => {
-		if (SENSITIVE_REQUEST_FIELDS.has(normalizedFieldName(field))) {
-			changed = true;
-			return [field, '[REDACTED]'] as const;
-		}
-		const redacted = redactCredentialFields(fieldValue);
-		changed ||= redacted.changed;
-		return [field, redacted.value] as const;
-	});
-	return changed
-		? { value: Object.fromEntries(entries), changed }
-		: { value, changed };
-}
-
 /**
  * Sends a request to the Imgix Management API.
  *
@@ -109,9 +48,13 @@ export async function makeImgixRequest(
 		? { Authorization: `Bearer ${apiKey}` }
 		: {};
 
-	const isOctetStream =
-		headers?.['Content-Type'] === 'application/octet-stream';
-	const contentType = headers?.['Content-Type'] ?? 'application/vnd.api+json';
+	// Uploads send raw bytes as a Blob under the file's own content type.
+	// Content-Type goes out only with a body (core sets it from mediaType):
+	// imgix answers a bodyless POST that carries a JSON Content-Type with
+	// 400 "Could not parse JSON from request body".
+	const isBinary = body instanceof Blob;
+	const { 'Content-Type': requestedType, ...otherHeaders } = headers ?? {};
+	const contentType = requestedType ?? 'application/octet-stream';
 
 	const config: OpenAPIConfig = {
 		BASE: IMGIX_API_BASE,
@@ -119,10 +62,9 @@ export async function makeImgixRequest(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			'Content-Type': contentType,
 			Accept: 'application/vnd.api+json, application/json',
 			...authHeaders,
-			...headers,
+			...otherHeaders,
 		},
 	};
 
@@ -130,9 +72,7 @@ export async function makeImgixRequest(
 		method,
 		url: path,
 		body: method !== 'GET' && body !== undefined ? body : undefined,
-		mediaType: isOctetStream
-			? 'application/octet-stream'
-			: 'application/json; charset=utf-8',
+		mediaType: isBinary ? contentType : 'application/json; charset=utf-8',
 		query,
 	};
 
@@ -149,29 +89,29 @@ export async function makeImgixRequest(
 		}
 		return response;
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const requestBody = redactCredentialFields(error.request.body);
-			if (requestBody.changed) {
-				const sanitizedError = new ApiError(
-					{ ...error.request, body: requestBody.value },
-					{
-						url: error.url,
-						ok: false,
-						status: error.status,
-						statusText: error.statusText,
-						body: error.body,
-					},
-					error.message,
-					{
-						retryAfter: error.retryAfter,
-						rateLimitReset: error.rateLimitReset,
-						rateLimitRemaining: error.rateLimitRemaining,
-						rateLimitLimit: error.rateLimitLimit,
-					},
-				);
-				sanitizedError.stack = error.stack;
-				throw sanitizedError;
-			}
+		// Drop the request body from errors: it can hold source credentials or
+		// customer data (custom fields, alt text). Status and rate-limit fields stay
+		// so the error handlers and core retries still work.
+		if (error instanceof ApiError && error.request.body !== undefined) {
+			const sanitizedError = new ApiError(
+				{ ...error.request, body: undefined },
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
+			sanitizedError.stack = error.stack;
+			throw sanitizedError;
 		}
 		if (error instanceof Error) {
 			throw error;
