@@ -120,7 +120,9 @@ describe('makeMondayMcpToolCall', () => {
 
 		expect(caught).toBeInstanceOf(MondayMcpAPIError);
 		expect((caught as MondayMcpAPIError).code).toBe('-32602');
-		expect((caught as MondayMcpAPIError).message).not.toContain('boardId');
+		expect((caught as MondayMcpAPIError).message).toBe(
+			'monday MCP request failed: Invalid params: boardId',
+		);
 	});
 
 	it('keeps the HTTP status and Retry-After from a transport failure', async () => {
@@ -184,7 +186,8 @@ describe('makeMondayMcpToolCall', () => {
 			expect(error).toBeInstanceOf(MondayMcpAPIError);
 			expect((error as MondayMcpAPIError).code).toBe('-32602');
 			expect(JSON.stringify(error)).not.toContain('private');
-			expect((error as Error).message).not.toContain('private');
+			// The message is kept (it says what to fix); the extension data is not.
+			expect((error as Error).message).not.toContain('private data');
 		}
 	});
 
@@ -260,5 +263,98 @@ describe('makeMondayMcpToolCall', () => {
 			content: [{ type: 'text', text: 'early reply' }],
 		});
 		expect(cancelled).toEqual([true]);
+	});
+});
+
+describe('provider error text', () => {
+	function mockSession(callResponse: Response) {
+		fetchMock
+			.mockImplementationOnce(() =>
+				Promise.resolve(
+					jsonResponse(
+						{ jsonrpc: '2.0', id: 1, result: {} },
+						{
+							'mcp-session-id': 'sess-err',
+						},
+					),
+				),
+			)
+			.mockImplementationOnce(() =>
+				Promise.resolve(new Response(null, { status: 202 })),
+			)
+			.mockImplementationOnce(() => Promise.resolve(callResponse));
+	}
+
+	it('keeps the JSON-RPC error message (live reply for a retired tool)', async () => {
+		mockSession(
+			jsonResponse({
+				jsonrpc: '2.0',
+				id: 2,
+				error: {
+					code: -32602,
+					message: "Tool 'get_notetaker_meetings' not found",
+				},
+			}),
+		);
+		await expect(
+			makeMondayMcpToolCall('token', 'get_notetaker_meetings', {}),
+		).rejects.toThrow(
+			"monday MCP request failed: Tool 'get_notetaker_meetings' not found",
+		);
+	});
+
+	it('keeps the tool error text when isError is set (live reply shape)', async () => {
+		mockSession(
+			jsonResponse({
+				jsonrpc: '2.0',
+				id: 2,
+				result: {
+					isError: true,
+					content: [
+						{
+							type: 'text',
+							text: 'Error: searchTerm is required and must be a non-empty search string.',
+						},
+					],
+				},
+			}),
+		);
+		const error = await makeMondayMcpToolCall('token', 'search', {}).catch(
+			(e: unknown) => e,
+		);
+		expect(error).toBeInstanceOf(MondayMcpAPIError);
+		expect((error as Error).message).toBe(
+			'monday MCP tool reported an error: Error: searchTerm is required and must be a non-empty search string.',
+		);
+	});
+
+	it('caps long provider error text at 500 characters', async () => {
+		mockSession(
+			jsonResponse({
+				jsonrpc: '2.0',
+				id: 2,
+				result: {
+					isError: true,
+					content: [{ type: 'text', text: 'x'.repeat(2000) }],
+				},
+			}),
+		);
+		const error = await makeMondayMcpToolCall('token', 'search', {}).catch(
+			(e: unknown) => e as Error,
+		);
+		expect((error as Error).message).toBe(
+			`monday MCP tool reported an error: ${'x'.repeat(500)}`,
+		);
+	});
+
+	it('cancels the unread body of an HTTP error response', async () => {
+		const cancel = jest.fn(() => Promise.resolve());
+		const response = new Response('upstream error page', { status: 502 });
+		Object.defineProperty(response, 'body', { value: { cancel } });
+		fetchMock.mockImplementationOnce(() => Promise.resolve(response));
+		await expect(
+			makeMondayMcpToolCall('token', 'list_workspaces', {}),
+		).rejects.toThrow('monday MCP server returned HTTP 502');
+		expect(cancel).toHaveBeenCalledTimes(1);
 	});
 });

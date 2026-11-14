@@ -86,6 +86,8 @@ async function postRpc(
 		throw new MondayMcpAPIError('Failed to reach the monday MCP server');
 	}
 	if (!response.ok) {
+		// The body is not read on this path; cancel it so the connection is freed.
+		await response.body?.cancel().catch(() => undefined);
 		throw new MondayMcpAPIError(
 			`monday MCP server returned HTTP ${response.status}`,
 			undefined,
@@ -172,10 +174,19 @@ async function readRpcResponse(
 // Returns the reply payload after rejecting protocol-level errors. The return
 // type is unknown because the payload shape is per-tool and provider-defined
 // (see the JsonRpcResponse note); endpoint output schemas own the public type.
+// Provider error text is the only thing that tells an agent what to change
+// ("Tool 'x' not found", "boardId is required"), so it is kept, capped in length.
+const MAX_ERROR_TEXT = 500;
+
+function describe(prefix: string, text: string | undefined): string {
+	const detail = text?.replace(/\s+/g, ' ').trim().slice(0, MAX_ERROR_TEXT);
+	return detail ? `${prefix}: ${detail}` : prefix;
+}
+
 function assertRpcOk(payload: JsonRpcResponse): unknown {
 	if (payload.error) {
 		throw new MondayMcpAPIError(
-			'monday MCP request failed',
+			describe('monday MCP request failed', payload.error.message),
 			typeof payload.error.code === 'number' &&
 				Number.isFinite(payload.error.code)
 				? String(payload.error.code)
@@ -248,7 +259,13 @@ export async function makeMondayMcpToolCall<T>(
 		| undefined;
 
 	if (result?.isError) {
-		throw new MondayMcpAPIError('monday MCP tool reported an error');
+		const text = result.content
+			?.filter((block) => block.type === 'text' && block.text)
+			.map((block) => block.text)
+			.join(' ');
+		throw new MondayMcpAPIError(
+			describe('monday MCP tool reported an error', text),
+		);
 	}
 
 	return result as T;

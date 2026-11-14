@@ -163,7 +163,7 @@ describe('boards family (mocked MCP transport)', () => {
 		expect(apiError.retryAfter).toBe(7000);
 	});
 
-	it('does not expose tool text when the result is an MCP tool error', async () => {
+	it('surfaces the tool error text when the result is an MCP tool error', async () => {
 		stubSession();
 		stubToolResult({
 			isError: true,
@@ -172,7 +172,7 @@ describe('boards family (mocked MCP transport)', () => {
 
 		await expect(
 			boardsGetInfo(mockCtx, { boardId: 18412502536 }),
-		).rejects.toThrow('monday MCP tool reported an error');
+		).rejects.toThrow('monday MCP tool reported an error: Board not found');
 	});
 });
 
