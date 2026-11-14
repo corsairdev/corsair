@@ -16,6 +16,8 @@ async function createTenants(options: Parameters<typeof shortio>[0] = {}) {
 			integration_id: 'shortio-integration',
 			config: {},
 			dek: undefined,
+			// Same cast as core's createIntegrationAndAccount: kysely's insert
+			// type wants the stored JSON column for config, not a plain object.
 		} as never)
 		.execute();
 	const corsair = createCorsair({
