@@ -4505,5 +4505,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/conversiontools",
+    "dir": "packages/conversiontools",
+    "name": "Conversion Tools",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/customjs",
+    "dir": "packages/customjs",
+    "name": "CustomJS",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/documenso",
+    "dir": "packages/documenso",
+    "name": "Documenso",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
