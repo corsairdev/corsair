@@ -605,6 +605,19 @@ describe('registered Fireberry operations and route semantics', () => {
 		]);
 	});
 
+	it('throws when Fireberry answers a custom field delete with success: false', async () => {
+		mockRequest.mockResolvedValueOnce({ success: false });
+		mockLogEventFromContext.mockClear();
+		await expect(
+			CustomFields.delete(endpointContext, {
+				objectType: 1,
+				fieldType: 'text',
+				fieldName: 'pcfdisplay',
+			}),
+		).rejects.toThrow('Fireberry did not delete the field');
+		expect(mockLogEventFromContext).not.toHaveBeenCalled();
+	});
+
 	it('accepts an empty Batch delete response and logs successful completion', async () => {
 		mockRequest.mockResolvedValueOnce(undefined);
 		const result = await Batch.delete(endpointContext, {

@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
-import { makeFireberryRequest, makeFireberryUploadRequest } from '../client';
+import {
+	FireberryAPIError,
+	makeFireberryRequest,
+	makeFireberryUploadRequest,
+} from '../client';
 import type { FireberryEndpoints } from '../index';
 import { getFireberryRecordPath } from './record-routes';
 import {
@@ -358,6 +362,10 @@ export const customFieldDelete: FireberryEndpoints['customFieldDelete'] =
 				method: 'DELETE',
 			},
 		);
+		// Fireberry can answer 200 with { success: false } when the field was not removed.
+		if (result.success === false) {
+			throw new FireberryAPIError('Fireberry did not delete the field');
+		}
 		await logEventFromContext(
 			ctx,
 			'fireberry.customFields.delete',
