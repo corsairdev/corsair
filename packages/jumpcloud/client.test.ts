@@ -7,6 +7,8 @@ const fetchMock = jest.fn<
 	Parameters<typeof globalThis.fetch>
 >();
 
+// unknown: fixtures intentionally cover every family's documented response
+// shapes; the endpoint output schemas, not this helper, enforce the contract.
 function jsonResponse(
 	body: unknown,
 	headers: Record<string, string> = {},
@@ -169,5 +171,39 @@ describe('makeJumpCloudRequest (mocked fetch transport)', () => {
 		const apiError = caught as JumpCloudAPIError;
 		expect(apiError.status).toBe(500);
 		expect(apiError.retryAfter).toBeUndefined();
+	});
+
+	it('keeps provider response body content out of the error message', async () => {
+		// JumpCloud error bodies can echo submitted request values, and the
+		// default error handler prints error.message, so only the status and
+		// reason phrase may appear there (R8: customer data stays out of logs).
+		fetchMock.mockImplementationOnce(() =>
+			Promise.resolve(
+				new Response(
+					JSON.stringify({
+						message: 'email alice@example.com is already registered',
+					}),
+					{ status: 400, headers: { 'content-type': 'application/json' } },
+				),
+			),
+		);
+
+		let caught: unknown;
+		try {
+			await makeJumpCloudRequest('jc-key', 1, 'POST', '/systemusers', {
+				body: { username: 'alice', email: 'alice@example.com' },
+			});
+		} catch (error) {
+			caught = error;
+		}
+
+		expect(caught).toBeInstanceOf(JumpCloudAPIError);
+		const apiError = caught as JumpCloudAPIError;
+		expect(apiError.status).toBe(400);
+		expect(apiError.message).toBe('JumpCloud API returned 400');
+		expect(apiError.message).not.toContain('alice@example.com');
+		// The raw response stays available as structured detail for programmatic
+		// use, but nothing prints it.
+		expect(apiError.body).toContain('alice@example.com');
 	});
 });

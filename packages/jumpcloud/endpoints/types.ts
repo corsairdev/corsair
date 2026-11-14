@@ -6,6 +6,13 @@ import { z } from 'zod';
 // specs (docs.jumpcloud.com/api/1.0/index.yaml, docs.jumpcloud.com/api/2.0/index.yaml)
 // with the provider's wire names. Response schemas come from the documented 2xx
 // bodies; ops the API documents without a JSON body parse as void.
+//
+// The JumpCloud specs leave many response fields without a type or a property
+// schema (e.g. `mfaEnrollment.*`, `fileSystem`, `lastContact`, unrestricted
+// arrays). Those output fields are mirrored verbatim as `z.unknown()` or
+// `z.record(z.string(), z.unknown())`: a stricter type would invent structure
+// the provider does not publish, and `.loose()` output objects keep a response
+// parsing when JumpCloud adds or drops such a field.
 const safePathParam = z
 	.string()
 	.min(1)
@@ -195,10 +202,14 @@ export const UsersCreateInputSchema = z
 				unix_uid: z.number().optional(),
 				username: z.string(),
 				managedAppleId: z.string().optional(),
+				// unknown: the spec declares delegatedAuthority without a type, so the
+				// delegation payload has no published shape to type.
 				delegatedAuthority: z
 					.unknown()
 					.describe('Used by auth to determine password delegation authority')
 					.optional(),
+				// unknown: restrictedFields is an untyped array in the spec and its
+				// item shape is not published.
 				restrictedFields: z.array(z.unknown()).optional(),
 			})
 			.loose(),
@@ -622,6 +633,8 @@ export const UsersUpdateInputSchema = z
 					)
 					.optional(),
 				samba_service_user: z.boolean().optional(),
+				// unknown: ssh_keys is an untyped array in the update spec; the typed
+				// key shape is only published on the sshkeys read endpoint.
 				ssh_keys: z.array(z.unknown()).optional(),
 				state: z.enum(['ACTIVATED', 'SUSPENDED']).optional(),
 				sudo: z.boolean().optional(),
@@ -631,10 +644,14 @@ export const UsersUpdateInputSchema = z
 				unix_uid: z.number().optional(),
 				username: z.string().optional(),
 				managedAppleId: z.string().optional(),
+				// unknown: the spec declares delegatedAuthority without a type, so the
+				// delegation payload has no published shape to type.
 				delegatedAuthority: z
 					.unknown()
 					.describe('Used by auth to determine password delegation authority')
 					.optional(),
+				// unknown: restrictedFields is an untyped array in the spec and its
+				// item shape is not published.
 				restrictedFields: z.array(z.unknown()).optional(),
 			})
 			.loose(),
@@ -1594,6 +1611,8 @@ export const SearchSystemUsersInputSchema = z
 							.object({
 								field: z.string(),
 								operator: z.string(),
+								// unknown: the spec accepts any JSON value in a filter entry,
+								// so the value has no published shape to type.
 								value: z.unknown().optional(),
 							})
 							.loose(),
@@ -1666,6 +1685,8 @@ export const SearchSystemsInputSchema = z
 							.object({
 								field: z.string(),
 								operator: z.string(),
+								// unknown: the spec accepts any JSON value in a filter entry,
+								// so the value has no published shape to type.
 								value: z.unknown().optional(),
 							})
 							.loose(),
@@ -2555,6 +2576,8 @@ export const UserGroupsListOutputSchema = z.array(
 				.describe('ObjectId uniquely identifying a User Group.')
 				.optional(),
 			memberQuery: z.unknown().optional(),
+			// unknown: GraphObjects are polymorphic provider-defined objects, and
+			// the spec publishes no item shape for the exemptions array.
 			memberQueryExemptions: z
 				.array(z.unknown())
 				.describe('Array of GraphObjects exempted from the query')
@@ -2750,6 +2773,8 @@ export const UserGroupsUpdateInputSchema = z
 		id: safePathParam.describe('ObjectID of the User Group.'),
 		body: z
 			.object({
+				// unknown: the spec does not publish a shape for UserGroup graph
+				// attributes, so no stricter type exists to model.
 				attributes: z
 					.unknown()
 					.describe('The graph attributes for a UserGroup.')
@@ -2759,12 +2784,16 @@ export const UserGroupsUpdateInputSchema = z
 					.string()
 					.describe('Description of a User Group')
 					.optional(),
+				// unknown: the member query DSL is provider-defined (v1 FilterQuery or
+				// v2 filter objects) and has no closed published shape to type.
 				memberQuery: z
 					.unknown()
 					.describe(
 						'Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value.',
 					)
 					.optional(),
+				// unknown: GraphObjects are polymorphic provider-defined objects, and
+				// the spec publishes no item shape for the exemptions array.
 				memberQueryExemptions: z
 					.array(z.unknown())
 					.describe('Array of GraphObjects exempted from the query')
@@ -2969,10 +2998,33 @@ export type UserGroupsListMembersOutput = z.infer<
 	typeof UserGroupsListMembersOutputSchema
 >;
 
+// The members POST body is the spec's GraphOperation-UserGroup-Member: one
+// graph operation naming the member ObjectID, the modification, and the
+// member type. Loose because the spec sets no additionalProperties: false.
 export const UserGroupsManageMembersInputSchema = z
 	.object({
 		group_id: safePathParam.describe('ObjectID of the User Group.'),
-		body: z.record(z.string(), z.unknown()),
+		body: z
+			.object({
+				id: z
+					.string()
+					.describe(
+						'The ObjectID of graph object being added or removed as an association.',
+					),
+				op: z
+					.enum(['add', 'remove', 'update'])
+					.describe('How to modify the graph connection.'),
+				type: z.literal('user').describe('The member type.'),
+				// unknown: GraphAttributes is documented as an open object
+				// (additionalProperties true, nullable), so its contents are
+				// provider-defined and have no closed shape to type.
+				attributes: z
+					.record(z.string(), z.unknown())
+					.nullable()
+					.optional()
+					.describe('The graph attributes.'),
+			})
+			.loose(),
 	})
 	.loose();
 
@@ -3093,6 +3145,8 @@ export const SystemGroupsListOutputSchema = z.array(
 				.optional(),
 			memberQuery: z.unknown().optional(),
 			memberQueryErrorFlags: z.unknown().optional(),
+			// unknown: GraphObjects are polymorphic provider-defined objects, and
+			// the spec publishes no item shape for the exemptions array.
 			memberQueryExemptions: z
 				.array(z.unknown())
 				.describe('Array of GraphObjects exempted from the query')
@@ -3125,6 +3179,8 @@ export const SystemGroupsCreateInputSchema = z
 	.object({
 		body: z
 			.object({
+				// unknown: the spec does not publish a shape for SystemGroup graph
+				// attributes, so no stricter type exists to model.
 				attributes: z.unknown().describe('The graph attributes.').optional(),
 				email: z
 					.string()
@@ -3135,6 +3191,8 @@ export const SystemGroupsCreateInputSchema = z
 					.describe('Description of a System Group')
 					.optional(),
 				name: z.string().describe('Display name of a System Group.'),
+				// unknown: the member query DSL is provider-defined (v1 FilterQuery or
+				// v2 filter objects) and has no closed published shape to type.
 				memberQuery: z
 					.unknown()
 					.describe(
@@ -3158,6 +3216,8 @@ export const SystemGroupsCreateInputSchema = z
 						'True if notification emails are to be sent for membership suggestions.',
 					)
 					.optional(),
+				// unknown: GraphObjects are polymorphic provider-defined objects, and
+				// the spec publishes no item shape for the exemptions array.
 				memberQueryExemptions: z
 					.array(z.unknown())
 					.describe('Array of GraphObjects exempted from the query')
@@ -3470,10 +3530,33 @@ export type SystemGroupsDeleteOutput = z.infer<
 	typeof SystemGroupsDeleteOutputSchema
 >;
 
+// The members POST body is the spec's GraphOperation-SystemGroup-Member: one
+// graph operation naming the member ObjectID, the modification, and the
+// member type. Loose because the spec sets no additionalProperties: false.
 export const SystemGroupsManageMembersInputSchema = z
 	.object({
 		group_id: safePathParam.describe('ObjectID of the System Group.'),
-		body: z.record(z.string(), z.unknown()),
+		body: z
+			.object({
+				id: z
+					.string()
+					.describe(
+						'The ObjectID of graph object being added or removed as an association.',
+					),
+				op: z
+					.enum(['add', 'remove', 'update'])
+					.describe('How to modify the graph connection.'),
+				type: z.literal('system').describe('The member type.'),
+				// unknown: GraphAttributes is documented as an open object
+				// (additionalProperties true, nullable), so its contents are
+				// provider-defined and have no closed shape to type.
+				attributes: z
+					.record(z.string(), z.unknown())
+					.nullable()
+					.optional()
+					.describe('The graph attributes.'),
+			})
+			.loose(),
 	})
 	.loose();
 
@@ -3555,6 +3638,8 @@ export const PoliciesCreateInputSchema = z
 							.describe('ObjectId uniquely identifying a Policy instance.'),
 					})
 					.loose(),
+				// unknown: policy template values are template-defined key/value
+				// pairs, so the spec publishes no item shape to type.
 				values: z.array(z.unknown()).optional(),
 			})
 			.loose()
@@ -3734,6 +3819,8 @@ export const PoliciesUpdateInputSchema = z
 					.string()
 					.describe('The notes for this specific Policy.')
 					.optional(),
+				// unknown: policy template values are template-defined key/value
+				// pairs, so the spec publishes no item shape to type.
 				values: z.array(z.unknown()).optional(),
 			})
 			.loose()

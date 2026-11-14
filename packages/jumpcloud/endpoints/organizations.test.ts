@@ -2,6 +2,9 @@ import type { JumpCloudContext } from '../index';
 import { organizationsGet, organizationsList } from './organizations';
 
 jest.mock('corsair/core', () => {
+	// unknown: core's export surface is intentionally opaque to plugin
+	// tests; the record cast only preserves requireActual while stubbing
+	// the event logger.
 	const actual = jest.requireActual('corsair/core') as Record<string, unknown>;
 	return {
 		...actual,
@@ -15,6 +18,8 @@ const fetchMock = jest.fn<
 	Parameters<typeof globalThis.fetch>
 >();
 
+// unknown: fixtures intentionally cover every family's documented response
+// shapes; the endpoint output schemas, not this helper, enforce the contract.
 function jsonResponse(
 	body: unknown,
 	headers: Record<string, string> = {},

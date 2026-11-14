@@ -6,9 +6,12 @@ import {
 	systemGroupsList,
 	systemGroupsManageMembers,
 	systemGroupsUpdate,
-} from './systemGroups';
+} from './system-groups';
 
 jest.mock('corsair/core', () => {
+	// unknown: core's export surface is intentionally opaque to plugin
+	// tests; the record cast only preserves requireActual while stubbing
+	// the event logger.
 	const actual = jest.requireActual('corsair/core') as Record<string, unknown>;
 	return {
 		...actual,
@@ -22,6 +25,8 @@ const fetchMock = jest.fn<
 	Parameters<typeof globalThis.fetch>
 >();
 
+// unknown: fixtures intentionally cover every family's documented response
+// shapes; the endpoint output schemas, not this helper, enforce the contract.
 function jsonResponse(
 	body: unknown,
 	headers: Record<string, string> = {},
@@ -173,7 +178,7 @@ describe('systemGroups family (mocked JumpCloud transport)', () => {
 		});
 	});
 
-	it('systemGroups.manageMembers posts the graph operation body to the interpolated members path', async () => {
+	it('systemGroups.manageMembers posts the documented graph operation to the interpolated members path', async () => {
 		fetchMock.mockImplementationOnce(() =>
 			Promise.resolve(new Response(null, { status: 200 })),
 		);
@@ -181,8 +186,9 @@ describe('systemGroups family (mocked JumpCloud transport)', () => {
 		const result = await systemGroupsManageMembers(mockCtx, {
 			group_id: 'sg-123',
 			body: {
-				add: [{ to: { id: 's9' } }],
-				remove: [{ to: { id: 's10' } }],
+				id: 's9',
+				op: 'remove',
+				type: 'system',
 			},
 		});
 
@@ -193,10 +199,35 @@ describe('systemGroups family (mocked JumpCloud transport)', () => {
 		expect(init).toMatchObject({ method: 'POST' });
 		expect(init?.headers).toMatchObject({ 'Content-Type': 'application/json' });
 		expect(JSON.parse(String(init?.body) ?? '{}')).toEqual({
-			add: [{ to: { id: 's9' } }],
-			remove: [{ to: { id: 's10' } }],
+			id: 's9',
+			op: 'remove',
+			type: 'system',
 		});
 		expect(result).toBeUndefined();
+	});
+
+	it('systemGroups.manageMembers rejects malformed member operations before any request', async () => {
+		// The spec's GraphOperation-SystemGroup-Member requires id, op and the
+		// 'system' type; bulk add/remove lists are not a documented body shape.
+		await expect(
+			systemGroupsManageMembers(mockCtx, {
+				group_id: 'sg-123',
+				body: { remove: [{ to: { id: 's9' } }] } as never,
+			}),
+		).rejects.toThrow();
+		await expect(
+			systemGroupsManageMembers(mockCtx, {
+				group_id: 'sg-123',
+				body: { id: 's9', op: 'replace', type: 'system' } as never,
+			}),
+		).rejects.toThrow();
+		await expect(
+			systemGroupsManageMembers(mockCtx, {
+				group_id: 'sg-123',
+				body: { id: 's9', op: 'add', type: 'user' } as never,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects unsafe path parameters before any request', async () => {

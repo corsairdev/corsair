@@ -22,7 +22,7 @@ import {
 	systemGroupsList,
 	systemGroupsManageMembers,
 	systemGroupsUpdate,
-} from './systemGroups';
+} from './system-groups';
 import {
 	systemsDelete,
 	systemsGet,
@@ -40,7 +40,7 @@ import {
 	userGroupsListMembership,
 	userGroupsManageMembers,
 	userGroupsUpdate,
-} from './userGroups';
+} from './user-groups';
 import {
 	usersCreate,
 	usersDelete,

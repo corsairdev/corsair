@@ -8,9 +8,12 @@ import {
 	userGroupsListMembership,
 	userGroupsManageMembers,
 	userGroupsUpdate,
-} from './userGroups';
+} from './user-groups';
 
 jest.mock('corsair/core', () => {
+	// unknown: core's export surface is intentionally opaque to plugin
+	// tests; the record cast only preserves requireActual while stubbing
+	// the event logger.
 	const actual = jest.requireActual('corsair/core') as Record<string, unknown>;
 	return {
 		...actual,
@@ -24,6 +27,8 @@ const fetchMock = jest.fn<
 	Parameters<typeof globalThis.fetch>
 >();
 
+// unknown: fixtures intentionally cover every family's documented response
+// shapes; the endpoint output schemas, not this helper, enforce the contract.
 function jsonResponse(
 	body: unknown,
 	headers: Record<string, string> = {},
@@ -208,7 +213,7 @@ describe('userGroups family (mocked JumpCloud transport)', () => {
 		]);
 	});
 
-	it('userGroups.manageMembers posts the graph operation body to the interpolated members path', async () => {
+	it('userGroups.manageMembers posts the documented graph operation to the interpolated members path', async () => {
 		fetchMock.mockImplementationOnce(() =>
 			Promise.resolve(new Response(null, { status: 200 })),
 		);
@@ -216,8 +221,9 @@ describe('userGroups family (mocked JumpCloud transport)', () => {
 		const result = await userGroupsManageMembers(mockCtx, {
 			group_id: 'ug-123',
 			body: {
-				add: [{ to: { id: 'u9' } }],
-				remove: [{ to: { id: 'u10' } }],
+				id: 'u9',
+				op: 'add',
+				type: 'user',
 			},
 		});
 
@@ -228,10 +234,35 @@ describe('userGroups family (mocked JumpCloud transport)', () => {
 		expect(init).toMatchObject({ method: 'POST' });
 		expect(init?.headers).toMatchObject({ 'Content-Type': 'application/json' });
 		expect(JSON.parse(String(init?.body) ?? '{}')).toEqual({
-			add: [{ to: { id: 'u9' } }],
-			remove: [{ to: { id: 'u10' } }],
+			id: 'u9',
+			op: 'add',
+			type: 'user',
 		});
 		expect(result).toBeUndefined();
+	});
+
+	it('userGroups.manageMembers rejects malformed member operations before any request', async () => {
+		// The spec's GraphOperation-UserGroup-Member requires id, op and the
+		// 'user' type; bulk add/remove lists are not a documented body shape.
+		await expect(
+			userGroupsManageMembers(mockCtx, {
+				group_id: 'ug-123',
+				body: { add: [{ to: { id: 'u9' } }] } as never,
+			}),
+		).rejects.toThrow();
+		await expect(
+			userGroupsManageMembers(mockCtx, {
+				group_id: 'ug-123',
+				body: { id: 'u9', op: 'merge', type: 'user' } as never,
+			}),
+		).rejects.toThrow();
+		await expect(
+			userGroupsManageMembers(mockCtx, {
+				group_id: 'ug-123',
+				body: { id: 'u9', op: 'add', type: 'system' } as never,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('userGroups.listMembership calls API v2 GET on the interpolated membership path with pagination query', async () => {
