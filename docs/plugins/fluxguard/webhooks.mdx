@@ -23,31 +23,25 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    // Read the raw text, not `request.json()`. Fluxguard signs the exact bytes
-    // it sent, and passing the parsed object makes processWebhook rebuild the
-    // body with JSON.stringify, which changes key order and whitespace and
-    // fails verification.
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
     const body = await request.text();
-    // With `multiTenancy`, register each tenant's webhook URL with
-    // `?tenantId=<id>` so the delivery is checked against that tenant's secret.
-    // Without it processWebhook uses the `default` tenant.
-    const tenantId = new URL(request.url).searchParams.get("tenantId") ?? undefined;
-    const result = await processWebhook(corsair, headers, body, { tenantId });
-    // `result.response` is a plain object, not a Response. No match means no
-    // plugin claimed the delivery, so answer 404 rather than 200.
-    // `success` is false only when the handler threw, which is how a rejected
-    // signature or an unparseable payload surfaces here.
-    return Response.json(result.response ?? { success: false }, {
-        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
     });
 }
 ```
-
-Three details decide whether a bad delivery is visible:
-
-- **A rejected signature must throw.** `processWebhook` ignores a handler's `statusCode` and answers `{ success: true }` for a returned `success: false`, keeping a failure only when the handler throws. The plugin's handler throws on a bad signature and on an unparseable payload for that reason, so `success` is a reliable failure signal here.
-- **A signature needs the exact body.** Verification is HMAC over `<t>.<raw body>`, so mount the route without a JSON parser in front of it.
-- **Fluxguard documents no retries.** Treat a delivery as sent once: answering 500 keeps the failure visible in your own logs instead of acknowledging a change alert you did not process.
 
 ## Events
 
@@ -81,8 +75,8 @@ A monitored page changed: Fluxguard posts the captured version with references t
 | `page` | `object \| null` | No | — |
 | `siteCategories` | `string[] \| null` | No | Category names, e.g. ["News"] |
 | `pageCategories` | `string[] \| null` | No | Category names, e.g. ["News"] |
-| `files` | `Record<string, unknown> \| null` | No | Captured file names, e.g. `{ captures: { html, visual, txt }, diffs: { visual } }` |
-| `alarms` | `Record<string, unknown>[] \| null` | No | Account-defined alarms, each with at least `name` and `value` |
+| `files` | `Record<string, any> \| null` | No | — |
+| `alarms` | `Record<string, any>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="site full type">
@@ -152,8 +146,8 @@ A monitored page changed: Fluxguard posts the captured version with references t
   } | null,
   siteCategories?: string[] | null,
   pageCategories?: string[] | null,
-  files?: Record<string, unknown> | null,
-  alarms?: Record<string, unknown>[] | null
+  files?: Record<string, any> | null,
+  alarms?: Record<string, any>[] | null
 }
 ```
 </Accordion>

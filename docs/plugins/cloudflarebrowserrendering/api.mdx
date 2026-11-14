@@ -1,0 +1,1864 @@
+---
+title: "Cloudflare Browser Run API reference"
+sidebarTitle: "API"
+description: "API reference for Cloudflare Browser Run: every `cloudflarebrowserrendering.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accessibility Tree
+
+### capture
+
+`accessibilityTree.capture`
+
+Capture a page accessibility tree: https://developers.cloudflare.com/browser-run/quick-actions/accessibility-tree-endpoint/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.accessibilityTree.capture({
+	accountId: 'acct-123',
+	body: { url: 'https://example.com', interestingOnly: true },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string,
+  interestingOnly?: boolean,
+  root?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accessibilityTree` | `object \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="accessibilityTree full type">
+
+```ts
+{
+  role: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Browser
+
+### close
+
+`browser.close`
+
+Close a Browser Rendering session: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/delete/.
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.browser.close({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`browser.create`
+
+Acquire a browser session with optional guardrails: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/create/.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.browser.create({
+	accountId: 'acct-123',
+	keepAlive: 60000,
+	lab: true,
+	liveViewUrlExpiresInMs: 120000,
+	recording: true,
+	targets: true,
+	guardrails: {
+		allowedDomains: ['example.com'],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `keepAlive` | `number` | No | — |
+| `lab` | `boolean` | No | — |
+| `liveViewUrlExpiresInMs` | `number` | No | — |
+| `recording` | `boolean` | No | — |
+| `targets` | `boolean` | No | — |
+| `guardrails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="guardrails full type">
+
+```ts
+{
+  allowedDomains?: string[],
+  allowedDomainSets?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionId` | `string` | Yes | — |
+| `webSocketDebuggerUrl` | `string` | No | — |
+
+
+
+---
+
+### liveView.create
+
+`browser.liveView.create`
+
+Mint time-limited browser live-view URLs: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/live_view/methods/create/.
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.browser.liveView.create({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e', expiresInMs: 300000, guardrails: { mode: 'readonly' }, mode: 'tab', targetId: 'target-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `expiresInMs` | `number` | No | — |
+| `guardrails` | `object` | No | — |
+| `mode` | `devtools \| tab \| full` | No | — |
+| `targetId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="guardrails full type">
+
+```ts
+{
+  mode: readonly
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `devtoolsFrontendUrl` | `string` | Yes | — |
+| `options` | `object` | Yes | — |
+| `webSocketDebuggerUrl` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  mode: string,
+  guardrails?: {
+    mode: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### protocol
+
+`browser.protocol`
+
+Retrieve the dynamic Chrome DevTools Protocol schema: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/protocol/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.browser.protocol({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `object[]` | Yes | — |
+| `version` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domain: string,
+  commands?: Record<string, JsonValue>[],
+  dependencies?: string[],
+  events?: Record<string, JsonValue>[],
+  experimental?: boolean,
+  types?: Record<string, JsonValue>[]
+}[]
+```
+</Accordion>
+
+<Accordion title="version full type">
+
+```ts
+{
+  major: string,
+  minor: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### version
+
+`browser.version`
+
+Get browser and DevTools version metadata: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/version/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.browser.version({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Browser` | `string` | Yes | — |
+| `Protocol-Version` | `string` | Yes | — |
+| `User-Agent` | `string` | Yes | — |
+| `V8-Version` | `string` | Yes | — |
+| `WebKit-Version` | `string` | Yes | — |
+| `webSocketDebuggerUrl` | `string` | Yes | — |
+
+
+
+---
+
+## Content
+
+### fetch
+
+`content.fetch`
+
+Fetch rendered HTML through Browser Run Quick Actions: https://developers.cloudflare.com/browser-run/quick-actions/content-endpoint/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.content.fetch({
+	accountId: 'acct-123',
+	body: { url: 'https://example.com' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+## Crawl
+
+### cancel
+
+`crawl.cancel`
+
+Cancel an active crawl job: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/.
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.crawl.cancel({ accountId: 'acct-123', jobId: 'job-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`crawl.get`
+
+Get crawl status or paginated results: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.crawl.get({ accountId: 'acct-123', jobId: 'job-123', cursor: '10', limit: 10, status: 'completed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `cursor` | `string \| number` | No | — |
+| `limit` | `number` | No | — |
+| `status` | `queued \| completed \| disallowed \| skipped \| errored \| cancelled` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `browserSecondsUsed` | `number` | Yes | — |
+| `finished` | `number` | Yes | — |
+| `id` | `string` | Yes | — |
+| `records` | `object[]` | Yes | — |
+| `robots` | `object[]` | No | — |
+| `skipped` | `number` | No | — |
+| `status` | `string` | Yes | — |
+| `total` | `number` | Yes | — |
+| `cursor` | `string \| number` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  status: string,
+  url: string,
+  html?: string,
+  json?: Record<string, JsonValue>,
+  markdown?: string,
+  metadata?: {
+    status: number,
+    url: string,
+    lastModified?: string,
+    title?: string
+  },
+  outcome?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="robots full type">
+
+```ts
+{
+  origin: string,
+  state: string,
+  status?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`crawl.start`
+
+Start an asynchronous site crawl: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.crawl.start({
+	accountId: 'acct-123',
+	body: { url: 'https://example.com', limit: 3, source: 'links' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  url: string,
+  browser?: kitesurf,
+  depth?: number,
+  formats?: (html | markdown | json)[],
+  crawlPurposes?: (search | ai-input | ai-train)[],
+  contentUse?: reference | full,
+  jsonOptions?: {
+    custom_ai?: {
+      authorization?: string,
+      model: string
+    }[],
+    prompt?: string,
+    response_format?: {
+      type: json_schema,
+      json_schema: Record<string, JsonValue>
+    }
+  },
+  limit?: number,
+  maxAge?: number,
+  modifiedSince?: number,
+  options?: {
+    includeExternalLinks?: boolean,
+    includePatterns?: string[],
+    excludePatterns?: string[],
+    includeSubdomains?: boolean
+  },
+  render?: boolean,
+  source?: all | sitemaps | links
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+## Json
+
+### extract
+
+`json.extract`
+
+Extract structured page data using a prompt or JSON schema: https://developers.cloudflare.com/browser-run/quick-actions/json-endpoint/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.json.extract({
+	accountId: 'acct-123',
+	body: { url: 'https://example.com', prompt: 'Extract the page title and a short summary as JSON.' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string,
+  custom_ai?: {
+    authorization?: string,
+    model: string
+  }[],
+  prompt?: string,
+  response_format?: {
+    type: json_schema,
+    json_schema: Record<string, JsonValue>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+## Links
+
+### list
+
+`links.list`
+
+Retrieve links from a rendered page: https://developers.cloudflare.com/browser-run/quick-actions/links-endpoint/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.links.list({
+	accountId: 'acct-123',
+	body: { url: 'https://example.com' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string,
+  excludeExternalLinks?: boolean,
+  visibleLinksOnly?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string[]`
+
+
+---
+
+## Markdown
+
+### convert
+
+`markdown.convert`
+
+Convert rendered page content to Markdown: https://developers.cloudflare.com/browser-run/quick-actions/markdown-endpoint/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.markdown.convert({
+	accountId: 'acct-123',
+	body: { url: 'https://example.com' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+## Pdf
+
+### render
+
+`pdf.render`
+
+Render a page to JSON-safe base64 PDF data: https://developers.cloudflare.com/browser-run/quick-actions/pdf-endpoint/.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.pdf.render({ accountId: 'acct-123', browser: 'kitesurf', cacheTTL: 0, body: { url: 'https://example.com', pdfOptions: { format: 'a4' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `browser` | `kitesurf` | No | — |
+| `cacheTTL` | `number` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string,
+  pdfOptions?: {
+    displayHeaderFooter?: boolean,
+    footerTemplate?: string,
+    format?: letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6,
+    headerTemplate?: string,
+    height?: string | number,
+    landscape?: boolean,
+    margin?: {
+      bottom?: string | number,
+      left?: string | number,
+      right?: string | number,
+      top?: string | number
+    },
+    omitBackground?: boolean,
+    outline?: boolean,
+    pageRanges?: string,
+    preferCSSPageSize?: boolean,
+    printBackground?: boolean,
+    scale?: number,
+    tagged?: boolean,
+    timeout?: number,
+    width?: string | number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `byteLength` | `number` | Yes | — |
+| `data` | `string` | Yes | — |
+
+
+
+---
+
+## Scrape
+
+### extract
+
+`scrape.extract`
+
+Extract selected HTML elements: https://developers.cloudflare.com/browser-run/quick-actions/scrape-endpoint/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.scrape.extract({
+	accountId: 'acct-123',
+	body: {
+		url: 'https://example.com',
+		elements: [{ selector: 'h1' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string,
+  elements: {
+    selector: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  results: {
+    attributes: {
+      name: string,
+      value: string
+    }[],
+    height: number,
+    html: string,
+    left: number,
+    text: string,
+    top: number,
+    width: number
+  }[],
+  selector: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Screenshot
+
+### capture
+
+`screenshot.capture`
+
+Capture a screenshot as JSON-safe base64 data: https://developers.cloudflare.com/browser-run/quick-actions/screenshot-endpoint/.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.screenshot.capture({ accountId: 'acct-123', browser: 'kitesurf', cacheTTL: 30, body: { url: 'https://example.com', screenshotOptions: { fullPage: true } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `browser` | `kitesurf` | No | — |
+| `cacheTTL` | `number` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string,
+  screenshotOptions?: {
+    captureBeyondViewport?: boolean,
+    clip?: {
+      height: number,
+      width: number,
+      x: number,
+      y: number,
+      scale?: number
+    },
+    fromSurface?: boolean,
+    fullPage?: boolean,
+    omitBackground?: boolean,
+    optimizeForSpeed?: boolean,
+    quality?: number,
+    type?: png | jpeg | webp
+  },
+  scrollPage?: boolean,
+  selector?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `byteLength` | `number` | Yes | — |
+| `data` | `string` | Yes | — |
+
+
+
+---
+
+## Sessions
+
+### get
+
+`sessions.get`
+
+Get details for a Browser Rendering session: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/session/methods/get/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.sessions.get({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionId` | `string` | Yes | — |
+| `closeReason` | `number` | No | — |
+| `closeReasonText` | `string` | No | — |
+| `connectionEndTime` | `number` | No | — |
+| `connectionId` | `string` | No | — |
+| `connectionStartTime` | `number` | No | — |
+| `devtoolsFrontendUrl` | `string` | No | — |
+| `endTime` | `number` | No | — |
+| `lastUpdated` | `number` | No | — |
+| `startTime` | `number` | No | — |
+| `webSocketDebuggerUrl` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`sessions.list`
+
+List active Browser Rendering sessions: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/session/methods/list/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.sessions.list({ accountId: 'acct-123', limit: 20, offset: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  sessionId: string,
+  closeReason?: number,
+  closeReasonText?: string,
+  connectionEndTime?: number,
+  connectionId?: string,
+  connectionStartTime?: number,
+  devtoolsFrontendUrl?: string,
+  endTime?: number,
+  lastUpdated?: number,
+  startTime?: number,
+  webSocketDebuggerUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Snapshot
+
+### capture
+
+`snapshot.capture`
+
+Capture multiple page formats in one request: https://developers.cloudflare.com/browser-run/quick-actions/snapshot/.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.snapshot.capture({
+	accountId: 'acct-123',
+	body: {
+		url: 'https://example.com',
+		formats: ['content', 'screenshot'],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  actionTimeout?: number,
+  addScriptTag?: {
+    id?: string,
+    content?: string,
+    type?: string,
+    url?: string
+  }[],
+  addStyleTag?: {
+    content?: string,
+    url?: string
+  }[],
+  allowRequestPattern?: string[],
+  allowResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  authenticate?: {
+    password: string,
+    username: string
+  },
+  bestAttempt?: boolean,
+  cookies?: {
+    name: string,
+    value: string,
+    domain?: string,
+    expires?: number,
+    httpOnly?: boolean,
+    partitionKey?: string,
+    path?: string,
+    priority?: Low | Medium | High,
+    sameParty?: boolean,
+    sameSite?: Strict | Lax | None,
+    secure?: boolean,
+    sourcePort?: number,
+    sourceScheme?: Unset | NonSecure | Secure,
+    url?: string
+  }[],
+  emulateMediaType?: string,
+  gotoOptions?: {
+    referer?: string,
+    referrerPolicy?: string,
+    timeout?: number,
+    waitUntil?: load | domcontentloaded | networkidle0 | networkidle2 | (load | domcontentloaded | networkidle0 | networkidle2)[]
+  },
+  rejectRequestPattern?: string[],
+  rejectResourceTypes?: (document | stylesheet | image | media | font | script | texttrack | xhr | fetch | prefetch | eventsource | websocket | manifest | signedexchange | ping | cspviolationreport | preflight | other)[],
+  setExtraHTTPHeaders?: Record<string, string>,
+  setJavaScriptEnabled?: boolean,
+  viewport?: {
+    height: number,
+    width: number,
+    deviceScaleFactor?: number,
+    hasTouch?: boolean,
+    isLandscape?: boolean,
+    isMobile?: boolean
+  },
+  waitForSelector?: {
+    selector: string,
+    hidden?: true,
+    timeout?: number,
+    visible?: true
+  },
+  waitForTimeout?: number,
+  html?: string,
+  url?: string,
+  userAgent?: string,
+  formats?: (content | screenshot | markdown | accessibilityTree)[],
+  screenshotOptions?: {
+    captureBeyondViewport?: boolean,
+    clip?: {
+      height: number,
+      width: number,
+      x: number,
+      y: number,
+      scale?: number
+    },
+    fromSurface?: boolean,
+    fullPage?: boolean,
+    omitBackground?: boolean,
+    optimizeForSpeed?: boolean,
+    quality?: number,
+    type?: png | jpeg | webp
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accessibilityTree` | `object` | No | — |
+| `content` | `string` | No | — |
+| `markdown` | `string` | No | — |
+| `screenshot` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="accessibilityTree full type">
+
+```ts
+{
+  role: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Targets
+
+### activate
+
+`targets.activate`
+
+Activate a browser target: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/activate/.
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.targets.activate({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e', targetId: 'target-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `targetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### close
+
+`targets.close`
+
+Close a browser target: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/close/.
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.targets.close({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e', targetId: 'target-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `targetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`targets.create`
+
+Open a browser tab: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/create/.
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.targets.create({
+	accountId: 'acct-123',
+	sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e',
+	liveViewUrlExpiresInMs: 600000,
+	url: 'https://example.com',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `liveViewUrlExpiresInMs` | `number` | No | — |
+| `url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `devtoolsFrontendUrl` | `string` | No | — |
+| `title` | `string` | No | — |
+| `webSocketDebuggerUrl` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`targets.get`
+
+Get a debuggable target by ID: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/get/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.targets.get({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e', targetId: 'target-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `targetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `devtoolsFrontendUrl` | `string` | No | — |
+| `title` | `string` | No | — |
+| `webSocketDebuggerUrl` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`targets.list`
+
+List debuggable browser targets: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/list/.
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflarebrowserrendering.api.targets.list({ accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e', liveViewUrlExpiresInMs: 60000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `liveViewUrlExpiresInMs` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  url: string,
+  description?: string,
+  devtoolsFrontendUrl?: string,
+  title?: string,
+  webSocketDebuggerUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

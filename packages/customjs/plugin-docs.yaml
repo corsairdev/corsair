@@ -1,0 +1,62 @@
+displayName: CustomJS
+description: Render HTML or Markdown to PDF, capture screenshots after browser automation, run inline JavaScript, scrape pages with exact steps or an AI agent, and publish hosted HTML pages.
+domain: customjs.space
+recommendedAuth: api_key
+overviewNote: |
+  Get the key from app.customjs.space: sign in, then copy the value under **API Key** on the dashboard. The free plan allows 20 renders and script runs a day (page calls are not counted).
+
+  Things to know before you call:
+
+  - **An exhausted window answers 403, not 429.** The body is `{"message":"Too Many Requests"}`, so the plugin classifies a 403 by its body: a wrong key and an exhausted window share the status. On the free plan that 403 means the day's quota is used up and carries no reset time, so the plugin reports `CustomjsAPIError` with `isRateLimit` at once instead of retrying. A 429, or a 403 with `Retry-After`, is retried up to three times.
+  - **Files come back base64 encoded.** `pdf.fromHtml`, `pdf.fromMarkdown`, `screenshot.capture` and `javascript.runBinary` return `{ base64, contentType, byteLength }`. Decode `base64` to write a file.
+  - **`javascript.run` returns text, not parsed JSON.** The route answers `text/plain` whatever the script returns, so an object arrives JSON encoded in `output` and a script with no `return` arrives empty.
+  - **Missing required fields render blank files.** CustomJS answers 200 with an empty PDF or PNG when `html` or `url` is absent, so the input schema requires them.
+  - **`scrape.agent` bills model tokens.** It drives a browser for up to `maxSteps` actions and returns its token usage. `scrape.page` runs your exact steps and spends none.
+  - **Page names are not unique.** `pages.create` publishes a new page every call, even with a name that already exists, so a retry duplicates it and the plugin never replays that call. `pages.delete` fails with a 404 for a page ID that does not exist.
+  - **Stored functions are not wrapped.** The docs describe calling a saved script by ID; the route answered 500 with every ID tried, so this plugin only runs code inline.
+examples:
+  read:
+    path: pdf.fromHtml
+    title: Render HTML to PDF
+    args:
+      html: "<h1>Invoice #1042</h1><p>Total: {{ total }}</p>"
+      data:
+        total: 100
+      config:
+        pdfWidthMm: 210
+        pdfHeightMm: 297
+  write:
+    path: pages.create
+    title: Publish a page
+    args:
+      name: Launch page
+      htmlContent: "<h1>Launch day</h1>"
+apiExamples:
+  auth.check: {}
+  pdf.fromHtml:
+    call: "{ html: '<h1>Hello</h1>' }"
+  pdf.fromMarkdown:
+    call: "{ markdown: '# Report\\n\\nTotal: 100' }"
+  screenshot.capture:
+    call: "{ url: 'https://example.com', commands: [{ action: 'click', selector: '#accept-cookies' }, { action: 'wait', value: 500 }], box: { x: 0, y: 0, width: 1200, height: 800 } }"
+  javascript.run:
+    call: "{ input: { name: 'Jon Doe' }, code: 'return input.name' }"
+  javascript.runBinary:
+    call: "{ input: { html: '<h1>Hello</h1>' }, code: 'const { HTML2PDF } = require(\"./utils\"); return HTML2PDF(input.html);' }"
+  scrape.page:
+    call: "{ url: 'https://example.com', commands: [{ action: 'extract', selector: 'h1', as: 'heading' }], returnType: 'json' }"
+  scrape.agent:
+    call: "{ goal: 'Go to shop.example.com and list every product name and price', maxSteps: 8 }"
+  pages.list: {}
+  pages.create:
+    call: "{ name: 'Launch page', htmlContent: '<h1>Launch day</h1>' }"
+  pages.update:
+    call: "{ pageId: '76f8fd9c-3dcb-4598-83f4-3eee09a23529', htmlContent: '<h1>Launch day v2</h1>' }"
+  pages.delete:
+    call: "{ pageId: '76f8fd9c-3dcb-4598-83f4-3eee09a23529' }"
+apiNotes:
+  'javascript.run': 'The code runs as a function body: use `input` for the request value and `return` for the result. Bundled modules include axios, cheerio, pdf-lib, nodemailer, jsonwebtoken and the AWS SDK.'
+  'javascript.runBinary': 'Send `returnBinary` by using this operation rather than `javascript.run`; the plugin sets it for you.'
+  'scrape.page': 'A `wait` step here takes `ms`; the screenshot route takes `value` for the same thing.'
+  'pages.create': 'CustomJS does not enforce unique names, and the answer carries `shortId` rather than the `name` the docs show.'
+  'pages.delete': 'An unknown `pageId` fails with a 404 (`CustomjsAPIError` with `status: 404`), so a delete that resolves removed the page.'
