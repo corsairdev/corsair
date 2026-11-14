@@ -399,7 +399,7 @@ export const helpScoutEndpointMeta = {
 		description: 'Create a new conversation with initial thread',
 	},
 	'conversations.update': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update fields of a conversation via JSON Patch',
 	},
 	'conversations.delete': {
@@ -423,23 +423,23 @@ export const helpScoutEndpointMeta = {
 		description: 'Create a reply thread sent to the customer',
 	},
 	'threads.createNote': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create an internal note thread on a conversation',
 	},
 	'threads.createChat': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a chat thread on a conversation',
 	},
 	'threads.createPhone': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a phone call log thread on a conversation',
 	},
 	'threads.createCustomer': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a customer message thread on a conversation',
 	},
 	'threads.update': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update thread text or visibility',
 	},
 	'threads.getOriginalSource': {
@@ -455,7 +455,7 @@ export const helpScoutEndpointMeta = {
 		description: 'Get details of a specific customer by ID',
 	},
 	'customers.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a new customer profile',
 	},
 	'customers.update': {
@@ -463,19 +463,20 @@ export const helpScoutEndpointMeta = {
 		description: 'Overwrite an existing customer profile',
 	},
 	'customers.patch': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Partially update customer profile fields',
 	},
 	'customers.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a customer profile',
+		description:
+			'Delete a customer with their conversations and survey responses (cannot be undone)',
 	},
 	'customers.createAddress': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create customer physical address',
 	},
 	'customers.updateAddress': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update customer physical address',
 	},
 	'customers.deleteAddress': {
@@ -483,11 +484,11 @@ export const helpScoutEndpointMeta = {
 		description: 'Delete customer physical address',
 	},
 	'customers.createEmail': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Add an email address to a customer',
 	},
 	'customers.updateEmail': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update an existing customer email address',
 	},
 	'customers.deleteEmail': {
@@ -495,11 +496,11 @@ export const helpScoutEndpointMeta = {
 		description: 'Delete an email address from a customer',
 	},
 	'customers.createPhone': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Add a phone number to a customer',
 	},
 	'customers.updatePhone': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update an existing customer phone number',
 	},
 	'customers.deletePhone': {
@@ -507,11 +508,11 @@ export const helpScoutEndpointMeta = {
 		description: 'Delete a phone number from a customer',
 	},
 	'customers.createChat': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Add a chat handle to a customer',
 	},
 	'customers.updateChat': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update an existing customer chat handle',
 	},
 	'customers.deleteChat': {
@@ -519,11 +520,11 @@ export const helpScoutEndpointMeta = {
 		description: 'Delete a chat handle from a customer',
 	},
 	'customers.createSocialProfile': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Add a social profile to a customer',
 	},
 	'customers.updateSocialProfile': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update an existing customer social profile',
 	},
 	'customers.deleteSocialProfile': {
@@ -531,11 +532,11 @@ export const helpScoutEndpointMeta = {
 		description: 'Delete a social profile from a customer',
 	},
 	'customers.createWebsite': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Add a website URL to a customer',
 	},
 	'customers.updateWebsite': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update an existing customer website URL',
 	},
 	'customers.deleteWebsite': {
@@ -559,11 +560,11 @@ export const helpScoutEndpointMeta = {
 		description: 'Get a saved reply by ID',
 	},
 	'savedReplies.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a saved reply in a mailbox',
 	},
 	'savedReplies.update': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update an existing saved reply',
 	},
 	'savedReplies.delete': {
