@@ -1865,6 +1865,14 @@
                 ]
               },
               {
+                "group": "Elorus",
+                "pages": [
+                  "plugins/elorus/overview",
+                  "plugins/elorus/api",
+                  "plugins/elorus/database"
+                ]
+              },
+              {
                 "group": "EmailOctopus",
                 "pages": [
                   "plugins/emailoctopus/overview",
