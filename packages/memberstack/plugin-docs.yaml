@@ -1,0 +1,49 @@
+displayName: Memberstack
+description: Manage members, free plans, data tables and member token verification using the Memberstack Admin REST API.
+domain: memberstack.com
+recommendedAuth: api_key
+overviewNote: |
+  Use a Memberstack secret key from Dev Tools as the API key. Keys are sent in the X-API-KEY header to https://admin.memberstack.com.
+
+  Member listing uses the numeric endCursor as after. Data record queries support offset and cursor pagination; cursor paging requires internalOrder ascending on every request. A missing member is returned as data: null. Member JSON updates replace the entire JSON value. Plan operations only support free plans. The provider limits the Admin API to 25 requests per second. Webhook verification is only available through Memberstack's Node admin package and is not included.
+examples:
+  read:
+    path: members.list
+    title: List members
+    args:
+      limit: 25
+  write:
+    path: members.addPlan
+    title: Add a free plan
+    args:
+      id: mem_example
+      planId: pln_example
+apiExamples:
+  members.list:
+    call: "{ limit: 25, after: 123 }"
+  members.get:
+    call: "{ id_or_email: 'mem_example' }"
+  members.create:
+    call: "{ email: 'member@example.com' }"
+  members.update:
+    call: "{ id: 'mem_example', customFields: { city: 'Paris' } }"
+  members.delete:
+    call: "{ id: 'mem_example' }"
+  members.addPlan:
+    call: "{ id: 'mem_example', planId: 'pln_example' }"
+  members.removePlan:
+    call: "{ id: 'mem_example', planId: 'pln_example' }"
+  members.verifyToken:
+    call: "{ token: 'member-jwt' }"
+  tables.list:
+    call: "{}"
+  tables.get:
+    call: "{ tableKey: 'products' }"
+  records.create:
+    call: "{ tableKey: 'products', data: { name: 'Widget' } }"
+  records.query:
+    call: "{ tableKey: 'products', query: { findMany: { take: 20, after: 123, orderBy: { internalOrder: 'asc' } } } }"
+  records.update:
+    call: "{ tableKey: 'products', recordId: 'record_example', data: { name: 'Updated' } }"
+  records.delete:
+    call: "{ tableKey: 'products', recordId: 'record_example' }"
