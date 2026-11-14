@@ -312,7 +312,12 @@ export async function makeCustomjsJsonRequest<T>(
 		options.host === 'pages'
 			? await sendToPages(apiKey, request)
 			: await send(apiKey, request);
-	const text = await readBody(res, request, (r) => r.text());
+	// A body read that times out reports the budget of the host it waited on.
+	const effective =
+		options.host === 'pages'
+			? { ...request, timeoutMs: request.timeoutMs ?? PAGES_TIMEOUT_MS }
+			: request;
+	const text = await readBody(res, effective, (r) => r.text());
 	try {
 		return JSON.parse(text) as T;
 	} catch {
