@@ -335,6 +335,7 @@ export const ApplicationUpdateInputSchema = z
 		id: z.union([z.number().int(), z.string()]).optional(),
 		name: z.string().optional(),
 		url: z.string().optional(),
+		language: z.string().max(255).optional(),
 		page_load: z.number().optional(),
 		maximum_per_page: z.number().optional(),
 		display_for: z.number().optional(),
@@ -353,6 +354,19 @@ export const ApplicationUpdateInputSchema = z
 		theme: z.enum(['theme1', 'theme2', 'custom']).optional(),
 		utm_source: z.string().optional(),
 		utm_medium: z.string().optional(),
+		// Fomo's update sample sends event types as objects. `_destroy` is left out so this
+		// operation stays a settings change and can't delete event types.
+		event_types_attributes: z
+			.array(
+				z
+					.object({
+						id: z.number().int().optional(),
+						name: z.string().optional(),
+						message: z.string().optional(),
+					})
+					.strict(),
+			)
+			.optional(),
 	})
 	.strict();
 

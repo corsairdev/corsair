@@ -248,6 +248,20 @@ describe('Fomo templates schemas', () => {
 });
 
 describe('Fomo application schemas', () => {
+	it('accepts the documented language and event_types_attributes update fields', () => {
+		const input = {
+			language: 'de',
+			event_types_attributes: [
+				{
+					id: 1,
+					name: 'Fomo',
+					message: 'Someone in {{ city }} just purchased {{ linked_title }}',
+				},
+			],
+		};
+		expect(ApplicationUpdateInputSchema.parse(input)).toEqual(input);
+	});
+
 	it('validates ApplicationSettingsSchema fixture', () => {
 		const fixture = {
 			id: 1,
