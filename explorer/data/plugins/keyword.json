@@ -1,0 +1,953 @@
+{
+  "id": "keyword",
+  "displayName": "Keyword",
+  "description": "Rank tracking with Keyword.com - manage projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages and Share of Voice history.",
+  "npmPackageName": "@corsair-dev/keyword",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "keyword.api.account.get",
+      "shortPath": "account.get",
+      "description": "The token’s own user, optionally with the subscription block",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include",
+            "optional": true,
+            "type": "subscriptions[]",
+            "description": "Also return the subscription block."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { user_id?: number | null, name?: string | null, email?: string | null, verified?: number | null, onboarding?: boolean | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.keywords.add",
+      "shortPath": "keywords.add",
+      "description": "Add keywords to a project, each with its domain, region and language. Adding a keyword already tracked returns the existing one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          },
+          {
+            "key": "keywords",
+            "optional": false,
+            "type": "{ kw: string, url: string, type?: se | local | gmb, region?: string, language?: string, ignore_local?: boolean, ignore_featured?: boolean, url_tracking_method?: broad | exact, notes?: string, tags?: string[], near?: string, gmb?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { project_id?: number | null, category?: string | null, url?: string | null, kw?: string | null, source?: number | null, start?: number | null, notes?: string | Record<string, any> | null, tags_count?: number | null, tags?: { id?: number | null, project_id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, keywords_count?: number | null }[] | null, tag?: string | null, region?: string | null, language?: string | null, in_featured?: boolean | null, has_featured?: boolean | null, has_featured_url?: string | null, ignore_local?: boolean | null, ignore_featured?: boolean | null, url_tracking_method?: string | null, type?: string | null, gmb?: string | null, near?: string | null, isfav?: boolean | null, status?: string | null, clicks?: number | null, impressions?: number | null, ctr?: number | null, ms?: number | null, competition?: number | string | null, cpc?: number | null, gpage?: number | null, grank?: number | null, grank_int?: number | null, best?: number | null, seocomp?: number | null, in_local_pack?: boolean | null, rankingurl?: string | null, grankhistory?: (number | null)[] | null, trends?: { day?: number | string | null, week?: number | string | null, month?: number | string | null, life?: number | string | null } | null, updated_at?: string | null, crawled_at?: number | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.keywords.bulkDelete",
+      "shortPath": "keywords.bulkDelete",
+      "description": "Delete many keywords from one project in a single call; their history is lost",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric project ID, from `projects.list`."
+          },
+          {
+            "key": "keywordIds",
+            "optional": false,
+            "type": "(string | number)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ title: string }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.keywords.bulkUpdate",
+      "shortPath": "keywords.bulkUpdate",
+      "description": "Apply the same domain, region, tags or status to many keywords in one project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric project ID, from `projects.list`."
+          },
+          {
+            "key": "keywordIds",
+            "optional": false,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "changes",
+            "optional": false,
+            "type": "{ url?: string, region?: string, language?: string, type?: se | local | gmb, status?: ACTIVE | INACTIVE | ARCHIVED, tags?: string[], ignore_local?: boolean, ignore_featured?: boolean, url_tracking_method?: broad | exact }",
+            "description": "Applied to every keyword in `keywordIds`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ title: string }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.keywords.delete",
+      "shortPath": "keywords.delete",
+      "description": "Delete one keyword and its ranking history; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          },
+          {
+            "key": "keywordId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The keyword ID, as a string or a number."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ title: string }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.keywords.get",
+      "shortPath": "keywords.get",
+      "description": "One keyword with its rank, metrics and rank history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          },
+          {
+            "key": "keywordId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The keyword ID, as a string or a number."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Read the keyword as it stood on this day."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { project_id?: number | null, category?: string | null, url?: string | null, kw?: string | null, source?: number | null, start?: number | null, notes?: string | Record<string, any> | null, tags_count?: number | null, tags?: { id?: number | null, project_id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, keywords_count?: number | null }[] | null, tag?: string | null, region?: string | null, language?: string | null, in_featured?: boolean | null, has_featured?: boolean | null, has_featured_url?: string | null, ignore_local?: boolean | null, ignore_featured?: boolean | null, url_tracking_method?: string | null, type?: string | null, gmb?: string | null, near?: string | null, isfav?: boolean | null, status?: string | null, clicks?: number | null, impressions?: number | null, ctr?: number | null, ms?: number | null, competition?: number | string | null, cpc?: number | null, gpage?: number | null, grank?: number | null, grank_int?: number | null, best?: number | null, seocomp?: number | null, in_local_pack?: boolean | null, rankingurl?: string | null, grankhistory?: (number | null)[] | null, trends?: { day?: number | string | null, week?: number | string | null, month?: number | string | null, life?: number | string | null } | null, updated_at?: string | null, crawled_at?: number | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.keywords.list",
+      "shortPath": "keywords.list",
+      "description": "Every keyword in a project or group with its rank, best rank, search volume and trend, read as of a given day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Read the keyword data as it stood on this day. Defaults to today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { project_id?: number | null, category?: string | null, url?: string | null, kw?: string | null, source?: number | null, start?: number | null, notes?: string | Record<string, any> | null, tags_count?: number | null, tags?: { id?: number | null, project_id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, keywords_count?: number | null }[] | null, tag?: string | null, region?: string | null, language?: string | null, in_featured?: boolean | null, has_featured?: boolean | null, has_featured_url?: string | null, ignore_local?: boolean | null, ignore_featured?: boolean | null, url_tracking_method?: string | null, type?: string | null, gmb?: string | null, near?: string | null, isfav?: boolean | null, status?: string | null, clicks?: number | null, impressions?: number | null, ctr?: number | null, ms?: number | null, competition?: number | string | null, cpc?: number | null, gpage?: number | null, grank?: number | null, grank_int?: number | null, best?: number | null, seocomp?: number | null, in_local_pack?: boolean | null, rankingurl?: string | null, grankhistory?: (number | null)[] | null, trends?: { day?: number | string | null, week?: number | string | null, month?: number | string | null, life?: number | string | null } | null, updated_at?: string | null, crawled_at?: number | null } }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.keywords.refresh",
+      "shortPath": "keywords.refresh",
+      "description": "Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywordIds",
+            "optional": false,
+            "type": "(string | number)[]",
+            "description": "Queued for an on-demand check. The whole request is refused if it would exceed the plan’s daily refresh quota."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "How many refreshes the plan has left."
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.keywords.update",
+      "shortPath": "keywords.update",
+      "description": "Change a keyword’s domain, region, tags, status, baseline or favourite flag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          },
+          {
+            "key": "keywordId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The keyword ID, as a string or a number."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "se | local | gmb"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | INACTIVE | ARCHIVED"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replace every tag on the keyword with this list."
+          },
+          {
+            "key": "isfav",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignore_local",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignore_featured",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url_tracking_method",
+            "optional": true,
+            "type": "broad | exact"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "The starting rank the keyword’s change is measured from (sent as Keyword’s `baseline`)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { project_id?: number | null, category?: string | null, url?: string | null, kw?: string | null, source?: number | null, start?: number | null, notes?: string | Record<string, any> | null, tags_count?: number | null, tags?: { id?: number | null, project_id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, keywords_count?: number | null }[] | null, tag?: string | null, region?: string | null, language?: string | null, in_featured?: boolean | null, has_featured?: boolean | null, has_featured_url?: string | null, ignore_local?: boolean | null, ignore_featured?: boolean | null, url_tracking_method?: string | null, type?: string | null, gmb?: string | null, near?: string | null, isfav?: boolean | null, status?: string | null, clicks?: number | null, impressions?: number | null, ctr?: number | null, ms?: number | null, competition?: number | string | null, cpc?: number | null, gpage?: number | null, grank?: number | null, grank_int?: number | null, best?: number | null, seocomp?: number | null, in_local_pack?: boolean | null, rankingurl?: string | null, grankhistory?: (number | null)[] | null, trends?: { day?: number | string | null, week?: number | string | null, month?: number | string | null, life?: number | string | null } | null, updated_at?: string | null, crawled_at?: number | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.metrics.competitors",
+      "shortPath": "metrics.competitors",
+      "description": "The top competing URLs for one keyword in a date window, with each result’s type and position",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          },
+          {
+            "key": "keywordId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The keyword ID, as a string or a number."
+          },
+          {
+            "key": "dateRange",
+            "optional": false,
+            "type": "string",
+            "description": "The window, such as `2026-11-01.2026-11-12`. Keyword requires it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ rank?: number | null, results?: { resultType?: string | null, url?: string | null, title?: string | null, domain?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.metrics.get",
+      "shortPath": "metrics.get",
+      "description": "Keyword movement for a project, group or tag: how many sit in each top-N bucket and how that changed day over day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "number",
+            "description": "Only this tag’s keywords."
+          },
+          {
+            "key": "timeframe",
+            "optional": false,
+            "type": "number",
+            "description": "Days to compare over, such as 30. Keyword requires it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id?: string | null, attributes: { ranges?: { count?: number | null, change?: number | null, status?: string | null, daily?: { count?: number | null, change?: number | null, status?: string | null } | null, weekly?: { count?: number | null, change?: number | null, status?: string | null } | null, monthly?: { count?: number | null, change?: number | null, status?: string | null } | null, semester?: { count?: number | null, change?: number | null, status?: string | null } | null, yearly?: { count?: number | null, change?: number | null, status?: string | null } | null, life?: { count?: number | null, change?: number | null, status?: string | null } | null, title?: string | null }[] | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.mindshare.history",
+      "shortPath": "mindshare.history",
+      "description": "Share of Voice over a date window, read from Keyword’s cache",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric project ID, from `projects.list`."
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "unknown"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.projects.archive",
+      "shortPath": "projects.archive",
+      "description": "Archive a project or subproject: it stops updating until `projects.restore` brings it back. Keyword refuses to archive the account’s only active top-level project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ title: string }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project, or a subproject from a `Parent[sub]Child` name; the parent must exist first",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": false,
+            "type": "string",
+            "description": "The project name. A `Parent[sub]Child` name creates a subproject, which needs the parent to exist first."
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string",
+            "description": "Three-letter currency for cost figures, such as `USD`."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The domain the project tracks, such as `disney.com`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { project_id?: number | null, name?: string | null, shortkey?: string | null, keywords_count?: number | Record<string, number> | [] | null, tags_count?: number | null, tags?: { id?: number | null, project_id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, keywords_count?: number | null }[] | null, keywords_last_updated_at?: string | null, notes_count?: number | null, updated_at?: string | null, crawled_at?: number | string | null, url?: string | null, currency_code?: string | null, company_name?: string | null, company_desc?: string | null, company_link?: string | null, company_logo?: string | null, sov_view_key?: boolean | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project with every keyword and its ranking history; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ title: string }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "One project or subproject with its tags and counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { project_id?: number | null, name?: string | null, shortkey?: string | null, keywords_count?: number | Record<string, number> | [] | null, tags_count?: number | null, tags?: { id?: number | null, project_id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, keywords_count?: number | null }[] | null, keywords_last_updated_at?: string | null, notes_count?: number | null, updated_at?: string | null, crawled_at?: number | string | null, url?: string | null, currency_code?: string | null, company_name?: string | null, company_desc?: string | null, company_link?: string | null, company_logo?: string | null, sov_view_key?: boolean | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "Every project and subproject with its tags and keyword counts; a subproject is named `Parent[sub]Child`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { project_id?: number | null, name?: string | null, shortkey?: string | null, keywords_count?: number | Record<string, number> | [] | null, tags_count?: number | null, tags?: { id?: number | null, project_id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, keywords_count?: number | null }[] | null, keywords_last_updated_at?: string | null, notes_count?: number | null, updated_at?: string | null, crawled_at?: number | string | null, url?: string | null, currency_code?: string | null, company_name?: string | null, company_desc?: string | null, company_link?: string | null, company_logo?: string | null, sov_view_key?: boolean | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.projects.restore",
+      "shortPath": "projects.restore",
+      "description": "Undo an archive, bringing the project and its keywords back",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ title: string }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.rankChart.get",
+      "shortPath": "rankChart.get",
+      "description": "Daily rank history for a set of keywords over a number of days; Keyword refuses a call covering more than 400,000 keyword-days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywordIds",
+            "optional": false,
+            "type": "(string | number)[]",
+            "description": "Keyword refuses a call covering more than 400,000 keyword-days."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Days of history before today. Each keyword counts `limit + 1` days toward the 400,000 keyword-day cap."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ kwid: number | string, data?: ({ name?: string | null, data: (string | number | null)[][] }[] | string | Record<string, any>)[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.rankingUrls.list",
+      "shortPath": "rankingUrls.list",
+      "description": "The pages that rank best for a project, with their average position and total search volume, 10 to a page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ current_ranking_url?: string | null, current_rank?: number | null, previous_rank?: number | null, total_keyword_count?: number | null, average_current_rank?: number | null, average_previous_rank?: number | null, total_search_volume?: number | null, average_cost_per_click?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.regions.list",
+      "shortPath": "regions.list",
+      "description": "The Google regions a project tracks, with each one’s language and keyword count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ region: string, lang?: string | null, type?: string | null, total?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.sharing.get",
+      "shortPath": "sharing.get",
+      "description": "A project’s shared-report settings: whether the share link is on, its hash, whether it needs a password, and what the report shows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric project ID, from `projects.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "share_hash",
+            "optional": true,
+            "type": "string | null",
+            "description": "The share link’s hash; null while sharing is off."
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_password_protected",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "{ hide_overview?: boolean | null, hide_top_pages?: boolean | null, hide_share_options?: boolean | null, hide_keyword_actions?: boolean | null, show_rank_verification?: boolean | null } | null"
+          },
+          {
+            "key": "keyword_columns",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "keyword_charts",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "overview_charts",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keyword.api.sharing.update",
+      "shortPath": "sharing.update",
+      "description": "Turn a project’s share link on or off, set or clear its password, or toggle what the shared report shows. Everything except the on/off switch needs Keyword’s white-label permission",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric project ID, from `projects.list`."
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn the share link on or off."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null",
+            "description": "Protect the share link with this password; null or an empty string removes it. Setting one needs the white-label plan."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "{ hide_overview?: boolean, hide_top_pages?: boolean, hide_share_options?: boolean, hide_keyword_actions?: boolean, show_rank_verification?: boolean }",
+            "description": "Toggles merged key by key; omitted ones keep their value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "share_hash",
+            "optional": true,
+            "type": "string | null",
+            "description": "The share link’s hash; null while sharing is off."
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_password_protected",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "{ hide_overview?: boolean | null, hide_top_pages?: boolean | null, hide_share_options?: boolean | null, hide_keyword_actions?: boolean | null, show_rank_verification?: boolean | null } | null"
+          },
+          {
+            "key": "keyword_columns",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "keyword_charts",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "overview_charts",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-12T21:06:23.717Z",
-  "corsairVersion": "0.1.180",
+  "generatedAt": "2026-11-14T11:17:15.624Z",
+  "corsairVersion": "0.1.185",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -2202,6 +2202,21 @@
       }
     },
     {
+      "id": "cloudconvert",
+      "displayName": "CloudConvert",
+      "description": "Create, wait for, inspect, list and delete CloudConvert jobs and tasks; cancel or retry tasks; create GCS/S3 export jobs; discover operations and formats; and view account credits with API-key authentication. Job-level webhook fields are not exposed. See https://cloudconvert.com/docs/api-reference/jobs and https://cloudconvert.com/docs/api-reference/tasks.",
+      "npmPackageName": "@corsair-dev/cloudconvert",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 17,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "cloudflare",
       "displayName": "Cloudflare",
       "description": "Edge cloud platform for DNS, CDN, security, Workers, and internet infrastructure services.",
@@ -2232,6 +2247,21 @@
       }
     },
     {
+      "id": "cloudflarebrowserrendering",
+      "displayName": "Cloudflare Browser Run",
+      "description": "Render and inspect pages, capture screenshots and PDFs, crawl sites, and manage Browser Rendering sessions and targets through REST.",
+      "npmPackageName": "@corsair-dev/cloudflarebrowserrendering",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 24,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "cloudinary",
       "displayName": "Cloudinary",
       "description": "Media management API for uploading, transforming, optimizing, and delivering images and video.",
@@ -2242,6 +2272,21 @@
         "api": 110,
         "webhooks": 13,
         "db": 10
+      }
+    },
+    {
+      "id": "cloudlayer",
+      "displayName": "Cloudlayer",
+      "description": "Generate PDFs and images from HTML, URLs, and templates, and manage Cloudlayer jobs, assets, and storage.",
+      "npmPackageName": "@corsair-dev/cloudlayer",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 26,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -2411,6 +2456,21 @@
       }
     },
     {
+      "id": "companyenrich",
+      "displayName": "CompanyEnrich",
+      "description": "B2B company and people data enrichment — look up firms by domain or properties, find work emails, and search or count companies and people with filters, semantic and lookalike queries.",
+      "npmPackageName": "@corsair-dev/companyenrich",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 25,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "composio",
       "displayName": "Composio",
       "description": "Tool integration platform for AI agents. List toolkits and tools, execute them, manage connected accounts, and create sessions.",
@@ -2512,6 +2572,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 2,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "conversiontools",
+      "displayName": "Conversion Tools",
+      "description": "Create and manage Conversion Tools file-conversion tasks, uploads, binary downloads, converter discovery, task status, and retention through its REST API.",
+      "npmPackageName": "@corsair-dev/conversiontools",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 17,
         "webhooks": 0,
         "db": 0
       }
@@ -2668,6 +2743,21 @@
       }
     },
     {
+      "id": "customjs",
+      "displayName": "CustomJS",
+      "description": "Render HTML or Markdown to PDF, capture screenshots after browser automation, run inline JavaScript, scrape pages with exact steps or an AI agent, and publish hosted HTML pages.",
+      "npmPackageName": "@corsair-dev/customjs",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 12,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "cuttly",
       "displayName": "Cutt.ly",
       "description": "Create branded short links, access QR code URLs, and retrieve click analytics.",
@@ -2819,6 +2909,21 @@
       }
     },
     {
+      "id": "deployhq",
+      "displayName": "DeployHQ",
+      "description": "Manage DeployHQ accounts, projects, servers, deployments, configuration, users, and deployment resources through its documented REST API.",
+      "npmPackageName": "@corsair-dev/deployhq",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 216,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "desktime",
       "displayName": "DeskTime",
       "description": "Time tracking and productivity reporting with DeskTime - read account settings, list employees for a day, week or month, and fetch one employee's tracked apps and projects.",
@@ -2949,6 +3054,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 11,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "documenso",
+      "displayName": "Documenso",
+      "description": "Create and manage Documenso signing envelopes, legacy documents and templates, recipients, fields, folders, attachments, downloads, and embed tokens through the documented v2 REST API.",
+      "npmPackageName": "@corsair-dev/documenso",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 89,
         "webhooks": 0,
         "db": 0
       }
@@ -3631,6 +3751,21 @@
       }
     },
     {
+      "id": "gamma",
+      "displayName": "Gamma",
+      "description": "Generate presentations with Gamma - start a generation from text or a multi-page outline, follow it to completion, read and export the finished gamma, and browse the workspace's themes and folders.",
+      "npmPackageName": "@corsair-dev/gamma",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 12,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "gemini",
       "displayName": "Gemini",
       "description": "Google multimodal AI API for text, image, and code generation with Gemini models.",
@@ -3641,6 +3776,36 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 8,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "genderapi",
+      "displayName": "Gender API",
+      "description": "Look up the gender behind a first name with Gender API - one name, up to 100 at once, an email address or a full name, each answer scored with its sample count and accuracy.",
+      "npmPackageName": "@corsair-dev/genderapi",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 6,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "genderize",
+      "displayName": "Genderize",
+      "description": "Predict the gender behind a first or full name with Genderize - one name or a batch, each answer scored with a confidence and the number of records behind it.",
+      "npmPackageName": "@corsair-dev/genderize",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 2,
         "webhooks": 0,
         "db": 0
       }
@@ -4404,6 +4569,21 @@
       }
     },
     {
+      "id": "keyword",
+      "displayName": "Keyword",
+      "description": "Rank tracking with Keyword.com - manage projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages and Share of Voice history.",
+      "npmPackageName": "@corsair-dev/keyword",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 23,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "kibana",
       "displayName": "Kibana",
       "description": "Elastic's data exploration and management interface, with endpoints for saved objects, data views, dashboards, alerting rules, cases, connectors, security detections, and Fleet.",
@@ -4416,6 +4596,36 @@
         "api": 55,
         "webhooks": 0,
         "db": 3
+      }
+    },
+    {
+      "id": "kickbox",
+      "displayName": "Kickbox",
+      "description": "Email verification with Kickbox - verify a single address for deliverability, role, free and disposable flags, typo suggestions and a Sendex quality score, and check whether a domain is a known disposable one for free.",
+      "npmPackageName": "@corsair-dev/kickbox",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 2,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "kit",
+      "displayName": "Kit",
+      "description": "Email marketing with Kit (formerly ConvertKit) - manage subscribers, tags, custom fields and forms, subscribe an address through a form, unsubscribe a subscriber, and read the account with its plan and sending addresses.",
+      "npmPackageName": "@corsair-dev/kit",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 16,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -4474,6 +4684,51 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 8,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "kofi",
+      "displayName": "Ko-fi",
+      "description": "Payment notifications from Ko-fi - receive the webhook Ko-fi sends when a donation, membership payment, shop order or commission is paid, with every delivery verified against the account's token. Ko-fi publishes no REST API.",
+      "npmPackageName": "@corsair-dev/kofi",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 1,
+        "webhooks": 4,
+        "db": 0
+      }
+    },
+    {
+      "id": "kontentai",
+      "displayName": "Kontent.ai",
+      "description": "Headless content delivery with Kontent.ai - read published content items by type, language, collection or filter, along with their content types, taxonomy terms and languages, from the Delivery API.",
+      "npmPackageName": "@corsair-dev/kontentai",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 6,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "krakenio",
+      "displayName": "Kraken.io",
+      "description": "Image and PDF optimization with Kraken.io - compress a file from a URL or a base64 upload, resize it, change its format, control the quality and keep chosen metadata, and read the account's plan and remaining quota.",
+      "npmPackageName": "@corsair-dev/krakenio",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 3,
         "webhooks": 0,
         "db": 0
       }
@@ -43815,6 +44070,108 @@
       "haystack": "product.created cloudcart.webhooks.product.created product created webhook event"
     },
     {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "formats.listSupported",
+      "haystack": "formats.listsupported cloudconvert.api.formats.listsupported list supported conversion formats, engines, options and engine versions through cloudconvert get /operations. docs: https://cloudconvert.com/docs/api-reference/operations#list-operations read"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "jobs.create",
+      "haystack": "jobs.create cloudconvert.api.jobs.create create an asynchronous job from a task graph. cloudconvert limits job task names to alphanumeric characters, hyphens and underscores, with at most 2000 tasks. docs: https://cloudconvert.com/docs/api-reference/jobs#create-job destructive"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "jobs.createAndWait",
+      "haystack": "jobs.createandwait cloudconvert.api.jobs.createandwait create a job and wait for completion on cloudconvert’s synchronous api. prefer jobs.create for long-running work because clients and network stacks may time out. redirect=true is rejected because it returns raw file bytes unsupported by this json endpoint. docs: https://cloudconvert.com/docs/api-reference/jobs#create-job-and-wait destructive"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "jobs.get",
+      "haystack": "jobs.get cloudconvert.api.jobs.get get job status and its tasks. redirect=true is rejected because it returns raw file bytes unsupported by this json endpoint. docs: https://cloudconvert.com/docs/api-reference/jobs#show-job read"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "jobs.list",
+      "haystack": "jobs.list cloudconvert.api.jobs.list list jobs with documented status, tag and access-token filters and page-based pagination. docs: https://cloudconvert.com/docs/api-reference/jobs#list-jobs read"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "jobs.remove",
+      "haystack": "jobs.remove cloudconvert.api.jobs.remove delete a job, including all of its tasks and data. docs: https://cloudconvert.com/docs/api-reference/jobs#delete-job destructive"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "jobs.wait",
+      "haystack": "jobs.wait cloudconvert.api.jobs.wait wait for job completion on cloudconvert’s synchronous api. prefer jobs.get for long-running work because clients and network stacks may time out. redirect=true is rejected because it returns raw file bytes unsupported by this json endpoint. docs: https://cloudconvert.com/docs/api-reference/jobs#wait-for-job read"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "operations.list",
+      "haystack": "operations.list cloudconvert.api.operations.list list available cloudconvert operations, formats, engines and options. docs: https://cloudconvert.com/docs/api-reference/operations#list-operations read"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "tasks.cancel",
+      "haystack": "tasks.cancel cloudconvert.api.tasks.cancel cancel a task that is waiting or processing. docs: https://cloudconvert.com/docs/api-reference/tasks#cancel-task write"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "tasks.createExportGoogleCloudStorage",
+      "haystack": "tasks.createexportgooglecloudstorage cloudconvert.api.tasks.createexportgooglecloudstorage create a google cloud storage export task in a new job; cloudconvert task creation is part of post /jobs. docs: https://cloudconvert.com/docs/import-export/export-files#google-cloud-storage and https://cloudconvert.com/docs/api-reference/jobs#create-job destructive"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "tasks.createExportS3",
+      "haystack": "tasks.createexports3 cloudconvert.api.tasks.createexports3 create an s3 export task in a new job; cloudconvert task creation is part of post /jobs. docs: https://cloudconvert.com/docs/import-export/export-files#s3 and https://cloudconvert.com/docs/api-reference/jobs#create-job destructive"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "tasks.get",
+      "haystack": "tasks.get cloudconvert.api.tasks.get get task status and optionally include retries, dependencies, payload and parent job. docs: https://cloudconvert.com/docs/api-reference/tasks#show-task read"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list cloudconvert.api.tasks.list list and filter cloudconvert tasks with page-based pagination. docs: https://cloudconvert.com/docs/api-reference/tasks#list-tasks read"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "tasks.remove",
+      "haystack": "tasks.remove cloudconvert.api.tasks.remove delete a task, including its data. docs: https://cloudconvert.com/docs/api-reference/tasks#delete-task destructive"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "tasks.retry",
+      "haystack": "tasks.retry cloudconvert.api.tasks.retry create a new task using the payload of an existing task. docs: https://cloudconvert.com/docs/api-reference/tasks#retry-task destructive"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "tasks.wait",
+      "haystack": "tasks.wait cloudconvert.api.tasks.wait wait for task completion on cloudconvert’s synchronous api. prefer tasks.get for long-running work because clients and network stacks may time out. docs: https://cloudconvert.com/docs/api-reference/tasks#wait-for-task read"
+    },
+    {
+      "pluginId": "cloudconvert",
+      "kind": "api",
+      "shortPath": "users.show",
+      "haystack": "users.show cloudconvert.api.users.show read the authenticated cloudconvert user and remaining credits. docs: https://cloudconvert.com/docs/api-reference/users#show-user read"
+    },
+    {
       "pluginId": "cloudflare",
       "kind": "api",
       "shortPath": "dns.create",
@@ -44107,6 +44464,150 @@
       "kind": "api",
       "shortPath": "zones.update",
       "haystack": "zones.update cloudflareapikey.api.zones.update edit a cloudflare zone (one of paused, type, or vanity_name_servers) write"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "accessibilityTree.capture",
+      "haystack": "accessibilitytree.capture cloudflarebrowserrendering.api.accessibilitytree.capture capture a page accessibility tree: https://developers.cloudflare.com/browser-run/quick-actions/accessibility-tree-endpoint/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "browser.close",
+      "haystack": "browser.close cloudflarebrowserrendering.api.browser.close close a browser rendering session: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/delete/. write"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "browser.create",
+      "haystack": "browser.create cloudflarebrowserrendering.api.browser.create acquire a browser session with optional guardrails: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/create/. destructive"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "browser.liveView.create",
+      "haystack": "browser.liveview.create cloudflarebrowserrendering.api.browser.liveview.create mint time-limited browser live-view urls: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/live_view/methods/create/. write"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "browser.protocol",
+      "haystack": "browser.protocol cloudflarebrowserrendering.api.browser.protocol retrieve the dynamic chrome devtools protocol schema: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/protocol/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "browser.version",
+      "haystack": "browser.version cloudflarebrowserrendering.api.browser.version get browser and devtools version metadata: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/version/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "content.fetch",
+      "haystack": "content.fetch cloudflarebrowserrendering.api.content.fetch fetch rendered html through browser run quick actions: https://developers.cloudflare.com/browser-run/quick-actions/content-endpoint/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "crawl.cancel",
+      "haystack": "crawl.cancel cloudflarebrowserrendering.api.crawl.cancel cancel an active crawl job: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/. write"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "crawl.get",
+      "haystack": "crawl.get cloudflarebrowserrendering.api.crawl.get get crawl status or paginated results: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "crawl.start",
+      "haystack": "crawl.start cloudflarebrowserrendering.api.crawl.start start an asynchronous site crawl: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/. destructive"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "json.extract",
+      "haystack": "json.extract cloudflarebrowserrendering.api.json.extract extract structured page data using a prompt or json schema: https://developers.cloudflare.com/browser-run/quick-actions/json-endpoint/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "links.list",
+      "haystack": "links.list cloudflarebrowserrendering.api.links.list retrieve links from a rendered page: https://developers.cloudflare.com/browser-run/quick-actions/links-endpoint/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "markdown.convert",
+      "haystack": "markdown.convert cloudflarebrowserrendering.api.markdown.convert convert rendered page content to markdown: https://developers.cloudflare.com/browser-run/quick-actions/markdown-endpoint/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "pdf.render",
+      "haystack": "pdf.render cloudflarebrowserrendering.api.pdf.render render a page to json-safe base64 pdf data: https://developers.cloudflare.com/browser-run/quick-actions/pdf-endpoint/. destructive"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "scrape.extract",
+      "haystack": "scrape.extract cloudflarebrowserrendering.api.scrape.extract extract selected html elements: https://developers.cloudflare.com/browser-run/quick-actions/scrape-endpoint/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "screenshot.capture",
+      "haystack": "screenshot.capture cloudflarebrowserrendering.api.screenshot.capture capture a screenshot as json-safe base64 data: https://developers.cloudflare.com/browser-run/quick-actions/screenshot-endpoint/. destructive"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "sessions.get",
+      "haystack": "sessions.get cloudflarebrowserrendering.api.sessions.get get details for a browser rendering session: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/session/methods/get/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "sessions.list",
+      "haystack": "sessions.list cloudflarebrowserrendering.api.sessions.list list active browser rendering sessions: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/session/methods/list/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "snapshot.capture",
+      "haystack": "snapshot.capture cloudflarebrowserrendering.api.snapshot.capture capture multiple page formats in one request: https://developers.cloudflare.com/browser-run/quick-actions/snapshot/. destructive"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "targets.activate",
+      "haystack": "targets.activate cloudflarebrowserrendering.api.targets.activate activate a browser target: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/activate/. write"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "targets.close",
+      "haystack": "targets.close cloudflarebrowserrendering.api.targets.close close a browser target: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/close/. write"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "targets.create",
+      "haystack": "targets.create cloudflarebrowserrendering.api.targets.create open a browser tab: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/create/. write"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "targets.get",
+      "haystack": "targets.get cloudflarebrowserrendering.api.targets.get get a debuggable target by id: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/get/. read"
+    },
+    {
+      "pluginId": "cloudflarebrowserrendering",
+      "kind": "api",
+      "shortPath": "targets.list",
+      "haystack": "targets.list cloudflarebrowserrendering.api.targets.list list debuggable browser targets: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/subresources/targets/methods/list/. read"
     },
     {
       "pluginId": "cloudinary",
@@ -44845,6 +45346,162 @@
       "kind": "webhook",
       "shortPath": "upload.upload",
       "haystack": "upload.upload cloudinary.webhooks.upload.upload notification when an upload completes"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get cloudlayer.api.account.get read account usage, plan limits, storage use and (on usage plans) the credit balance. docs: https://cloudlayer.io/docs/account/ read"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "assets.get",
+      "haystack": "assets.get cloudlayer.api.assets.get get one generated asset including its pre-authenticated download url. docs: https://cloudlayer.io/docs/assets/ read"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "assets.list",
+      "haystack": "assets.list cloudlayer.api.assets.list list the most recent generated assets with cursor pagination. docs: https://cloudlayer.io/docs/assets/ read"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "html.toImage",
+      "haystack": "html.toimage cloudlayer.api.html.toimage render base64 html to a png, jpg, webp or svg image; v2 returns a job, including a completed job with async:false. docs: https://cloudlayer.io/docs/html-to-image/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "html.toImageV1",
+      "haystack": "html.toimagev1 cloudlayer.api.html.toimagev1 render base64 html to an image using the v1 route; returns a base64-encoded binary artifact. docs: https://cloudlayer.io/docs/html-to-image/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "html.toPdf",
+      "haystack": "html.topdf cloudlayer.api.html.topdf render base64 html to a pdf; v2 returns a job, including a completed job with async:false. docs: https://cloudlayer.io/docs/html-to-pdf/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "html.toPdfV1",
+      "haystack": "html.topdfv1 cloudlayer.api.html.topdfv1 render base64 html to a pdf using the v1 route; returns a base64-encoded binary artifact. docs: https://cloudlayer.io/docs/html-to-pdf/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "jobs.get",
+      "haystack": "jobs.get cloudlayer.api.jobs.get get one job to poll an async generation, including status, size and cost. docs: https://cloudlayer.io/docs/jobs/ read"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "jobs.list",
+      "haystack": "jobs.list cloudlayer.api.jobs.list list recent jobs using the documented v1 jobs endpoint with optional cursor parameters. docs: https://cloudlayer.io/docs/jobs/ read"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "jobs.listV2",
+      "haystack": "jobs.listv2 cloudlayer.api.jobs.listv2 list recent jobs using the v2 jobs endpoint with optional cursor parameters. docs: https://cloudlayer.io/docs/jobs/ read"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "storage.create",
+      "haystack": "storage.create cloudlayer.api.storage.create create an s3-compatible storage configuration for direct file delivery. docs: https://cloudlayer.io/docs/storage/ write"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "storage.get",
+      "haystack": "storage.get cloudlayer.api.storage.get read one storage configuration by id with secrets masked. docs: https://cloudlayer.io/docs/storage/ read"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "storage.getCurrent",
+      "haystack": "storage.getcurrent cloudlayer.api.storage.getcurrent read the current storage configuration with secrets masked. docs: https://cloudlayer.io/docs/storage/ read"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "storage.remove",
+      "haystack": "storage.remove cloudlayer.api.storage.remove delete a storage configuration and revert to cloudlayer.io cloud storage. docs: https://cloudlayer.io/docs/storage/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "template.toImage",
+      "haystack": "template.toimage cloudlayer.api.template.toimage render a gallery or base64 nunjucks template with caller data to an image using json or multipart upload; v2 async:false returns a completed json job. docs: https://cloudlayer.io/docs/template-to-image/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "template.toImageV1",
+      "haystack": "template.toimagev1 cloudlayer.api.template.toimagev1 render a gallery or base64 nunjucks template to an image using the v1 route; returns a base64-encoded binary artifact. docs: https://cloudlayer.io/docs/template-to-image/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "template.toPdf",
+      "haystack": "template.topdf cloudlayer.api.template.topdf render a gallery or base64 nunjucks template with caller data to a pdf using json or multipart upload; v2 async:false returns a completed json job. docs: https://cloudlayer.io/docs/template-to-pdf/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "template.toPdfV1",
+      "haystack": "template.topdfv1 cloudlayer.api.template.topdfv1 render a gallery or base64 nunjucks template to a pdf using the v1 route; returns a base64-encoded binary artifact. docs: https://cloudlayer.io/docs/template-to-pdf/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "url.toImage",
+      "haystack": "url.toimage cloudlayer.api.url.toimage screenshot a live web page with full viewport, cookie and auth control; v2 returns a job, including a completed job with async:false. docs: https://cloudlayer.io/docs/url-to-image/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "url.toImageQuick",
+      "haystack": "url.toimagequick cloudlayer.api.url.toimagequick get convenience route that creates a json job for one url image with only url and timeout. docs: https://cloudlayer.io/docs/url-to-image/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "url.toImageQuickV1",
+      "haystack": "url.toimagequickv1 cloudlayer.api.url.toimagequickv1 get v1 shortcut that screenshots one url and returns a base64-encoded binary artifact. docs: https://cloudlayer.io/docs/url-to-image/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "url.toImageV1",
+      "haystack": "url.toimagev1 cloudlayer.api.url.toimagev1 screenshot a url using the v1 post route; returns a base64-encoded binary artifact. docs: https://cloudlayer.io/docs/url-to-image/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "url.toPdf",
+      "haystack": "url.topdf cloudlayer.api.url.topdf capture a live web page (or a batch of urls) as a pdf; v2 returns a job, including a completed job with async:false. docs: https://cloudlayer.io/docs/url-to-pdf/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "url.toPdfQuick",
+      "haystack": "url.topdfquick cloudlayer.api.url.topdfquick get convenience route that captures a single url as a pdf with only url and timeout. docs: https://cloudlayer.io/docs/url-to-pdf/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "url.toPdfQuickV1",
+      "haystack": "url.topdfquickv1 cloudlayer.api.url.topdfquickv1 get v1 shortcut that captures one url as a pdf and returns a base64-encoded binary artifact. docs: https://cloudlayer.io/docs/url-to-pdf/ destructive"
+    },
+    {
+      "pluginId": "cloudlayer",
+      "kind": "api",
+      "shortPath": "url.toPdfV1",
+      "haystack": "url.topdfv1 cloudlayer.api.url.topdfv1 capture a url (or batch) as a pdf using the v1 route; returns a base64-encoded binary artifact. docs: https://cloudlayer.io/docs/url-to-pdf/ destructive"
     },
     {
       "pluginId": "coassemble",
@@ -46695,6 +47352,156 @@
       "haystack": "webusers.list commcare.api.webusers.list list the web users (dashboard accounts) in the project with their roles read"
     },
     {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "account.me",
+      "haystack": "account.me companyenrich.api.account.me get the authenticated user, credit balance and plan capabilities. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.autocomplete",
+      "haystack": "companies.autocomplete companyenrich.api.companies.autocomplete suggest up to 10 companies whose domain starts with the query. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.enrichBatch",
+      "haystack": "companies.enrichbatch companyenrich.api.companies.enrichbatch enrich up to 50 company domains in one request. costs 1 credit per unique company found. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.enrichByDomain",
+      "haystack": "companies.enrichbydomain companyenrich.api.companies.enrichbydomain enrich a company from its domain, optionally waiting for on-demand enrichment. costs 1 credit per success. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.enrichByProperties",
+      "haystack": "companies.enrichbyproperties companyenrich.api.companies.enrichbyproperties enrich a company from identifying properties such as name or social urls. costs 1 credit when a company is returned. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.get",
+      "haystack": "companies.get companyenrich.api.companies.get get a stored company by its companyenrich id. costs 1 credit plus 1 per expansion (financial, keywords, naics codes, technologies, workforce with 12 months of history). read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.search",
+      "haystack": "companies.search companyenrich.api.companies.search search companies by filters, a semantic query or lookalike seed domains, with cursor pagination. costs 1 credit per company (2 semantic, 5 lookalike). read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.searchCount",
+      "haystack": "companies.searchcount companyenrich.api.companies.searchcount count companies matching the same filters, semantic query or lookalike seeds as search. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.searchPreview",
+      "haystack": "companies.searchpreview companyenrich.api.companies.searchpreview preview up to 25 matching companies with the search ranking. free, needs a plan with previews. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "companies.workforce",
+      "haystack": "companies.workforce companyenrich.api.companies.workforce get observed headcount and department breakdowns for one company by id or domain, 12 months of history per page. costs 1 credit per page. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "geo.getCountry",
+      "haystack": "geo.getcountry companyenrich.api.geo.getcountry get one country by its two-letter iso code. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "geo.regions",
+      "haystack": "geo.regions companyenrich.api.geo.regions list geographic regions and the country codes they cover. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "geo.searchCities",
+      "haystack": "geo.searchcities companyenrich.api.geo.searchcities search cities by name substring, state or country, with cursor pagination. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "geo.searchCountries",
+      "haystack": "geo.searchcountries companyenrich.api.geo.searchcountries search countries by a literal name substring, with cursor pagination. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "geo.searchStates",
+      "haystack": "geo.searchstates companyenrich.api.geo.searchstates search states or provinces by name substring, optionally by country, with cursor pagination. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "industries.list",
+      "haystack": "industries.list companyenrich.api.industries.list list industries with the naics code prefixes accepted by company search. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "keywords.autocomplete",
+      "haystack": "keywords.autocomplete companyenrich.api.keywords.autocomplete suggest up to 10 keywords by popularity, for company search keyword filters. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "people.enrich",
+      "haystack": "people.enrich companyenrich.api.people.enrich enrich a person from their email address. costs 5 credits when a person is returned. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "people.findEmail",
+      "haystack": "people.findemail companyenrich.api.people.findemail find the work email of a person on a company domain (beta). costs 10 credits for a previously unseen email. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "people.get",
+      "haystack": "people.get companyenrich.api.people.get get a stored person by their companyenrich id. costs 2 credits, plus 1 for the education expansion and 1 per unique company for the company expansion. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "people.search",
+      "haystack": "people.search companyenrich.api.people.search search people by person filters, a natural-language query and an optional company query, with cursor pagination. costs 2 credits per person. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "people.searchCount",
+      "haystack": "people.searchcount companyenrich.api.people.searchcount count people matching the same person filters, natural-language query and company query as search. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "people.searchPreview",
+      "haystack": "people.searchpreview companyenrich.api.people.searchpreview preview up to 10 masked person summaries with the search ranking. free, needs a plan with previews. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "positions.autocomplete",
+      "haystack": "positions.autocomplete companyenrich.api.positions.autocomplete suggest up to 10 position or job titles by popularity, for people search position filters. free. read"
+    },
+    {
+      "pluginId": "companyenrich",
+      "kind": "api",
+      "shortPath": "technologies.autocomplete",
+      "haystack": "technologies.autocomplete companyenrich.api.technologies.autocomplete suggest up to 10 technologies by popularity, for company search technology filters. free. read"
+    },
+    {
       "pluginId": "composio",
       "kind": "api",
       "shortPath": "connections.create",
@@ -47185,6 +47992,108 @@
       "kind": "api",
       "shortPath": "library.search",
       "haystack": "library.search contextsevenmcp.api.library.search search context7 libraries by name read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "account.getConfig",
+      "haystack": "account.getconfig conversiontools.api.account.getconfig get account-specific converter configuration. https://api.conversiontools.io/openapi.yaml read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "account.getInfo",
+      "haystack": "account.getinfo conversiontools.api.account.getinfo get authenticated account information. https://api.conversiontools.io/openapi.yaml read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "account.verify",
+      "haystack": "account.verify conversiontools.api.account.verify verify the api token at the api root. https://conversiontools.io/llms-full.txt read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "conversions.get",
+      "haystack": "conversions.get conversiontools.api.conversions.get get one conversion type and its options. https://api.conversiontools.io/openapi.yaml read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "conversions.list",
+      "haystack": "conversions.list conversiontools.api.conversions.list list conversion types with optional format and ai filters. https://conversiontools.io/api-documentation#building-a-connector read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "files.createDownloadLink",
+      "haystack": "files.createdownloadlink conversiontools.api.files.createdownloadlink mint a temporary download credential for a file. https://conversiontools.io/llms-full.txt write"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "files.createUploadSession",
+      "haystack": "files.createuploadsession conversiontools.api.files.createuploadsession create a one-time upload session for a large file. https://conversiontools.io/llms-full.txt write"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "files.downloadById",
+      "haystack": "files.downloadbyid conversiontools.api.files.downloadbyid download file bytes by file id as base64 with response metadata. https://conversiontools.io/llms-full.txt read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "files.downloadFromLink",
+      "haystack": "files.downloadfromlink conversiontools.api.files.downloadfromlink download file bytes using a temporary download id; the id is sent without api-key auth. https://conversiontools.io/llms-full.txt read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "files.getInfo",
+      "haystack": "files.getinfo conversiontools.api.files.getinfo get file metadata and a text preview when available. https://api.conversiontools.io/openapi.yaml read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "files.upload",
+      "haystack": "files.upload conversiontools.api.files.upload upload a file as multipart form data. https://conversiontools.io/api-documentation#upload-file-to-server write"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "files.uploadToSession",
+      "haystack": "files.uploadtosession conversiontools.api.files.uploadtosession upload raw file bytes to a one-time session url. https://conversiontools.io/llms-full.txt write"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create conversiontools.api.tasks.create create an asynchronous conversion task. https://conversiontools.io/api-documentation#run-conversion-task destructive"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "tasks.get",
+      "haystack": "tasks.get conversiontools.api.tasks.get get the current state of a conversion task. https://conversiontools.io/api-documentation#get-task-status read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list conversiontools.api.tasks.list list recent tasks, optionally filtered by status, with page and limit (up to 100 a page). https://api.conversiontools.io/openapi.yaml read"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "tasks.remove",
+      "haystack": "tasks.remove conversiontools.api.tasks.remove permanently schedule deletion of task files. https://api.conversiontools.io/openapi.yaml destructive"
+    },
+    {
+      "pluginId": "conversiontools",
+      "kind": "api",
+      "shortPath": "tasks.updateRetention",
+      "haystack": "tasks.updateretention conversiontools.api.tasks.updateretention update task file retention mode. https://api.conversiontools.io/openapi.yaml write"
     },
     {
       "pluginId": "convex",
@@ -48403,6 +49312,78 @@
       "kind": "api",
       "shortPath": "user.updateProfile",
       "haystack": "user.updateprofile customgpt.api.user.updateprofile updates the authenticated user's profile information in customgpt. use this action to modify profile details such as the user's display name, email address, or profile photo url. all fields are optional - only the fields you provide will be updated. the action returns the complete updated user profile. write"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "auth.check",
+      "haystack": "auth.check customjs.api.auth.check verify the api key and read its workspace name, rate-limit window and suspension state; the key and jwt in the raw answer are dropped read"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "javascript.run",
+      "haystack": "javascript.run customjs.api.javascript.run run javascript inline with the given input and return what it produced as text; the code can call any bundled npm module and reach the network write"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "javascript.runBinary",
+      "haystack": "javascript.runbinary customjs.api.javascript.runbinary run javascript inline and return its buffer result as base64, for pdfs and images; the code can call any bundled npm module and reach the network write"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "pages.create",
+      "haystack": "pages.create customjs.api.pages.create publish an html page to a new live url; customjs does not enforce unique names, so a repeated call publishes a second page write"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "pages.delete",
+      "haystack": "pages.delete customjs.api.pages.delete delete a hosted page, which takes its live url down permanently; an unknown page id fails with a 404 destructive"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "pages.list",
+      "haystack": "pages.list customjs.api.pages.list list the hosted html pages in the workspace with their live urls read"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "pages.update",
+      "haystack": "pages.update customjs.api.pages.update replace the html of a hosted page in place, keeping its live url, and optionally rename it write"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "pdf.fromHtml",
+      "haystack": "pdf.fromhtml customjs.api.pdf.fromhtml render html or a nunjucks template to pdf in chromium, returning the bytes as base64 with an optional page size read"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "pdf.fromMarkdown",
+      "haystack": "pdf.frommarkdown customjs.api.pdf.frommarkdown render markdown to pdf, returning the bytes as base64 read"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "scrape.agent",
+      "haystack": "scrape.agent customjs.api.scrape.agent give an ai agent a plain-language goal and let it drive a browser for up to maxsteps actions; it bills model tokens and can submit forms on the site it visits destructive"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "scrape.page",
+      "haystack": "scrape.page customjs.api.scrape.page drive a browser through exact steps (navigate, click, type, evaluate and extract) and return the extracted values, with no model tokens spent per step write"
+    },
+    {
+      "pluginId": "customjs",
+      "kind": "api",
+      "shortPath": "screenshot.capture",
+      "haystack": "screenshot.capture customjs.api.screenshot.capture capture a url as png after optional click, type, wait and scroll steps, cropped to a box when one is given write"
     },
     {
       "pluginId": "cuttly",
@@ -50893,6 +51874,1302 @@
       "kind": "api",
       "shortPath": "reports.participants",
       "haystack": "reports.participants demio.api.reports.participants list who registered for a date, whether they attended, and their custom fields read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "account.billingStatusAccountBillingStatus",
+      "haystack": "account.billingstatusaccountbillingstatus deployhq.api.account.billingstatusaccountbillingstatus get billing status read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "account.getAccount",
+      "haystack": "account.getaccount deployhq.api.account.getaccount view account details read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "account.replaceAccount",
+      "haystack": "account.replaceaccount deployhq.api.account.replaceaccount update account settings write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "account.resetPasswordSubmitReset",
+      "haystack": "account.resetpasswordsubmitreset deployhq.api.account.resetpasswordsubmitreset reset password destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "account.updateAccount",
+      "haystack": "account.updateaccount deployhq.api.account.updateaccount update account settings write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "automaticDeployments.createProjectAutoDeployment",
+      "haystack": "automaticdeployments.createprojectautodeployment deployhq.api.automaticdeployments.createprojectautodeployment update automatic deployment settings write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "automaticDeployments.listProjectAutoDeployments",
+      "haystack": "automaticdeployments.listprojectautodeployments deployhq.api.automaticdeployments.listprojectautodeployments list automatic deployment configuration read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "beta.createBetumEnrollment",
+      "haystack": "beta.createbetumenrollment deployhq.api.beta.createbetumenrollment enroll in managed-resources beta write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCacheFiles.createProjectBuildCacheFile",
+      "haystack": "buildcachefiles.createprojectbuildcachefile deployhq.api.buildcachefiles.createprojectbuildcachefile create a build cache file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCacheFiles.deleteProjectBuildCacheFile",
+      "haystack": "buildcachefiles.deleteprojectbuildcachefile deployhq.api.buildcachefiles.deleteprojectbuildcachefile delete a build cache file destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCacheFiles.listProjectBuildCacheFiles",
+      "haystack": "buildcachefiles.listprojectbuildcachefiles deployhq.api.buildcachefiles.listprojectbuildcachefiles list build cache files read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCacheFiles.replaceProjectBuildCacheFile",
+      "haystack": "buildcachefiles.replaceprojectbuildcachefile deployhq.api.buildcachefiles.replaceprojectbuildcachefile update a build cache file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCacheFiles.updateProjectBuildCacheFile",
+      "haystack": "buildcachefiles.updateprojectbuildcachefile deployhq.api.buildcachefiles.updateprojectbuildcachefile update a build cache file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCommands.createProjectBuildCommand",
+      "haystack": "buildcommands.createprojectbuildcommand deployhq.api.buildcommands.createprojectbuildcommand create a build command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCommands.deleteProjectBuildCommand",
+      "haystack": "buildcommands.deleteprojectbuildcommand deployhq.api.buildcommands.deleteprojectbuildcommand delete a build command destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCommands.linkGlobalProjectBuildCommandLinkGlobal",
+      "haystack": "buildcommands.linkglobalprojectbuildcommandlinkglobal deployhq.api.buildcommands.linkglobalprojectbuildcommandlinkglobal link a global build command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCommands.listProjectBuildCommands",
+      "haystack": "buildcommands.listprojectbuildcommands deployhq.api.buildcommands.listprojectbuildcommands list build commands read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCommands.replaceProjectBuildCommand",
+      "haystack": "buildcommands.replaceprojectbuildcommand deployhq.api.buildcommands.replaceprojectbuildcommand update a build command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCommands.unlinkGlobalProjectBuildCommandUnlinkGlobal",
+      "haystack": "buildcommands.unlinkglobalprojectbuildcommandunlinkglobal deployhq.api.buildcommands.unlinkglobalprojectbuildcommandunlinkglobal unlink a global build command destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildCommands.updateProjectBuildCommand",
+      "haystack": "buildcommands.updateprojectbuildcommand deployhq.api.buildcommands.updateprojectbuildcommand update a build command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildConfigurations.createProjectBuildConfiguration",
+      "haystack": "buildconfigurations.createprojectbuildconfiguration deployhq.api.buildconfigurations.createprojectbuildconfiguration create an empty build configuration override write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildConfigurations.deleteProjectBuildConfiguration",
+      "haystack": "buildconfigurations.deleteprojectbuildconfiguration deployhq.api.buildconfigurations.deleteprojectbuildconfiguration delete a build configuration override destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildConfigurations.getProjectBuildConfiguration",
+      "haystack": "buildconfigurations.getprojectbuildconfiguration deployhq.api.buildconfigurations.getprojectbuildconfiguration get a build configuration read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildConfigurations.getProjectBuildConfigurationById",
+      "haystack": "buildconfigurations.getprojectbuildconfigurationbyid deployhq.api.buildconfigurations.getprojectbuildconfigurationbyid get a build configuration read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildConfigurations.listProjectBuildConfigurations",
+      "haystack": "buildconfigurations.listprojectbuildconfigurations deployhq.api.buildconfigurations.listprojectbuildconfigurations list build configurations read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildConfigurations.replaceProjectBuildConfiguration",
+      "haystack": "buildconfigurations.replaceprojectbuildconfiguration deployhq.api.buildconfigurations.replaceprojectbuildconfiguration update a build configuration override's target servers write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildConfigurations.updateProjectBuildConfiguration",
+      "haystack": "buildconfigurations.updateprojectbuildconfiguration deployhq.api.buildconfigurations.updateprojectbuildconfiguration update a build configuration override's target servers write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildKnownHosts.createProjectBuildKnownHost",
+      "haystack": "buildknownhosts.createprojectbuildknownhost deployhq.api.buildknownhosts.createprojectbuildknownhost create a build known host write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildKnownHosts.deleteProjectBuildKnownHost",
+      "haystack": "buildknownhosts.deleteprojectbuildknownhost deployhq.api.buildknownhosts.deleteprojectbuildknownhost delete a build known host destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "buildKnownHosts.listProjectBuildKnownHosts",
+      "haystack": "buildknownhosts.listprojectbuildknownhosts deployhq.api.buildknownhosts.listprojectbuildknownhosts list build known hosts read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "configFiles.createProjectConfigFile",
+      "haystack": "configfiles.createprojectconfigfile deployhq.api.configfiles.createprojectconfigfile create a config file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "configFiles.deleteProjectConfigFile",
+      "haystack": "configfiles.deleteprojectconfigfile deployhq.api.configfiles.deleteprojectconfigfile delete a config file destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "configFiles.getProjectConfigFileById",
+      "haystack": "configfiles.getprojectconfigfilebyid deployhq.api.configfiles.getprojectconfigfilebyid get a config file read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "configFiles.listProjectConfigFiles",
+      "haystack": "configfiles.listprojectconfigfiles deployhq.api.configfiles.listprojectconfigfiles list config files read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "configFiles.replaceProjectConfigFile",
+      "haystack": "configfiles.replaceprojectconfigfile deployhq.api.configfiles.replaceprojectconfigfile update a config file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "configFiles.updateProjectConfigFile",
+      "haystack": "configfiles.updateprojectconfigfile deployhq.api.configfiles.updateprojectconfigfile update a config file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deploymentChecks.createProjectDeploymentCheck",
+      "haystack": "deploymentchecks.createprojectdeploymentcheck deployhq.api.deploymentchecks.createprojectdeploymentcheck create a deployment check write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deploymentChecks.deleteProjectDeploymentCheck",
+      "haystack": "deploymentchecks.deleteprojectdeploymentcheck deployhq.api.deploymentchecks.deleteprojectdeploymentcheck delete a deployment check destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deploymentChecks.getProjectDeploymentCheckById",
+      "haystack": "deploymentchecks.getprojectdeploymentcheckbyid deployhq.api.deploymentchecks.getprojectdeploymentcheckbyid show a deployment check read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deploymentChecks.listProjectDeploymentChecks",
+      "haystack": "deploymentchecks.listprojectdeploymentchecks deployhq.api.deploymentchecks.listprojectdeploymentchecks list deployment checks read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deploymentChecks.replaceProjectDeploymentCheck",
+      "haystack": "deploymentchecks.replaceprojectdeploymentcheck deployhq.api.deploymentchecks.replaceprojectdeploymentcheck update a deployment check write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deploymentChecks.updateProjectDeploymentCheck",
+      "haystack": "deploymentchecks.updateprojectdeploymentcheck deployhq.api.deploymentchecks.updateprojectdeploymentcheck update a deployment check write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deployments.abortProjectDeployment",
+      "haystack": "deployments.abortprojectdeployment deployhq.api.deployments.abortprojectdeployment abort a running deployment destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deployments.createProjectDeployment",
+      "haystack": "deployments.createprojectdeployment deployhq.api.deployments.createprojectdeployment queue, preview or schedule a deployment write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deployments.getProjectDeploymentById",
+      "haystack": "deployments.getprojectdeploymentbyid deployhq.api.deployments.getprojectdeploymentbyid view a deployment read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deployments.listProjectDeployments",
+      "haystack": "deployments.listprojectdeployments deployhq.api.deployments.listprojectdeployments list deployments for a project read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deployments.listProjectDeploymentStepLogs",
+      "haystack": "deployments.listprojectdeploymentsteplogs deployhq.api.deployments.listprojectdeploymentsteplogs list log entries for a deployment step read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deployments.retryProjectDeploymentRetry",
+      "haystack": "deployments.retryprojectdeploymentretry deployhq.api.deployments.retryprojectdeploymentretry retry a deployment write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "deployments.rollbackProjectDeployment",
+      "haystack": "deployments.rollbackprojectdeployment deployhq.api.deployments.rollbackprojectdeployment rollback a deployment destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "detection.createDetection",
+      "haystack": "detection.createdetection deployhq.api.detection.createdetection detect framework from a file manifest write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "environmentVariables.createProjectEnvironmentVariable",
+      "haystack": "environmentvariables.createprojectenvironmentvariable deployhq.api.environmentvariables.createprojectenvironmentvariable create an environment variable write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "environmentVariables.deleteProjectEnvironmentVariable",
+      "haystack": "environmentvariables.deleteprojectenvironmentvariable deployhq.api.environmentvariables.deleteprojectenvironmentvariable delete an environment variable destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "environmentVariables.getProjectEnvironmentVariableById",
+      "haystack": "environmentvariables.getprojectenvironmentvariablebyid deployhq.api.environmentvariables.getprojectenvironmentvariablebyid get an environment variable read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "environmentVariables.listProjectEnvironmentVariables",
+      "haystack": "environmentvariables.listprojectenvironmentvariables deployhq.api.environmentvariables.listprojectenvironmentvariables list environment variables read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "environmentVariables.replaceProjectEnvironmentVariable",
+      "haystack": "environmentvariables.replaceprojectenvironmentvariable deployhq.api.environmentvariables.replaceprojectenvironmentvariable update an environment variable write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "environmentVariables.updateProjectEnvironmentVariable",
+      "haystack": "environmentvariables.updateprojectenvironmentvariable deployhq.api.environmentvariables.updateprojectenvironmentvariable update an environment variable write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "excludedFiles.createProjectExcludedFile",
+      "haystack": "excludedfiles.createprojectexcludedfile deployhq.api.excludedfiles.createprojectexcludedfile create an excluded file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "excludedFiles.deleteProjectExcludedFile",
+      "haystack": "excludedfiles.deleteprojectexcludedfile deployhq.api.excludedfiles.deleteprojectexcludedfile delete an excluded file destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "excludedFiles.getProjectExcludedFileById",
+      "haystack": "excludedfiles.getprojectexcludedfilebyid deployhq.api.excludedfiles.getprojectexcludedfilebyid get an excluded file read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "excludedFiles.listProjectExcludedFiles",
+      "haystack": "excludedfiles.listprojectexcludedfiles deployhq.api.excludedfiles.listprojectexcludedfiles list excluded files read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "excludedFiles.replaceProjectExcludedFile",
+      "haystack": "excludedfiles.replaceprojectexcludedfile deployhq.api.excludedfiles.replaceprojectexcludedfile update an excluded file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "excludedFiles.updateProjectExcludedFile",
+      "haystack": "excludedfiles.updateprojectexcludedfile deployhq.api.excludedfiles.updateprojectexcludedfile update an excluded file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "folders.createFolder",
+      "haystack": "folders.createfolder deployhq.api.folders.createfolder create a folder write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "folders.deleteFolder",
+      "haystack": "folders.deletefolder deployhq.api.folders.deletefolder delete a folder destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "folders.listFolders",
+      "haystack": "folders.listfolders deployhq.api.folders.listfolders list all folders read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "folders.replaceFolder",
+      "haystack": "folders.replacefolder deployhq.api.folders.replacefolder update a folder write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "folders.updateFolder",
+      "haystack": "folders.updatefolder deployhq.api.folders.updatefolder update a folder write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalBuildCommands.createGlobalBuildCommand",
+      "haystack": "globalbuildcommands.createglobalbuildcommand deployhq.api.globalbuildcommands.createglobalbuildcommand create new global build command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalBuildCommands.deleteGlobalBuildCommand",
+      "haystack": "globalbuildcommands.deleteglobalbuildcommand deployhq.api.globalbuildcommands.deleteglobalbuildcommand delete global build command destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalBuildCommands.getGlobalBuildCommand",
+      "haystack": "globalbuildcommands.getglobalbuildcommand deployhq.api.globalbuildcommands.getglobalbuildcommand view global build command read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalBuildCommands.listGlobalBuildCommands",
+      "haystack": "globalbuildcommands.listglobalbuildcommands deployhq.api.globalbuildcommands.listglobalbuildcommands list global build commands read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalBuildCommands.replaceGlobalBuildCommand",
+      "haystack": "globalbuildcommands.replaceglobalbuildcommand deployhq.api.globalbuildcommands.replaceglobalbuildcommand update global build command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalBuildCommands.updateGlobalBuildCommand",
+      "haystack": "globalbuildcommands.updateglobalbuildcommand deployhq.api.globalbuildcommands.updateglobalbuildcommand update global build command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalConfigFiles.createGlobalConfigFile",
+      "haystack": "globalconfigfiles.createglobalconfigfile deployhq.api.globalconfigfiles.createglobalconfigfile create new global config file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalConfigFiles.deleteGlobalConfigFile",
+      "haystack": "globalconfigfiles.deleteglobalconfigfile deployhq.api.globalconfigfiles.deleteglobalconfigfile delete global config file destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalConfigFiles.getGlobalConfigFile",
+      "haystack": "globalconfigfiles.getglobalconfigfile deployhq.api.globalconfigfiles.getglobalconfigfile view global config file read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalConfigFiles.listGlobalConfigFiles",
+      "haystack": "globalconfigfiles.listglobalconfigfiles deployhq.api.globalconfigfiles.listglobalconfigfiles list global config files read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalConfigFiles.replaceGlobalConfigFile",
+      "haystack": "globalconfigfiles.replaceglobalconfigfile deployhq.api.globalconfigfiles.replaceglobalconfigfile update global config file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalConfigFiles.updateGlobalConfigFile",
+      "haystack": "globalconfigfiles.updateglobalconfigfile deployhq.api.globalconfigfiles.updateglobalconfigfile update global config file write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalEnvironmentVariables.createGlobalEnvironmentVariable",
+      "haystack": "globalenvironmentvariables.createglobalenvironmentvariable deployhq.api.globalenvironmentvariables.createglobalenvironmentvariable create a global environment variable write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalEnvironmentVariables.deleteGlobalEnvironmentVariable",
+      "haystack": "globalenvironmentvariables.deleteglobalenvironmentvariable deployhq.api.globalenvironmentvariables.deleteglobalenvironmentvariable delete a global environment variable destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalEnvironmentVariables.getGlobalEnvironmentVariable",
+      "haystack": "globalenvironmentvariables.getglobalenvironmentvariable deployhq.api.globalenvironmentvariables.getglobalenvironmentvariable get a global environment variable read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalEnvironmentVariables.listGlobalEnvironmentVariables",
+      "haystack": "globalenvironmentvariables.listglobalenvironmentvariables deployhq.api.globalenvironmentvariables.listglobalenvironmentvariables list global environment variables read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalEnvironmentVariables.replaceGlobalEnvironmentVariable",
+      "haystack": "globalenvironmentvariables.replaceglobalenvironmentvariable deployhq.api.globalenvironmentvariables.replaceglobalenvironmentvariable update a global environment variable write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalEnvironmentVariables.updateGlobalEnvironmentVariable",
+      "haystack": "globalenvironmentvariables.updateglobalenvironmentvariable deployhq.api.globalenvironmentvariables.updateglobalenvironmentvariable update a global environment variable write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalServers.copyToProjectGlobalServer",
+      "haystack": "globalservers.copytoprojectglobalserver deployhq.api.globalservers.copytoprojectglobalserver copy a global server to a project write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalServers.createGlobalServer",
+      "haystack": "globalservers.createglobalserver deployhq.api.globalservers.createglobalserver create a global server write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalServers.deleteGlobalServer",
+      "haystack": "globalservers.deleteglobalserver deployhq.api.globalservers.deleteglobalserver delete a global server destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalServers.getGlobalServer",
+      "haystack": "globalservers.getglobalserver deployhq.api.globalservers.getglobalserver view a global server read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalServers.listGlobalServers",
+      "haystack": "globalservers.listglobalservers deployhq.api.globalservers.listglobalservers list global servers read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalServers.replaceGlobalServer",
+      "haystack": "globalservers.replaceglobalserver deployhq.api.globalservers.replaceglobalserver update a global server write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalServers.updateGlobalServer",
+      "haystack": "globalservers.updateglobalserver deployhq.api.globalservers.updateglobalserver update a global server write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalSshCommands.createGlobalSshCommand",
+      "haystack": "globalsshcommands.createglobalsshcommand deployhq.api.globalsshcommands.createglobalsshcommand create new global ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalSshCommands.deleteGlobalSshCommand",
+      "haystack": "globalsshcommands.deleteglobalsshcommand deployhq.api.globalsshcommands.deleteglobalsshcommand delete global ssh command destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalSshCommands.getGlobalSshCommand",
+      "haystack": "globalsshcommands.getglobalsshcommand deployhq.api.globalsshcommands.getglobalsshcommand view global ssh command read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalSshCommands.listGlobalSshCommands",
+      "haystack": "globalsshcommands.listglobalsshcommands deployhq.api.globalsshcommands.listglobalsshcommands list global ssh commands read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalSshCommands.replaceGlobalSshCommand",
+      "haystack": "globalsshcommands.replaceglobalsshcommand deployhq.api.globalsshcommands.replaceglobalsshcommand update global ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "globalSshCommands.updateGlobalSshCommand",
+      "haystack": "globalsshcommands.updateglobalsshcommand deployhq.api.globalsshcommands.updateglobalsshcommand update global ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "hostedResources.getHostedResource",
+      "haystack": "hostedresources.gethostedresource deployhq.api.hostedresources.gethostedresource show a hosted resource or hosted website read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "hostedResources.listHostedResources",
+      "haystack": "hostedresources.listhostedresources deployhq.api.hostedresources.listhostedresources list all hosted resources and hosted websites read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "hostedResources.retryProvisionHostedResourceRetryProvision",
+      "haystack": "hostedresources.retryprovisionhostedresourceretryprovision deployhq.api.hostedresources.retryprovisionhostedresourceretryprovision retry provisioning a hosted resource write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "hostedResources.syncHostedResourceSync",
+      "haystack": "hostedresources.synchostedresourcesync deployhq.api.hostedresources.synchostedresourcesync sync a hosted resource write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "integrations.createProjectIntegration",
+      "haystack": "integrations.createprojectintegration deployhq.api.integrations.createprojectintegration create an integration write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "integrations.deleteProjectIntegration",
+      "haystack": "integrations.deleteprojectintegration deployhq.api.integrations.deleteprojectintegration delete an integration destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "integrations.getProjectIntegrationById",
+      "haystack": "integrations.getprojectintegrationbyid deployhq.api.integrations.getprojectintegrationbyid get an integration read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "integrations.listProjectIntegrations",
+      "haystack": "integrations.listprojectintegrations deployhq.api.integrations.listprojectintegrations list integrations read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "integrations.replaceProjectIntegration",
+      "haystack": "integrations.replaceprojectintegration deployhq.api.integrations.replaceprojectintegration update an integration write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "integrations.updateProjectIntegration",
+      "haystack": "integrations.updateprojectintegration deployhq.api.integrations.updateprojectintegration update an integration write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "invoices.getAccountInvoice",
+      "haystack": "invoices.getaccountinvoice deployhq.api.invoices.getaccountinvoice download an invoice pdf read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "invoices.listAccountInvoices",
+      "haystack": "invoices.listaccountinvoices deployhq.api.invoices.listaccountinvoices list invoices read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "ipRanges.listIpRanges",
+      "haystack": "ipranges.listipranges deployhq.api.ipranges.listipranges list deployhq deployment ip ranges read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "languageVersions.listLanguageVersions",
+      "haystack": "languageversions.listlanguageversions deployhq.api.languageversions.listlanguageversions list available language versions read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "languageVersions.listProjectLanguageVersions",
+      "haystack": "languageversions.listprojectlanguageversions deployhq.api.languageversions.listprojectlanguageversions get project language versions read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "languageVersions.replaceProjectBuildConfigurationBuildLanguage",
+      "haystack": "languageversions.replaceprojectbuildconfigurationbuildlanguage deployhq.api.languageversions.replaceprojectbuildconfigurationbuildlanguage update language version write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "languageVersions.replaceProjectBuildLanguage",
+      "haystack": "languageversions.replaceprojectbuildlanguage deployhq.api.languageversions.replaceprojectbuildlanguage update language version write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "languageVersions.updateProjectBuildConfigurationBuildLanguage",
+      "haystack": "languageversions.updateprojectbuildconfigurationbuildlanguage deployhq.api.languageversions.updateprojectbuildconfigurationbuildlanguage update language version write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "languageVersions.updateProjectBuildLanguage",
+      "haystack": "languageversions.updateprojectbuildlanguage deployhq.api.languageversions.updateprojectbuildlanguage update language version write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "managedHosting.listManagedHostingRegions",
+      "haystack": "managedhosting.listmanagedhostingregions deployhq.api.managedhosting.listmanagedhostingregions list available regions read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "managedHosting.listManagedHostingSizes",
+      "haystack": "managedhosting.listmanagedhostingsizes deployhq.api.managedhosting.listmanagedhostingsizes list available sizes read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "networkAgents.createAgent",
+      "haystack": "networkagents.createagent deployhq.api.networkagents.createagent claim a network agent write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "networkAgents.deleteAgent",
+      "haystack": "networkagents.deleteagent deployhq.api.networkagents.deleteagent delete a network agent destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "networkAgents.listAgents",
+      "haystack": "networkagents.listagents deployhq.api.networkagents.listagents list network agents read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "networkAgents.replaceAgent",
+      "haystack": "networkagents.replaceagent deployhq.api.networkagents.replaceagent update a network agent write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "networkAgents.revokeAgent",
+      "haystack": "networkagents.revokeagent deployhq.api.networkagents.revokeagent revoke a network agent destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "networkAgents.updateAgent",
+      "haystack": "networkagents.updateagent deployhq.api.networkagents.updateagent update a network agent write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "packages.listPackages",
+      "haystack": "packages.listpackages deployhq.api.packages.listpackages list deployhq plans and prices read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "profile.getProfile",
+      "haystack": "profile.getprofile deployhq.api.profile.getprofile view your profile read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "profile.replaceProfile",
+      "haystack": "profile.replaceprofile deployhq.api.profile.replaceprofile update your profile write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "profile.updateProfile",
+      "haystack": "profile.updateprofile deployhq.api.profile.updateprofile update your profile write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.aiDeploymentOverviewProject",
+      "haystack": "projects.aideploymentoverviewproject deployhq.api.projects.aideploymentoverviewproject ai deployment overview write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.createProject",
+      "haystack": "projects.createproject deployhq.api.projects.createproject create a project write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.deleteProject",
+      "haystack": "projects.deleteproject deployhq.api.projects.deleteproject delete a project destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.getProject",
+      "haystack": "projects.getproject deployhq.api.projects.getproject view a project read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.listProjectInsights",
+      "haystack": "projects.listprojectinsights deployhq.api.projects.listprojectinsights get project deployment insights read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.listProjects",
+      "haystack": "projects.listprojects deployhq.api.projects.listprojects list all projects read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.regenerateKeyProjectRegenerateKey",
+      "haystack": "projects.regeneratekeyprojectregeneratekey deployhq.api.projects.regeneratekeyprojectregeneratekey regenerate project ssh key destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.replaceProject",
+      "haystack": "projects.replaceproject deployhq.api.projects.replaceproject update a project write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.starProject",
+      "haystack": "projects.starproject deployhq.api.projects.starproject toggle star/unstar on a project write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.statusBadgeStatusBadge",
+      "haystack": "projects.statusbadgestatusbadge deployhq.api.projects.statusbadgestatusbadge get deployment status badge read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.statusBadgeStatusBadgeByIdentifier",
+      "haystack": "projects.statusbadgestatusbadgebyidentifier deployhq.api.projects.statusbadgestatusbadgebyidentifier get deployment status badge read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.undeployedChangesProjectUndeployedChange",
+      "haystack": "projects.undeployedchangesprojectundeployedchange deployhq.api.projects.undeployedchangesprojectundeployedchange list undeployed commits for a project read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.updateProject",
+      "haystack": "projects.updateproject deployhq.api.projects.updateproject update a project write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "projects.uploadKeyProject",
+      "haystack": "projects.uploadkeyproject deployhq.api.projects.uploadkeyproject upload custom key write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "repositories.branchesProjectRepository",
+      "haystack": "repositories.branchesprojectrepository deployhq.api.repositories.branchesprojectrepository branches read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "repositories.commitInfoProjectRepository",
+      "haystack": "repositories.commitinfoprojectrepository deployhq.api.repositories.commitinfoprojectrepository commit info read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "repositories.createProjectRepository",
+      "haystack": "repositories.createprojectrepository deployhq.api.repositories.createprojectrepository create or replace the repository write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "repositories.getProjectRepository",
+      "haystack": "repositories.getprojectrepository deployhq.api.repositories.getprojectrepository view the repository read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "repositories.latestRevisionProjectRepository",
+      "haystack": "repositories.latestrevisionprojectrepository deployhq.api.repositories.latestrevisionprojectrepository latest revision read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "repositories.recentCommitsProjectRepository",
+      "haystack": "repositories.recentcommitsprojectrepository deployhq.api.repositories.recentcommitsprojectrepository recent commits read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "repositories.replaceProjectRepository",
+      "haystack": "repositories.replaceprojectrepository deployhq.api.repositories.replaceprojectrepository update the repository write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "repositories.updateProjectRepository",
+      "haystack": "repositories.updateprojectrepository deployhq.api.repositories.updateprojectrepository update the repository write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "scheduledDeployments.createProjectScheduledDeployment",
+      "haystack": "scheduleddeployments.createprojectscheduleddeployment deployhq.api.scheduleddeployments.createprojectscheduleddeployment create a scheduled deployment write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "scheduledDeployments.deleteProjectScheduledDeployment",
+      "haystack": "scheduleddeployments.deleteprojectscheduleddeployment deployhq.api.scheduleddeployments.deleteprojectscheduleddeployment cancel a scheduled deployment destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "scheduledDeployments.getProjectScheduledDeploymentById",
+      "haystack": "scheduleddeployments.getprojectscheduleddeploymentbyid deployhq.api.scheduleddeployments.getprojectscheduleddeploymentbyid get a scheduled deployment read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "scheduledDeployments.listProjectScheduledDeployments",
+      "haystack": "scheduleddeployments.listprojectscheduleddeployments deployhq.api.scheduleddeployments.listprojectscheduleddeployments list scheduled deployments read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "scheduledDeployments.replaceProjectScheduledDeployment",
+      "haystack": "scheduleddeployments.replaceprojectscheduleddeployment deployhq.api.scheduleddeployments.replaceprojectscheduleddeployment update a scheduled deployment write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "scheduledDeployments.updateProjectScheduledDeployment",
+      "haystack": "scheduleddeployments.updateprojectscheduleddeployment deployhq.api.scheduleddeployments.updateprojectscheduleddeployment update a scheduled deployment write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "security.createSecurityApiKey",
+      "haystack": "security.createsecurityapikey deployhq.api.security.createsecurityapikey create an api key write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "security.deleteSecurityApiKey",
+      "haystack": "security.deletesecurityapikey deployhq.api.security.deletesecurityapikey revoke an api key destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "serverGroups.createProjectServerGroup",
+      "haystack": "servergroups.createprojectservergroup deployhq.api.servergroups.createprojectservergroup create a server group write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "serverGroups.deleteProjectServerGroup",
+      "haystack": "servergroups.deleteprojectservergroup deployhq.api.servergroups.deleteprojectservergroup delete a server group destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "serverGroups.getProjectServerGroupById",
+      "haystack": "servergroups.getprojectservergroupbyid deployhq.api.servergroups.getprojectservergroupbyid get a server group read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "serverGroups.listProjectServerGroups",
+      "haystack": "servergroups.listprojectservergroups deployhq.api.servergroups.listprojectservergroups list server groups read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "serverGroups.replaceProjectServerGroup",
+      "haystack": "servergroups.replaceprojectservergroup deployhq.api.servergroups.replaceprojectservergroup update a server group write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "serverGroups.updateProjectServerGroup",
+      "haystack": "servergroups.updateprojectservergroup deployhq.api.servergroups.updateprojectservergroup update a server group write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "servers.createProjectServer",
+      "haystack": "servers.createprojectserver deployhq.api.servers.createprojectserver create a server write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "servers.deleteProjectServer",
+      "haystack": "servers.deleteprojectserver deployhq.api.servers.deleteprojectserver delete a server destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "servers.getProjectServerById",
+      "haystack": "servers.getprojectserverbyid deployhq.api.servers.getprojectserverbyid view a server read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "servers.listProjectServers",
+      "haystack": "servers.listprojectservers deployhq.api.servers.listprojectservers list all servers read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "servers.replaceProjectServer",
+      "haystack": "servers.replaceprojectserver deployhq.api.servers.replaceprojectserver update a server write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "servers.resetHostKeyProjectServer",
+      "haystack": "servers.resethostkeyprojectserver deployhq.api.servers.resethostkeyprojectserver reset host key destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "servers.serverMetricsProjectServerServerMetric",
+      "haystack": "servers.servermetricsprojectserverservermetric deployhq.api.servers.servermetricsprojectserverservermetric get server metrics read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "servers.updateProjectServer",
+      "haystack": "servers.updateprojectserver deployhq.api.servers.updateprojectserver update a server write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "signup.createSignup",
+      "haystack": "signup.createsignup deployhq.api.signup.createsignup create a new deployhq account destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.createProjectCommand",
+      "haystack": "sshcommands.createprojectcommand deployhq.api.sshcommands.createprojectcommand create an ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.createProjectSshCommand",
+      "haystack": "sshcommands.createprojectsshcommand deployhq.api.sshcommands.createprojectsshcommand create an ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.deleteProjectCommand",
+      "haystack": "sshcommands.deleteprojectcommand deployhq.api.sshcommands.deleteprojectcommand delete an ssh command destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.deleteProjectSshCommand",
+      "haystack": "sshcommands.deleteprojectsshcommand deployhq.api.sshcommands.deleteprojectsshcommand delete an ssh command destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.getProjectCommandById",
+      "haystack": "sshcommands.getprojectcommandbyid deployhq.api.sshcommands.getprojectcommandbyid get an ssh command read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.getProjectSshCommandById",
+      "haystack": "sshcommands.getprojectsshcommandbyid deployhq.api.sshcommands.getprojectsshcommandbyid get an ssh command read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.linkGlobalProjectCommandLinkGlobal",
+      "haystack": "sshcommands.linkglobalprojectcommandlinkglobal deployhq.api.sshcommands.linkglobalprojectcommandlinkglobal link a global ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.listProjectCommands",
+      "haystack": "sshcommands.listprojectcommands deployhq.api.sshcommands.listprojectcommands list ssh commands read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.listProjectSshCommands",
+      "haystack": "sshcommands.listprojectsshcommands deployhq.api.sshcommands.listprojectsshcommands list ssh commands read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.replaceProjectCommand",
+      "haystack": "sshcommands.replaceprojectcommand deployhq.api.sshcommands.replaceprojectcommand update an ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.replaceProjectSshCommand",
+      "haystack": "sshcommands.replaceprojectsshcommand deployhq.api.sshcommands.replaceprojectsshcommand update an ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.unlinkGlobalProjectCommandUnlinkGlobal",
+      "haystack": "sshcommands.unlinkglobalprojectcommandunlinkglobal deployhq.api.sshcommands.unlinkglobalprojectcommandunlinkglobal unlink a global ssh command destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.updateProjectCommand",
+      "haystack": "sshcommands.updateprojectcommand deployhq.api.sshcommands.updateprojectcommand update an ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshCommands.updateProjectSshCommand",
+      "haystack": "sshcommands.updateprojectsshcommand deployhq.api.sshcommands.updateprojectsshcommand update an ssh command write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshKeys.createSshKey",
+      "haystack": "sshkeys.createsshkey deployhq.api.sshkeys.createsshkey create an ssh key write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshKeys.deleteSshKey",
+      "haystack": "sshkeys.deletesshkey deployhq.api.sshkeys.deletesshkey delete an ssh key destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshKeys.downloadPrivateKeySshKeyDownloadPrivateKey",
+      "haystack": "sshkeys.downloadprivatekeysshkeydownloadprivatekey deployhq.api.sshkeys.downloadprivatekeysshkeydownloadprivatekey download private key read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "sshKeys.listSshKeys",
+      "haystack": "sshkeys.listsshkeys deployhq.api.sshkeys.listsshkeys list all ssh keys read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "teams.createTeam",
+      "haystack": "teams.createteam deployhq.api.teams.createteam create a team write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "teams.deleteTeam",
+      "haystack": "teams.deleteteam deployhq.api.teams.deleteteam delete a team destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "teams.getTeam",
+      "haystack": "teams.getteam deployhq.api.teams.getteam view a team read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "teams.listTeams",
+      "haystack": "teams.listteams deployhq.api.teams.listteams list teams read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "teams.replaceTeam",
+      "haystack": "teams.replaceteam deployhq.api.teams.replaceteam update a team write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "teams.updateTeam",
+      "haystack": "teams.updateteam deployhq.api.teams.updateteam update a team write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "templates.createTemplate",
+      "haystack": "templates.createtemplate deployhq.api.templates.createtemplate create a template write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "templates.deleteTemplate",
+      "haystack": "templates.deletetemplate deployhq.api.templates.deletetemplate delete a template destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "templates.listTemplates",
+      "haystack": "templates.listtemplates deployhq.api.templates.listtemplates list templates read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "templates.publicTemplatesTemplate",
+      "haystack": "templates.publictemplatestemplate deployhq.api.templates.publictemplatestemplate list public templates read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "templates.replaceTemplate",
+      "haystack": "templates.replacetemplate deployhq.api.templates.replacetemplate update a template write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "templates.showPublicTemplateTemplatePublic",
+      "haystack": "templates.showpublictemplatetemplatepublic deployhq.api.templates.showpublictemplatetemplatepublic get a public template read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "templates.updateTemplate",
+      "haystack": "templates.updatetemplate deployhq.api.templates.updatetemplate update a template write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "testAccess.createProjectServerTestAccess",
+      "haystack": "testaccess.createprojectservertestaccess deployhq.api.testaccess.createprojectservertestaccess run test access write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "testAccess.createProjectTestAccess",
+      "haystack": "testaccess.createprojecttestaccess deployhq.api.testaccess.createprojecttestaccess run test access write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "testAccess.getProjectTestAccess",
+      "haystack": "testaccess.getprojecttestaccess deployhq.api.testaccess.getprojecttestaccess get test access results read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "users.createUser",
+      "haystack": "users.createuser deployhq.api.users.createuser invite a user destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "users.deleteUser",
+      "haystack": "users.deleteuser deployhq.api.users.deleteuser remove a user destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "users.getUser",
+      "haystack": "users.getuser deployhq.api.users.getuser view a user read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "users.listUsers",
+      "haystack": "users.listusers deployhq.api.users.listusers list users read"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "users.replaceUser",
+      "haystack": "users.replaceuser deployhq.api.users.replaceuser update a user write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "users.resendInvitationUserResendInvitation",
+      "haystack": "users.resendinvitationuserresendinvitation deployhq.api.users.resendinvitationuserresendinvitation resend invitation destructive"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "users.updateUser",
+      "haystack": "users.updateuser deployhq.api.users.updateuser update a user write"
+    },
+    {
+      "pluginId": "deployhq",
+      "kind": "api",
+      "shortPath": "zones.listZones",
+      "haystack": "zones.listzones deployhq.api.zones.listzones list available deployment zones read"
     },
     {
       "pluginId": "desktime",
@@ -53449,6 +55726,540 @@
       "kind": "api",
       "shortPath": "user.getDocumentTypes",
       "haystack": "user.getdocumenttypes docsumo.api.user.getdocumenttypes get user account details and available document types read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.attachments.create.post",
+      "haystack": "documents.attachments.create.post documenso.api.documents.attachments.create.post post /document/attachment/create — [deprecated] create attachment. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.attachments.delete.post",
+      "haystack": "documents.attachments.delete.post documenso.api.documents.attachments.delete.post post /document/attachment/delete — [deprecated] delete attachment. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.attachments.find.get",
+      "haystack": "documents.attachments.find.get documenso.api.documents.attachments.find.get get /document/attachment — [deprecated] find attachments. documenso's server currently routes this path to the get-document handler and answers 400; use envelopes.attachments.find with the document's envelopeid instead. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.attachments.update.post",
+      "haystack": "documents.attachments.update.post documenso.api.documents.attachments.update.post post /document/attachment/update — [deprecated] update attachment. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.create.post",
+      "haystack": "documents.create.post documenso.api.documents.create.post post /document/create — [deprecated] create document. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.createV0.post",
+      "haystack": "documents.createv0.post documenso.api.documents.createv0.post post /document/create/beta — [deprecated] create document. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.delete.post",
+      "haystack": "documents.delete.post documenso.api.documents.delete.post post /document/delete — [deprecated] delete document. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.distribute.post",
+      "haystack": "documents.distribute.post documenso.api.documents.distribute.post post /document/distribute — [deprecated] distribute document. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.documentDownload.get",
+      "haystack": "documents.documentdownload.get documenso.api.documents.documentdownload.get get /document/{documentid}/download-beta — [deprecated] download document (beta). read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.download.get",
+      "haystack": "documents.download.get documenso.api.documents.download.get get /document/{documentid}/download — [deprecated] download document. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.duplicate.post",
+      "haystack": "documents.duplicate.post documenso.api.documents.duplicate.post post /document/duplicate — [deprecated] duplicate document. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.fields.create.post",
+      "haystack": "documents.fields.create.post documenso.api.documents.fields.create.post post /document/field/create — [deprecated] create document field. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.fields.createMany.post",
+      "haystack": "documents.fields.createmany.post documenso.api.documents.fields.createmany.post post /document/field/create-many — [deprecated] create document fields. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.fields.delete.post",
+      "haystack": "documents.fields.delete.post documenso.api.documents.fields.delete.post post /document/field/delete — [deprecated] delete document field. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.fields.get.get",
+      "haystack": "documents.fields.get.get documenso.api.documents.fields.get.get get /document/field/{fieldid} — [deprecated] get document field. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.fields.update.post",
+      "haystack": "documents.fields.update.post documenso.api.documents.fields.update.post post /document/field/update — [deprecated] update document field. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.fields.updateMany.post",
+      "haystack": "documents.fields.updatemany.post documenso.api.documents.fields.updatemany.post post /document/field/update-many — [deprecated] update document fields. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.find.get",
+      "haystack": "documents.find.get documenso.api.documents.find.get get /document — [deprecated] find documents. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.get.get",
+      "haystack": "documents.get.get documenso.api.documents.get.get get /document/{documentid} — [deprecated] get document. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.getMany.post",
+      "haystack": "documents.getmany.post documenso.api.documents.getmany.post post /document/get-many — [deprecated] get multiple documents. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.recipients.create.post",
+      "haystack": "documents.recipients.create.post documenso.api.documents.recipients.create.post post /document/recipient/create — [deprecated] create document recipient. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.recipients.createMany.post",
+      "haystack": "documents.recipients.createmany.post documenso.api.documents.recipients.createmany.post post /document/recipient/create-many — [deprecated] create document recipients. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.recipients.delete.post",
+      "haystack": "documents.recipients.delete.post documenso.api.documents.recipients.delete.post post /document/recipient/delete — [deprecated] delete document recipient. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.recipients.get.get",
+      "haystack": "documents.recipients.get.get documenso.api.documents.recipients.get.get get /document/recipient/{recipientid} — [deprecated] get document recipient. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.recipients.update.post",
+      "haystack": "documents.recipients.update.post documenso.api.documents.recipients.update.post post /document/recipient/update — [deprecated] update document recipient. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.recipients.updateMany.post",
+      "haystack": "documents.recipients.updatemany.post documenso.api.documents.recipients.updatemany.post post /document/recipient/update-many — [deprecated] update document recipients. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.redistribute.post",
+      "haystack": "documents.redistribute.post documenso.api.documents.redistribute.post post /document/redistribute — [deprecated] redistribute document. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "documents.update.post",
+      "haystack": "documents.update.post documenso.api.documents.update.post post /document/update — [deprecated] update document. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "embedding.presignCreateEmbeddingPresignToken.post",
+      "haystack": "embedding.presigncreateembeddingpresigntoken.post documenso.api.embedding.presigncreateembeddingpresigntoken.post post /embedding/create-presign-token — create embedding presign token. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "embedding.presignVerifyEmbeddingPresignToken.post",
+      "haystack": "embedding.presignverifyembeddingpresigntoken.post documenso.api.embedding.presignverifyembeddingpresigntoken.post post /embedding/verify-presign-token — verify embedding presign token. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.attachments.create.post",
+      "haystack": "envelopes.attachments.create.post documenso.api.envelopes.attachments.create.post post /envelope/attachment/create — create attachment. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.attachments.delete.post",
+      "haystack": "envelopes.attachments.delete.post documenso.api.envelopes.attachments.delete.post post /envelope/attachment/delete — delete attachment. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.attachments.find.get",
+      "haystack": "envelopes.attachments.find.get documenso.api.envelopes.attachments.find.get get /envelope/attachment — find attachments. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.attachments.update.post",
+      "haystack": "envelopes.attachments.update.post documenso.api.envelopes.attachments.update.post post /envelope/attachment/update — update attachment. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.auditLogDownloadPdf.get",
+      "haystack": "envelopes.auditlogdownloadpdf.get documenso.api.envelopes.auditlogdownloadpdf.get get /envelope/{envelopeid}/audit-log/download — download envelope audit log pdf. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.auditLogFind.get",
+      "haystack": "envelopes.auditlogfind.get documenso.api.envelopes.auditlogfind.get get /envelope/{envelopeid}/audit-log — get envelope audit logs. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.cancel.post",
+      "haystack": "envelopes.cancel.post documenso.api.envelopes.cancel.post post /envelope/cancel — cancel envelope. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.certificateDownloadPdf.get",
+      "haystack": "envelopes.certificatedownloadpdf.get documenso.api.envelopes.certificatedownloadpdf.get get /envelope/{envelopeid}/certificate/download — download envelope certificate pdf. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.create.post",
+      "haystack": "envelopes.create.post documenso.api.envelopes.create.post post /envelope/create — create envelope. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.delete.post",
+      "haystack": "envelopes.delete.post documenso.api.envelopes.delete.post post /envelope/delete — delete envelope. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.distribute.post",
+      "haystack": "envelopes.distribute.post documenso.api.envelopes.distribute.post post /envelope/distribute — distribute envelope. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.duplicate.post",
+      "haystack": "envelopes.duplicate.post documenso.api.envelopes.duplicate.post post /envelope/duplicate — duplicate envelope. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.fields.createMany.post",
+      "haystack": "envelopes.fields.createmany.post documenso.api.envelopes.fields.createmany.post post /envelope/field/create-many — create envelope fields. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.fields.delete.post",
+      "haystack": "envelopes.fields.delete.post documenso.api.envelopes.fields.delete.post post /envelope/field/delete — delete envelope field. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.fields.get.get",
+      "haystack": "envelopes.fields.get.get documenso.api.envelopes.fields.get.get get /envelope/field/{fieldid} — get envelope field. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.fields.updateMany.post",
+      "haystack": "envelopes.fields.updatemany.post documenso.api.envelopes.fields.updatemany.post post /envelope/field/update-many — update envelope fields. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.find.get",
+      "haystack": "envelopes.find.get documenso.api.envelopes.find.get get /envelope — find envelopes. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.get.get",
+      "haystack": "envelopes.get.get documenso.api.envelopes.get.get get /envelope/{envelopeid} — get envelope. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.getMany.post",
+      "haystack": "envelopes.getmany.post documenso.api.envelopes.getmany.post post /envelope/get-many — get multiple envelopes. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.items.createMany.post",
+      "haystack": "envelopes.items.createmany.post documenso.api.envelopes.items.createmany.post post /envelope/item/create-many — create envelope items. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.items.delete.post",
+      "haystack": "envelopes.items.delete.post documenso.api.envelopes.items.delete.post post /envelope/item/delete — delete envelope item. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.items.download.get",
+      "haystack": "envelopes.items.download.get documenso.api.envelopes.items.download.get get /envelope/item/{envelopeitemid}/download — download an envelope item. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.items.updateMany.post",
+      "haystack": "envelopes.items.updatemany.post documenso.api.envelopes.items.updatemany.post post /envelope/item/update-many — update envelope items. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.recipients.createMany.post",
+      "haystack": "envelopes.recipients.createmany.post documenso.api.envelopes.recipients.createmany.post post /envelope/recipient/create-many — create envelope recipients. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.recipients.delete.post",
+      "haystack": "envelopes.recipients.delete.post documenso.api.envelopes.recipients.delete.post post /envelope/recipient/delete — delete envelope recipient. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.recipients.get.get",
+      "haystack": "envelopes.recipients.get.get documenso.api.envelopes.recipients.get.get get /envelope/recipient/{recipientid} — get envelope recipient. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.recipients.recipientRejectOnBehalfOf.post",
+      "haystack": "envelopes.recipients.recipientrejectonbehalfof.post documenso.api.envelopes.recipients.recipientrejectonbehalfof.post post /envelope/recipient/{recipientid}/reject — reject envelope recipient on behalf of. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.recipients.updateMany.post",
+      "haystack": "envelopes.recipients.updatemany.post documenso.api.envelopes.recipients.updatemany.post post /envelope/recipient/update-many — update envelope recipients. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.redistribute.post",
+      "haystack": "envelopes.redistribute.post documenso.api.envelopes.redistribute.post post /envelope/redistribute — redistribute envelope. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.update.post",
+      "haystack": "envelopes.update.post documenso.api.envelopes.update.post post /envelope/update — update envelope. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "envelopes.use.post",
+      "haystack": "envelopes.use.post documenso.api.envelopes.use.post post /envelope/use — use envelope. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "folders.create.post",
+      "haystack": "folders.create.post documenso.api.folders.create.post post /folder/create — create new folder. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "folders.delete.post",
+      "haystack": "folders.delete.post documenso.api.folders.delete.post post /folder/delete — delete folder. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "folders.find.get",
+      "haystack": "folders.find.get documenso.api.folders.find.get get /folder — find folders. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "folders.update.post",
+      "haystack": "folders.update.post documenso.api.folders.update.post post /folder/update — update folder. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.create.post",
+      "haystack": "templates.create.post documenso.api.templates.create.post post /template/create — [deprecated] create template. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.createTemplateTemporary.post",
+      "haystack": "templates.createtemplatetemporary.post documenso.api.templates.createtemplatetemporary.post post /template/create/beta — [deprecated] create template. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.delete.post",
+      "haystack": "templates.delete.post documenso.api.templates.delete.post post /template/delete — [deprecated] delete template. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.directLinks.create.post",
+      "haystack": "templates.directlinks.create.post documenso.api.templates.directlinks.create.post post /template/direct/create — [deprecated] create direct link. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.directLinks.delete.post",
+      "haystack": "templates.directlinks.delete.post documenso.api.templates.directlinks.delete.post post /template/direct/delete — [deprecated] delete direct link. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.directLinks.toggle.post",
+      "haystack": "templates.directlinks.toggle.post documenso.api.templates.directlinks.toggle.post post /template/direct/toggle — [deprecated] toggle direct link. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.duplicate.post",
+      "haystack": "templates.duplicate.post documenso.api.templates.duplicate.post post /template/duplicate — [deprecated] duplicate template. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.fields.create.post",
+      "haystack": "templates.fields.create.post documenso.api.templates.fields.create.post post /template/field/create — [deprecated] create template field. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.fields.createMany.post",
+      "haystack": "templates.fields.createmany.post documenso.api.templates.fields.createmany.post post /template/field/create-many — [deprecated] create template fields. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.fields.delete.post",
+      "haystack": "templates.fields.delete.post documenso.api.templates.fields.delete.post post /template/field/delete — [deprecated] delete template field. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.fields.get.get",
+      "haystack": "templates.fields.get.get documenso.api.templates.fields.get.get get /template/field/{fieldid} — [deprecated] get template field. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.fields.update.post",
+      "haystack": "templates.fields.update.post documenso.api.templates.fields.update.post post /template/field/update — [deprecated] update template field. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.fields.updateMany.post",
+      "haystack": "templates.fields.updatemany.post documenso.api.templates.fields.updatemany.post post /template/field/update-many — [deprecated] update template fields. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.find.get",
+      "haystack": "templates.find.get documenso.api.templates.find.get get /template — [deprecated] find templates. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.get.get",
+      "haystack": "templates.get.get documenso.api.templates.get.get get /template/{templateid} — [deprecated] get template. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.getMany.post",
+      "haystack": "templates.getmany.post documenso.api.templates.getmany.post post /template/get-many — [deprecated] get multiple templates. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.recipients.create.post",
+      "haystack": "templates.recipients.create.post documenso.api.templates.recipients.create.post post /template/recipient/create — [deprecated] create template recipient. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.recipients.createMany.post",
+      "haystack": "templates.recipients.createmany.post documenso.api.templates.recipients.createmany.post post /template/recipient/create-many — [deprecated] create template recipients. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.recipients.delete.post",
+      "haystack": "templates.recipients.delete.post documenso.api.templates.recipients.delete.post post /template/recipient/delete — [deprecated] delete template recipient. destructive"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.recipients.get.get",
+      "haystack": "templates.recipients.get.get documenso.api.templates.recipients.get.get get /template/recipient/{recipientid} — [deprecated] get template recipient. read"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.recipients.update.post",
+      "haystack": "templates.recipients.update.post documenso.api.templates.recipients.update.post post /template/recipient/update — [deprecated] update template recipient. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.recipients.updateMany.post",
+      "haystack": "templates.recipients.updatemany.post documenso.api.templates.recipients.updatemany.post post /template/recipient/update-many — [deprecated] update template recipients. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.update.post",
+      "haystack": "templates.update.post documenso.api.templates.update.post post /template/update — [deprecated] update template. write"
+    },
+    {
+      "pluginId": "documenso",
+      "kind": "api",
+      "shortPath": "templates.use.post",
+      "haystack": "templates.use.post documenso.api.templates.use.post post /template/use — [deprecated] use template. destructive"
     },
     {
       "pluginId": "docupost",
@@ -64737,6 +67548,78 @@
       "haystack": "people.search fundable.api.people.search fuzzy person lookup by name or identifier read"
     },
     {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "agent.generate",
+      "haystack": "agent.generate gamma.api.agent.generate start a gamma 5 agent generation from one brief, with a theme, template, quality preset and up to 10 source urls. spends credits destructive"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "agent.get",
+      "haystack": "agent.get gamma.api.agent.get where an agent generation stands, with the same terminal states as a classic one read"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "exports.get",
+      "haystack": "exports.get gamma.api.exports.get where an export stands. `completed` carries a download url that works for anyone holding it, for about a week read"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "exports.start",
+      "haystack": "exports.start gamma.api.exports.start start an export of an existing gamma to pdf, pptx or png, returning an `exportid`. a png export is a zip of one image per card write"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "folders.list",
+      "haystack": "folders.list gamma.api.folders.list the folders the caller can see. some are view-only, and placing a gamma with `folderid` needs edit access read"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "gammas.archive",
+      "haystack": "gammas.archive gamma.api.gammas.archive archive a gamma. idempotent, and reversible from the gamma app, so it is not destructive write"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "gammas.delete",
+      "haystack": "gammas.delete gamma.api.gammas.delete delete a gamma permanently. needs a workspace admin role destructive"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "gammas.get",
+      "haystack": "gammas.get gamma.api.gammas.get one gamma’s title, author, folder, theme, archive state and thumbnail read"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "gammas.search",
+      "haystack": "gammas.search gamma.api.gammas.search full-text search over the gammas the caller can read. needs `q` or a filter (`createdby`, `updatedafter`, `updatedbefore`) read"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "generations.create",
+      "haystack": "generations.create gamma.api.generations.create start a classic generation from text or a `pages` array, at once returning a `generationid` to poll. spends credits. use it for webpages and multi-page gammas; the agent route covers a single new presentation destructive"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "generations.get",
+      "haystack": "generations.get gamma.api.generations.get where a classic generation stands: `pending` is not final, `completed` carries the gamma id, url and any export url, `failed` carries the error read"
+    },
+    {
+      "pluginId": "gamma",
+      "kind": "api",
+      "shortPath": "themes.list",
+      "haystack": "themes.list gamma.api.themes.list workspace and official themes, with the id a generation takes read"
+    },
+    {
       "pluginId": "gemini",
       "kind": "api",
       "shortPath": "content.countTokens",
@@ -64783,6 +67666,54 @@
       "kind": "api",
       "shortPath": "videos.waitForVideo",
       "haystack": "videos.waitforvideo gemini.api.videos.waitforvideo poll a veo video generation operation until it completes and return the generated video write"
+    },
+    {
+      "pluginId": "genderapi",
+      "kind": "api",
+      "shortPath": "account.stats",
+      "haystack": "account.stats genderapi.api.account.stats read the remaining request count and whether the monthly limit is used up read"
+    },
+    {
+      "pluginId": "genderapi",
+      "kind": "api",
+      "shortPath": "countryOfOrigin.get",
+      "haystack": "countryoforigin.get genderapi.api.countryoforigin.get find the countries a first name most likely comes from, each with a probability score read"
+    },
+    {
+      "pluginId": "genderapi",
+      "kind": "api",
+      "shortPath": "email.lookup",
+      "haystack": "email.lookup genderapi.api.email.lookup extract the first and last name from an email address and look up the gender behind the first name read"
+    },
+    {
+      "pluginId": "genderapi",
+      "kind": "api",
+      "shortPath": "fullName.split",
+      "haystack": "fullname.split genderapi.api.fullname.split split a full name into first and last name, then look up the gender behind the first name read"
+    },
+    {
+      "pluginId": "genderapi",
+      "kind": "api",
+      "shortPath": "lookup.multi",
+      "haystack": "lookup.multi genderapi.api.lookup.multi look up up to 100 names in one request, answered in the same order, with an optional country per name read"
+    },
+    {
+      "pluginId": "genderapi",
+      "kind": "api",
+      "shortPath": "lookup.name",
+      "haystack": "lookup.name genderapi.api.lookup.name look up the gender behind one first name, with the sample count and the accuracy behind the answer. a country, locale or ip localizes it, which changes the answer for names such as andrea read"
+    },
+    {
+      "pluginId": "genderize",
+      "kind": "api",
+      "shortPath": "batch.names",
+      "haystack": "batch.names genderize.api.batch.names predict gender for several names at once, answered in the same order. a batch counts each name against the monthly quota, and `country_id` applies to every name in it read"
+    },
+    {
+      "pluginId": "genderize",
+      "kind": "api",
+      "shortPath": "name.predict",
+      "haystack": "name.predict genderize.api.name.predict predict the gender behind a first or full name, with a confidence score and the number of records behind it. scoping by country changes the answer for names such as kim or andrea read"
     },
     {
       "pluginId": "giphy",
@@ -78981,6 +81912,144 @@
       "haystack": "search.post keenable.api.search.post search the web and return ranked results (realtime or pro mode) read"
     },
     {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get keyword.api.account.get the token’s own user, optionally with the subscription block read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "keywords.add",
+      "haystack": "keywords.add keyword.api.keywords.add add keywords to a project, each with its domain, region and language. adding a keyword already tracked returns the existing one write"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "keywords.bulkDelete",
+      "haystack": "keywords.bulkdelete keyword.api.keywords.bulkdelete delete many keywords from one project in a single call; their history is lost destructive"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "keywords.bulkUpdate",
+      "haystack": "keywords.bulkupdate keyword.api.keywords.bulkupdate apply the same domain, region, tags or status to many keywords in one project write"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "keywords.delete",
+      "haystack": "keywords.delete keyword.api.keywords.delete delete one keyword and its ranking history; it cannot be restored destructive"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "keywords.get",
+      "haystack": "keywords.get keyword.api.keywords.get one keyword with its rank, metrics and rank history read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "keywords.list",
+      "haystack": "keywords.list keyword.api.keywords.list every keyword in a project or group with its rank, best rank, search volume and trend, read as of a given day read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "keywords.refresh",
+      "haystack": "keywords.refresh keyword.api.keywords.refresh queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. the whole request is refused if the quota would be exceeded destructive"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "keywords.update",
+      "haystack": "keywords.update keyword.api.keywords.update change a keyword’s domain, region, tags, status, baseline or favourite flag write"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "metrics.competitors",
+      "haystack": "metrics.competitors keyword.api.metrics.competitors the top competing urls for one keyword in a date window, with each result’s type and position read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "metrics.get",
+      "haystack": "metrics.get keyword.api.metrics.get keyword movement for a project, group or tag: how many sit in each top-n bucket and how that changed day over day read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "mindshare.history",
+      "haystack": "mindshare.history keyword.api.mindshare.history share of voice over a date window, read from keyword’s cache read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "projects.archive",
+      "haystack": "projects.archive keyword.api.projects.archive archive a project or subproject: it stops updating until `projects.restore` brings it back. keyword refuses to archive the account’s only active top-level project write"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create keyword.api.projects.create create a project, or a subproject from a `parent[sub]child` name; the parent must exist first write"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete keyword.api.projects.delete delete a project with every keyword and its ranking history; it cannot be restored destructive"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get keyword.api.projects.get one project or subproject with its tags and counts read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list keyword.api.projects.list every project and subproject with its tags and keyword counts; a subproject is named `parent[sub]child` read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "projects.restore",
+      "haystack": "projects.restore keyword.api.projects.restore undo an archive, bringing the project and its keywords back write"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "rankChart.get",
+      "haystack": "rankchart.get keyword.api.rankchart.get daily rank history for a set of keywords over a number of days; keyword refuses a call covering more than 400,000 keyword-days read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "rankingUrls.list",
+      "haystack": "rankingurls.list keyword.api.rankingurls.list the pages that rank best for a project, with their average position and total search volume, 10 to a page read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "regions.list",
+      "haystack": "regions.list keyword.api.regions.list the google regions a project tracks, with each one’s language and keyword count read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "sharing.get",
+      "haystack": "sharing.get keyword.api.sharing.get a project’s shared-report settings: whether the share link is on, its hash, whether it needs a password, and what the report shows read"
+    },
+    {
+      "pluginId": "keyword",
+      "kind": "api",
+      "shortPath": "sharing.update",
+      "haystack": "sharing.update keyword.api.sharing.update turn a project’s share link on or off, set or clear its password, or toggle what the shared report shows. everything except the on/off switch needs keyword’s white-label permission write"
+    },
+    {
       "pluginId": "kibana",
       "kind": "api",
       "shortPath": "alerting.createRule",
@@ -79309,6 +82378,114 @@
       "kind": "api",
       "shortPath": "status.get",
       "haystack": "status.get kibana.api.status.get retrieve health and version status of the kibana instance read"
+    },
+    {
+      "pluginId": "kickbox",
+      "kind": "api",
+      "shortPath": "verify.disposable",
+      "haystack": "verify.disposable kickbox.api.verify.disposable check whether an address or domain is a known disposable one. free, and answered by kickbox’s open service read"
+    },
+    {
+      "pluginId": "kickbox",
+      "kind": "api",
+      "shortPath": "verify.verify",
+      "haystack": "verify.verify kickbox.api.verify.verify verify one address and get its verdict (deliverable, undeliverable, risky, unknown), the reason, role and free flags, a typo suggestion and a sendex quality score. spends one verification credit read"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get kit.api.account.get the account and its user: plan, primary address, timezone and the sending addresses with their verification and dmarc status read"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "customFields.create",
+      "haystack": "customfields.create kit.api.customfields.create create a custom field; kit derives its `key` from the label write"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "customFields.list",
+      "haystack": "customfields.list kit.api.customfields.list every custom field with the `key` a subscriber’s `fields` map uses read"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "customFields.update",
+      "haystack": "customfields.update kit.api.customfields.update change a custom field’s label write"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "forms.list",
+      "haystack": "forms.list kit.api.forms.list forms by status, cursor-paged, optionally with each one’s subscriber count read"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "forms.subscribe",
+      "haystack": "forms.subscribe kit.api.forms.subscribe add an existing subscriber to a form, which applies the form’s incentive and records when they were added. create the subscriber first destructive"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "subscribers.create",
+      "haystack": "subscribers.create kit.api.subscribers.create create a subscriber, or return the existing one for an address already on the list. unknown custom field keys are ignored and named in `warnings` write"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "subscribers.get",
+      "haystack": "subscribers.get kit.api.subscribers.get one subscriber with their custom field values and location read"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "subscribers.list",
+      "haystack": "subscribers.list kit.api.subscribers.list subscribers by state, address or date, cursor-paged, with optional attribution, tags and location read"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "subscribers.unsubscribe",
+      "haystack": "subscribers.unsubscribe kit.api.subscribers.unsubscribe unsubscribe a subscriber, which stops every future send to them; re-subscribing takes their own action, not a call destructive"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "subscribers.update",
+      "haystack": "subscribers.update kit.api.subscribers.update change a subscriber’s address, first name or custom field values write"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "tags.create",
+      "haystack": "tags.create kit.api.tags.create create a tag, or return the existing one when the name is taken write"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list kit.api.tags.list every tag, optionally with its active subscriber count read"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "tags.tagSubscriber",
+      "haystack": "tags.tagsubscriber kit.api.tags.tagsubscriber add a tag to an existing subscriber, found by email address write"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "tags.untagSubscriber",
+      "haystack": "tags.untagsubscriber kit.api.tags.untagsubscriber remove a tag from a subscriber, found by email address write"
+    },
+    {
+      "pluginId": "kit",
+      "kind": "api",
+      "shortPath": "tags.update",
+      "haystack": "tags.update kit.api.tags.update rename a tag write"
     },
     {
       "pluginId": "klaviyo",
@@ -79867,6 +83044,90 @@
       "kind": "api",
       "shortPath": "records.update",
       "haystack": "records.update knack.api.records.update update fields on an existing record write"
+    },
+    {
+      "pluginId": "kofi",
+      "kind": "api",
+      "shortPath": "webhooks.listEvents",
+      "haystack": "webhooks.listevents kofi.api.webhooks.listevents list the payment types ko-fi can deliver, from its webhook reference; makes no api call, because ko-fi has no rest api read"
+    },
+    {
+      "pluginId": "kofi",
+      "kind": "webhook",
+      "shortPath": "commission",
+      "haystack": "commission kofi.webhooks.commission a paid commission. ko-fi documents the type but publishes no example payload."
+    },
+    {
+      "pluginId": "kofi",
+      "kind": "webhook",
+      "shortPath": "donation",
+      "haystack": "donation kofi.webhooks.donation a tip or donation. `amount` is a decimal string, and `message` holds the note left with it."
+    },
+    {
+      "pluginId": "kofi",
+      "kind": "webhook",
+      "shortPath": "shopOrder",
+      "haystack": "shoporder kofi.webhooks.shoporder a shop purchase, with `shop_items` and, for physical goods, `shipping`."
+    },
+    {
+      "pluginId": "kofi",
+      "kind": "webhook",
+      "shortPath": "subscription",
+      "haystack": "subscription kofi.webhooks.subscription a membership payment, which fires on every payment including the first. `tier_name` names the tier."
+    },
+    {
+      "pluginId": "kontentai",
+      "kind": "api",
+      "shortPath": "items.get",
+      "haystack": "items.get kontentai.api.items.get one content item by codename, with its elements and, on request, its linked items read"
+    },
+    {
+      "pluginId": "kontentai",
+      "kind": "api",
+      "shortPath": "items.list",
+      "haystack": "items.list kontentai.api.items.list published content items by type, language, collection or filter, with `depth` deciding how far linked items resolve; `next_skip` gives the next page read"
+    },
+    {
+      "pluginId": "kontentai",
+      "kind": "api",
+      "shortPath": "languages.list",
+      "haystack": "languages.list kontentai.api.languages.list the environment’s languages, each with the codename to read content in read"
+    },
+    {
+      "pluginId": "kontentai",
+      "kind": "api",
+      "shortPath": "taxonomies.list",
+      "haystack": "taxonomies.list kontentai.api.taxonomies.list the taxonomy groups with their nested terms, which an item’s taxonomy element points at read"
+    },
+    {
+      "pluginId": "kontentai",
+      "kind": "api",
+      "shortPath": "types.get",
+      "haystack": "types.get kontentai.api.types.get one content type by codename, with its element definitions read"
+    },
+    {
+      "pluginId": "kontentai",
+      "kind": "api",
+      "shortPath": "types.list",
+      "haystack": "types.list kontentai.api.types.list the content types, each with the element definitions an item of that type carries read"
+    },
+    {
+      "pluginId": "krakenio",
+      "kind": "api",
+      "shortPath": "account.status",
+      "haystack": "account.status krakenio.api.account.status the plan, whether the account is active, and the quota total, used and remaining, all in bytes read"
+    },
+    {
+      "pluginId": "krakenio",
+      "kind": "api",
+      "shortPath": "upload.optimize",
+      "haystack": "upload.optimize krakenio.api.upload.optimize optimize a file passed as base64, which the plugin uploads to kraken as multipart, with the same resize and conversion options. spends quota destructive"
+    },
+    {
+      "pluginId": "krakenio",
+      "kind": "api",
+      "shortPath": "url.optimize",
+      "haystack": "url.optimize krakenio.api.url.optimize fetch an image or pdf from a url and optimize it, optionally resizing, converting, keeping metadata or setting the quality. spends quota destructive"
     },
     {
       "pluginId": "leexi",
