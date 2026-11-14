@@ -1,0 +1,134 @@
+---
+title: "HoneyHive plugin"
+sidebarTitle: "Overview"
+description: "AI agent observability and evaluation platform for tracing, evaluating, monitoring, and improving LLM applications."
+---
+
+Use **HoneyHive** through Corsair: one client, typed API calls.
+
+HoneyHive provides AI agent observability and evaluation across development and production:
+
+- **Authentication**: Authenticate using your HoneyHive API key (`hh_...` or fine-grained key) passed via the `Authorization: Bearer <apiKey>` header.
+- **Tracing & Sessions**: Group multi-step agent and tool spans into sessions with `sessions.create` and stream event batches with `sessions.createEventBatch` or `events.createBatch`.
+- **Datasets & Experiments**: Curate evaluation datasets and run automated test suites across prompts, configurations, and models.
+- **Evaluators & Metrics**: Define custom metrics, deploy metric version snapshots, and run automated evaluations against trace events.
+
+**What you get:**
+
+- 49 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/honeyhive better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/honeyhive better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/honeyhive better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/honeyhive better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { honeyhive } from '@corsair-dev/honeyhive';
+
+export const corsair = createCorsair({
+	plugins: [
+		honeyhive(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the HoneyHive API key before the first call: `pnpm corsair setup --plugin=honeyhive --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+honeyhive()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'honeyhive',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List evaluators and metrics**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.honeyhive.api.metrics.list({});
+```
+
+
+**Start a new tracing session**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.honeyhive.api.sessions.create({ session_name: 'customer-support-agent' });
+```
+
+
+See the full list on the [API](/plugins/honeyhive/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/honeyhive/api">
+    Every `honeyhive.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
