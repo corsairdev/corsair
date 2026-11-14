@@ -69,23 +69,36 @@ async function resolve(
 }
 
 describe('error handler selection', () => {
-	it('retries a 503, which is how GatherUp signals its 5-a-second limit', async () => {
-		await expect(resolve(apiError({ status: 503 }))).resolves.toEqual({
+	it('retries a 503 read, which is how GatherUp signals its 5-a-second limit', async () => {
+		await expect(
+			resolve(apiError({ status: 503, method: 'GET' })),
+		).resolves.toEqual({
 			maxRetries: 3,
 			headersRetryAfterMs: undefined,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
 
-	it('retries a 429 too, in case a proxy adds one', async () => {
-		await expect(resolve(apiError({ status: 429 }))).resolves.toMatchObject({
+	it.each([['POST'], ['PUT']])(
+		'does not retry a 503 on a %s, which may have landed',
+		async (method) => {
+			await expect(
+				resolve(apiError({ status: 503, method })),
+			).resolves.toMatchObject({ maxRetries: 0 });
+		},
+	);
+
+	it('retries a 429 on a write too, since nothing ran', async () => {
+		await expect(
+			resolve(apiError({ status: 429, method: 'POST' })),
+		).resolves.toMatchObject({
 			maxRetries: 3,
 		});
 	});
 
 	it('waits a Retry-After header when one arrives', async () => {
 		await expect(
-			resolve(apiError({ status: 503, retryAfter: 2000 })),
+			resolve(apiError({ status: 503, method: 'GET', retryAfter: 2000 })),
 		).resolves.toMatchObject({ headersRetryAfterMs: 2000 });
 	});
 

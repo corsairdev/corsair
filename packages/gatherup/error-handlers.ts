@@ -7,14 +7,20 @@ import { gatherupErrorInfo } from './client';
 export const errorHandlers = {
 	// GatherUp answers 5 requests a second and returns **503** above it, not 429,
 	// so both statuses are a rate limit. It does not document Retry-After, so the
-	// handler's own backoff is the delay.
+	// handler's own backoff is the delay. A 503 from an outage looks the same as
+	// one from the limit, and a write may have landed before it (a created
+	// customer, a feedback request already sent), so a 503 is retried only on a
+	// read. A 429 is a refusal before anything ran, so it is retried on any method.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => gatherupErrorInfo(error).isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: gatherupErrorInfo(error).retryAfter,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			const { method, status, retryAfter } = gatherupErrorInfo(error);
+			return {
+				maxRetries: status === 429 || method === 'GET' ? 3 : 0,
+				headersRetryAfterMs: retryAfter,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	// A refused token, or `errorCode: 2` for an invalid clientId on a 200. It sits
 	// before VALIDATION_ERROR because both can carry a 4xx.

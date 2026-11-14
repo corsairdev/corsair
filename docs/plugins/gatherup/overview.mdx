@@ -11,7 +11,7 @@ Create a bearer token and copy your client ID from your GatherUp account owner d
 Things to know before you call:
 
 - **A failure can arrive with HTTP 200.** GatherUp puts `errorCode` and `errorMessage` in the body of every answer, with `0` and `Success` on a good one. A live probe of `/api/test` with a bad token answered **200** and `{"errorCode": 2, "errorMessage": "Invalid clientId"}`, so the plugin throws whenever the code is non-zero, whatever the status was.
-- **The rate limit answers 503, not 429.** GatherUp allows 5 requests a second and returns 503 above it, so a 503 is a rate limit and is retried. A 500 is still a real server error.
+- **The rate limit answers 503, not 429.** GatherUp allows 5 requests a second and returns 503 above it, so a 503 is a rate limit. A 503 is retried on reads only, since one from an outage can follow a write that already landed; a 429 is retried on any call. A 500 is still a real server error.
 - **Write bodies use prefixed field names.** `businesses.create` takes `businessName` and `businessType`, where a read returns `name` and `organisationType`. `customers.create` takes `customerFirstName`, `customerEmail` and so on. The plugin uses the documented names on each side.
 - **Update and create disagree on one spelling.** `customers.create` takes `customerPhone`, and `customers.update` takes `customerPhoneNumber`. Each keeps its own documented name.
 - **A rating is a decimal string.** A customer's `rating` arrives as `"5.00"` or null, not a number, while a feedback's `rating` is a number.
