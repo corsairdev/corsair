@@ -1,0 +1,2883 @@
+---
+title: "Svix API reference"
+sidebarTitle: "API"
+description: "API reference for the Svix plugin in Corsair: every `svix.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Applications
+
+### create
+
+`applications.create`
+
+Create Application
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.applications.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get_if_exists` | `boolean` | No | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  metadata?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`applications.delete`
+
+Delete Application
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.applications.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`applications.get`
+
+Get Application
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.applications.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+### list
+
+`applications.list`
+
+List Applications
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.applications.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exclude_apps_with_no_endpoints` | `boolean` | No | — |
+| `exclude_apps_with_disabled_endpoints` | `boolean` | No | — |
+| `exclude_apps_with_svix_play_endpoints` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `order` | `ascending \| descending \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  name: string,
+  throttleRate?: number | null,
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  metadata: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`applications.patch`
+
+Patch Application
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.applications.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  metadata?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`applications.upsert`
+
+Upsert Application
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.applications.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  metadata?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+## Attempts
+
+### expungeContent
+
+`attempts.expungeContent`
+
+Delete attempt response body
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.attempts.expungeContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `msg_id` | `string & string` | Yes | — |
+| `attempt_id` | `string & string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`attempts.get`
+
+Get Attempt
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.attempts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `msg_id` | `string & string` | Yes | — |
+| `attempt_id` | `string & string` | Yes | — |
+| `expanded_statuses` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `response` | `string` | Yes | — |
+| `responseStatusCode` | `number` | Yes | — |
+| `responseDurationMs` | `number` | Yes | — |
+| `status` | `0 \| 1 \| 2 \| 3 \| 4 \| number` | Yes | — |
+| `statusText` | `success \| pending \| fail \| sending \| canceled \| string` | Yes | — |
+| `triggerType` | `0 \| 1 \| number` | Yes | — |
+| `msgId` | `string` | Yes | — |
+| `endpointId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `msg` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="msg full type">
+
+```ts
+{
+  eventId?: string | null,
+  eventType: string,
+  payload: Record<string, any>,
+  channels?: string[] | null,
+  id: string,
+  timestamp: string,
+  tags?: string[] | null,
+  deliverAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttemptedDestinations
+
+`attempts.listAttemptedDestinations`
+
+List Attempted Destinations
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.attempts.listAttemptedDestinations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `app_id` | `string & string` | Yes | — |
+| `msg_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: 0 | 1 | 2 | 3 | 4 | number,
+  statusText: success | pending | fail | sending | canceled | string,
+  nextAttempt?: string | null,
+  url: string,
+  description: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  disabled?: boolean,
+  eventTypes?: string[] | null,
+  channels?: string[] | null,
+  createdAt: string,
+  updatedAt: string,
+  expiry?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttemptedMessages
+
+`attempts.listAttemptedMessages`
+
+List Attempted Messages
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.attempts.listAttemptedMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `tag` | `string \| null` | No | — |
+| `status` | `0 \| 1 \| 2 \| 3 \| 4 \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `after` | `string \| null` | No | — |
+| `with_content` | `boolean` | No | — |
+| `expanded_statuses` | `boolean` | No | — |
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `event_types` | `string[] \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: 0 | 1 | 2 | 3 | 4 | number,
+  statusText: success | pending | fail | sending | canceled | string,
+  nextAttempt?: string | null,
+  eventId?: string | null,
+  eventType: string,
+  payload: Record<string, any>,
+  channels?: string[] | null,
+  id: string,
+  timestamp: string,
+  tags?: string[] | null,
+  deliverAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByEndpoint
+
+`attempts.listByEndpoint`
+
+List Attempts By Endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.attempts.listByEndpoint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `status` | `0 \| 1 \| 2 \| 3 \| 4 \| null` | No | — |
+| `status_code_class` | `0 \| 100 \| 200 \| 300 \| 400 \| 500 \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `tag` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `after` | `string \| null` | No | — |
+| `with_content` | `boolean` | No | — |
+| `with_msg` | `boolean` | No | — |
+| `expanded_statuses` | `boolean` | No | — |
+| `event_types` | `string[] \| null` | No | — |
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url: string,
+  response: string,
+  responseStatusCode: number,
+  responseDurationMs: number,
+  status: 0 | 1 | 2 | 3 | 4 | number,
+  statusText: success | pending | fail | sending | canceled | string,
+  triggerType: 0 | 1 | number,
+  msgId: string,
+  endpointId: string,
+  id: string,
+  timestamp: string,
+  msg?: {
+    eventId?: string | null,
+    eventType: string,
+    payload: Record<string, any>,
+    channels?: string[] | null,
+    id: string,
+    timestamp: string,
+    tags?: string[] | null,
+    deliverAt?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByMsg
+
+`attempts.listByMsg`
+
+List Attempts By Msg
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.attempts.listByMsg({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `status` | `0 \| 1 \| 2 \| 3 \| 4 \| null` | No | — |
+| `status_code_class` | `0 \| 100 \| 200 \| 300 \| 400 \| 500 \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `tag` | `string \| null` | No | — |
+| `endpoint_id` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `after` | `string \| null` | No | — |
+| `with_content` | `boolean` | No | — |
+| `expanded_statuses` | `boolean` | No | — |
+| `app_id` | `string & string` | Yes | — |
+| `msg_id` | `string & string` | Yes | — |
+| `event_types` | `string[] \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url: string,
+  response: string,
+  responseStatusCode: number,
+  responseDurationMs: number,
+  status: 0 | 1 | 2 | 3 | 4 | number,
+  statusText: success | pending | fail | sending | canceled | string,
+  triggerType: 0 | 1 | number,
+  msgId: string,
+  endpointId: string,
+  id: string,
+  timestamp: string,
+  msg?: {
+    eventId?: string | null,
+    eventType: string,
+    payload: Record<string, any>,
+    channels?: string[] | null,
+    id: string,
+    timestamp: string,
+    tags?: string[] | null,
+    deliverAt?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resend
+
+`attempts.resend`
+
+Resend Webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.attempts.resend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `msg_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Endpoints
+
+### bulkReplay
+
+`endpoints.bulkReplay`
+
+Bulk Replay Messages
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.endpoints.bulkReplay({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  since: string,
+  until?: string | null,
+  eventTypes?: string[] | null,
+  channel?: string | null,
+  tag?: string | null,
+  status?: 0 | 1 | 2 | 3 | 4 | null,
+  statusCodeClass?: 0 | 100 | 200 | 300 | 400 | 500 | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `running \| finished \| failed \| string` | Yes | — |
+| `task` | `endpoint.replay \| endpoint.recover \| application.stats \| message.broadcast \| sdk.generate \| event-type.aggregate \| application.purge_content \| endpoint.bulk-replay \| string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`endpoints.create`
+
+Create Endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.endpoints.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  url: string,
+  description?: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  disabled?: boolean,
+  eventTypes?: string[] | null,
+  channels?: string[] | null,
+  secret?: string | null,
+  metadata?: Record<string, string>,
+  headers?: Record<string, string> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `disabled` | `boolean` | No | — |
+| `eventTypes` | `string[] \| null` | No | — |
+| `channels` | `string[] \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `expiry` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`endpoints.delete`
+
+Delete Endpoint
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.endpoints.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`endpoints.get`
+
+Get Endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.endpoints.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `disabled` | `boolean` | No | — |
+| `eventTypes` | `string[] \| null` | No | — |
+| `channels` | `string[] \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `expiry` | `string \| null` | No | — |
+
+
+
+---
+
+### getAttemptStats
+
+`endpoints.getAttemptStats`
+
+Endpoint Attempt Stats
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.endpoints.getAttemptStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `since` | `string \| null` | No | — |
+| `until` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `number` | Yes | — |
+| `fail` | `number` | Yes | — |
+| `canceled` | `number` | Yes | — |
+
+
+
+---
+
+### getHeaders
+
+`endpoints.getHeaders`
+
+Get Endpoint Headers
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.endpoints.getHeaders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `Record<string, string>` | Yes | — |
+| `sensitive` | `string[]` | Yes | — |
+
+
+
+---
+
+### getSecret
+
+`endpoints.getSecret`
+
+Get Endpoint Secret
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.endpoints.getSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+
+
+
+---
+
+### getStats
+
+`endpoints.getStats`
+
+Endpoint Stats
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.endpoints.getStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `since` | `string \| null` | No | — |
+| `until` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `number` | Yes | — |
+| `pending` | `number` | Yes | — |
+| `sending` | `number` | Yes | — |
+| `fail` | `number` | Yes | — |
+| `canceled` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`endpoints.list`
+
+List Endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.endpoints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `order` | `ascending \| descending \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  metadata: Record<string, string>,
+  url: string,
+  description: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  disabled?: boolean,
+  eventTypes?: string[] | null,
+  channels?: string[] | null,
+  createdAt: string,
+  updatedAt: string,
+  expiry?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mcpEventsSubscribe
+
+`endpoints.mcpEventsSubscribe`
+
+Subscribe to MCP Events
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.endpoints.mcpEventsSubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  arguments?: Record<string, any>,
+  delivery: {
+    mode: webhook,
+    url: string,
+    secret: string
+  },
+  ttlMs?: number | null,
+  secretGracePeriodSeconds?: number | null,
+  challengeMode?: challenge-response | echo,
+  channels?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `endpointId` | `string` | Yes | — |
+| `refreshBefore` | `string \| null` | No | — |
+| `cursor` | `string \| null` | No | — |
+| `truncated` | `boolean` | Yes | — |
+
+
+
+---
+
+### mcpEventsUnsubscribe
+
+`endpoints.mcpEventsUnsubscribe`
+
+Unsubscribe from MCP Events
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.endpoints.mcpEventsUnsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  arguments?: Record<string, any>,
+  delivery: {
+    mode: webhook,
+    url: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### patch
+
+`endpoints.patch`
+
+Patch Endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.endpoints.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  description?: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  url?: string,
+  disabled?: boolean,
+  eventTypes?: string[] | null,
+  channels?: string[] | null,
+  metadata?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `disabled` | `boolean` | No | — |
+| `eventTypes` | `string[] \| null` | No | — |
+| `channels` | `string[] \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `expiry` | `string \| null` | No | — |
+
+
+
+---
+
+### patchHeaders
+
+`endpoints.patchHeaders`
+
+Patch Endpoint Headers
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.endpoints.patchHeaders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  headers: Record<string, string | null>,
+  deleteHeaders?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### recover
+
+`endpoints.recover`
+
+Recover Failed Webhooks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.endpoints.recover({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  since: string,
+  until?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `running \| finished \| failed \| string` | Yes | — |
+| `task` | `endpoint.replay \| endpoint.recover \| application.stats \| message.broadcast \| sdk.generate \| event-type.aggregate \| application.purge_content \| endpoint.bulk-replay \| string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+
+
+---
+
+### replayMissing
+
+`endpoints.replayMissing`
+
+Replay Missing Webhooks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.endpoints.replayMissing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  since: string,
+  until?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `running \| finished \| failed \| string` | Yes | — |
+| `task` | `endpoint.replay \| endpoint.recover \| application.stats \| message.broadcast \| sdk.generate \| event-type.aggregate \| application.purge_content \| endpoint.bulk-replay \| string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+
+
+---
+
+### rotateSecret
+
+`endpoints.rotateSecret`
+
+Rotate Endpoint Secret
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.endpoints.rotateSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  key?: string | null,
+  gracePeriodSeconds?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+
+
+
+---
+
+### sendExample
+
+`endpoints.sendExample`
+
+Send Event Type Example Message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.endpoints.sendExample({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  eventType: string,
+  exampleIndex?: number,
+  payload?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string \| null` | No | — |
+| `eventType` | `string` | Yes | — |
+| `payload` | `Record<string, any>` | Yes | — |
+| `channels` | `string[] \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `tags` | `string[] \| null` | No | — |
+| `deliverAt` | `string \| null` | No | — |
+
+
+
+---
+
+### setHeaders
+
+`endpoints.setHeaders`
+
+Set Endpoint Headers
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.endpoints.setHeaders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  headers: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### transformationGet
+
+`endpoints.transformationGet`
+
+Get Endpoint Transformation
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.endpoints.transformationGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `enabled` | `boolean` | No | — |
+| `variables` | `Record<string, string> \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### transformationPatch
+
+`endpoints.transformationPatch`
+
+Patch Endpoint Transformation
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.endpoints.transformationPatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  code?: string | null,
+  enabled?: boolean,
+  variables?: Record<string, string> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### upsert
+
+`endpoints.upsert`
+
+Upsert Endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.endpoints.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `endpoint_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  url: string,
+  description?: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  disabled?: boolean,
+  eventTypes?: string[] | null,
+  channels?: string[] | null,
+  metadata?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `disabled` | `boolean` | No | — |
+| `eventTypes` | `string[] \| null` | No | — |
+| `channels` | `string[] \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `expiry` | `string \| null` | No | — |
+
+
+
+---
+
+## Event Types
+
+### create
+
+`eventTypes.create`
+
+Create Event Type
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.eventTypes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  descriptionTranslations?: Record<string, string> | null,
+  archived?: boolean,
+  deprecated?: boolean,
+  schemas?: Record<string, any> | null,
+  groupName?: string | null,
+  featureFlags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `descriptionTranslations` | `Record<string, string> \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `deprecated` | `boolean` | Yes | — |
+| `schemas` | `Record<string, any> \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `groupName` | `string \| null` | No | — |
+| `featureFlags` | `string[] \| null` | No | — |
+| `featureFlag` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`eventTypes.delete`
+
+Delete Event Type
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.eventTypes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type_name` | `string & string` | Yes | — |
+| `expunge` | `boolean` | No | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`eventTypes.get`
+
+Get Event Type
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.eventTypes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type_name` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `descriptionTranslations` | `Record<string, string> \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `deprecated` | `boolean` | Yes | — |
+| `schemas` | `Record<string, any> \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `groupName` | `string \| null` | No | — |
+| `featureFlags` | `string[] \| null` | No | — |
+| `featureFlag` | `string \| null` | No | — |
+
+
+
+---
+
+### importOpenapi
+
+`eventTypes.importOpenapi`
+
+Event Type Import From Openapi
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.eventTypes.importOpenapi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  dryRun?: boolean,
+  replaceAll?: boolean,
+  spec?: Record<string, any> | null,
+  specRaw?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  modified: string[],
+  to_modify?: {
+    name: string,
+    description: string,
+    schemas?: Record<string, any> | null,
+    deprecated: boolean,
+    groupName?: string | null,
+    featureFlags?: string[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`eventTypes.list`
+
+List Event Types
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.eventTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `order` | `ascending \| descending \| null` | No | — |
+| `include_archived` | `boolean` | No | — |
+| `archive_status` | `active \| archived \| all \| null` | No | — |
+| `with_content` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  descriptionTranslations?: Record<string, string> | null,
+  archived?: boolean,
+  deprecated: boolean,
+  schemas?: Record<string, any> | null,
+  createdAt: string,
+  updatedAt: string,
+  groupName?: string | null,
+  featureFlags?: string[] | null,
+  featureFlag?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`eventTypes.patch`
+
+Patch Event Type
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.eventTypes.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type_name` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  description?: string,
+  descriptionTranslations?: Record<string, string> | null,
+  archived?: boolean,
+  deprecated?: boolean,
+  schemas?: Record<string, any> | null,
+  featureFlags?: string[] | null,
+  groupName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `descriptionTranslations` | `Record<string, string> \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `deprecated` | `boolean` | Yes | — |
+| `schemas` | `Record<string, any> \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `groupName` | `string \| null` | No | — |
+| `featureFlags` | `string[] \| null` | No | — |
+| `featureFlag` | `string \| null` | No | — |
+
+
+
+---
+
+### upsert
+
+`eventTypes.upsert`
+
+Upsert Event Type
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.eventTypes.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type_name` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  description: string,
+  descriptionTranslations?: Record<string, string> | null,
+  archived?: boolean,
+  deprecated?: boolean,
+  schemas?: Record<string, any> | null,
+  featureFlags?: string[] | null,
+  groupName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `descriptionTranslations` | `Record<string, string> \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `deprecated` | `boolean` | Yes | — |
+| `schemas` | `Record<string, any> \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `groupName` | `string \| null` | No | — |
+| `featureFlags` | `string[] \| null` | No | — |
+| `featureFlag` | `string \| null` | No | — |
+
+
+
+---
+
+## Messages
+
+### bulkExpungeContent
+
+`messages.bulkExpungeContent`
+
+Expunge a set of message payloads
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.messages.bulkExpungeContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `Record<string, expunged \| not-found \| string>` | Yes | — |
+
+
+
+---
+
+### create
+
+`messages.create`
+
+Create Message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.messages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `with_content` | `boolean` | No | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  eventId?: string | null,
+  eventType: string,
+  payload: Record<string, any>,
+  channels?: string[] | null,
+  application?: {
+    name: string,
+    throttleRate?: number | null,
+    uid?: string | null,
+    metadata?: Record<string, string>
+  } | null,
+  tags?: string[] | null,
+  transformationsParams?: Record<string, any> | null,
+  deliverAt?: string | null,
+  payloadRetentionPeriod?: number | null,
+  payloadRetentionHours?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string \| null` | No | — |
+| `eventType` | `string` | Yes | — |
+| `payload` | `Record<string, any>` | Yes | — |
+| `channels` | `string[] \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `tags` | `string[] \| null` | No | — |
+| `deliverAt` | `string \| null` | No | — |
+
+
+
+---
+
+### createBatch
+
+`messages.createBatch`
+
+Quickly Create a Batch of Messages
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.messages.createBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  messages: {
+    eventId?: string | null,
+    eventType: string,
+    payload: Record<string, any>,
+    channels?: string[] | null,
+    tags?: string[] | null,
+    transformationsParams?: Record<string, any> | null,
+    deliverAt?: string | null,
+    payloadRetentionPeriod?: number | null,
+    payloadRetentionHours?: number | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### expungeAllContents
+
+`messages.expungeAllContents`
+
+Expunge all message contents for an application
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.messages.expungeAllContents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `running \| finished \| failed \| string` | Yes | — |
+| `task` | `endpoint.replay \| endpoint.recover \| application.stats \| message.broadcast \| sdk.generate \| event-type.aggregate \| application.purge_content \| endpoint.bulk-replay \| string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+
+
+---
+
+### expungeContent
+
+`messages.expungeContent`
+
+Expunge one message payload
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.messages.expungeContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `msg_id` | `string & string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`messages.get`
+
+Get Message
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `msg_id` | `string & string` | Yes | — |
+| `with_content` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string \| null` | No | — |
+| `eventType` | `string` | Yes | — |
+| `payload` | `Record<string, any>` | Yes | — |
+| `channels` | `string[] \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `tags` | `string[] \| null` | No | — |
+| `deliverAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List Messages
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
+| `after` | `string \| null` | No | — |
+| `with_content` | `boolean` | No | — |
+| `tag` | `string \| null` | No | — |
+| `event_types` | `string[] \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  eventId?: string | null,
+  eventType: string,
+  payload: Record<string, any>,
+  channels?: string[] | null,
+  id: string,
+  timestamp: string,
+  tags?: string[] | null,
+  deliverAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pollerConsumerPoll
+
+`messages.pollerConsumerPoll`
+
+Poller Consumer Poll
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.messages.pollerConsumerPoll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `sink_id` | `string & string` | Yes | — |
+| `consumer_id` | `string & string` | Yes | — |
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string` | Yes | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  headers?: Record<string, string> | null,
+  eventId?: string | null,
+  eventType: string,
+  payload: Record<string, any>,
+  channels?: string[] | null,
+  id: string,
+  timestamp: string,
+  tags?: string[] | null,
+  deliverAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pollerConsumerSeek
+
+`messages.pollerConsumerSeek`
+
+Poller Consumer Seek
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.messages.pollerConsumerSeek({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `sink_id` | `string & string` | Yes | — |
+| `consumer_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  after: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iterator` | `string` | Yes | — |
+
+
+
+---
+
+### pollerPoll
+
+`messages.pollerPoll`
+
+Poller Poll
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.messages.pollerPoll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `sink_id` | `string & string` | Yes | — |
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `after` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string` | Yes | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  headers?: Record<string, string> | null,
+  eventId?: string | null,
+  eventType: string,
+  payload: Record<string, any>,
+  channels?: string[] | null,
+  id: string,
+  timestamp: string,
+  tags?: string[] | null,
+  deliverAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### precheck
+
+`messages.precheck`
+
+Create Message Precheck
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.messages.precheck({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  eventType: string,
+  channels?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `active` | `boolean` | Yes | — |
+
+
+
+---
+
+## Operational Webhooks
+
+### create
+
+`operationalWebhooks.create`
+
+Create Operational Webhook Endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.operationalWebhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  url: string,
+  description?: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  disabled?: boolean,
+  eventTypes?: string[] | null,
+  secret?: string | null,
+  metadata?: Record<string, string>,
+  headers?: Record<string, string> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `disabled` | `boolean` | No | — |
+| `eventTypes` | `string[] \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`operationalWebhooks.delete`
+
+Delete Operational Webhook Endpoint
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.operationalWebhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`operationalWebhooks.get`
+
+Get Operational Webhook Endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.operationalWebhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `disabled` | `boolean` | No | — |
+| `eventTypes` | `string[] \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+### getHeaders
+
+`operationalWebhooks.getHeaders`
+
+Get Operational Webhook Endpoint Headers
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.operationalWebhooks.getHeaders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headers` | `Record<string, string>` | Yes | — |
+| `sensitive` | `string[]` | Yes | — |
+
+
+
+---
+
+### getSecret
+
+`operationalWebhooks.getSecret`
+
+Get Operational Webhook Endpoint Secret
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.operationalWebhooks.getSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string & string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`operationalWebhooks.list`
+
+List Operational Webhook Endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.svix.api.operationalWebhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `iterator` | `string \| null` | No | — |
+| `order` | `ascending \| descending \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `iterator` | `string \| null` | Yes | — |
+| `prevIterator` | `string \| null` | No | — |
+| `done` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  description: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  disabled?: boolean,
+  eventTypes?: string[] | null,
+  createdAt: string,
+  updatedAt: string,
+  metadata: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rotateSecret
+
+`operationalWebhooks.rotateSecret`
+
+Rotate Operational Webhook Endpoint Secret
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.operationalWebhooks.rotateSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string & string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  key?: string | null,
+  gracePeriodSeconds?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### setHeaders
+
+`operationalWebhooks.setHeaders`
+
+Set Operational Webhook Endpoint Headers
+
+**Risk:** `destructive`
+
+```ts
+await corsair.svix.api.operationalWebhooks.setHeaders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  headers: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### upsert
+
+`operationalWebhooks.upsert`
+
+Upsert Operational Webhook Endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.svix.api.operationalWebhooks.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint_id` | `string & string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  url: string,
+  description?: string,
+  throttleRate?: number | null,
+  uid?: string | null,
+  disabled?: boolean,
+  eventTypes?: string[] | null,
+  metadata?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `throttleRate` | `number \| null` | No | — |
+| `uid` | `string \| null` | No | — |
+| `disabled` | `boolean` | No | — |
+| `eventTypes` | `string[] \| null` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
