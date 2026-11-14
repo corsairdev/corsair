@@ -256,8 +256,19 @@ const getResponseHeader = (
 	return undefined;
 };
 
-const getResponseBody = async (response: Response): Promise<any> => {
+const getResponseBody = async (
+	response: Response,
+	options?: ApiRequestOptions,
+): Promise<any> => {
 	if (response.status !== 204) {
+		// A file is kept as bytes: reading it as text replaces every byte that
+		// is not valid UTF-8. An error is still parsed below for its message.
+		if (options?.responseType === 'binary' && response.ok) {
+			return {
+				bytes: new Uint8Array(await response.arrayBuffer()),
+				contentType: response.headers.get('Content-Type'),
+			};
+		}
 		try {
 			const contentType = response.headers.get('Content-Type');
 			if (contentType) {
@@ -365,7 +376,7 @@ export const request = <T>(
 					onCancel,
 				);
 
-				const responseBody = await getResponseBody(response);
+				const responseBody = await getResponseBody(response, options);
 				const responseHeader = getResponseHeader(
 					response,
 					options.responseHeader,
