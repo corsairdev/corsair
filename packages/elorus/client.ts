@@ -64,7 +64,7 @@ function toElorusError(error: unknown): Error {
 	if (error instanceof ApiError) {
 		const url = new URL(error.url, ELORUS_API_BASE);
 		url.search = '';
-		return new ApiError(
+		const rebuilt = new ApiError(
 			{
 				...error.request,
 				body: undefined,
@@ -86,6 +86,9 @@ function toElorusError(error: unknown): Error {
 				rateLimitLimit: error.rateLimitLimit,
 			},
 		);
+		// Same message, so the original stack (headline and frames) carries no sent data.
+		if (error.stack) rebuilt.stack = error.stack;
+		return rebuilt;
 	}
 	return new ElorusAPIError('Elorus API request failed.');
 }

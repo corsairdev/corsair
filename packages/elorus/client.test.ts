@@ -172,6 +172,8 @@ describe('Elorus client', () => {
 			expect((error as ApiError).request.body).toBeUndefined();
 			expect(JSON.stringify(error)).not.toContain('private-value');
 			expect(String(error)).not.toContain('private-value');
+			// The rebuilt error keeps the message, so the original stack can be kept whole.
+			expect((error as ApiError).stack).toBe(providerError.stack);
 		} finally {
 			fetchSpy.mockRestore();
 		}
