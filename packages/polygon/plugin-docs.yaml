@@ -42,6 +42,7 @@ examples:
         details:
           id: ext_fky491gakzj0dd46qb6whsr2vq
           asset: usd
+          network: ach
 apiExamples:
   customers.list:
     call: "{ status: 'active', limit: 20 }"
@@ -64,7 +65,7 @@ apiExamples:
   networks.list:
     call: "{ limit: 20 }"
   quotes.create:
-    call: "{ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', source: { type: 'walletCrypto', details: { id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn', asset: 'usdc', network: 'polygon' }, amount: '100.00' }, destination: { type: 'bankUs', details: { id: 'ext_fky491gakzj0dd46qb6whsr2vq', asset: 'usd' } } }"
+    call: "{ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', source: { type: 'walletCrypto', details: { id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn', asset: 'usdc', network: 'polygon' }, amount: '100.00' }, destination: { type: 'bankUs', details: { id: 'ext_fky491gakzj0dd46qb6whsr2vq', asset: 'usd', network: 'ach' } } }"
   quotes.get:
     call: "{ quoteId: 'qt_0gq9aesz4wb5etdv88z1j61qcm' }"
   transactions.list:

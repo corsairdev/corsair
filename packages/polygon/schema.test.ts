@@ -162,7 +162,7 @@ describe('quote amount rules', () => {
 		},
 		destination: {
 			type: 'bankUs' as const,
-			details: { id: 'ext_1', asset: 'usd' as const },
+			details: { id: 'ext_1', asset: 'usd' as const, network: 'ach' as const },
 		},
 	};
 
@@ -201,7 +201,7 @@ describe('quote amount rules', () => {
 		expect(
 			QuotesCreateInputSchema.safeParse({
 				customerId: 'cst_1',
-				source: { ...base.source, amount: '500.00' },
+				source: base.source,
 				destination: {
 					type: 'cash',
 					details: {
@@ -213,6 +213,51 @@ describe('quote amount rules', () => {
 				},
 			}).success,
 		).toBe(true);
+	});
+});
+
+describe('quote side rules from the v0.13 spec', () => {
+	const source = {
+		type: 'walletCrypto' as const,
+		details: { id: 'wlt_1', asset: 'usdc', network: 'polygon' as const },
+		amount: '100.00',
+	};
+
+	it('requires the payout rail on a bankUs destination', () => {
+		// BankUsSideDetails lists id, asset and network as required.
+		expect(
+			QuotesCreateInputSchema.safeParse({
+				customerId: 'cst_1',
+				source,
+				destination: { type: 'bankUs', details: { id: 'ext_1', asset: 'usd' } },
+			}).success,
+		).toBe(false);
+	});
+
+	it('takes the cash amount from details, so the source carries none', () => {
+		const cash = {
+			type: 'cash' as const,
+			details: {
+				asset: 'usd' as const,
+				cashLocationId: 'loc_1',
+				cashLocationReference: 'ref_1',
+				amount: '40.00',
+			},
+		};
+		expect(
+			QuotesCreateInputSchema.safeParse({
+				customerId: 'cst_1',
+				source: { type: source.type, details: source.details },
+				destination: cash,
+			}).success,
+		).toBe(true);
+		expect(
+			QuotesCreateInputSchema.safeParse({
+				customerId: 'cst_1',
+				source,
+				destination: cash,
+			}).success,
+		).toBe(false);
 	});
 });
 

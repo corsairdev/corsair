@@ -304,7 +304,7 @@ describe('quotes endpoints', () => {
 			},
 			destination: {
 				type: 'bankUs',
-				details: { id: 'ext_1', asset: 'usd' },
+				details: { id: 'ext_1', asset: 'usd', network: 'ach' },
 			},
 			sponsorGas: true,
 		});
@@ -322,7 +322,7 @@ describe('quotes endpoints', () => {
 			},
 			destination: {
 				type: 'bankUs',
-				details: { id: 'ext_1', asset: 'usd' },
+				details: { id: 'ext_1', asset: 'usd', network: 'ach' },
 			},
 			sponsorGas: true,
 			metadata: undefined,

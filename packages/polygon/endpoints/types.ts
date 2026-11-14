@@ -697,6 +697,9 @@ const BankUsSideSchema = z.object({
 	details: z.object({
 		id: IdSchema.describe('US bank ExternalAccount id (`ext_` prefix).'),
 		asset: z.literal('usd'),
+		network: z
+			.enum(['ach', 'achSameDay', 'wire', 'rtp', 'instant', 'intraBank'])
+			.describe('The payout rail. OMS requires it on a bankUs side.'),
 		memo: z
 			.string()
 			.min(1)
@@ -726,9 +729,10 @@ const CashSideSchema = z.object({
 			.string()
 			.min(1)
 			.describe("The location's provider reference, from the same call."),
-		amount: decimalString.describe('A multiple of 20.00, at most 400.00.'),
+		amount: decimalString.describe(
+			'A multiple of 20.00, at most 400.00. This is the destination amount; OMS takes no top-level amount on a cash side.',
+		),
 	}),
-	amount: decimalString.optional(),
 });
 
 /** What funds a quote: an OMS wallet, a fiat wallet, or a registered card. */
@@ -771,7 +775,10 @@ export const QuotesCreateInputSchema = z
 	.superRefine((value, ctx) => {
 		// OMS calculates the other side, so exactly one side carries the amount.
 		const sourceAmount = value.source.amount !== undefined;
-		const destinationAmount = value.destination.amount !== undefined;
+		// A cash side carries its amount inside details, which fixes that side.
+		const destinationAmount =
+			value.destination.type === 'cash' ||
+			value.destination.amount !== undefined;
 		if (sourceAmount && destinationAmount) {
 			ctx.addIssue({
 				code: 'custom',
