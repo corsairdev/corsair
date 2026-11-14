@@ -1,12 +1,10 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
-	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
@@ -14,27 +12,23 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { StackExchangeEndpointInputs, StackExchangeEndpointOutputs } from './endpoints/types';
-import { StackExchangeEndpointInputSchemas, StackExchangeEndpointOutputSchemas } from './endpoints/types';
+import { networkRead, siteRead, siteWrite } from './endpoints';
 import type {
-	StackExchangeWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { StackExchangeSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	StackExchangeEndpointInputs,
+	StackExchangeEndpointOutputs,
+} from './endpoints/types';
+import {
+	StackExchangeEndpointInputSchemas,
+	StackExchangeEndpointOutputSchemas,
+	StackExchangeResponseSchema,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchStackExchangeTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveStackExchangeOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { StackExchangeSchema } from './schema';
 
 export type StackExchangePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalStackExchangePlugin['hooks'];
-	webhookHooks?: InternalStackExchangePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof stackExchangeEndpointsNested>;
 };
@@ -44,94 +38,100 @@ export type StackExchangeContext = CorsairPluginContext<
 	StackExchangePluginOptions
 >;
 
-export type StackExchangeKeyBuilderContext = KeyBuilderContext<StackExchangePluginOptions>;
-
-export type StackExchangeBoundEndpoints = BindEndpoints<typeof stackExchangeEndpointsNested>;
-
-type StackExchangeEndpoint<
-	K extends keyof StackExchangeEndpointOutputs,
-> = CorsairEndpoint<
-	StackExchangeContext,
-	StackExchangeEndpointInputs[K],
-	StackExchangeEndpointOutputs[K]
+export type StackExchangeBoundEndpoints = BindEndpoints<
+	typeof stackExchangeEndpointsNested
 >;
+
+type StackExchangeEndpoint<K extends keyof StackExchangeEndpointOutputs> =
+	CorsairEndpoint<
+		StackExchangeContext,
+		StackExchangeEndpointInputs[K],
+		StackExchangeEndpointOutputs[K]
+	>;
 
 export type StackExchangeEndpoints = {
-	exampleGet: StackExchangeEndpoint<'exampleGet'>;
+	siteRead: StackExchangeEndpoint<'siteRead'>;
+	siteWrite: StackExchangeEndpoint<'siteWrite'>;
+	networkRead: StackExchangeEndpoint<'networkRead'>;
 };
-
-type StackExchangeWebhook<
-	K extends keyof StackExchangeWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<StackExchangeContext, TEvent, StackExchangeWebhookOutputs[K]>;
-
-export type StackExchangeWebhooks = {
-	example: StackExchangeWebhook<'example', ExampleEvent>;
-};
-
-export type StackExchangeBoundWebhooks = BindWebhooks<StackExchangeWebhooks>;
 
 const stackExchangeEndpointsNested = {
-	example: {
-		get: Example.get,
+	site: {
+		read: siteRead,
+		write: siteWrite,
 	},
+	network: { read: networkRead },
 } as const;
 
-const stackExchangeWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const stackExchangeWebhooksNested = {} as const;
 
 export const stackExchangeEndpointSchemas = {
-	'example.get': {
-		input: StackExchangeEndpointInputSchemas.exampleGet,
-		output: StackExchangeEndpointOutputSchemas.exampleGet,
+	'site.read': {
+		input: StackExchangeEndpointInputSchemas.siteRead,
+		output: StackExchangeEndpointOutputSchemas.siteRead,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof stackExchangeEndpointsNested>;
-
-const stackExchangeWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'site.write': {
+		input: StackExchangeEndpointInputSchemas.siteWrite,
+		output: StackExchangeEndpointOutputSchemas.siteWrite,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof stackExchangeWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const stackExchangeEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+	'network.read': {
+		input: StackExchangeEndpointInputSchemas.networkRead,
+		output: StackExchangeEndpointOutputSchemas.networkRead,
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof stackExchangeEndpointsNested>;
-
-export const stackExchangeAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
-export type BaseStackExchangePlugin<T extends StackExchangePluginOptions> = CorsairPlugin<
-	'stackexchange',
-	typeof StackExchangeSchema,
-	typeof stackExchangeEndpointsNested,
-	typeof stackExchangeWebhooksNested,
-	T,
-	typeof defaultAuthType
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof stackExchangeEndpointsNested
 >;
 
-export type InternalStackExchangePlugin = BaseStackExchangePlugin<StackExchangePluginOptions>;
+const stackExchangeWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof stackExchangeWebhooksNested
+	>;
 
+const defaultAuthType: AuthTypes = 'api_key';
+
+const stackExchangeEndpointMeta = {
+	'site.read': {
+		riskLevel: 'read',
+		description:
+			'Read Stack Exchange per-site API v2.3 resources using a documented route.',
+	},
+	'site.write': {
+		riskLevel: 'destructive',
+		description:
+			'Invoke a documented per-site POST method; includes edits, votes, flags and deletes.',
+	},
+	'network.read': {
+		riskLevel: 'read',
+		description:
+			'Read Stack Exchange network API v2.3 resources using a documented route.',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof stackExchangeEndpointsNested
+>;
+
+export const stackExchangeAuthConfig = {
+	api_key: {},
+	oauth_2: {},
+} as const satisfies PluginAuthConfig;
+
+export type BaseStackExchangePlugin<T extends StackExchangePluginOptions> =
+	CorsairPlugin<
+		'stackexchange',
+		typeof StackExchangeSchema,
+		typeof stackExchangeEndpointsNested,
+		typeof stackExchangeWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
+
+export type InternalStackExchangePlugin =
+	BaseStackExchangePlugin<StackExchangePluginOptions>;
 export type ExternalStackExchangePlugin<T extends StackExchangePluginOptions> =
 	BaseStackExchangePlugin<T>;
 
 export function stackexchange<const T extends StackExchangePluginOptions>(
-	incomingOptions: StackExchangePluginOptions & T = {} as StackExchangePluginOptions & T,
+	incomingOptions: StackExchangePluginOptions &
+		T = {} as StackExchangePluginOptions & T,
 ): ExternalStackExchangePlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -140,63 +140,48 @@ export function stackexchange<const T extends StackExchangePluginOptions>(
 	return {
 		id: 'stackexchange',
 		authConfig: stackExchangeAuthConfig,
+		oauthConfig: {
+			providerName: 'Stack Exchange',
+			authUrl: 'https://stackoverflow.com/oauth/dialog',
+			tokenUrl: 'https://stackoverflow.com/oauth/access_token/json',
+			scopes: ['read_inbox', 'write_access', 'private_info'],
+			requiresRegisteredRedirect: true,
+		},
 		schema: StackExchangeSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: stackExchangeEndpointsNested,
 		webhooks: stackExchangeWebhooksNested,
 		endpointMeta: stackExchangeEndpointMeta,
 		endpointSchemas: stackExchangeEndpointSchemas,
 		webhookSchemas: stackExchangeWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-stackexchange-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchStackExchangeTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveStackExchangeOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (ctx: StackExchangeKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
+		keyBuilder: async (ctx, source) => {
+			if (source !== 'endpoint') return '';
+			if (ctx.options.key) return ctx.options.key;
+			if (!ctx.keys) return '';
+			if (ctx.authType === 'oauth_2') {
+				return (await ctx.keys.get_access_token()) ?? '';
 			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			return (await ctx.keys.get_api_key()) ?? '';
 		},
 	} satisfies InternalStackExchangePlugin;
 }
 
+export { StackExchangeResponseSchema };
+export {
+	NETWORK_READ_ROUTES,
+	SITE_READ_ROUTES,
+	SITE_WRITE_ROUTES,
+} from './endpoints/routes';
 export type {
-	ExampleEvent,
-	StackExchangeWebhookOutputs,
-} from './webhooks/types';
-
-export type {
+	NetworkReadInput,
+	SiteReadInput,
+	SiteWriteInput,
 	StackExchangeEndpointInputs,
 	StackExchangeEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	StackExchangeResponse,
 } from './endpoints/types';

@@ -1,0 +1,158 @@
+---
+title: "Stack Exchange API reference"
+sidebarTitle: "API"
+description: "API reference for Stack Exchange: every `stackexchange.api.*` operation with input and output types."
+---
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Network
+
+### read
+
+`network.read`
+
+Read Stack Exchange network API v2.3 resources using a documented route.
+
+**Risk:** `read`
+
+```ts
+await corsair.stackexchange.api.network.read({ route: 'sites' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route` | `string` | Yes | — |
+| `pathParams` | `Record<string, string \| number>` | No | — |
+| `parameters` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
+| `method` | `GET \| POST` | No | — |
+
+Network methods omit the `site` parameter. OAuth methods specify whether `read_inbox`, `private_info`, or user authentication is needed in the route catalog. Pagination is exposed as `page` and `pagesize`; callers must honor `has_more` and `backoff` in the common response wrapper. `filters/create` defaults to GET and accepts POST when the include/exclude list is too large.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `Record<string, JsonValue>[]` | No | — |
+| `has_more` | `boolean` | No | — |
+| `backoff` | `number` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `quota_max` | `number` | No | — |
+| `quota_remaining` | `number` | No | — |
+| `total` | `number` | No | — |
+| `type` | `string` | No | — |
+| `error_id` | `number` | No | — |
+| `error_name` | `string` | No | — |
+| `error_message` | `string` | No | — |
+
+
+
+---
+
+## Site
+
+### read
+
+`site.read`
+
+Read Stack Exchange per-site API v2.3 resources using a documented route.
+
+**Risk:** `read`
+
+```ts
+await corsair.stackexchange.api.site.read({
+	route: 'questions',
+	site: 'stackoverflow',
+	parameters: { pagesize: 10 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route` | `string` | Yes | — |
+| `pathParams` | `Record<string, string \| number>` | No | — |
+| `parameters` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
+| `site` | `string` | Yes | — |
+
+`route` selects one of the per-site v2.3 methods listed in the package route catalog. `parameters` must use fields documented for that method. The method documentation remains authoritative for required inputs, sort enums and response item fields.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `Record<string, JsonValue>[]` | No | — |
+| `has_more` | `boolean` | No | — |
+| `backoff` | `number` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `quota_max` | `number` | No | — |
+| `quota_remaining` | `number` | No | — |
+| `total` | `number` | No | — |
+| `type` | `string` | No | — |
+| `error_id` | `number` | No | — |
+| `error_name` | `string` | No | — |
+| `error_message` | `string` | No | — |
+
+
+
+---
+
+### write
+
+`site.write`
+
+Invoke a documented per-site POST method; includes edits, votes, flags and deletes.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stackexchange.api.site.write({
+	route: 'render-question',
+	site: 'stackoverflow',
+	parameters: { title: 'A question about API integration', body: 'Markdown body for rendering only', tags: 'api;testing' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route` | `string` | Yes | — |
+| `pathParams` | `Record<string, string \| number>` | No | — |
+| `parameters` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
+| `site` | `string` | Yes | — |
+
+POST methods share one conservative destructive-risk operation. Use only a user-authorized OAuth token with `write_access` for write methods; methods requiring authentication but no write scope are marked in the route catalog. Write parameters are form-urlencoded. Review Stack Exchange's write policy before enabling these operations.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `Record<string, JsonValue>[]` | No | — |
+| `has_more` | `boolean` | No | — |
+| `backoff` | `number` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `quota_max` | `number` | No | — |
+| `quota_remaining` | `number` | No | — |
+| `total` | `number` | No | — |
+| `type` | `string` | No | — |
+| `error_id` | `number` | No | — |
+| `error_name` | `string` | No | — |
+| `error_message` | `string` | No | — |
+
+
+
+---
