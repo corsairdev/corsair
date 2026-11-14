@@ -11,7 +11,7 @@ Create a key in the Enigma Console under API Keys. Every call goes to one GraphQ
 - **Read-only.** All four operations are GraphQL queries; none of them writes or deletes anything at Enigma.
 - **Matching, not search listings.** `brands.match` and `locations.match` send the terms to Enigma's resolver and return the single best match, or `null` when nothing clears the confidence bar. Narrow with `address` and raise `matchThreshold` (0.0 to 1.0) to reject weak matches.
 - **`prompt`.** `brands.match` accepts a natural-language business description instead of name, website or phone, but it cannot be combined with any of them or with `address`.
-- **Paging.** `brands.get` pages the brand's operating locations with `locationsFirst` and the `endCursor` from the previous page's `pageInfo`. `legalEntitiesFirst` sizes the legal entities list, which is not paged.
+- **Paging.** `brands.get` pages the brand's operating locations with `locationsFirst` and the `endCursor` from the previous page's `pageInfo`. `legalEntitiesFirst` sizes the legal entities list, which is not paged. Inside `legalEntities.get`, the `registeredEntities`, `addresses` and `brands` lists return their first page of up to three entries, each with a `pageInfo.hasNextPage` flag when more exist.
 - **Card revenue costs credits.** `cardRevenue12m` is the projected 12-month card revenue Enigma reports for the brand or location, in dollars. Enigma bills it per value returned (25 credits each on its price list as of November 2026), so `brands.get` with the default 10 locations can use about 275 credits in one call. Set `locationsFirst` lower when you only need the brand's details. `brands.match` returns one value.
 - **Rate limits.** Limits are per plan, daily and monthly. Over the limit the API answers 429 with a `Retry-After` header; the plugin retries up to three times, honoring that header. A 402 means the account is out of credits and is not retried.
 - **Webhooks.** Enigma does not send webhooks to this plugin.
@@ -28,15 +28,19 @@ Create a key in the Enigma Console under API Keys. Every call goes to one GraphQ
 <CodeGroup>
 ```bash npm
 npm install corsair @corsair-dev/enigma better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
 yarn add corsair @corsair-dev/enigma better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
 pnpm install corsair @corsair-dev/enigma better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
 bun add corsair @corsair-dev/enigma better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -70,7 +74,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required here. When a tenant calls the API before a key is saved, the call throws an `AuthMissingError`, which may carry a `connectUrl` the tenant follows to save their Enigma API key.
+Store the Enigma API key before the first call: `pnpm corsair setup --plugin=enigma --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 enigma()

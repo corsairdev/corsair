@@ -81,6 +81,10 @@
   "cloudinary": {
     "from": "https://svgl.app/library/cloudinary.svg"
   },
+  "cloudlayer": {
+    "from": "https://media.brand.dev/0aec83fa-756c-47a9-af40-1117d5ff7dc6.svg",
+    "note": "found with the context.dev Brand API for cloudlayer.io"
+  },
   "coda": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/coda.svg"
   },
@@ -122,11 +126,19 @@
   "diffbot": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/diffbot.svg"
   },
+  "digicert": {
+    "from": "https://media.brand.dev/2db544b7-0afe-447b-bb5e-7659ce9ec0a5.svg",
+    "note": "found with the context.dev Brand API for digicert.com"
+  },
   "digitalocean": {
     "from": "https://svgl.app/library/digitalocean.svg"
   },
   "discord": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/discord.svg"
+  },
+  "documenso": {
+    "from": "https://media.brand.dev/9521d660-0c58-4ab5-98c7-111a3ed5617a.svg",
+    "note": "found with the context.dev Brand API for documenso.com"
   },
   "docusign": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/docusign.svg"
@@ -154,12 +166,28 @@
   "facebook": {
     "from": "https://svgl.app/library/facebook-icon.svg"
   },
+  "fathom": {
+    "from": "https://media.brand.dev/fdd2c9af-5eb8-4c6d-9b50-e8c871e91a0d.svg",
+    "note": "found with the context.dev Brand API for usefathom.com"
+  },
+  "felt": {
+    "from": "https://media.brand.dev/b3ca0f88-2992-4373-ac2c-b0934756b1f5.svg",
+    "note": "found with the context.dev Brand API for felt.com"
+  },
+  "fibery": {
+    "from": "https://media.brand.dev/908fdf09-ccf7-4c31-8db4-c0c81b8be58c.svg",
+    "note": "found with the context.dev Brand API for fibery.com"
+  },
   "fidel": {
     "from": "https://media.brand.dev/7726e0cb-145b-4940-a8fc-53aaec99ca4a.svg",
     "note": "found with the context.dev Brand API for fidelapi.com"
   },
   "figma": {
     "from": "https://svgl.app/library/figma.svg"
+  },
+  "finmei": {
+    "from": "https://media.brand.dev/9039fb92-aadd-459e-b88c-de120c2cfefd.svg",
+    "note": "found with the context.dev Brand API for finmei.com"
   },
   "firecrawl": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/firecrawl.svg"
@@ -170,8 +198,28 @@
   "flutterwave": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/flutterwave.svg"
   },
+  "folk": {
+    "from": "https://media.brand.dev/512ec990-d8b3-4c40-87de-80260917f007.svg",
+    "note": "found with the context.dev Brand API for folk.app"
+  },
+  "fomo": {
+    "from": "https://media.brand.dev/10b216dc-d872-403e-b956-fcc037256898.svg",
+    "note": "found with the context.dev Brand API for usefomo.com"
+  },
+  "gamma": {
+    "from": "https://media.brand.dev/a557eb51-bb9f-4d73-b7fc-9a74f7127a78.svg",
+    "note": "found with the context.dev Brand API for gamma.app"
+  },
   "gemini": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/gemini.svg"
+  },
+  "genderapiio": {
+    "from": "https://media.brand.dev/20610f1d-0d1f-4407-9b8d-c885b8d2f15c.svg",
+    "note": "found with the context.dev Brand API for genderapi.io"
+  },
+  "geoapify": {
+    "from": "https://media.brand.dev/3a625850-b311-4774-af07-fdc97f5c6b96.svg",
+    "note": "found with the context.dev Brand API for geoapify.com"
   },
   "github": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/github.svg"
@@ -241,6 +289,18 @@
   },
   "intercom": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/intercom.svg"
+  },
+  "keyword": {
+    "from": "https://media.brand.dev/ca427665-f4ca-4a40-a7f6-a24bf4c040df.svg",
+    "note": "found with the context.dev Brand API for keyword.com"
+  },
+  "kontentai": {
+    "from": "https://media.brand.dev/c13dd12c-bd7e-4520-93bb-7c9e223130b6.svg",
+    "note": "found with the context.dev Brand API for kontent.ai"
+  },
+  "krakenio": {
+    "from": "https://media.brand.dev/3d940d50-60b4-4db3-abee-2665d088bcac.svg",
+    "note": "found with the context.dev Brand API for kraken.io"
   },
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
