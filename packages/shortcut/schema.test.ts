@@ -3972,3 +3972,68 @@ describe('generated API-call documentation examples', () => {
 		).toBe(true);
 	});
 });
+
+describe('Shortcut live API responses', () => {
+	// Shortcut returns null for these fields although the OpenAPI spec types them as an object or array.
+	const nulled = <T>(value: T, patch: (copy: T) => void): T => {
+		const copy = structuredClone(value);
+		patch(copy);
+		return copy;
+	};
+	type Row = Record<string, unknown>;
+
+	it('accepts a member profile without a display icon', () => {
+		const members = nulled(ShortcutTestOutputs['listMembers'], (rows) => {
+			for (const row of rows as unknown as Row[]) {
+				(row.profile as Row).display_icon = null;
+			}
+		});
+		expect(
+			ShortcutEndpointOutputSchemas['listMembers'].safeParse(members).success,
+		).toBe(true);
+		const member = nulled(ShortcutTestOutputs['getMember'], (row) => {
+			((row as unknown as Row).profile as Row).display_icon = null;
+		});
+		expect(
+			ShortcutEndpointOutputSchemas['getMember'].safeParse(member).success,
+		).toBe(true);
+	});
+
+	it('accepts a team without a display icon', () => {
+		const groups = nulled(ShortcutTestOutputs['listGroups'], (rows) => {
+			for (const row of rows as unknown as Row[]) row.display_icon = null;
+		});
+		expect(
+			ShortcutEndpointOutputSchemas['listGroups'].safeParse(groups).success,
+		).toBe(true);
+	});
+
+	it('accepts epics and iterations with null associated_groups', () => {
+		const epics = nulled(ShortcutTestOutputs['listEpics'], (rows) => {
+			for (const row of rows as unknown as Row[]) row.associated_groups = null;
+		});
+		expect(
+			ShortcutEndpointOutputSchemas['listEpics'].safeParse(epics).success,
+		).toBe(true);
+		const epic = nulled(ShortcutTestOutputs['createEpic'], (row) => {
+			(row as unknown as Row).associated_groups = null;
+		});
+		expect(
+			ShortcutEndpointOutputSchemas['createEpic'].safeParse(epic).success,
+		).toBe(true);
+		const iteration = nulled(ShortcutTestOutputs['createIteration'], (row) => {
+			(row as unknown as Row).associated_groups = null;
+		});
+		expect(
+			ShortcutEndpointOutputSchemas['createIteration'].safeParse(iteration)
+				.success,
+		).toBe(true);
+		const iterations = nulled(ShortcutTestOutputs['listIterations'], (rows) => {
+			for (const row of rows as unknown as Row[]) row.associated_groups = null;
+		});
+		expect(
+			ShortcutEndpointOutputSchemas['listIterations'].safeParse(iterations)
+				.success,
+		).toBe(true);
+	});
+});

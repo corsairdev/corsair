@@ -602,7 +602,9 @@ export const ShortcutEpic = z
 		labels: z.array(z.lazy(() => ShortcutLabelSlim)),
 		mention_ids: z.array(z.string()),
 		member_mention_ids: z.array(z.string()),
-		associated_groups: z.array(z.lazy(() => ShortcutEpicAssociatedGroup)),
+		associated_groups: z
+			.array(z.lazy(() => ShortcutEpicAssociatedGroup))
+			.nullable(),
 		project_ids: z.array(z.number().int()),
 		stories_without_projects: z.number().int(),
 		completed_at_override: z.string().nullable(),
@@ -666,7 +668,9 @@ export const ShortcutEpicSearchResult = z
 		labels: z.array(z.lazy(() => ShortcutLabelSlim)),
 		mention_ids: z.array(z.string()),
 		member_mention_ids: z.array(z.string()),
-		associated_groups: z.array(z.lazy(() => ShortcutEpicAssociatedGroup)),
+		associated_groups: z
+			.array(z.lazy(() => ShortcutEpicAssociatedGroup))
+			.nullable(),
 		project_ids: z.array(z.number().int()),
 		stories_without_projects: z.number().int(),
 		completed_at_override: z.string().nullable(),
@@ -723,7 +727,9 @@ export const ShortcutEpicSlim = z
 		labels: z.array(z.lazy(() => ShortcutLabelSlim)),
 		mention_ids: z.array(z.string()),
 		member_mention_ids: z.array(z.string()),
-		associated_groups: z.array(z.lazy(() => ShortcutEpicAssociatedGroup)),
+		associated_groups: z
+			.array(z.lazy(() => ShortcutEpicAssociatedGroup))
+			.nullable(),
 		project_ids: z.array(z.number().int()),
 		stories_without_projects: z.number().int(),
 		completed_at_override: z.string().nullable(),
@@ -847,7 +853,7 @@ export const ShortcutGroup = z
 		updated_at: z.string(),
 		num_stories_backlog: z.number().int(),
 		id: z.string(),
-		display_icon: z.lazy(() => ShortcutIcon),
+		display_icon: z.lazy(() => ShortcutIcon).nullable(),
 		default_workflow_id: z.number().int().nullable().optional(),
 		member_ids: z.array(z.string()),
 		workflow_ids: z.array(z.number().int()),
@@ -1356,7 +1362,9 @@ export const ShortcutIteration = z
 		labels: z.array(z.lazy(() => ShortcutLabel)),
 		mention_ids: z.array(z.string()),
 		member_mention_ids: z.array(z.string()),
-		associated_groups: z.array(z.lazy(() => ShortcutIterationAssociatedGroup)),
+		associated_groups: z
+			.array(z.lazy(() => ShortcutIterationAssociatedGroup))
+			.nullable(),
 		name: z.string(),
 		global_id: z.string(),
 		label_ids: z.array(z.number().int()),
@@ -1395,7 +1403,9 @@ export const ShortcutIterationSlim = z
 		labels: z.array(z.lazy(() => ShortcutLabel)),
 		mention_ids: z.array(z.string()),
 		member_mention_ids: z.array(z.string()),
-		associated_groups: z.array(z.lazy(() => ShortcutIterationAssociatedGroup)),
+		associated_groups: z
+			.array(z.lazy(() => ShortcutIterationAssociatedGroup))
+			.nullable(),
 		name: z.string(),
 		global_id: z.string(),
 		label_ids: z.array(z.number().int()),
@@ -1682,7 +1692,7 @@ export const ShortcutProfile = z
 		is_agent: z.boolean().optional(),
 		gravatar_hash: z.string().nullable(),
 		id: z.string(),
-		display_icon: z.lazy(() => ShortcutIcon),
+		display_icon: z.lazy(() => ShortcutIcon).nullable(),
 		is_owner: z.boolean(),
 		is_assignable: z.boolean().optional(),
 		email_address: z.string().nullable(),
