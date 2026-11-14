@@ -20,6 +20,7 @@ type Options = {
 	query?: object;
 	body?: object;
 	resourceVersion?: string;
+	replayable?: boolean;
 };
 // Unknown query values are documented JSON scalars, arrays, or nested filter objects passed to the shared query serializer.
 function toRecord(
@@ -33,26 +34,61 @@ function toRecord(
 function delay(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
-function safeError(caught: unknown, method: SevdeskHttpMethod): Error {
+const SAFE_ERROR_FIELDS = new Set([
+	'code',
+	'errorcode',
+	'type',
+	'status',
+	'statuscode',
+	'field',
+	'parameter',
+]);
+const REDACTED = '[REDACTED]';
+
+// `unknown` because Sevdesk error bodies are provider-controlled JSON; preserve safe error codes while redacting arbitrary values.
+function sanitizeErrorBody(value: unknown, field = ''): unknown {
+	if (Array.isArray(value))
+		return value.map((entry: unknown) => sanitizeErrorBody(entry));
+	if (value !== null && typeof value === 'object') {
+		const sanitized: Record<string, unknown> = {};
+		for (const key of Object.keys(value)) {
+			const entry: unknown = Reflect.get(value, key);
+			sanitized[key] = sanitizeErrorBody(
+				entry,
+				key.toLowerCase().replace(/[-_]/gu, ''),
+			);
+		}
+		return sanitized;
+	}
+	if (SAFE_ERROR_FIELDS.has(field)) return value;
+	return value === null ? null : REDACTED;
+}
+
+function sanitizeApiError(error: ApiError): ApiError {
+	// Error body values and request payloads can contain contacts, invoices, and credentials.
+	const body: unknown = error.body;
+	const stack = error.stack?.replace(
+		error.message,
+		'Sevdesk API request failed',
+	);
+	const request: ApiRequestOptions = {
+		method: error.request.method,
+		url: SEVDESK_API_BASE,
+	};
+	// Mutate the original ApiError so Corsair keeps its identity, stack frames, status, and Retry-After metadata.
+	return Object.assign(error, {
+		url: SEVDESK_API_BASE,
+		statusText: '',
+		message: 'Sevdesk API request failed',
+		stack,
+		body: sanitizeErrorBody(body),
+		request,
+	});
+}
+
+function safeError(caught: unknown): Error {
 	// unknown because HTTP and fetch errors have no stable shape; narrow API errors before removing potentially sensitive data.
-	if (caught instanceof ApiError)
-		return new ApiError(
-			{ method, url: SEVDESK_API_BASE },
-			{
-				url: SEVDESK_API_BASE,
-				ok: false,
-				status: caught.status,
-				statusText: '',
-				body: undefined,
-			},
-			'Sevdesk API request failed',
-			{
-				retryAfter: caught.retryAfter,
-				rateLimitReset: caught.rateLimitReset,
-				rateLimitRemaining: caught.rateLimitRemaining,
-				rateLimitLimit: caught.rateLimitLimit,
-			},
-		);
+	if (caught instanceof ApiError) return sanitizeApiError(caught);
 	return new Error('Sevdesk request failed');
 }
 export async function makeSevdeskRequest<T>(
@@ -101,9 +137,10 @@ export async function makeSevdeskRequest<T>(
 			});
 		} catch (caught: unknown) {
 			// unknown because transport failures may contain PII; sanitize before retrying or propagating them.
-			const error = safeError(caught, method);
+			const error = safeError(caught);
 			if (
 				method !== 'GET' ||
+				options.replayable !== true ||
 				(error instanceof ApiError && error.status < 500) ||
 				attempt === 2
 			)

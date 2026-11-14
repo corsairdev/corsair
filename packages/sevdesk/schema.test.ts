@@ -2,6 +2,7 @@ import {
 	SevdeskEndpointInputSchemas,
 	SevdeskEndpointOutputSchemas,
 	SevdeskRequestComponents,
+	SevdeskResponseComponents,
 } from './endpoints/types';
 
 const inputKeys = Object.keys(SevdeskEndpointInputSchemas).sort();
@@ -20,7 +21,12 @@ describe('Sevdesk OpenAPI schemas', () => {
 		for (const schema of Object.values(SevdeskEndpointOutputSchemas))
 			expect(schema.safeParse(Number.NaN).success).toBe(false);
 	});
-	it('enforces pagination bounds and tax-rule enums', () => {
+	it('enforces pagination bounds, accounting tax rules, and position quantities', () => {
+		expect(
+			SevdeskEndpointInputSchemas['invoice.createInvoiceByFactory'].safeParse(
+				{},
+			).success,
+		).toBe(false);
 		expect(
 			SevdeskEndpointInputSchemas['contact.getContacts'].safeParse({
 				query: { limit: 0 },
@@ -88,6 +94,63 @@ describe('Sevdesk OpenAPI schemas', () => {
 			SevdeskRequestComponents.Model_Invoice.safeParse({
 				...validInvoice,
 				taxRule: { id: '999', objectName: 'TaxRule' },
+			}).success,
+		).toBe(false);
+		const voucher = {
+			objectName: 'Voucher',
+			mapAll: true,
+			status: 50,
+			taxRule: { id: '9', objectName: 'TaxRule' },
+			taxType: 'default',
+			creditDebit: 'D',
+			voucherType: 'VOU',
+		};
+		expect(
+			SevdeskRequestComponents.Model_Voucher.safeParse(voucher).success,
+		).toBe(true);
+		expect(
+			SevdeskRequestComponents.Model_VoucherUpdate.safeParse({
+				taxRule: { id: '14', objectName: 'TaxRule' },
+			}).success,
+		).toBe(true);
+		expect(
+			SevdeskResponseComponents.Model_VoucherResponse.safeParse({
+				taxRule: { id: '9', objectName: 'TaxRule' },
+			}).success,
+		).toBe(true);
+		expect(
+			SevdeskResponseComponents.Model_VoucherResponse.safeParse({
+				taxRule: { id: '21', objectName: 'TaxRule' },
+			}).success,
+		).toBe(false);
+		expect(
+			SevdeskEndpointOutputSchemas['invoicePos.getInvoicePos'].safeParse({
+				objects: [{ quantity: '2' }],
+			}).success,
+		).toBe(true);
+		expect(
+			SevdeskEndpointOutputSchemas['invoicePos.getInvoicePos'].safeParse({
+				objects: [{ quantity: 2 }],
+			}).success,
+		).toBe(true);
+		expect(
+			SevdeskEndpointOutputSchemas['invoicePos.getInvoicePos'].safeParse({
+				objects: [{ quantity: true }],
+			}).success,
+		).toBe(false);
+		expect(
+			SevdeskResponseComponents.Model_InvoicePosResponse.safeParse({
+				quantity: '2',
+			}).success,
+		).toBe(true);
+		expect(
+			SevdeskResponseComponents.Model_InvoicePosResponse.safeParse({
+				quantity: 2,
+			}).success,
+		).toBe(true);
+		expect(
+			SevdeskResponseComponents.Model_InvoicePosResponse.safeParse({
+				quantity: true,
 			}).success,
 		).toBe(false);
 	});

@@ -104,10 +104,17 @@ describe('Sevdesk JSON client', () => {
 	});
 	it('preserves Retry-After but sanitizes and does not replay a failed write', async () => {
 		fetchSpy.mockResolvedValueOnce(
-			new Response(JSON.stringify({ message: 'Sensitive contact content' }), {
-				status: 429,
-				headers: { 'Content-Type': 'application/json', 'Retry-After': '4' },
-			}),
+			new Response(
+				JSON.stringify({
+					code: 'RATE_LIMITED',
+					message: 'Sensitive contact content',
+					contact: { name: 'Private Customer' },
+				}),
+				{
+					status: 429,
+					headers: { 'Content-Type': 'application/json', 'Retry-After': '4' },
+				},
+			),
 		);
 		// unknown because the shared HTTP client rejects with an external transport value.
 		const caught = await makeSevdeskRequest('POST', '/Contact', token, {
@@ -119,8 +126,16 @@ describe('Sevdesk JSON client', () => {
 		expect(caught.status).toBe(429);
 		expect(caught.retryAfter).toBe(4000);
 		expect(caught.message).toBe('Sevdesk API request failed');
-		expect(caught.body).toBeUndefined();
+		expect(caught.body).toEqual({
+			code: 'RATE_LIMITED',
+			message: '[REDACTED]',
+			contact: { name: '[REDACTED]' },
+		});
+		expect(caught.url).toBe(SEVDESK_API_BASE);
 		expect(caught.request.body).toBeUndefined();
+		expect(caught.stack).toBeDefined();
+		expect(caught.stack).not.toContain('Sensitive contact content');
+		expect(caught.stack).not.toContain('Private Customer');
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
 	});
 	it('retries transient server errors only for reads', async () => {
@@ -142,7 +157,7 @@ describe('Sevdesk JSON client', () => {
 				headers: { 'Content-Type': 'application/json' },
 			}),
 		);
-		await makeSevdeskRequest('GET', '/Contact', token);
+		await makeSevdeskRequest('GET', '/Contact', token, { replayable: true });
 		expect(fetchSpy).toHaveBeenCalledTimes(3);
 	});
 	it('does not retry server errors for writes', async () => {
@@ -156,6 +171,23 @@ describe('Sevdesk JSON client', () => {
 			makeSevdeskRequest('POST', '/Contact', token, {
 				body: { name: 'Private' },
 			}),
+		).rejects.toThrow('Sevdesk API request failed');
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+	});
+	it('does not retry GET actions that can send, commit, or create exports', async () => {
+		fetchSpy.mockResolvedValueOnce(
+			new Response('{}', {
+				status: 503,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(
+			makeSevdeskRequest(
+				'GET',
+				'/CreditNote/{creditNoteId}/sendByWithRender',
+				token,
+				{ path: { creditNoteId: 1 }, replayable: false },
+			),
 		).rejects.toThrow('Sevdesk API request failed');
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
 	});

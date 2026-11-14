@@ -1,6 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { sevdeskEndpointsNested } from './endpoints';
+import { NON_REPLAYABLE_GETS } from './endpoints/operation';
+import type { SevdeskEndpointInputs } from './endpoints/types';
 import type { SevdeskContext } from './index';
 import { sevdesk } from './index';
 
@@ -81,9 +83,9 @@ const cases = [
 		key: 'checkAccount.createFileImportAccount',
 		method: 'POST',
 		route: '/CheckAccount/Factory/fileImportAccount',
-		input: {},
+		input: { body: {} },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.checkAccount.createFileImportAccount,
@@ -101,9 +103,9 @@ const cases = [
 		key: 'checkAccount.createClearingAccount',
 		method: 'POST',
 		route: '/CheckAccount/Factory/clearingAccount',
-		input: {},
+		input: { body: {} },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.checkAccount.createClearingAccount,
@@ -141,9 +143,9 @@ const cases = [
 		key: 'checkAccount.updateCheckAccount',
 		method: 'PUT',
 		route: '/CheckAccount/{checkAccountId}',
-		input: { path: { checkAccountId: 1 } },
+		input: { path: { checkAccountId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { checkAccountId: 1 } },
+		expectedOptions: { path: { checkAccountId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.checkAccount.updateCheckAccount,
@@ -224,9 +226,25 @@ const cases = [
 		key: 'checkAccountTransaction.createTransaction',
 		method: 'POST',
 		route: '/CheckAccountTransaction',
-		input: {},
+		input: {
+			body: {
+				valueDate: '2026-01-01T00:00:00Z',
+				checkAccount: { id: 1, objectName: 'test' },
+				amount: 100.1,
+				status: 100,
+				payeePayerName: 'Cercei Lannister',
+			},
+		},
 		response: {},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				valueDate: '2026-01-01T00:00:00Z',
+				checkAccount: { id: 1, objectName: 'test' },
+				amount: 100.1,
+				status: 100,
+				payeePayerName: 'Cercei Lannister',
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.checkAccountTransaction.createTransaction,
@@ -266,9 +284,9 @@ const cases = [
 		key: 'checkAccountTransaction.updateCheckAccountTransaction',
 		method: 'PUT',
 		route: '/CheckAccountTransaction/{checkAccountTransactionId}',
-		input: { path: { checkAccountTransactionId: 1 } },
+		input: { path: { checkAccountTransactionId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { checkAccountTransactionId: 1 } },
+		expectedOptions: { path: { checkAccountTransactionId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.checkAccountTransaction
@@ -354,9 +372,9 @@ const cases = [
 		key: 'privateTransactionRule.createPrivateTransactionRule',
 		method: 'POST',
 		route: '/PrivateTransactionRule',
-		input: {},
+		input: { body: { objectName: 'test' } },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: { objectName: 'test' } },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.privateTransactionRule
@@ -476,9 +494,9 @@ const cases = [
 		key: 'contact.createContact',
 		method: 'POST',
 		route: '/Contact',
-		input: {},
+		input: { body: { category: { id: 3, objectName: 'Category' } } },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: { category: { id: 3, objectName: 'Category' } } },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.contact.createContact, undefined, [
 				ctx,
@@ -512,9 +530,9 @@ const cases = [
 		key: 'contact.updateContact',
 		method: 'PUT',
 		route: '/Contact/{contactId}',
-		input: { path: { contactId: 1 } },
+		input: { path: { contactId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { contactId: 1 } },
+		expectedOptions: { path: { contactId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.contact.updateContact, undefined, [
 				ctx,
@@ -568,12 +586,24 @@ const cases = [
 		key: 'contactAddress.createContactAddress',
 		method: 'POST',
 		route: '/ContactAddress',
-		input: {},
+		input: {
+			body: {
+				contact: { id: 1, objectName: 'Contact' },
+				country: { id: 1, objectName: 'StaticCountry' },
+				category: { id: 1, objectName: 'test' },
+			},
+		},
 		response: {
 			contact: { id: 1, objectName: 'Contact' },
 			country: { id: 1, objectName: 'StaticCountry' },
 		},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				contact: { id: 1, objectName: 'Contact' },
+				country: { id: 1, objectName: 'StaticCountry' },
+				category: { id: 1, objectName: 'test' },
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.contactAddress.createContactAddress,
@@ -631,12 +661,12 @@ const cases = [
 		key: 'contactAddress.updateContactAddress',
 		method: 'PUT',
 		route: '/ContactAddress/{contactAddressId}',
-		input: { path: { contactAddressId: 1 } },
+		input: { path: { contactAddressId: 1 }, body: {} },
 		response: {
 			contact: { id: 1, objectName: 'Contact' },
 			country: { id: 1, objectName: 'StaticCountry' },
 		},
-		expectedOptions: { path: { contactAddressId: 1 } },
+		expectedOptions: { path: { contactAddressId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.contactAddress.updateContactAddress,
@@ -694,9 +724,21 @@ const cases = [
 		key: 'communicationWay.createCommunicationWay',
 		method: 'POST',
 		route: '/CommunicationWay',
-		input: {},
+		input: {
+			body: {
+				type: 'EMAIL',
+				value: 'test',
+				key: { id: 1, objectName: 'CommunicationWayKey' },
+			},
+		},
 		response: {},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				type: 'EMAIL',
+				value: 'test',
+				key: { id: 1, objectName: 'CommunicationWayKey' },
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.communicationWay.createCommunicationWay,
@@ -754,9 +796,9 @@ const cases = [
 		key: 'communicationWay.updateCommunicationWay',
 		method: 'PUT',
 		route: '/CommunicationWay/{communicationWayId}',
-		input: { path: { communicationWayId: 1 } },
+		input: { path: { communicationWayId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { communicationWayId: 1 } },
+		expectedOptions: { path: { communicationWayId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.communicationWay.updateCommunicationWay,
@@ -814,9 +856,9 @@ const cases = [
 		key: 'accountingContact.createAccountingContact',
 		method: 'POST',
 		route: '/AccountingContact',
-		input: {},
+		input: { body: { contact: { id: 1, objectName: 'Contact' } } },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: { contact: { id: 1, objectName: 'Contact' } } },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.accountingContact.createAccountingContact,
@@ -854,9 +896,9 @@ const cases = [
 		key: 'accountingContact.updateAccountingContact',
 		method: 'PUT',
 		route: '/AccountingContact/{accountingContactId}',
-		input: { path: { accountingContactId: 1 } },
+		input: { path: { accountingContactId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { accountingContactId: 1 } },
+		expectedOptions: { path: { accountingContactId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.accountingContact.updateAccountingContact,
@@ -934,9 +976,29 @@ const cases = [
 		key: 'contactField.createContactField',
 		method: 'POST',
 		route: '/ContactCustomField',
-		input: {},
+		input: {
+			body: {
+				contact: { id: 1, objectName: 'Contact' },
+				contactCustomFieldSetting: {
+					id: 1,
+					objectName: 'ContactCustomFieldSetting',
+				},
+				value: 'test',
+				objectName: 'ContactCustomField',
+			},
+		},
 		response: {},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				contact: { id: 1, objectName: 'Contact' },
+				contactCustomFieldSetting: {
+					id: 1,
+					objectName: 'ContactCustomFieldSetting',
+				},
+				value: 'test',
+				objectName: 'ContactCustomField',
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.contactField.createContactField,
@@ -974,9 +1036,9 @@ const cases = [
 		key: 'contactField.updateContactfield',
 		method: 'PUT',
 		route: '/ContactCustomField/{contactCustomFieldId}',
-		input: { path: { contactCustomFieldId: 1 } },
+		input: { path: { contactCustomFieldId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { contactCustomFieldId: 1 } },
+		expectedOptions: { path: { contactCustomFieldId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.contactField.updateContactfield,
@@ -1034,9 +1096,9 @@ const cases = [
 		key: 'contactField.createContactFieldSetting',
 		method: 'POST',
 		route: '/ContactCustomFieldSetting',
-		input: {},
+		input: { body: { name: 'test' } },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: { name: 'test' } },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.contactField.createContactFieldSetting,
@@ -1074,9 +1136,9 @@ const cases = [
 		key: 'contactField.updateContactFieldSetting',
 		method: 'PUT',
 		route: '/ContactCustomFieldSetting/{contactCustomFieldSettingId}',
-		input: { path: { contactCustomFieldSettingId: 1 } },
+		input: { path: { contactCustomFieldSettingId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { contactCustomFieldSettingId: 1 } },
+		expectedOptions: { path: { contactCustomFieldSettingId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.contactField.updateContactFieldSetting,
@@ -1155,9 +1217,49 @@ const cases = [
 		key: 'creditNote.createcreditNote',
 		method: 'POST',
 		route: '/CreditNote/Factory/saveCreditNote',
-		input: {},
+		input: {
+			body: {
+				creditNote: {
+					creditNoteNumber: 'GU-1000',
+					creditNoteDate: '2026-01-01T00:00:00Z',
+					contact: { id: 1, objectName: 'Contact' },
+					status: '100',
+					addressCountry: { id: 1, objectName: 'StaticCountry' },
+					contactPerson: { id: 1, objectName: 'SevUser' },
+					taxRate: 0,
+					taxRule: { id: '1', objectName: 'TaxRule' },
+					taxText: 'Umsatzsteuer 19%',
+					taxType: 'default',
+					bookingCategory: 'PROVISION',
+					currency: 'EUR',
+					header: 'My GU-1000',
+					mapAll: true,
+					objectName: 'CreditNote',
+				},
+			},
+		},
 		response: {},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				creditNote: {
+					creditNoteNumber: 'GU-1000',
+					creditNoteDate: '2026-01-01T00:00:00Z',
+					contact: { id: 1, objectName: 'Contact' },
+					status: '100',
+					addressCountry: { id: 1, objectName: 'StaticCountry' },
+					contactPerson: { id: 1, objectName: 'SevUser' },
+					taxRate: 0,
+					taxRule: { id: '1', objectName: 'TaxRule' },
+					taxText: 'Umsatzsteuer 19%',
+					taxType: 'default',
+					bookingCategory: 'PROVISION',
+					currency: 'EUR',
+					header: 'My GU-1000',
+					mapAll: true,
+					objectName: 'CreditNote',
+				},
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.creditNote.createcreditNote,
@@ -1175,9 +1277,9 @@ const cases = [
 		key: 'creditNote.createCreditNoteFromInvoice',
 		method: 'POST',
 		route: '/CreditNote/Factory/createFromInvoice',
-		input: {},
+		input: { body: { invoice: { id: 1234, objectName: 'Invoice' } } },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: { invoice: { id: 1234, objectName: 'Invoice' } } },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.creditNote.createCreditNoteFromInvoice,
@@ -1195,9 +1297,9 @@ const cases = [
 		key: 'creditNote.createCreditNoteFromVoucher',
 		method: 'POST',
 		route: '/CreditNote/Factory/createFromVoucher',
-		input: {},
+		input: { body: { voucher: { id: 1234, objectName: 'Voucher' } } },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: { voucher: { id: 1234, objectName: 'Voucher' } } },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.creditNote.createCreditNoteFromVoucher,
@@ -1235,9 +1337,9 @@ const cases = [
 		key: 'creditNote.updatecreditNote',
 		method: 'PUT',
 		route: '/CreditNote/{creditNoteId}',
-		input: { path: { creditNoteId: 1 } },
+		input: { path: { creditNoteId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { creditNoteId: 1 } },
+		expectedOptions: { path: { creditNoteId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.creditNote.updatecreditNote,
@@ -1295,9 +1397,15 @@ const cases = [
 		key: 'creditNote.creditNoteSendBy',
 		method: 'PUT',
 		route: '/CreditNote/{creditNoteId}/sendBy',
-		input: { path: { creditNoteId: 1 } },
+		input: {
+			path: { creditNoteId: 1 },
+			body: { sendType: 'VPR', sendDraft: false },
+		},
 		response: {},
-		expectedOptions: { path: { creditNoteId: 1 } },
+		expectedOptions: {
+			path: { creditNoteId: 1 },
+			body: { sendType: 'VPR', sendDraft: false },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.creditNote.creditNoteSendBy,
@@ -1355,9 +1463,15 @@ const cases = [
 		key: 'creditNote.sendCreditNoteViaEMail',
 		method: 'POST',
 		route: '/CreditNote/{creditNoteId}/sendViaEmail',
-		input: { path: { creditNoteId: 1 } },
+		input: {
+			path: { creditNoteId: 1 },
+			body: { toEmail: 'test', subject: 'test', text: 'test' },
+		},
 		response: {},
-		expectedOptions: { path: { creditNoteId: 1 } },
+		expectedOptions: {
+			path: { creditNoteId: 1 },
+			body: { toEmail: 'test', subject: 'test', text: 'test' },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.creditNote.sendCreditNoteViaEMail,
@@ -1375,9 +1489,25 @@ const cases = [
 		key: 'creditNote.bookCreditNote',
 		method: 'PUT',
 		route: '/CreditNote/{creditNoteId}/bookAmount',
-		input: { path: { creditNoteId: 1 } },
+		input: {
+			path: { creditNoteId: 1 },
+			body: {
+				amount: 1,
+				date: 1,
+				type: 'FULL_PAYMENT',
+				checkAccount: { id: 1, objectName: 'CheckAccount' },
+			},
+		},
 		response: {},
-		expectedOptions: { path: { creditNoteId: 1 } },
+		expectedOptions: {
+			path: { creditNoteId: 1 },
+			body: {
+				amount: 1,
+				date: 1,
+				type: 'FULL_PAYMENT',
+				checkAccount: { id: 1, objectName: 'CheckAccount' },
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.creditNote.bookCreditNote,
@@ -1455,9 +1585,23 @@ const cases = [
 		key: 'export.updateExportConfig',
 		method: 'PUT',
 		route: '/SevClient/{SevClientId}/updateExportConfig',
-		input: { path: { SevClientId: 1 } },
+		input: {
+			path: { SevClientId: 1 },
+			body: {
+				accountantNumber: 1324124,
+				accountantClientNumber: 1234152,
+				accountingYearBegin: 1681907569,
+			},
+		},
 		response: {},
-		expectedOptions: { path: { SevClientId: 1 } },
+		expectedOptions: {
+			path: { SevClientId: 1 },
+			body: {
+				accountantNumber: 1324124,
+				accountantClientNumber: 1234152,
+				accountingYearBegin: 1681907569,
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.export.updateExportConfig,
@@ -1733,7 +1877,15 @@ const cases = [
 		key: 'part.createPart',
 		method: 'POST',
 		route: '/Part',
-		input: {},
+		input: {
+			body: {
+				taxRate: 19,
+				unity: { id: 1, objectName: 'Unity' },
+				stock: 10000,
+				name: 'Dragonglass',
+				partNumber: 'Part-1000',
+			},
+		},
 		response: {
 			taxRate: 19,
 			unity: { id: 1, objectName: 'Unity' },
@@ -1741,7 +1893,15 @@ const cases = [
 			name: 'Dragonglass',
 			partNumber: 'Part-1000',
 		},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				taxRate: 19,
+				unity: { id: 1, objectName: 'Unity' },
+				stock: 10000,
+				name: 'Dragonglass',
+				partNumber: 'Part-1000',
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.part.createPart, undefined, [
 				ctx,
@@ -1775,7 +1935,7 @@ const cases = [
 		key: 'part.updatePart',
 		method: 'PUT',
 		route: '/Part/{partId}',
-		input: { path: { partId: 1 } },
+		input: { path: { partId: 1 }, body: {} },
 		response: {
 			taxRate: 19,
 			unity: { id: 1, objectName: 'Unity' },
@@ -1783,7 +1943,7 @@ const cases = [
 			name: 'Dragonglass',
 			partNumber: 'Part-1000',
 		},
-		expectedOptions: { path: { partId: 1 } },
+		expectedOptions: { path: { partId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.part.updatePart, undefined, [
 				ctx,
@@ -1835,9 +1995,45 @@ const cases = [
 		key: 'invoice.createInvoiceByFactory',
 		method: 'POST',
 		route: '/Invoice/Factory/saveInvoice',
-		input: {},
+		input: {
+			body: {
+				invoice: {
+					invoiceDate: '01.01.2022',
+					contact: { id: 1, objectName: 'Contact' },
+					discount: 0,
+					status: '50',
+					addressCountry: { id: 1, objectName: 'StaticCountry' },
+					contactPerson: { id: 1, objectName: 'SevUser' },
+					taxRate: 0,
+					taxRule: { id: '1', objectName: 'TaxRule' },
+					taxText: 'Umsatzsteuer 19%',
+					taxType: 'default',
+					invoiceType: 'RE',
+					currency: 'EUR',
+					mapAll: true,
+				},
+			},
+		},
 		response: {},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				invoice: {
+					invoiceDate: '01.01.2022',
+					contact: { id: 1, objectName: 'Contact' },
+					discount: 0,
+					status: '50',
+					addressCountry: { id: 1, objectName: 'StaticCountry' },
+					contactPerson: { id: 1, objectName: 'SevUser' },
+					taxRate: 0,
+					taxRule: { id: '1', objectName: 'TaxRule' },
+					taxText: 'Umsatzsteuer 19%',
+					taxType: 'default',
+					invoiceType: 'RE',
+					currency: 'EUR',
+					mapAll: true,
+				},
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.invoice.createInvoiceByFactory,
@@ -1893,9 +2089,9 @@ const cases = [
 		key: 'invoice.createInvoiceFromOrder',
 		method: 'POST',
 		route: '/Invoice/Factory/createInvoiceFromOrder',
-		input: {},
+		input: { body: { order: { id: 1, objectName: 'Order' } } },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: { order: { id: 1, objectName: 'Order' } } },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.invoice.createInvoiceFromOrder,
@@ -1913,10 +2109,14 @@ const cases = [
 		key: 'invoice.createInvoiceReminder',
 		method: 'POST',
 		route: '/Invoice/Factory/createInvoiceReminder',
-		input: { query: { 'invoice[id]': 1, 'invoice[objectName]': 'test' } },
+		input: {
+			query: { 'invoice[id]': 1, 'invoice[objectName]': 'test' },
+			body: { invoice: { id: 1, objectName: 'Invoice' } },
+		},
 		response: {},
 		expectedOptions: {
 			query: { 'invoice[id]': 1, 'invoice[objectName]': 'test' },
+			body: { invoice: { id: 1, objectName: 'Invoice' } },
 		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
@@ -1973,9 +2173,9 @@ const cases = [
 		key: 'invoice.invoiceRender',
 		method: 'POST',
 		route: '/Invoice/{invoiceId}/render',
-		input: { path: { invoiceId: 1 } },
+		input: { path: { invoiceId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { invoiceId: 1 } },
+		expectedOptions: { path: { invoiceId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.invoice.invoiceRender, undefined, [
 				ctx,
@@ -1991,9 +2191,15 @@ const cases = [
 		key: 'invoice.sendInvoiceViaEMail',
 		method: 'POST',
 		route: '/Invoice/{invoiceId}/sendViaEmail',
-		input: { path: { invoiceId: 1 } },
+		input: {
+			path: { invoiceId: 1 },
+			body: { toEmail: 'test', subject: 'test', text: 'test' },
+		},
 		response: { from: 'test', to: 'test', subject: 'test' },
-		expectedOptions: { path: { invoiceId: 1 } },
+		expectedOptions: {
+			path: { invoiceId: 1 },
+			body: { toEmail: 'test', subject: 'test', text: 'test' },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.invoice.sendInvoiceViaEMail,
@@ -2029,9 +2235,15 @@ const cases = [
 		key: 'invoice.invoiceSendBy',
 		method: 'PUT',
 		route: '/Invoice/{invoiceId}/sendBy',
-		input: { path: { invoiceId: 1 } },
+		input: {
+			path: { invoiceId: 1 },
+			body: { sendType: 'VPR', sendDraft: true },
+		},
 		response: {},
-		expectedOptions: { path: { invoiceId: 1 } },
+		expectedOptions: {
+			path: { invoiceId: 1 },
+			body: { sendType: 'VPR', sendDraft: true },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.invoice.invoiceSendBy, undefined, [
 				ctx,
@@ -2065,9 +2277,25 @@ const cases = [
 		key: 'invoice.bookInvoice',
 		method: 'PUT',
 		route: '/Invoice/{invoiceId}/bookAmount',
-		input: { path: { invoiceId: 1 } },
+		input: {
+			path: { invoiceId: 1 },
+			body: {
+				amount: 1,
+				date: 1,
+				type: 'FULL_PAYMENT',
+				checkAccount: { id: 1, objectName: 'CheckAccount' },
+			},
+		},
 		response: {},
-		expectedOptions: { path: { invoiceId: 1 } },
+		expectedOptions: {
+			path: { invoiceId: 1 },
+			body: {
+				amount: 1,
+				date: 1,
+				type: 'FULL_PAYMENT',
+				checkAccount: { id: 1, objectName: 'CheckAccount' },
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.invoice.bookInvoice, undefined, [
 				ctx,
@@ -2181,9 +2409,15 @@ const cases = [
 		key: 'layout.updateInvoiceTemplate',
 		method: 'PUT',
 		route: '/Invoice/{invoiceId}/changeParameter',
-		input: { path: { invoiceId: 1 } },
+		input: {
+			path: { invoiceId: 1 },
+			body: { key: 'language', value: '573ef2706bd2d50366786471' },
+		},
 		response: {},
-		expectedOptions: { path: { invoiceId: 1 } },
+		expectedOptions: {
+			path: { invoiceId: 1 },
+			body: { key: 'language', value: '573ef2706bd2d50366786471' },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.layout.updateInvoiceTemplate,
@@ -2201,9 +2435,15 @@ const cases = [
 		key: 'layout.updateOrderTemplate',
 		method: 'PUT',
 		route: '/Order/{orderId}/changeParameter',
-		input: { path: { orderId: 1 } },
+		input: {
+			path: { orderId: 1 },
+			body: { key: 'language', value: '573ef2706bd2d50366786471' },
+		},
 		response: {},
-		expectedOptions: { path: { orderId: 1 } },
+		expectedOptions: {
+			path: { orderId: 1 },
+			body: { key: 'language', value: '573ef2706bd2d50366786471' },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.layout.updateOrderTemplate,
@@ -2221,9 +2461,15 @@ const cases = [
 		key: 'layout.updateCreditNoteTemplate',
 		method: 'PUT',
 		route: '/CreditNote/{creditNoteId}/changeParameter',
-		input: { path: { creditNoteId: 1 } },
+		input: {
+			path: { creditNoteId: 1 },
+			body: { key: 'language', value: '573ef2706bd2d50366786471' },
+		},
 		response: {},
-		expectedOptions: { path: { creditNoteId: 1 } },
+		expectedOptions: {
+			path: { creditNoteId: 1 },
+			body: { key: 'language', value: '573ef2706bd2d50366786471' },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.layout.updateCreditNoteTemplate,
@@ -2259,9 +2505,47 @@ const cases = [
 		key: 'order.createOrder',
 		method: 'POST',
 		route: '/Order/Factory/saveOrder',
-		input: {},
+		input: {
+			body: {
+				order: {
+					orderNumber: 'Offer-1000',
+					orderDate: '2026-01-01T00:00:00Z',
+					contact: { id: 1, objectName: 'Contact' },
+					status: 100,
+					addressCountry: { id: 1, objectName: 'StaticCountry' },
+					contactPerson: { id: 0, objectName: 'SevUser' },
+					taxRate: 0,
+					taxRule: { id: '1', objectName: 'TaxRule' },
+					taxText: 'Umsatzsteuer 19%',
+					taxType: 'default',
+					currency: 'EUR',
+					header: 'My Offer-1000',
+					version: 0,
+					mapAll: true,
+				},
+			},
+		},
 		response: {},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				order: {
+					orderNumber: 'Offer-1000',
+					orderDate: '2026-01-01T00:00:00Z',
+					contact: { id: 1, objectName: 'Contact' },
+					status: 100,
+					addressCountry: { id: 1, objectName: 'StaticCountry' },
+					contactPerson: { id: 0, objectName: 'SevUser' },
+					taxRate: 0,
+					taxRule: { id: '1', objectName: 'TaxRule' },
+					taxText: 'Umsatzsteuer 19%',
+					taxType: 'default',
+					currency: 'EUR',
+					header: 'My Offer-1000',
+					version: 0,
+					mapAll: true,
+				},
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.order.createOrder, undefined, [
 				ctx,
@@ -2295,9 +2579,9 @@ const cases = [
 		key: 'order.updateOrder',
 		method: 'PUT',
 		route: '/Order/{orderId}',
-		input: { path: { orderId: 1 } },
+		input: { path: { orderId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { orderId: 1 } },
+		expectedOptions: { path: { orderId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.order.updateOrder, undefined, [
 				ctx,
@@ -2387,9 +2671,15 @@ const cases = [
 		key: 'order.sendorderViaEMail',
 		method: 'POST',
 		route: '/Order/{orderId}/sendViaEmail',
-		input: { path: { orderId: 1 } },
+		input: {
+			path: { orderId: 1 },
+			body: { toEmail: 'test', subject: 'test', text: 'test' },
+		},
 		response: {},
-		expectedOptions: { path: { orderId: 1 } },
+		expectedOptions: {
+			path: { orderId: 1 },
+			body: { toEmail: 'test', subject: 'test', text: 'test' },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.order.sendorderViaEMail, undefined, [
 				ctx,
@@ -2405,9 +2695,15 @@ const cases = [
 		key: 'order.createPackingListFromOrder',
 		method: 'POST',
 		route: '/Order/Factory/createPackingListFromOrder',
-		input: { query: { 'order[id]': 1, 'order[objectName]': 'test' } },
+		input: {
+			query: { 'order[id]': 1, 'order[objectName]': 'test' },
+			body: { id: 1, objectName: 'Order' },
+		},
 		response: {},
-		expectedOptions: { query: { 'order[id]': 1, 'order[objectName]': 'test' } },
+		expectedOptions: {
+			query: { 'order[id]': 1, 'order[objectName]': 'test' },
+			body: { id: 1, objectName: 'Order' },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.order.createPackingListFromOrder,
@@ -2425,9 +2721,15 @@ const cases = [
 		key: 'order.createContractNoteFromOrder',
 		method: 'POST',
 		route: '/Order/Factory/createContractNoteFromOrder',
-		input: { query: { 'order[id]': 1, 'order[objectName]': 'test' } },
+		input: {
+			query: { 'order[id]': 1, 'order[objectName]': 'test' },
+			body: { id: 1, objectName: 'Order' },
+		},
 		response: {},
-		expectedOptions: { query: { 'order[id]': 1, 'order[objectName]': 'test' } },
+		expectedOptions: {
+			query: { 'order[id]': 1, 'order[objectName]': 'test' },
+			body: { id: 1, objectName: 'Order' },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.order.createContractNoteFromOrder,
@@ -2463,9 +2765,12 @@ const cases = [
 		key: 'order.orderSendBy',
 		method: 'PUT',
 		route: '/Order/{orderId}/sendBy',
-		input: { path: { orderId: 1 } },
+		input: { path: { orderId: 1 }, body: { sendType: 'VPR', sendDraft: true } },
 		response: {},
-		expectedOptions: { path: { orderId: 1 } },
+		expectedOptions: {
+			path: { orderId: 1 },
+			body: { sendType: 'VPR', sendDraft: true },
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.order.orderSendBy, undefined, [
 				ctx,
@@ -2521,9 +2826,9 @@ const cases = [
 		key: 'orderPos.updateOrderPosition',
 		method: 'PUT',
 		route: '/OrderPos/{orderPosId}',
-		input: { path: { orderPosId: 1 } },
+		input: { path: { orderPosId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { orderPosId: 1 } },
+		expectedOptions: { path: { orderPosId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.orderPos.updateOrderPosition,
@@ -2559,9 +2864,33 @@ const cases = [
 		key: 'voucher.voucherFactorySaveVoucher',
 		method: 'POST',
 		route: '/Voucher/Factory/saveVoucher',
-		input: {},
+		input: {
+			body: {
+				voucher: {
+					creditDebit: 'C',
+					taxType: 'default',
+					taxRule: { id: '1', objectName: 'TaxRule' },
+					status: 50,
+					voucherType: 'VOU',
+					mapAll: true,
+					objectName: 'test',
+				},
+			},
+		},
 		response: {},
-		expectedOptions: {},
+		expectedOptions: {
+			body: {
+				voucher: {
+					creditDebit: 'C',
+					taxType: 'default',
+					taxRule: { id: '1', objectName: 'TaxRule' },
+					status: 50,
+					voucherType: 'VOU',
+					mapAll: true,
+					objectName: 'test',
+				},
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(
 				sevdeskEndpointsNested.voucher.voucherFactorySaveVoucher,
@@ -2615,9 +2944,9 @@ const cases = [
 		key: 'voucher.updateVoucher',
 		method: 'PUT',
 		route: '/Voucher/{voucherId}',
-		input: { path: { voucherId: 1 } },
+		input: { path: { voucherId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { voucherId: 1 } },
+		expectedOptions: { path: { voucherId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.voucher.updateVoucher, undefined, [
 				ctx,
@@ -2651,9 +2980,25 @@ const cases = [
 		key: 'voucher.bookVoucher',
 		method: 'PUT',
 		route: '/Voucher/{voucherId}/bookAmount',
-		input: { path: { voucherId: 1 } },
+		input: {
+			path: { voucherId: 1 },
+			body: {
+				amount: 1,
+				date: '2026-01-01T00:00:00Z',
+				type: 'FULL_PAYMENT',
+				checkAccount: { id: 1, objectName: 'CheckAccount' },
+			},
+		},
 		response: {},
-		expectedOptions: { path: { voucherId: 1 } },
+		expectedOptions: {
+			path: { voucherId: 1 },
+			body: {
+				amount: 1,
+				date: '2026-01-01T00:00:00Z',
+				type: 'FULL_PAYMENT',
+				checkAccount: { id: 1, objectName: 'CheckAccount' },
+			},
+		},
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.voucher.bookVoucher, undefined, [
 				ctx,
@@ -2934,9 +3279,9 @@ const cases = [
 		key: 'tag.updateTag',
 		method: 'PUT',
 		route: '/Tag/{tagId}',
-		input: { path: { tagId: 1 } },
+		input: { path: { tagId: 1 }, body: {} },
 		response: {},
-		expectedOptions: { path: { tagId: 1 } },
+		expectedOptions: { path: { tagId: 1 }, body: {} },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.tag.updateTag, undefined, [
 				ctx,
@@ -2970,9 +3315,9 @@ const cases = [
 		key: 'tag.createTag',
 		method: 'POST',
 		route: '/Tag/Factory/create',
-		input: {},
+		input: { body: { object: { id: 1, objectName: 'Invoice' } } },
 		response: {},
-		expectedOptions: {},
+		expectedOptions: { body: { object: { id: 1, objectName: 'Invoice' } } },
 		invoke: (ctx: SevdeskContext, data: object) =>
 			Reflect.apply(sevdeskEndpointsNested.tag.createTag, undefined, [
 				ctx,
@@ -3015,6 +3360,103 @@ describe('documented operations', () => {
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.options?.authType).toBe('api_key');
 	});
+	it('accepts a populated invoice-position response with a numeric quantity', async () => {
+		const response = { objects: [{ quantity: '2' }] };
+		mockedRequest.mockResolvedValueOnce(response);
+		await expect(
+			sevdeskEndpointsNested.invoicePos.getInvoicePos(ctx, {}),
+		).resolves.toEqual(response);
+	});
+	it('sends an invoice with a populated line and validates the response envelope', async () => {
+		const body = {
+			invoice: {
+				contact: { id: 1, objectName: 'Contact' },
+				contactPerson: { id: 1, objectName: 'SevUser' },
+				invoiceDate: '2026-01-01',
+				discount: 0,
+				addressCountry: { id: 1, objectName: 'StaticCountry' },
+				status: '100',
+				taxRate: 19,
+				taxRule: { id: '1', objectName: 'TaxRule' },
+				taxText: 'VAT',
+				taxType: 'default',
+				invoiceType: 'RE',
+				currency: 'EUR',
+				mapAll: true,
+			},
+			invoicePosSave: [
+				{
+					objectName: 'InvoicePos',
+					mapAll: true,
+					quantity: 2,
+					unity: { id: 1, objectName: 'Unity' },
+					taxRate: 19,
+				},
+			],
+		} satisfies SevdeskEndpointInputs['invoice.createInvoiceByFactory']['body'];
+		const response = {
+			invoice: {
+				invoiceNumber: 'RE-1001',
+				status: '100',
+				taxRule: { id: '1', objectName: 'TaxRule' },
+			},
+			invoicePos: [{ quantity: '2', taxRate: '19' }],
+		};
+		mockedRequest.mockResolvedValueOnce(response);
+		await expect(
+			sevdeskEndpointsNested.invoice.createInvoiceByFactory(ctx, { body }),
+		).resolves.toEqual(response);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'POST',
+			'/Invoice/Factory/saveInvoice',
+			ctx.key,
+			expect.objectContaining({ body, replayable: false }),
+		);
+	});
+	it('sends an expense voucher with an Update 2.0 expense tax rule', async () => {
+		const body = {
+			voucher: {
+				objectName: 'Voucher',
+				mapAll: true,
+				status: 50,
+				taxRule: { id: '9', objectName: 'TaxRule' },
+				taxType: 'default',
+				creditDebit: 'D',
+				voucherType: 'VOU',
+			},
+			voucherPosSave: [
+				{
+					objectName: 'VoucherPos',
+					mapAll: true,
+					accountDatev: { id: 1, objectName: 'AccountDatev' },
+					accountingType: { id: 1, objectName: 'AccountingType' },
+					taxRate: 19,
+					net: true,
+					sumNet: 100,
+					sumGross: 119,
+				},
+			],
+		} satisfies SevdeskEndpointInputs['voucher.voucherFactorySaveVoucher']['body'];
+		const response = {
+			voucher: {
+				status: '50',
+				taxRule: { id: '9', objectName: 'TaxRule' },
+				creditDebit: 'D',
+				voucherType: 'VOU',
+			},
+			voucherPos: [],
+		};
+		mockedRequest.mockResolvedValueOnce(response);
+		await expect(
+			sevdeskEndpointsNested.voucher.voucherFactorySaveVoucher(ctx, { body }),
+		).resolves.toEqual(response);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'POST',
+			'/Voucher/Factory/saveVoucher',
+			ctx.key,
+			expect.objectContaining({ body, replayable: false }),
+		);
+	});
 	for (const operation of cases) {
 		it(`${operation.key} sends the expected route and validates its response`, async () => {
 			mockedRequest.mockResolvedValueOnce(operation.response);
@@ -3024,7 +3466,13 @@ describe('documented operations', () => {
 				operation.method,
 				operation.route,
 				ctx.key,
-				{ ...operation.expectedOptions, resourceVersion: undefined },
+				expect.objectContaining({
+					...operation.expectedOptions,
+					resourceVersion: undefined,
+					replayable:
+						operation.method === 'GET' &&
+						!NON_REPLAYABLE_GETS.has(operation.key),
+				}),
 			);
 			expect(mockedLogEvent).toHaveBeenCalledWith(
 				ctx,
@@ -3038,6 +3486,19 @@ describe('documented operations', () => {
 			expect(mockedRequest).not.toHaveBeenCalled();
 		});
 	}
+	it('does not mark a print-and-send GET as replayable', async () => {
+		mockedRequest.mockResolvedValueOnce({});
+		await sevdeskEndpointsNested.creditNote.sendCreditNoteByPrinting(ctx, {
+			path: { creditNoteId: 1 },
+			query: { sendType: 'VP' },
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'GET',
+			'/CreditNote/{creditNoteId}/sendByWithRender',
+			ctx.key,
+			expect.objectContaining({ replayable: false }),
+		);
+	});
 	it('does not log customer content or credentials', async () => {
 		mockedRequest.mockResolvedValueOnce({});
 		await sevdeskEndpointsNested.contact.createContact(ctx, {

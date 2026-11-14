@@ -1881,7 +1881,13 @@ const requestComponent_Model_Voucher = z
 					z.literal('3'),
 					z.literal('4'),
 					z.literal('5'),
+					z.literal('8'),
+					z.literal('9'),
+					z.literal('10'),
 					z.literal('11'),
+					z.literal('12'),
+					z.literal('13'),
+					z.literal('14'),
 				]),
 				objectName: z.union([z.literal('TaxRule')]),
 			})
@@ -2102,7 +2108,13 @@ const requestComponent_Model_VoucherUpdate = z
 					z.literal('3'),
 					z.literal('4'),
 					z.literal('5'),
+					z.literal('8'),
+					z.literal('9'),
+					z.literal('10'),
 					z.literal('11'),
+					z.literal('12'),
+					z.literal('13'),
+					z.literal('14'),
 				]),
 				objectName: z.union([z.literal('TaxRule')]),
 			})
@@ -4118,7 +4130,8 @@ const responseComponent_Model_InvoicePosResponse = z
 			})
 			.passthrough()
 			.optional(),
-		quantity: z.boolean().optional(),
+		// The OpenAPI response declares quantity as boolean, conflicting with its numeric request and sibling position models.
+		quantity: z.union([z.number(), z.string()]).optional(),
 		price: z.string().optional(),
 		name: z.string().optional(),
 		unity: z
@@ -4845,7 +4858,13 @@ const responseComponent_Model_Voucher = z
 					z.literal('3'),
 					z.literal('4'),
 					z.literal('5'),
+					z.literal('8'),
+					z.literal('9'),
+					z.literal('10'),
 					z.literal('11'),
+					z.literal('12'),
+					z.literal('13'),
+					z.literal('14'),
 				]),
 				objectName: z.union([z.literal('TaxRule')]),
 			})
@@ -5032,7 +5051,13 @@ const responseComponent_Model_VoucherResponse = z
 					z.literal('3'),
 					z.literal('4'),
 					z.literal('5'),
+					z.literal('8'),
+					z.literal('9'),
+					z.literal('10'),
 					z.literal('11'),
+					z.literal('12'),
+					z.literal('13'),
+					z.literal('14'),
 				]),
 				objectName: z.union([z.literal('TaxRule')]),
 			})
@@ -5516,7 +5541,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_createFileImportAccount.optional(),
+			body: requestComponent_createFileImportAccount,
 		})
 		.strict(),
 	'checkAccount.createClearingAccount': z
@@ -5527,7 +5552,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_createClearingAccount.optional(),
+			body: requestComponent_createClearingAccount,
 		})
 		.strict(),
 	'checkAccount.getCheckAccountById': z
@@ -5557,7 +5582,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_CheckAccountUpdate.optional(),
+			body: requestComponent_Model_CheckAccountUpdate,
 		})
 		.strict(),
 	'checkAccount.deleteCheckAccount': z
@@ -5629,7 +5654,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_CheckAccountTransaction.optional(),
+			body: requestComponent_Model_CheckAccountTransaction,
 		})
 		.strict(),
 	'checkAccountTransaction.getCheckAccountTransactionById': z
@@ -5659,7 +5684,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_CheckAccountTransactionUpdate.optional(),
+			body: requestComponent_Model_CheckAccountTransactionUpdate,
 		})
 		.strict(),
 	'checkAccountTransaction.deleteCheckAccountTransaction': z
@@ -5718,7 +5743,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_CreatePrivateTransactionRule.optional(),
+			body: requestComponent_CreatePrivateTransactionRule,
 		})
 		.strict(),
 	'privateTransactionRule.deletePrivateTransactionRule': z
@@ -5812,7 +5837,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_Contact.optional(),
+			body: requestComponent_Model_Contact,
 		})
 		.strict(),
 	'contact.getContactById': z
@@ -5842,7 +5867,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ContactUpdate.optional(),
+			body: requestComponent_Model_ContactUpdate,
 		})
 		.strict(),
 	'contact.deleteContact': z
@@ -5883,7 +5908,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ContactAddress.optional(),
+			body: requestComponent_Model_ContactAddress,
 		})
 		.strict(),
 	'contactAddress.getContactAddresses': z
@@ -5931,7 +5956,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ContactAddressUpdate.optional(),
+			body: requestComponent_Model_ContactAddressUpdate,
 		})
 		.strict(),
 	'contactAddress.deleteContactAddress': z
@@ -5986,7 +6011,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_CommunicationWay.optional(),
+			body: requestComponent_Model_CommunicationWay,
 		})
 		.strict(),
 	'communicationWay.getCommunicationWayById': z
@@ -6031,7 +6056,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_CommunicationWayUpdate.optional(),
+			body: requestComponent_Model_CommunicationWayUpdate,
 		})
 		.strict(),
 	'communicationWay.getCommunicationWayKeys': z
@@ -6080,7 +6105,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_AccountingContact.optional(),
+			body: requestComponent_Model_AccountingContact,
 		})
 		.strict(),
 	'accountingContact.getAccountingContactById': z
@@ -6110,7 +6135,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_AccountingContactUpdate.optional(),
+			body: requestComponent_Model_AccountingContactUpdate,
 		})
 		.strict(),
 	'accountingContact.deleteAccountingContact': z
@@ -6188,7 +6213,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ContactCustomField.optional(),
+			body: requestComponent_Model_ContactCustomField,
 		})
 		.strict(),
 	'contactField.getContactFieldsById': z
@@ -6218,7 +6243,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ContactCustomFieldUpdate.optional(),
+			body: requestComponent_Model_ContactCustomFieldUpdate,
 		})
 		.strict(),
 	'contactField.deleteContactCustomFieldId': z
@@ -6262,7 +6287,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ContactCustomFieldSetting.optional(),
+			body: requestComponent_Model_ContactCustomFieldSetting,
 		})
 		.strict(),
 	'contactField.getContactFieldSettingById': z
@@ -6292,7 +6317,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ContactCustomFieldSettingUpdate.optional(),
+			body: requestComponent_Model_ContactCustomFieldSettingUpdate,
 		})
 		.strict(),
 	'contactField.deleteContactFieldSetting': z
@@ -6366,7 +6391,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_saveCreditNote.optional(),
+			body: requestComponent_saveCreditNote,
 		})
 		.strict(),
 	'creditNote.createCreditNoteFromInvoice': z
@@ -6386,8 +6411,7 @@ export const SevdeskEndpointInputSchemas = {
 						})
 						.strict(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'creditNote.createCreditNoteFromVoucher': z
@@ -6407,8 +6431,7 @@ export const SevdeskEndpointInputSchemas = {
 						})
 						.strict(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'creditNote.getcreditNoteById': z
@@ -6438,7 +6461,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_creditNoteUpdate.optional(),
+			body: requestComponent_Model_creditNoteUpdate,
 		})
 		.strict(),
 	'creditNote.deletecreditNote': z
@@ -6497,8 +6520,7 @@ export const SevdeskEndpointInputSchemas = {
 					]),
 					sendDraft: z.boolean(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'creditNote.creditNoteEnshrine': z
@@ -6559,8 +6581,7 @@ export const SevdeskEndpointInputSchemas = {
 					ccEmail: z.string().optional(),
 					bccEmail: z.string().optional(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'creditNote.bookCreditNote': z
@@ -6603,8 +6624,7 @@ export const SevdeskEndpointInputSchemas = {
 						.optional(),
 					createFeed: z.boolean().optional(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'creditNote.creditNoteResetToOpen': z
@@ -6675,8 +6695,7 @@ export const SevdeskEndpointInputSchemas = {
 					accountantClientNumber: z.number(),
 					accountingYearBegin: z.number(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'export.exportDatevDepricated': z
@@ -7113,7 +7132,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_Part.optional(),
+			body: requestComponent_Model_Part,
 		})
 		.strict(),
 	'part.getPartById': z
@@ -7143,7 +7162,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_PartUpdate.optional(),
+			body: requestComponent_Model_PartUpdate,
 		})
 		.strict(),
 	'part.partGetStock': z
@@ -7195,7 +7214,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_saveInvoice.optional(),
+			body: requestComponent_saveInvoice,
 		})
 		.strict(),
 	'invoice.getInvoiceById': z
@@ -7244,7 +7263,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_CreateInvoiceFromOrder.optional(),
+			body: requestComponent_Model_CreateInvoiceFromOrder,
 		})
 		.strict(),
 	'invoice.createInvoiceReminder': z
@@ -7269,8 +7288,7 @@ export const SevdeskEndpointInputSchemas = {
 						})
 						.strict(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'invoice.getIsInvoicePartiallyPaid': z
@@ -7319,8 +7337,7 @@ export const SevdeskEndpointInputSchemas = {
 				.object({
 					forceReload: z.boolean().optional(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'invoice.sendInvoiceViaEMail': z
@@ -7346,8 +7363,7 @@ export const SevdeskEndpointInputSchemas = {
 					bccEmail: z.string().optional(),
 					sendXml: z.boolean().optional(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'invoice.invoiceGetPdf': z
@@ -7393,8 +7409,7 @@ export const SevdeskEndpointInputSchemas = {
 					]),
 					sendDraft: z.boolean(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'invoice.invoiceEnshrine': z
@@ -7452,8 +7467,7 @@ export const SevdeskEndpointInputSchemas = {
 						.optional(),
 					createFeed: z.boolean().optional(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'invoice.invoiceResetToOpen': z
@@ -7558,7 +7572,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ChangeLayout.optional(),
+			body: requestComponent_Model_ChangeLayout,
 		})
 		.strict(),
 	'layout.updateOrderTemplate': z
@@ -7573,7 +7587,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ChangeLayout.optional(),
+			body: requestComponent_Model_ChangeLayout,
 		})
 		.strict(),
 	'layout.updateCreditNoteTemplate': z
@@ -7588,7 +7602,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_ChangeLayout.optional(),
+			body: requestComponent_Model_ChangeLayout,
 		})
 		.strict(),
 	'order.getOrders': z
@@ -7632,7 +7646,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_saveOrder.optional(),
+			body: requestComponent_saveOrder,
 		})
 		.strict(),
 	'order.getOrderById': z
@@ -7662,7 +7676,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_OrderUpdate.optional(),
+			body: requestComponent_Model_OrderUpdate,
 		})
 		.strict(),
 	'order.deleteOrder': z
@@ -7773,8 +7787,7 @@ export const SevdeskEndpointInputSchemas = {
 					ccEmail: z.string().optional(),
 					bccEmail: z.string().optional(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'order.createPackingListFromOrder': z
@@ -7790,7 +7803,7 @@ export const SevdeskEndpointInputSchemas = {
 					'order[objectName]': z.string(),
 				})
 				.strict(),
-			body: requestComponent_Model_CreatePackingListFromOrder.optional(),
+			body: requestComponent_Model_CreatePackingListFromOrder,
 		})
 		.strict(),
 	'order.createContractNoteFromOrder': z
@@ -7806,7 +7819,7 @@ export const SevdeskEndpointInputSchemas = {
 					'order[objectName]': z.string(),
 				})
 				.strict(),
-			body: requestComponent_Model_CreatePackingListFromOrder.optional(),
+			body: requestComponent_Model_CreatePackingListFromOrder,
 		})
 		.strict(),
 	'order.orderGetPdf': z
@@ -7852,8 +7865,7 @@ export const SevdeskEndpointInputSchemas = {
 					]),
 					sendDraft: z.boolean(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'orderPos.getOrderPositions': z
@@ -7903,7 +7915,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_OrderPosUpdate.optional(),
+			body: requestComponent_Model_OrderPosUpdate,
 		})
 		.strict(),
 	'orderPos.deleteOrderPos': z
@@ -7929,7 +7941,7 @@ export const SevdeskEndpointInputSchemas = {
 				.optional(),
 			path: z.object({}).strict().optional(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_saveVoucher.optional(),
+			body: requestComponent_saveVoucher,
 		})
 		.strict(),
 	'voucher.getVouchers': z
@@ -7986,7 +7998,7 @@ export const SevdeskEndpointInputSchemas = {
 				})
 				.strict(),
 			query: z.object({}).strict().optional(),
-			body: requestComponent_Model_VoucherUpdate.optional(),
+			body: requestComponent_Model_VoucherUpdate,
 		})
 		.strict(),
 	'voucher.voucherEnshrine': z
@@ -8044,8 +8056,7 @@ export const SevdeskEndpointInputSchemas = {
 						.optional(),
 					createFeed: z.boolean().optional(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'voucher.voucherResetToOpen': z
@@ -8411,8 +8422,7 @@ export const SevdeskEndpointInputSchemas = {
 				.object({
 					name: z.string().optional(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'tag.deleteTag': z
@@ -8453,8 +8463,7 @@ export const SevdeskEndpointInputSchemas = {
 						})
 						.strict(),
 				})
-				.strict()
-				.optional(),
+				.strict(),
 		})
 		.strict(),
 	'tag.getTagRelations': z

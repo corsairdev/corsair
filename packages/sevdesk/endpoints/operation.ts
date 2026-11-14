@@ -1,9 +1,20 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { ZodType } from 'zod';
-import type { SevdeskContext } from '..';
 import type { SevdeskHttpMethod } from '../client';
 import { makeSevdeskRequest } from '../client';
+import type { SevdeskContext } from '../index';
+
+export const NON_REPLAYABLE_GETS = new Set([
+	'creditNote.sendCreditNoteByPrinting',
+	'creditNote.creditNoteGetPdf',
+	'export.exportDatevDepricated',
+	'export.exportDatevCSV',
+	'export.exportDatevXML',
+	'export.generateDownloadHash',
+	'invoice.invoiceGetPdf',
+	'order.orderGetPdf',
+]);
 
 export function createSevdeskEndpoint<
 	Input extends {
@@ -29,6 +40,7 @@ export function createSevdeskEndpoint<
 			body: parsedInput.body,
 			resourceVersion:
 				parsedInput.resourceVersion ?? ctx.options.resourceVersion,
+			replayable: method === 'GET' && !NON_REPLAYABLE_GETS.has(operation),
 		});
 		const parsedOutput = outputSchema.parse(response);
 		await logEventFromContext(ctx, 'sevdesk.' + operation, {}, 'completed');

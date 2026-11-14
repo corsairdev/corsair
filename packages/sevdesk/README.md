@@ -14,7 +14,9 @@ Pass `resourceVersion` at the operation input root to set `X-Version` for that c
 
 ## Pagination, retries, and privacy
 
-List routes expose documented `limit` (1–1000), `offset`, and `countAll`; list responses use the documented `objects` array and include the string `total` when requested with `countAll: true`. `embed` accepts resource names as documented. A 429 preserves `Retry-After` on Corsair's `ApiError`. The transport does not retry rate-limited writes; transient network/5xx failures retry only GETs. Event logs and propagated messages omit tokens, request/response data, contact details, invoice details, and resource IDs.
+List routes expose documented `limit` (1–1000), `offset`, and `countAll`; list responses use the documented `objects` array and include the string `total` when requested with `countAll: true`. `embed` accepts resource names as documented. A 429 preserves `Retry-After` on Corsair's `ApiError`. Transient network/5xx failures retry only explicitly replayable GET reads; send/print, PDF actions, and export-job GET operations are not replayed. Event logs and propagated messages omit tokens, request/response data, contact details, invoice details, and resource IDs.
+
+The OpenAPI declares invoice-position response `quantity` as boolean, conflicting with its numeric request schema and numeric/string sibling position models. The response validator accepts numeric values and numeric strings and rejects booleans.
 
 ## Accounting and tax rules
 
@@ -37,6 +39,8 @@ Check `basics.bookkeepingSystemVersion` first. Sevdesk Update 2.0 uses `taxRule`
 | Reverse-charge expense rules | 12/13/14 | 0% |
 
 Rules 17–21 have further restrictions in the provider's Update 2.0 section; rules 17 and 21 do not support advance/partial/final invoices, rules 18–20 do not support voucher use or advance/partial/final invoices, and rule 21 is not available for vouchers. AR/TR invoices accept only rules 1 or 11, and AR/TR/ER invoices must use the account's default currency. New invoices and credit notes are drafts; newly saved vouchers are DRAFT (50) or UNPAID/DUE (100). Update 2.0 rejects credit-note booking category `ACCOUNTING_TYPE`, requires delivery dates to match the source invoice, and does not support creating credit notes from vouchers. That documented `createCreditNoteFromVoucher` route remains for legacy bookkeeping system 1.0 accounts. Voucher assets must use an asset account correctly; custom accounting types are unsupported. Booking payments and sending documents are separate actions. Enshrining invoices, credit notes, vouchers, and check-account transactions is legally irreversible and marked destructive.
+
+Voucher tax-rule inputs include the documented revenue rules (1, 2, 3, 4, 5, 11) and expense rules (8, 9, 10, 12, 13, 14); account-specific compatibility must still be checked through Receipt Guidance.
 
 The legacy DATEV CSV export route remains exposed because it is documented but is deprecated; use the DATEV CSV/XML export-job workflow instead. `exportDatevXML` returns JSON job metadata; the resulting XML/ZIP artifact is obtained separately from the returned download URL.
 
