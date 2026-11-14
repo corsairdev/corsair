@@ -159,6 +159,7 @@ export const BaseProviders = [
 	'cloro',
 	'close',
 	'cloudcart',
+	'cloudconvert',
 	'cloudflare',
 	'cloudflareapikey',
 	'cloudinary',
@@ -694,6 +695,7 @@ export const ProviderDisplayNames = {
 	cloro: 'cloro',
 	close: 'Close',
 	cloudcart: 'CloudCart',
+	cloudconvert: 'CloudConvert',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
@@ -1236,6 +1238,7 @@ export type AllProviders =
 	| 'cloro'
 	| 'close'
 	| 'cloudcart'
+	| 'cloudconvert'
 	| 'cloudflare'
 	| 'cloudflareapikey'
 	| 'cloudinary'
