@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import { describeKrakenError, makeKrakenRequest, readFailure } from './client';
 
 const CREDENTIALS = {
@@ -122,18 +123,20 @@ describe('makeKrakenRequest', () => {
 			body: {},
 		}).catch((caught: unknown) => caught)) as Error;
 
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error).toMatchObject({
-			name: 'KrakenAPIError',
+			name: 'ApiError',
 			status: 401,
 			message: 'Kraken 401: Unknown API Key',
-			method: 'POST',
-			transport: false,
+			request: { method: 'POST', url: '/user_status' },
 		});
-		// The cause would hold the request body, which carries the secret.
+		// Core's request body holds the secret; the rebuilt error has none.
 		expect(error.cause).toBeUndefined();
+		expect((error as ApiError).request).not.toHaveProperty('body');
 		expect(require('node:util').inspect(error)).not.toContain(
 			CREDENTIALS.apiSecret,
 		);
+		expect(JSON.stringify(error)).not.toContain(CREDENTIALS.apiSecret);
 	});
 
 	it('turns a 200 that says success false into an error', async () => {
@@ -161,17 +164,61 @@ describe('makeKrakenRequest', () => {
 		expect(error.message).not.toContain('<pre>');
 	});
 
-	it('keeps a Retry-After header as milliseconds', async () => {
-		fetchMock.mockResolvedValueOnce(
-			new Response(JSON.stringify({ success: false, message: 'Slow' }), {
-				status: 429,
-				headers: { 'Content-Type': 'application/json', 'Retry-After': '4' },
-			}),
-		);
+	it('keeps a secret in an upload form off the error', async () => {
+		respond({ success: false, message: 'Unknown API Key' }, 401);
 
-		await expect(
-			makeKrakenRequest(CREDENTIALS, { path: '/user_status', body: {} }),
-		).rejects.toMatchObject({ retryAfter: 4000, isRateLimit: true });
+		const error = (await makeKrakenRequest(CREDENTIALS, {
+			path: '/v1/upload',
+			body: {},
+			file: { bytes: new Uint8Array([1, 2, 3]), filename: 'a.png' },
+		}).catch((caught: unknown) => caught)) as ApiError;
+
+		expect(error.request).not.toHaveProperty('formData');
+		expect(require('node:util').inspect(error)).not.toContain(
+			CREDENTIALS.apiSecret,
+		);
+	});
+
+	it('uses a fixed message, not core text, when a 422 body is markup', async () => {
+		respond('<html><body>Unprocessable</body></html>', 422, 'text/html');
+
+		const error = (await makeKrakenRequest(CREDENTIALS, {
+			path: '/v1/url',
+			body: {},
+		}).catch((caught: unknown) => caught)) as Error;
+
+		expect(error.message).toBe('Kraken 422: Kraken refused the request');
+	});
+
+	it('lets core retry a 429 three times, then keeps Retry-After as milliseconds', async () => {
+		jest.useFakeTimers();
+		try {
+			fetchMock.mockImplementation(
+				async () =>
+					new Response(JSON.stringify({ success: false, message: 'Slow' }), {
+						status: 429,
+						headers: {
+							'Content-Type': 'application/json',
+							'Retry-After': '4',
+						},
+					}),
+			);
+
+			const pending = makeKrakenRequest(CREDENTIALS, {
+				path: '/user_status',
+				body: {},
+			}).catch((caught: unknown) => caught);
+			await jest.advanceTimersByTimeAsync(60_000);
+
+			expect(await pending).toMatchObject({
+				name: 'ApiError',
+				status: 429,
+				retryAfter: 4000,
+			});
+			expect(fetchMock).toHaveBeenCalledTimes(4);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
 	it('keeps a transport failure’s cause, which never held a body', async () => {

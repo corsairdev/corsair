@@ -50,10 +50,10 @@ Quota figures are in bytes.
 
 Optimize a file passed as base64, which the plugin uploads to Kraken as multipart, with the same resize and conversion options. Spends quota
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.krakenio.api.upload.optimize({ data: 'aGVsbG8=', filename: 'header.jpg', wait: true, convert: { format: 'webp' } });
+await corsair.krakenio.api.upload.optimize({ data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', filename: 'pixel.png', wait: true, convert: { format: 'webp' } });
 ```
 
 **Input**
@@ -151,7 +151,7 @@ Record<string, {
 
 Fetch an image or PDF from a URL and optimize it, optionally resizing, converting, keeping metadata or setting the quality. Spends quota
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.krakenio.api.url.optimize({ url: 'https://acme.example/header.jpg', wait: true, lossy: true, quality: 80, resize: { width: 800, strategy: 'fit' } });
@@ -171,7 +171,7 @@ await corsair.krakenio.api.url.optimize({ url: 'https://acme.example/header.jpg'
 | `convert` | `object` | No | — |
 | `url` | `string` | Yes | The publicly reachable image or PDF to fetch and optimize. |
 
-Needs `wait: true` or a `callback_url`. Spends quota. A per-file failure appears in `results`, and a whole-request refusal arrives as a 200 with `success: false`, which the plugin throws on.
+Needs `wait: true` or a `callback_url`. Spends quota. With a multi-size resize, a failure of one size appears in the `results` entry for that size; a whole-request refusal arrives as a 200 with `success: false`, which the plugin throws on.
 
 <AccordionGroup>
 <Accordion title="resize full type">

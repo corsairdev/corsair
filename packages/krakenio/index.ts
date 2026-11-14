@@ -109,13 +109,14 @@ export const krakenioEndpointSchemas = {
 const defaultAuthType = 'api_key' as const;
 
 const krakenEndpointMeta = {
+	// Each optimization spends quota, so under R8 it is destructive.
 	'url.optimize': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Fetch an image or PDF from a URL and optimize it, optionally resizing, converting, keeping metadata or setting the quality. Spends quota',
 	},
 	'upload.optimize': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Optimize a file passed as base64, which the plugin uploads to Kraken as multipart, with the same resize and conversion options. Spends quota',
 	},
@@ -168,14 +169,17 @@ export function krakenio<const T extends KrakenPluginOptions>(
 				return inlineKey;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const [apiKey, apiSecret] = await Promise.all([
+			// ctx.keys exists only with a database and a kek; without it there is
+			// nothing stored, and the missing-credentials error below applies.
+			if (source === 'endpoint' && ctx.authType === 'api_key' && ctx.keys) {
+				const [apiKey, storedSecret] = await Promise.all([
 					ctx.keys.get_api_key(),
-					ctx.keys.get_api_secret(),
+					options.apiSecret ? undefined : ctx.keys.get_api_secret(),
 				]);
-				// Kraken refuses a key without its secret, so a half-stored pair is
-				// treated as no credentials, which lets Corsair offer a connect link.
-				if (apiKey && apiSecret) return apiKey;
+				// Kraken refuses a key without its secret, so a key with no secret
+				// (inline or stored) is treated as no credentials, which lets
+				// Corsair offer a connect link.
+				if (apiKey && (options.apiSecret ?? storedSecret)) return apiKey;
 			}
 
 			throw new AuthMissingError('krakenio', ctx.authType ?? 'api_key');
@@ -183,7 +187,7 @@ export function krakenio<const T extends KrakenPluginOptions>(
 	} satisfies InternalKrakenPlugin;
 }
 
-export { KrakenAPIError } from './client';
+export { isKrakenAuthFailure, KrakenAPIError } from './client';
 
 export type {
 	AccountStatusInput,

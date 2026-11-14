@@ -1,8 +1,11 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { KrakenAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isKrakenAuthFailure, KrakenAPIError } from './client';
 
+// An HTTP error from Kraken is core's ApiError; KrakenAPIError is a 200 that
+// said `success: false`, or a request that got no answer.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KrakenAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // Kraken documents 401 for an unknown key, 422 for a missing parameter, and 500
@@ -11,24 +14,17 @@ function statusOf(error: Error): number | undefined {
 // reads a failed optimization as a done one.
 // Reference: https://kraken.io/docs/http-status-codes
 export const errorHandlers = {
-	// A 429 is a throughput limit. Kraken publishes no Retry-After, so the
-	// handler's own backoff is the only delay.
+	// A 429 is a throughput limit. Core's request() has already retried it
+	// three times by the time it gets here, so no more retries are added.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof KrakenAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof KrakenAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401 is an unknown key or an inactive account (and /user_status says 404
 	// "User not found" for a wrong pair). Regenerating a key in the
 	// dashboard replaces the old one, so a 401 usually means it was rotated.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof KrakenAPIError && error.isAuthError,
+		match: (error: Error) => isKrakenAuthFailure(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403 is a spent quota or a plan that does not allow the request.
@@ -49,8 +45,7 @@ export const errorHandlers = {
 	// failed mid-way may still have been billed, and a retry would spend against
 	// the quota again.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof KrakenAPIError && (error.status ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A dropped connection reached no answer. It is still a POST, so it is not

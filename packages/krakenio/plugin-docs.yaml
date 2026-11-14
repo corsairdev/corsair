@@ -35,9 +35,9 @@ apiExamples:
   url.optimize:
     call: "{ url: 'https://acme.example/header.jpg', wait: true, lossy: true, quality: 80, resize: { width: 800, strategy: 'fit' } }"
   upload.optimize:
-    call: "{ data: 'aGVsbG8=', filename: 'header.jpg', wait: true, convert: { format: 'webp' } }"
+    call: "{ data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', filename: 'pixel.png', wait: true, convert: { format: 'webp' } }"
   account.status: {}
 apiNotes:
-  url.optimize: 'Needs `wait: true` or a `callback_url`. Spends quota. A per-file failure appears in `results`, and a whole-request refusal arrives as a 200 with `success: false`, which the plugin throws on.'
+  url.optimize: 'Needs `wait: true` or a `callback_url`. Spends quota. With a multi-size resize, a failure of one size appears in the `results` entry for that size; a whole-request refusal arrives as a 200 with `success: false`, which the plugin throws on.'
   upload.optimize: 'Takes the file as base64 and sends it to Kraken as a multipart upload. Needs `wait: true` or a `callback_url`. Spends quota.'
   account.status: 'Quota figures are in bytes.'

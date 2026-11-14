@@ -22,21 +22,22 @@ const KRAKEN_TIMEOUT_MS = 120_000;
  *
  * That matters for error handling. `ApiError` redacts only query parameters
  * named `api_key`, `key`, `token` or `appid`, and it does not redact a body at
- * all, so keeping the `ApiError` as `cause` would print the secret through
- * `console.error` and `util.inspect`. The client therefore drops the cause on a
- * provider failure and copies only the status and message.
+ * all, so the `ApiError` core throws would print the secret through
+ * `console.error` and `util.inspect`. The client therefore rethrows it as a
+ * new `ApiError` without the request body (`sanitizeApiError`).
  */
 export type KrakenCredentials = {
 	apiKey: string;
 	apiSecret: string;
 };
 
-// Kraken does not publish a rate limit header or a 429 in its docs; a 401 for a
-// spent account is the closest thing to a limit. The config is complete so the
-// retry layer behaves predictably either way.
+// Kraken does not publish a rate limit header or a 429 in its docs. If one
+// arrives, core retries it three times, honouring Retry-After: Kraken refused
+// the request before running it, so nothing was fetched or billed. The 429
+// handler then adds no retries of its own.
 const KRAKEN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -64,62 +65,49 @@ export function readFailure(body: unknown): {
 }
 
 /**
- * A Kraken failure. It never holds the request body, because the body carries
- * the API secret.
+ * A Kraken failure that is not an HTTP error: a 200 whose body says
+ * `success: false`, or a request that got no answer (a reset, DNS failure,
+ * abort or timeout).
+ *
+ * An HTTP error stays core's `ApiError`, rebuilt without the request body (see
+ * `sanitizeApiError`), so its status, Retry-After and rate-limit fields reach
+ * core and the error handlers.
  */
 export class KrakenAPIError extends Error {
 	readonly status?: number;
-	/** Milliseconds from a Retry-After header, when Kraken sent one. */
-	readonly retryAfter?: number;
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
-	/** Kraken refused the key or secret, whatever status it used to say so. */
-	readonly authFailure: boolean;
 
 	constructor(
 		message: string,
 		options: {
 			cause?: Error;
 			status?: number;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
-			authFailure?: boolean;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KrakenAPIError';
 		this.status = options.status;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
-		this.authFailure = options.authFailure ?? false;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/**
-	 * An unknown API key or a wrong secret. The optimize routes say 401;
-	 * `/user_status` says 404 "User not found" (seen live on 11-14).
-	 */
-	get isAuthError(): boolean {
-		return this.status === 401 || this.authFailure;
-	}
-
-	/** The plan's quota is spent, which no retry can fix. */
-	get isQuotaError(): boolean {
-		return this.status === 403;
-	}
-
-	/** The request was malformed: a missing `url`, or no `wait` and no callback. */
-	get isValidationError(): boolean {
-		return this.status === 422;
-	}
+/**
+ * Kraken refused the key or secret. The optimize routes say 401;
+ * `/user_status` says 404 "User not found" (seen live on 11-14).
+ */
+export function isKrakenAuthFailure(error: unknown): boolean {
+	if (!(error instanceof ApiError)) return false;
+	return (
+		error.status === 401 ||
+		(error.status === 404 && error.request.url === '/user_status')
+	);
 }
 
 /** The message Kraken sent, with the status in front. */
@@ -217,29 +205,7 @@ export async function makeKrakenRequest(
 		return raw;
 	} catch (error) {
 		if (error instanceof KrakenAPIError) throw error;
-		if (error instanceof ApiError) {
-			const fields = readFailure(error.body);
-			// An HTML body is Kraken's own crash page, whose text is markup.
-			const message =
-				fields.message && !isHtml(fields.message)
-					? fields.message
-					: error.status === 500
-						? 'Kraken failed to handle the request'
-						: error.message;
-			// The cause is dropped: `ApiError.request.body` holds the API secret,
-			// and `util.inspect` would print it.
-			throw new KrakenAPIError(
-				describeKrakenError(error.status, { message }, message),
-				{
-					status: error.status,
-					retryAfter: error.retryAfter,
-					method: 'POST',
-					// The route is fixed, so a 404 here is Kraken not finding the
-					// account behind the key and secret.
-					authFailure: path === '/user_status' && error.status === 404,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			// A transport failure never had a response body, and its cause is the
@@ -256,6 +222,46 @@ export async function makeKrakenRequest(
 			transport: true,
 		});
 	}
+}
+
+/**
+ * Core's `ApiError` keeps `request.body` (or `formData`), and here that holds
+ * the API secret, which `util.inspect` would print. The error is rebuilt as an
+ * `ApiError` with the same method, route, status and rate-limit fields, the
+ * request body dropped, and Kraken's envelope as the body. Kraken renders an
+ * unhandled failure as an HTML page, so markup is never used as the message;
+ * a fixed message that names the status takes its place.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const { body: _body, formData: _formData, ...request } = error.request;
+	const fields = readFailure(error.body);
+	const message =
+		fields.message && !isHtml(fields.message) ? fields.message : undefined;
+	const fallback =
+		error.status >= 500
+			? 'Kraken failed to handle the request'
+			: 'Kraken refused the request';
+	return new ApiError(
+		request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: { success: false, ...(message ? { message } : {}) },
+		},
+		describeKrakenError(
+			error.status,
+			{ message: message ?? fallback },
+			fallback,
+		),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /** Drops the keys whose value is undefined, so a body carries only what was asked for. */

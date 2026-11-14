@@ -1,5 +1,5 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { KrakenAPIError } from './client';
+import { isKrakenAuthFailure, KrakenAPIError } from './client';
 import { Kraken } from './endpoints';
 import {
 	accountStatus,
@@ -232,8 +232,8 @@ describe('url.optimize', () => {
 				wait: true,
 			}),
 		).rejects.toMatchObject({
+			name: 'ApiError',
 			status: 401,
-			isAuthError: true,
 			message:
 				'Kraken 401: Unknown API Key. Please check your API key and try again.',
 		});
@@ -407,8 +407,8 @@ describe('account.status', () => {
 		respond(quotaExceeded, 403);
 
 		await expect(invoke(Kraken.account, {})).rejects.toMatchObject({
+			name: 'ApiError',
 			status: 403,
-			isQuotaError: true,
 		});
 	});
 });
@@ -502,19 +502,24 @@ describe('error envelopes', () => {
 	it('treats the 404 "User not found" from /user_status as an auth error', async () => {
 		respond(userNotFound, 404);
 
-		await expect(invoke(Kraken.account, {})).rejects.toMatchObject({
+		const error = await caught(invoke(Kraken.account, {}));
+
+		expect(error).toMatchObject({
 			status: 404,
-			isAuthError: true,
 			message: 'Kraken 404: User not found',
 		});
+		expect(isKrakenAuthFailure(error)).toBe(true);
 	});
 
 	it('does not call a 404 on another route an auth error', async () => {
 		respond({ success: false, message: '404 Not Found' }, 404);
 
-		await expect(
+		const error = await caught(
 			invoke(Kraken.url, { url: 'https://acme.example/a.jpg', wait: true }),
-		).rejects.toMatchObject({ status: 404, isAuthError: false });
+		);
+
+		expect(error).toMatchObject({ status: 404 });
+		expect(isKrakenAuthFailure(error)).toBe(false);
 	});
 
 	it('reads the `error` field that /user_status uses', async () => {
@@ -526,12 +531,13 @@ describe('error envelopes', () => {
 		});
 	});
 
-	it('keeps no body on the error', async () => {
+	it('keeps no request body, which holds the secret, on the error', async () => {
 		respond(unknownKey, 401);
 
 		const error = await caught(invoke(Kraken.account, {}));
 
-		expect(error).not.toHaveProperty('body');
+		expect((error as { request?: object }).request).not.toHaveProperty('body');
+		expect(JSON.stringify(error)).not.toContain('api_secret');
 	});
 
 	it('replaces an HTML crash page rather than returning its markup', async () => {

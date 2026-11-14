@@ -1,15 +1,33 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { KrakenAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An answered request fails as core's ApiError; a 200 with `success: false`
+// or a request that got no answer as KrakenAPIError.
 function apiError(options: {
 	status?: number;
 	method?: string;
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new KrakenAPIError('failed', options);
+	url?: string;
+}): Error {
+	if (options.status === undefined) {
+		return new KrakenAPIError('failed', options);
+	}
+	return new ApiError(
+		{ method: 'POST', url: options.url ?? '/v1/url' },
+		{
+			url: `https://api.kraken.io${options.url ?? '/v1/url'}`,
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { success: false, message: 'failed' },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -40,18 +58,24 @@ async function resolve(
 }
 
 describe('error handler selection', () => {
-	it('retries a 429 twice with backoff', async () => {
+	it('adds no 429 retries to the three core already made', async () => {
 		await expect(resolve(apiError({ status: 429 }))).resolves.toEqual({
-			maxRetries: 2,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
+			maxRetries: 0,
 		});
 	});
 
-	it('waits a Retry-After header when one arrives', async () => {
+	it('reads the 404 from /user_status as an auth failure', async () => {
 		await expect(
-			resolve(apiError({ status: 429, retryAfter: 4000 })),
-		).resolves.toMatchObject({ headersRetryAfterMs: 4000 });
+			resolve(apiError({ status: 404, url: '/user_status' })),
+		).resolves.toEqual({ maxRetries: 0 });
+		expect(
+			errorHandlers.AUTH_ERROR.match(
+				apiError({ status: 404, url: '/user_status' }),
+			),
+		).toBe(true);
+		expect(
+			errorHandlers.AUTH_ERROR.match(apiError({ status: 404, url: '/v1/url' })),
+		).toBe(false);
 	});
 
 	it('does not retry an unknown key', async () => {

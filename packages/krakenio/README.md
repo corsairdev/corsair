@@ -13,8 +13,8 @@ pnpm add @corsair-dev/krakenio
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `account.status` | `krakenio.api.account.status` | `read` | The plan, whether the account is active, and the quota total, used and remaining, all in bytes |
-| `upload.optimize` | `krakenio.api.upload.optimize` | `write` | Optimize a file passed as base64, which the plugin uploads to Kraken as multipart, with the same resize and conversion options. Spends quota |
-| `url.optimize` | `krakenio.api.url.optimize` | `write` | Fetch an image or PDF from a URL and optimize it, optionally resizing, converting, keeping metadata or setting the quality. Spends quota |
+| `upload.optimize` | `krakenio.api.upload.optimize` | `destructive` | Optimize a file passed as base64, which the plugin uploads to Kraken as multipart, with the same resize and conversion options. Spends quota |
+| `url.optimize` | `krakenio.api.url.optimize` | `destructive` | Fetch an image or PDF from a URL and optimize it, optionally resizing, converting, keeping metadata or setting the quality. Spends quota |
 
 ## Auth
 

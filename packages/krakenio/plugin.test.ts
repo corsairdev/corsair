@@ -63,8 +63,8 @@ describe('krakenio plugin definition', () => {
 				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
 			),
 		).toEqual({
-			'url.optimize': 'write',
-			'upload.optimize': 'write',
+			'url.optimize': 'destructive',
+			'upload.optimize': 'destructive',
 			'account.status': 'read',
 		});
 	});
@@ -135,6 +135,27 @@ describe('krakenio key builder', () => {
 	it('throws AuthMissingError when the key is stored without its secret', async () => {
 		await expect(
 			buildKey(krakenio(), keyContext('stored-key', null)),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('takes a stored key with an inline secret when no secret is stored', async () => {
+		const ctx = keyContext('stored-key', null);
+
+		await expect(
+			buildKey(krakenio({ apiSecret: 'inline-secret' }), ctx),
+		).resolves.toBe('stored-key');
+		expect(ctx.keys.get_api_secret).not.toHaveBeenCalled();
+	});
+
+	it('throws AuthMissingError, not a TypeError, without a key manager', async () => {
+		const ctx = {
+			authType: 'api_key' as const,
+			options: {},
+			tenantId: 'default',
+		};
+
+		await expect(
+			krakenio().keyBuilder?.(ctx as never, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
