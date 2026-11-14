@@ -58,8 +58,9 @@ export const SchemaExecuteQueryInputSchema = z
 		variables: z
 			.string()
 			.describe(
-				'A JSON string containing the variables for the GraphQL operation. Pass "{}" if the query uses no variables.',
-			),
+				'A JSON string containing the variables for the GraphQL operation. Defaults to "{}".',
+			)
+			.optional(),
 	})
 	.loose();
 
@@ -635,10 +636,8 @@ export const WorkflowsCreateInputSchema = z
 			.describe('Workflow title. Defaults to "New Workflow".')
 			.optional(),
 		privacyKind: z
-			.enum(['PUBLIC', 'PRIVATE', 'SHAREABLE'])
-			.describe(
-				'Visibility: PUBLIC (default), PRIVATE, or SHAREABLE (accessible to guests outside the account).',
-			)
+			.enum(['PUBLIC', 'PRIVATE'])
+			.describe('Visibility: PUBLIC (default) or PRIVATE.')
 			.optional(),
 		description: z
 			.string()
@@ -690,7 +689,12 @@ export const AssetsFinalizeUploadInputSchema = z
 			.describe(
 				'The ETag header value from the PUT response when uploading to the presigned URL.',
 			),
-		boardId: z.string().describe("The board's unique identifier."),
+		boardId: z
+			.string()
+			.describe(
+				"The board's unique identifier. Optional; the server resolves the board from the item.",
+			)
+			.optional(),
 		itemId: z.string().describe("The item's unique identifier."),
 		columnId: z
 			.string()
@@ -736,8 +740,9 @@ export const AssetsGetUploadUrlInputSchema = z
 		contentType: z
 			.string()
 			.describe(
-				'The MIME type of the file (e.g. "application/pdf", "image/png", "text/plain").',
-			),
+				'The MIME type of the file (e.g. "application/pdf", "image/png", "text/plain"). Optional when the extension is a known type.',
+			)
+			.optional(),
 		fileSize: z
 			.number()
 			.describe(
@@ -1162,12 +1167,6 @@ export type UsersListAndTeamsInput = z.infer<
 
 export const WorkspacesListInputSchema = z
 	.object({
-		searchTerm: z
-			.string()
-			.describe(
-				'Filters results to workspaces whose name matches the search term. **Only alphanumeric characters are supported.**',
-			)
-			.optional(),
 		limit: z
 			.number()
 			.describe(
@@ -1570,10 +1569,6 @@ export const SearchQueryInputSchema = z
 			.describe(
 				'Number of results to return per page. Maximum and default is `20`.',
 			)
-			.optional(),
-		page: z
-			.number()
-			.describe('Page number to return, starting at 1. Defaults to `1`.')
 			.optional(),
 		workspaceIds: z
 			.array(LooseArrayItem)
