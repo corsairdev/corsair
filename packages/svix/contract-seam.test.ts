@@ -354,6 +354,41 @@ describe('Svix OpenAPI request seam', () => {
 		);
 	});
 
+	it.each(['pollerConsumerPoll', 'pollerConsumerSeek'] as const)(
+		'%s sends a consumer ID with reserved characters, encoded',
+		async (name) => {
+			const fixture = fixtures.find(
+				(f) => f.group === 'messages' && f.name === name,
+			);
+			if (!fixture) throw new Error(`Missing ${name} fixture`);
+			mockRequest.mockResolvedValue(fixture.response);
+			await call('messages', name, ctx, {
+				...fixture.input,
+				consumer_id: `worker#1?"x'`,
+			});
+			expect(mockRequest.mock.calls[0][1].url).toContain(
+				"/consumer/worker%231%3F%22x'",
+			);
+		},
+	);
+
+	it.each(['.', '..', 'a/b', 'a\\b', ''])(
+		'refuses consumer ID %p before calling Svix',
+		async (consumerId) => {
+			const fixture = fixtures.find(
+				(f) => f.group === 'messages' && f.name === 'pollerConsumerPoll',
+			);
+			if (!fixture) throw new Error('Missing poller consumer fixture');
+			await expect(
+				call('messages', 'pollerConsumerPoll', ctx, {
+					...fixture.input,
+					consumer_id: consumerId,
+				}),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		},
+	);
+
 	it.each([
 		['sk_test.us', undefined, 'https://api.us.svix.com'],
 		['sk_test.eu', undefined, 'https://api.eu.svix.com'],
@@ -401,6 +436,7 @@ describe('Svix OpenAPI request seam', () => {
 		'endpoints.recover',
 		'endpoints.rotateSecret',
 		'endpoints.setHeaders',
+		'endpoints.mcpEventsSubscribe',
 		'operationalWebhooks.rotateSecret',
 		'operationalWebhooks.setHeaders',
 	] as const)(

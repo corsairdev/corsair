@@ -1044,6 +1044,16 @@ const pathSegment = z
 		'Invalid path segment',
 	);
 
+// Svix leaves poller consumer IDs unrestricted, and the dispatcher encodes every
+// path value, so only dot segments and slashes (which a proxy may decode) are refused.
+const consumerIdSegment = z
+	.string()
+	.min(1)
+	.refine(
+		(value) => value !== '.' && value !== '..' && !/[\\/]/.test(value),
+		'Invalid consumer ID',
+	);
+
 // List responses document a minus-prefixed prevIterator, even though the
 // OpenAPI request patterns omit that prefix. Preserve the underlying ID format.
 export const SvixEndpointInputSchemas = {
@@ -1677,7 +1687,7 @@ export const SvixEndpointInputSchemas = {
 		sink_id: pathSegment.and(
 			z.string().min(1).max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
 		),
-		consumer_id: pathSegment.and(z.string()),
+		consumer_id: consumerIdSegment,
 		idempotencyKey: z
 			.string()
 			.min(1)
@@ -1692,7 +1702,7 @@ export const SvixEndpointInputSchemas = {
 		sink_id: pathSegment.and(
 			z.string().min(1).max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
 		),
-		consumer_id: pathSegment.and(z.string()),
+		consumer_id: consumerIdSegment,
 		limit: z.number().int().min(1).max(250).optional(),
 		iterator: z.string().nullable().optional(),
 	}),
