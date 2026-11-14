@@ -6,7 +6,7 @@ import { z } from 'zod';
 // (get_item_details), erpnext/accounts/party.py (get_party_details),
 // erpnext/accounts/doctype/payment_entry/payment_entry.py (get_payment_entry),
 // erpnext/stock/utils.py (get_stock_balance), erpnext/selling/doctype/
-// sales_order/mapper.py (make_sales_invoice, make_delivery_note,
+// sales_order/sales_order.py (make_sales_invoice, make_delivery_note,
 // make_purchase_order), and erpnext/stock/doctype/stock_entry/
 // stock_entry_utils.py (make_stock_entry), plus the frappe envelope:
 // frappe/handler.py nests every /api/method answer under a `message` key, and
@@ -49,14 +49,13 @@ const ErpGetExchangeRateInputSchema = z
 	})
 	.strict();
 
-// GET /api/method/erpnext.stock.get_item_details.get_item_details — the
-// develop signature renames the first parameter to `ctx`
-// (get_item_details.py: get_item_details(ctx, doc, for_validate,
-// overwrite_warehouse) under @erpnext.normalize_ctx_input(ItemDetailsCtx)),
-// and frappe.call drops query keys that are not function parameters
-// (frappe/__init__.py get_newargs), so the item context rides in the `ctx`
-// query key as a JSON string — not the legacy `args` name — and the provider
-// parses it server-side into ItemDetailsCtx.
+// GET /api/method/erpnext.stock.get_item_details.get_item_details —
+// version-16 names the first parameter `ctx` (get_item_details(ctx, doc,
+// for_validate, overwrite_warehouse) under
+// @erpnext.normalize_ctx_input(ItemDetailsCtx)); version-15 names it `args`.
+// frappe.call drops query keys that are not function parameters
+// (frappe/__init__.py get_newargs), so the endpoint (erp.ts) sends the JSON
+// string under both names and each version reads its own.
 const ErpGetItemDetailsInputSchema = z
 	.object({
 		ctx: z
@@ -105,9 +104,9 @@ const ErpGetStockBalanceInputSchema = z
 	})
 	.strict();
 
-// POST /api/method/erpnext.selling.doctype.sales_order.mapper.
+// POST /api/method/erpnext.selling.doctype.sales_order.sales_order.
 // make_sales_invoice — the mapper signature is make_sales_invoice(source_name,
-// target_doc=None, args=None, ignore_permissions=False) (mapper.py).
+// target_doc=None, args=None, ignore_permissions=False) (sales_order.py on version-15 and version-16).
 // target_doc names an existing draft invoice to update instead of creating a
 // fresh one, and args stays a JSON string exactly as Frappe parses it
 // server-side.
@@ -127,9 +126,9 @@ const ErpMakeSalesInvoiceInputSchema = z
 	})
 	.strict();
 
-// POST /api/method/erpnext.selling.doctype.sales_order.mapper.
+// POST /api/method/erpnext.selling.doctype.sales_order.sales_order.
 // make_delivery_note — the mapper signature is make_delivery_note(source_name,
-// target_doc=None, kwargs=None) (mapper.py); the kwargs bag stays out rather
+// target_doc=None, kwargs=None) (sales_order.py on version-15 and version-16); the kwargs bag stays out rather
 // than being invented, so the operation maps the full order by default.
 const ErpMakeDeliveryNoteInputSchema = z
 	.object({
@@ -142,9 +141,9 @@ const ErpMakeDeliveryNoteInputSchema = z
 	})
 	.strict();
 
-// POST /api/method/erpnext.selling.doctype.sales_order.mapper.
+// POST /api/method/erpnext.selling.doctype.sales_order.sales_order.
 // make_purchase_order — the mapper signature is make_purchase_order(source_name,
-// selected_items=None, target_doc=None) (mapper.py). Frappe parses
+// selected_items=None, target_doc=None) (sales_order.py on version-15 and version-16). Frappe parses
 // selected_items with frappe.parse_json, which accepts both a JSON string and
 // a JSON array, so the schema models the union the provider declares.
 const ErpMakePurchaseOrderInputSchema = z
@@ -222,7 +221,7 @@ const ErpnextErpDocumentOutputSchema = z
 
 // make_purchase_order returns purchase_orders, a list of mapped Purchase
 // Order drafts ("Creates Purchase Order for each Supplier. Returns a list of
-// doc objects." — mapper.py), so the message is an array of open records.
+// doc objects." — sales_order.py), so the message is an array of open records.
 // The mapper returns early (None) when selected_items is empty; that branch
 // answers without a message key and fails this schema, which is the intended
 // boundary for a call that would create nothing.

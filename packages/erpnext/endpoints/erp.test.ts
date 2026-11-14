@@ -127,7 +127,7 @@ const INPUT_FIXTURES: Record<ErpOperationKey, unknown> = {
 // (frappe/handler.py): numbers for the rate and stock balance lookups, one
 // document-shaped object for the pricing, party, payment and mapper helpers,
 // and a list of drafts for make_purchase_order, whose mapper returns
-// purchase_orders ("Returns a list of doc objects." — mapper.py).
+// purchase_orders ("Returns a list of doc objects." — sales_order.py).
 const RESPONSE_FIXTURES: Record<ErpOperationKey, unknown> = {
 	'erp.getExchangeRate': { message: 1.0825 },
 	'erp.getItemDetails': {
@@ -164,7 +164,7 @@ const RESPONSE_FIXTURES: Record<ErpOperationKey, unknown> = {
 		},
 	},
 	'erp.getStockBalance': { message: 42.5 },
-	// get_mapped_doc answers the unsaved target draft (mapper.py).
+	// get_mapped_doc answers the unsaved target draft (sales_order.py).
 	'erp.makeSalesInvoice': {
 		message: {
 			doctype: 'Sales Invoice',
@@ -236,6 +236,8 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 		url: 'https://test.example.com/api/method/erpnext.stock.get_item_details.get_item_details',
 		query: {
 			ctx: '{"item_code":"WIDGET"}',
+			// version-15 reads the same context as `args`.
+			args: '{"item_code":"WIDGET"}',
 			// Boolean query values reach Frappe as strings; the provider reads
 			// them with Python truthiness, so the factory sends a true as "1".
 			for_validate: '1',
@@ -266,7 +268,7 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 	},
 	'erp.makeSalesInvoice': {
 		method: 'POST',
-		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.mapper.make_sales_invoice',
+		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.sales_order.make_sales_invoice',
 		body: {
 			source_name: 'SO-00001',
 			target_doc: 'ACC-SINV-2026-00042',
@@ -275,7 +277,7 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 	},
 	'erp.makeDeliveryNote': {
 		method: 'POST',
-		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.mapper.make_delivery_note',
+		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.sales_order.make_delivery_note',
 		body: {
 			source_name: 'SO-00001',
 			target_doc: 'MAT-DN-2026-00042',
@@ -284,7 +286,7 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 	},
 	'erp.makePurchaseOrder': {
 		method: 'POST',
-		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.mapper.make_purchase_order',
+		url: 'https://test.example.com/api/method/erpnext.selling.doctype.sales_order.sales_order.make_purchase_order',
 		body: {
 			source_name: 'SO-00001',
 			selected_items: ['SO-00001-0001'],
