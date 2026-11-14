@@ -222,13 +222,13 @@ describe('order schemas', () => {
 			backHTML: '<b>B</b>',
 		});
 		expect(postcard.success).toBe(true);
-		// A letter still needs a sender, so the two are not interchangeable.
+		// PostGrid documents `from` as optional on letters too.
 		expect(
 			LettersCreateInputSchema.safeParse({
 				to,
 				html: '<b>Hi</b>',
 			}).success,
-		).toBe(false);
+		).toBe(true);
 	});
 
 	it('keeps secret on an inline contact instead of stripping it', () => {

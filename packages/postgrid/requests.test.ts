@@ -113,9 +113,15 @@ describe('contacts endpoints', () => {
 	});
 
 	it('contacts.delete removes by path', async () => {
-		mockedRequest.mockResolvedValue(contact);
+		mockedRequest.mockResolvedValue({
+			id: 'contact_1',
+			object: 'contact',
+			deleted: true,
+		});
 
-		await Contacts.remove(ctx, { id: 'contact_1' });
+		const result = await Contacts.remove(ctx, { id: 'contact_1' });
+
+		expect(result.deleted).toBe(true);
 
 		expect(sentRequest()).toEqual({
 			method: 'DELETE',
@@ -255,7 +261,7 @@ describe('letters endpoints', () => {
 		expect(request?.idempotencyKey).toMatch(/^[0-9a-f-]{36}$/);
 		expect(request?.body).toEqual({
 			to,
-			from,
+			from: 'contact_sender',
 			html: '<b>Hello</b>',
 			color: true,
 			doubleSided: false,
@@ -409,6 +415,89 @@ describe('selfMailers endpoints', () => {
 		expect(request?.idempotencyKey).toBeDefined();
 		expect(request?.body).toMatchObject({
 			size: '8.5x11_bifold',
+			insideHTML: '<b>Inside</b>',
+			outsideHTML: '<b>Outside</b>',
+		});
+	});
+});
+
+describe('order recipients and senders, as PostGrid reads them', () => {
+	// PostGrid takes an existing contact as its id string (`contact_123`) or an
+	// inline contact body. An object holding only `id` is read as an inline
+	// contact with no address, so the plugin sends the id string instead.
+	it('letters.create sends an existing contact as its id string', async () => {
+		mockedRequest.mockResolvedValue({ id: 'letter_new', status: 'ready' });
+
+		await Letters.create(ctx, {
+			to: 'contact_recipient',
+			from: { id: 'contact_sender' },
+			html: '<b>Hello</b>',
+		});
+
+		expect(sentRequest()?.body).toEqual({
+			to: 'contact_recipient',
+			from: 'contact_sender',
+			html: '<b>Hello</b>',
+		});
+	});
+
+	it('letters.create sends no sender when none is given, which PostGrid allows', async () => {
+		mockedRequest.mockResolvedValue({ id: 'letter_new', status: 'ready' });
+
+		await Letters.create(ctx, { to, html: '<b>Hello</b>' });
+
+		expect(sentRequest()?.body).toEqual({ to, html: '<b>Hello</b>' });
+	});
+
+	it('letters.create sends `envelope`, the documented field, and no `express` flag', async () => {
+		mockedRequest.mockResolvedValue({ id: 'letter_new', status: 'ready' });
+
+		await Letters.create(ctx, {
+			to,
+			html: '<b>Hello</b>',
+			envelope: 'standard',
+			mailingClass: 'express',
+		});
+
+		expect(sentRequest()?.body).toEqual({
+			to,
+			html: '<b>Hello</b>',
+			envelope: 'standard',
+			mailingClass: 'express',
+		});
+	});
+
+	it('postcards.create sends an existing recipient as its id string', async () => {
+		mockedRequest.mockResolvedValue({ id: 'postcard_new', status: 'ready' });
+
+		await Postcards.create(ctx, {
+			to: { id: 'contact_recipient' },
+			size: '6x4',
+			frontHTML: '<b>Front</b>',
+			backHTML: '<b>Back</b>',
+		});
+
+		expect(sentRequest()?.body).toEqual({
+			to: 'contact_recipient',
+			size: '6x4',
+			frontHTML: '<b>Front</b>',
+			backHTML: '<b>Back</b>',
+		});
+	});
+
+	it('selfMailers.create takes the 9.5x16 trifold without a sender', async () => {
+		mockedRequest.mockResolvedValue({ id: 'self_mailer_new', status: 'ready' });
+
+		await SelfMailers.create(ctx, {
+			to: 'contact_recipient',
+			size: '9.5x16_trifold',
+			insideHTML: '<b>Inside</b>',
+			outsideHTML: '<b>Outside</b>',
+		});
+
+		expect(sentRequest()?.body).toEqual({
+			to: 'contact_recipient',
+			size: '9.5x16_trifold',
 			insideHTML: '<b>Inside</b>',
 			outsideHTML: '<b>Outside</b>',
 		});

@@ -1,6 +1,6 @@
 import type { PostgridEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, withContactRefs } from './call';
 import {
 	PostgridEndpointInputSchemas as Inputs,
 	PostgridEndpointOutputSchemas as Outputs,
@@ -53,7 +53,7 @@ export const create: PostgridEndpoints['selfMailersCreate'] = (ctx, input) =>
 		({ idempotencyKey: _ignored, ...body }) => ({
 			method: 'POST',
 			path: '/self_mailers',
-			body,
+			body: withContactRefs(body),
 		}),
 		{
 			log: ({ size }, result) => ({

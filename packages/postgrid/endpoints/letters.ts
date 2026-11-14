@@ -1,6 +1,6 @@
 import type { PostgridEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, withContactRefs } from './call';
 import {
 	PostgridEndpointInputSchemas as Inputs,
 	PostgridEndpointOutputSchemas as Outputs,
@@ -53,13 +53,13 @@ export const create: PostgridEndpoints['lettersCreate'] = (ctx, input) =>
 		({ idempotencyKey: _ignored, ...body }) => ({
 			method: 'POST',
 			path: '/letters',
-			body,
+			body: withContactRefs(body),
 		}),
 		{
 			log: ({ to }, result) => ({
 				letterId: result.id ?? undefined,
 				status: result.status ?? undefined,
-				countryCode: to.countryCode,
+				countryCode: typeof to === 'string' ? undefined : to.countryCode,
 			}),
 		},
 	);

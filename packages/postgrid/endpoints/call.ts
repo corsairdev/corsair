@@ -69,3 +69,28 @@ function readIdempotencyKey(parsed: Untyped): string | undefined {
 	const value = (parsed as Record<string, Untyped>).idempotencyKey;
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
+
+/** An order's `to` or `from` after input parsing. */
+type ContactRefInput = string | { id?: string };
+
+/**
+ * An order's recipient or sender as PostGrid reads it: an existing contact goes
+ * as its id string, and an inline contact goes as its body. PostGrid reads any
+ * object as an inline contact, so an object carrying `id` is sent as the id.
+ */
+export function contactRef(contact: ContactRefInput): ContactRefInput {
+	if (typeof contact === 'string') return contact;
+	return contact.id === undefined ? contact : contact.id;
+}
+
+/** The order body with `to` and, when given, `from` as PostGrid reads them. */
+export function withContactRefs<
+	B extends { to: ContactRefInput; from?: ContactRefInput },
+>(body: B): Untyped {
+	const { to, from, ...rest } = body;
+	return {
+		...rest,
+		to: contactRef(to),
+		...(from === undefined ? {} : { from: contactRef(from) }),
+	};
+}

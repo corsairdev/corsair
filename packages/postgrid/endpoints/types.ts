@@ -213,6 +213,16 @@ const contactInputFields = {
 
 const contactInput = z.object(contactInputFields);
 
+/**
+ * How an order names a recipient or sender. PostGrid takes an existing contact
+ * as its id string (`contact_123`) or an inline contact body; the endpoint sends
+ * an object's `id` as that string, since PostGrid reads an object as a body.
+ */
+const contactRef = z.union([
+	z.string().min(1).describe('An existing contact id, such as `contact_123`.'),
+	contactInput,
+]);
+
 export const ContactsCreateInputSchema = z
 	.object({
 		addressLine1: z.string().min(1).describe('First line of the address.'),
@@ -277,8 +287,8 @@ const DeletedOutputSchema = z
 	.object({
 		id: IdSchema.nullish(),
 		object: z.string().nullish(),
-		// PostGrid answers a delete with the deleted resource, so the id is the
-		// confirmation; there is no separate success flag to trust.
+		// PostGrid answers a delete with `{ id, object, deleted: true }`.
+		deleted: z.boolean().nullish(),
 		live: z.boolean().nullish(),
 	})
 	.loose();
@@ -384,9 +394,7 @@ const orderOutputFields = {
 };
 
 const orderInputFields = {
-	to: contactInput.describe(
-		'The recipient: a contact id or the address fields.',
-	),
+	to: contactRef.describe('The recipient: a contact id or the address fields.'),
 	sendDate: z
 		.string()
 		.min(1)
@@ -414,22 +422,19 @@ const orderPageFields = {
 
 // ── letters ───────────────────────────────────────────────────────────────
 
-export const POSTGRID_LETTER_SIZES = ['us_letter', 'us_legal', 'a4'] as const;
+export const POSTGRID_LETTER_SIZES = ['us_letter', 'a4'] as const;
 export const POSTGRID_ADDRESS_PLACEMENTS = [
 	'top_first_page',
 	'insert_blank_page',
-] as const;
-export const POSTGRID_ENVELOPE_TYPES = [
-	'standard_double_window',
-	'flat',
 ] as const;
 
 export const LettersCreateInputSchema = z
 	.object({
 		...orderInputFields,
-		from: contactInput.describe(
-			'The sender: a contact id or the address fields.',
-		),
+		// PostGrid documents the sender as optional on every order type.
+		from: contactRef
+			.describe('The sender: a contact id or the address fields.')
+			.optional(),
 		html: z
 			.string()
 			.min(1)
@@ -444,8 +449,13 @@ export const LettersCreateInputSchema = z
 		color: z.boolean().optional().describe('Print in colour.'),
 		doubleSided: z.boolean().optional(),
 		addressPlacement: z.enum(POSTGRID_ADDRESS_PLACEMENTS).optional(),
-		envelopeType: z.enum(POSTGRID_ENVELOPE_TYPES).optional(),
-		express: z.boolean().optional().describe('Send by express postage.'),
+		envelope: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'A custom envelope id, or `standard` for the default envelope. Express postage is `mailingClass: express`.',
+			),
 		perforatedPage: z
 			.literal(1)
 			.optional()
@@ -488,7 +498,7 @@ export const LetterSchema = z
 		addressPlacement: z.string().nullish(),
 		color: z.boolean().nullish(),
 		doubleSided: z.boolean().nullish(),
-		envelopeType: z.string().nullish(),
+		envelope: z.string().nullish(),
 		mailingClass: z.string().nullish(),
 	})
 	.loose();
@@ -532,7 +542,7 @@ export const PostcardsCreateInputSchema = z
 		...orderInputFields,
 		// PostGrid documents the postcard sender as optional, unlike a letter's.
 		// Without one the card prints with the return address area blank.
-		from: contactInput
+		from: contactRef
 			.describe('The sender: a contact id or the address fields.')
 			.optional(),
 		size: z
@@ -618,14 +628,15 @@ export type PostcardsCancelInput = z.infer<typeof PostcardsCancelInputSchema>;
 export const POSTGRID_SELF_MAILER_SIZES = [
 	'8.5x11_bifold',
 	'8.5x11_trifold',
+	'9.5x16_trifold',
 ] as const;
 
 export const SelfMailersCreateInputSchema = z
 	.object({
 		...orderInputFields,
-		from: contactInput.describe(
-			'The sender: a contact id or the address fields.',
-		),
+		from: contactRef
+			.describe('The sender: a contact id or the address fields.')
+			.optional(),
 		size: z
 			.enum(POSTGRID_SELF_MAILER_SIZES)
 			.describe('Which fold to print and finish.'),
@@ -727,7 +738,9 @@ const TrackerOutputSchema = z
 		urlExpireAfterDays: z
 			.number()
 			.nullish()
-			.describe('How long a generated URL stays valid: 30, 60 or 90 days.'),
+			.describe(
+				'How long a generated URL stays valid: 30, 60, 90, 180 or 365 days.',
+			),
 		visitCount: z
 			.number()
 			.nullish()
