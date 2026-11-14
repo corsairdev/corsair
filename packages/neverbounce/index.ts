@@ -65,8 +65,11 @@ export const neverbounceEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 const neverbounceEndpointMeta = {
 	'single.check': {
-		riskLevel: 'destructive',
-		description: 'Verify an email address; verification may consume credits',
+		// A lookup that only returns data. It uses a verification credit, but
+		// metered reads stay `read` (as in the Ahrefs and Kickbox plugins).
+		riskLevel: 'read',
+		description:
+			'Verify an email address (valid, invalid, disposable, catchall or unknown); uses one verification credit',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof neverbounceEndpointsNested
