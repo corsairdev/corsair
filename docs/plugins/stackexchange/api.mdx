@@ -3,6 +3,7 @@ title: "Stack Exchange API reference"
 sidebarTitle: "API"
 description: "API reference for Stack Exchange: every `stackexchange.api.*` operation with input and output types."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -30,7 +31,7 @@ await corsair.stackexchange.api.network.read({ route: 'sites' });
 | `parameters` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `method` | `GET \| POST` | No | — |
 
-Network methods omit the `site` parameter. OAuth methods specify whether `read_inbox`, `private_info`, or user authentication is needed in the route catalog. Pagination is exposed as `page` and `pagesize`; callers must honor `has_more` and `backoff` in the common response wrapper. `filters/create` defaults to GET and accepts POST when the include/exclude list is too large.
+Network methods omit the `site` parameter. OAuth methods specify whether `read_inbox`, `private_info`, or user authentication is needed in the route catalog. Pagination is exposed as `page` and `pagesize`; callers follow `has_more`. When a response sets `backoff`, the plugin waits that long before calling the same method again, or raises a rate-limit error when the wait is over 30 seconds. `filters/create` defaults to GET and accepts POST when the include/exclude list is too large.
 
 
 
@@ -156,3 +157,4 @@ POST methods share one conservative destructive-risk operation. Use only a user-
 
 
 ---
+

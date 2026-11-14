@@ -6,7 +6,7 @@ description: "Read public and authenticated Stack Exchange content across indivi
 
 Use **Stack Exchange** through Corsair: one client, typed API calls.
 
-Select a documented method with the route field. Per-site methods require a site parameter; network methods do not. OAuth connection requests the documented `read_inbox`, `write_access`, and `private_info` scopes together so every user-context method can be called. Stack Exchange requires a registered redirect URI; expiring tokens have no refresh token and must be reconnected.
+Select a documented method with the route field. Per-site methods require a site parameter; network methods do not. OAuth connection requests the documented `read_inbox`, `write_access`, and `private_info` scopes together so every user-context method can be called, plus `no_expiry`, because Stack Exchange issues no refresh token. Stack Exchange requires a registered redirect URI. Anonymous and app-key requests can read pages 1 to 25 only.
 
 **What you get:**
 
