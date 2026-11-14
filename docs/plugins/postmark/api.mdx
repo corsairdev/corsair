@@ -167,8 +167,8 @@ await corsair.postmark.api.bounces.list({ Count: 10, Offset: 0 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Count` | `number` | No | How many bounces to return, at most 500. |
-| `Offset` | `number` | No | How many to skip. |
+| `Count` | `number` | No | How many bounces to return, at most 500. Defaults to 100. |
+| `Offset` | `number` | No | How many to skip. Defaults to 0. |
 | `Type` | `string` | No | Only this bounce type, such as `HardBounce`. |
 | `Inactive` | `boolean` | No | — |
 | `EmailFilter` | `string` | No | Only this address. |
@@ -512,21 +512,23 @@ await corsair.postmark.api.stats.overview({ FromDate: '2026-01-01', ToDate: '202
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Inbound` | `number \| null` | No | — |
-| `Outbound` | `number \| null` | No | — |
-| `Transatlantic` | `number \| null` | No | — |
-| `Tracked` | `number \| null` | No | — |
+| `Sent` | `number \| null` | No | — |
+| `Bounced` | `number \| null` | No | — |
+| `SMTPApiErrors` | `number \| null` | No | — |
+| `BounceRate` | `number \| null` | No | A percentage of Sent. |
+| `SpamComplaints` | `number \| null` | No | — |
+| `SpamComplaintsRate` | `number \| null` | No | A percentage of Sent. |
 | `Opens` | `number \| null` | No | — |
 | `UniqueOpens` | `number \| null` | No | — |
-| `OpenRate` | `number \| null` | No | — |
-| `Clicks` | `number \| null` | No | — |
+| `Tracked` | `number \| null` | No | — |
+| `WithLinkTracking` | `number \| null` | No | — |
+| `WithOpenTracking` | `number \| null` | No | — |
+| `TotalTrackedLinksSent` | `number \| null` | No | — |
 | `UniqueLinksClicked` | `number \| null` | No | — |
-| `ClickRate` | `number \| null` | No | — |
-| `UniqueClicks` | `number \| null` | No | — |
-| `Bounces` | `number \| null` | No | — |
-| `BounceRate` | `number \| null` | No | — |
-| `SpamComplaints` | `number \| null` | No | — |
-| `SpamComplaintsRate` | `number \| null` | No | — |
+| `TotalClicks` | `number \| null` | No | — |
+| `WithClientRecorded` | `number \| null` | No | — |
+| `WithPlatformRecorded` | `number \| null` | No | — |
+| `WithReadTimeRecorded` | `number \| null` | No | — |
 
 
 
@@ -559,6 +561,7 @@ await corsair.postmark.api.stats.sends({ FromDate: '2026-01-01', ToDate: '2026-0
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `Sent` | `number \| null` | No | The total across the window. |
 | `Days` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -603,7 +606,9 @@ await corsair.postmark.api.streams.archive({ id: 'broadcast-1' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Message` | `string \| null` | No | — |
+| `ID` | `string \| null` | No | — |
+| `ServerID` | `number \| string \| null` | No | — |
+| `ExpectedPurgeDate` | `string \| null` | No | The stream is deleted on this date unless it is restored. |
 
 
 
@@ -636,7 +641,7 @@ await corsair.postmark.api.streams.get({ id: 'outbound' });
 | `ID` | `string \| null` | No | — |
 | `Name` | `string \| null` | No | — |
 | `Description` | `string \| null` | No | — |
-| `MessageStreamType` | `string \| null` | No | `Transactional`, `Inbound` or `Broadcast`. |
+| `MessageStreamType` | `string \| null` | No | `Transactional`, `Inbound` or `Broadcasts`. |
 | `CreatedAt` | `string \| null` | No | — |
 | `UpdatedAt` | `string \| null` | No | — |
 | `ArchivedAt` | `string \| null` | No | — |
@@ -673,7 +678,7 @@ await corsair.postmark.api.streams.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `MessageStreamType` | `Transactional \| Inbound \| Broadcast` | No | Only streams of this kind. |
+| `MessageStreamType` | `All \| Transactional \| Inbound \| Broadcasts` | No | Only streams of this kind. Defaults to `All`. |
 | `IncludeArchivedStreams` | `boolean` | No | Include archived streams. Defaults to false. |
 
 
@@ -683,6 +688,7 @@ await corsair.postmark.api.streams.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `MessageStreams` | `object[]` | Yes | — |
+| `TotalCount` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="MessageStreams full type">
@@ -840,8 +846,8 @@ await corsair.postmark.api.templates.list({ Count: 10, Offset: 0 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Count` | `number` | No | How many templates to return, at most 500. |
-| `Offset` | `number` | No | How many to skip. |
+| `Count` | `number` | No | How many templates to return, at most 500. Defaults to 100. |
+| `Offset` | `number` | No | How many to skip. Defaults to 0. |
 | `TemplateType` | `Standard \| Layout` | No | Only templates of this kind. |
 
 
@@ -900,7 +906,7 @@ await corsair.postmark.api.templates.update({ idOrAlias: 'onboarding-v1', Subjec
 | `TextBody` | `string` | No | — |
 | `Alias` | `string` | No | — |
 | `TemplateType` | `Standard \| Layout` | No | — |
-| `LayoutTemplate` | `string` | No | — |
+| `LayoutTemplate` | `string` | No | The layout alias to use. An empty string removes the layout. |
 
 
 
@@ -932,7 +938,7 @@ Render a template against a model and report whether its subject and bodies are 
 **Risk:** `read`
 
 ```ts
-await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', TemplateModel: { name: 'Kevin' } });
+await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', TestRenderModel: { name: 'Kevin' } });
 ```
 
 **Input**
@@ -942,7 +948,7 @@ await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', Tem
 | `Subject` | `string` | No | — |
 | `HtmlBody` | `string` | No | — |
 | `TextBody` | `string` | No | — |
-| `TemplateModel` | `Record<string, JsonValue>` | No | — |
+| `TestRenderModel` | `Record<string, JsonValue>` | No | The model to render the template content against. |
 
 
 
@@ -954,6 +960,7 @@ await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', Tem
 | `HtmlBody` | `object \| null` | No | — |
 | `TextBody` | `object \| null` | No | — |
 | `Subject` | `object \| null` | No | — |
+| `SuggestedTemplateModel` | `Record<string, JsonValue> \| null` | No | A model with every key the template content references. |
 
 <AccordionGroup>
 <Accordion title="HtmlBody full type">
@@ -962,7 +969,8 @@ await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', Tem
 {
   ContentIsValid?: boolean | null,
   RenderErrors?: JsonValue[] | null,
-  ValidationErrors?: JsonValue[] | null
+  ValidationErrors?: JsonValue[] | null,
+  RenderedContent?: string | null
 } | null
 ```
 </Accordion>
@@ -973,7 +981,8 @@ await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', Tem
 {
   ContentIsValid?: boolean | null,
   RenderErrors?: JsonValue[] | null,
-  ValidationErrors?: JsonValue[] | null
+  ValidationErrors?: JsonValue[] | null,
+  RenderedContent?: string | null
 } | null
 ```
 </Accordion>
@@ -984,7 +993,8 @@ await corsair.postmark.api.templates.validate({ HtmlBody: '<b>{{name}}</b>', Tem
 {
   ContentIsValid?: boolean | null,
   RenderErrors?: JsonValue[] | null,
-  ValidationErrors?: JsonValue[] | null
+  ValidationErrors?: JsonValue[] | null,
+  RenderedContent?: string | null
 } | null
 ```
 </Accordion>
