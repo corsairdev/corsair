@@ -26,6 +26,31 @@ export class FireberryAPIError extends Error {
 	}
 }
 
+// Core's ApiError goes through (R8) so its status, retryAfter and rate-limit fields reach core and the
+// error handlers. It is rebuilt without the sent body, the query (metadata calls carry tokenid there),
+// the URL's query string and Fireberry's reply, whose messages can echo CRM field values.
+function sanitizedApiError(error: ApiError): ApiError {
+	const url = new URL(error.url, FIREBERRY_API_BASE);
+	url.search = '';
+	return new ApiError(
+		{ ...error.request, body: undefined, formData: undefined, query: undefined },
+		{
+			url: url.toString(),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: undefined,
+		},
+		`Fireberry request failed with status ${error.status}`,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
 export async function makeFireberryRequest<T>(
 	path: string,
 	apiKey: string,
@@ -60,14 +85,7 @@ export async function makeFireberryRequest<T>(
 			rateLimitConfig: NO_TRANSPORT_RETRIES,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// Provider error messages can echo CRM data; expose status and retry timing only.
-			throw new FireberryAPIError(
-				'Fireberry request failed',
-				error.status,
-				error.retryAfter,
-			);
-		}
+		if (error instanceof ApiError) throw sanitizedApiError(error);
 		if (error instanceof Error)
 			throw new FireberryAPIError('Fireberry request failed');
 		// `unknown` because JavaScript permits throwing non-Error values.
@@ -107,17 +125,24 @@ export async function makeFireberryUploadRequest(
 					? Math.max(0, retryDate - Date.now())
 					: undefined;
 			await response.body?.cancel().catch(() => undefined);
-			throw new FireberryAPIError(
-				'Fireberry file upload failed',
-				response.status,
-				retryAfter,
+			throw new ApiError(
+				{ method: 'POST', url: path },
+				{
+					url: `${FIREBERRY_API_BASE}${path}`,
+					ok: false,
+					status: response.status,
+					statusText: response.statusText,
+					body: undefined,
+				},
+				`Fireberry file upload failed with status ${response.status}`,
+				{ retryAfter },
 			);
 		}
 		// `unknown` because provider response JSON is untrusted until parsed by the upload response schema.
 		const result: unknown = await response.json();
 		return result;
 	} catch (error) {
-		if (error instanceof FireberryAPIError) throw error;
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error)
 			throw new FireberryAPIError('Fireberry file upload failed');
 		// `unknown` because JavaScript permits throwing non-Error values.

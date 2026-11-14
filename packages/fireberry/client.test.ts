@@ -78,13 +78,50 @@ describe('Fireberry HTTP client', () => {
 			'/api/record/account',
 			'test-key',
 		).catch((error: unknown) => error);
+		expect(result).toBeInstanceOf(ApiError);
 		expect(result).toMatchObject({
-			name: 'FireberryAPIError',
 			status: 422,
 			retryAfter: 4000,
-			message: 'Fireberry request failed',
+			message: 'Fireberry request failed with status 422',
 		});
-		expect(result).not.toHaveProperty('body');
+		if (result instanceof ApiError) {
+			expect(result.body).toBeUndefined();
+			expect(result.request.body).toBeUndefined();
+		}
+		expect(JSON.stringify(result)).not.toContain('private');
+	});
+
+	it('keeps the metadata tokenid query off the rebuilt ApiError', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'GET',
+					url: '/metadata/records',
+					query: { tokenid: 'secret-key-123' },
+				},
+				{
+					url: 'https://api.fireberry.com/metadata/records?tokenid=secret-key-123',
+					ok: false,
+					status: 401,
+					statusText: 'Unauthorized',
+					body: { message: 'bad token secret-key-123' },
+				},
+				'bad token secret-key-123',
+			),
+		);
+		// `unknown` because a rejected promise may carry any JavaScript value.
+		const result = await makeFireberryRequest(
+			'/metadata/records',
+			'secret-key-123',
+			{ metadata: true },
+		).catch((error: unknown) => error);
+		expect(result).toBeInstanceOf(ApiError);
+		if (result instanceof ApiError) {
+			expect(result.status).toBe(401);
+			expect(result.url).toBe('https://api.fireberry.com/metadata/records');
+			expect(result.request.query).toBeUndefined();
+		}
+		expect(JSON.stringify(result)).not.toContain('secret-key-123');
 	});
 
 	it('extracts Retry-After with the real shared transport without transport retries', async () => {
