@@ -5,9 +5,10 @@ import {
 	HandwryttenAPIError,
 	makeHandwryttenRequest,
 } from './client';
-import { Cards } from './endpoints';
+import { Cards, QrCodes, Signatures } from './endpoints';
 import { errorHandlers } from './error-handlers';
-import { type HandwryttenContext, handwrytten } from './index';
+import type { HandwryttenContext } from './index';
+import { handwrytten } from './index';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -339,6 +340,31 @@ describe('credential resolution joined with endpoint execution', () => {
 
 		const [config] = mockRequest.mock.calls[0] ?? [];
 		expect(config?.BASE).toBe(customBase);
+	});
+
+	it('executes signatures.list and qrCodes.frames without credentials', async () => {
+		mockRequest.mockResolvedValue({
+			status: 'success',
+			signatures: [],
+			frames: [],
+		});
+
+		const plugin = handwrytten();
+		// `unknown` because mock context models minimal runtime interface for endpoint.
+		const endpointCtx = {
+			key: '',
+			options: plugin.options,
+			$getAccountId: () => 'test-account',
+		} as unknown as HandwryttenContext;
+
+		await Signatures.list(endpointCtx, {});
+		await QrCodes.frames(endpointCtx, {});
+		expect(mockRequest).toHaveBeenCalledTimes(2);
+
+		const [config1] = mockRequest.mock.calls[0] ?? [];
+		const [config2] = mockRequest.mock.calls[1] ?? [];
+		expect(config1?.HEADERS).not.toHaveProperty('Authorization');
+		expect(config2?.HEADERS).not.toHaveProperty('Authorization');
 	});
 
 	it('fails fast on private endpoint when credentials are missing', async () => {

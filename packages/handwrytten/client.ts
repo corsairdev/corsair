@@ -43,6 +43,10 @@ export const PUBLIC_ROUTES = new Set([
 	'countries/list',
 	'/countries/listStates',
 	'countries/listStates',
+	'/profile/signatures',
+	'profile/signatures',
+	'/qrCode/frames',
+	'qrCode/frames',
 ]);
 
 const SENSITIVE_FIELD_NAMES = new Set([
