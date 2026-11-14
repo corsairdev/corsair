@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { GeoapifyAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { GeoapifyAPIError, geoapifyErrorInfo } from './client';
 import {
 	autocomplete,
 	boundaries,
@@ -16,6 +17,7 @@ import {
 	routing,
 	timezone,
 } from './endpoints';
+import { GeoapifyEndpointOutputSchemas } from './endpoints/types';
 import {
 	badRequest,
 	berlin,
@@ -98,15 +100,25 @@ function lastRequest() {
  * Runs a call that must fail and returns what it threw.
  */
 // unknown: the rejection value is untyped by definition.
-async function failure(
-	run: Promise<unknown>,
-): Promise<GeoapifyAPIError & Error> {
+async function thrown(run: Promise<unknown>): Promise<Error> {
 	try {
 		await run;
 	} catch (error) {
-		return error as GeoapifyAPIError & Error;
+		return error as Error;
 	}
 	throw new Error('expected the call to fail, but it resolved');
+}
+
+/**
+ * Runs a call that must fail and returns the Geoapify fields of what it threw:
+ * the gateway envelope of core's ApiError, or the transport error.
+ */
+// unknown: the rejection value is untyped by definition.
+async function failure(
+	run: Promise<unknown>,
+): Promise<GeoapifyAPIError & Error> {
+	const error = await thrown(run);
+	return (geoapifyErrorInfo(error) ?? error) as GeoapifyAPIError & Error;
 }
 
 beforeEach(() => {
@@ -164,7 +176,23 @@ describe('Geoapify client', () => {
 		expect(lastRequest().origin).toBe('https://api.geoapify.com');
 	});
 
-	it('wraps a 401 in GeoapifyAPIError with the gateway message', async () => {
+	it('passes core ApiError through without the address or coordinates sent', async () => {
+		respond(unauthorized, 401);
+		const error = await thrown(
+			invoke(forwardGeocode, { text: '221B Baker Street, London' }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (error instanceof ApiError) {
+			expect(error.status).toBe(401);
+			expect(JSON.stringify(error.request)).not.toContain('Baker');
+			expect(error.url).not.toContain('Baker');
+			expect(error.message).not.toContain('Baker');
+			expect(error.body).toMatchObject({ error: 'Unauthorized' });
+		}
+	});
+
+	it('reads the gateway fields of a 401', async () => {
 		respond(unauthorized, 401);
 		const error = await failure(invoke(forwardGeocode, { text: 'Berlin' }));
 
@@ -1030,5 +1058,67 @@ describe('geoapify event names', () => {
 		respond(fixture);
 		await invoke(endpoint as never, args as never);
 		expect(mockLog.mock.calls.at(-1)?.[1]).toBe(expected);
+	});
+});
+
+describe('Geoapify response schemas', () => {
+	it('keeps the contact object of a place', () => {
+		const feature = places.features[0];
+		const parsed = GeoapifyEndpointOutputSchemas.placeDetails.parse({
+			...places,
+			features: [
+				{
+					...feature,
+					properties: {
+						...feature?.properties,
+						contact: { phone: '+49 30 1234567', email: 'info@example.com' },
+					},
+				},
+			],
+		});
+		expect(parsed.features[0]?.properties.contact).toEqual({
+			phone: '+49 30 1234567',
+			email: 'info@example.com',
+		});
+	});
+
+	it('keeps the elevation and route details a route asked for', () => {
+		const result = route.results[0];
+		const leg = result?.legs[0];
+		const parsed = GeoapifyEndpointOutputSchemas.routing.parse({
+			...route,
+			results: [
+				{
+					...result,
+					legs: [
+						{
+							...leg,
+							elevation: [34, 35, 37],
+							elevation_range: [
+								[0, 34],
+								[12, 35],
+							],
+							country_code: ['de'],
+						},
+					],
+				},
+			],
+		});
+		const parsedLeg = parsed.results?.[0]?.legs?.[0];
+		expect(parsedLeg?.elevation).toEqual([34, 35, 37]);
+		expect(parsedLeg?.elevation_range).toEqual([
+			[0, 34],
+			[12, 35],
+		]);
+		expect(parsedLeg).toMatchObject({ country_code: ['de'] });
+	});
+
+	it('accepts a null next_transition when no change is known', () => {
+		const zone = timezoneFixture.timezones[0];
+		const parsed = GeoapifyEndpointOutputSchemas.timezone.parse({
+			...timezoneFixture,
+			timezones: [{ ...zone, next_transition: null }],
+		});
+		expect(parsed.timezones[0]?.next_transition).toBeNull();
 	});
 });

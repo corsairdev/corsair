@@ -1,8 +1,11 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { GeoapifyAPIError } from './client';
+import { geoapifyErrorInfo } from './client';
+
+/** HTTP failures arrive as core's ApiError, transport failures as GeoapifyAPIError. */
+const info = geoapifyErrorInfo;
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof GeoapifyAPIError ? error.status : undefined;
+	return info(error)?.status;
 }
 
 /**
@@ -15,25 +18,21 @@ export const errorHandlers = {
 	// 429 covers both a burst and an exhausted quota. A used-up quota only fails
 	// again until it resets, so it gets no retry.
 	QUOTA_EXCEEDED: {
-		match: (error: Error) =>
-			error instanceof GeoapifyAPIError && error.isQuotaExceeded,
+		match: (error: Error) => info(error)?.isQuotaExceeded === true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A burst over the per-second limit; honour Retry-After when it is sent.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GeoapifyAPIError && error.isRateLimit,
+		match: (error: Error) => info(error)?.isRateLimit === true,
 		handler: async (error: Error) => ({
 			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof GeoapifyAPIError ? error.retryAfter : undefined,
+			headersRetryAfterMs: info(error)?.retryAfter,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// A missing or invalid key. A retry sends the same key.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof GeoapifyAPIError && error.isAuthError,
+		match: (error: Error) => info(error)?.isAuthError === true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A parameter the gateway refused, such as a limit above the maximum, or a
@@ -50,10 +49,10 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Every call here is a read, so a 5xx is safe to replay.
+	// Every call is a GET or a computation that changes nothing at Geoapify, so
+	// a 5xx is safe to replay.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof GeoapifyAPIError && (error.status ?? 0) >= 500,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
@@ -61,16 +60,14 @@ export const errorHandlers = {
 	},
 	// A timeout is also a transport failure, so it is matched first.
 	TIMEOUT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GeoapifyAPIError && error.timedOut,
+		match: (error: Error) => info(error)?.timedOut === true,
 		handler: async () => ({
 			maxRetries: 1,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
 	NETWORK_ERROR: {
-		match: (error: Error) =>
-			error instanceof GeoapifyAPIError && error.transport,
+		match: (error: Error) => info(error)?.transport === true,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

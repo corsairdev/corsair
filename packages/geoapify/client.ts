@@ -124,6 +124,25 @@ export class GeoapifyAPIError extends Error {
 	}
 }
 
+/**
+ * The Geoapify fields of a thrown error. An HTTP failure reaches callers as
+ * core's ApiError (R8); this reads its gateway envelope into the same shape a
+ * transport failure has, so the handlers treat both alike.
+ */
+// unknown: a caught rejection has no static type.
+export function geoapifyErrorInfo(
+	error: unknown,
+): GeoapifyAPIError | undefined {
+	if (error instanceof GeoapifyAPIError) return error;
+	if (!(error instanceof ApiError)) return undefined;
+	return new GeoapifyAPIError(error.message, {
+		status: error.status,
+		reason: readGatewayError(error.body).error,
+		retryAfter: error.retryAfter,
+		method: error.request.method,
+	});
+}
+
 /** The gateway message, with the status and its short name in front. */
 // unknown: an error body is untyped: the gateway envelope, or text from a proxy
 // that never reached Geoapify.
@@ -202,14 +221,32 @@ export async function makeGeoapifyRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Core's ApiError goes through (R8), minus the addresses, coordinates
+			// and IPs that were sent in the query or body. Only the gateway
+			// envelope's fixed fields are kept from the response.
 			const fields = readGatewayError(error.body);
-			throw new GeoapifyAPIError(
-				describeGeoapifyError(error.status, error.body, error.message),
+			const safeBody = {
+				statusCode: fields.statusCode,
+				error: fields.error,
+				message: fields.message,
+			};
+			const url = new URL(error.url);
+			url.search = '';
+			throw new ApiError(
+				{ ...error.request, query: undefined, body: undefined },
 				{
+					url: url.toString(),
+					ok: false,
 					status: error.status,
-					reason: fields.error,
+					statusText: error.statusText,
+					body: safeBody,
+				},
+				describeGeoapifyError(error.status, safeBody, `HTTP ${error.status}`),
+				{
 					retryAfter: error.retryAfter,
-					method,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}

@@ -94,6 +94,16 @@ const PlaceSchema = AddressSchema.extend({
 	details: z.array(z.string()).optional(),
 	website: z.string().optional(),
 	phone: z.string().optional(),
+	/** Phone, email and fax from the place's OpenStreetMap tags, when known. */
+	contact: z
+		.object({
+			phone: z.string().optional(),
+			email: z.string().optional(),
+			fax: z.string().optional(),
+		})
+		// Geoapify adds other contact fields (such as `phone_other`) per place.
+		.passthrough()
+		.optional(),
 	opening_hours: z.string().optional(),
 	description: z.string().optional(),
 	brand: z.string().optional(),
@@ -152,25 +162,37 @@ const RouteResultSchema = z.object({
 		.optional(),
 	legs: z
 		.array(
-			z.object({
-				distance: z.number().optional(),
-				time: z.number().optional(),
-				steps: z
-					.array(
-						z.object({
-							distance: z.number().optional(),
-							time: z.number().optional(),
-							/** Indexes into the leg's geometry. */
-							from_index: z.number().optional(),
-							to_index: z.number().optional(),
-							instruction: RouteInstructionSchema.optional(),
-							name: z.string().optional(),
-							toll: z.boolean().optional(),
-							ferry: z.boolean().optional(),
-						}),
-					)
-					.optional(),
-			}),
+			z
+				.object({
+					distance: z.number().optional(),
+					time: z.number().optional(),
+					steps: z
+						.array(
+							z
+								.object({
+									distance: z.number().optional(),
+									time: z.number().optional(),
+									/** Indexes into the leg's geometry. */
+									from_index: z.number().optional(),
+									to_index: z.number().optional(),
+									instruction: RouteInstructionSchema.optional(),
+									name: z.string().optional(),
+									toll: z.boolean().optional(),
+									ferry: z.boolean().optional(),
+								})
+								// `details: ['route_details']` adds surface, speed limit and
+								// other per-step fields that differ by road.
+								.passthrough(),
+						)
+						.optional(),
+					/** Meters above sea level along the leg, with `details: ['elevation']`. */
+					elevation: z.array(z.number()).optional(),
+					/** `[distance from leg start, elevation]` pairs, with `details: ['elevation']`. */
+					elevation_range: z.array(z.array(z.number())).optional(),
+				})
+				// Other `details` (country and administrative areas) add per-leg
+				// fields that differ by request.
+				.passthrough(),
 		)
 		.optional(),
 	toll: z.boolean().optional(),
@@ -290,7 +312,8 @@ const TimezoneResponseSchema = z.object({
 					offset_change_seconds: z.number().optional(),
 					kind: z.string().optional(),
 				})
-				.optional(),
+				// Documented as null when no change is known in the bundled range.
+				.nullish(),
 		}),
 	),
 });

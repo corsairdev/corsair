@@ -1,7 +1,12 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GeoapifyAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/**
+ * An HTTP failure arrives as core's ApiError; a request that got no answer
+ * arrives as GeoapifyAPIError.
+ */
 function apiError(options: {
 	status?: number;
 	reason?: string;
@@ -9,8 +14,21 @@ function apiError(options: {
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new GeoapifyAPIError('failed', options);
+	message?: string;
+}): Error {
+	if (options.transport) return new GeoapifyAPIError('failed', options);
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/v1/geocode/search' },
+		{
+			url: 'https://api.geoapify.com/v1/geocode/search',
+			ok: false,
+			status: options.status ?? 500,
+			statusText: '',
+			body: { statusCode: options.status, error: options.reason },
+		},
+		options.message ?? 'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -50,10 +68,11 @@ describe('error handler selection', () => {
 	});
 
 	it('does not retry an exhausted quota, which only fails again until it resets', async () => {
-		const quota = new GeoapifyAPIError(
-			'Geoapify 429 Too Many Requests: Quota exceeded',
-			{ status: 429, retryAfter: 60_000 },
-		);
+		const quota = apiError({
+			status: 429,
+			retryAfter: 60_000,
+			message: 'Geoapify 429 Too Many Requests: Quota exceeded',
+		});
 		await expect(resolve(quota)).resolves.toEqual({ maxRetries: 0 });
 	});
 
