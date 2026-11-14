@@ -1,0 +1,9 @@
+displayName: NeverBounce
+description: Verify individual email addresses with the NeverBounce API.
+domain: neverbounce.com
+examples:
+  write:
+    path: single.check
+    title: Verify an email address
+    args:
+      email: user@example.com
