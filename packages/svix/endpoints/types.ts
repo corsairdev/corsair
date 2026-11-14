@@ -58,6 +58,11 @@ export const BackgroundTaskStatusSchema = z.enum([
 	'finished',
 	'failed',
 ]);
+// Output copy: accepts values Svix adds later; inputs keep the strict enum.
+export const BackgroundTaskStatusOutSchema = z.union([
+	BackgroundTaskStatusSchema,
+	z.string(),
+]);
 export const BackgroundTaskTypeSchema = z.enum([
 	'endpoint.replay',
 	'endpoint.recover',
@@ -67,6 +72,11 @@ export const BackgroundTaskTypeSchema = z.enum([
 	'event-type.aggregate',
 	'application.purge_content',
 	'endpoint.bulk-replay',
+]);
+// Output copy: accepts values Svix adds later; inputs keep the strict enum.
+export const BackgroundTaskTypeOutSchema = z.union([
+	BackgroundTaskTypeSchema,
+	z.string(),
 ]);
 export const BatchMessageInSchema = z
 	.object({
@@ -122,8 +132,13 @@ export const BulkExpungeContentsInSchema = z
 	})
 	.passthrough();
 export const BulkExpungeStatusSchema = z.enum(['expunged', 'not-found']);
+// Output copy: accepts values Svix adds later; inputs keep the strict enum.
+export const BulkExpungeStatusOutSchema = z.union([
+	BulkExpungeStatusSchema,
+	z.string(),
+]);
 export const BulkExpungeContentsOutSchema = z
-	.object({ results: z.record(z.string(), BulkExpungeStatusSchema) })
+	.object({ results: z.record(z.string(), BulkExpungeStatusOutSchema) })
 	.passthrough();
 export const MessageStatusSchema = z.union([
 	z.literal(0),
@@ -131,6 +146,11 @@ export const MessageStatusSchema = z.union([
 	z.literal(2),
 	z.literal(3),
 	z.literal(4),
+]);
+// Output copy: accepts values Svix adds later; inputs keep the strict enum.
+export const MessageStatusOutSchema = z.union([
+	MessageStatusSchema,
+	z.number().int(),
 ]);
 export const StatusCodeClassSchema = z.union([
 	z.literal(0),
@@ -235,10 +255,15 @@ export const MessageStatusTextSchema = z.enum([
 	'sending',
 	'canceled',
 ]);
+// Output copy: accepts values Svix adds later; inputs keep the strict enum.
+export const MessageStatusTextOutSchema = z.union([
+	MessageStatusTextSchema,
+	z.string(),
+]);
 export const EndpointMessageOutSchema = z
 	.object({
-		status: MessageStatusSchema,
-		statusText: MessageStatusTextSchema,
+		status: MessageStatusOutSchema,
+		statusText: MessageStatusTextOutSchema,
 		nextAttempt: z.string().nullable().optional(),
 		eventId: z
 			.string()
@@ -552,8 +577,8 @@ export const EventTypeUpsertInSchema = z
 export const ExpungeAllContentsOutSchema = z
 	.object({
 		id: z.string().min(33).max(33).regex(new RegExp('^qtask_[A-Za-z0-9]{27}$')),
-		status: BackgroundTaskStatusSchema,
-		task: BackgroundTaskTypeSchema,
+		status: BackgroundTaskStatusOutSchema,
+		task: BackgroundTaskTypeOutSchema,
 		updatedAt: z.string(),
 	})
 	.passthrough();
@@ -593,6 +618,11 @@ export const MessageAttemptTriggerTypeSchema = z.union([
 	z.literal(0),
 	z.literal(1),
 ]);
+// Output copy: accepts values Svix adds later; inputs keep the strict enum.
+export const MessageAttemptTriggerTypeOutSchema = z.union([
+	MessageAttemptTriggerTypeSchema,
+	z.number().int(),
+]);
 export const MessageOutSchema = z
 	.object({
 		eventId: z
@@ -625,9 +655,9 @@ export const MessageAttemptOutSchema = z
 		response: z.string(),
 		responseStatusCode: z.number().int().min(-32768).max(32767),
 		responseDurationMs: z.number().int(),
-		status: MessageStatusSchema,
-		statusText: MessageStatusTextSchema,
-		triggerType: MessageAttemptTriggerTypeSchema,
+		status: MessageStatusOutSchema,
+		statusText: MessageStatusTextOutSchema,
+		triggerType: MessageAttemptTriggerTypeOutSchema,
 		msgId: z
 			.string()
 			.min(31)
@@ -654,8 +684,8 @@ export const ListResponse_MessageAttemptOut_Schema = z
 export const MessageEndpointOutSchema = z
 	.object({
 		id: z.string().min(30).max(30).regex(new RegExp('^ep_[A-Za-z0-9]{27}$')),
-		status: MessageStatusSchema,
-		statusText: MessageStatusTextSchema,
+		status: MessageStatusOutSchema,
+		statusText: MessageStatusTextOutSchema,
 		nextAttempt: z.string().nullable().optional(),
 		url: z.string().min(1).max(65536),
 		description: z.string(),
@@ -989,8 +1019,8 @@ export const RecoverInSchema = z
 export const RecoverOutSchema = z
 	.object({
 		id: z.string().min(33).max(33).regex(new RegExp('^qtask_[A-Za-z0-9]{27}$')),
-		status: BackgroundTaskStatusSchema,
-		task: BackgroundTaskTypeSchema,
+		status: BackgroundTaskStatusOutSchema,
+		task: BackgroundTaskTypeOutSchema,
 		updatedAt: z.string(),
 	})
 	.passthrough();
@@ -1000,8 +1030,8 @@ export const ReplayInSchema = z
 export const ReplayOutSchema = z
 	.object({
 		id: z.string().min(33).max(33).regex(new RegExp('^qtask_[A-Za-z0-9]{27}$')),
-		status: BackgroundTaskStatusSchema,
-		task: BackgroundTaskTypeSchema,
+		status: BackgroundTaskStatusOutSchema,
+		task: BackgroundTaskTypeOutSchema,
 		updatedAt: z.string(),
 	})
 	.passthrough();

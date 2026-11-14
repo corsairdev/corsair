@@ -413,4 +413,33 @@ describe('Svix OpenAPI request seam', () => {
 	it('marks the message precheck as a read', () => {
 		expect(svixEndpointMeta['messages.precheck'].riskLevel).toBe('read');
 	});
+
+	it('accepts status and task values Svix adds later in responses', async () => {
+		const fixture = fixtures.find(
+			(f) => f.group === 'attempts' && f.name === 'get',
+		);
+		if (!fixture?.response) throw new Error('Missing attempt fixture');
+		mockRequest.mockResolvedValue({
+			...fixture.response,
+			status: 9,
+			statusText: 'paused',
+			triggerType: 7,
+		});
+		await expect(
+			call('attempts', 'get', ctx, fixture.input),
+		).resolves.toMatchObject({ statusText: 'paused' });
+		mockRequest.mockResolvedValue({
+			id: 'qtask_33qen93MNuelBAq1T9G7eHLJRsF',
+			status: 'queued',
+			task: 'endpoint.new-task',
+			updatedAt: '2026-11-15T00:00:00Z',
+		});
+		await expect(
+			call('endpoints', 'recover', ctx, {
+				app_id: 'app_1',
+				endpoint_id: 'ep_1',
+				body: { since: '2026-11-14T00:00:00Z' },
+			}),
+		).resolves.toMatchObject({ task: 'endpoint.new-task' });
+	});
 });
