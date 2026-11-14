@@ -188,17 +188,24 @@ describe('migration input rules', () => {
 		).toBe(true);
 	});
 
-	it('requires at least one change on update', () => {
+	it('requires data on update, which Prismic requires on every PUT', () => {
 		expect(MigrationUpdateInputSchema.safeParse({ id: 'doc_1' }).success).toBe(
 			false,
 		);
 		expect(
 			MigrationUpdateInputSchema.safeParse({ id: 'doc_1', title: 'New' })
 				.success,
-		).toBe(true);
+		).toBe(false);
 		expect(
 			MigrationUpdateInputSchema.safeParse({ id: 'doc_1', tags: ['Red'] })
 				.success,
+		).toBe(false);
+		expect(
+			MigrationUpdateInputSchema.safeParse({
+				id: 'doc_1',
+				data: {},
+				tags: ['Red'],
+			}).success,
 		).toBe(true);
 	});
 
@@ -206,6 +213,7 @@ describe('migration input rules', () => {
 		const parsed = MigrationUpdateInputSchema.parse({
 			id: 'doc_1',
 			title: 'New',
+			data: {},
 			type: 'page',
 			lang: 'fr-fr',
 			alternate_language_id: 'abc',

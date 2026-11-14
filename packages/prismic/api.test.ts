@@ -1,24 +1,24 @@
-// Live Prismic smoke tests. Excluded from the default run; run with:
+// Live Prismic tests. Excluded from the default run (CI skips *api.test.ts);
+// run with:
 //
-//   PRISMIC_REPOSITORY=my-repo [PRISMIC_WRITE_TOKEN=...] pnpm test:live
+//   PRISMIC_REPOSITORY=my-repo [PRISMIC_WRITE_TOKEN=...] [PRISMIC_ACCESS_TOKEN=...] pnpm test:live
 //
-// Every test is a read, and every answer is parsed through the same output
-// schema a caller receives, so a field typed wrongly cannot pass silently.
-// Nothing here writes: the Migration API creates real drafts, which this suite
-// does not do without an explicit repository.
-import {
-	makePrismicRequest,
-	PRISMIC_MIGRATION_BASE,
-	PrismicAPIError,
-} from './client';
-import {
-	DocumentSchema,
-	PrismicEndpointOutputSchemas,
-} from './endpoints/types';
-import { captureError } from './test-helpers';
+// Every call goes through the plugin's own endpoints, so each answer is parsed
+// by the output schema a caller receives. Nothing here writes: the one
+// Migration call uses a made-up token, which Prismic refuses before it runs.
+import { ApiError } from 'corsair/http';
+import { Content, Migration } from './endpoints';
+import { buildContext, captureError } from './test-helpers';
+
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	// The test context has no database to log into.
+	return { ...actual, logEventFromContext: jest.fn() };
+});
 
 const LIVE_REPO = process.env.PRISMIC_REPOSITORY ?? '';
 const LIVE_TOKEN = process.env.PRISMIC_WRITE_TOKEN ?? '';
+const LIVE_ACCESS_TOKEN = process.env.PRISMIC_ACCESS_TOKEN ?? '';
 
 const missing = [LIVE_REPO ? undefined : 'PRISMIC_REPOSITORY'].filter(
 	(name): name is string => name !== undefined,
@@ -33,85 +33,96 @@ if (missing.length > 0) {
 const describeLive = missing.length === 0 ? describe : describe.skip;
 
 describeLive('Prismic live API', () => {
-	it('reads the repository metadata through the output schema', async () => {
-		const raw = await makePrismicRequest(
-			{ repository: LIVE_REPO },
-			{ method: 'GET', api: 'content', url: '' },
-		);
-		const parsed = PrismicEndpointOutputSchemas.repositoryInfo.parse(raw);
-
-		expect(Array.isArray(parsed.refs)).toBe(true);
-		// A query is pinned to a ref, so one must exist.
-		expect(parsed.refs.length).toBeGreaterThan(0);
+	const ctx = buildContext({
+		apiKey: LIVE_TOKEN,
+		repository: LIVE_REPO,
+		accessToken: LIVE_ACCESS_TOKEN || undefined,
 	});
 
-	it('queries documents through the output schema', async () => {
-		const meta = PrismicEndpointOutputSchemas.repositoryInfo.parse(
-			await makePrismicRequest(
-				{ repository: LIVE_REPO },
-				{ method: 'GET', api: 'content', url: '' },
-			),
-		);
-		const master = meta.refs.find((ref) => ref.isMasterRef) ?? meta.refs[0];
+	it('repository.info returns the refs, with one master ref', async () => {
+		const info = await Content.info(ctx, {});
 
-		const raw = await makePrismicRequest(
-			{ repository: LIVE_REPO },
-			{
-				method: 'GET',
-				api: 'content',
-				url: '/documents/search',
-				query: { pageSize: 2, ref: master?.ref ?? undefined },
-			},
-		);
-		const parsed = PrismicEndpointOutputSchemas.documentsSearch.parse(raw);
-
-		expect(Array.isArray(parsed.results)).toBe(true);
-		for (const document of parsed.results) {
-			expect(DocumentSchema.safeParse(document).success).toBe(true);
-		}
+		expect(info.refs.filter((ref) => ref.isMasterRef)).toHaveLength(1);
 	});
 
-	it('rejects a repository that does not exist, which answers 401 with no body', async () => {
-		const error = await captureError(
-			makePrismicRequest(
-				{ repository: 'corsair-definitely-not-a-real-repo' },
-				{ method: 'GET', api: 'content', url: '' },
-			),
-		);
+	it('documents.search with no ref reads the master ref first', async () => {
+		const page = await Content.search(ctx, { pageSize: 5 });
 
-		expect(error).toBeInstanceOf(PrismicAPIError);
-		if (!(error instanceof PrismicAPIError)) return;
-		expect(error.status).toBe(401);
-		expect(error.credentialsRejected).toBe(true);
+		expect(Array.isArray(page.results)).toBe(true);
 	});
 
-	it('rejects a bad write token without echoing it', async () => {
-		if (LIVE_TOKEN.length === 0) {
-			console.warn(
-				'Skipping the write-token check: PRISMIC_WRITE_TOKEN is not set.',
-			);
+	it('documents.search follows next_page to the second page', async () => {
+		const first = await Content.search(ctx, { pageSize: 1 });
+		if (!first.next_page) {
+			console.warn('Skipping the paging check: fewer than two documents.');
 			return;
 		}
 
+		const second = await Content.search(ctx, { nextPage: first.next_page });
+
+		expect(second.page).toBe(2);
+		expect(second.results[0]?.id).not.toBe(first.results[0]?.id);
+	});
+
+	it('documents.search filters by tag', async () => {
+		const all = await Content.search(ctx, { pageSize: 20 });
+		const tag = all.results.flatMap((document) => document.tags ?? [])[0];
+		if (!tag) {
+			console.warn('Skipping the tag check: no document carries a tag.');
+			return;
+		}
+
+		const tagged = await Content.search(ctx, { tags: [tag] });
+
+		expect(tagged.results.length).toBeGreaterThan(0);
+		for (const document of tagged.results) {
+			expect(document.tags).toContain(tag);
+		}
+	});
+
+	it('documents.get reads one document by id', async () => {
+		const page = await Content.search(ctx, { pageSize: 1 });
+		const id = page.results[0]?.id;
+		if (!id) {
+			console.warn('Skipping the get check: the repository has no documents.');
+			return;
+		}
+
+		const document = await Content.get(ctx, { id });
+
+		expect(document.id).toBe(id);
+	});
+
+	it('documents.get reports an id with no published document', async () => {
+		await expect(Content.get(ctx, { id: 'ZZZZcorsairNoDoc' })).rejects.toThrow(
+			/No published document/,
+		);
+	});
+
+	it('an unknown repository answers 404 as an ApiError', async () => {
 		const error = await captureError(
-			makePrismicRequest(
-				{ repository: LIVE_REPO, writeToken: 'definitely-not-a-token' },
-				{
-					method: 'POST',
-					api: 'migration',
-					url: '/documents',
-					body: { title: 'x', type: 'page', lang: 'en-us', data: {} },
-				},
+			Content.info(ctx, { repository: 'corsair-definitely-not-a-real-repo' }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.status).toBe(404);
+	});
+
+	it('a bad write token is refused with 403 and not echoed', async () => {
+		const error = await captureError(
+			Migration.create(
+				buildContext({
+					apiKey: 'definitely-not-a-token',
+					repository: LIVE_REPO,
+				}),
+				{ title: 'x', type: 'page', lang: 'en-us', data: {} },
 			),
 		);
 
-		expect(error).toBeInstanceOf(PrismicAPIError);
-		if (!(error instanceof PrismicAPIError)) return;
-		expect([401, 403]).toContain(error.status);
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.status).toBe(403);
 		expect(JSON.stringify(error)).not.toContain('definitely-not-a-token');
-	});
-
-	it('exposes the documented Migration host', () => {
-		expect(PRISMIC_MIGRATION_BASE).toBe('https://migration.prismic.io');
 	});
 });

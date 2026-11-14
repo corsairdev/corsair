@@ -151,7 +151,7 @@ const listQueryFields = {
 		.min(1)
 		.optional()
 		.describe(
-			'An ordering such as `[my.document.date desc]`, or several separated by a space.',
+			'An ordering such as `[my.page.date desc]`; several fields go comma-separated in one pair of brackets, such as `[my.page.date desc,my.page.title]`.',
 		),
 	q: z
 		.string()
@@ -170,7 +170,9 @@ const listQueryFields = {
 	tags: z
 		.array(z.string().min(1))
 		.optional()
-		.describe('Only documents carrying every one of these tags.'),
+		.describe(
+			'Only documents carrying every one of these tags. Sent as an `at(document.tags, [...])` predicate added to `q`.',
+		),
 	after: z
 		.string()
 		.min(1)
@@ -183,7 +185,7 @@ const listQueryFields = {
 		.min(1)
 		.optional()
 		.describe(
-			'Pins the query to a ref, such as a release preview. Defaults to `master`.',
+			"Pins the query to a ref, such as a release preview. Defaults to the repository's master ref, which the plugin reads from the repository metadata first.",
 		),
 	nextPage: z
 		.string()
@@ -217,14 +219,27 @@ const DocumentsSearchOutputSchema = z
 export type DocumentsSearchOutput = z.infer<typeof DocumentsSearchOutputSchema>;
 
 export const DocumentsGetInputSchema = z.object({
-	id: z.string().min(1).describe('The document id.'),
+	id: z
+		.string()
+		.regex(
+			/^[A-Za-z0-9_-]+$/,
+			'A Prismic document id is letters, digits, `_` and `-`, such as `ZMI65RQAADkECUFM`.',
+		)
+		.describe('The document id.'),
 	ref: listQueryFields.ref,
-	lang: listQueryFields.lang,
+	lang: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Only a document in this locale, such as `en-us`. Defaults to `*`, any locale.',
+		),
 });
 
 export type DocumentsGetInput = z.infer<typeof DocumentsGetInputSchema>;
 
-/** A single-document read answers the document itself, not a page. */
+/** A single-document read answers the document itself, not a page. The plugin
+ * takes it from a search on `document.id`. */
 const DocumentsGetOutputSchema = DocumentSchema;
 
 export type DocumentsGetOutput = z.infer<typeof DocumentsGetOutputSchema>;
@@ -269,33 +284,21 @@ export const MigrationCreateInputSchema = z
 
 export type MigrationCreateInput = z.infer<typeof MigrationCreateInputSchema>;
 
-export const MigrationUpdateInputSchema = z
-	.object({
-		id: z.string().min(1).describe('The id of the document to update.'),
-		uid: MigrationUidSchema.optional(),
-		// unknown: same as create; the type decides which fields are valid.
-		data: z.record(z.string(), PrismicJsonValueSchema).optional(),
-		title: z.string().min(1).optional(),
-		tags: z
-			.array(z.string().min(1))
-			.optional()
-			.describe('Replaces the existing tags; omitting it deletes them all.'),
-	})
-	.superRefine((value, ctx) => {
-		// A PUT must change something; an empty body is a no-op Prismic rejects.
-		if (
-			value.data === undefined &&
-			value.title === undefined &&
-			value.tags === undefined &&
-			value.uid === undefined
-		) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Supply data, title, tags or uid to change.',
-				path: ['data'],
-			});
-		}
-	});
+export const MigrationUpdateInputSchema = z.object({
+	id: z.string().min(1).describe('The id of the document to update.'),
+	uid: MigrationUidSchema.optional(),
+	// unknown: same as create; the type decides which fields are valid.
+	data: z
+		.record(z.string(), PrismicJsonValueSchema)
+		.describe(
+			"The document's full content. Prismic requires it on every update and replaces the stored content with it.",
+		),
+	title: z.string().min(1).optional(),
+	tags: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Replaces the existing tags; omitting it deletes them all.'),
+});
 
 export type MigrationUpdateInput = z.infer<typeof MigrationUpdateInputSchema>;
 

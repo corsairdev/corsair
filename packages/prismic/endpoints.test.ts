@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import * as client from './client';
-import { PrismicAPIError } from './client';
 import { Content, Migration } from './endpoints';
 import { buildContext, captureError } from './test-helpers';
 
@@ -55,7 +55,7 @@ describe('response parsing', () => {
 			results: [],
 		});
 
-		const result = await Content.search(ctx, {});
+		const result = await Content.search(ctx, { ref: 'r' });
 
 		expect(result.next_page).toBeNull();
 		expect(result.results).toEqual([]);
@@ -64,24 +64,28 @@ describe('response parsing', () => {
 	it('rejects a page whose results is not an array', async () => {
 		mockedRequest.mockResolvedValue({ results: 'nope' });
 
-		await expect(Content.search(ctx, {})).rejects.toThrow();
+		await expect(Content.search(ctx, { ref: 'r' })).rejects.toThrow();
 	});
 
 	it('keeps a document body of arbitrary shape, which the custom type defines', async () => {
 		mockedRequest.mockResolvedValue({
-			id: 'doc_1',
-			type: 'page',
-			data: {
-				title: 'Hello',
-				price: 55,
-				published: true,
-				nothing: null,
-				rich_text: [{ type: 'paragraph', text: 'Hi', spans: [] }],
-				group: [{ price: 10 }, { price: 20 }],
-			},
+			results: [
+				{
+					id: 'doc_1',
+					type: 'page',
+					data: {
+						title: 'Hello',
+						price: 55,
+						published: true,
+						nothing: null,
+						rich_text: [{ type: 'paragraph', text: 'Hi', spans: [] }],
+						group: [{ price: 10 }, { price: 20 }],
+					},
+				},
+			],
 		});
 
-		const result = await Content.get(ctx, { id: 'doc_1' });
+		const result = await Content.get(ctx, { id: 'doc_1', ref: 'r' });
 
 		expect(result.data).toMatchObject({
 			title: 'Hello',
@@ -92,20 +96,20 @@ describe('response parsing', () => {
 
 	it('accepts a document with no url, which a type with no route returns', async () => {
 		mockedRequest.mockResolvedValue({
-			id: 'doc_1',
-			type: 'settings',
-			url: null,
+			results: [{ id: 'doc_1', type: 'settings', url: null }],
 		});
 
-		const result = await Content.get(ctx, { id: 'doc_1' });
+		const result = await Content.get(ctx, { id: 'doc_1', ref: 'r' });
 
 		expect(result.url).toBeNull();
 	});
 
 	it('rejects a document whose tags is not an array of strings', async () => {
-		mockedRequest.mockResolvedValue({ id: 'doc_1', tags: [{ name: 'Red' }] });
+		mockedRequest.mockResolvedValue({
+			results: [{ id: 'doc_1', tags: [{ name: 'Red' }] }],
+		});
 
-		await expect(Content.get(ctx, { id: 'doc_1' })).rejects.toThrow();
+		await expect(Content.get(ctx, { id: 'doc_1', ref: 'r' })).rejects.toThrow();
 	});
 
 	it('accepts a migration answer that echoes only the new id', async () => {
@@ -158,18 +162,18 @@ describe('input validation before the request', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('rejects a migration update that changes nothing', async () => {
-		await expect(Migration.update(ctx, { id: 'doc_1' })).rejects.toThrow(
-			/Supply data, title, tags or uid/,
-		);
+	it('rejects a migration update without data, which Prismic requires on every PUT', async () => {
+		await expect(
+			Migration.update(ctx, { id: 'doc_1', tags: ['Red'] } as never),
+		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('accepts a migration update that changes only the tags', async () => {
+	it('accepts a migration update with data and new tags', async () => {
 		mockedRequest.mockResolvedValue({ id: 'doc_1' });
 
 		await expect(
-			Migration.update(ctx, { id: 'doc_1', tags: ['Red'] }),
+			Migration.update(ctx, { id: 'doc_1', data: {}, tags: ['Red'] }),
 		).resolves.toBeDefined();
 	});
 
@@ -198,16 +202,19 @@ describe('input validation before the request', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('surfaces a field rejection as an error a handler can match', async () => {
-		mockedRequest.mockRejectedValue(
-			new PrismicAPIError('Prismic 400: title: The value must be a string', {
+	it('surfaces a field rejection as the ApiError a handler can match', async () => {
+		const rejection = new ApiError(
+			{ method: 'POST', url: '/documents' },
+			{
+				url: 'https://migration.prismic.io/documents',
+				ok: false,
 				status: 400,
-				method: 'POST',
-				fieldErrors: [
-					{ property: 'title', error: 'The value must be a string' },
-				],
-			}),
+				statusText: 'Bad Request',
+				body: [{ property: 'title', error: 'The value must be a string' }],
+			},
+			'Bad Request',
 		);
+		mockedRequest.mockRejectedValue(rejection);
 
 		const error = await captureError(
 			Migration.create(ctx, {
@@ -218,10 +225,9 @@ describe('input validation before the request', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PrismicAPIError);
-		expect(error).toMatchObject({
-			status: 400,
-			fieldErrors: [{ property: 'title' }],
-		});
+		expect(error).toBe(rejection);
+		expect(client.readFieldErrors(rejection.body)).toEqual([
+			{ property: 'title', error: 'The value must be a string' },
+		]);
 	});
 });
