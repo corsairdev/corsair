@@ -8,7 +8,7 @@ jest.mock('corsair/http', () => ({
 
 import { AuthMissingError } from 'corsair/core';
 import { joinPushoverKey } from './client';
-import { Glances, Messages, Sounds, Users } from './endpoints';
+import { Glances, Messages, Receipts, Sounds, Users } from './endpoints';
 import { pushover, pushoverAuthConfig } from './index';
 
 const status = { status: 1, request: 'r' };
@@ -92,6 +92,29 @@ test('rejects messages over the documented length limits', async () => {
 		Messages.send(stored, { message: 'x', title: 'x'.repeat(251) }),
 	).rejects.toThrow();
 	expect(requestMock).not.toHaveBeenCalled();
+});
+
+test('counts characters, not UTF-16 units, against the length limits', async () => {
+	requestMock.mockResolvedValue(status);
+	await expect(
+		Messages.send(stored, {
+			message: `${'a'.repeat(1023)}\u{1F600}`,
+			title: `${'a'.repeat(249)}\u{1F600}`,
+			url_title: `${'a'.repeat(99)}\u{1F600}`,
+		}),
+	).resolves.toEqual(status);
+	await expect(
+		Messages.send(stored, { message: `${'a'.repeat(1024)}\u{1F600}` }),
+	).rejects.toThrow();
+});
+
+test('cancels by any tag a send accepts, quotes and slashes included', async () => {
+	requestMock.mockResolvedValue(status);
+	await Receipts.cancelByTag(stored, { tag: "O'Hare/gate" });
+	expect(requestMock.mock.calls[0][1]).toMatchObject({
+		url: "receipts/cancel_by_tag/O'Hare%2Fgate.json",
+	});
+	await expect(Receipts.cancelByTag(stored, { tag: '..' })).rejects.toThrow();
 });
 
 test('cancelling emergency retries is destructive', () => {

@@ -9,6 +9,21 @@ export const pathSegment = z
 		'Invalid path segment',
 	);
 const nonEmpty = z.string().min(1);
+// Pushover counts characters, so measure code points, not UTF-16 units.
+const maxChars = (limit: number, min = 0) =>
+	z
+		.string()
+		.min(min)
+		.refine(
+			(value) => [...value].length <= limit,
+			`Must be at most ${limit} characters`,
+		);
+// Tags are free text and get percent-encoded into the path; only the dot
+// segments could change the route.
+const cancelTag = nonEmpty.refine(
+	(value) => value !== '.' && value !== '..',
+	'Invalid tag',
+);
 const status = z.object({ status: z.literal(1), request: z.string() });
 const noInput = z.object({});
 const flag = z.union([z.literal(0), z.literal(1)]);
@@ -27,11 +42,11 @@ const groupMember = groupPath.extend({
 const message = z
 	.object({
 		user: ownerOrUser,
-		message: nonEmpty.max(1024),
+		message: maxChars(1024, 1),
 		device: z.string().optional(),
-		title: z.string().max(250).optional(),
+		title: maxChars(250).optional(),
 		url: z.string().max(512).optional(),
-		url_title: z.string().max(100).optional(),
+		url_title: maxChars(100).optional(),
 		html: flag.optional(),
 		monospace: flag.optional(),
 		priority: z
@@ -92,7 +107,7 @@ export const PushoverEndpointInputSchemas = {
 	appsLimits: noInput,
 	receiptsGet: z.object({ receipt: pathSegment }),
 	receiptsCancel: z.object({ receipt: pathSegment }),
-	receiptsCancelByTag: z.object({ tag: pathSegment }),
+	receiptsCancelByTag: z.object({ tag: cancelTag }),
 	groupsCreate: z.object({ name: nonEmpty }),
 	groupsList: noInput,
 	groupsGet: groupPath,
