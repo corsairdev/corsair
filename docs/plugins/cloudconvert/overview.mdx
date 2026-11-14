@@ -1,0 +1,136 @@
+---
+title: "CloudConvert plugin"
+sidebarTitle: "Overview"
+description: "Create, wait for, inspect, list and delete CloudConvert jobs and tasks; cancel or retry tasks; create GCS/S3 export jobs; discover operations and formats; and view account credits with API-key authentication. Job-level webhook fields are not exposed. See https://cloudconvert.com/docs/api-reference/jobs and https://cloudconvert.com/docs/api-reference/tasks."
+---
+
+Use **CloudConvert** through Corsair: one client, typed API calls.
+
+CloudConvert warns that its synchronous endpoints can time out for long-running jobs and tasks. Prefer async jobs plus status reads for long work. The provider's `redirect=true` returns raw export-file content; this JSON plugin rejects that option. Job-level `webhook_url` is not exposed. Export credentials are stored in Corsair's encrypted per-tenant key manager and are not endpoint arguments. Add an `export/url` task to make a downloadable URL available in the finished export task's `result.files[].url`. Do not send credentials as extra task fields: when an endpoint requires approval (including strict mode), Corsair records raw incoming arguments before endpoint validation, so an invalid request containing secret fields could still expose them to the local permissions table or hosted Hub approval.
+
+**What you get:**
+
+- 17 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/cloudconvert better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/cloudconvert better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/cloudconvert better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/cloudconvert better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { cloudconvert } from '@corsair-dev/cloudconvert';
+
+export const corsair = createCorsair({
+	plugins: [
+		cloudconvert(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the CloudConvert API key before the first call: `pnpm corsair setup --plugin=cloudconvert --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+cloudconvert()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'cloudconvert',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recent jobs**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.cloudconvert.api.jobs.list({ perPage: 10 });
+```
+
+
+**Create a conversion job**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.cloudconvert.api.jobs.create({
+	tasks: {
+		import_file: { operation: 'import/url', url: 'https://example.test/input.docx' },
+		convert: { operation: 'convert', input: 'import_file', output_format: 'pdf' },
+		export_file: { operation: 'export/url', input: 'convert' },
+	},
+	tag: 'request-123',
+});
+```
+
+
+See the full list on the [API](/plugins/cloudconvert/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/cloudconvert/api">
+    Every `cloudconvert.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
