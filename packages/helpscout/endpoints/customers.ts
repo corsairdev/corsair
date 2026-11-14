@@ -17,9 +17,9 @@ export const list: HelpScoutEndpoints['customers.list'] = async (
 	let query = parsedInput.query;
 	if (parsedInput.email) {
 		const emailClause = `email:"${parsedInput.email.replace(/"/g, '')}"`;
-		query = query
-			? `(${emailClause} AND ${query.replace(/^\((.*)\)$/s, '$1')})`
-			: `(${emailClause})`;
+		// The caller's query stays whole inside its own group, so every OR
+		// branch is held to the email filter.
+		query = query ? `(${emailClause} AND (${query}))` : `(${emailClause})`;
 	}
 	const response = await makeHelpscoutRequest<
 		HelpScoutEndpointOutputs['customers.list']

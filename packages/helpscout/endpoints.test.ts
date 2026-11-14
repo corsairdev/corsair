@@ -1043,6 +1043,20 @@ describe('Help Scout Endpoints', () => {
 			);
 		});
 
+		it('reports accept a comma-separated list of conversation types', async () => {
+			mockedRequest.mockResolvedValueOnce({ totalConversations: 1 });
+			await Reports.getConversations(ctx, {
+				...reportInput,
+				types: 'email,chat',
+			});
+			expect(mockedRequest.mock.calls[0]?.[2]?.query).toMatchObject({
+				types: 'email,chat',
+			});
+			await expect(
+				Reports.getConversations(ctx, { ...reportInput, types: 'email,fax' }),
+			).rejects.toThrow();
+		});
+
 		it('reports.getCompany sends GET /reports/company', async () => {
 			mockedRequest.mockResolvedValueOnce({ customersHelped: 100 });
 
@@ -1164,9 +1178,41 @@ describe('Help Scout Endpoints', () => {
 			const query = mockedRequest.mock.calls[0]?.[2]?.query;
 			expect(query).not.toHaveProperty('email');
 			expect(query).toMatchObject({
-				query: '(email:"jane@example.com" AND firstName:"Jane")',
+				query: '(email:"jane@example.com" AND ((firstName:"Jane")))',
 				sortField: 'firstName',
 			});
+		});
+
+		it('customers.list keeps every branch of an OR query inside the email filter', async () => {
+			mockedRequest.mockResolvedValueOnce({ _embedded: { customers: [] } });
+			await Customers.list(ctx, {
+				email: 'john@example.com',
+				query: '(firstName:"John") OR (firstName:"Johnny")',
+			});
+			expect(mockedRequest.mock.calls[0]?.[2]?.query).toMatchObject({
+				query:
+					'(email:"john@example.com" AND ((firstName:"John") OR (firstName:"Johnny")))',
+			});
+		});
+
+		it('customers.create sends the notes, organization and contact lists', async () => {
+			mockedRequest.mockResolvedValueOnce(undefined);
+			const body = {
+				firstName: 'Jane',
+				background: 'VIP',
+				organizationId: 35,
+				location: 'Austin',
+				age: '30-35',
+				gender: 'female' as const,
+				chats: [{ type: 'skype' as const, value: 'jane.chat' }],
+				socialProfiles: [
+					{ type: 'twitter' as const, value: 'https://twitter.com/jane' },
+				],
+				websites: [{ value: 'https://example.com' }],
+				properties: { plan: 'pro', seats: 5 },
+			};
+			await Customers.create(ctx, body);
+			expect(mockedRequest.mock.calls[0]?.[2]?.body).toEqual(body);
 		});
 
 		it('customers.patch accepts an email object value and sends an array', async () => {

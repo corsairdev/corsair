@@ -497,10 +497,19 @@ await corsair.helpscout.api.customers.create({});
 | `company` | `string` | No | — |
 | `photoUrl` | `string` | No | — |
 | `photoType` | `string` | No | — |
+| `location` | `string` | No | — |
+| `background` | `string` | No | — |
+| `age` | `string` | No | — |
+| `gender` | `male \| female \| unknown` | No | — |
 | `organization` | `string` | No | — |
+| `organizationId` | `number` | No | — |
 | `emails` | `object[]` | No | — |
 | `phones` | `object[]` | No | — |
 | `address` | `object` | No | — |
+| `chats` | `object[]` | No | — |
+| `socialProfiles` | `object[]` | No | — |
+| `websites` | `object[]` | No | — |
+| `properties` | `Record<string, string \| number>` | No | — |
 
 <AccordionGroup>
 <Accordion title="emails full type">
@@ -533,6 +542,35 @@ await corsair.helpscout.api.customers.create({});
   postalCode?: string,
   country?: string
 }
+```
+</Accordion>
+
+<Accordion title="chats full type">
+
+```ts
+{
+  value: string,
+  type?: aim | gtalk | icq | msn | other | qq | skype | xmpp | yahoo
+}[]
+```
+</Accordion>
+
+<Accordion title="socialProfiles full type">
+
+```ts
+{
+  value: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="websites full type">
+
+```ts
+{
+  value: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -588,7 +626,7 @@ Add a chat handle to a customer
 **Risk:** `write`
 
 ```ts
-await corsair.helpscout.api.customers.createChat({ customerId: 200, value: 'alice_chat', type: 'slack' });
+await corsair.helpscout.api.customers.createChat({ customerId: 200, value: 'alice_chat', type: 'other' });
 ```
 
 **Input**
@@ -1261,7 +1299,7 @@ Update an existing customer chat handle
 **Risk:** `write`
 
 ```ts
-await corsair.helpscout.api.customers.updateChat({ customerId: 200, chatId: 30, value: 'alice_new_chat', type: 'slack' });
+await corsair.helpscout.api.customers.updateChat({ customerId: 200, chatId: 30, value: 'alice_new_chat', type: 'other' });
 ```
 
 **Input**
@@ -1728,7 +1766,7 @@ await corsair.helpscout.api.reports.getChat({ start: '2026-01-01T00:00:00Z', end
 | `previousEnd` | `string` | No | — |
 | `mailboxes` | `string` | No | — |
 | `tags` | `string` | No | — |
-| `types` | `email \| chat \| phone` | No | — |
+| `types` | `string` | No | — |
 | `folders` | `string` | No | — |
 
 
@@ -1760,7 +1798,7 @@ await corsair.helpscout.api.reports.getCompany({ start: '2026-01-01T00:00:00Z', 
 | `previousEnd` | `string` | No | — |
 | `mailboxes` | `string` | No | — |
 | `tags` | `string` | No | — |
-| `types` | `email \| chat \| phone` | No | — |
+| `types` | `string` | No | — |
 | `folders` | `string` | No | — |
 
 
@@ -1792,7 +1830,7 @@ await corsair.helpscout.api.reports.getConversations({ start: '2026-01-01T00:00:
 | `previousEnd` | `string` | No | — |
 | `mailboxes` | `string` | No | — |
 | `tags` | `string` | No | — |
-| `types` | `email \| chat \| phone` | No | — |
+| `types` | `string` | No | — |
 | `folders` | `string` | No | — |
 
 
@@ -1853,7 +1891,7 @@ await corsair.helpscout.api.reports.getEmail({ start: '2026-01-01T00:00:00Z', en
 | `previousEnd` | `string` | No | — |
 | `mailboxes` | `string` | No | — |
 | `tags` | `string` | No | — |
-| `types` | `email \| chat \| phone` | No | — |
+| `types` | `string` | No | — |
 | `folders` | `string` | No | — |
 
 

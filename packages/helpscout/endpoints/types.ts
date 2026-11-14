@@ -560,7 +560,14 @@ export const CreateCustomerInputSchema = z.object({
 	company: z.string().optional(),
 	photoUrl: z.string().url().optional(),
 	photoType: z.string().optional(),
+	location: z.string().max(60).optional(),
+	// Help Scout's "Notes" field
+	background: z.string().max(200).optional(),
+	age: z.string().optional(),
+	gender: z.enum(['male', 'female', 'unknown']).optional(),
+	// Deprecated by Help Scout in favour of organizationId
 	organization: z.string().optional(),
+	organizationId: z.number().int().optional(),
 	emails: z
 		.array(
 			z.object({
@@ -588,6 +595,34 @@ export const CreateCustomerInputSchema = z.object({
 			postalCode: z.string().optional(),
 			country: z.string().optional(),
 		})
+		.optional(),
+	chats: z
+		.array(
+			z.object({
+				value: z.string(),
+				type: z
+					.enum([
+						'aim',
+						'gtalk',
+						'icq',
+						'msn',
+						'other',
+						'qq',
+						'skype',
+						'xmpp',
+						'yahoo',
+					])
+					.optional(),
+			}),
+		)
+		.optional(),
+	socialProfiles: z
+		.array(z.object({ value: z.string(), type: z.string().optional() }))
+		.optional(),
+	websites: z.array(z.object({ value: z.string().url() })).optional(),
+	// Customer property values by slug; the definitions must already exist
+	properties: z
+		.record(z.string(), z.union([z.string(), z.number()]))
 		.optional(),
 });
 
@@ -852,7 +887,14 @@ export const ReportInputSchema = z.object({
 	previousEnd: z.string().optional(),
 	mailboxes: z.string().optional(),
 	tags: z.string().optional(),
-	types: z.enum(['email', 'chat', 'phone']).optional(),
+	// comma-separated conversation types, e.g. `email,chat`
+	types: z
+		.string()
+		.regex(
+			/^(email|chat|phone)(,(email|chat|phone))*$/,
+			'comma-separated list of email, chat, phone',
+		)
+		.optional(),
 	folders: z.string().optional(),
 });
 
