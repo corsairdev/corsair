@@ -69,32 +69,27 @@ await corsair.sevdesk.api.accountingContact.createAccountingContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `debitorNumber` | `string` | No | — |
-| `creditorNumber` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  debitorNumber?: string,
+  creditorNumber?: string
 }
 ```
 </Accordion>
@@ -103,6 +98,7 @@ await corsair.sevdesk.api.accountingContact.createAccountingContact({});
 
 
 ---
+
 ### deleteAccountingContact
 
 `accountingContact.deleteAccountingContact`
@@ -399,32 +395,27 @@ await corsair.sevdesk.api.accountingContact.updateAccountingContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `debitorNumber` | `string` | No | — |
-| `creditorNumber` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  debitorNumber?: string,
+  creditorNumber?: string
 }
 ```
 </Accordion>
@@ -1056,35 +1047,37 @@ await corsair.sevdesk.api.checkAccount.updateCheckAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `name` | `string` | No | — |
-| `iban` | `string \| null` | No | — |
-| `type` | `online \| offline \| register` | No | — |
-| `importType` | `CSV \| MT940 \| null` | No | — |
-| `currency` | `string` | No | — |
-| `defaultAccount` | `string` | No | — |
-| `baseAccount` | `string` | No | — |
-| `priority` | `string` | No | — |
-| `status` | `0 \| 100` | No | — |
-| `balance` | `string \| null` | No | — |
-| `bankServer` | `string \| null` | No | — |
-| `autoMapTransactions` | `string \| null` | No | — |
-| `autoSyncTransactions` | `string` | No | — |
-| `lastSync` | `string` | No | — |
-| `accountingNumber` | `string` | No | — |
-| `bic` | `string \| null` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  name?: string,
+  iban?: string | null,
+  type?: online | offline | register,
+  importType?: CSV | MT940 | null,
+  currency?: string,
+  defaultAccount?: string,
+  baseAccount?: string,
+  priority?: string,
+  status?: 0 | 100,
+  balance?: string | null,
+  bankServer?: string | null,
+  autoMapTransactions?: string | null,
+  autoSyncTransactions?: string,
+  lastSync?: string,
+  accountingNumber?: string,
+  bic?: string | null
 }
 ```
 </Accordion>
@@ -1231,64 +1224,45 @@ await corsair.sevdesk.api.checkAccountTransaction.createTransaction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `valueDate` | `string` | No | — |
-| `entryDate` | `string \| null` | No | — |
-| `paymtPurpose` | `string \| null` | No | — |
-| `amount` | `string` | No | — |
-| `payeePayerName` | `string \| null` | No | — |
-| `payeePayerAcctNo` | `string \| null` | No | — |
-| `payeePayerBankCode` | `string \| null` | No | — |
-| `gvCode` | `string \| null` | No | — |
-| `entryText` | `string \| null` | No | — |
-| `primaNotaNo` | `string \| null` | No | — |
-| `checkAccount` | `object` | No | — |
-| `status` | `100 \| 200 \| 300 \| 350 \| 400` | No | — |
-| `sourceTransaction` | `object` | No | — |
-| `targetTransaction` | `object` | No | — |
-| `enshrined` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="checkAccount full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sourceTransaction full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="targetTransaction full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  valueDate?: string,
+  entryDate?: string | null,
+  paymtPurpose?: string | null,
+  amount?: string,
+  payeePayerName?: string | null,
+  payeePayerAcctNo?: string | null,
+  payeePayerBankCode?: string | null,
+  gvCode?: string | null,
+  entryText?: string | null,
+  primaNotaNo?: string | null,
+  checkAccount?: {
+    id: string,
+    objectName: string
+  },
+  status?: 100 | 200 | 300 | 350 | 400,
+  sourceTransaction?: {
+    id: string,
+    objectName: string
+  },
+  targetTransaction?: {
+    id: string,
+    objectName: string
+  },
+  enshrined?: string
 }
 ```
 </Accordion>
@@ -1649,64 +1623,45 @@ await corsair.sevdesk.api.checkAccountTransaction.updateCheckAccountTransaction(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `valueDate` | `string` | No | — |
-| `entryDate` | `string \| null` | No | — |
-| `paymtPurpose` | `string \| null` | No | — |
-| `amount` | `string` | No | — |
-| `payeePayerName` | `string \| null` | No | — |
-| `payeePayerAcctNo` | `string \| null` | No | — |
-| `payeePayerBankCode` | `string \| null` | No | — |
-| `gvCode` | `string \| null` | No | — |
-| `entryText` | `string \| null` | No | — |
-| `primaNotaNo` | `string \| null` | No | — |
-| `checkAccount` | `object` | No | — |
-| `status` | `100 \| 200 \| 300 \| 350 \| 400` | No | — |
-| `sourceTransaction` | `object` | No | — |
-| `targetTransaction` | `object` | No | — |
-| `enshrined` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="checkAccount full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sourceTransaction full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="targetTransaction full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  valueDate?: string,
+  entryDate?: string | null,
+  paymtPurpose?: string | null,
+  amount?: string,
+  payeePayerName?: string | null,
+  payeePayerAcctNo?: string | null,
+  payeePayerBankCode?: string | null,
+  gvCode?: string | null,
+  entryText?: string | null,
+  primaNotaNo?: string | null,
+  checkAccount?: {
+    id: string,
+    objectName: string
+  },
+  status?: 100 | 200 | 300 | 350 | 400,
+  sourceTransaction?: {
+    id: string,
+    objectName: string
+  },
+  targetTransaction?: {
+    id: string,
+    objectName: string
+  },
+  enshrined?: string
 }
 ```
 </Accordion>
@@ -1782,44 +1737,32 @@ await corsair.sevdesk.api.communicationWay.createCommunicationWay({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `type` | `EMAIL \| PHONE \| WEB \| MOBILE` | No | — |
-| `value` | `string` | No | — |
-| `key` | `object` | No | — |
-| `main` | `string` | No | — |
-| `sevClient` | `object` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="key full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  type?: EMAIL | PHONE | WEB | MOBILE,
+  value?: string,
+  key?: {
+    id: string,
+    objectName: string
+  },
+  main?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  }
 }
 ```
 </Accordion>
@@ -2220,44 +2163,32 @@ await corsair.sevdesk.api.communicationWay.updateCommunicationWay({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `type` | `EMAIL \| PHONE \| WEB \| MOBILE` | No | — |
-| `value` | `string` | No | — |
-| `key` | `object` | No | — |
-| `main` | `string` | No | — |
-| `sevClient` | `object` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="key full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  type?: EMAIL | PHONE | WEB | MOBILE,
+  value?: string,
+  key?: {
+    id: string,
+    objectName: string
+  },
+  main?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  }
 }
 ```
 </Accordion>
@@ -2414,66 +2345,54 @@ await corsair.sevdesk.api.contact.createContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `name` | `string` | No | — |
-| `status` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `parent` | `object` | No | — |
-| `surename` | `string` | No | — |
-| `familyname` | `string` | No | — |
-| `titel` | `string` | No | — |
-| `category` | `object` | No | — |
-| `description` | `string` | No | — |
-| `academicTitle` | `string` | No | — |
-| `gender` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `name2` | `string` | No | — |
-| `birthday` | `string` | No | — |
-| `vatNumber` | `string` | No | — |
-| `bankAccount` | `string` | No | — |
-| `bankNumber` | `string` | No | — |
-| `defaultCashbackTime` | `string` | No | — |
-| `defaultCashbackPercent` | `string` | No | — |
-| `defaultTimeToPay` | `string` | No | — |
-| `taxNumber` | `string` | No | — |
-| `taxOffice` | `string` | No | — |
-| `exemptVat` | `string` | No | — |
-| `defaultDiscountAmount` | `string` | No | — |
-| `defaultDiscountPercentage` | `string` | No | — |
-| `buyerReference` | `string` | No | — |
-| `governmentAgency` | `string` | No | — |
-| `additionalInformation` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="parent full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="category full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: number,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  name?: string,
+  status?: string,
+  customerNumber?: string,
+  parent?: {
+    id: string,
+    objectName: string
+  },
+  surename?: string,
+  familyname?: string,
+  titel?: string,
+  category?: {
+    id: string,
+    objectName: string
+  },
+  description?: string,
+  academicTitle?: string,
+  gender?: string,
+  sevClient?: {
+    id: number,
+    objectName: string
+  },
+  name2?: string,
+  birthday?: string,
+  vatNumber?: string,
+  bankAccount?: string,
+  bankNumber?: string,
+  defaultCashbackTime?: string,
+  defaultCashbackPercent?: string,
+  defaultTimeToPay?: string,
+  taxNumber?: string,
+  taxOffice?: string,
+  exemptVat?: string,
+  defaultDiscountAmount?: string,
+  defaultDiscountPercentage?: string,
+  buyerReference?: string,
+  governmentAgency?: string,
+  additionalInformation?: string
 }
 ```
 </Accordion>
@@ -3103,66 +3022,54 @@ await corsair.sevdesk.api.contact.updateContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `name` | `string` | No | — |
-| `status` | `string` | No | — |
-| `customerNumber` | `string` | No | — |
-| `parent` | `object` | No | — |
-| `surename` | `string` | No | — |
-| `familyname` | `string` | No | — |
-| `titel` | `string` | No | — |
-| `category` | `object` | No | — |
-| `description` | `string` | No | — |
-| `academicTitle` | `string` | No | — |
-| `gender` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `name2` | `string` | No | — |
-| `birthday` | `string` | No | — |
-| `vatNumber` | `string` | No | — |
-| `bankAccount` | `string` | No | — |
-| `bankNumber` | `string` | No | — |
-| `defaultCashbackTime` | `string` | No | — |
-| `defaultCashbackPercent` | `string` | No | — |
-| `defaultTimeToPay` | `string` | No | — |
-| `taxNumber` | `string` | No | — |
-| `taxOffice` | `string` | No | — |
-| `exemptVat` | `string` | No | — |
-| `defaultDiscountAmount` | `string` | No | — |
-| `defaultDiscountPercentage` | `string` | No | — |
-| `buyerReference` | `string` | No | — |
-| `governmentAgency` | `string` | No | — |
-| `additionalInformation` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="parent full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="category full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: number,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  name?: string,
+  status?: string,
+  customerNumber?: string,
+  parent?: {
+    id: string,
+    objectName: string
+  },
+  surename?: string,
+  familyname?: string,
+  titel?: string,
+  category?: {
+    id: string,
+    objectName: string
+  },
+  description?: string,
+  academicTitle?: string,
+  gender?: string,
+  sevClient?: {
+    id: number,
+    objectName: string
+  },
+  name2?: string,
+  birthday?: string,
+  vatNumber?: string,
+  bankAccount?: string,
+  bankNumber?: string,
+  defaultCashbackTime?: string,
+  defaultCashbackPercent?: string,
+  defaultTimeToPay?: string,
+  taxNumber?: string,
+  taxOffice?: string,
+  exemptVat?: string,
+  defaultDiscountAmount?: string,
+  defaultDiscountPercentage?: string,
+  buyerReference?: string,
+  governmentAgency?: string,
+  additionalInformation?: string
 }
 ```
 </Accordion>
@@ -3343,59 +3250,40 @@ await corsair.sevdesk.api.contactAddress.createContactAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `contact` | `object` | Yes | — |
-| `street` | `string \| null` | No | — |
-| `zip` | `string \| null` | No | — |
-| `city` | `string \| null` | No | — |
-| `country` | `object` | Yes | — |
-| `category` | `object \| null` | No | — |
-| `name` | `string \| null` | No | — |
-| `sevClient` | `object` | No | — |
-| `name2` | `string` | No | — |
-| `name3` | `string \| null` | No | — |
-| `name4` | `string \| null` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: number,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="country full type">
-
-```ts
-{
-  id: number,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="category full type">
-
-```ts
-{
-  id: number,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: number,
-  objectName: string
+  id?: number,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  contact: {
+    id: number,
+    objectName: string
+  },
+  street?: string | null,
+  zip?: string | null,
+  city?: string | null,
+  country: {
+    id: number,
+    objectName: string
+  },
+  category?: {
+    id: number,
+    objectName: string
+  } | null,
+  name?: string | null,
+  sevClient?: {
+    id: number,
+    objectName: string
+  },
+  name2?: string,
+  name3?: string | null,
+  name4?: string | null
 }
 ```
 </Accordion>
@@ -3637,59 +3525,40 @@ await corsair.sevdesk.api.contactAddress.updateContactAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `contact` | `object` | Yes | — |
-| `street` | `string \| null` | No | — |
-| `zip` | `string \| null` | No | — |
-| `city` | `string \| null` | No | — |
-| `country` | `object` | Yes | — |
-| `category` | `object \| null` | No | — |
-| `name` | `string \| null` | No | — |
-| `sevClient` | `object` | No | — |
-| `name2` | `string` | No | — |
-| `name3` | `string \| null` | No | — |
-| `name4` | `string \| null` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: number,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="country full type">
-
-```ts
-{
-  id: number,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="category full type">
-
-```ts
-{
-  id: number,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: number,
-  objectName: string
+  id?: number,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  contact: {
+    id: number,
+    objectName: string
+  },
+  street?: string | null,
+  zip?: string | null,
+  city?: string | null,
+  country: {
+    id: number,
+    objectName: string
+  },
+  category?: {
+    id: number,
+    objectName: string
+  } | null,
+  name?: string | null,
+  sevClient?: {
+    id: number,
+    objectName: string
+  },
+  name2?: string,
+  name3?: string | null,
+  name4?: string | null
 }
 ```
 </Accordion>
@@ -3764,37 +3633,10 @@ await corsair.sevdesk.api.contactField.createContactField({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `contact` | `object` | No | — |
-| `contactCustomFieldSetting` | `object` | No | — |
-| `value` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contact full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contactCustomFieldSetting full type">
+<Accordion title="objects full type">
 
 ```ts
 {
@@ -3806,10 +3648,25 @@ await corsair.sevdesk.api.contactField.createContactField({});
     id: string,
     objectName: string
   },
-  name?: string,
-  identifier?: string,
-  description?: string
-}& JsonValue
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  contactCustomFieldSetting?: {
+    id?: string,
+    objectName?: string,
+    create?: string,
+    update?: string,
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    name?: string,
+    identifier?: string,
+    description?: string
+  }& JsonValue,
+  value?: string
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3874,7 +3731,7 @@ await corsair.sevdesk.api.contactField.createContactFieldSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `objects` | `object[]` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="objects full type">
@@ -3892,7 +3749,7 @@ await corsair.sevdesk.api.contactField.createContactFieldSetting({});
   name?: string,
   identifier?: string,
   description?: string
-}[]
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4447,7 +4304,10 @@ await corsair.sevdesk.api.contactField.getPlaceholder({});
   key?: string,
   value?: {
     key?: string,
-    value?: string
+    value?: string | {
+      key?: string,
+      value?: JsonValue
+    }[]
   }[]
 }[]
 ```
@@ -4582,37 +4442,10 @@ await corsair.sevdesk.api.contactField.updateContactfield({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `contact` | `object` | No | — |
-| `contactCustomFieldSetting` | `object` | No | — |
-| `value` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contact full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contactCustomFieldSetting full type">
+<Accordion title="objects full type">
 
 ```ts
 {
@@ -4624,10 +4457,25 @@ await corsair.sevdesk.api.contactField.updateContactfield({});
     id: string,
     objectName: string
   },
-  name?: string,
-  identifier?: string,
-  description?: string
-}& JsonValue
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  contactCustomFieldSetting?: {
+    id?: string,
+    objectName?: string,
+    create?: string,
+    update?: string,
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    name?: string,
+    identifier?: string,
+    description?: string
+  }& JsonValue,
+  value?: string
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4693,22 +4541,24 @@ await corsair.sevdesk.api.contactField.updateContactFieldSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `name` | `string` | No | — |
-| `identifier` | `string` | No | — |
-| `description` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  name?: string,
+  identifier?: string,
+  description?: string
 }
 ```
 </Accordion>
@@ -4844,7 +4694,7 @@ await corsair.sevdesk.api.creditNote.createcreditNote({});
 | `query` | `object` | No | — |
 | `body` | `object` | Yes | — |
 
-For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidance. New credit notes are created as DRAFT; enshrining is separate and irreversible. Update 2.0 does not support ACCOUNTING_TYPE bookingCategory or credit notes from vouchers; delivery dates must agree with the source invoice.
+For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidance. New credit notes are created as DRAFT and need a deliveryDate; enshrining is separate and irreversible. Update 2.0 does not support ACCOUNTING_TYPE bookingCategory or credit notes from vouchers; delivery dates must agree with the source invoice.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -4877,6 +4727,8 @@ For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidan
       objectName: string
     },
     creditNoteDate: string,
+    deliveryDate?: string | null,
+    deliveryDateUntil?: number | null,
     status: 100 | 200 | 300 | 500 | 750 | 1000,
     header: string,
     headText?: string | null,
@@ -4962,112 +4814,107 @@ For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidan
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `creditNote` | `object` | No | — |
-| `creditNotePos` | `object[]` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="creditNote full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id?: string,
-  objectName?: string,
-  create?: string,
-  update?: string,
-  creditNoteNumber?: string | null,
-  contact?: {
-    id: string,
-    objectName: string
-  } | null,
-  creditNoteDate?: string,
-  status?: 100 | 200 | 750 | 1000,
-  header?: string | null,
-  headText?: string | null,
-  footText?: string | null,
-  addressCountry?: {
-    id: string,
-    objectName: string
-  } | null,
-  createUser?: {
-    id: string,
-    objectName: string
+  creditNote?: {
+    id?: string,
+    objectName?: string,
+    create?: string,
+    update?: string,
+    creditNoteNumber?: string | null,
+    contact?: {
+      id: string,
+      objectName: string
+    } | null,
+    creditNoteDate?: string,
+    status?: 100 | 200 | 750 | 1000,
+    header?: string | null,
+    headText?: string | null,
+    footText?: string | null,
+    addressCountry?: {
+      id: string,
+      objectName: string
+    } | null,
+    createUser?: {
+      id: string,
+      objectName: string
+    },
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    deliveryDate?: string,
+    smallSettlement?: boolean | null,
+    contactPerson?: {
+      id: string,
+      objectName: string
+    } | null,
+    taxRate?: string | null,
+    taxRule?: {
+      id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+      objectName: TaxRule
+    },
+    taxSet?: {
+      id: string,
+      objectName: string
+    } | null,
+    taxText?: string | null,
+    taxType?: string | null,
+    sendDate?: string | null,
+    address?: string | null,
+    currency?: string | null,
+    sumNet?: string,
+    sumTax?: string,
+    sumGross?: string,
+    sumDiscounts?: string,
+    sumNetForeignCurrency?: string,
+    sumTaxForeignCurrency?: string,
+    sumGrossForeignCurrency?: string,
+    sumDiscountsForeignCurrency?: string,
+    customerInternalNote?: string | null,
+    showNet?: boolean,
+    sendType?: VPR | VPDF | VM | VP
   },
-  sevClient?: {
-    id: string,
-    objectName: string
-  },
-  deliveryDate?: string,
-  smallSettlement?: boolean | null,
-  contactPerson?: {
-    id: string,
-    objectName: string
-  } | null,
-  taxRate?: string | null,
-  taxRule?: {
-    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-    objectName: TaxRule
-  },
-  taxSet?: {
-    id: string,
-    objectName: string
-  } | null,
-  taxText?: string | null,
-  taxType?: string | null,
-  sendDate?: string | null,
-  address?: string | null,
-  currency?: string | null,
-  sumNet?: string,
-  sumTax?: string,
-  sumGross?: string,
-  sumDiscounts?: string,
-  sumNetForeignCurrency?: string,
-  sumTaxForeignCurrency?: string,
-  sumGrossForeignCurrency?: string,
-  sumDiscountsForeignCurrency?: string,
-  customerInternalNote?: string | null,
-  showNet?: boolean,
-  sendType?: VPR | VPDF | VM | VP
+  creditNotePos?: {
+    id?: string,
+    objectName?: string,
+    create?: string,
+    update?: string,
+    creditNote: {
+      id: string,
+      objectName: string
+    },
+    part?: {
+      id: string,
+      objectName: string
+    },
+    quantity: string,
+    price?: string | null,
+    priceNet?: string | null,
+    priceTax?: string | null,
+    priceGross?: string | null,
+    name?: string | null,
+    unity: {
+      id: string,
+      objectName: string
+    },
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    positionNumber?: string | null,
+    text?: string | null,
+    discount?: string | null,
+    optional?: boolean | null,
+    taxRate: string,
+    sumDiscount?: string | null
+  }[]
 }
-```
-</Accordion>
-
-<Accordion title="creditNotePos full type">
-
-```ts
-{
-  id?: string,
-  objectName?: string,
-  create?: string,
-  update?: string,
-  creditNote: {
-    id: string,
-    objectName: string
-  },
-  part?: {
-    id: string,
-    objectName: string
-  },
-  quantity: string,
-  price?: string | null,
-  priceNet?: string | null,
-  priceTax?: string | null,
-  priceGross?: string | null,
-  name?: string | null,
-  unity: {
-    id: string,
-    objectName: string
-  },
-  sevClient?: {
-    id: string,
-    objectName: string
-  },
-  positionNumber?: string | null,
-  text?: string | null,
-  discount?: string | null,
-  optional?: boolean | null,
-  taxRate: string,
-  sumDiscount?: string | null
-}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -5876,111 +5723,71 @@ await corsair.sevdesk.api.creditNote.creditNoteSendBy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `creditNoteNumber` | `string \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `creditNoteDate` | `string` | No | — |
-| `status` | `100 \| 200 \| 750 \| 1000` | No | — |
-| `header` | `string \| null` | No | — |
-| `headText` | `string \| null` | No | — |
-| `footText` | `string \| null` | No | — |
-| `addressCountry` | `object \| null` | No | — |
-| `createUser` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `deliveryDate` | `string` | No | — |
-| `smallSettlement` | `boolean \| null` | No | — |
-| `contactPerson` | `object \| null` | No | — |
-| `taxRate` | `string \| null` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxSet` | `object \| null` | No | — |
-| `taxText` | `string \| null` | No | — |
-| `taxType` | `string \| null` | No | — |
-| `sendDate` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `currency` | `string \| null` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `customerInternalNote` | `string \| null` | No | — |
-| `showNet` | `boolean` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  creditNoteNumber?: string | null,
+  contact?: {
+    id: string,
+    objectName: string
+  } | null,
+  creditNoteDate?: string,
+  status?: 100 | 200 | 750 | 1000,
+  header?: string | null,
+  headText?: string | null,
+  footText?: string | null,
+  addressCountry?: {
+    id: string,
+    objectName: string
+  } | null,
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  deliveryDate?: string,
+  smallSettlement?: boolean | null,
+  contactPerson?: {
+    id: string,
+    objectName: string
+  } | null,
+  taxRate?: string | null,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+    objectName: TaxRule
+  },
+  taxSet?: {
+    id: string,
+    objectName: string
+  } | null,
+  taxText?: string | null,
+  taxType?: string | null,
+  sendDate?: string | null,
+  address?: string | null,
+  currency?: string | null,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumDiscounts?: string,
+  sumNetForeignCurrency?: string,
+  sumTaxForeignCurrency?: string,
+  sumGrossForeignCurrency?: string,
+  sumDiscountsForeignCurrency?: string,
+  customerInternalNote?: string | null,
+  showNet?: boolean,
+  sendType?: VPR | VPDF | VM | VP
 }
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -6370,25 +6177,27 @@ await corsair.sevdesk.api.creditNote.sendCreditNoteByPrinting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdf` | `string` | No | — |
-| `docId` | `string` | No | — |
-| `parameters` | `object[]` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="parameters full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  key?: string,
-  name?: string,
-  values?: {
+  pdf?: string,
+  docId?: string,
+  parameters?: {
+    key?: string,
     name?: string,
-    translationCade?: string,
+    values?: {
+      name?: string,
+      translationCade?: string,
+      value?: string
+    }[],
+    visible?: boolean,
     value?: string
-  }[],
-  visible?: boolean,
-  value?: string
-}[]
+  }[]
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -6637,111 +6446,71 @@ await corsair.sevdesk.api.creditNote.updatecreditNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `creditNoteNumber` | `string \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `creditNoteDate` | `string` | No | — |
-| `status` | `100 \| 200 \| 750 \| 1000` | No | — |
-| `header` | `string \| null` | No | — |
-| `headText` | `string \| null` | No | — |
-| `footText` | `string \| null` | No | — |
-| `addressCountry` | `object \| null` | No | — |
-| `createUser` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `deliveryDate` | `string` | No | — |
-| `smallSettlement` | `boolean \| null` | No | — |
-| `contactPerson` | `object \| null` | No | — |
-| `taxRate` | `string \| null` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxSet` | `object \| null` | No | — |
-| `taxText` | `string \| null` | No | — |
-| `taxType` | `string \| null` | No | — |
-| `sendDate` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `currency` | `string \| null` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `customerInternalNote` | `string \| null` | No | — |
-| `showNet` | `boolean` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  creditNoteNumber?: string | null,
+  contact?: {
+    id: string,
+    objectName: string
+  } | null,
+  creditNoteDate?: string,
+  status?: 100 | 200 | 750 | 1000,
+  header?: string | null,
+  headText?: string | null,
+  footText?: string | null,
+  addressCountry?: {
+    id: string,
+    objectName: string
+  } | null,
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  deliveryDate?: string,
+  smallSettlement?: boolean | null,
+  contactPerson?: {
+    id: string,
+    objectName: string
+  } | null,
+  taxRate?: string | null,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+    objectName: TaxRule
+  },
+  taxSet?: {
+    id: string,
+    objectName: string
+  } | null,
+  taxText?: string | null,
+  taxType?: string | null,
+  sendDate?: string | null,
+  address?: string | null,
+  currency?: string | null,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumDiscounts?: string,
+  sumNetForeignCurrency?: string,
+  sumTaxForeignCurrency?: string,
+  sumGrossForeignCurrency?: string,
+  sumDiscountsForeignCurrency?: string,
+  customerInternalNote?: string | null,
+  showNet?: boolean,
+  sendType?: VPR | VPDF | VM | VP
 }
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7046,9 +6815,9 @@ await corsair.sevdesk.api.export.exportCreditNote({});
 
 `export.exportDatevCSV`
 
-Start DATEV CSV ZIP export. Reads Sevdesk data.
+Start DATEV CSV ZIP export. With enshrineDocuments: true it enshrines the exported documents, which cannot be undone (GoBD).
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.sevdesk.api.export.exportDatevCSV({});
@@ -7112,9 +6881,9 @@ await corsair.sevdesk.api.export.exportDatevCSV({});
 
 `export.exportDatevDepricated`
 
-Export datev. Reads Sevdesk data.
+Export datev. With enshrine: true it enshrines the exported documents, which cannot be undone (GoBD).
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.sevdesk.api.export.exportDatevDepricated({});
@@ -8116,163 +7885,102 @@ await corsair.sevdesk.api.invoice.cancelInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `invoiceNumber` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `invoiceDate` | `string` | No | — |
-| `header` | `string` | No | — |
-| `headText` | `string` | No | — |
-| `footText` | `string` | No | — |
-| `timeToPay` | `string` | No | — |
-| `discountTime` | `string` | No | — |
-| `discount` | `string` | No | — |
-| `addressCountry` | `object` | No | — |
-| `payDate` | `string` | No | — |
-| `createUser` | `object` | No | — |
-| `deliveryDate` | `string` | No | — |
-| `status` | `50 \| 100 \| 200 \| 750 \| 1000` | No | — |
-| `smallSettlement` | `boolean` | No | — |
-| `contactPerson` | `object` | No | — |
-| `taxRate` | `string` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxText` | `string` | No | — |
-| `dunningLevel` | `string` | No | — |
-| `taxType` | `default \| eu \| noteu \| custom` | No | — |
-| `paymentMethod` | `object` | No | — |
-| `costCentre` | `object` | No | — |
-| `sendDate` | `string` | No | — |
-| `origin` | `object` | No | — |
-| `invoiceType` | `RE \| WKR \| SR \| MA \| TR \| AR \| ER` | No | — |
-| `accountIntervall` | `string` | No | — |
-| `accountNextInvoice` | `string` | No | — |
-| `reminderTotal` | `string` | No | — |
-| `reminderDebit` | `string` | No | — |
-| `reminderDeadline` | `string` | No | — |
-| `reminderCharge` | `string` | No | — |
-| `taxSet` | `object` | No | — |
-| `address` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `sumNetAccounting` | `string` | No | — |
-| `sumTaxAccounting` | `string` | No | — |
-| `sumGrossAccounting` | `string` | No | — |
-| `paidAmount` | `number` | No | — |
-| `customerInternalNote` | `string` | No | — |
-| `showNet` | `boolean` | No | — |
-| `enshrined` | `string` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
-| `deliveryDateUntil` | `string` | No | — |
-| `datevConnectOnline` | `Record<string, JsonValue>` | No | — |
-| `sendPaymentReceivedNotificationDate` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="paymentMethod full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="costCentre full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="origin full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  invoiceNumber?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  create?: string,
+  update?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  invoiceDate?: string,
+  header?: string,
+  headText?: string,
+  footText?: string,
+  timeToPay?: string,
+  discountTime?: string,
+  discount?: string,
+  addressCountry?: {
+    id: string,
+    objectName: string
+  },
+  payDate?: string,
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  deliveryDate?: string,
+  status?: 50 | 100 | 200 | 750 | 1000,
+  smallSettlement?: boolean,
+  contactPerson?: {
+    id: string,
+    objectName: string
+  },
+  taxRate?: string,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+    objectName: TaxRule
+  },
+  taxText?: string,
+  dunningLevel?: string,
+  taxType?: default | eu | noteu | custom,
+  paymentMethod?: {
+    id: string,
+    objectName: string
+  },
+  costCentre?: {
+    id: string,
+    objectName: string
+  },
+  sendDate?: string,
+  origin?: {
+    id: string,
+    objectName: string
+  },
+  invoiceType?: RE | WKR | SR | MA | TR | AR | ER,
+  accountIntervall?: string,
+  accountNextInvoice?: string,
+  reminderTotal?: string,
+  reminderDebit?: string,
+  reminderDeadline?: string,
+  reminderCharge?: string,
+  taxSet?: {
+    id: string,
+    objectName: string
+  },
+  address?: string,
+  currency?: string,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumDiscounts?: string,
+  sumNetForeignCurrency?: string,
+  sumTaxForeignCurrency?: string,
+  sumGrossForeignCurrency?: string,
+  sumDiscountsForeignCurrency?: string,
+  sumNetAccounting?: string,
+  sumTaxAccounting?: string,
+  sumGrossAccounting?: string,
+  paidAmount?: number,
+  customerInternalNote?: string,
+  showNet?: boolean,
+  enshrined?: string,
+  sendType?: VPR | VPDF | VM | VP,
+  deliveryDateUntil?: string,
+  datevConnectOnline?: Record<string, JsonValue>,
+  sendPaymentReceivedNotificationDate?: string
 }
 ```
 </Accordion>
@@ -8303,7 +8011,7 @@ await corsair.sevdesk.api.invoice.createInvoiceByFactory({});
 | `query` | `object` | No | — |
 | `body` | `object` | Yes | — |
 
-For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidance. New invoices are created as DRAFT; do not set status manually. Advanced and partial invoices accept only taxRule 1 or 11; AR/TR/ER require the account's default currency.
+For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidance. The factory requires invoice.status: send "100" (draft); sending, booking and enshrining are separate actions. Advanced and partial invoices accept only taxRule 1 or 11; AR/TR/ER require the account's default currency.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -8432,12 +8140,214 @@ For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidan
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `invoice` | `object` | No | — |
-| `invoicePos` | `object[]` | No | — |
-| `filename` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="invoice full type">
+<Accordion title="objects full type">
+
+```ts
+{
+  invoice?: {
+    id?: string,
+    objectName?: string,
+    invoiceNumber?: string,
+    contact?: {
+      id: string,
+      objectName: string
+    },
+    create?: string,
+    update?: string,
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    invoiceDate?: string,
+    header?: string,
+    headText?: string,
+    footText?: string,
+    timeToPay?: string,
+    discountTime?: string,
+    discount?: string,
+    addressCountry?: {
+      id: string,
+      objectName: string
+    },
+    payDate?: string,
+    createUser?: {
+      id: string,
+      objectName: string
+    },
+    deliveryDate?: string,
+    status?: 50 | 100 | 200 | 750 | 1000,
+    smallSettlement?: boolean,
+    contactPerson?: {
+      id: string,
+      objectName: string
+    },
+    taxRate?: string,
+    taxRule?: {
+      id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+      objectName: TaxRule
+    },
+    taxText?: string,
+    dunningLevel?: string,
+    taxType?: default | eu | noteu | custom,
+    paymentMethod?: {
+      id: string,
+      objectName: string
+    },
+    costCentre?: {
+      id: string,
+      objectName: string
+    },
+    sendDate?: string,
+    origin?: {
+      id: string,
+      objectName: string
+    },
+    invoiceType?: RE | WKR | SR | MA | TR | AR | ER,
+    accountIntervall?: string,
+    accountNextInvoice?: string,
+    reminderTotal?: string,
+    reminderDebit?: string,
+    reminderDeadline?: string,
+    reminderCharge?: string,
+    taxSet?: {
+      id: string,
+      objectName: string
+    },
+    address?: string,
+    currency?: string,
+    sumNet?: string,
+    sumTax?: string,
+    sumGross?: string,
+    sumDiscounts?: string,
+    sumNetForeignCurrency?: string,
+    sumTaxForeignCurrency?: string,
+    sumGrossForeignCurrency?: string,
+    sumDiscountsForeignCurrency?: string,
+    sumNetAccounting?: string,
+    sumTaxAccounting?: string,
+    sumGrossAccounting?: string,
+    paidAmount?: number,
+    customerInternalNote?: string,
+    showNet?: boolean,
+    enshrined?: string,
+    sendType?: VPR | VPDF | VM | VP,
+    deliveryDateUntil?: string,
+    datevConnectOnline?: Record<string, JsonValue>,
+    sendPaymentReceivedNotificationDate?: string
+  },
+  invoicePos?: {
+    id?: string,
+    objectName?: string,
+    create?: string,
+    update?: string,
+    invoice?: {
+      id: string,
+      objectName: string
+    },
+    part?: {
+      id: string,
+      objectName: string
+    },
+    quantity?: number | string,
+    price?: string,
+    name?: string,
+    unity?: {
+      id: string,
+      objectName: string
+    },
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    positionNumber?: string,
+    text?: string,
+    discount?: string,
+    taxRate?: string,
+    sumDiscount?: string,
+    sumNetAccounting?: string,
+    sumTaxAccounting?: string,
+    sumGrossAccounting?: string,
+    priceNet?: string,
+    priceGross?: string,
+    priceTax?: string
+  }[],
+  filename?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createInvoiceFromOrder
+
+`invoice.createInvoiceFromOrder`
+
+Create invoice from order. Changes Sevdesk data or starts an export job.
+
+**Risk:** `write`
+
+```ts
+await corsair.sevdesk.api.invoice.createInvoiceFromOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceVersion` | `string` | No | — |
+| `path` | `object` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  order: {
+    id: number,
+    objectName: string
+  },
+  type?: percentage | net | gross,
+  amount?: number | null,
+  partialType?: RE | TR | AR
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objects` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="objects full type">
 
 ```ts
 {
@@ -8533,274 +8443,6 @@ For Update 2.0, use taxRule and position taxRate values allowed by ReceiptGuidan
 }
 ```
 </Accordion>
-
-<Accordion title="invoicePos full type">
-
-```ts
-{
-  id?: string,
-  objectName?: string,
-  create?: string,
-  update?: string,
-  invoice?: {
-    id: string,
-    objectName: string
-  },
-  part?: {
-    id: string,
-    objectName: string
-  },
-  quantity?: number | string,
-  price?: string,
-  name?: string,
-  unity?: {
-    id: string,
-    objectName: string
-  },
-  sevClient?: {
-    id: string,
-    objectName: string
-  },
-  positionNumber?: string,
-  text?: string,
-  discount?: string,
-  taxRate?: string,
-  sumDiscount?: string,
-  sumNetAccounting?: string,
-  sumTaxAccounting?: string,
-  sumGrossAccounting?: string,
-  priceNet?: string,
-  priceGross?: string,
-  priceTax?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### createInvoiceFromOrder
-
-`invoice.createInvoiceFromOrder`
-
-Create invoice from order. Changes Sevdesk data or starts an export job.
-
-**Risk:** `write`
-
-```ts
-await corsair.sevdesk.api.invoice.createInvoiceFromOrder({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `resourceVersion` | `string` | No | — |
-| `path` | `object` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  order: {
-    id: number,
-    objectName: string
-  },
-  type?: percentage | net | gross,
-  amount?: number | null,
-  partialType?: RE | TR | AR
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `invoiceNumber` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `invoiceDate` | `string` | No | — |
-| `header` | `string` | No | — |
-| `headText` | `string` | No | — |
-| `footText` | `string` | No | — |
-| `timeToPay` | `string` | No | — |
-| `discountTime` | `string` | No | — |
-| `discount` | `string` | No | — |
-| `addressCountry` | `object` | No | — |
-| `payDate` | `string` | No | — |
-| `createUser` | `object` | No | — |
-| `deliveryDate` | `string` | No | — |
-| `status` | `50 \| 100 \| 200 \| 750 \| 1000` | No | — |
-| `smallSettlement` | `boolean` | No | — |
-| `contactPerson` | `object` | No | — |
-| `taxRate` | `string` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxText` | `string` | No | — |
-| `dunningLevel` | `string` | No | — |
-| `taxType` | `default \| eu \| noteu \| custom` | No | — |
-| `paymentMethod` | `object` | No | — |
-| `costCentre` | `object` | No | — |
-| `sendDate` | `string` | No | — |
-| `origin` | `object` | No | — |
-| `invoiceType` | `RE \| WKR \| SR \| MA \| TR \| AR \| ER` | No | — |
-| `accountIntervall` | `string` | No | — |
-| `accountNextInvoice` | `string` | No | — |
-| `reminderTotal` | `string` | No | — |
-| `reminderDebit` | `string` | No | — |
-| `reminderDeadline` | `string` | No | — |
-| `reminderCharge` | `string` | No | — |
-| `taxSet` | `object` | No | — |
-| `address` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `sumNetAccounting` | `string` | No | — |
-| `sumTaxAccounting` | `string` | No | — |
-| `sumGrossAccounting` | `string` | No | — |
-| `paidAmount` | `number` | No | — |
-| `customerInternalNote` | `string` | No | — |
-| `showNet` | `boolean` | No | — |
-| `enshrined` | `string` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
-| `deliveryDateUntil` | `string` | No | — |
-| `datevConnectOnline` | `Record<string, JsonValue>` | No | — |
-| `sendPaymentReceivedNotificationDate` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="contact full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="paymentMethod full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="costCentre full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="origin full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -8870,163 +8512,102 @@ await corsair.sevdesk.api.invoice.createInvoiceReminder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `invoiceNumber` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `invoiceDate` | `string` | No | — |
-| `header` | `string` | No | — |
-| `headText` | `string` | No | — |
-| `footText` | `string` | No | — |
-| `timeToPay` | `string` | No | — |
-| `discountTime` | `string` | No | — |
-| `discount` | `string` | No | — |
-| `addressCountry` | `object` | No | — |
-| `payDate` | `string` | No | — |
-| `createUser` | `object` | No | — |
-| `deliveryDate` | `string` | No | — |
-| `status` | `50 \| 100 \| 200 \| 750 \| 1000` | No | — |
-| `smallSettlement` | `boolean` | No | — |
-| `contactPerson` | `object` | No | — |
-| `taxRate` | `string` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxText` | `string` | No | — |
-| `dunningLevel` | `string` | No | — |
-| `taxType` | `default \| eu \| noteu \| custom` | No | — |
-| `paymentMethod` | `object` | No | — |
-| `costCentre` | `object` | No | — |
-| `sendDate` | `string` | No | — |
-| `origin` | `object` | No | — |
-| `invoiceType` | `RE \| WKR \| SR \| MA \| TR \| AR \| ER` | No | — |
-| `accountIntervall` | `string` | No | — |
-| `accountNextInvoice` | `string` | No | — |
-| `reminderTotal` | `string` | No | — |
-| `reminderDebit` | `string` | No | — |
-| `reminderDeadline` | `string` | No | — |
-| `reminderCharge` | `string` | No | — |
-| `taxSet` | `object` | No | — |
-| `address` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `sumNetAccounting` | `string` | No | — |
-| `sumTaxAccounting` | `string` | No | — |
-| `sumGrossAccounting` | `string` | No | — |
-| `paidAmount` | `number` | No | — |
-| `customerInternalNote` | `string` | No | — |
-| `showNet` | `boolean` | No | — |
-| `enshrined` | `string` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
-| `deliveryDateUntil` | `string` | No | — |
-| `datevConnectOnline` | `Record<string, JsonValue>` | No | — |
-| `sendPaymentReceivedNotificationDate` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="paymentMethod full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="costCentre full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="origin full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  invoiceNumber?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  create?: string,
+  update?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  invoiceDate?: string,
+  header?: string,
+  headText?: string,
+  footText?: string,
+  timeToPay?: string,
+  discountTime?: string,
+  discount?: string,
+  addressCountry?: {
+    id: string,
+    objectName: string
+  },
+  payDate?: string,
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  deliveryDate?: string,
+  status?: 50 | 100 | 200 | 750 | 1000,
+  smallSettlement?: boolean,
+  contactPerson?: {
+    id: string,
+    objectName: string
+  },
+  taxRate?: string,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+    objectName: TaxRule
+  },
+  taxText?: string,
+  dunningLevel?: string,
+  taxType?: default | eu | noteu | custom,
+  paymentMethod?: {
+    id: string,
+    objectName: string
+  },
+  costCentre?: {
+    id: string,
+    objectName: string
+  },
+  sendDate?: string,
+  origin?: {
+    id: string,
+    objectName: string
+  },
+  invoiceType?: RE | WKR | SR | MA | TR | AR | ER,
+  accountIntervall?: string,
+  accountNextInvoice?: string,
+  reminderTotal?: string,
+  reminderDebit?: string,
+  reminderDeadline?: string,
+  reminderCharge?: string,
+  taxSet?: {
+    id: string,
+    objectName: string
+  },
+  address?: string,
+  currency?: string,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumDiscounts?: string,
+  sumNetForeignCurrency?: string,
+  sumTaxForeignCurrency?: string,
+  sumGrossForeignCurrency?: string,
+  sumDiscountsForeignCurrency?: string,
+  sumNetAccounting?: string,
+  sumTaxAccounting?: string,
+  sumGrossAccounting?: string,
+  paidAmount?: number,
+  customerInternalNote?: string,
+  showNet?: boolean,
+  enshrined?: string,
+  sendType?: VPR | VPDF | VM | VP,
+  deliveryDateUntil?: string,
+  datevConnectOnline?: Record<string, JsonValue>,
+  sendPaymentReceivedNotificationDate?: string
 }
 ```
 </Accordion>
@@ -10130,250 +9711,10 @@ await corsair.sevdesk.api.invoice.invoiceSendBy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `invoiceNumber` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `invoiceDate` | `string` | No | — |
-| `header` | `string` | No | — |
-| `headText` | `string` | No | — |
-| `footText` | `string` | No | — |
-| `timeToPay` | `string` | No | — |
-| `discountTime` | `string` | No | — |
-| `discount` | `string` | No | — |
-| `addressCountry` | `object` | No | — |
-| `payDate` | `string` | No | — |
-| `createUser` | `object` | No | — |
-| `deliveryDate` | `string` | No | — |
-| `status` | `50 \| 100 \| 200 \| 750 \| 1000` | No | — |
-| `smallSettlement` | `boolean` | No | — |
-| `contactPerson` | `object` | No | — |
-| `taxRate` | `string` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxText` | `string` | No | — |
-| `dunningLevel` | `string` | No | — |
-| `taxType` | `default \| eu \| noteu \| custom` | No | — |
-| `paymentMethod` | `object` | No | — |
-| `costCentre` | `object` | No | — |
-| `sendDate` | `string` | No | — |
-| `origin` | `object` | No | — |
-| `invoiceType` | `RE \| WKR \| SR \| MA \| TR \| AR \| ER` | No | — |
-| `accountIntervall` | `string` | No | — |
-| `accountNextInvoice` | `string` | No | — |
-| `reminderTotal` | `string` | No | — |
-| `reminderDebit` | `string` | No | — |
-| `reminderDeadline` | `string` | No | — |
-| `reminderCharge` | `string` | No | — |
-| `taxSet` | `object` | No | — |
-| `address` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `sumNetAccounting` | `string` | No | — |
-| `sumTaxAccounting` | `string` | No | — |
-| `sumGrossAccounting` | `string` | No | — |
-| `paidAmount` | `number` | No | — |
-| `customerInternalNote` | `string` | No | — |
-| `showNet` | `boolean` | No | — |
-| `enshrined` | `string` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
-| `deliveryDateUntil` | `string` | No | — |
-| `datevConnectOnline` | `Record<string, JsonValue>` | No | — |
-| `sendPaymentReceivedNotificationDate` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="paymentMethod full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="costCentre full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="origin full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### sendInvoiceViaEMail
-
-`invoice.sendInvoiceViaEMail`
-
-Send invoice via email. Confirm before sending, booking, deleting, or legally enshrining accounting records.
-
-**Risk:** `destructive`
-
-```ts
-await corsair.sevdesk.api.invoice.sendInvoiceViaEMail({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `resourceVersion` | `string` | No | — |
-| `path` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="path full type">
-
-```ts
-{
-  invoiceId: number
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-  toEmail: string,
-  subject: string,
-  text: string,
-  copy?: boolean,
-  additionalAttachments?: string,
-  ccEmail?: string,
-  bccEmail?: string,
-  sendXml?: boolean
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `object` | `object` | No | — |
-| `from` | `string` | Yes | — |
-| `to` | `string` | Yes | — |
-| `subject` | `string` | Yes | — |
-| `text` | `string \| null` | No | — |
-| `sevClient` | `object` | No | — |
-| `cc` | `string \| null` | No | — |
-| `bcc` | `string \| null` | No | — |
-| `arrived` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="object full type">
+<Accordion title="objects full type">
 
 ```ts
 {
@@ -10469,13 +9810,187 @@ await corsair.sevdesk.api.invoice.sendInvoiceViaEMail({});
 }
 ```
 </Accordion>
+</AccordionGroup>
 
-<Accordion title="sevClient full type">
+
+
+---
+
+### sendInvoiceViaEMail
+
+`invoice.sendInvoiceViaEMail`
+
+Send invoice via email. Confirm before sending, booking, deleting, or legally enshrining accounting records.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sevdesk.api.invoice.sendInvoiceViaEMail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceVersion` | `string` | No | — |
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
 
 ```ts
 {
-  id: number,
-  objectName: string
+  invoiceId: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  toEmail: string,
+  subject: string,
+  text: string,
+  copy?: boolean,
+  additionalAttachments?: string,
+  ccEmail?: string,
+  bccEmail?: string,
+  sendXml?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objects` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="objects full type">
+
+```ts
+{
+  id?: number,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  object?: {
+    id?: string,
+    objectName?: string,
+    invoiceNumber?: string,
+    contact?: {
+      id: string,
+      objectName: string
+    },
+    create?: string,
+    update?: string,
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    invoiceDate?: string,
+    header?: string,
+    headText?: string,
+    footText?: string,
+    timeToPay?: string,
+    discountTime?: string,
+    discount?: string,
+    addressCountry?: {
+      id: string,
+      objectName: string
+    },
+    payDate?: string,
+    createUser?: {
+      id: string,
+      objectName: string
+    },
+    deliveryDate?: string,
+    status?: 50 | 100 | 200 | 750 | 1000,
+    smallSettlement?: boolean,
+    contactPerson?: {
+      id: string,
+      objectName: string
+    },
+    taxRate?: string,
+    taxRule?: {
+      id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+      objectName: TaxRule
+    },
+    taxText?: string,
+    dunningLevel?: string,
+    taxType?: default | eu | noteu | custom,
+    paymentMethod?: {
+      id: string,
+      objectName: string
+    },
+    costCentre?: {
+      id: string,
+      objectName: string
+    },
+    sendDate?: string,
+    origin?: {
+      id: string,
+      objectName: string
+    },
+    invoiceType?: RE | WKR | SR | MA | TR | AR | ER,
+    accountIntervall?: string,
+    accountNextInvoice?: string,
+    reminderTotal?: string,
+    reminderDebit?: string,
+    reminderDeadline?: string,
+    reminderCharge?: string,
+    taxSet?: {
+      id: string,
+      objectName: string
+    },
+    address?: string,
+    currency?: string,
+    sumNet?: string,
+    sumTax?: string,
+    sumGross?: string,
+    sumDiscounts?: string,
+    sumNetForeignCurrency?: string,
+    sumTaxForeignCurrency?: string,
+    sumGrossForeignCurrency?: string,
+    sumDiscountsForeignCurrency?: string,
+    sumNetAccounting?: string,
+    sumTaxAccounting?: string,
+    sumGrossAccounting?: string,
+    paidAmount?: number,
+    customerInternalNote?: string,
+    showNet?: boolean,
+    enshrined?: string,
+    sendType?: VPR | VPDF | VM | VP,
+    deliveryDateUntil?: string,
+    datevConnectOnline?: Record<string, JsonValue>,
+    sendPaymentReceivedNotificationDate?: string
+  },
+  from: string,
+  to: string,
+  subject: string,
+  text?: string | null,
+  sevClient?: {
+    id: number,
+    objectName: string
+  },
+  cc?: string | null,
+  bcc?: string | null,
+  arrived?: string | null
 }
 ```
 </Accordion>
@@ -10821,16 +10336,18 @@ await corsair.sevdesk.api.layout.updateCreditNoteTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `string` | No | — |
-| `metadaten` | `object` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadaten full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  pdf?: string,
-  docId?: string
+  result?: string,
+  metadaten?: {
+    pdf?: string,
+    docId?: string
+  }
 }
 ```
 </Accordion>
@@ -10896,16 +10413,18 @@ await corsair.sevdesk.api.layout.updateInvoiceTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `string` | No | — |
-| `metadaten` | `object` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadaten full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  pdf?: string,
-  docId?: string
+  result?: string,
+  metadaten?: {
+    pdf?: string,
+    docId?: string
+  }
 }
 ```
 </Accordion>
@@ -10971,16 +10490,18 @@ await corsair.sevdesk.api.layout.updateOrderTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `string` | No | — |
-| `metadaten` | `object` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadaten full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  pdf?: string,
-  docId?: string
+  result?: string,
+  metadaten?: {
+    pdf?: string,
+    docId?: string
+  }
 }
 ```
 </Accordion>
@@ -11053,125 +10574,78 @@ await corsair.sevdesk.api.order.createContractNoteFromOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `orderNumber` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `orderDate` | `string` | No | — |
-| `status` | `100 \| 200 \| 300 \| 500 \| 750 \| 1000` | No | — |
-| `header` | `string` | No | — |
-| `headText` | `string \| null` | No | — |
-| `footText` | `string \| null` | No | — |
-| `addressCountry` | `object \| null` | No | — |
-| `createUser` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `deliveryTerms` | `string \| null` | No | — |
-| `paymentTerms` | `string \| null` | No | — |
-| `origin` | `object \| null` | No | — |
-| `version` | `string` | No | — |
-| `smallSettlement` | `boolean` | No | — |
-| `contactPerson` | `object` | No | — |
-| `taxRate` | `string` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxSet` | `object \| null` | No | — |
-| `taxText` | `string` | No | — |
-| `taxType` | `string` | No | — |
-| `orderType` | `AN \| AB \| LI` | No | — |
-| `sendDate` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `currency` | `string` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `customerInternalNote` | `string \| null` | No | — |
-| `showNet` | `boolean` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  orderNumber?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  orderDate?: string,
+  status?: 100 | 200 | 300 | 500 | 750 | 1000,
+  header?: string,
+  headText?: string | null,
+  footText?: string | null,
+  addressCountry?: {
+    id: string,
+    objectName: string
+  } | null,
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  deliveryTerms?: string | null,
+  paymentTerms?: string | null,
+  origin?: {
+    id: string,
+    objectName: string
+  } | null,
+  version?: string,
+  smallSettlement?: boolean,
+  contactPerson?: {
+    id: string,
+    objectName: string
+  },
+  taxRate?: string,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+    objectName: TaxRule
+  },
+  taxSet?: {
+    id: string,
+    objectName: string
+  } | null,
+  taxText?: string,
+  taxType?: string,
+  orderType?: AN | AB | LI,
+  sendDate?: string | null,
+  address?: string | null,
+  currency?: string,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumDiscounts?: string,
+  sumNetForeignCurrency?: string,
+  sumTaxForeignCurrency?: string,
+  sumGrossForeignCurrency?: string,
+  sumDiscountsForeignCurrency?: string,
+  customerInternalNote?: string | null,
+  showNet?: boolean,
+  sendType?: VPR | VPDF | VM | VP
 }
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="origin full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -11271,6 +10745,8 @@ await corsair.sevdesk.api.order.createOrder({});
     } | null
   },
   orderPosSave?: {
+    objectName: string,
+    mapAll: boolean,
     order?: {
       id: number,
       objectName: string
@@ -11309,119 +10785,114 @@ await corsair.sevdesk.api.order.createOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `order` | `object` | No | — |
-| `orderPos` | `object[]` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="order full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id?: string,
-  objectName?: string,
-  create?: string,
-  update?: string,
-  orderNumber?: string,
-  contact?: {
-    id: string,
-    objectName: string
-  },
-  orderDate?: string,
-  status?: 100 | 200 | 300 | 500 | 750 | 1000,
-  header?: string,
-  headText?: string | null,
-  footText?: string | null,
-  addressCountry?: {
-    id: string,
-    objectName: string
-  } | null,
-  createUser?: {
-    id: string,
-    objectName: string
-  },
-  sevClient?: {
-    id: string,
-    objectName: string
-  },
-  deliveryTerms?: string | null,
-  paymentTerms?: string | null,
-  origin?: {
-    id: string,
-    objectName: string
-  } | null,
-  version?: string,
-  smallSettlement?: boolean,
-  contactPerson?: {
-    id: string,
-    objectName: string
-  },
-  taxRate?: string,
-  taxRule?: {
-    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-    objectName: TaxRule
-  },
-  taxSet?: {
-    id: string,
-    objectName: string
-  } | null,
-  taxText?: string,
-  taxType?: string,
-  orderType?: AN | AB | LI,
-  sendDate?: string | null,
-  address?: string | null,
-  currency?: string,
-  sumNet?: string,
-  sumTax?: string,
-  sumGross?: string,
-  sumDiscounts?: string,
-  sumNetForeignCurrency?: string,
-  sumTaxForeignCurrency?: string,
-  sumGrossForeignCurrency?: string,
-  sumDiscountsForeignCurrency?: string,
-  customerInternalNote?: string | null,
-  showNet?: boolean,
-  sendType?: VPR | VPDF | VM | VP
-}
-```
-</Accordion>
-
-<Accordion title="orderPos full type">
-
-```ts
-{
-  id?: string,
-  objectName?: string,
-  create?: string,
-  update?: string,
   order?: {
-    id: string,
-    objectName: string
+    id?: string,
+    objectName?: string,
+    create?: string,
+    update?: string,
+    orderNumber?: string,
+    contact?: {
+      id: string,
+      objectName: string
+    },
+    orderDate?: string,
+    status?: 100 | 200 | 300 | 500 | 750 | 1000,
+    header?: string,
+    headText?: string | null,
+    footText?: string | null,
+    addressCountry?: {
+      id: string,
+      objectName: string
+    } | null,
+    createUser?: {
+      id: string,
+      objectName: string
+    },
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    deliveryTerms?: string | null,
+    paymentTerms?: string | null,
+    origin?: {
+      id: string,
+      objectName: string
+    } | null,
+    version?: string,
+    smallSettlement?: boolean,
+    contactPerson?: {
+      id: string,
+      objectName: string
+    },
+    taxRate?: string,
+    taxRule?: {
+      id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+      objectName: TaxRule
+    },
+    taxSet?: {
+      id: string,
+      objectName: string
+    } | null,
+    taxText?: string,
+    taxType?: string,
+    orderType?: AN | AB | LI,
+    sendDate?: string | null,
+    address?: string | null,
+    currency?: string,
+    sumNet?: string,
+    sumTax?: string,
+    sumGross?: string,
+    sumDiscounts?: string,
+    sumNetForeignCurrency?: string,
+    sumTaxForeignCurrency?: string,
+    sumGrossForeignCurrency?: string,
+    sumDiscountsForeignCurrency?: string,
+    customerInternalNote?: string | null,
+    showNet?: boolean,
+    sendType?: VPR | VPDF | VM | VP
   },
-  part?: {
-    id: string,
-    objectName: string
-  },
-  quantity?: string,
-  price?: string | null,
-  priceNet?: string | null,
-  priceTax?: string | null,
-  priceGross?: string | null,
-  name?: string | null,
-  unity?: {
-    id: string,
-    objectName: string
-  },
-  sevClient?: {
-    id: string,
-    objectName: string
-  },
-  positionNumber?: string | null,
-  text?: string | null,
-  discount?: string | null,
-  optional?: boolean | null,
-  taxRate?: string,
-  sumDiscount?: string | null
-}[]
+  orderPos?: {
+    id?: string,
+    objectName?: string,
+    create?: string,
+    update?: string,
+    order?: {
+      id: string,
+      objectName: string
+    },
+    part?: {
+      id: string,
+      objectName: string
+    },
+    quantity?: string,
+    price?: string | null,
+    priceNet?: string | null,
+    priceTax?: string | null,
+    priceGross?: string | null,
+    name?: string | null,
+    unity?: {
+      id: string,
+      objectName: string
+    },
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    positionNumber?: string | null,
+    text?: string | null,
+    discount?: string | null,
+    optional?: boolean | null,
+    taxRate?: string,
+    sumDiscount?: string | null
+  }[]
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -11491,125 +10962,78 @@ await corsair.sevdesk.api.order.createPackingListFromOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `orderNumber` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `orderDate` | `string` | No | — |
-| `status` | `100 \| 200 \| 300 \| 500 \| 750 \| 1000` | No | — |
-| `header` | `string` | No | — |
-| `headText` | `string \| null` | No | — |
-| `footText` | `string \| null` | No | — |
-| `addressCountry` | `object \| null` | No | — |
-| `createUser` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `deliveryTerms` | `string \| null` | No | — |
-| `paymentTerms` | `string \| null` | No | — |
-| `origin` | `object \| null` | No | — |
-| `version` | `string` | No | — |
-| `smallSettlement` | `boolean` | No | — |
-| `contactPerson` | `object` | No | — |
-| `taxRate` | `string` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxSet` | `object \| null` | No | — |
-| `taxText` | `string` | No | — |
-| `taxType` | `string` | No | — |
-| `orderType` | `AN \| AB \| LI` | No | — |
-| `sendDate` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `currency` | `string` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `customerInternalNote` | `string \| null` | No | — |
-| `showNet` | `boolean` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  orderNumber?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  orderDate?: string,
+  status?: 100 | 200 | 300 | 500 | 750 | 1000,
+  header?: string,
+  headText?: string | null,
+  footText?: string | null,
+  addressCountry?: {
+    id: string,
+    objectName: string
+  } | null,
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  deliveryTerms?: string | null,
+  paymentTerms?: string | null,
+  origin?: {
+    id: string,
+    objectName: string
+  } | null,
+  version?: string,
+  smallSettlement?: boolean,
+  contactPerson?: {
+    id: string,
+    objectName: string
+  },
+  taxRate?: string,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+    objectName: TaxRule
+  },
+  taxSet?: {
+    id: string,
+    objectName: string
+  } | null,
+  taxText?: string,
+  taxType?: string,
+  orderType?: AN | AB | LI,
+  sendDate?: string | null,
+  address?: string | null,
+  currency?: string,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumDiscounts?: string,
+  sumNetForeignCurrency?: string,
+  sumTaxForeignCurrency?: string,
+  sumGrossForeignCurrency?: string,
+  sumDiscountsForeignCurrency?: string,
+  customerInternalNote?: string | null,
+  showNet?: boolean,
+  sendType?: VPR | VPDF | VM | VP
 }
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="origin full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12380,125 +11804,78 @@ await corsair.sevdesk.api.order.orderSendBy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `orderNumber` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `orderDate` | `string` | No | — |
-| `status` | `100 \| 200 \| 300 \| 500 \| 750 \| 1000` | No | — |
-| `header` | `string` | No | — |
-| `headText` | `string \| null` | No | — |
-| `footText` | `string \| null` | No | — |
-| `addressCountry` | `object \| null` | No | — |
-| `createUser` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `deliveryTerms` | `string \| null` | No | — |
-| `paymentTerms` | `string \| null` | No | — |
-| `origin` | `object \| null` | No | — |
-| `version` | `string` | No | — |
-| `smallSettlement` | `boolean` | No | — |
-| `contactPerson` | `object` | No | — |
-| `taxRate` | `string` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxSet` | `object \| null` | No | — |
-| `taxText` | `string` | No | — |
-| `taxType` | `string` | No | — |
-| `orderType` | `AN \| AB \| LI` | No | — |
-| `sendDate` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `currency` | `string` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `customerInternalNote` | `string \| null` | No | — |
-| `showNet` | `boolean` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  orderNumber?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  orderDate?: string,
+  status?: 100 | 200 | 300 | 500 | 750 | 1000,
+  header?: string,
+  headText?: string | null,
+  footText?: string | null,
+  addressCountry?: {
+    id: string,
+    objectName: string
+  } | null,
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  deliveryTerms?: string | null,
+  paymentTerms?: string | null,
+  origin?: {
+    id: string,
+    objectName: string
+  } | null,
+  version?: string,
+  smallSettlement?: boolean,
+  contactPerson?: {
+    id: string,
+    objectName: string
+  },
+  taxRate?: string,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+    objectName: TaxRule
+  },
+  taxSet?: {
+    id: string,
+    objectName: string
+  } | null,
+  taxText?: string,
+  taxType?: string,
+  orderType?: AN | AB | LI,
+  sendDate?: string | null,
+  address?: string | null,
+  currency?: string,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumDiscounts?: string,
+  sumNetForeignCurrency?: string,
+  sumTaxForeignCurrency?: string,
+  sumGrossForeignCurrency?: string,
+  sumDiscountsForeignCurrency?: string,
+  customerInternalNote?: string | null,
+  showNet?: boolean,
+  sendType?: VPR | VPDF | VM | VP
 }
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="origin full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12763,125 +12140,78 @@ await corsair.sevdesk.api.order.updateOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `orderNumber` | `string` | No | — |
-| `contact` | `object` | No | — |
-| `orderDate` | `string` | No | — |
-| `status` | `100 \| 200 \| 300 \| 500 \| 750 \| 1000` | No | — |
-| `header` | `string` | No | — |
-| `headText` | `string \| null` | No | — |
-| `footText` | `string \| null` | No | — |
-| `addressCountry` | `object \| null` | No | — |
-| `createUser` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `deliveryTerms` | `string \| null` | No | — |
-| `paymentTerms` | `string \| null` | No | — |
-| `origin` | `object \| null` | No | — |
-| `version` | `string` | No | — |
-| `smallSettlement` | `boolean` | No | — |
-| `contactPerson` | `object` | No | — |
-| `taxRate` | `string` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxSet` | `object \| null` | No | — |
-| `taxText` | `string` | No | — |
-| `taxType` | `string` | No | — |
-| `orderType` | `AN \| AB \| LI` | No | — |
-| `sendDate` | `string \| null` | No | — |
-| `address` | `string \| null` | No | — |
-| `currency` | `string` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumNetForeignCurrency` | `string` | No | — |
-| `sumTaxForeignCurrency` | `string` | No | — |
-| `sumGrossForeignCurrency` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `customerInternalNote` | `string \| null` | No | — |
-| `showNet` | `boolean` | No | — |
-| `sendType` | `VPR \| VPDF \| VM \| VP` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="contact full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  orderNumber?: string,
+  contact?: {
+    id: string,
+    objectName: string
+  },
+  orderDate?: string,
+  status?: 100 | 200 | 300 | 500 | 750 | 1000,
+  header?: string,
+  headText?: string | null,
+  footText?: string | null,
+  addressCountry?: {
+    id: string,
+    objectName: string
+  } | null,
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  deliveryTerms?: string | null,
+  paymentTerms?: string | null,
+  origin?: {
+    id: string,
+    objectName: string
+  } | null,
+  version?: string,
+  smallSettlement?: boolean,
+  contactPerson?: {
+    id: string,
+    objectName: string
+  },
+  taxRate?: string,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
+    objectName: TaxRule
+  },
+  taxSet?: {
+    id: string,
+    objectName: string
+  } | null,
+  taxText?: string,
+  taxType?: string,
+  orderType?: AN | AB | LI,
+  sendDate?: string | null,
+  address?: string | null,
+  currency?: string,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumDiscounts?: string,
+  sumNetForeignCurrency?: string,
+  sumTaxForeignCurrency?: string,
+  sumGrossForeignCurrency?: string,
+  sumDiscountsForeignCurrency?: string,
+  customerInternalNote?: string | null,
+  showNet?: boolean,
+  sendType?: VPR | VPDF | VM | VP
 }
-```
-</Accordion>
-
-<Accordion title="addressCountry full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="origin full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="contactPerson full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 11 | 17 | 18 | 19 | 20 | 21,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -13240,64 +12570,45 @@ await corsair.sevdesk.api.orderPos.updateOrderPosition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `order` | `object` | No | — |
-| `part` | `object` | No | — |
-| `quantity` | `string` | No | — |
-| `price` | `string \| null` | No | — |
-| `priceNet` | `string \| null` | No | — |
-| `priceTax` | `string \| null` | No | — |
-| `priceGross` | `string \| null` | No | — |
-| `name` | `string \| null` | No | — |
-| `unity` | `object` | No | — |
-| `sevClient` | `object` | No | — |
-| `positionNumber` | `string \| null` | No | — |
-| `text` | `string \| null` | No | — |
-| `discount` | `string \| null` | No | — |
-| `optional` | `boolean \| null` | No | — |
-| `taxRate` | `string` | No | — |
-| `sumDiscount` | `string \| null` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="order full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="part full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="unity full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  order?: {
+    id: string,
+    objectName: string
+  },
+  part?: {
+    id: string,
+    objectName: string
+  },
+  quantity?: string,
+  price?: string | null,
+  priceNet?: string | null,
+  priceTax?: string | null,
+  priceGross?: string | null,
+  name?: string | null,
+  unity?: {
+    id: string,
+    objectName: string
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  positionNumber?: string | null,
+  text?: string | null,
+  discount?: string | null,
+  optional?: boolean | null,
+  taxRate?: string,
+  sumDiscount?: string | null
 }
 ```
 </Accordion>
@@ -13382,53 +12693,41 @@ await corsair.sevdesk.api.part.createPart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `name` | `string` | Yes | — |
-| `partNumber` | `string` | Yes | — |
-| `text` | `string \| null` | No | — |
-| `category` | `object \| null` | No | — |
-| `stock` | `number` | Yes | — |
-| `stockEnabled` | `boolean` | No | — |
-| `unity` | `object` | Yes | — |
-| `price` | `number \| null` | No | — |
-| `priceNet` | `number \| null` | No | — |
-| `priceGross` | `number \| null` | No | — |
-| `sevClient` | `object` | No | — |
-| `pricePurchase` | `number \| null` | No | — |
-| `taxRate` | `number` | Yes | — |
-| `status` | `50 \| 100` | No | — |
-| `internalComment` | `string \| null` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="category full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: number,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="unity full type">
-
-```ts
-{
-  id: number,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: number,
-  objectName: string
+  id?: number,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  name: string,
+  partNumber: string,
+  text?: string | null,
+  category?: {
+    id: number,
+    objectName: string
+  } | null,
+  stock: number,
+  stockEnabled?: boolean,
+  unity: {
+    id: number,
+    objectName: string
+  },
+  price?: number | null,
+  priceNet?: number | null,
+  priceGross?: number | null,
+  sevClient?: {
+    id: number,
+    objectName: string
+  },
+  pricePurchase?: number | null,
+  taxRate: number,
+  status?: 50 | 100,
+  internalComment?: string | null
 }
 ```
 </Accordion>
@@ -13772,53 +13071,41 @@ await corsair.sevdesk.api.part.updatePart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `name` | `string` | Yes | — |
-| `partNumber` | `string` | Yes | — |
-| `text` | `string \| null` | No | — |
-| `category` | `object \| null` | No | — |
-| `stock` | `number` | Yes | — |
-| `stockEnabled` | `boolean` | No | — |
-| `unity` | `object` | Yes | — |
-| `price` | `number \| null` | No | — |
-| `priceNet` | `number \| null` | No | — |
-| `priceGross` | `number \| null` | No | — |
-| `sevClient` | `object` | No | — |
-| `pricePurchase` | `number \| null` | No | — |
-| `taxRate` | `number` | Yes | — |
-| `status` | `50 \| 100` | No | — |
-| `internalComment` | `string \| null` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="category full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: number,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="unity full type">
-
-```ts
-{
-  id: number,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: number,
-  objectName: string
+  id?: number,
+  objectName?: string,
+  create?: string,
+  update?: string,
+  name: string,
+  partNumber: string,
+  text?: string | null,
+  category?: {
+    id: number,
+    objectName: string
+  } | null,
+  stock: number,
+  stockEnabled?: boolean,
+  unity: {
+    id: number,
+    objectName: string
+  },
+  price?: number | null,
+  priceNet?: number | null,
+  priceGross?: number | null,
+  sevClient?: {
+    id: number,
+    objectName: string
+  },
+  pricePurchase?: number | null,
+  taxRate: number,
+  status?: 50 | 100,
+  internalComment?: string | null
 }
 ```
 </Accordion>
@@ -13886,21 +13173,23 @@ await corsair.sevdesk.api.privateTransactionRule.createPrivateTransactionRule({}
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `paymentPurpose` | `string \| null` | No | — |
-| `counterpartName` | `string \| null` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
+<Accordion title="objects full type">
 
 ```ts
 {
   id?: string,
-  objectName?: string
+  objectName?: string,
+  create?: string,
+  update?: string,
+  sevClient?: {
+    id?: string,
+    objectName?: string
+  },
+  paymentPurpose?: string | null,
+  counterpartName?: string | null
 }
 ```
 </Accordion>
@@ -14360,6 +13649,7 @@ await corsair.sevdesk.api.report.reportVoucher({});
 ```ts
 {
   download?: boolean,
+  view: string,
   sevQuery: {
     limit?: number,
     modelName: JsonValue,
@@ -14476,41 +13766,29 @@ await corsair.sevdesk.api.tag.createTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `additionalInformation` | `string` | No | — |
-| `create` | `string` | No | — |
-| `tag` | `object` | No | — |
-| `object` | `object` | No | — |
-| `sevClient` | `object` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="tag full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="object full type">
-
-```ts
-{
-  id: number,
-  objectName: Invoice | Voucher | Order | CreditNote
-}
-```
-</Accordion>
-
-<Accordion title="sevClient full type">
-
-```ts
-{
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  additionalInformation?: string,
+  create?: string,
+  tag?: {
+    id: string,
+    objectName: string
+  },
+  object?: {
+    id: number,
+    objectName: Invoice | Voucher | Order | CreditNote
+  },
+  sevClient?: {
+    id: string,
+    objectName: string
+  }
 }
 ```
 </Accordion>
@@ -14885,20 +14163,22 @@ await corsair.sevdesk.api.tag.updateTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `additionalInformation` | `string` | No | — |
-| `create` | `string` | No | — |
-| `name` | `string` | No | — |
-| `sevClient` | `object` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  additionalInformation?: string,
+  create?: string,
+  name?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  }
 }
 ```
 </Accordion>
@@ -15069,13 +14349,25 @@ await corsair.sevdesk.api.voucher.forAccountNumber({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `objects` | `object[]` | No | — |
+| `objects` | `object \| object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="objects full type">
 
 ```ts
 {
+  accountDatevId?: number,
+  accountNumber?: string,
+  accountName?: string,
+  description?: string,
+  allowedTaxRules?: {
+    name?: string,
+    description?: string,
+    id?: number,
+    taxRates?: string[]
+  }[],
+  allowedReceiptTypes?: string[]
+} | {
   accountDatevId?: number,
   accountNumber?: string,
   accountName?: string,
@@ -15794,116 +15086,76 @@ await corsair.sevdesk.api.voucher.updateVoucher({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `objectName` | `string` | No | — |
-| `mapAll` | `boolean` | No | — |
-| `create` | `string` | No | — |
-| `update` | `string` | No | — |
-| `sevClient` | `object` | No | — |
-| `createUser` | `object` | No | — |
-| `voucherDate` | `string \| null` | No | — |
-| `supplier` | `object \| null` | No | — |
-| `supplierName` | `string \| null` | No | — |
-| `description` | `string \| null` | No | — |
-| `document` | `object \| null` | No | — |
-| `payDate` | `string \| null` | No | — |
-| `status` | `50 \| 100 \| 1000` | No | — |
-| `sumNet` | `string` | No | — |
-| `sumTax` | `string` | No | — |
-| `sumGross` | `string` | No | — |
-| `sumNetAccounting` | `string` | No | — |
-| `sumTaxAccounting` | `string` | No | — |
-| `sumGrossAccounting` | `string` | No | — |
-| `sumDiscounts` | `string` | No | — |
-| `sumDiscountsForeignCurrency` | `string` | No | — |
-| `paidAmount` | `number \| null` | No | — |
-| `taxRule` | `object` | No | — |
-| `taxType` | `string \| null` | No | — |
-| `creditDebit` | `C \| D` | No | — |
-| `costCentre` | `object` | No | — |
-| `voucherType` | `VOU \| RV` | No | — |
-| `currency` | `string \| null` | No | — |
-| `propertyForeignCurrencyDeadline` | `string \| null` | No | — |
-| `propertyExchangeRate` | `string \| null` | No | — |
-| `recurringInterval` | `P0Y0M1W \| P0Y0M2W \| P0Y1M0W \| P0Y3M0W \| P0Y6M0W \| P1Y0M0W \| P2Y0M0W \| P3Y0M0W \| P4Y0M0W \| P5Y0M0W` | No | — |
-| `recurringStartDate` | `string \| null` | No | — |
-| `recurringNextVoucher` | `string \| null` | No | — |
-| `recurringLastVoucher` | `string \| null` | No | — |
-| `recurringEndDate` | `string \| null` | No | — |
-| `enshrined` | `string` | No | — |
-| `taxSet` | `object \| null` | No | — |
-| `paymentDeadline` | `string \| null` | No | — |
-| `deliveryDate` | `string` | No | — |
-| `deliveryDateUntil` | `string \| null` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="sevClient full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id: string,
-  objectName: string
+  id?: string,
+  objectName?: string,
+  mapAll?: boolean,
+  create?: string,
+  update?: string,
+  sevClient?: {
+    id: string,
+    objectName: string
+  },
+  createUser?: {
+    id: string,
+    objectName: string
+  },
+  voucherDate?: string | null,
+  supplier?: {
+    id: string,
+    objectName: string
+  } | null,
+  supplierName?: string | null,
+  description?: string | null,
+  document?: {
+    id: string,
+    objectName: string
+  } | null,
+  payDate?: string | null,
+  status?: 50 | 100 | 1000,
+  sumNet?: string,
+  sumTax?: string,
+  sumGross?: string,
+  sumNetAccounting?: string,
+  sumTaxAccounting?: string,
+  sumGrossAccounting?: string,
+  sumDiscounts?: string,
+  sumDiscountsForeignCurrency?: string,
+  paidAmount?: number | null,
+  taxRule?: {
+    id: 1 | 2 | 3 | 4 | 5 | 8 | 9 | 10 | 11 | 12 | 13 | 14,
+    objectName: TaxRule
+  },
+  taxType?: string | null,
+  creditDebit?: C | D,
+  costCentre?: {
+    id: string,
+    objectName: string
+  },
+  voucherType?: VOU | RV,
+  currency?: string | null,
+  propertyForeignCurrencyDeadline?: string | null,
+  propertyExchangeRate?: string | null,
+  recurringInterval?: P0Y0M1W | P0Y0M2W | P0Y1M0W | P0Y3M0W | P0Y6M0W | P1Y0M0W | P2Y0M0W | P3Y0M0W | P4Y0M0W | P5Y0M0W,
+  recurringStartDate?: string | null,
+  recurringNextVoucher?: string | null,
+  recurringLastVoucher?: string | null,
+  recurringEndDate?: string | null,
+  enshrined?: string,
+  taxSet?: {
+    id: string,
+    objectName: string
+  } | null,
+  paymentDeadline?: string | null,
+  deliveryDate?: string,
+  deliveryDateUntil?: string | null
 }
-```
-</Accordion>
-
-<Accordion title="createUser full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="supplier full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="document full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
-```
-</Accordion>
-
-<Accordion title="taxRule full type">
-
-```ts
-{
-  id: 1 | 2 | 3 | 4 | 5 | 8 | 9 | 10 | 11 | 12 | 13 | 14,
-  objectName: TaxRule
-}
-```
-</Accordion>
-
-<Accordion title="costCentre full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-}
-```
-</Accordion>
-
-<Accordion title="taxSet full type">
-
-```ts
-{
-  id: string,
-  objectName: string
-} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -15995,7 +15247,7 @@ await corsair.sevdesk.api.voucher.voucherFactorySaveVoucher({});
 | `query` | `object` | No | — |
 | `body` | `object` | Yes | — |
 
-Update 2.0 requires ReceiptGuidance-compatible tax rules/rates. Voucher taxRule supports the documented revenue rules 1, 2, 3, 4, 5, 11 and expense rules 8, 9, 10, 12, 13, 14. Only DRAFT (50) and UNPAID/DUE (100) can be created; use bookVoucher to register payment. Asset accounts require an asset, and enshrinement is a separate irreversible action.
+Update 2.0 requires ReceiptGuidance-compatible tax rules/rates. Voucher taxRule supports the documented revenue rules 1, 2, 3, 4, 5, 11 and expense rules 8, 9, 10, 12, 13, 14. Positions on Update 2.0 take accountDatev (accountingType is the 1.0 field) and sumGross when net is false or sumNet when net is true. Only DRAFT (50) and UNPAID/DUE (100) can be created; use bookVoucher to register payment. Asset accounts require an asset, and enshrinement is a separate irreversible action.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -16059,19 +15311,19 @@ Update 2.0 requires ReceiptGuidance-compatible tax rules/rates. Voucher taxRule 
   voucherPosSave?: {
     objectName: string,
     mapAll: boolean,
-    accountDatev: {
+    accountDatev?: {
       id: number,
       objectName: string
     },
-    accountingType: {
+    accountingType?: {
       id: number,
       objectName: string
     },
     taxRate: number,
     net: boolean,
     isAsset?: boolean,
-    sumNet: number,
-    sumGross: number,
+    sumNet?: number,
+    sumGross?: number,
     comment?: string | null
   }[],
   voucherPosDelete?: {
@@ -16090,120 +15342,115 @@ Update 2.0 requires ReceiptGuidance-compatible tax rules/rates. Voucher taxRule 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `voucher` | `object` | No | — |
-| `voucherPos` | `object[]` | No | — |
-| `filename` | `string` | No | — |
+| `objects` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="voucher full type">
+<Accordion title="objects full type">
 
 ```ts
 {
-  id?: string,
-  objectName?: string,
-  mapAll?: boolean,
-  create?: string,
-  update?: string,
-  sevClient?: {
-    id: string,
-    objectName: string
+  voucher?: {
+    id?: string,
+    objectName?: string,
+    mapAll?: boolean,
+    create?: string,
+    update?: string,
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    createUser?: {
+      id: string,
+      objectName: string
+    },
+    voucherDate?: string | null,
+    supplier?: {
+      id: string,
+      objectName: string
+    } | null,
+    supplierName?: string | null,
+    description?: string | null,
+    document?: {
+      id: string,
+      objectName: string
+    } | null,
+    payDate?: string | null,
+    status?: 50 | 100 | 1000,
+    sumNet?: string,
+    sumTax?: string,
+    sumGross?: string,
+    sumNetAccounting?: string,
+    sumTaxAccounting?: string,
+    sumGrossAccounting?: string,
+    sumDiscounts?: string,
+    sumDiscountsForeignCurrency?: string,
+    paidAmount?: number | null,
+    taxRule?: {
+      id: 1 | 2 | 3 | 4 | 5 | 8 | 9 | 10 | 11 | 12 | 13 | 14,
+      objectName: TaxRule
+    },
+    taxType?: string | null,
+    creditDebit?: C | D,
+    costCentre?: {
+      id: string,
+      objectName: string
+    },
+    voucherType?: VOU | RV,
+    currency?: string | null,
+    propertyForeignCurrencyDeadline?: string | null,
+    propertyExchangeRate?: string | null,
+    recurringInterval?: P0Y0M1W | P0Y0M2W | P0Y1M0W | P0Y3M0W | P0Y6M0W | P1Y0M0W | P2Y0M0W | P3Y0M0W | P4Y0M0W | P5Y0M0W,
+    recurringStartDate?: string | null,
+    recurringNextVoucher?: string | null,
+    recurringLastVoucher?: string | null,
+    recurringEndDate?: string | null,
+    enshrined?: string,
+    taxSet?: {
+      id: string,
+      objectName: string
+    } | null,
+    paymentDeadline?: string | null,
+    deliveryDate?: string,
+    deliveryDateUntil?: string | null
   },
-  createUser?: {
-    id: string,
-    objectName: string
-  },
-  voucherDate?: string | null,
-  supplier?: {
-    id: string,
-    objectName: string
-  } | null,
-  supplierName?: string | null,
-  description?: string | null,
-  document?: {
-    id: string,
-    objectName: string
-  } | null,
-  payDate?: string | null,
-  status?: 50 | 100 | 1000,
-  sumNet?: string,
-  sumTax?: string,
-  sumGross?: string,
-  sumNetAccounting?: string,
-  sumTaxAccounting?: string,
-  sumGrossAccounting?: string,
-  sumDiscounts?: string,
-  sumDiscountsForeignCurrency?: string,
-  paidAmount?: number | null,
-  taxRule?: {
-    id: 1 | 2 | 3 | 4 | 5 | 8 | 9 | 10 | 11 | 12 | 13 | 14,
-    objectName: TaxRule
-  },
-  taxType?: string | null,
-  creditDebit?: C | D,
-  costCentre?: {
-    id: string,
-    objectName: string
-  },
-  voucherType?: VOU | RV,
-  currency?: string | null,
-  propertyForeignCurrencyDeadline?: string | null,
-  propertyExchangeRate?: string | null,
-  recurringInterval?: P0Y0M1W | P0Y0M2W | P0Y1M0W | P0Y3M0W | P0Y6M0W | P1Y0M0W | P2Y0M0W | P3Y0M0W | P4Y0M0W | P5Y0M0W,
-  recurringStartDate?: string | null,
-  recurringNextVoucher?: string | null,
-  recurringLastVoucher?: string | null,
-  recurringEndDate?: string | null,
-  enshrined?: string,
-  taxSet?: {
-    id: string,
-    objectName: string
-  } | null,
-  paymentDeadline?: string | null,
-  deliveryDate?: string,
-  deliveryDateUntil?: string | null
+  voucherPos?: {
+    id?: string,
+    objectName?: string,
+    create?: string,
+    update?: string,
+    sevClient?: {
+      id: string,
+      objectName: string
+    },
+    voucher: {
+      id: string,
+      objectName: string
+    },
+    accountDatev: {
+      id: number,
+      objectName: string
+    },
+    accountingType: {
+      id: string,
+      objectName: string
+    },
+    estimatedAccountingType?: {
+      id: string,
+      objectName: string
+    },
+    taxRate: string,
+    net: boolean,
+    isAsset?: boolean,
+    sumNet: string,
+    sumTax?: string,
+    sumGross: string,
+    sumNetAccounting?: string,
+    sumTaxAccounting?: string,
+    sumGrossAccounting?: string,
+    comment?: string | null
+  }[],
+  filename?: string
 }
-```
-</Accordion>
-
-<Accordion title="voucherPos full type">
-
-```ts
-{
-  id?: string,
-  objectName?: string,
-  create?: string,
-  update?: string,
-  sevClient?: {
-    id: string,
-    objectName: string
-  },
-  voucher: {
-    id: string,
-    objectName: string
-  },
-  accountDatev: {
-    id: number,
-    objectName: string
-  },
-  accountingType: {
-    id: string,
-    objectName: string
-  },
-  estimatedAccountingType?: {
-    id: string,
-    objectName: string
-  },
-  taxRate: string,
-  net: boolean,
-  isAsset?: boolean,
-  sumNet: string,
-  sumTax?: string,
-  sumGross: string,
-  sumNetAccounting?: string,
-  sumTaxAccounting?: string,
-  sumGrossAccounting?: string,
-  comment?: string | null
-}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -16593,3 +15840,4 @@ await corsair.sevdesk.api.voucherPos.getVoucherPositions({});
 
 
 ---
+
