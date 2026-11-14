@@ -350,7 +350,7 @@ const eventeeEndpointMeta = {
 		description: 'List all event partners with sponsor and exhibitor details',
 	},
 	'attendeeInvite.put': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Invite attendees by email with optional profile details and tickets',
 	},
@@ -369,7 +369,7 @@ const eventeeEndpointMeta = {
 			'Remove an attendee, their event participation, invitation and tickets',
 	},
 	'registrationInvite.put': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create or update event registrations by email',
 	},
 	'registrations.get': {

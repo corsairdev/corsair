@@ -497,6 +497,12 @@ describe('Eventee REST operation routing', () => {
 		expect(meta?.['partnerSections.patch']?.riskLevel).toBe('destructive');
 		expect(meta?.['contentReset.delete']?.riskLevel).toBe('destructive');
 		expect(meta?.['partner.patch']?.riskLevel).toBe('write');
-		expect(meta?.['attendeeInvite.put']?.riskLevel).toBe('write');
+	});
+
+	it('marks invitations that can email people as destructive', () => {
+		const meta = eventee({}).endpointMeta;
+		// `send_email: true` makes Eventee email each invited person.
+		expect(meta?.['attendeeInvite.put']?.riskLevel).toBe('destructive');
+		expect(meta?.['registrationInvite.put']?.riskLevel).toBe('destructive');
 	});
 });

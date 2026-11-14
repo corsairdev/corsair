@@ -52,7 +52,7 @@ The plugin implements all 31 REST operations in the [official Eventee Public API
 
 - Eventee limits requests to 200 per minute. The documented limit response is HTTP 400 without `Retry-After`; pause bulk jobs until the 60-second window resets rather than retrying automatically.
 - Attendee invitations and registrations process the first 25 entries immediately and the rest in the background. Eventee silently skips invalid entries; invitation also skips event admins and moderators.
-- Destructive operations are marked `destructive`. In particular, deleting a hall removes its sessions, deleting a session removes its related questions/polls/bookings/ratings, and deleting all test content removes all sessions, breaks, halls, speakers and labels.
+- Destructive operations are marked `destructive`. In particular, deleting a hall removes its sessions, deleting a session removes its related questions/polls/bookings/ratings, and deleting all test content removes all sessions, breaks, halls, speakers and labels. Inviting attendees and creating registrations are `destructive` too, because `send_email: true` emails each person.
 - Eventee accepts image/file URLs for some partner and speaker content and downloads those assets itself. The API returns JSON, not file bytes.
 - No documented REST operation is excluded. No webhook support is included because the official OpenAPI documents no webhook contract.
 
