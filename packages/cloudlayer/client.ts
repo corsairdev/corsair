@@ -110,12 +110,12 @@ function collectRequestStrings(
 function sanitizeProviderMessage(
 	message: string,
 	apiKey: string,
-	options: CloudlayerSyncRequestOptions,
+	// The submitted body, form parts and query; any value may be echoed back.
+	requestParts: unknown[],
 ): string {
 	const privateValues = new Set<string>();
 	if (apiKey.length >= 4) privateValues.add(apiKey);
-	collectRequestStrings(options.body, privateValues);
-	collectRequestStrings(options.query, privateValues);
+	for (const part of requestParts) collectRequestStrings(part, privateValues);
 
 	return [...privateValues]
 		.sort((left, right) => right.length - left.length)
@@ -125,19 +125,17 @@ function sanitizeProviderMessage(
 		);
 }
 
-async function readProviderError(
-	response: Response,
+/**
+ * Keep only the provider's status fields and a redacted message from an error
+ * body. Providers can echo submitted HTML, template data or credentials, so
+ * nothing else from the body reaches the ApiError.
+ */
+// `unknown` because the error body is untrusted JSON; isRecord narrows it.
+function safeProviderError(
+	parsed: unknown,
 	apiKey: string,
-	options: CloudlayerSyncRequestOptions,
-): Promise<{ body?: Record<string, unknown>; message?: string }> {
-	// `unknown` because response.json() returns untrusted data; isRecord
-	// narrows it before any field is read.
-	let parsed: unknown;
-	try {
-		parsed = await response.json();
-	} catch {
-		return {};
-	}
+	requestParts: unknown[],
+): { body?: Record<string, unknown>; message?: string } {
 	if (!isRecord(parsed)) return {};
 
 	const messageValue = [parsed.message, parsed.error, parsed.detail].find(
@@ -146,7 +144,7 @@ async function readProviderError(
 	const message =
 		messageValue === undefined
 			? undefined
-			: sanitizeProviderMessage(messageValue, apiKey, options);
+			: sanitizeProviderMessage(messageValue, apiKey, requestParts);
 	const body: Record<string, unknown> = {};
 	if (typeof parsed.statusCode === 'number')
 		body.statusCode = parsed.statusCode;
@@ -157,6 +155,20 @@ async function readProviderError(
 		...(Object.keys(body).length > 0 ? { body } : {}),
 		...(message === undefined ? {} : { message }),
 	};
+}
+
+async function readProviderError(
+	response: Response,
+	apiKey: string,
+	options: CloudlayerSyncRequestOptions,
+): Promise<{ body?: Record<string, unknown>; message?: string }> {
+	let parsed: unknown;
+	try {
+		parsed = await response.json();
+	} catch {
+		return {};
+	}
+	return safeProviderError(parsed, apiKey, [options.body, options.query]);
 }
 
 type CloudlayerSyncRequestOptions = {
@@ -329,19 +341,29 @@ export async function makeCloudlayerRequest<T>(
 		return response;
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// The request body and form parts hold submitted HTML, template
-			// data, page passwords and storage credentials; keep them out of
-			// the error and keep status and retry timing for core's handlers.
+			// The request body, form parts and query hold submitted HTML,
+			// template data, page passwords, storage credentials and capture
+			// URLs that may be signed; the provider can echo any of them in its
+			// error body. Keep only the method, path, status fields and a
+			// redacted message, plus status and retry timing for core's handlers.
+			const providerError = safeProviderError(error.body, apiKey, [
+				body,
+				formData,
+				query,
+			]);
+			const message =
+				providerError.message ??
+				sanitizeProviderMessage(error.message, apiKey, [body, formData, query]);
 			throw new ApiError(
-				{ ...error.request, body: undefined, formData: undefined },
+				{ method, url: endpoint },
 				{
-					url: error.url,
+					url: `${config.BASE}${endpoint}`,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
-					body: error.body,
+					body: providerError.body,
 				},
-				error.message,
+				message,
 				{
 					retryAfter: error.retryAfter,
 					rateLimitReset: error.rateLimitReset,

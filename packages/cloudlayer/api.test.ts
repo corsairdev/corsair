@@ -20,7 +20,8 @@ describeLive('Cloudlayer live API (env-gated, read-only)', () => {
 		});
 		const account = AccountGetOutputSchema.parse(response);
 
-		expect(['limit', 'usage']).toContain(account.subType);
+		// The schema accepts billing types beyond limit and usage.
+		expect(typeof account.subType).toBe('string');
 		expect(typeof account.calls).toBe('number');
 		// A fresh account omits totalJobs until its first job runs.
 		if (account.totalJobs !== undefined) {

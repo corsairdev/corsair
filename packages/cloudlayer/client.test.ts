@@ -247,6 +247,78 @@ describe('makeCloudlayerRequest', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 	});
 
+	it('keeps a signed capture URL out of a quick-route ApiError', async () => {
+		const captureUrl =
+			'https://bucket.example.com/page.html?X-Amz-Signature=private-signature-123';
+		const failed = new ApiError(
+			{
+				method: 'GET',
+				url: '/url/pdf',
+				query: { url: captureUrl, timeout: 30 },
+			},
+			{
+				url: `https://api.cloudlayer.io/v2/url/pdf?url=${encodeURIComponent(captureUrl)}`,
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { statusCode: 429, message: 'Too Many Requests' },
+			},
+			'Too Many Requests',
+			{ retryAfter: 1000 },
+		);
+		mockedRequest.mockRejectedValue(failed);
+
+		const error = await makeCloudlayerRequest('/url/pdf', 'unit-test-key', {
+			method: 'GET',
+			query: { url: captureUrl, timeout: 30 },
+			// `unknown` because a rejection value has no static type.
+		}).catch((caught: unknown) => caught);
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
+		const serialized = JSON.stringify(error);
+		expect(serialized).not.toContain('private-signature-123');
+		expect(error.url).toBe(`${CLOUDLAYER_API_BASE}/url/pdf`);
+		expect(error.request).toEqual({ method: 'GET', url: '/url/pdf' });
+		expect(error).toMatchObject({ status: 429, retryAfter: 1000 });
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+	});
+
+	it('keeps only status fields and a redacted message from a provider error body', async () => {
+		const failed = new ApiError(
+			{ method: 'POST', url: '/html/pdf' },
+			{
+				url: 'https://api.cloudlayer.io/v2/html/pdf',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: {
+					statusCode: 400,
+					status: 'error',
+					message: 'Invalid template near <p>private-html-body</p>',
+					request: { html: '<p>private-html-body</p>', password: 'pw-secret' },
+				},
+			},
+			'Invalid template near <p>private-html-body</p>',
+		);
+		mockedRequest.mockRejectedValue(failed);
+
+		const error = await makeCloudlayerRequest('/html/pdf', 'unit-test-key', {
+			method: 'POST',
+			body: { html: '<p>private-html-body</p>', password: 'pw-secret' },
+			// `unknown` because a rejection value has no static type.
+		}).catch((caught: unknown) => caught);
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
+		const serialized = JSON.stringify({ ...error, message: error.message });
+		expect(serialized).not.toContain('private-html-body');
+		expect(serialized).not.toContain('pw-secret');
+		expect(error.body).toEqual({
+			statusCode: 400,
+			status: 'error',
+			message: 'Invalid template near [REDACTED]',
+		});
+		expect(error.message).toBe('Invalid template near [REDACTED]');
+		expect(error.status).toBe(400);
+	});
+
 	it('uses the bounded sync timeout and parses the documented v2 job response', async () => {
 		const timeoutSpy = jest.spyOn(AbortSignal, 'timeout');
 		const fetchMock = jest
