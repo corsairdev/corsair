@@ -6,6 +6,9 @@ export class MondayMcpAPIError extends Error {
 		public readonly code?: string,
 		public readonly status?: number,
 		public readonly retryAfter?: number,
+		// Error response bodies vary by endpoint and error kind (JSON, HTML or
+		// empty) and are surfaced for diagnostics only — unknown avoids inventing
+		// a shape the provider does not guarantee.
 		public readonly body?: unknown,
 	) {
 		super(message);
@@ -34,8 +37,16 @@ const REQUEST_TIMEOUT_MS = 60_000;
 type JsonRpcResponse = {
 	jsonrpc?: string;
 	id?: number;
+	// Tool result payloads are provider-defined per tool (60 different shapes,
+	// documented by examples rather than schemas) — unknown avoids inventing
+	// structure the wire does not guarantee; output schemas own the public type.
 	result?: unknown;
-	error?: { code?: number; message?: string; data?: unknown };
+	error?: {
+		code?: number;
+		message?: string;
+		// Server-defined extension data; the shape varies by error kind.
+		data?: unknown;
+	};
 };
 
 type SessionHeaders = Record<string, string>;

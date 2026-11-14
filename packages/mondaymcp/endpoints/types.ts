@@ -6,6 +6,18 @@ import { z } from 'zod';
 // 2026-09-06); parameter names are the provider's wire names. Tool results are MCP
 // CallToolResult envelopes whose payload shapes are provider-defined, so they are
 // parsed loosely on purpose.
+//
+// Input-side looseness is equally intentional: the published parameter tables
+// type arrays and nested objects WITHOUT element schemas and direct callers to
+// the tools/list command for current shapes, so their items stay unknown and
+// objects pass through. Validating them more strictly would reject documented
+// payloads as the tool set evolves; the documented top-level fields above are
+// validated strictly, and the loose values are forwarded verbatim on the wire.
+// Both helpers below carry that explanation for every site that uses them.
+const LooseArrayItem = z.unknown();
+
+const LooseRecord = z.record(z.string(), z.unknown());
+
 export const MondayMcpToolResultItemSchema = z
 	.object({
 		type: z.string().optional(),
@@ -28,7 +40,7 @@ export const AgentsCatalogInputSchema = z
 			.enum(['list_triggers', 'list_skills'])
 			.describe('list_triggers or list_skills.'),
 		block_reference_ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Used with list_triggers. Fetch specific trigger types by block_reference_id. Omit to return all trigger types.',
 			)
@@ -67,13 +79,13 @@ export const BoardsInsightsInputSchema = z
 			.number()
 			.describe('The ID of the board to calculate insights for.'),
 		aggregations: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of aggregation objects, each with a `columnId` and an optional `function`. Supported functions include `COUNT`, `COUNT_ITEMS`, `SUM`, `AVERAGE`, `MIN`, `MAX`, `MEDIAN`, `LABEL`, `DATE_TRUNC_MONTH`, `DATE_TRUNC_WEEK`, and more. Columns in `groupBy` must also appear here without a function.',
 			)
 			.optional(),
 		groupBy: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of column IDs to group results by. All groupBy columns must also be present in `aggregations` without a function.',
 			)
@@ -85,7 +97,7 @@ export const BoardsInsightsInputSchema = z
 			)
 			.optional(),
 		filters: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of column filter objects (same structure as `get_board_items_page` filters). Narrows the item set before aggregation.',
 			)
@@ -97,7 +109,7 @@ export const BoardsInsightsInputSchema = z
 			)
 			.optional(),
 		orderBy: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of sort objects with `columnId` and `direction` (`asc` or `desc`).',
 			)
@@ -164,7 +176,7 @@ export const BoardsCreateInputSchema = z
 			)
 			.optional(),
 		boardOwnerIds: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'List of user IDs to set as board owners. Use `list_users_and_teams` to look up user IDs.',
 			)
@@ -209,7 +221,7 @@ export const DashboardsCreateInputSchema = z
 				'ID of the workspace that will own the dashboard. Use `list_workspaces` or `workspace_info` to find workspace IDs.',
 			),
 		board_ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'List of board IDs (as strings) to connect to the dashboard. Minimum 1, maximum 50. All widgets on this dashboard will source data from these boards.',
 			),
@@ -239,7 +251,7 @@ export const DocsCreateInputSchema = z
 				'Markdown content to import into the document as blocks on creation.',
 			),
 		location: z
-			.enum(['workspace', 'item'])
+			.string()
 			.describe(
 				'Where to create the document. One of `workspace` (standalone doc) or `item` (attached to a board item).',
 			),
@@ -275,13 +287,21 @@ export const DocsCreateInputSchema = z
 			.optional(),
 	})
 	.loose()
+	// workspace_id and item_id apply to different location modes: item_id is
+	// required when location is item, workspace_id otherwise.
 	.superRefine((value, ctx) => {
-		const field = value.location === 'workspace' ? 'workspace_id' : 'item_id';
-		if (value[field] === undefined) {
+		if (value.location === 'item' && !value.item_id) {
 			ctx.addIssue({
 				code: 'custom',
-				path: [field],
-				message: `${field} is required for ${value.location} documents`,
+				message: 'item_id is required when location is item.',
+				path: ['item_id'],
+			});
+		}
+		if (value.location !== 'item' && !value.workspace_id) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'workspace_id is required unless location is item.',
+				path: ['workspace_id'],
 			});
 		}
 	});
@@ -353,19 +373,19 @@ export const FormsCreateInputSchema = z
 			)
 			.optional(),
 		board_owner_ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe('List of user IDs to set as owners of the backing board.')
 			.optional(),
 		board_owner_team_ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe('List of team IDs to set as owners of the backing board.')
 			.optional(),
 		board_subscriber_ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe('User IDs to notify on board activity.')
 			.optional(),
 		board_subscriber_teams_ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe('Team IDs to notify on board activity.')
 			.optional(),
 	})
@@ -381,7 +401,7 @@ export const FormsCreateSubmissionInputSchema = z
 				'The form token, a full WorkForm URL, or a shortened wkf.ms URL. Shortened URLs are automatically resolved.',
 			),
 		answers: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of answer objects. Each object must include question_id and exactly one answer field matching the question type. See answer type fields below.',
 			),
@@ -397,7 +417,7 @@ export const FormsCreateSubmissionInputSchema = z
 			)
 			.optional(),
 		tags: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Routing tags to attach to the submission. Each tag maps a column_id to a value.',
 			)
@@ -519,36 +539,27 @@ export type UpdatesCreateInput = z.infer<typeof UpdatesCreateInputSchema>;
 export const ViewsCreateInputSchema = z
 	.object({
 		boardId: z.string().describe('The board ID to create the view on.'),
-		type: z
-			.unknown()
-			.describe(
-				'The type of board view to create. Defaults to TABLE. Use TABLE for standard board views.',
-			)
-			.optional(),
+		type: LooseArrayItem.describe(
+			'The type of board view to create. Defaults to TABLE. Use TABLE for standard board views.',
+		).optional(),
 		name: z
 			.string()
 			.describe(
 				'The name of the view (e.g. "High Priority Items", "My Tasks").',
 			)
 			.optional(),
-		filter: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and).',
-			)
-			.optional(),
+		filter: LooseRecord.describe(
+			'Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and).',
+		).optional(),
 		sort: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Sort configuration. Array of { column_id, direction } objects. direction defaults to asc.',
 			)
 			.optional(),
-		settings: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Type-specific view settings as a JSON object. The shape varies by view type. For TABLE views, prefer create_view_table.',
-			)
-			.optional(),
+		settings: LooseRecord.describe(
+			'Type-specific view settings as a JSON object. The shape varies by view type. For TABLE views, prefer create_view_table.',
+		).optional(),
 	})
 	.loose();
 
@@ -563,28 +574,22 @@ export const ViewsCreateTableInputSchema = z
 				'The name of the view (e.g. "High Priority Items", "My Tasks").',
 			)
 			.optional(),
-		filter: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and).',
-			)
-			.optional(),
+		filter: LooseRecord.describe(
+			'Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and).',
+		).optional(),
 		sort: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Sort configuration. Array of { column_id, direction } objects. direction defaults to asc.',
 			)
 			.optional(),
 		tags: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe('Tags to apply to the view.')
 			.optional(),
-		settings: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Table-specific settings: columns (visibility/order) and group_by. See the settings reference below.',
-			)
-			.optional(),
+		settings: LooseRecord.describe(
+			'Table-specific settings: columns (visibility/order) and group_by. See the settings reference below.',
+		).optional(),
 	})
 	.loose();
 
@@ -610,12 +615,9 @@ export const DashboardsCreateWidgetInputSchema = z
 		widget_name: z
 			.string()
 			.describe('Display name for the widget (1–255 UTF-8 characters).'),
-		settings: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Widget-specific configuration as a JSON object. Must conform to the schema for the specified `widget_kind`. Use `all_widgets_schema` to retrieve the required structure for each type.',
-			)
-			.optional(),
+		settings: LooseRecord.describe(
+			'Widget-specific configuration as a JSON object. Must conform to the schema for the specified `widget_kind`. Use `all_widgets_schema` to retrieve the required structure for each type.',
+		).optional(),
 	})
 	.loose();
 
@@ -647,7 +649,7 @@ export const WorkflowsCreateInputSchema = z
 			.describe('Optional folder ID to place the workflow in.')
 			.optional(),
 		ownerIds: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe('Optional list of user IDs to set as workflow owners.')
 			.optional(),
 	})
@@ -714,12 +716,9 @@ export const FormsEditQuestionsInputSchema = z
 				'ID of the question to update or delete. Required for update and delete.',
 			)
 			.optional(),
-		question: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'The question definition. Required for create. For update, required with type always included. See sub-fields below.',
-			)
-			.optional(),
+		question: LooseRecord.describe(
+			'The question definition. Required for create. For update, required with type always included. See sub-fields below.',
+		).optional(),
 	})
 	.loose();
 
@@ -754,7 +753,7 @@ export type AssetsGetUploadUrlInput = z.infer<
 export const AssetsGetInputSchema = z
 	.object({
 		ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of asset IDs to fetch. Must contain at least one ID. Asset IDs are numeric strings (e.g., `["12345678"]`).',
 			),
@@ -807,7 +806,7 @@ export const BoardsGetItemsPageInputSchema = z
 	.object({
 		boardId: z.number().describe('The ID of the board to retrieve items from.'),
 		itemIds: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe('Fetch specific items by their IDs (maximum 100).')
 			.optional(),
 		searchTerm: z
@@ -853,7 +852,7 @@ export const BoardsGetItemsPageInputSchema = z
 			)
 			.optional(),
 		filters: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of column filter objects. Each filter requires `columnId` and `compareValue`, with optional `operator` and `compareAttribute`. Call `get_column_type_info` with `fetchMode: "guidelines"` to understand valid filter values per column type.',
 			)
@@ -865,13 +864,13 @@ export const BoardsGetItemsPageInputSchema = z
 			)
 			.optional(),
 		columnIds: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Limit which columns are returned when `includeColumns` is true. Omit to return all columns.',
 			)
 			.optional(),
 		orderBy: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of sort objects with `columnId` and `direction` (`asc` or `desc`).',
 			)
@@ -937,7 +936,7 @@ export type SprintsGetBoardsInput = z.infer<typeof SprintsGetBoardsInputSchema>;
 export const MeetingsGetNotetakerInputSchema = z
 	.object({
 		ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Filter by specific meeting IDs. Use to fetch one or more specific meetings in a single call.',
 			)
@@ -1129,7 +1128,7 @@ export const UsersListAndTeamsInputSchema = z
 			)
 			.optional(),
 		userIds: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of specific user IDs to fetch (max 500). Always use when user IDs are available in context. Returns user profiles including team memberships.',
 			)
@@ -1141,7 +1140,7 @@ export const UsersListAndTeamsInputSchema = z
 			)
 			.optional(),
 		teamIds: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of specific team IDs to fetch (max 500). Always use when team IDs are known. Returns team details with owners and optional member data.',
 			)
@@ -1224,12 +1223,9 @@ export const AgentsManageInputSchema = z
 				'Required for create. Plain-language description of what the agent should do.',
 			)
 			.optional(),
-		agent_model: z
-			.unknown()
-			.describe(
-				'Used with create or update. Omit unless the user explicitly names a valid monday-supported model.',
-			)
-			.optional(),
+		agent_model: LooseArrayItem.describe(
+			'Used with create or update. Omit unless the user explicitly names a valid monday-supported model.',
+		).optional(),
 		name: z
 			.string()
 			.describe('Used with create_blank or update. Display name of the agent.')
@@ -1360,12 +1356,9 @@ export const AgentsManageTriggersInputSchema = z
 				'Required for add. The trigger type\'s block_reference_id from agent_catalog action: "list_triggers". Never guess this value.',
 			)
 			.optional(),
-		field_values: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Used with add when the trigger type has required fields. Key/value object whose shape is described by field_schemas in the catalog. Scalar fields use string/number/boolean; selection fields use {\'{ "value": "", "label": "" }\'}.',
-			)
-			.optional(),
+		field_values: LooseRecord.describe(
+			'Used with add when the trigger type has required fields. Key/value object whose shape is described by field_schemas in the catalog. Scalar fields use string/number/boolean; selection fields use {\'{ "value": "", "label": "" }\'}.',
+		).optional(),
 		node_id: z
 			.string()
 			.describe(
@@ -1499,7 +1492,7 @@ export const DocsReadInputSchema = z
 			)
 			.optional(),
 		ids: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of ID values matching the selected `type`. In `version_history` mode, provide the single document `object_id` here (e.g., `["18412502542"]`).',
 			),
@@ -1614,7 +1607,7 @@ export const SearchQueryInputSchema = z
 			.describe('Page number to return, starting at 1. Defaults to `1`.')
 			.optional(),
 		workspaceIds: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Array of workspace IDs to scope the search. Only pass this when you want to restrict results to specific workspaces.',
 			)
@@ -1639,7 +1632,7 @@ export const DocsUpdateInputSchema = z
 			)
 			.optional(),
 		operations: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Ordered list of operations to perform (1–25). Each operation requires an `operation_type` and type-specific fields. See operation types below.',
 			),
@@ -1727,22 +1720,16 @@ export const FormsUpdateInputSchema = z
 			.describe(
 				'The operation to perform. See the table below for all supported actions and their required fields.',
 			),
-		form: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Form data to update. Required for updateFormHeader, updateAppearance, updateAccessibility, updateFeatures, and updateQuestionOrder. Patch semantics — only include the fields you want to change.',
-			)
-			.optional(),
+		form: LooseRecord.describe(
+			'Form data to update. Required for updateFormHeader, updateAppearance, updateAccessibility, updateFeatures, and updateQuestionOrder. Patch semantics — only include the fields you want to change.',
+		).optional(),
 		formPassword: z
 			.string()
 			.describe('Required for the setFormPassword action.')
 			.optional(),
-		tag: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Required for createTag, updateTag, and deleteTag. For create: provide name and value. For update: provide id and new value. For delete: provide id only.',
-			)
-			.optional(),
+		tag: LooseRecord.describe(
+			'Required for createTag, updateTag, and deleteTag. For create: provide name and value. For update: provide id and new value. For delete: provide id only.',
+		).optional(),
 	})
 	.loose();
 
@@ -1752,32 +1739,25 @@ export const ViewsUpdateInputSchema = z
 	.object({
 		viewId: z.string().describe('The ID of the view to update.'),
 		boardId: z.string().describe('The board ID the view belongs to.'),
-		type: z
-			.unknown()
-			.describe('The type of the board view being updated. Defaults to TABLE.')
-			.optional(),
+		type: LooseArrayItem.describe(
+			'The type of the board view being updated. Defaults to TABLE.',
+		).optional(),
 		name: z
 			.string()
 			.describe('New name for the view (omit to leave unchanged).')
 			.optional(),
-		filter: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and).',
-			)
-			.optional(),
+		filter: LooseRecord.describe(
+			'Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and).',
+		).optional(),
 		sort: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Sort configuration. Array of { column_id, direction } objects. direction defaults to asc.',
 			)
 			.optional(),
-		settings: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Type-specific view settings as a JSON object. The shape varies by view type. For TABLE views, prefer update_view_table.',
-			)
-			.optional(),
+		settings: LooseRecord.describe(
+			'Type-specific view settings as a JSON object. The shape varies by view type. For TABLE views, prefer update_view_table.',
+		).optional(),
 	})
 	.loose();
 
@@ -1791,28 +1771,22 @@ export const ViewsUpdateTableInputSchema = z
 			.string()
 			.describe('New name for the view (omit to leave unchanged).')
 			.optional(),
-		filter: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and).',
-			)
-			.optional(),
+		filter: LooseRecord.describe(
+			'Filter configuration. Contains rules (an array of { column_id, compare_value, operator }) and an optional operator (logical operator between rules, defaults to and).',
+		).optional(),
 		sort: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe(
 				'Sort configuration. Array of { column_id, direction } objects. direction defaults to asc.',
 			)
 			.optional(),
 		tags: z
-			.array(z.unknown())
+			.array(LooseArrayItem)
 			.describe('Tags to apply to the view.')
 			.optional(),
-		settings: z
-			.record(z.string(), z.unknown())
-			.describe(
-				'Table-specific settings: columns (visibility/order) and group_by. Same shape as create_view_table.',
-			)
-			.optional(),
+		settings: LooseRecord.describe(
+			'Table-specific settings: columns (visibility/order) and group_by. Same shape as create_view_table.',
+		).optional(),
 	})
 	.loose();
 
