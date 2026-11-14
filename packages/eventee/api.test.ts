@@ -4,6 +4,9 @@ import { makeEventeeRequest } from './client';
 import { EventeeEndpointOutputSchemas } from './endpoints/types';
 
 const liveKey = process.env.EVENTEE_API_KEY ?? '';
+if (liveKey.length === 0) {
+	console.warn('Skipping Eventee live tests: EVENTEE_API_KEY is not set.');
+}
 const describeLive = liveKey.length > 0 ? describe : describe.skip;
 
 describeLive('Eventee live read-only API smoke tests', () => {
