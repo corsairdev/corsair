@@ -220,6 +220,7 @@ export const BaseProviders = [
 	'dropboxsign',
 	'dropcontact',
 	'dynapictures',
+	'e2b',
 	'elevenlabs',
 	'emailoctopus',
 	'emelia',
@@ -755,6 +756,7 @@ export const ProviderDisplayNames = {
 	dropboxsign: 'Dropbox Sign',
 	dropcontact: 'Dropcontact',
 	dynapictures: 'Dynapictures',
+	e2b: 'E2B',
 	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
@@ -1297,6 +1299,7 @@ export type AllProviders =
 	| 'dropboxsign'
 	| 'dropcontact'
 	| 'dynapictures'
+	| 'e2b'
 	| 'elevenlabs'
 	| 'emailoctopus'
 	| 'emelia'
