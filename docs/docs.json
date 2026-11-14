@@ -1561,6 +1561,14 @@
                 ]
               },
               {
+                "group": "Conversion Tools",
+                "pages": [
+                  "plugins/conversiontools/overview",
+                  "plugins/conversiontools/api",
+                  "plugins/conversiontools/database"
+                ]
+              },
+              {
                 "group": "Convex",
                 "pages": [
                   "plugins/convex/overview",
