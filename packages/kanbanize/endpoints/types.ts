@@ -661,14 +661,53 @@ const CardResponseSchema = z.object({ data: KanbanizeCardSchema }).loose();
 
 export type CardResponse = z.infer<typeof CardResponseSchema>;
 
+const IdArraySchema = z.array(z.number().int().positive()).min(1);
+
+// Businessmap takes one write shape per field type: `value` for text, number,
+// date and link fields; `selected_values_to_add_or_update` for a dropdown;
+// contributor, vote and card-picker fields have their own keys.
 const CustomFieldValueSchema = z
 	.object({
 		field_id: z.number().int().positive(),
 		value: z
 			.union([z.string(), z.number(), z.array(z.string())])
-			.describe('The value. A dropdown takes the option ID as a number.'),
+			.nullable()
+			.optional()
+			.describe('Text, number, date or link fields. null clears the value.'),
+		selected_values_to_add_or_update: z
+			.array(
+				z
+					.object({
+						value_id: z.number().int().positive(),
+						position: z.number().int().min(0).optional(),
+					})
+					.loose(),
+			)
+			.min(1)
+			.optional()
+			.describe('Dropdown fields: the option IDs to select.'),
+		selected_value_ids_to_remove: IdArraySchema.optional().describe(
+			'Dropdown fields: the option IDs to unselect.',
+		),
+		other_value: z
+			.string()
+			.nullable()
+			.optional()
+			.describe('Dropdown fields when "Other" is selected.'),
+		contributor_ids_to_add: IdArraySchema.optional(),
+		contributor_ids_to_remove: IdArraySchema.optional(),
+		vote: z
+			.union([z.literal(0), z.literal(1)])
+			.optional()
+			.describe('Vote fields: `1` up, `0` down.'),
+		comment: z.string().nullable().optional(),
 	})
-	.loose();
+	.loose()
+	.refine(
+		({ field_id: _fieldId, ...change }) =>
+			Object.values(change).some((entry) => entry !== undefined),
+		{ message: 'Send a value or a change for the custom field.' },
+	);
 
 const SubtaskToAddSchema = z
 	.object({
@@ -764,6 +803,26 @@ const CardUpdateInputSchema = z
 			.optional(),
 		custom_field_ids_to_remove: IdListQuerySchema.optional(),
 		subtasks_to_add: z.array(SubtaskToAddSchema).min(1).optional(),
+		// Businessmap documents null on these to clear them.
+		custom_id: z.string().min(1).nullable().optional(),
+		owner_user_id: z
+			.number()
+			.int()
+			.positive()
+			.nullable()
+			.optional()
+			.describe('null removes the owner.'),
+		type_id: z.number().int().positive().nullable().optional(),
+		size: z
+			.number()
+			.nullable()
+			.optional()
+			.describe('null counts as a size of 1.'),
+		deadline: z
+			.string()
+			.nullable()
+			.optional()
+			.describe('ISO 8601 with a timezone offset. null removes the deadline.'),
 		is_archived: FlagSchema.optional().describe('`1` archives the card.'),
 		is_discarded: FlagSchema.optional().describe('`1` discards the card.'),
 	})

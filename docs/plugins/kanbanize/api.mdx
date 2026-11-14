@@ -280,7 +280,7 @@ await corsair.kanbanize.api.cards.create({ title: 'Ship the pricing page', colum
 | `subtasks_to_add` | `object[]` | No | — |
 | `watch` | `0 \| 1` | No | `1` to have the key’s user watch the new card. |
 
-`title`, `column_id` and `lane_id` are required: Businessmap places every new card in a column and a lane. It answers with a one-card array, which the plugin returns as `data`.
+`title`, `column_id` and `lane_id` are required: Businessmap places every new card in a column and a lane. Businessmap answers with a one-card array; the plugin returns that card as the `data` object, the same shape `cards.get` returns.
 
 <AccordionGroup>
 <Accordion title="custom_fields_to_add_or_update full type">
@@ -288,7 +288,17 @@ await corsair.kanbanize.api.cards.create({ title: 'Ship the pricing page', colum
 ```ts
 {
   field_id: number,
-  value: string | number | string[]
+  value?: string | number | string[] | null,
+  selected_values_to_add_or_update?: {
+    value_id: number,
+    position?: number
+  }[],
+  selected_value_ids_to_remove?: number[],
+  other_value?: string | null,
+  contributor_ids_to_add?: number[],
+  contributor_ids_to_remove?: number[],
+  vote?: 0 | 1,
+  comment?: string | null
 }[]
 ```
 </Accordion>
@@ -613,13 +623,13 @@ await corsair.kanbanize.api.cards.update({ card_id: 539522, column_id: 15877, pr
 | `position` | `number` | No | `0` is the top. |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
-| `custom_id` | `string` | No | — |
-| `owner_user_id` | `number` | No | — |
-| `type_id` | `number` | No | — |
-| `size` | `number` | No | — |
+| `custom_id` | `string \| null` | No | — |
+| `owner_user_id` | `number \| null` | No | null removes the owner. |
+| `type_id` | `number \| null` | No | — |
+| `size` | `number \| null` | No | null counts as a size of 1. |
 | `priority` | `1 \| 2 \| 3 \| 4` | No | `1` critical, `2` high, `3` average, `4` low. |
 | `color` | `string` | No | Hexadecimal, such as `a1b2c3`. |
-| `deadline` | `string` | No | ISO 8601 with a timezone offset. |
+| `deadline` | `string \| null` | No | ISO 8601 with a timezone offset. null removes the deadline. |
 | `co_owner_ids_to_add` | `number[]` | No | — |
 | `watcher_ids_to_add` | `number[]` | No | — |
 | `tag_ids_to_add` | `number[]` | No | — |
@@ -642,7 +652,17 @@ Moving into a column whose WIP limit is reached answers 409 with code `L001`, wh
 ```ts
 {
   field_id: number,
-  value: string | number | string[]
+  value?: string | number | string[] | null,
+  selected_values_to_add_or_update?: {
+    value_id: number,
+    position?: number
+  }[],
+  selected_value_ids_to_remove?: number[],
+  other_value?: string | null,
+  contributor_ids_to_add?: number[],
+  contributor_ids_to_remove?: number[],
+  vote?: 0 | 1,
+  comment?: string | null
 }[]
 ```
 </Accordion>
