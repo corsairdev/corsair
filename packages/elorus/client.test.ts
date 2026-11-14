@@ -141,7 +141,7 @@ describe('Elorus client', () => {
 		expect(config.TOKEN).toBeUndefined();
 	});
 
-	it("keeps the request body out of the error message when core's ApiError passes through", async () => {
+	it("keeps the request body off core's ApiError when it passes through", async () => {
 		const providerError = new ApiError(
 			{
 				method: 'POST',
@@ -167,7 +167,10 @@ describe('Elorus client', () => {
 				method: 'POST',
 				body: { password: 'private-value' },
 			}).catch((caught: unknown) => caught);
-			expect(error).toBe(providerError);
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).toMatchObject({ status: 400, body: { detail: 'invalid' } });
+			expect((error as ApiError).request.body).toBeUndefined();
+			expect(JSON.stringify(error)).not.toContain('private-value');
 			expect(String(error)).not.toContain('private-value');
 		} finally {
 			fetchSpy.mockRestore();

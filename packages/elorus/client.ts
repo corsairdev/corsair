@@ -57,10 +57,36 @@ function routeWithPath(
 	});
 }
 
-// Core's ApiError passes through unchanged so its status, retryAfter and provider body reach core and the error handlers.
+// Core's ApiError goes through (R8) so its status, retryAfter and provider body reach core and the error handlers.
+// It is rebuilt without the sent body, form data and query, which can hold contacts' names, emails and addresses.
 // Any other transport rejection can be an arbitrary value and becomes a generic error.
 function toElorusError(error: unknown): Error {
-	if (error instanceof ApiError) return error;
+	if (error instanceof ApiError) {
+		const url = new URL(error.url, ELORUS_API_BASE);
+		url.search = '';
+		return new ApiError(
+			{
+				...error.request,
+				body: undefined,
+				formData: undefined,
+				query: undefined,
+			},
+			{
+				url: url.toString(),
+				ok: false,
+				status: error.status,
+				statusText: error.statusText,
+				body: error.body,
+			},
+			error.message,
+			{
+				retryAfter: error.retryAfter,
+				rateLimitReset: error.rateLimitReset,
+				rateLimitRemaining: error.rateLimitRemaining,
+				rateLimitLimit: error.rateLimitLimit,
+			},
+		);
+	}
 	return new ElorusAPIError('Elorus API request failed.');
 }
 

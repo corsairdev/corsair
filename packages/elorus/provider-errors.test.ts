@@ -34,6 +34,36 @@ describe('Elorus provider errors', () => {
 		}
 	});
 
+	it('leaves the sent body and query off the ApiError', async () => {
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(jsonResponse({ detail: 'Invalid input.' }, 400));
+		try {
+			const error = await makeElorusRequest('/v1.2/contacts/', 'token', {
+				method: 'POST',
+				body: { email: 'customer@example.com', company: 'Private Co' },
+				query: { search: 'Private Co' },
+				organizationId: 'org',
+				mode: 'json',
+			}).catch((caught: unknown) => caught);
+			expect(error).toBeInstanceOf(ApiError);
+			const apiError = error as ApiError;
+			expect(apiError.status).toBe(400);
+			expect(apiError.request.body).toBeUndefined();
+			expect(apiError.request.query).toBeUndefined();
+			expect(apiError.request.formData).toBeUndefined();
+			const serialized = JSON.stringify({
+				...apiError,
+				message: apiError.message,
+			});
+			expect(serialized).not.toContain('customer@example.com');
+			expect(serialized).not.toContain('Private');
+			expect(serialized).not.toContain('token');
+		} finally {
+			fetchSpy.mockRestore();
+		}
+	});
+
 	it('matches ApiError statuses in every handler', async () => {
 		const apiError = (status: number) =>
 			new ApiError(
