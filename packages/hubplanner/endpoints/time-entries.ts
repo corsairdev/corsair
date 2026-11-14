@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { TimeEntry } from './types';
+import type { SuccessResponse, TimeEntry } from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -131,7 +131,7 @@ export const TimeEntries = {
 	delete: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['timeEntries.delete'].parse(input);
-		const raw = await makeHubPlannerRequest<unknown>(
+		const raw = await makeHubPlannerRequest<SuccessResponse>(
 			`/timeentry/${encodeURIComponent(parsedInput.timeEntryId)}`,
 			ctx.key,
 			{ method: 'DELETE' },
@@ -150,10 +150,14 @@ export const TimeEntries = {
 	deleteBulk: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['timeEntries.deleteBulk'].parse(input);
-		const raw = await makeHubPlannerRequest<unknown>('/timeentry', ctx.key, {
-			method: 'DELETE',
-			body: parsedInput.ids,
-		});
+		const raw = await makeHubPlannerRequest<SuccessResponse>(
+			'/timeentry',
+			ctx.key,
+			{
+				method: 'DELETE',
+				body: parsedInput.ids,
+			},
+		);
 		const parsed =
 			HubPlannerEndpointOutputSchemas['timeEntries.deleteBulk'].parse(raw);
 		await logEventFromContext(

@@ -1045,6 +1045,7 @@ describe('Events Endpoints', () => {
 
 describe('Invalid input rejection before network I/O', () => {
 	it('rejects invalid inputs before calling makeHubPlannerRequest', async () => {
+		// `unknown` because caught rejection is untyped at runtime; narrowed by expect/assertions below.
 		let caughtError: unknown;
 		try {
 			await Projects.get(ctx, { projectId: '' });

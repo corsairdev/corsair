@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { Booking } from './types';
+import type { Booking, SuccessResponse } from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -152,7 +152,7 @@ export const Bookings = {
 	delete: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['bookings.delete'].parse(input);
-		const raw = await makeHubPlannerRequest<unknown>(
+		const raw = await makeHubPlannerRequest<SuccessResponse>(
 			`/booking/${encodeURIComponent(parsedInput.bookingId)}`,
 			ctx.key,
 			{ method: 'DELETE' },
@@ -178,17 +178,21 @@ export const Bookings = {
 			query.ids = parsedInput.ids.join(',');
 		}
 
-		const raw = await makeHubPlannerRequest<unknown>('/booking', ctx.key, {
-			method: 'DELETE',
-			body: parsedInput.ids,
-			query,
-		});
+		const raw = await makeHubPlannerRequest<SuccessResponse>(
+			'/booking',
+			ctx.key,
+			{
+				method: 'DELETE',
+				body: parsedInput.ids,
+				query,
+			},
+		);
 		const parsed =
 			HubPlannerEndpointOutputSchemas['bookings.deleteBulk'].parse(raw);
 		await logEventFromContext(
 			ctx,
 			'hubplanner.bookings.deleteBulk',
-			{ count: parsedInput.ids?.length ?? 1 },
+			parsed.count === undefined ? {} : { count: parsed.count },
 			'completed',
 		);
 		return parsed;

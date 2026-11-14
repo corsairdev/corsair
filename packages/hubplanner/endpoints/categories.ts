@@ -1,7 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { BookingCategory, CategoryGroup, CostCategory } from './types';
+import type {
+	BookingCategory,
+	CategoryGroup,
+	CostCategory,
+	SuccessResponse,
+} from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -263,7 +268,7 @@ export const Categories = {
 			HubPlannerEndpointInputSchemas['categories.deleteCostCategory'].parse(
 				input,
 			);
-		const raw = await makeHubPlannerRequest<unknown>(
+		const raw = await makeHubPlannerRequest<SuccessResponse>(
 			`/costCategories/${encodeURIComponent(parsedInput.costCategoryId)}`,
 			ctx.key,
 			{ method: 'DELETE' },

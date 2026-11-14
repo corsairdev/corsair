@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HubPlannerEndpoints } from '..';
 import { makeHubPlannerRequest } from '../client';
-import type { CustomFieldTemplate } from './types';
+import type { CustomFieldTemplate, SuccessResponse } from './types';
 import {
 	HubPlannerEndpointInputSchemas,
 	HubPlannerEndpointOutputSchemas,
@@ -95,7 +95,7 @@ export const CustomFields = {
 	delete: (async (ctx, input) => {
 		const parsedInput =
 			HubPlannerEndpointInputSchemas['customFields.delete'].parse(input);
-		const raw = await makeHubPlannerRequest<unknown>(
+		const raw = await makeHubPlannerRequest<SuccessResponse>(
 			`/${encodeURIComponent(parsedInput.entityType)}/customField/template/${encodeURIComponent(parsedInput.id)}`,
 			ctx.key,
 			{ method: 'DELETE' },

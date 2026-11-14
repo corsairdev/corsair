@@ -111,6 +111,7 @@ describe('makeHubPlannerRequest', () => {
 		);
 		mockRequest.mockRejectedValueOnce(rawApiError);
 
+		// `unknown` because caught rejection is untyped at runtime; narrowed by expect/assertions below.
 		let thrownError: unknown;
 		try {
 			await makeHubPlannerRequest('/project', sensitiveKey, { method: 'GET' });
@@ -135,6 +136,7 @@ describe('makeHubPlannerRequest', () => {
 		const genericError = new Error(`Connection failed using ${sensitiveKey}`);
 		mockRequest.mockRejectedValueOnce(genericError);
 
+		// `unknown` because caught rejection is untyped at runtime; narrowed by expect/assertions below.
 		let thrownError: unknown;
 		try {
 			await makeHubPlannerRequest('/project', sensitiveKey, { method: 'GET' });
@@ -160,6 +162,7 @@ describe('makeHubPlannerRequest', () => {
 		const rateLimited = createApiError(429, 'Too many requests', 5000);
 		mockRequest.mockRejectedValueOnce(rateLimited);
 
+		// `unknown` because caught rejection is untyped at runtime; narrowed by expect/assertions below.
 		let thrownError: unknown;
 		try {
 			await makeHubPlannerRequest('/booking', 'valid-key', { method: 'GET' });
@@ -228,6 +231,7 @@ describe('real transport Retry-After handling', () => {
 			url: '/project',
 		};
 
+		// `unknown` because caught rejection is untyped at runtime; narrowed by expect/assertions below.
 		let caughtError: unknown;
 		try {
 			await actualHttp.request(config, requestOptions);
