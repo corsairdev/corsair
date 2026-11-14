@@ -180,6 +180,17 @@ describe('redaction helpers', () => {
 		});
 	});
 
+	it.each(['Bearer', 'Basic'])(
+		'redacts the credential after an Authorization %s scheme',
+		(scheme) => {
+			expect(
+				redactCredentials({
+					message: `Authorization: ${scheme} session_secret`,
+				}),
+			).toEqual({ message: `Authorization: ${scheme} [redacted]` });
+		},
+	);
+
 	it('redacts in-place on ApiError without replacing the instance', () => {
 		const error = apiError(
 			401,

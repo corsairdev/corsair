@@ -55,8 +55,13 @@ function redactSecretsInString(text: string, secrets: string[]): string {
 			result = result.split(secret).join('[redacted]');
 		}
 	}
+	// "Authorization: Bearer <value>": redact the value after the scheme, not the scheme.
 	result = result.replace(
-		/(?:password|proxyserverpassword|proxypassword|secret|token|apikey|api_key|authorization)["']?\s*[:=]\s*["']?([^"',\s}{\]]+)/gi,
+		/(authorization["']?\s*[:=]\s*["']?(?:bearer|basic)\s+)([^"',\s}{\]]+)/gi,
+		(_match, prefix: string) => `${prefix}[redacted]`,
+	);
+	result = result.replace(
+		/(?:password|proxyserverpassword|proxypassword|secret|token|apikey|api_key|authorization)["']?\s*[:=]\s*["']?(?!(?:bearer|basic)\s)([^"',\s}{\]]+)/gi,
 		(match, val) => match.replace(val, '[redacted]'),
 	);
 	return result;
