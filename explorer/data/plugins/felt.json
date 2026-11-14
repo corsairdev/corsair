@@ -1,0 +1,3844 @@
+{
+  "id": "felt",
+  "displayName": "Felt",
+  "description": "Collaborative mapping and geospatial visualization platform for creating maps, layers, components, and spatial analysis.",
+  "npmPackageName": "@corsair-dev/felt",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 69,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "felt.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Permanently delete a map comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.comments.export",
+      "shortPath": "comments.export",
+      "description": "Export all comments and replies from a map",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "csv | json | geojson"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, text?: string, author?: Record<string, any>, created_at?: string, resolved?: boolean }[] | { type: string, features?: Record<string, any>[] } | string"
+      }
+    },
+    {
+      "path": "felt.api.comments.resolve",
+      "shortPath": "comments.resolve",
+      "description": "Resolve a map comment thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.elements.delete",
+      "shortPath": "elements.delete",
+      "description": "Delete a drawn element from a map; the element id is the feature's `felt:id` property",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "element_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.elements.getGroup",
+      "shortPath": "elements.getGroup",
+      "description": "Get elements in an element group as GeoJSON",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.elements.list",
+      "shortPath": "elements.list",
+      "description": "List drawn elements on a map in GeoJSON format",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.elements.listGroups",
+      "shortPath": "elements.listGroups",
+      "description": "List element groups in a map",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, color?: string, symbol?: string | null, elements?: { type: string, features?: Record<string, any>[] } }[]"
+      }
+    },
+    {
+      "path": "felt.api.elements.upsert",
+      "shortPath": "elements.upsert",
+      "description": "Create or update elements on a map using GeoJSON FeatureCollection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.elements.upsertGroups",
+      "shortPath": "elements.upsertGroups",
+      "description": "Create or update element groups in a map",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ id?: string, name?: string, color?: string, symbol?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, color?: string, symbol?: string | null, elements?: { type: string, features?: Record<string, any>[] } }[]"
+      }
+    },
+    {
+      "path": "felt.api.layerComponents.create",
+      "shortPath": "layerComponents.create",
+      "description": "Create a dashboard component on a layer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "component",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layerComponents.delete",
+      "shortPath": "layerComponents.delete",
+      "description": "Permanently delete a layer component",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layerComponents.get",
+      "shortPath": "layerComponents.get",
+      "description": "Get details of a layer component",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layerComponents.list",
+      "shortPath": "layerComponents.list",
+      "description": "List dashboard UI components attached to a layer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, type?: string, config?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "felt.api.layerComponents.update",
+      "shortPath": "layerComponents.update",
+      "description": "Update a dashboard component on a layer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "component",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layerGroups.delete",
+      "shortPath": "layerGroups.delete",
+      "description": "Permanently delete a layer group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layerGroups.get",
+      "shortPath": "layerGroups.get",
+      "description": "Get details of a layer group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ordering_key",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "legend_visibility",
+            "optional": true,
+            "type": "hide | show | string | null"
+          },
+          {
+            "key": "visibility_interaction",
+            "optional": true,
+            "type": "default | slider | select | multi_select | string | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layerGroups.list",
+      "shortPath": "layerGroups.list",
+      "description": "List layer groups in a map",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_uploading",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, caption?: string | null, ordering_key?: number | null, legend_visibility?: hide | show | string | null, visibility_interaction?: default | slider | select | multi_select | string | null, layers?: { id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[] }[]"
+      }
+    },
+    {
+      "path": "felt.api.layerGroups.publish",
+      "shortPath": "layerGroups.publish",
+      "description": "Publish a layer group to the library",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "feltServerId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ordering_key",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "legend_visibility",
+            "optional": true,
+            "type": "hide | show | string | null"
+          },
+          {
+            "key": "visibility_interaction",
+            "optional": true,
+            "type": "default | slider | select | multi_select | string | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layerGroups.update",
+      "shortPath": "layerGroups.update",
+      "description": "Update properties of a layer group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "legend_visibility",
+            "optional": true,
+            "type": "hide | show"
+          },
+          {
+            "key": "visibility_interaction",
+            "optional": true,
+            "type": "default | slider | select | multi_select | null"
+          },
+          {
+            "key": "ordering_key",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ordering_key",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "legend_visibility",
+            "optional": true,
+            "type": "hide | show | string | null"
+          },
+          {
+            "key": "visibility_interaction",
+            "optional": true,
+            "type": "default | slider | select | multi_select | string | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layerGroups.updateBulk",
+      "shortPath": "layerGroups.updateBulk",
+      "description": "Update multiple layer groups in bulk",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_groups",
+            "optional": false,
+            "type": "{ id: string, name?: string, caption?: string, subtitle?: string, legend_visibility?: hide | show, visibility_interaction?: default | slider | select | multi_select | null, ordering_key?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, caption?: string | null, ordering_key?: number | null, legend_visibility?: hide | show | string | null, visibility_interaction?: default | slider | select | multi_select | string | null, layers?: { id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[] }[]"
+      }
+    },
+    {
+      "path": "felt.api.layers.addFromSource",
+      "shortPath": "layers.addFromSource",
+      "description": "Add a layer to a map from a source: one of its datasets, a SQL query or a STAC asset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ map_id: string, from: dataset, dataset_id: string } | { map_id: string, from: sql, source_id: string, query: string } | { map_id: string, from: stac, source_id: string, stac_asset_url: string }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.createCustomExport",
+      "shortPath": "layers.createCustomExport",
+      "description": "Request an export of layer data in a specified format",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output_format",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_on_completion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "export_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "poll_endpoint",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.delete",
+      "shortPath": "layers.delete",
+      "description": "Permanently delete a map layer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.duplicate",
+      "shortPath": "layers.duplicate",
+      "description": "Duplicate layers across maps",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "layers",
+            "optional": false,
+            "type": "({ source_layer_id: string, destination_map_id: string } | { source_layer_group_id: string, destination_map_id: string })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[]"
+          },
+          {
+            "key": "layer_groups",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.get",
+      "shortPath": "layers.get",
+      "description": "Get details of a specific map layer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "geometry_type",
+            "optional": true,
+            "type": "Line | Point | Polygon | Raster | string | null"
+          },
+          {
+            "key": "hide_from_legend",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_spreadsheet",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "last_refreshed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_refresh_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "legend_display",
+            "optional": true,
+            "type": "default | name_only | string | null"
+          },
+          {
+            "key": "legend_visibility",
+            "optional": true,
+            "type": "hide | show | string | null"
+          },
+          {
+            "key": "ordering_key",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "paused_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "refresh_period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refresh_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "tile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.getExportLink",
+      "shortPath": "layers.getExportLink",
+      "description": "Get a direct download link for layer data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "export_link",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.list",
+      "shortPath": "layers.list",
+      "description": "List all layers within a map",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_uploading",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[]"
+      }
+    },
+    {
+      "path": "felt.api.layers.listLibrary",
+      "shortPath": "layers.listLibrary",
+      "description": "List layers available in the library",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[]"
+          },
+          {
+            "key": "layer_groups",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.pollCustomExport",
+      "shortPath": "layers.pollCustomExport",
+      "description": "Check status and get download URL of a layer export request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "export_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "export_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.publish",
+      "shortPath": "layers.publish",
+      "description": "Publish a layer to the library",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "feltServerId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "geometry_type",
+            "optional": true,
+            "type": "Line | Point | Polygon | Raster | string | null"
+          },
+          {
+            "key": "hide_from_legend",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_spreadsheet",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "last_refreshed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_refresh_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "legend_display",
+            "optional": true,
+            "type": "default | name_only | string | null"
+          },
+          {
+            "key": "legend_visibility",
+            "optional": true,
+            "type": "hide | show | string | null"
+          },
+          {
+            "key": "ordering_key",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "paused_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "refresh_period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refresh_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "tile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.refresh",
+      "shortPath": "layers.refresh",
+      "description": "Trigger a refresh of a live data layer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "presigned_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.update",
+      "shortPath": "layers.update",
+      "description": "Update multiple map layers in bulk",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layers",
+            "optional": false,
+            "type": "{ id: string, name?: string, caption?: string, subtitle?: string, layer_group_id?: string | null, legend_display?: default | name_only, legend_visibility?: hide | show, ordering_key?: number, refresh_period?: 15 min | 30 min | hour | 3 hours | 6 hours | 12 hours | day | week | month | disabled, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, type?: string, name?: string, caption?: string | null, geometry_type?: Line | Point | Polygon | Raster | string | null, hide_from_legend?: boolean | null, is_spreadsheet?: boolean | null, last_refreshed_at?: string | null, next_refresh_at?: string | null, legend_display?: default | name_only | string | null, legend_visibility?: hide | show | string | null, ordering_key?: number | null, paused_reason?: string | null, progress?: number, refresh_period?: string, refresh_status?: string, status?: string, style?: Record<string, any>, tile_url?: string | null, metadata?: { attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }, attributes?: { name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null }[]"
+      }
+    },
+    {
+      "path": "felt.api.layers.updateStyle",
+      "shortPath": "layers.updateStyle",
+      "description": "Update visual style of a layer using Felt Style Language",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "geometry_type",
+            "optional": true,
+            "type": "Line | Point | Polygon | Raster | string | null"
+          },
+          {
+            "key": "hide_from_legend",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_spreadsheet",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "last_refreshed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_refresh_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "legend_display",
+            "optional": true,
+            "type": "default | name_only | string | null"
+          },
+          {
+            "key": "legend_visibility",
+            "optional": true,
+            "type": "hide | show | string | null"
+          },
+          {
+            "key": "ordering_key",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "paused_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "refresh_period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refresh_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "tile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ name: string, type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.layers.upload",
+      "shortPath": "layers.upload",
+      "description": "Upload a data layer to a map from a URL or file upload parameters",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "import_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "zoom",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ attribution_text?: string | null, attribution_url?: string | null, description?: string | null, license?: string | null, source_abbreviation?: string | null, source_name?: string | null, source_url?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "hints",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "layer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layer_group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "presigned_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.maps.create",
+      "shortPath": "maps.create",
+      "description": "Create a new map in Felt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basemap",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "zoom",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "public_access",
+            "optional": true,
+            "type": "private | view_only | view_and_comment | view_comment_and_edit"
+          },
+          {
+            "key": "layer_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basemap",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visited_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "element_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{ type: string, features?: Record<string, any>[] }"
+          },
+          {
+            "key": "layer_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "table_settings",
+            "optional": true,
+            "type": "{ default_table_layer_id?: string | null, viewers_can_open_table?: boolean | null } | null"
+          },
+          {
+            "key": "viewer_permissions",
+            "optional": true,
+            "type": "{ can_duplicate_map?: boolean | null, can_export_data?: boolean | null, can_see_map_presence?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.maps.createEmbedToken",
+      "shortPath": "maps.createEmbedToken",
+      "description": "Create a secure authenticated embed token for a map",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.maps.delete",
+      "shortPath": "maps.delete",
+      "description": "Permanently delete a map",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.maps.duplicate",
+      "shortPath": "maps.duplicate",
+      "description": "Duplicate an existing map",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "{ folder_id?: string, project_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basemap",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visited_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "element_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{ type: string, features?: Record<string, any>[] }"
+          },
+          {
+            "key": "layer_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "table_settings",
+            "optional": true,
+            "type": "{ default_table_layer_id?: string | null, viewers_can_open_table?: boolean | null } | null"
+          },
+          {
+            "key": "viewer_permissions",
+            "optional": true,
+            "type": "{ can_duplicate_map?: boolean | null, can_export_data?: boolean | null, can_see_map_presence?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.maps.exportImage",
+      "shortPath": "maps.exportImage",
+      "description": "Trigger an export of the map as an image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "legend",
+            "optional": true,
+            "type": "{ visible?: boolean, show_title?: boolean, show_description?: boolean, show_components?: boolean }"
+          },
+          {
+            "key": "show_scale_bar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | us_standard"
+          },
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ format?: png | jpg | pdf | svg, width_px: number, height_px: number, pixel_ratio?: number, jpg_quality?: number }"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "rendered_bounds",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.maps.get",
+      "shortPath": "maps.get",
+      "description": "Get details and layers of a map",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basemap",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visited_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "element_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{ type: string, features?: Record<string, any>[] }"
+          },
+          {
+            "key": "layer_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "table_settings",
+            "optional": true,
+            "type": "{ default_table_layer_id?: string | null, viewers_can_open_table?: boolean | null } | null"
+          },
+          {
+            "key": "viewer_permissions",
+            "optional": true,
+            "type": "{ can_duplicate_map?: boolean | null, can_export_data?: boolean | null, can_see_map_presence?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.maps.move",
+      "shortPath": "maps.move",
+      "description": "Move a map to a project or folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basemap",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visited_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "element_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{ type: string, features?: Record<string, any>[] }"
+          },
+          {
+            "key": "layer_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "table_settings",
+            "optional": true,
+            "type": "{ default_table_layer_id?: string | null, viewers_can_open_table?: boolean | null } | null"
+          },
+          {
+            "key": "viewer_permissions",
+            "optional": true,
+            "type": "{ can_duplicate_map?: boolean | null, can_export_data?: boolean | null, can_see_map_presence?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.maps.update",
+      "shortPath": "maps.update",
+      "description": "Update map properties such as title, description, or permissions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basemap",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_access",
+            "optional": true,
+            "type": "private | view_only | view_and_comment | view_comment_and_edit"
+          },
+          {
+            "key": "table_settings",
+            "optional": true,
+            "type": "{ default_table_layer_id?: string | null, viewers_can_open_table?: boolean }"
+          },
+          {
+            "key": "viewer_permissions",
+            "optional": true,
+            "type": "{ can_duplicate_map?: boolean, can_export_data?: boolean, can_see_map_presence?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "basemap",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visited_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "element_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{ type: string, features?: Record<string, any>[] }"
+          },
+          {
+            "key": "layer_groups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "table_settings",
+            "optional": true,
+            "type": "{ default_table_layer_id?: string | null, viewers_can_open_table?: boolean | null } | null"
+          },
+          {
+            "key": "viewer_permissions",
+            "optional": true,
+            "type": "{ can_duplicate_map?: boolean | null, can_export_data?: boolean | null, can_see_map_presence?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.createLayout",
+      "shortPath": "printPages.createLayout",
+      "description": "Save a print page as a reusable layout template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contents",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.createPage",
+      "shortPath": "printPages.createPage",
+      "description": "Create a new print page design in a map",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "layout_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "map_view",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, type?: string, align?: string, color?: string | null, border?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.deleteItem",
+      "shortPath": "printPages.deleteItem",
+      "description": "Delete an item from a print page design",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.deleteLayout",
+      "shortPath": "printPages.deleteLayout",
+      "description": "Delete a print layout template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layout_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.deletePage",
+      "shortPath": "printPages.deletePage",
+      "description": "Permanently delete a print page design",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.exportPage",
+      "shortPath": "printPages.exportPage",
+      "description": "Export a print page as a PDF or image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "download_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.getPage",
+      "shortPath": "printPages.getPage",
+      "description": "Get details and items of a print page design",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, type?: string, align?: string, color?: string | null, border?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.listLayouts",
+      "shortPath": "printPages.listLayouts",
+      "description": "List saved print layouts in a map",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, kind?: string, orientation?: string | null, contents?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "felt.api.printPages.listPages",
+      "shortPath": "printPages.listPages",
+      "description": "List print page designs in a map",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, url?: string, page?: Record<string, any>, output?: Record<string, any> }[]"
+      }
+    },
+    {
+      "path": "felt.api.printPages.updateLayout",
+      "shortPath": "printPages.updateLayout",
+      "description": "Update a print layout template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layout_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contents",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.updatePage",
+      "shortPath": "printPages.updatePage",
+      "description": "Update properties and dimensions of a print page design",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, type?: string, align?: string, color?: string | null, border?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.printPages.upsertItems",
+      "shortPath": "printPages.upsertItems",
+      "description": "Create or update items on a print page design",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "map_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, type?: string, align?: string, color?: string | null, border?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project in the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_inherited_permission",
+            "optional": true,
+            "type": "view_only | view_and_contribute | view_and_edit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "workspace | private | string"
+          },
+          {
+            "key": "max_inherited_permission",
+            "optional": true,
+            "type": "view_only | view_and_contribute | view_and_edit | string"
+          },
+          {
+            "key": "maps",
+            "optional": true,
+            "type": "{ id: string, title?: string, url?: string, public_access?: string, project_id?: string | null, folder_id?: string | null, created_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get details and maps contained within a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "workspace | private | string"
+          },
+          {
+            "key": "max_inherited_permission",
+            "optional": true,
+            "type": "view_only | view_and_contribute | view_and_edit | string"
+          },
+          {
+            "key": "maps",
+            "optional": true,
+            "type": "{ id: string, title?: string, url?: string, public_access?: string, project_id?: string | null, folder_id?: string | null, created_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, type?: string, visibility?: string, max_inherited_permission?: string }[]"
+      }
+    },
+    {
+      "path": "felt.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update project settings or permissions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "workspace | private"
+          },
+          {
+            "key": "max_inherited_permission",
+            "optional": true,
+            "type": "view_only | view_and_contribute | view_and_edit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "workspace | private | string"
+          },
+          {
+            "key": "max_inherited_permission",
+            "optional": true,
+            "type": "view_only | view_and_contribute | view_and_edit | string"
+          },
+          {
+            "key": "maps",
+            "optional": true,
+            "type": "{ id: string, title?: string, url?: string, public_access?: string, project_id?: string | null, folder_id?: string | null, created_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.sources.create",
+      "shortPath": "sources.create",
+      "description": "Connect a new cloud database or warehouse data source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "last_synced_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "sync_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "automatic_sync",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.sources.createCredential",
+      "shortPath": "sources.createCredential",
+      "description": "Add an authentication credential to a data source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "use_case",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credential",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_case",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.sources.delete",
+      "shortPath": "sources.delete",
+      "description": "Permanently delete a data source connection",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.sources.deleteCredential",
+      "shortPath": "sources.deleteCredential",
+      "description": "Permanently delete a credential from a data source",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credential_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.sources.get",
+      "shortPath": "sources.get",
+      "description": "Get details of a connected data source and its datasets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "last_synced_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "sync_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "automatic_sync",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "datasets",
+            "optional": true,
+            "type": "{ id: string, name: string, created_at?: number | string, updated_at?: number | string, description?: string | null, geometry_type?: string | null, inspection_status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.sources.list",
+      "shortPath": "sources.list",
+      "description": "List connected data sources in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, connection_type?: string, created_at?: number | string | null, updated_at?: number | string | null, last_synced_at?: number | string | null, sync_status?: string, automatic_sync?: string }[]"
+      }
+    },
+    {
+      "path": "felt.api.sources.sync",
+      "shortPath": "sources.sync",
+      "description": "Trigger a manual sync of a connected data source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "last_synced_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "sync_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "automatic_sync",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.sources.update",
+      "shortPath": "sources.update",
+      "description": "Update data source configuration or permissions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "last_synced_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "sync_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "automatic_sync",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.sources.updateCredential",
+      "shortPath": "sources.updateCredential",
+      "description": "Update an authentication credential on a data source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credential_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_case",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_case",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "felt.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Retrieve profile information for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

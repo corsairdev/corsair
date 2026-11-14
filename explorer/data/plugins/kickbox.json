@@ -1,0 +1,154 @@
+{
+  "id": "kickbox",
+  "displayName": "Kickbox",
+  "description": "Email verification with Kickbox - verify a single address for deliverability, role, free and disposable flags, typo suggestions and a Sendex quality score, and check whether a domain is a known disposable one for free.",
+  "npmPackageName": "@corsair-dev/kickbox",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kickbox.api.verify.disposable",
+      "shortPath": "verify.disposable",
+      "description": "Check whether an address or domain is a known disposable one. Free, and answered by Kickbox’s open service",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "An email address or a bare domain, such as `mailinator.com`. It is URL-encoded for you."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "disposable",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when the domain is a known disposable one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kickbox.api.verify.verify",
+      "shortPath": "verify.verify",
+      "description": "Verify one address and get its verdict (deliverable, undeliverable, risky, unknown), the reason, role and free flags, a typo suggestion and a Sendex quality score. Spends one verification credit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The address to verify. It is URL-encoded for you. Send a syntactically bad one to have Kickbox report `invalid_email` rather than rejecting it here."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "How long Kickbox may spend on the SMTP check, in milliseconds. Defaults to 6000, and 30000 is the ceiling."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "deliverable | undeliverable | risky | unknown | string",
+            "description": "`deliverable`, `undeliverable`, `risky` or `unknown`."
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why the result came out as it did, such as `accepted_email` or `rejected_email`."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True for a role address such as `support@example.com`."
+          },
+          {
+            "key": "free",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True for a free provider such as gmail.com."
+          },
+          {
+            "key": "disposable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when the domain is a known disposable one."
+          },
+          {
+            "key": "accept_all",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when the domain accepts every address it is offered."
+          },
+          {
+            "key": "did_you_mean",
+            "optional": true,
+            "type": "string | null",
+            "description": "A suggested spelling when Kickbox spotted a likely typo."
+          },
+          {
+            "key": "sendex",
+            "optional": true,
+            "type": "number | null",
+            "description": "A quality score from 0 (no quality) to 1 (perfect)."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The address in normalized lower case."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

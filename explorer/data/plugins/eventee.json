@@ -1,0 +1,2240 @@
+{
+  "id": "eventee",
+  "displayName": "Eventee",
+  "description": "Manage an Eventee event program, partners, attendees, registrations, groups and session reviews through the public REST API.",
+  "npmPackageName": "@corsair-dev/eventee",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "eventee.api.attendeeCheckIn.patch",
+      "shortPath": "attendeeCheckIn.patch",
+      "description": "Check in an attendee or undo their event check-in",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attendee_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "checkin",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imported",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "anonymous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "invited",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "email_valid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_tickets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tickets_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "checked_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "registered_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.attendeeInvite.put",
+      "shortPath": "attendeeInvite.put",
+      "description": "Invite attendees by email with optional profile details and tickets",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ email: string, first_name?: string, last_name?: string, company?: string, position?: string, photo?: string, phone?: string, bio?: string, web?: string, facebook_link?: string, twitter_link?: string, linked_in_link?: string, group_id?: number, send_email?: boolean, tickets?: { number: string, title?: string, type?: plain | barcode | qr }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "qr_code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.attendees.delete",
+      "shortPath": "attendees.delete",
+      "description": "Remove an attendee, their event participation, invitation and tickets",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Plain email address; the plugin URL-encodes it for Eventee."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.attendees.get",
+      "shortPath": "attendees.get",
+      "description": "List event participants with roles, groups and check-in details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, email?: string, name?: string, first_name?: string, last_name?: string, company?: string, position?: string, role?: a | m | l | e, group_id?: number | null, url?: string, tickets?: { number?: string, title?: string, type?: string }[], checked_at?: string | null, registered_at?: string | null, account_deleted?: boolean }[]"
+      }
+    },
+    {
+      "path": "eventee.api.content.get",
+      "shortPath": "content.get",
+      "description": "Read the complete event program, speakers, halls, breaks and labels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "with_overlapping",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "halls",
+            "optional": false,
+            "type": "{ id: number, name?: string, order?: number, event_id?: number, created_at?: string, updated_at?: string, stream?: string | null }[]"
+          },
+          {
+            "key": "days",
+            "optional": false,
+            "type": "{ id: number, date?: string, event_id?: number, content_url?: string }[]"
+          },
+          {
+            "key": "lectures",
+            "optional": false,
+            "type": "{ id: number, name?: string, description?: string, start?: string, end?: string, event_day_id?: number, created_at?: string, updated_at?: string, discussion?: boolean, panel_discussion?: boolean | number, code?: string, moderating?: boolean, polling?: boolean, checkin?: boolean, type?: 0 | 1, mentoring?: boolean, hall_id?: number, speakers?: number[], files?: any[], available?: number, booked?: boolean, capacity?: number, booking_info?: { id?: number, capacity?: number, speaker_id?: number | null, lecture_id?: number, available?: number, booked?: boolean, booked_attendees?: number[] }[], stream?: { code?: string, url?: string, available?: boolean, is_live?: boolean, streamable_type?: string, streamable_id?: number, created_at?: string, updated_at?: string, availability?: string | null, type?: string } | null, virtual_meeting?: string | null, tracks?: number[], event_id?: number, qr_code_url?: string, overlapping?: boolean, visible_in_groups?: any[], mandatory_for_groups?: any[], mandatory?: boolean }[]",
+            "description": "Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[]."
+          },
+          {
+            "key": "workshops",
+            "optional": false,
+            "type": "{ id: number, name?: string, description?: string, start?: string, end?: string, event_day_id?: number, created_at?: string, updated_at?: string, discussion?: boolean, panel_discussion?: boolean | number, code?: string, moderating?: boolean, polling?: boolean, checkin?: boolean, type?: 0 | 1, mentoring?: boolean, hall_id?: number, speakers?: number[], files?: any[], available?: number, booked?: boolean, capacity?: number, booking_info?: { id?: number, capacity?: number, speaker_id?: number | null, lecture_id?: number, available?: number, booked?: boolean, booked_attendees?: number[] }[], stream?: { code?: string, url?: string, available?: boolean, is_live?: boolean, streamable_type?: string, streamable_id?: number, created_at?: string, updated_at?: string, availability?: string | null, type?: string } | null, virtual_meeting?: string | null, tracks?: number[], event_id?: number, qr_code_url?: string, overlapping?: boolean, visible_in_groups?: any[], mandatory_for_groups?: any[], mandatory?: boolean }[]",
+            "description": "Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[]."
+          },
+          {
+            "key": "pauses",
+            "optional": false,
+            "type": "{ id: number, name?: string, description?: string, start?: string, end?: string, event_day_id?: number, created_at?: string, updated_at?: string, event_id?: number }[]"
+          },
+          {
+            "key": "speakers",
+            "optional": false,
+            "type": "{ id: number, name?: string, email?: string, phone?: string, bio_html?: string, web?: string, facebook?: string, twitter?: string, linkedIn?: string, instagram?: string, position?: string, company?: string, country?: string, language?: string, event_id?: number, order?: number, photo?: string | null, thumbnail?: string | null, bio?: string }[]"
+          },
+          {
+            "key": "tracks",
+            "optional": false,
+            "type": "{ id: number, name?: string, color?: string, order?: number, created_at?: string, updated_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.contentReset.delete",
+      "shortPath": "contentReset.delete",
+      "description": "Irreversibly delete all program content, halls, speakers and labels",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "List attendee groups and their enabled app features",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string, public_name?: string, color?: string, emoji?: string, agenda?: boolean, questions?: boolean, polling?: boolean, newsfeed?: boolean, networking?: boolean, session_ratings?: boolean, social_wall?: boolean, gamification?: boolean, ticket_names?: string[], is_default?: boolean, notification_suffix?: string, event_id?: number, created_at?: string, updated_at?: string, deleted_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "eventee.api.hall.delete",
+      "shortPath": "hall.delete",
+      "description": "Delete a hall and every session placed in it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hall_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.hall.patch",
+      "shortPath": "hall.patch",
+      "description": "Update a hall and its live stream assignment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hall_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.hall.post",
+      "shortPath": "hall.post",
+      "description": "Create a hall for sessions in the event program",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.label.delete",
+      "shortPath": "label.delete",
+      "description": "Delete a label and remove it from all sessions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "track_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.label.patch",
+      "shortPath": "label.patch",
+      "description": "Update an event program label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "track_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.label.post",
+      "shortPath": "label.post",
+      "description": "Create a colored label for categorizing sessions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.partner.delete",
+      "shortPath": "partner.delete",
+      "description": "Delete a partner and all of its detail page sections",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partner_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.partner.get",
+      "shortPath": "partner.get",
+      "description": "List all event partners with sponsor and exhibitor details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, company?: string, description?: string, web?: string, email?: string, phone?: string, address?: string, code?: string, created_at?: string, updated_at?: string, sections?: { id?: number, type?: number, data?: string, order?: number }[], exhibitor?: boolean, sponsor?: boolean, exhibitor_info?: { booth_number?: string, order?: number, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } } | null, sponsor_info?: { order?: number, sponsor_category_id?: string | null, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } } | null, logo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } | null, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } | null, qr_code_url?: string }[]"
+      }
+    },
+    {
+      "path": "eventee.api.partner.patch",
+      "shortPath": "partner.patch",
+      "description": "Replace a partner profile and sponsor or exhibitor media",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partner_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "booth_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sections",
+            "optional": true,
+            "type": "{ id?: number, type?: number, data?: string, order?: number }[]"
+          },
+          {
+            "key": "exhibitor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sponsor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exhibitor_info",
+            "optional": true,
+            "type": "{ booth_number?: string, order?: number, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } } | null"
+          },
+          {
+            "key": "sponsor_info",
+            "optional": true,
+            "type": "{ order?: number, sponsor_category_id?: string | null, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } } | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "{ id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } | null"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "{ id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } | null"
+          },
+          {
+            "key": "qr_code_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.partner.post",
+      "shortPath": "partner.post",
+      "description": "Create an event sponsor or exhibitor partner profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "booth_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sections",
+            "optional": true,
+            "type": "{ id?: number, type?: number, data?: string, order?: number }[]"
+          },
+          {
+            "key": "exhibitor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sponsor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exhibitor_info",
+            "optional": true,
+            "type": "{ booth_number?: string, order?: number, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } } | null"
+          },
+          {
+            "key": "sponsor_info",
+            "optional": true,
+            "type": "{ order?: number, sponsor_category_id?: string | null, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } } | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "{ id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } | null"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "{ id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } | null"
+          },
+          {
+            "key": "qr_code_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.partnerSections.patch",
+      "shortPath": "partnerSections.patch",
+      "description": "Replace a partner detail page sections list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partner_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sections",
+            "optional": false,
+            "type": "({ id?: number, type: 0, title?: string, align?: left | center | right } | { id?: number, type: 1, html?: string, align?: left | center | right } | { id?: number, type: 2, urls?: { text?: string, url?: string }[] } | { id?: number, type: 3, images?: string[] } | { id?: number, type: 4, files?: string[] } | { id?: number, type: 5, facebook?: string, twitter?: string, linkedIn?: string, youtube?: string, instagram?: string, general?: string })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sections",
+            "optional": true,
+            "type": "{ id?: number, type?: number, data?: string, order?: number }[]"
+          },
+          {
+            "key": "exhibitor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sponsor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exhibitor_info",
+            "optional": true,
+            "type": "{ booth_number?: string, order?: number, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } } | null"
+          },
+          {
+            "key": "sponsor_info",
+            "optional": true,
+            "type": "{ order?: number, sponsor_category_id?: string | null, photo?: { id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } } | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "{ id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } | null"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "{ id?: number, width?: number, height?: number, type?: string, url?: string, thumbnail?: string, giphy_id?: string | null } | null"
+          },
+          {
+            "key": "qr_code_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.pause.delete",
+      "shortPath": "pause.delete",
+      "description": "Remove a break from the event program",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pause_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.pause.patch",
+      "shortPath": "pause.patch",
+      "description": "Update a break in the event program",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pause_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_day_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.pause.post",
+      "shortPath": "pause.post",
+      "description": "Add a break to the event program",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_day_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.registrationInvite.put",
+      "shortPath": "registrationInvite.put",
+      "description": "Create or update event registrations by email",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registrations",
+            "optional": false,
+            "type": "{ email: string, first_name?: string, last_name?: string, company?: string, position?: string, photo?: string, phone?: string, bio?: string, web?: string, facebook_link?: string, twitter_link?: string, linked_in_link?: string, group_id?: number, send_email?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "qr_code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.registrations.delete",
+      "shortPath": "registrations.delete",
+      "description": "Delete an event registration by email address",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Plain email address; the plugin URL-encodes it for Eventee."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.registrations.get",
+      "shortPath": "registrations.get",
+      "description": "List event registrations with statuses and profile details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, email?: string, email_valid?: boolean | null, status?: 0 | 1 | 2 | null, first_name?: string, last_name?: string, photo?: string | null, phone?: string, bio?: string, web?: string, facebook_link?: string, twitter_link?: string, linkedIn_link?: string, position?: string, company?: string, answer_histories?: any[], group_id?: number | null, created_at?: string, updated_at?: string, form_id?: string | null, form_answers?: any[], account_deleted?: boolean }[]"
+      }
+    },
+    {
+      "path": "eventee.api.reviews.get",
+      "shortPath": "reviews.get",
+      "description": "List attendee ratings and comments for event sessions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, stars?: number, comment?: string, device?: string, OS?: string, lecture_id?: number, user_id?: number, created_at?: string, updated_at?: string, username?: string, userphoto?: string, account_deleted?: boolean, lecture?: { id: number, name?: string, description?: string, start?: string, end?: string, event_day_id?: number, created_at?: string, updated_at?: string, discussion?: boolean, panel_discussion?: boolean | number, code?: string, moderating?: boolean, polling?: boolean, checkin?: boolean, type?: 0 | 1, mentoring?: boolean, hall_id?: number, speakers?: number[], files?: any[], available?: number, booked?: boolean, capacity?: number, booking_info?: { id?: number, capacity?: number, speaker_id?: number | null, lecture_id?: number, available?: number, booked?: boolean, booked_attendees?: number[] }[], stream?: { code?: string, url?: string, available?: boolean, is_live?: boolean, streamable_type?: string, streamable_id?: number, created_at?: string, updated_at?: string, availability?: string | null, type?: string } | null, virtual_meeting?: string | null, tracks?: number[], event_id?: number, qr_code_url?: string, overlapping?: boolean, visible_in_groups?: any[], mandatory_for_groups?: any[], mandatory?: boolean } }[]"
+      }
+    },
+    {
+      "path": "eventee.api.session.delete",
+      "shortPath": "session.delete",
+      "description": "Delete a session including its questions, polls, bookings and ratings",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lecture_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.session.patch",
+      "shortPath": "session.patch",
+      "description": "Update a lecture or workshop and its scheduling details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lecture_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "hall_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "speakers",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tracks",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "discussion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "moderating",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "polling",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "virtual_meeting",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_day_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discussion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "panel_discussion",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "moderating",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "polling",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "checkin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "mentoring",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hall_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "speakers",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "any[]",
+            "description": "Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape."
+          },
+          {
+            "key": "available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "booked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "booking_info",
+            "optional": true,
+            "type": "{ id?: number, capacity?: number, speaker_id?: number | null, lecture_id?: number, available?: number, booked?: boolean, booked_attendees?: number[] }[]"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "{ code?: string, url?: string, available?: boolean, is_live?: boolean, streamable_type?: string, streamable_id?: number, created_at?: string, updated_at?: string, availability?: string | null, type?: string } | null"
+          },
+          {
+            "key": "virtual_meeting",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tracks",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "qr_code_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "overlapping",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visible_in_groups",
+            "optional": true,
+            "type": "any[]",
+            "description": "Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape."
+          },
+          {
+            "key": "mandatory_for_groups",
+            "optional": true,
+            "type": "any[]",
+            "description": "Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape."
+          },
+          {
+            "key": "mandatory",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.session.post",
+      "shortPath": "session.post",
+      "description": "Create a lecture or bookable workshop in the event program",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "hall_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "speakers",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tracks",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "discussion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "moderating",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "polling",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "checkin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "virtual_meeting",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_day_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discussion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "panel_discussion",
+            "optional": true,
+            "type": "boolean | number"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "moderating",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "polling",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "checkin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "mentoring",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hall_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "speakers",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "any[]",
+            "description": "Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape."
+          },
+          {
+            "key": "available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "booked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "booking_info",
+            "optional": true,
+            "type": "{ id?: number, capacity?: number, speaker_id?: number | null, lecture_id?: number, available?: number, booked?: boolean, booked_attendees?: number[] }[]"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "{ code?: string, url?: string, available?: boolean, is_live?: boolean, streamable_type?: string, streamable_id?: number, created_at?: string, updated_at?: string, availability?: string | null, type?: string } | null"
+          },
+          {
+            "key": "virtual_meeting",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tracks",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "qr_code_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "overlapping",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visible_in_groups",
+            "optional": true,
+            "type": "any[]",
+            "description": "Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape."
+          },
+          {
+            "key": "mandatory_for_groups",
+            "optional": true,
+            "type": "any[]",
+            "description": "Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape."
+          },
+          {
+            "key": "mandatory",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.speaker.delete",
+      "shortPath": "speaker.delete",
+      "description": "Delete a speaker and remove them from all sessions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "speakerTmp_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "eventee.api.speaker.patch",
+      "shortPath": "speaker.patch",
+      "description": "Update fields on an event speaker profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "speakerTmp_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedIn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instagram",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bio_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedIn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instagram",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "eventee.api.speaker.post",
+      "shortPath": "speaker.post",
+      "description": "Create a speaker profile for the event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedIn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instagram",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bio_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedIn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instagram",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

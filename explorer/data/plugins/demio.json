@@ -1,0 +1,289 @@
+{
+  "id": "demio",
+  "displayName": "Demio",
+  "description": "Webinar and event data from Demio - list events and their dates, register attendees, and read who attended each session.",
+  "npmPackageName": "@corsair-dev/demio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "demio.api.events.get",
+      "shortPath": "events.get",
+      "description": "Read one event with every date the filter allowed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The event id from `events.list` or `events.get`."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean",
+            "description": "Receive only dates that are scheduled or running. Demio reads any value other than its own `false` as `true`, so this is sent only when set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "registrants_stay_registered",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when registering once covers the whole series."
+          },
+          {
+            "key": "registration_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "automated",
+            "optional": true,
+            "type": "{ ready?: boolean | null, duration?: number | null } | null"
+          },
+          {
+            "key": "next_date_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The first date that has not finished, if any."
+          },
+          {
+            "key": "dates",
+            "optional": false,
+            "type": "{ date_id: number, status: string, timestamp?: number | null, datetime?: string | null, zone?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "demio.api.events.getDate",
+      "shortPath": "events.getDate",
+      "description": "Read one date of an event",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The event id from `events.list` or `events.get`."
+          },
+          {
+            "key": "date_id",
+            "optional": false,
+            "type": "number",
+            "description": "The event date id from `events.get` or `events.getDate`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "`scheduled`, `running` or `finished`. Unlike `events.get`, an on-demand date reports `running` here rather than `on-demand`."
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "When the date starts, as a Unix timestamp. For an on-demand date, the moment you asked."
+          },
+          {
+            "key": "datetime",
+            "optional": false,
+            "type": "string",
+            "description": "The date's stored start time, formatted in its zone. For an on-demand date this does not describe the same instant as `timestamp`."
+          },
+          {
+            "key": "zone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "demio.api.events.list",
+      "shortPath": "events.list",
+      "description": "List events, each collapsed to one representative date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "upcoming | past | automated",
+            "description": "Narrows the list. Omit it to receive every event with its nearest date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, labeled_name?: string | null, name: string, description?: string | null, date_id: number, status: string, timestamp: number, zone?: string | null, registration_url: string, automated?: { ready?: boolean | null, duration?: number | null } | null }[]"
+      }
+    },
+    {
+      "path": "demio.api.ping.check",
+      "shortPath": "ping.check",
+      "description": "Check that the API key and secret are accepted",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pong",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when the credentials are accepted."
+          },
+          {
+            "key": "sandbox",
+            "optional": true,
+            "type": "boolean",
+            "description": "Present and true only for a sandbox account."
+          }
+        ]
+      }
+    },
+    {
+      "path": "demio.api.registrations.create",
+      "shortPath": "registrations.create",
+      "description": "Register a person for an event date and return their join link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number",
+            "description": "The event id. Give this or `ref_url`."
+          },
+          {
+            "key": "ref_url",
+            "optional": true,
+            "type": "string",
+            "description": "The event's registration page link. Give this or `id`."
+          },
+          {
+            "key": "date_id",
+            "optional": true,
+            "type": "number",
+            "description": "The event date to register for. Omit it to use the event's next date."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The person's full name as one field. Demio rejects a name containing a URL."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The email address to register."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hash",
+            "optional": false,
+            "type": "string",
+            "description": "The registrant's identifier for this event date."
+          },
+          {
+            "key": "join_link",
+            "optional": false,
+            "type": "string",
+            "description": "The link the person opens to join."
+          }
+        ]
+      }
+    },
+    {
+      "path": "demio.api.reports.participants",
+      "shortPath": "reports.participants",
+      "description": "List who registered for a date, whether they attended, and their custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date_id",
+            "optional": false,
+            "type": "number",
+            "description": "The event date id from `events.get` or `events.getDate`."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "attended | did-not-attend | completed | left-early | banned",
+            "description": "Narrows the list. Omit it to receive every registrant."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "participants",
+            "optional": false,
+            "type": "{ email: string, name: string, custom_fields: { id: string, name: string, value: string }[], attended: boolean, status: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

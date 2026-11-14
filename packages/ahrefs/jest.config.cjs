@@ -29,6 +29,7 @@ module.exports = {
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					types: ['node', 'jest'],
 				},
 			},
 		],
@@ -44,6 +45,7 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},

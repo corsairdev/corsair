@@ -1,0 +1,1960 @@
+{
+  "id": "webex",
+  "displayName": "Webex",
+  "description": "Cisco Webex messaging - manage spaces, post and read messages and threads, look up people and teams, manage room and team memberships, and subscribe webhooks to Webex events.",
+  "npmPackageName": "@corsair-dev/webex",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "webex.api.memberships.create",
+      "shortPath": "memberships.create",
+      "description": "Add a person to a room, optionally as a moderator",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isModerator",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roomId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personDisplayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personOrgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isModerator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isMonitor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.memberships.delete",
+      "shortPath": "memberships.delete",
+      "description": "Remove a person from a room",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.memberships.list",
+      "shortPath": "memberships.list",
+      "description": "List the memberships of a room or of a person",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string",
+            "description": "Pass the previous page's `nextLink` to read the next page. Omit it for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | null, roomId?: string | null, personId?: string | null, personEmail?: string | null, personDisplayName?: string | null, personOrgId?: string | null, isModerator?: boolean | null, isMonitor?: boolean | null, created?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page, or null when this is the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Post a message to a room or directly to a person, with text, markdown, html or one file attachment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": true,
+            "type": "string",
+            "description": "The room to post to."
+          },
+          {
+            "key": "toPersonId",
+            "optional": true,
+            "type": "string",
+            "description": "A one-to-one message to this person id."
+          },
+          {
+            "key": "toPersonEmail",
+            "optional": true,
+            "type": "string",
+            "description": "A one-to-one message to this address."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]",
+            "description": "The public URL of one file to attach; Webex takes one per message."
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string",
+            "description": "Post as a reply in this thread."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roomId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roomType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentionedPeople",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "mentionedGroups",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachmentActions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "isVoiceClip",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Delete one message permanently",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Read one message with its text, files and thread parent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roomId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roomType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentionedPeople",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "mentionedGroups",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachmentActions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "isVoiceClip",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages in a room, or the replies in one of its threads, optionally before a time or message id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string",
+            "description": "The room to list messages from."
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string",
+            "description": "Only the replies in this thread of the room."
+          },
+          {
+            "key": "mentionedPeople",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages mentioning this person."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601: only earlier messages."
+          },
+          {
+            "key": "beforeMessage",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages before this id."
+          },
+          {
+            "key": "max",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string",
+            "description": "Pass the previous page's `nextLink` to read the next page. Omit it for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | null, roomId?: string | null, roomType?: string | null, text?: string | null, html?: string | null, markdown?: string | null, files?: string[] | null, personId?: string | null, personEmail?: string | null, created?: string | null, updated?: string | null, mentionedPeople?: string[] | null, mentionedGroups?: string[] | null, parentId?: string | null, attachmentActions?: any[] | null, isVoiceClip?: boolean | null, contentType?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page, or null when this is the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Edit the text or markdown of a message you sent, up to 10 times per message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roomId",
+            "optional": false,
+            "type": "string",
+            "description": "The room the message is in; Webex requires it on an edit."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roomId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roomType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentionedPeople",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "mentionedGroups",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachmentActions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "isVoiceClip",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.people.get",
+      "shortPath": "people.get",
+      "description": "Read one person by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nickName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "licenses",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastActivity",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "active, inactive or unknown."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "person or bot."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.people.list",
+      "shortPath": "people.list",
+      "description": "List people by email, display name, id or organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Only this address."
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string",
+            "description": "Pass the previous page's `nextLink` to read the next page. Omit it for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | null, emails?: string[] | null, displayName?: string | null, nickName?: string | null, firstName?: string | null, lastName?: string | null, avatar?: string | null, orgId?: string | null, roles?: string[] | null, licenses?: string[] | null, created?: string | null, lastActivity?: string | null, status?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page, or null when this is the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.people.me",
+      "shortPath": "people.me",
+      "description": "Read the account behind the token, which is the cheapest way to check it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nickName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "licenses",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastActivity",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "active, inactive or unknown."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "person or bot."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.rooms.create",
+      "shortPath": "rooms.create",
+      "description": "Create a space, optionally within a team and with lock or read-only settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isLocked",
+            "optional": true,
+            "type": "boolean",
+            "description": "A locked room only lets moderators add people."
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isReadOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "A read-only room only lets moderators send messages."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "group for a space, direct for a one-to-one room."
+          },
+          {
+            "key": "isLocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastActivity",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isReadOnly",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "siteUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.rooms.delete",
+      "shortPath": "rooms.delete",
+      "description": "Delete a space and its message history; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.rooms.get",
+      "shortPath": "rooms.get",
+      "description": "Read one space with its title, type and creator",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "group for a space, direct for a one-to-one room."
+          },
+          {
+            "key": "isLocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastActivity",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isReadOnly",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "siteUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.rooms.list",
+      "shortPath": "rooms.list",
+      "description": "List spaces, filtered by type or team and sorted by id, last activity or creation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string",
+            "description": "Pass the previous page's `nextLink` to read the next page. Omit it for the first page."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "group | direct"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "Only rooms shared with this team, or with no team for `none`."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "id | lastactivity | created"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, type?: string | null, isLocked?: boolean | null, lastActivity?: string | null, creatorId?: string | null, created?: string | null, ownerId?: string | null, isPublic?: boolean | null, isReadOnly?: boolean | null, description?: string | null, siteUrl?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page, or null when this is the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.rooms.update",
+      "shortPath": "rooms.update",
+      "description": "Change a space title, description or lock and read-only settings; the title is always sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Webex requires the title on every update, even when unchanged."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isLocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isReadOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "group for a space, direct for a one-to-one room."
+          },
+          {
+            "key": "isLocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastActivity",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isReadOnly",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "siteUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.teamMemberships.create",
+      "shortPath": "teamMemberships.create",
+      "description": "Add a person to a team, optionally as a moderator",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isModerator",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personDisplayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personOrgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isModerator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.teamMemberships.delete",
+      "shortPath": "teamMemberships.delete",
+      "description": "Remove a person from a team",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.teamMemberships.list",
+      "shortPath": "teamMemberships.list",
+      "description": "List the members of a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string",
+            "description": "Pass the previous page's `nextLink` to read the next page. Omit it for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | null, teamId?: string | null, personId?: string | null, personEmail?: string | null, personDisplayName?: string | null, personOrgId?: string | null, isModerator?: boolean | null, created?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page, or null when this is the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a team with a name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Delete a team, leaving its spaces in place",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Read one team with its name and creator",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creatorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List the teams on the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string",
+            "description": "Pass the previous page's `nextLink` to read the next page. Omit it for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, creatorId?: string | null, created?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page, or null when this is the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Subscribe a URL to a resource event, optionally filtered to one room and signed with a secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": false,
+            "type": "attachmentActions | dataSources | memberships | messages | rooms | meetings | recordings | convergedRecordings | meetingParticipants | meetingTranscripts | telephony_calls | telephony_conference | telephony_mwi | uc_counters | serviceApp | adminBatchJobs | all",
+            "description": "The resource whose events to send. all, with event all, is the firehose for memberships, messages and rooms."
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "created | updated | deleted | started | ended | joined | left | migrated | authorized | deauthorized | statusChanged | all",
+            "description": "Which event on that resource, e.g. started or ended for meetings, joined or left for meetingParticipants."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "Restrict to a room id, e.g. `roomId=abc`."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string",
+            "description": "The HMAC key Webex signs deliveries with."
+          },
+          {
+            "key": "ownedBy",
+            "optional": true,
+            "type": "org",
+            "description": "org makes an org-wide webhook (admin token). Needed for host or owner filters such as hostEmail."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "targetUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownedBy",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook and what it fires on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "targetUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownedBy",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "max",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string",
+            "description": "Pass the previous page's `nextLink` to read the next page. Omit it for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, targetUrl?: string | null, resource?: string | null, event?: string | null, filter?: string | null, secret?: string | null, status?: string | null, created?: string | null, createdBy?: string | null, orgId?: string | null, ownedBy?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page, or null when this is the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "webex.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook name, target or secret, or reactivate one Webex disabled; name and target are always sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Webex requires the name on every update, even when unchanged."
+          },
+          {
+            "key": "targetUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Webex requires the target URL on every update, even when unchanged."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active",
+            "description": "active turns back on a webhook Webex disabled after failed deliveries. Webex refuses inactive; delete the webhook to stop it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "targetUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownedBy",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
