@@ -20,6 +20,9 @@ import {
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.FINMEI_API_KEY ?? '';
+if (LIVE_KEY.length === 0) {
+	console.warn('Skipping Finmei live API tests: FINMEI_API_KEY is not set.');
+}
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Finmei live API (env-gated smoke tests)', () => {
