@@ -737,6 +737,20 @@ test('responses sends non-streaming request and preserves citations', async () =
 		}),
 	);
 });
+test('chat and responses wait past the documented research-model latency', async () => {
+	const timeout = jest.spyOn(AbortSignal, 'timeout');
+	jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(async () => new Response('{}', { status: 200 }));
+	await api.chat.create({ model: 'core', messages: [] }).catch(() => {});
+	expect(timeout).toHaveBeenLastCalledWith(330_000);
+	await api.responses
+		.create({ model: 'parallel', input: 'x', reasoning: { effort: 'high' } })
+		.catch(() => {});
+	expect(timeout).toHaveBeenLastCalledWith(180_000);
+	await api.search.search({ search_queries: ['x'] }).catch(() => {});
+	expect(timeout).toHaveBeenLastCalledWith(60_000);
+});
 test('streaming requests are rejected instead of parsed as JSON', async () => {
 	const fetchMock = jest.spyOn(globalThis, 'fetch');
 	await expect(

@@ -61,10 +61,26 @@ function operation<I extends z.ZodType<object>, O extends z.ZodType>(
 	input: I,
 	output: O,
 	path: string,
+	timeoutMs?: number,
 ): CorsairEndpoint<ParallelContext, z.input<I>, z.output<O>> {
 	return async (ctx, raw) =>
-		output.parse(await parallelRequest(ctx.key, path, input.parse(raw)));
+		output.parse(
+			await parallelRequest(
+				ctx.key,
+				path,
+				input.parse(raw),
+				'POST',
+				{},
+				timeoutMs,
+			),
+		);
 }
+
+// Parallel documents up to 5 minutes for the `core` chat model (base: 100 s)
+// and about a minute for high-effort responses. Both bill when they finish, so
+// the client waits past those windows instead of aborting a paid answer.
+const CHAT_TIMEOUT_MS = 330_000;
+const RESPONSES_TIMEOUT_MS = 180_000;
 
 function monitorPath(id: string): string {
 	return `/v1/monitors/${encodeURIComponent(safeId.parse(id))}`;
@@ -123,10 +139,20 @@ function findallPath(id: string): string {
 }
 export const endpoints = {
 	chat: {
-		create: operation(ChatInput, ChatOutput, '/v1beta/chat/completions'),
+		create: operation(
+			ChatInput,
+			ChatOutput,
+			'/v1beta/chat/completions',
+			CHAT_TIMEOUT_MS,
+		),
 	},
 	responses: {
-		create: operation(ResponseInput, ResponseOutput, '/v1/responses'),
+		create: operation(
+			ResponseInput,
+			ResponseOutput,
+			'/v1/responses',
+			RESPONSES_TIMEOUT_MS,
+		),
 	},
 	findall: {
 		entitySearch: operation(
