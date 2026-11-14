@@ -1,4 +1,4 @@
-import { Comments, CustomFieldValues, Tasks } from './endpoints';
+import { Comments, CustomFields, CustomFieldValues, Tasks } from './endpoints';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -229,6 +229,37 @@ describe('Motion public seam behavior', () => {
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(url).toBe('https://api.usemotion.com/v1/tasks/123');
 		expect(init.method).toBe('DELETE');
+	});
+
+	it('accepts null for unset optional task fields', async () => {
+		respond({
+			...taskResource,
+			dueDate: null,
+			completedTime: null,
+			startOn: null,
+			duration: null,
+			parentRecurringTaskId: null,
+			project: null,
+			creator: { id: 'usr_1', name: null, email: 'ada@example.com' },
+		});
+		await expect(Tasks.get(ctx as never, { id: 'task_1' })).resolves.toEqual(
+			expect.objectContaining({ id: 'task_1', dueDate: null, project: null }),
+		);
+	});
+
+	it('accepts custom field types Motion adds after this plugin shipped', async () => {
+		respond([{ id: 'cf_1', field: 'rating' }]);
+		await expect(
+			CustomFields.list(ctx as never, { workspaceId: 'ws_1' }),
+		).resolves.toEqual([{ id: 'cf_1', field: 'rating' }]);
+		respond({ id: 'cf_2', type: 'rating' });
+		await expect(
+			CustomFields.create(ctx as never, {
+				workspaceId: 'ws_1',
+				type: 'text',
+				name: 'corsair-plugin-test',
+			}),
+		).resolves.toEqual({ id: 'cf_2', type: 'rating' });
 	});
 
 	it('propagates provider rate limits as the core ApiError unchanged', async () => {

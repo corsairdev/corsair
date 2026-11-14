@@ -7,6 +7,20 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 	);
 }, 'Route identifiers must be safe path segments');
 
+// Motion's API writes unset fields as null instead of leaving them out, so every
+// response field accepts null as well as absence. Inputs stay strict.
+const nullishObject = <S extends z.ZodRawShape>(shape: S) =>
+	z.object(
+		Object.fromEntries(
+			Object.entries(shape).map(([key, field]) => [
+				key,
+				(field as z.ZodType).nullish(),
+			]),
+			// Object.fromEntries loses the per-key types, so the result passes through
+			// unknown to restore the mapped shape built from the same keys above.
+		) as unknown as { [K in keyof S]: z.ZodOptional<z.ZodNullable<S[K]>> },
+	);
+
 // Motion list responses wrap this cursor envelope in a top-level `meta` field:
 // { meta: { nextCursor, pageSize }, ...items }. nextCursor is a string when
 // another page is available and null otherwise, so callers forward
@@ -18,13 +32,11 @@ const CursorMetaSchema = z
 	})
 	.loose();
 
-const UserReferenceSchema = z
-	.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		email: z.string().optional(),
-	})
-	.loose();
+const UserReferenceSchema = nullishObject({
+	id: z.string().optional(),
+	name: z.string().optional(),
+	email: z.string().optional(),
+}).loose();
 
 // Motion documents these custom field type values across the custom-field endpoints.
 const CustomFieldTypeSchema = z.enum([
@@ -70,49 +82,43 @@ const CustomFieldValueSchema = z
 	})
 	.loose();
 
-const ProjectStatusSchema = z
-	.object({
-		name: z.string().optional(),
-		isDefaultStatus: z.boolean().optional(),
-		isResolvedStatus: z.boolean().optional(),
-	})
-	.loose();
+const ProjectStatusSchema = nullishObject({
+	name: z.string().optional(),
+	isDefaultStatus: z.boolean().optional(),
+	isResolvedStatus: z.boolean().optional(),
+}).loose();
 
-const ProjectResourceSchema = z
-	.object({
-		id: z.string(),
-		name: z.string(),
-		description: z.string(),
-		workspaceId: z.string(),
-		status: ProjectStatusSchema,
-		createdTime: z.string().optional(),
-		updatedTime: z.string().optional(),
-		dueDate: z.string().optional(),
-		// Custom field values are keyed by the custom field's name, so the record
-		// keys are provider-defined while each value has the documented wrapper shape.
-		customFieldValues: z.record(z.string(), CustomFieldValueSchema).optional(),
-	})
-	.partial()
+const ProjectResourceSchema = nullishObject({
+	id: z.string(),
+	name: z.string(),
+	description: z.string(),
+	workspaceId: z.string(),
+	status: ProjectStatusSchema,
+	createdTime: z.string().optional(),
+	updatedTime: z.string().optional(),
+	dueDate: z.string().optional(),
+	// Custom field values are keyed by the custom field's name, so the record
+	// keys are provider-defined while each value has the documented wrapper shape.
+	customFieldValues: z.record(z.string(), CustomFieldValueSchema).optional(),
+})
 	.extend({ id: z.string() })
 	.loose();
 
-const TaskResourceSchema = z
-	.object({
-		id: z.string(),
-		name: z.string(),
-		description: z.string(),
-		duration: z.union([z.string(), z.number()]).optional(),
-		dueDate: z.string().optional(),
-		deadlineType: z.string(),
-		parentRecurringTaskId: z.string(),
-		completed: z.boolean(),
-		completedTime: z.string().optional(),
-		updatedTime: z.string().optional(),
-		startOn: z.string().optional(),
-		creator: UserReferenceSchema,
-		project: ProjectResourceSchema.optional(),
-	})
-	.partial()
+const TaskResourceSchema = nullishObject({
+	id: z.string(),
+	name: z.string(),
+	description: z.string(),
+	duration: z.union([z.string(), z.number()]).optional(),
+	dueDate: z.string().optional(),
+	deadlineType: z.string(),
+	parentRecurringTaskId: z.string(),
+	completed: z.boolean(),
+	completedTime: z.string().optional(),
+	updatedTime: z.string().optional(),
+	startOn: z.string().optional(),
+	creator: UserReferenceSchema,
+	project: ProjectResourceSchema.optional(),
+})
 	.extend({ id: z.string() })
 	.loose();
 
@@ -121,15 +127,13 @@ const TaskPageSchema = z
 	.extend({ tasks: z.array(TaskResourceSchema) })
 	.loose();
 
-const CommentResourceSchema = z
-	.object({
-		id: z.string(),
-		taskId: z.string(),
-		content: z.string(),
-		createdAt: z.string(),
-		creator: UserReferenceSchema,
-	})
-	.partial()
+const CommentResourceSchema = nullishObject({
+	id: z.string(),
+	taskId: z.string(),
+	content: z.string(),
+	createdAt: z.string(),
+	creator: UserReferenceSchema,
+})
 	.extend({ id: z.string() })
 	.loose();
 
@@ -143,16 +147,14 @@ const ProjectPageSchema = z
 	.extend({ projects: z.array(ProjectResourceSchema).optional() })
 	.loose();
 
-const WorkspaceResourceSchema = z
-	.object({
-		id: z.string(),
-		name: z.string(),
-		teamId: z.string(),
-		type: z.string(),
-		labels: z.array(z.object({ name: z.string().optional() }).loose()),
-		statuses: z.array(ProjectStatusSchema),
-	})
-	.partial()
+const WorkspaceResourceSchema = nullishObject({
+	id: z.string(),
+	name: z.string(),
+	teamId: z.string(),
+	type: z.string(),
+	labels: z.array(z.object({ name: z.string().optional() }).loose()),
+	statuses: z.array(ProjectStatusSchema),
+})
 	.extend({ id: z.string() })
 	.loose();
 
@@ -161,20 +163,18 @@ const WorkspacePageSchema = z
 	.extend({ workspaces: z.array(WorkspaceResourceSchema) })
 	.loose();
 
-const RecurringTaskResourceSchema = z
-	.object({
-		id: z.string(),
-		name: z.string(),
-		description: z.string(),
-		workspace: WorkspaceResourceSchema,
-		creator: UserReferenceSchema,
-		assignee: UserReferenceSchema,
-		project: z
-			.object({ id: z.string(), name: z.string().optional() })
-			.loose()
-			.optional(),
-	})
-	.partial()
+const RecurringTaskResourceSchema = nullishObject({
+	id: z.string(),
+	name: z.string(),
+	description: z.string(),
+	workspace: WorkspaceResourceSchema,
+	creator: UserReferenceSchema,
+	assignee: UserReferenceSchema,
+	project: z
+		.object({ id: z.string(), name: z.string().optional() })
+		.loose()
+		.optional(),
+})
 	.extend({ id: z.string() })
 	.loose();
 
@@ -183,13 +183,11 @@ const RecurringTaskPageSchema = z
 	.extend({ tasks: z.array(RecurringTaskResourceSchema) })
 	.loose();
 
-const UserResourceSchema = z
-	.object({
-		id: z.string(),
-		name: z.string().optional(),
-		email: z.string(),
-	})
-	.partial()
+const UserResourceSchema = nullishObject({
+	id: z.string(),
+	name: z.string().optional(),
+	email: z.string(),
+})
 	.extend({ id: z.string() })
 	.loose();
 
@@ -198,40 +196,34 @@ const UserPageSchema = z
 	.extend({ users: z.array(UserResourceSchema) })
 	.loose();
 
-const ScheduleSchema = z
-	.object({
-		name: z.string(),
-		isDefaultTimezone: z.boolean(),
-		timezone: z.string(),
-		schedule: z.record(
-			z.string(),
-			z.array(
-				z
-					.object({ start: z.string().optional(), end: z.string().optional() })
-					.loose(),
-			),
+const ScheduleSchema = nullishObject({
+	name: z.string(),
+	isDefaultTimezone: z.boolean(),
+	timezone: z.string(),
+	schedule: z.record(
+		z.string(),
+		z.array(
+			z
+				.object({ start: z.string().optional(), end: z.string().optional() })
+				.loose(),
 		),
-	})
-	.partial()
-	.loose();
+	),
+}).loose();
 
 // Motion returns { id, field } when listing custom fields but { id, type } when
 // creating one, so each response keeps its own documented shape.
-const CustomFieldResourceSchema = z
-	.object({
-		id: z.string(),
-		field: CustomFieldTypeSchema,
-	})
-	.partial()
+const CustomFieldResourceSchema = nullishObject({
+	id: z.string(),
+	// Output enums accept types Motion adds later; inputs keep the strict list.
+	field: CustomFieldTypeSchema.or(z.string()),
+})
 	.extend({ id: z.string() })
 	.loose();
 
-const CustomFieldCreateSchema = z
-	.object({
-		id: z.string(),
-		type: CustomFieldTypeSchema,
-	})
-	.partial()
+const CustomFieldCreateSchema = nullishObject({
+	id: z.string(),
+	type: CustomFieldTypeSchema.or(z.string()),
+})
 	.extend({ id: z.string() })
 	.loose();
 
