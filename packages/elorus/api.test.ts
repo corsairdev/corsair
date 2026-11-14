@@ -3,6 +3,11 @@ import { elorusOperationSchemas } from './endpoints/types';
 
 const apiKey = process.env.ELORUS_API_KEY;
 const organizationId = process.env.ELORUS_ORGANIZATION_ID;
+if (!apiKey || !organizationId) {
+	console.warn(
+		'Skipping Elorus live test: ELORUS_API_KEY and ELORUS_ORGANIZATION_ID are required.',
+	);
+}
 const liveTest = apiKey && organizationId ? it : it.skip;
 
 liveTest(

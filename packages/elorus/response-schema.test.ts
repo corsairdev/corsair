@@ -30,6 +30,7 @@ const context = {
 	},
 } satisfies ElorusContext;
 
+// unknown: test payloads are arbitrary JSON, including shapes the schemas must reject.
 function jsonResponse(body: unknown, status = 200): Response {
 	return new Response(JSON.stringify(body), {
 		status,

@@ -2,6 +2,7 @@ import { ApiError } from 'corsair/http';
 import { makeElorusRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
+// unknown: the mocked provider bodies are arbitrary JSON, success or error.
 function jsonResponse(body: unknown, status = 200): Response {
 	return new Response(JSON.stringify(body), {
 		status,
