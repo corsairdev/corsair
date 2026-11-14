@@ -147,4 +147,50 @@ describe('Stack Exchange API schemas', () => {
 		expect(questionCreate?.scope).toBe('write_access');
 		expect(filterCreate?.methods).toEqual(['GET', 'POST']);
 	});
+
+	it('accepts every documented method parameter the catalog needs', () => {
+		expect(
+			SiteWriteInputSchema.parse({
+				route: 'edit-tag-prefs-on-user',
+				site: 'stackoverflow',
+				pathParams: { id: 1 },
+				parameters: {
+					favorite_tags: ['javascript', 'typescript'],
+					ignored_tags: 'php',
+					preview: true,
+				},
+			}).parameters,
+		).toMatchObject({ favorite_tags: ['javascript', 'typescript'] });
+		expect(
+			SiteReadInputSchema.parse({
+				route: 'users-network-activity',
+				site: 'stackoverflow',
+				pathParams: { id: 1 },
+				parameters: { types: 'posts;badges' },
+			}).parameters,
+		).toEqual({ types: 'posts;badges' });
+		expect(
+			NetworkReadInputSchema.parse({
+				route: 'associated-users',
+				pathParams: { ids: 1 },
+				parameters: { types: 'main_site' },
+			}).parameters,
+		).toEqual({ types: 'main_site' });
+		expect(
+			SiteWriteInputSchema.parse({
+				route: 'recommend-answer',
+				site: 'stackoverflow',
+				pathParams: { id: 1 },
+				parameters: { slug: 'go' },
+			}).parameters,
+		).toEqual({ slug: 'go' });
+		expect(
+			SiteWriteInputSchema.parse({
+				route: 'create-question-flag',
+				site: 'stackoverflow',
+				pathParams: { id: 1 },
+				parameters: { option_id: 3, question_id: 2, target_site: 'superuser' },
+			}).parameters,
+		).toEqual({ option_id: 3, question_id: 2, target_site: 'superuser' });
+	});
 });
