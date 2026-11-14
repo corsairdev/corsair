@@ -1,4 +1,8 @@
 import { createCorsair } from 'corsair/core';
+import {
+	ModelryEndpointInputSchemas,
+	ModelryEndpointOutputSchemas,
+} from './endpoints/types';
 import { modelry, modelryEndpointSchemas } from './index';
 
 const api = createCorsair({ plugins: [modelry({ key: 'test-token' })] }).modelry
@@ -239,6 +243,13 @@ it('covers every registered endpoint', () =>
 	expect(cases.map((c) => c.name).sort()).toEqual(
 		Object.keys(modelryEndpointSchemas).sort(),
 	));
+it('keeps the input and output schema registries aligned with public endpoints', () => {
+	const publicNames = Object.keys(modelryEndpointSchemas)
+		.map((name) => name.replace('.', '_'))
+		.sort();
+	expect(Object.keys(ModelryEndpointInputSchemas).sort()).toEqual(publicNames);
+	expect(Object.keys(ModelryEndpointOutputSchemas).sort()).toEqual(publicNames);
+});
 it.each(cases)(
 	'$name sends the documented request and parses its response',
 	async (c) => {

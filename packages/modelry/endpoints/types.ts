@@ -230,3 +230,54 @@ export const uploadOutput = z
 export const reviewOutput = z
 	.object({ data: z.union([resource, z.array(resource)]) })
 	.passthrough();
+
+export const ModelryEndpointInputSchemas = {
+	products_list: products_listInput,
+	products_get: products_getInput,
+	products_create: products_createInput,
+	products_update: products_updateInput,
+	products_delete: products_deleteInput,
+	modelingRequests_list: modelingRequests_listInput,
+	modelingRequests_get: modelingRequests_getInput,
+	modelingRequests_create: modelingRequests_createInput,
+	modelingRequests_approve: modelingRequests_approveInput,
+	modelingRequests_reject: modelingRequests_rejectInput,
+	modelingRequests_assets: modelingRequests_assetsInput,
+	productAssets_create: productAssets_createInput,
+	productAssets_delete: productAssets_deleteInput,
+	embeds_list: embeds_listInput,
+	embeds_get: embeds_getInput,
+	embeds_publish: embeds_publishInput,
+	embeds_delete: embeds_deleteInput,
+	reviews_create: reviews_createInput,
+	uploads_blob: uploads_blobInput,
+	uploads_file: uploads_fileInput,
+	workspaces_list: workspaces_listInput,
+} as const;
+
+export const ModelryEndpointOutputSchemas = {
+	products_list: list,
+	products_get: single,
+	products_create: single,
+	products_update: single,
+	products_delete: empty,
+	modelingRequests_list: list,
+	modelingRequests_get: single,
+	modelingRequests_create: single,
+	modelingRequests_approve: single,
+	modelingRequests_reject: single,
+	modelingRequests_assets: list,
+	productAssets_create: single,
+	productAssets_delete: empty,
+	embeds_list: list,
+	embeds_get: single,
+	embeds_publish: single,
+	embeds_delete: empty,
+	reviews_create: reviewOutput,
+	uploads_blob: blobOutput,
+	uploads_file: uploadOutput,
+	workspaces_list: list,
+} as const satisfies Record<
+	keyof typeof ModelryEndpointInputSchemas,
+	z.ZodType
+>;
