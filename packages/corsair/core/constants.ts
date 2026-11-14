@@ -336,6 +336,7 @@ export const BaseProviders = [
 	'missive',
 	'mixmax',
 	'monday',
+	'moonclerk',
 	'mrscraper',
 	'nanonets',
 	'neon',
@@ -871,6 +872,7 @@ export const ProviderDisplayNames = {
 	missive: 'Missive',
 	mixmax: 'Mixmax',
 	monday: 'Monday',
+	moonclerk: 'MoonClerk',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
 	neon: 'Neon',
@@ -1413,6 +1415,7 @@ export type AllProviders =
 	| 'missive'
 	| 'mixmax'
 	| 'monday'
+	| 'moonclerk'
 	| 'mrscraper'
 	| 'nanonets'
 	| 'neon'
