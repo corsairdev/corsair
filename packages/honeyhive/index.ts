@@ -448,7 +448,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'List datasets in a project',
 	},
 	'datasets.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a new dataset in a project',
 	},
 	'datasets.update': {
@@ -461,7 +461,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'Delete a dataset and its datapoints from a project',
 	},
 	'datasets.addDatapoints': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Add datapoints to a dataset',
 	},
 	'datasets.removeDatapoint': {
@@ -473,7 +473,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'List datasets (legacy)',
 	},
 	'datasets.createLegacy': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a new dataset (legacy)',
 	},
 	'datasets.updateLegacy': {
@@ -490,7 +490,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'List evaluation runs in a project',
 	},
 	'experiments.createRun': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create an evaluation run in a project',
 	},
 	'experiments.getRun': {
@@ -498,7 +498,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'Get evaluation run details',
 	},
 	'experiments.updateRun': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update an evaluation run',
 	},
 	'experiments.deleteRun': {
@@ -534,7 +534,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'List evaluation runs (legacy)',
 	},
 	'experiments.createRunLegacy': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create an evaluation run (legacy)',
 	},
 	'experiments.getRunLegacy': {
@@ -578,7 +578,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'List LLM and pipeline configurations',
 	},
 	'configurations.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a new configuration',
 	},
 	'configurations.update': {
@@ -590,7 +590,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'Delete a configuration',
 	},
 	'projects.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a new project in a workspace',
 	},
 	'projects.get': {
@@ -598,7 +598,7 @@ export const honeyHiveEndpointMeta = {
 		description: 'Get details for a project',
 	},
 	'projects.update': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update a project name or description',
 	},
 	'projects.delete': {

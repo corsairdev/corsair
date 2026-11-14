@@ -76,28 +76,38 @@ describe('HoneyHive metadata and endpoint sync', () => {
 	});
 
 	it('assigns destructive riskLevel to state-modifying or irreversible operations', () => {
+		// R8: deletes, replace-all updates and paid evaluator runs need approval;
+		// plain creates and partial updates are writes.
 		const destructiveOperations = [
-			'datasets.create',
 			'datasets.update',
 			'datasets.delete',
-			'datasets.addDatapoints',
 			'datasets.removeDatapoint',
-			'datasets.createLegacy',
 			'datasets.updateLegacy',
 			'datasets.deleteLegacy',
-			'experiments.createRun',
-			'experiments.updateRun',
 			'experiments.deleteRun',
-			'experiments.createRunLegacy',
-			'configurations.create',
 			'configurations.update',
 			'configurations.delete',
-			'projects.create',
-			'projects.update',
 			'projects.delete',
 			'metrics.delete',
 			'metrics.run',
 		];
+		const writeOperations = [
+			'datasets.create',
+			'datasets.addDatapoints',
+			'datasets.createLegacy',
+			'experiments.createRun',
+			'experiments.updateRun',
+			'experiments.createRunLegacy',
+			'configurations.create',
+			'projects.create',
+			'projects.update',
+		];
+		for (const op of writeOperations) {
+			expect(
+				honeyHiveEndpointMeta[op as keyof typeof honeyHiveEndpointMeta]
+					.riskLevel,
+			).toBe('write');
+		}
 
 		for (const op of destructiveOperations) {
 			const meta =
