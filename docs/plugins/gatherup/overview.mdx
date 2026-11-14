@@ -1,0 +1,146 @@
+---
+title: "GatherUp plugin"
+sidebarTitle: "Overview"
+description: "Customer feedback and reviews with GatherUp - manage the businesses on an account, add customers and send them feedback requests, and read the feedback and ratings they leave."
+---
+
+Use **GatherUp** through Corsair: one client, typed API calls.
+
+Create a bearer token and copy your client ID from your GatherUp account owner details. Both are needed on every call, and the client ID travels as the `clientId` query parameter.
+
+Things to know before you call:
+
+- **A failure can arrive with HTTP 200.** GatherUp puts `errorCode` and `errorMessage` in the body of every answer, with `0` and `Success` on a good one. A live probe of `/api/test` with a bad token answered **200** and `{"errorCode": 2, "errorMessage": "Invalid clientId"}`, so the plugin throws whenever the code is non-zero, whatever the status was.
+- **The rate limit answers 503, not 429.** GatherUp allows 5 requests a second and returns 503 above it, so a 503 is a rate limit. A 503 is retried on reads only, since one from an outage can follow a write that already landed; a 429 is retried on any call. A 500 is still a real server error.
+- **Write bodies use prefixed field names.** `businesses.create` takes `businessName` and `businessType`, where a read returns `name` and `organisationType`. `customers.create` takes `customerFirstName`, `customerEmail` and so on. The plugin uses the documented names on each side.
+- **Update and create disagree on one spelling.** `customers.create` takes `customerPhone`, and `customers.update` takes `customerPhoneNumber`. Each keeps its own documented name.
+- **A rating is a decimal string.** A customer's `rating` arrives as `"5.00"` or null, not a number, while a feedback's `rating` is a number.
+- **A feedback's tags arrive as one string.** `tags` is `"Auto,Towing,Roadside Service"`, not an array.
+- **Deactivating is not deleting.** `businesses.deactivate` suspends feedback requests and `businesses.reactivate` reverses it, so neither is destructive. `businesses.delete` and `customers.delete` are permanent.
+- **`customers.requestFeedback` messages a real person.** It sends the review request, so it is a write.
+- **No webhooks.** GatherUp does not push; a caller polls `feedbacks.list`.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/gatherup better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/gatherup better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/gatherup better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/gatherup better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { gatherup } from '@corsair-dev/gatherup';
+
+export const corsair = createCorsair({
+	plugins: [
+		gatherup(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the GatherUp API key before the first call: `pnpm corsair setup --plugin=gatherup --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+gatherup()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'gatherup',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the businesses on the account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gatherup.api.businesses.list({ page: 1, perPage: 25 });
+```
+
+
+**Add a customer to a business**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gatherup.api.customers.create({
+	businessId: 34291,
+	customerFirstName: 'John',
+	customerLastName: 'Smith',
+	customerEmail: 'john.smith@example.com',
+});
+```
+
+
+See the full list on the [API](/plugins/gatherup/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/gatherup/api">
+    Every `gatherup.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

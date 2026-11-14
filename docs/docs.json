@@ -2140,6 +2140,14 @@
                 ]
               },
               {
+                "group": "GatherUp",
+                "pages": [
+                  "plugins/gatherup/overview",
+                  "plugins/gatherup/api",
+                  "plugins/gatherup/database"
+                ]
+              },
+              {
                 "group": "Gemini",
                 "pages": [
                   "plugins/gemini/overview",
