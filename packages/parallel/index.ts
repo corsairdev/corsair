@@ -191,7 +191,7 @@ const meta = {
 		description: 'Create a non-streaming response',
 	},
 	'findall.entitySearch': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description: 'Search for entities',
 	},
 	'findall.ingest': {
@@ -203,7 +203,11 @@ const meta = {
 		description: 'Create a FindAll run',
 	},
 	'findall.getRun': { riskLevel: 'read', description: 'Get a FindAll run' },
-	'findall.cancel': { riskLevel: 'write', description: 'Cancel a FindAll run' },
+	'findall.cancel': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Cancel a FindAll run',
+	},
 	'findall.enrich': {
 		riskLevel: 'destructive',
 		description: 'Enrich a FindAll run',
@@ -271,11 +275,11 @@ const meta = {
 	},
 	'memory.retrieve': { riskLevel: 'read', description: 'Retrieve memories' },
 	'images.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description: 'Search for images',
 	},
 	'places.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description: 'Search for places by location',
 	},
 	'decisions.create': {
@@ -283,11 +287,11 @@ const meta = {
 		description: 'Answer grounded decision questions',
 	},
 	'search.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description: 'Search the web for relevant sources and excerpts',
 	},
 	'extract.extract': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description: 'Extract content from web URLs',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof endpoints>;
