@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { ShipEngineResponse } from './responses';
 
 // Generated from ShipEngine's official OpenAPI 3.0 contract (version 1.1.202604070904); provider descriptions/examples are intentionally omitted from runtime schemas.
 const shipEngineSchema2 = z.union([z.literal('4x6'), z.literal('Letter')]);
@@ -597,10 +598,11 @@ const shipEngineSchema121 = z
 		display_scheme: shipEngineSchema128.optional(),
 	})
 	.strict();
+// external_batch_id is the caller's own id (ShipEngine's example is a UUID), not an se- id.
 const shipEngineSchema115 = z.union([
 	z
 		.object({
-			external_batch_id: shipEngineSchema116.optional(),
+			external_batch_id: shipEngineSchema34.optional(),
 			batch_notes: shipEngineSchema34.optional(),
 			shipment_ids: shipEngineSchema118.optional(),
 			rate_ids: shipEngineSchema119.optional(),
@@ -608,7 +610,7 @@ const shipEngineSchema115 = z.union([
 		.strict(),
 	z
 		.object({
-			external_batch_id: shipEngineSchema116.optional(),
+			external_batch_id: shipEngineSchema34.optional(),
 			batch_notes: shipEngineSchema34.optional(),
 			shipment_ids: shipEngineSchema118.optional(),
 			rate_ids: shipEngineSchema119.optional(),
@@ -2876,11 +2878,12 @@ const shipEngineSchema445 = z
 		rate_type: shipEngineSchema448.optional(),
 	})
 	.strict();
+// carrier_id and service_code are optional when rate_options.carrier_ids picks the carriers (ShipEngine's rate-shopping example).
 const shipEngineSchema449 = z
 	.object({
 		validate_address: shipEngineSchema378.optional(),
-		carrier_id: shipEngineSchema116,
-		service_code: shipEngineSchema282,
+		carrier_id: shipEngineSchema116.optional(),
+		service_code: shipEngineSchema282.optional(),
 		shipping_rule_id: shipEngineSchema116.optional(),
 		external_order_id: shipEngineSchema36.optional(),
 		items: shipEngineSchema283.optional(),
@@ -4747,7 +4750,8 @@ export const ShipEngineEndpointOutputSchemas = {
 	'shipments.getShipmentById': shipEngineSchema596,
 	'shipments.updateShipment': shipEngineSchema602,
 	'shipments.cancelShipments': shipEngineSchema32,
-	'shipments.listShipmentRates': shipEngineSchema603,
+	// Live API returns an array of rate responses here; the OpenAPI contract shows a single object.
+	'shipments.listShipmentRates': z.array(shipEngineSchema603),
 	'shipments.shipmentsUpdateTags': z.undefined(),
 	'shipments.shipmentsListTags': shipEngineSchema611,
 	'shipments.tagShipment': shipEngineSchema611,
@@ -4777,7 +4781,7 @@ export type ShipEngineEndpointInputs = {
 	>;
 };
 export type ShipEngineEndpointOutputs = {
-	[K in ShipEngineOperationName]: z.infer<
-		(typeof ShipEngineEndpointOutputSchemas)[K]
+	[K in ShipEngineOperationName]: ShipEngineResponse<
+		z.infer<(typeof ShipEngineEndpointOutputSchemas)[K]>
 	>;
 };

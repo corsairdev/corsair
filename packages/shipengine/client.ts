@@ -2,6 +2,7 @@ import type { OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import type { z } from 'zod';
 import { SHIPENGINE_OPERATIONS } from './endpoints/operations';
+import { toResponseSchema } from './endpoints/responses';
 import type {
 	ShipEngineEndpointInputs,
 	ShipEngineEndpointOutputs,
@@ -27,12 +28,30 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function parseWithSchema<Schema extends z.ZodType>(
-	schema: Schema,
+const responseSchemas = new Map<ShipEngineOperationName, z.ZodType>();
+
+function parseResponse<K extends ShipEngineOperationName>(
+	operationName: K,
 	value: unknown,
-): z.infer<Schema> {
+): ShipEngineEndpointOutputs[K] {
 	// `unknown` because HTTP and binary response data is untrusted until the operation's Zod schema parses it.
-	return schema.parse(value);
+	let schema = responseSchemas.get(operationName);
+	if (!schema) {
+		schema = toResponseSchema(ShipEngineEndpointOutputSchemas[operationName]);
+		responseSchemas.set(operationName, schema);
+	}
+	const result = schema.safeParse(value);
+	if (!result.success) {
+		// Paths only: response values can hold addresses and other customer data.
+		const paths = result.error.issues
+			.slice(0, 5)
+			.map((issue) => issue.path.join('.') || '(root)')
+			.join(', ');
+		throw new Error(
+			`ShipEngine returned an unexpected response for ${operationName} at ${paths}`,
+		);
+	}
+	return result.data as ShipEngineEndpointOutputs[K];
 }
 
 function inputSection(input: object, key: 'path' | 'query' | 'body'): unknown {
@@ -216,10 +235,7 @@ async function downloadFile(
 			base64: toBase64(bytes),
 			byteLength: bytes.byteLength,
 		};
-		return parseWithSchema(
-			ShipEngineEndpointOutputSchemas[operationName],
-			result,
-		);
+		return parseResponse(operationName, result);
 	}
 	throw new Error(
 		'ShipEngine file download exceeded the documented rate-limit retry count',
@@ -262,22 +278,20 @@ export async function makeShipEngineRequest(
 			'Content-Type': 'application/json',
 		},
 	};
+	// `unknown` because the provider response is untrusted until parsed by the operation-specific schema.
+	let response: unknown;
 	try {
-		// `unknown` because the provider response is untrusted until parsed by the operation-specific schema.
-		const response: unknown = await request<unknown>(config, {
+		response = await request<unknown>(config, {
 			method: operation.method,
 			url: path,
 			query,
 			body: inputSection(validatedInput, 'body'),
 			mediaType: operation.hasBody ? 'application/json' : undefined,
 		});
-		return parseWithSchema(
-			ShipEngineEndpointOutputSchemas[operationName],
-			response,
-		);
 	} catch (error: unknown) {
 		// `unknown` because JavaScript promises may reject with any value; ApiError is narrowed before handling.
 		if (error instanceof ApiError) throw error;
 		throw new Error('ShipEngine API request failed');
 	}
+	return parseResponse(operationName, response);
 }

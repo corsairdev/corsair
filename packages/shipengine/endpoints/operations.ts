@@ -971,7 +971,7 @@ export const SHIPENGINE_OPERATIONS = {
 		pagination: false,
 		binary: false,
 		tag: 'labels',
-		risk: 'write',
+		risk: 'destructive',
 	},
 	'labels.cancelLabelRefund': {
 		name: 'labels.cancelLabelRefund',
