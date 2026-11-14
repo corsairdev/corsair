@@ -203,5 +203,8 @@ Without this, the test sandbox will be running stale compiled output.
 
 - **Look at existing plugins** for reference. `packages/github/` and `packages/resend/` are good examples at different complexity levels.
 - **Auth headers** go in `client.ts` inside the `HEADERS` config object. Most APIs use `Authorization: Bearer <key>` or `Authorization: <key>`.
-- **Webhook signature verification**: update the `TODO` in `webhooks/types.ts` with the HMAC logic for your provider.
+- **Webhook signature verification**: update the `TODO` in `webhooks/types.ts` with the HMAC logic for your provider. Check it against the raw body (`request.rawBody`), not re-serialized JSON. When a check fails, return `{ success: false, error }` instead of throwing: `processWebhook` reports it as a refusal (400), while a thrown error becomes a 500 that the sender retries.
+- **Errors from `client.ts`**: let core's `ApiError` through unchanged, as the scaffold does. Its `status` and `retryAfter` are what error handlers match and what core reads to refresh an OAuth token after a 401. Wrapping it in a new error hides both.
+- **Rate limits**: core's `request()` already retries a 429 three times and honors `Retry-After`. Keep the scaffold's `RATE_LIMIT_ERROR` handler at `maxRetries: 0` unless the endpoint needs more, or the attempts multiply.
+- **Mark reads as reads**: give each endpoint that only reads `riskLevel: 'read'` in the plugin's endpoint meta (the scaffold's `example.get` shows it). For OAuth plugins, core refreshes the token once and repeats a read that comes back 401. It leaves writes alone, because repeating one could send a request twice. If your endpoints already decide which 401s deserve a refresh, set `refreshOnUnauthorized: false` on the plugin.
 - **Database entities**: define Zod schemas in `schema/database.ts` for any data you want to cache locally. Leave `entities: {}` empty if you only need live API calls.

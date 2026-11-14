@@ -1,0 +1,1805 @@
+---
+title: "CloudConvert API reference"
+sidebarTitle: "API"
+description: "API reference for the CloudConvert plugin in Corsair: every `cloudconvert.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Formats
+
+### listSupported
+
+`formats.listSupported`
+
+List supported conversion formats, engines, options and engine versions through CloudConvert GET /operations. Docs: https://cloudconvert.com/docs/api-reference/operations#list-operations
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.formats.listSupported({});
+```
+
+**Input:** _empty object_
+
+`options[].type` is a string discriminator, not a TypeScript primitive or identifier union. Its literal values are `"string"`, `"boolean"`, `"integer"`, `"float"`, `"enum"`, and `"dictionary"`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  operation: string,
+  input_format?: string | null,
+  output_format?: string | null,
+  engine: string,
+  credits: number,
+  options?: {
+    name: string,
+    type?: string | boolean | integer | float | enum | dictionary | string,
+    default?: JsonValue,
+    description?: string,
+    possible_values?: JsonValue[],
+    label?: string,
+    group?: string,
+    advanced?: boolean,
+    depends_on?: Record<string, JsonValue>[],
+    min?: number,
+    max?: number,
+    step?: number,
+    unit?: string,
+    marks?: {
+      value: JsonValue,
+      label: string
+    }[],
+    suggestions?: string[],
+    values?: {
+      value: string,
+      label?: string | null,
+      description?: string | null
+    }[]
+  }[] | null,
+  engine_versions?: {
+    version: string,
+    default?: boolean,
+    latest?: boolean,
+    deprecated?: boolean,
+    experimental?: boolean
+  }[] | null,
+  deprecated?: boolean,
+  experimental?: boolean,
+  meta?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### create
+
+`jobs.create`
+
+Create an asynchronous job from a task graph. CloudConvert limits job task names to alphanumeric characters, hyphens and underscores, with at most 2000 tasks. Docs: https://cloudconvert.com/docs/api-reference/jobs#create-job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudconvert.api.jobs.create({
+	tasks: {
+		import_file: { operation: 'import/url', url: 'https://example.test/input.docx' },
+		convert: { operation: 'convert', input: 'import_file', output_format: 'pdf' },
+		export_file: { operation: 'export/url', input: 'convert' },
+	},
+	tag: 'request-123',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object` | Yes | — |
+| `tag` | `string` | No | — |
+
+This example includes an `export/url` task so the completed job has a downloadable file. Read `result.files[].url` from the finished export task; use `jobs.get` for status polling on long jobs. The generic task schema rejects credential fields such as `private_key` and `secret_access_key`. Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+Record<string, {
+  operation: string,
+  input?: string | string[],
+  ignore_error?: boolean
+}& Record<string, JsonValue>>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tag?: string | null,
+  status: waiting | processing | finished | error | string,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    message?: string | null,
+    code?: string | null,
+    waiting_reason?: string | null,
+    credits?: number | null,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    engine?: string | null,
+    engine_version?: string | null,
+    retry_of_task_id?: string | null,
+    retries?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
+    payload?: Record<string, JsonValue> | null,
+    job?: {
+      id: string,
+      tag?: string | null,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    result?: {
+      files?: {
+        filename: string,
+        url?: string | null
+      }[] | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createAndWait
+
+`jobs.createAndWait`
+
+Create a job and wait for completion on CloudConvert’s synchronous API. Prefer jobs.create for long-running work because clients and network stacks may time out. redirect=true is rejected because it returns raw file bytes unsupported by this JSON endpoint. Docs: https://cloudconvert.com/docs/api-reference/jobs#create-job-and-wait
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudconvert.api.jobs.createAndWait({
+	tasks: {
+		import_file: { operation: 'import/url', url: 'https://example.test/input.docx' },
+		convert: { operation: 'convert', input: 'import_file', output_format: 'pdf' },
+		export_file: { operation: 'export/url', input: 'convert' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object` | Yes | — |
+| `tag` | `string` | No | — |
+| `redirect` | `false` | No | Only false or omitted is supported. true redirects to raw file content, which this JSON endpoint cannot represent. |
+
+This example includes an `export/url` task. Read `result.files[].url` from the completed export task. Synchronous calls are bounded by `syncTimeoutMs` (5 minutes by default, up to 10 minutes); use async jobs for long work. Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+Record<string, {
+  operation: string,
+  input?: string | string[],
+  ignore_error?: boolean
+}& Record<string, JsonValue>>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tag?: string | null,
+  status: waiting | processing | finished | error | string,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    message?: string | null,
+    code?: string | null,
+    waiting_reason?: string | null,
+    credits?: number | null,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    engine?: string | null,
+    engine_version?: string | null,
+    retry_of_task_id?: string | null,
+    retries?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
+    payload?: Record<string, JsonValue> | null,
+    job?: {
+      id: string,
+      tag?: string | null,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    result?: {
+      files?: {
+        filename: string,
+        url?: string | null
+      }[] | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`jobs.get`
+
+Get job status and its tasks. redirect=true is rejected because it returns raw file bytes unsupported by this JSON endpoint. Docs: https://cloudconvert.com/docs/api-reference/jobs#show-job
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.jobs.get({ jobId: 'job-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `redirect` | `false` | No | Only false or omitted is supported. true redirects to raw file content, which this JSON endpoint cannot represent. |
+
+Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tag?: string | null,
+  status: waiting | processing | finished | error | string,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    message?: string | null,
+    code?: string | null,
+    waiting_reason?: string | null,
+    credits?: number | null,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    engine?: string | null,
+    engine_version?: string | null,
+    retry_of_task_id?: string | null,
+    retries?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
+    payload?: Record<string, JsonValue> | null,
+    job?: {
+      id: string,
+      tag?: string | null,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    result?: {
+      files?: {
+        filename: string,
+        url?: string | null
+      }[] | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+List jobs with documented status, tag and access-token filters and page-based pagination. Docs: https://cloudconvert.com/docs/api-reference/jobs#list-jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.jobs.list({
+	include: ['tasks'],
+	perPage: 10,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `processing \| finished \| error` | No | — |
+| `tag` | `string` | No | — |
+| `accessToken` | `string` | No | — |
+| `include` | `tasks[]` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tag?: string | null,
+  status: waiting | processing | finished | error | string,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    message?: string | null,
+    code?: string | null,
+    waiting_reason?: string | null,
+    credits?: number | null,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    engine?: string | null,
+    engine_version?: string | null,
+    retry_of_task_id?: string | null,
+    retries?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
+    payload?: Record<string, JsonValue> | null,
+    job?: {
+      id: string,
+      tag?: string | null,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    result?: {
+      files?: {
+        filename: string,
+        url?: string | null
+      }[] | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  links?: {
+    self?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from?: number | null,
+  path: string,
+  per_page: number,
+  to?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`jobs.remove`
+
+Delete a job, including all of its tasks and data. Docs: https://cloudconvert.com/docs/api-reference/jobs#delete-job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudconvert.api.jobs.remove({ jobId: 'job-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### wait
+
+`jobs.wait`
+
+Wait for job completion on CloudConvert’s synchronous API. Prefer jobs.get for long-running work because clients and network stacks may time out. redirect=true is rejected because it returns raw file bytes unsupported by this JSON endpoint. Docs: https://cloudconvert.com/docs/api-reference/jobs#wait-for-job
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.jobs.wait({ jobId: 'job-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `redirect` | `false` | No | Only false or omitted is supported. true redirects to raw file content, which this JSON endpoint cannot represent. |
+
+Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tag?: string | null,
+  status: waiting | processing | finished | error | string,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    message?: string | null,
+    code?: string | null,
+    waiting_reason?: string | null,
+    credits?: number | null,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    engine?: string | null,
+    engine_version?: string | null,
+    retry_of_task_id?: string | null,
+    retries?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
+    payload?: Record<string, JsonValue> | null,
+    job?: {
+      id: string,
+      tag?: string | null,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    result?: {
+      files?: {
+        filename: string,
+        url?: string | null
+      }[] | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Operations
+
+### list
+
+`operations.list`
+
+List available CloudConvert operations, formats, engines and options. Docs: https://cloudconvert.com/docs/api-reference/operations#list-operations
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.operations.list({ operation: 'convert', inputFormat: 'docx', outputFormat: 'pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation` | `string` | No | — |
+| `inputFormat` | `string` | No | — |
+| `outputFormat` | `string` | No | — |
+| `engine` | `string` | No | — |
+| `engineVersion` | `string` | No | — |
+| `alternatives` | `boolean` | No | — |
+| `include` | `(options \| engine_versions \| options.details)[]` | No | — |
+
+`options[].type` is a string discriminator, not a TypeScript primitive or identifier union. Its literal values are `"string"`, `"boolean"`, `"integer"`, `"float"`, `"enum"`, and `"dictionary"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  operation: string,
+  input_format?: string | null,
+  output_format?: string | null,
+  engine: string,
+  credits: number,
+  options?: {
+    name: string,
+    type?: string | boolean | integer | float | enum | dictionary | string,
+    default?: JsonValue,
+    description?: string,
+    possible_values?: JsonValue[],
+    label?: string,
+    group?: string,
+    advanced?: boolean,
+    depends_on?: Record<string, JsonValue>[],
+    min?: number,
+    max?: number,
+    step?: number,
+    unit?: string,
+    marks?: {
+      value: JsonValue,
+      label: string
+    }[],
+    suggestions?: string[],
+    values?: {
+      value: string,
+      label?: string | null,
+      description?: string | null
+    }[]
+  }[] | null,
+  engine_versions?: {
+    version: string,
+    default?: boolean,
+    latest?: boolean,
+    deprecated?: boolean,
+    experimental?: boolean
+  }[] | null,
+  deprecated?: boolean,
+  experimental?: boolean,
+  meta?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### cancel
+
+`tasks.cancel`
+
+Cancel a task that is waiting or processing. Docs: https://cloudconvert.com/docs/api-reference/tasks#cancel-task
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudconvert.api.tasks.cancel({ taskId: 'task-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  job_id?: string | null,
+  name?: string | null,
+  operation: string,
+  status: waiting | processing | finished | error | string,
+  message?: string | null,
+  code?: string | null,
+  waiting_reason?: string | null,
+  credits?: number | null,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  engine?: string | null,
+  engine_version?: string | null,
+  retry_of_task_id?: string | null,
+  retries?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
+  payload?: Record<string, JsonValue> | null,
+  job?: {
+    id: string,
+    tag?: string | null,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  result?: {
+    files?: {
+      filename: string,
+      url?: string | null
+    }[] | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createExportGoogleCloudStorage
+
+`tasks.createExportGoogleCloudStorage`
+
+Create a Google Cloud Storage export task in a new job; CloudConvert task creation is part of POST /jobs. Docs: https://cloudconvert.com/docs/import-export/export-files#google-cloud-storage and https://cloudconvert.com/docs/api-reference/jobs#create-job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudconvert.api.tasks.createExportGoogleCloudStorage({
+	exportTaskName: 'export',
+	sourceTasks: {
+		imported: { operation: 'import/url', url: 'https://example.test/input.pdf' },
+	},
+	input: 'imported',
+	bucket: 'bucket-name',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exportTaskName` | `string` | Yes | Name to assign to the export task. |
+| `sourceTasks` | `object` | Yes | Other tasks to include in the same job, such as import and conversion tasks. |
+| `input` | `string \| string[]` | Yes | The name or names of source tasks whose files this export task will export. |
+| `bucket` | `string` | Yes | Google Cloud Storage bucket name. |
+| `file` | `string` | No | Destination filename in the bucket. |
+| `filePrefix` | `string` | No | Destination filename prefix; use instead of file. |
+
+Before calling, store `export_gcs_project_id`, `export_gcs_client_email`, and `export_gcs_private_key` with the tenant's CloudConvert key manager. The private key is encrypted at rest and is resolved after approval; it is not part of this endpoint's arguments. The response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+<AccordionGroup>
+<Accordion title="sourceTasks full type">
+
+```ts
+Record<string, {
+  operation: string,
+  input?: string | string[],
+  ignore_error?: boolean
+}& Record<string, JsonValue>>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tag?: string | null,
+  status: waiting | processing | finished | error | string,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    message?: string | null,
+    code?: string | null,
+    waiting_reason?: string | null,
+    credits?: number | null,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    engine?: string | null,
+    engine_version?: string | null,
+    retry_of_task_id?: string | null,
+    retries?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
+    payload?: Record<string, JsonValue> | null,
+    job?: {
+      id: string,
+      tag?: string | null,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    result?: {
+      files?: {
+        filename: string,
+        url?: string | null
+      }[] | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createExportS3
+
+`tasks.createExportS3`
+
+Create an S3 export task in a new job; CloudConvert task creation is part of POST /jobs. Docs: https://cloudconvert.com/docs/import-export/export-files#s3 and https://cloudconvert.com/docs/api-reference/jobs#create-job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudconvert.api.tasks.createExportS3({
+	exportTaskName: 'export',
+	sourceTasks: {
+		imported: { operation: 'import/url', url: 'https://example.test/input.pdf' },
+	},
+	input: 'imported',
+	bucket: 'bucket-name',
+	region: 'us-east-1',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exportTaskName` | `string` | Yes | Name to assign to the export task. |
+| `sourceTasks` | `object` | Yes | Other tasks to include in the same job, such as import and conversion tasks. |
+| `input` | `string \| string[]` | Yes | The name or names of source tasks whose files this export task will export. |
+| `bucket` | `string` | Yes | Amazon S3 bucket name. |
+| `region` | `string` | Yes | Amazon S3 region or compatible endpoint region. |
+| `endpoint` | `string` | No | Custom S3-compatible API endpoint. |
+| `key` | `string` | No | Destination object key. |
+| `keyPrefix` | `string` | No | Destination object-key prefix; use instead of key. |
+| `acl` | `private \| public-read \| public-read-write \| authenticated-read \| bucket-owner-read \| bucket-owner-full-control` | No | — |
+| `cacheControl` | `string` | No | — |
+| `contentDisposition` | `string` | No | — |
+| `contentType` | `string` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `serverSideEncryption` | `AES256 \| aws:kms` | No | — |
+| `tagging` | `Record<string, JsonValue>` | No | — |
+
+Before calling, store `export_s3_access_key_id` and `export_s3_secret_access_key` with the tenant's CloudConvert key manager. Store `export_s3_session_token` when using temporary credentials. These credential fields are encrypted at rest and are not endpoint arguments. The response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+<AccordionGroup>
+<Accordion title="sourceTasks full type">
+
+```ts
+Record<string, {
+  operation: string,
+  input?: string | string[],
+  ignore_error?: boolean
+}& Record<string, JsonValue>>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  tag?: string | null,
+  status: waiting | processing | finished | error | string,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    message?: string | null,
+    code?: string | null,
+    waiting_reason?: string | null,
+    credits?: number | null,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    engine?: string | null,
+    engine_version?: string | null,
+    retry_of_task_id?: string | null,
+    retries?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
+    payload?: Record<string, JsonValue> | null,
+    job?: {
+      id: string,
+      tag?: string | null,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    } | null,
+    result?: {
+      files?: {
+        filename: string,
+        url?: string | null
+      }[] | null
+    } | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get task status and optionally include retries, dependencies, payload and parent job. Docs: https://cloudconvert.com/docs/api-reference/tasks#show-task
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.tasks.get({
+	taskId: 'task-id',
+	include: ['retries', 'depends_on_tasks', 'payload', 'job'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `include` | `(retries \| depends_on_tasks \| payload \| job)[]` | No | — |
+
+Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  job_id?: string | null,
+  name?: string | null,
+  operation: string,
+  status: waiting | processing | finished | error | string,
+  message?: string | null,
+  code?: string | null,
+  waiting_reason?: string | null,
+  credits?: number | null,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  engine?: string | null,
+  engine_version?: string | null,
+  retry_of_task_id?: string | null,
+  retries?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
+  payload?: Record<string, JsonValue> | null,
+  job?: {
+    id: string,
+    tag?: string | null,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  result?: {
+    files?: {
+      filename: string,
+      url?: string | null
+    }[] | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List and filter CloudConvert tasks with page-based pagination. Docs: https://cloudconvert.com/docs/api-reference/tasks#list-tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.tasks.list({
+	include: ['retries', 'depends_on_tasks'],
+	perPage: 10,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | No | — |
+| `status` | `waiting \| processing \| finished \| error` | No | — |
+| `operation` | `string` | No | — |
+| `include` | `(retries \| depends_on_tasks)[]` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  job_id?: string | null,
+  name?: string | null,
+  operation: string,
+  status: waiting | processing | finished | error | string,
+  message?: string | null,
+  code?: string | null,
+  waiting_reason?: string | null,
+  credits?: number | null,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  engine?: string | null,
+  engine_version?: string | null,
+  retry_of_task_id?: string | null,
+  retries?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
+  payload?: Record<string, JsonValue> | null,
+  job?: {
+    id: string,
+    tag?: string | null,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  result?: {
+    files?: {
+      filename: string,
+      url?: string | null
+    }[] | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  from?: number | null,
+  path: string,
+  per_page: number,
+  to?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`tasks.remove`
+
+Delete a task, including its data. Docs: https://cloudconvert.com/docs/api-reference/tasks#delete-task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudconvert.api.tasks.remove({ taskId: 'task-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### retry
+
+`tasks.retry`
+
+Create a new task using the payload of an existing task. Docs: https://cloudconvert.com/docs/api-reference/tasks#retry-task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudconvert.api.tasks.retry({ taskId: 'task-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  job_id?: string | null,
+  name?: string | null,
+  operation: string,
+  status: waiting | processing | finished | error | string,
+  message?: string | null,
+  code?: string | null,
+  waiting_reason?: string | null,
+  credits?: number | null,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  engine?: string | null,
+  engine_version?: string | null,
+  retry_of_task_id?: string | null,
+  retries?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
+  payload?: Record<string, JsonValue> | null,
+  job?: {
+    id: string,
+    tag?: string | null,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  result?: {
+    files?: {
+      filename: string,
+      url?: string | null
+    }[] | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### wait
+
+`tasks.wait`
+
+Wait for task completion on CloudConvert’s synchronous API. Prefer tasks.get for long-running work because clients and network stacks may time out. Docs: https://cloudconvert.com/docs/api-reference/tasks#wait-for-task
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.tasks.wait({ taskId: 'task-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+Response `status` values are the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  job_id?: string | null,
+  name?: string | null,
+  operation: string,
+  status: waiting | processing | finished | error | string,
+  message?: string | null,
+  code?: string | null,
+  waiting_reason?: string | null,
+  credits?: number | null,
+  created_at: string,
+  started_at?: string | null,
+  ended_at?: string | null,
+  engine?: string | null,
+  engine_version?: string | null,
+  retry_of_task_id?: string | null,
+  retries?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
+  payload?: Record<string, JsonValue> | null,
+  job?: {
+    id: string,
+    tag?: string | null,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  } | null,
+  result?: {
+    files?: {
+      filename: string,
+      url?: string | null
+    }[] | null
+  } | null,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### show
+
+`users.show`
+
+Read the authenticated CloudConvert user and remaining credits. Docs: https://cloudconvert.com/docs/api-reference/users#show-user
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudconvert.api.users.show({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  username: string | null,
+  email: string,
+  credits: number,
+  created_at: string,
+  links?: {
+    self?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

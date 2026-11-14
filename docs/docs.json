@@ -1357,6 +1357,14 @@
                 ]
               },
               {
+                "group": "CloudConvert",
+                "pages": [
+                  "plugins/cloudconvert/overview",
+                  "plugins/cloudconvert/api",
+                  "plugins/cloudconvert/database"
+                ]
+              },
+              {
                 "group": "Cloudflare",
                 "pages": [
                   "plugins/cloudflare/overview",
@@ -1374,12 +1382,28 @@
                 ]
               },
               {
+                "group": "Cloudflare Browser Run",
+                "pages": [
+                  "plugins/cloudflarebrowserrendering/overview",
+                  "plugins/cloudflarebrowserrendering/api",
+                  "plugins/cloudflarebrowserrendering/database"
+                ]
+              },
+              {
                 "group": "Cloudinary",
                 "pages": [
                   "plugins/cloudinary/overview",
                   "plugins/cloudinary/api",
                   "plugins/cloudinary/database",
                   "plugins/cloudinary/webhooks"
+                ]
+              },
+              {
+                "group": "Cloudlayer",
+                "pages": [
+                  "plugins/cloudlayer/overview",
+                  "plugins/cloudlayer/api",
+                  "plugins/cloudlayer/database"
                 ]
               },
               {
@@ -1473,6 +1497,14 @@
                 ]
               },
               {
+                "group": "CompanyEnrich",
+                "pages": [
+                  "plugins/companyenrich/overview",
+                  "plugins/companyenrich/api",
+                  "plugins/companyenrich/database"
+                ]
+              },
+              {
                 "group": "Composio",
                 "pages": [
                   "plugins/composio/overview",
@@ -1526,6 +1558,14 @@
                   "plugins/contextsevenmcp/overview",
                   "plugins/contextsevenmcp/api",
                   "plugins/contextsevenmcp/database"
+                ]
+              },
+              {
+                "group": "Conversion Tools",
+                "pages": [
+                  "plugins/conversiontools/overview",
+                  "plugins/conversiontools/api",
+                  "plugins/conversiontools/database"
                 ]
               },
               {
@@ -1611,6 +1651,14 @@
                 ]
               },
               {
+                "group": "CustomJS",
+                "pages": [
+                  "plugins/customjs/overview",
+                  "plugins/customjs/api",
+                  "plugins/customjs/database"
+                ]
+              },
+              {
                 "group": "Cutt.ly",
                 "pages": [
                   "plugins/cuttly/overview",
@@ -1691,6 +1739,14 @@
                 ]
               },
               {
+                "group": "DeployHQ",
+                "pages": [
+                  "plugins/deployhq/overview",
+                  "plugins/deployhq/api",
+                  "plugins/deployhq/database"
+                ]
+              },
+              {
                 "group": "DeskTime",
                 "pages": [
                   "plugins/desktime/overview",
@@ -1762,6 +1818,14 @@
                   "plugins/docsumo/overview",
                   "plugins/docsumo/api",
                   "plugins/docsumo/database"
+                ]
+              },
+              {
+                "group": "Documenso",
+                "pages": [
+                  "plugins/documenso/overview",
+                  "plugins/documenso/api",
+                  "plugins/documenso/database"
                 ]
               },
               {
@@ -2580,11 +2644,35 @@
                 ]
               },
               {
+                "group": "Keyword",
+                "pages": [
+                  "plugins/keyword/overview",
+                  "plugins/keyword/api",
+                  "plugins/keyword/database"
+                ]
+              },
+              {
                 "group": "Kibana",
                 "pages": [
                   "plugins/kibana/overview",
                   "plugins/kibana/api",
                   "plugins/kibana/database"
+                ]
+              },
+              {
+                "group": "Kickbox",
+                "pages": [
+                  "plugins/kickbox/overview",
+                  "plugins/kickbox/api",
+                  "plugins/kickbox/database"
+                ]
+              },
+              {
+                "group": "Kit",
+                "pages": [
+                  "plugins/kit/overview",
+                  "plugins/kit/api",
+                  "plugins/kit/database"
                 ]
               },
               {
