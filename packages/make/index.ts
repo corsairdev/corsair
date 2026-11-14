@@ -292,6 +292,15 @@ export function make<const T extends MakePluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
+				// A token without a zone can't reach any Make host. Failing here,
+				// not in the endpoint, lets core hand back a connect link.
+				if (key && !options.zone && !(await ctx.keys.get_zone())) {
+					throw new AuthMissingError(
+						'make',
+						'api_key',
+						'Make zone is not set: connect the account with its zone (for example eu1) or set the zone option.',
+					);
+				}
 				if (key) return key;
 			}
 			throw new AuthMissingError('make', ctx.authType ?? 'api_key');

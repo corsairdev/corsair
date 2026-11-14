@@ -4,7 +4,11 @@ import {
 	logEventFromContext,
 } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import type { MakeContext, MakePluginOptions } from './index';
+import type {
+	MakeContext,
+	MakeKeyBuilderContext,
+	MakePluginOptions,
+} from './index';
 import {
 	MakeEndpointInputSchemas,
 	MakeEndpointOutputSchemas,
@@ -371,6 +375,29 @@ describe('Make scenario public endpoints', () => {
 			endpoints.get(context({}, 'test-token', 'eu1.make.com.evil.example'), id),
 		).rejects.toThrow('zone');
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+	it('asks for a connect link in the key builder when the account has no zone', async () => {
+		// A key-builder auth error is the one core turns into a connect link, so
+		// a token without a zone must fail there, not later in the endpoint.
+		const keyBuilder = make().keyBuilder!;
+		const keyCtx = (storedZone: string | null) =>
+			({
+				authType: 'api_key',
+				keys: {
+					get_api_key: async () => 'stored-token',
+					get_zone: async () => storedZone,
+				},
+			}) as unknown as MakeKeyBuilderContext;
+		await expect(keyBuilder(keyCtx(null), 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		await expect(keyBuilder(keyCtx('eu1'), 'endpoint')).resolves.toBe(
+			'stored-token',
+		);
+		const zoned: MakePluginOptions = { zone: 'us2' };
+		await expect(
+			make(zoned).keyBuilder!(keyCtx(null), 'endpoint'),
+		).resolves.toBe('stored-token');
 	});
 	it('declares zone as an account field of the api_key auth', () => {
 		expect(make().authConfig).toEqual({ api_key: { account: ['zone'] } });
