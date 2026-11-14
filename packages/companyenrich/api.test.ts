@@ -3,6 +3,11 @@ import type { AccountMeResponse } from './endpoints/types';
 import { AccountMeResponseSchema } from './endpoints/types';
 
 const KEY = process.env.COMPANYENRICH_API_KEY ?? '';
+if (KEY.length === 0) {
+	console.warn(
+		'Skipping CompanyEnrich live tests: set COMPANYENRICH_API_KEY to run them.',
+	);
+}
 const describeLive = KEY.length > 0 ? describe : describe.skip;
 
 describeLive('CompanyEnrich live API (env-gated)', () => {
