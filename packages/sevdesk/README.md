@@ -42,6 +42,10 @@ Rules 17–21 have further restrictions in the provider's Update 2.0 section; ru
 
 Voucher tax-rule inputs include the documented revenue rules (1, 2, 3, 4, 5, 11) and expense rules (8, 9, 10, 12, 13, 14); account-specific compatibility must still be checked through Receipt Guidance.
 
+## Responses
+
+Sevdesk's live API returns most values as strings (`"id": "141154016"`, `"sumNet": "10.00"`, flags as `"0"`/`"1"`), unset fields as `null`, and wraps create and update results in `{ "objects": ... }`. Responses are parsed with a lenient copy of the documented schemas, so these come back as Sevdesk sent them. Boolean query flags are sent as `1`/`0`, because Sevdesk reads `download=false` as true. `download: true` makes export, report and PDF routes return the raw file, which this plugin does not parse; leave it unset to get the JSON form with base64 `content`.
+
 The legacy DATEV CSV export route remains exposed because it is documented but is deprecated; use the DATEV CSV/XML export-job workflow instead. `exportDatevXML` returns JSON job metadata; the resulting XML/ZIP artifact is obtained separately from the returned download URL.
 
 ## Complete operation inventory
@@ -119,8 +123,8 @@ The legacy DATEV CSV export route remains exposed because it is documented but i
 | `creditNote.creditNoteResetToDraft` | `PUT /CreditNote/{creditNoteId}/resetToDraft` | write |
 | `creditNotePos.getcreditNotePositions` | `GET /CreditNotePos` | read |
 | `export.updateExportConfig` | `PUT /SevClient/{SevClientId}/updateExportConfig` | write |
-| `export.exportDatevDepricated` | `GET /Export/datevCSV` | read |
-| `export.exportDatevCSV` | `GET /Export/createDatevCsvZipExportJob` | read |
+| `export.exportDatevDepricated` | `GET /Export/datevCSV` | destructive |
+| `export.exportDatevCSV` | `GET /Export/createDatevCsvZipExportJob` | destructive |
 | `export.exportDatevXML` | `GET /Export/createDatevXmlZipExportJob` | read |
 | `export.generateDownloadHash` | `GET /Progress/generateDownloadHash` | write |
 | `export.getProgress` | `GET /Progress/getProgress` | read |
