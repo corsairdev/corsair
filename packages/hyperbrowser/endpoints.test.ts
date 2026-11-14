@@ -56,6 +56,33 @@ describe('Hyperbrowser endpoint registry and schemas consistency', () => {
 		expect(schemaKeys.length).toBe(31);
 	});
 
+	it('sets risk levels per R8: billed browser runs and irreversible deletes are destructive, metered lookups stay read', () => {
+		const levels = Object.fromEntries(
+			Object.entries(hyperbrowserEndpointMeta).map(([k, v]) => [
+				k,
+				v.riskLevel,
+			]),
+		);
+		expect(levels['sessions.create']).toBe('destructive');
+		expect(levels['sessions.evaluateCaptcha']).toBe('destructive');
+		expect(levels['profiles.delete']).toBe('destructive');
+		expect(levels['sessions.stop']).toBe('write');
+		expect(levels['sessions.update']).toBe('write');
+		expect(levels['profiles.create']).toBe('write');
+		expect(levels['profiles.fork']).toBe('write');
+		for (const op of [
+			'scrape.create',
+			'scrape.createBatch',
+			'crawl.create',
+			'crawl.createWeb',
+			'extract.create',
+			'web.fetch',
+			'web.search',
+		]) {
+			expect(levels[op]).toBe('read');
+		}
+	});
+
 	it('instantiates the hyperbrowser plugin', () => {
 		const instance = hyperbrowser({ key: 'test-key' });
 		expect(instance.id).toBe('hyperbrowser');

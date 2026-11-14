@@ -275,11 +275,11 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const hyperbrowserEndpointMeta = {
 	'profiles.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a new persistent browser profile',
 	},
 	'profiles.fork': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Fork an existing persistent browser profile',
 	},
 	'profiles.get': {
@@ -306,11 +306,11 @@ export const hyperbrowserEndpointMeta = {
 		description: 'Get cloud browser session details by ID',
 	},
 	'sessions.stop': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Stop an active cloud browser session',
 	},
 	'sessions.update': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Update live configuration of a running browser session',
 	},
 	'sessions.evaluateCaptcha': {
@@ -337,7 +337,7 @@ export const hyperbrowserEndpointMeta = {
 	},
 
 	'scrape.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Start an asynchronous web scrape job (consumes compute credits)',
 	},
@@ -351,7 +351,7 @@ export const hyperbrowserEndpointMeta = {
 			'Get the current status of an asynchronous scrape job by job ID',
 	},
 	'scrape.createBatch': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Start an asynchronous batch scrape job across multiple URLs (consumes compute credits)',
 	},
@@ -366,7 +366,7 @@ export const hyperbrowserEndpointMeta = {
 	},
 
 	'crawl.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Start an asynchronous multi-page crawl job (consumes compute credits)',
 	},
@@ -380,7 +380,7 @@ export const hyperbrowserEndpointMeta = {
 			'Get the current status of an asynchronous crawl job by job ID',
 	},
 	'crawl.createWeb': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Start an asynchronous web crawl job using the Web API engine (consumes compute credits)',
 	},
@@ -395,7 +395,7 @@ export const hyperbrowserEndpointMeta = {
 	},
 
 	'extract.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Start an AI structured data extraction job across URLs (consumes compute credits)',
 	},
@@ -411,12 +411,12 @@ export const hyperbrowserEndpointMeta = {
 	},
 
 	'web.fetch': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Fetch web page content in multiple formats using cloud browser (consumes compute credits)',
 	},
 	'web.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Search the web with clean structured results (consumes compute credits)',
 	},
