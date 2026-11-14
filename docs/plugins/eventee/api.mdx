@@ -66,7 +66,7 @@ await corsair.eventee.api.attendeeCheckIn.patch({ attendee_id: 7, checkin: true 
 
 Invite attendees by email with optional profile details and tickets
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.eventee.api.attendeeInvite.put({ users: [{ email: 'jane.doe@example.com', first_name: 'Jane', send_email: false }] });
@@ -1431,7 +1431,7 @@ await corsair.eventee.api.pause.post({ name: 'Coffee Break', start: '2024-06-01 
 
 Create or update event registrations by email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.eventee.api.registrationInvite.put({ registrations: [{ email: 'jane.doe@example.com', first_name: 'Jane' }] });
