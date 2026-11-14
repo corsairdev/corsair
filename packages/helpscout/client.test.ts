@@ -6,6 +6,7 @@ import {
 	makeHelpscoutRequest,
 	redactApiErrorInPlace,
 } from './client';
+import type { HelpScoutEndpointOutputs } from './endpoints/types';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -108,9 +109,9 @@ describe('Help Scout Client & Transport', () => {
 				JSON.stringify({ _embedded: { mailboxes: [] } }),
 			);
 
-			const result = await makeHelpscoutRequest<{
-				_embedded: { mailboxes: unknown[] };
-			}>('/mailboxes', 'valid-key', { method: 'GET' });
+			const result = await makeHelpscoutRequest<
+				HelpScoutEndpointOutputs['mailboxes.list']
+			>('/mailboxes', 'valid-key', { method: 'GET' });
 
 			expect(result).toEqual({ _embedded: { mailboxes: [] } });
 		});
