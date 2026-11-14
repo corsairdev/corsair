@@ -40,6 +40,14 @@ pnpm add @corsair-dev/pushover
 
 Auth: API key. Corsair prompts your tenant for credentials on first use.
 
+A connection stores two values: the application token as `api_key` and the account owner's user key (from the Pushover dashboard) as `user_key`:
+
+```bash
+pnpm corsair setup --plugin=pushover api_key=<app-token> user_key=<user-key>
+```
+
+`messages.send`, `users.validate` and `glances.update` go to the stored user key when `user` is left out; pass a group key or another user's key in `user` to send elsewhere. Team operations (`teams.*`) need a separate connection whose `api_key` is the team token.
+
 ## Webhooks
 
 No webhooks.
