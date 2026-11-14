@@ -642,3 +642,52 @@ describe('Hyperbrowser output schemas tolerate provider additions', () => {
 		).toBe(true);
 	});
 });
+
+describe('Hyperbrowser web fetch and web crawl request options', () => {
+	it('accepts a structured json format with schema and prompt on web.fetch', () => {
+		expect(
+			FetchPageInputSchema.safeParse({
+				url: 'https://example.com',
+				outputs: {
+					formats: [
+						'markdown',
+						{
+							type: 'json',
+							schema: { type: 'object' },
+							prompt: 'Extract the title',
+						},
+						{ type: 'screenshot', fullPage: true, format: 'png' },
+					],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			FetchPageInputSchema.safeParse({
+				url: 'https://example.com',
+				outputs: { formats: ['pdf'] },
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts outputs, browser, navigation and cache on crawl.createWeb', () => {
+		expect(
+			CreateWebCrawlJobInputSchema.safeParse({
+				url: 'https://example.com',
+				outputs: { formats: ['html'] },
+				browser: { profileId: 'prof_123' },
+				navigation: { waitUntil: 'load', timeoutMs: 30000 },
+				cache: { maxAgeSeconds: 60 },
+				crawlOptions: { maxPages: 2 },
+			}).success,
+		).toBe(true);
+	});
+
+	it('keeps branding data in web.fetch output', () => {
+		const parsed = FetchPageOutputSchema.parse({
+			jobId: 'j1',
+			status: 'completed',
+			data: { branding: { colorScheme: 'dark' } },
+		});
+		expect(parsed.data?.branding).toEqual({ colorScheme: 'dark' });
+	});
+});

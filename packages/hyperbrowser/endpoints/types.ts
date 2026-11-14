@@ -500,10 +500,83 @@ export const GetCrawlJobStatusInputSchema = z
 
 export const GetCrawlJobStatusOutputSchema = GetScrapeJobStatusOutputSchema;
 
+// Shared by POST /api/web/fetch and POST /api/web/crawl (same request objects in the API reference).
+const WebOutputFormatSchema = z.union([
+	z.enum(['markdown', 'html', 'links', 'screenshot', 'branding']),
+	z.object({ type: z.literal('markdown') }).strict(),
+	z.object({ type: z.literal('html') }).strict(),
+	z.object({ type: z.literal('links') }).strict(),
+	z.object({ type: z.literal('branding') }).strict(),
+	z
+		.object({
+			type: z.literal('screenshot'),
+			fullPage: z.boolean().optional(),
+			format: z.enum(['jpeg', 'png', 'webp']).optional(),
+			cropToContent: z.boolean().optional(),
+			cropToContentMaxHeight: z.number().int().optional(),
+			cropToContentMinHeight: z.number().int().optional(),
+		})
+		.strict(),
+	z
+		.object({
+			type: z.literal('json'),
+			// `unknown` because the extraction schema is a caller-provided JSON schema.
+			schema: z.record(z.string(), z.unknown()).optional(),
+			prompt: z.string().optional(),
+		})
+		.strict(),
+]);
+
+const WebOutputsSchema = z
+	.object({
+		formats: z.array(WebOutputFormatSchema).optional(),
+		sanitize: z.enum(['none', 'basic', 'advanced']).optional(),
+		includeSelectors: z.array(z.string()).optional(),
+		excludeSelectors: z.array(z.string()).optional(),
+	})
+	.strict();
+
+const WebBrowserSchema = z
+	.object({
+		profileId: z.string().optional(),
+		solveCaptchas: z.string().optional(),
+		screen: z
+			.object({ width: z.number(), height: z.number() })
+			.strict()
+			.optional(),
+		location: z
+			.object({
+				country: z.string().optional(),
+				state: z.string().optional(),
+				city: z.string().optional(),
+			})
+			.strict()
+			.optional(),
+	})
+	.strict();
+
+const WebNavigationSchema = z
+	.object({
+		waitUntil: z.enum(['load', 'domcontentloaded', 'networkidle']).optional(),
+		timeoutMs: z.number().int().optional(),
+		waitFor: z.number().int().optional(),
+	})
+	.strict();
+
+const WebCacheSchema = z
+	.object({
+		maxAgeSeconds: z.number().int().optional(),
+	})
+	.strict();
+
 export const CreateWebCrawlJobInputSchema = z
 	.object({
 		url: z.string().min(1),
 		stealth: z.enum(['none', 'auto', 'ultra']).optional(),
+		outputs: WebOutputsSchema.optional(),
+		browser: WebBrowserSchema.optional(),
+		navigation: WebNavigationSchema.optional(),
+		cache: WebCacheSchema.optional(),
 		crawlOptions: z
 			.object({
 				maxPages: z.number().int().min(1).max(100).optional(),
@@ -538,6 +611,8 @@ export const WebCrawlPageDataSchema = z.object({
 	screenshot: z.string().optional(),
 	// `unknown` because extracted JSON structure depends on user-defined page extract schemas.
 	json: z.record(z.string(), z.unknown()).optional(),
+	// `unknown` because branding is a nested design summary only returned when requested.
+	branding: z.record(z.string(), z.unknown()).optional(),
 	metadata: z
 		.record(z.string(), z.union([z.string(), z.array(z.string())]))
 		.optional(),
@@ -613,32 +688,10 @@ export const FetchPageInputSchema = z
 	.object({
 		url: z.string().min(1),
 		stealth: z.enum(['none', 'auto', 'ultra']).optional(),
-		outputs: z
-			.object({
-				formats: z.array(z.string()).optional(),
-				sanitize: z.string().optional(),
-				includeSelectors: z.array(z.string()).optional(),
-				excludeSelectors: z.array(z.string()).optional(),
-			})
-			.optional(),
-		browser: z
-			.object({
-				profileId: z.string().optional(),
-				solveCaptchas: z.string().optional(),
-			})
-			.optional(),
-		navigation: z
-			.object({
-				waitUntil: z.string().optional(),
-				timeoutMs: z.number().int().optional(),
-				waitFor: z.number().int().optional(),
-			})
-			.optional(),
-		cache: z
-			.object({
-				maxAgeSeconds: z.number().int().optional(),
-			})
-			.optional(),
+		outputs: WebOutputsSchema.optional(),
+		browser: WebBrowserSchema.optional(),
+		navigation: WebNavigationSchema.optional(),
+		cache: WebCacheSchema.optional(),
 	})
 	.strict();
 
@@ -654,6 +707,8 @@ export const FetchPageOutputSchema = z.object({
 			screenshot: z.string().optional(),
 			// `unknown` because structured JSON output depends on requested page formats.
 			json: z.record(z.string(), z.unknown()).optional(),
+			// `unknown` because branding is a nested design summary only returned when requested.
+			branding: z.record(z.string(), z.unknown()).optional(),
 			metadata: z
 				.record(z.string(), z.union([z.string(), z.array(z.string())]))
 				.optional(),
