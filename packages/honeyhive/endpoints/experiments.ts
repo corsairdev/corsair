@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
-import { makeHoneyHiveRequest } from '../client';
+import {
+	makeHoneyHiveRequest,
+	resolveDataPlaneKey,
+	resolveDataPlaneUrl,
+} from '../client';
 import type {
 	ExperimentsCompareEventsInput,
 	ExperimentsCompareEventsResponse,
@@ -42,8 +46,8 @@ export async function listRuns(
 	const { project_id, ...query } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsListRunsResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl, query },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx), query },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsListRuns.parse(response);
@@ -67,8 +71,8 @@ export async function createRun(
 	const { project_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsCreateRunResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs`,
-		ctx.key,
-		{ method: 'POST', baseUrl: ctx.options?.baseUrl, body },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'POST', baseUrl: await resolveDataPlaneUrl(ctx), body },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsCreateRun.parse(response);
@@ -91,8 +95,8 @@ export async function getRun(
 		HoneyHiveEndpointInputSchemas.experimentsGetRun.parse(input);
 	const response = await makeHoneyHiveRequest<ExperimentsGetRunResponse>(
 		`/v1/projects/${encodeURIComponent(parsedInput.project_id)}/runs/${encodeURIComponent(parsedInput.run_id)}`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx) },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsGetRun.parse(response);
@@ -116,8 +120,8 @@ export async function updateRun(
 	const { project_id, run_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsUpdateRunResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs/${encodeURIComponent(run_id)}`,
-		ctx.key,
-		{ method: 'PATCH', baseUrl: ctx.options?.baseUrl, body },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'PATCH', baseUrl: await resolveDataPlaneUrl(ctx), body },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsUpdateRun.parse(response);
@@ -140,8 +144,8 @@ export async function deleteRun(
 		HoneyHiveEndpointInputSchemas.experimentsDeleteRun.parse(input);
 	const response = await makeHoneyHiveRequest<ExperimentsDeleteRunResponse>(
 		`/v1/projects/${encodeURIComponent(parsedInput.project_id)}/runs/${encodeURIComponent(parsedInput.run_id)}`,
-		ctx.key,
-		{ method: 'DELETE', baseUrl: ctx.options?.baseUrl },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'DELETE', baseUrl: await resolveDataPlaneUrl(ctx) },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsDeleteRun.parse(response);
@@ -165,8 +169,8 @@ export async function getSummary(
 	const { project_id, run_id, ...query } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsGetSummaryResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs/${encodeURIComponent(run_id)}/summary`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl, query },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx), query },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsGetSummary.parse(response);
@@ -190,8 +194,8 @@ export async function getMetrics(
 	const { project_id, run_id, ...query } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsGetMetricsResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs/${encodeURIComponent(run_id)}/metrics`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl, query },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx), query },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsGetMetrics.parse(response);
@@ -215,8 +219,8 @@ export async function getRunSchema(
 	const { project_id, run_id, ...query } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsGetRunSchemaResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs/${encodeURIComponent(run_id)}/schema`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl, query },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx), query },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsGetRunSchema.parse(response);
@@ -240,8 +244,8 @@ export async function getRunsSchema(
 	const { project_id, ...query } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsGetRunsSchemaResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs/schema`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl, query },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx), query },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsGetRunsSchema.parse(response);
@@ -265,8 +269,8 @@ export async function compare(
 	const { project_id, new_run_id, old_run_id, ...query } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsCompareResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs/${encodeURIComponent(new_run_id)}/compare/${encodeURIComponent(old_run_id)}`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl, query },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx), query },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsCompare.parse(response);
@@ -290,8 +294,8 @@ export async function compareEvents(
 	const { project_id, new_run_id, old_run_id, ...query } = parsedInput;
 	const response = await makeHoneyHiveRequest<ExperimentsCompareEventsResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/runs/${encodeURIComponent(new_run_id)}/compare/${encodeURIComponent(old_run_id)}/events`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl, query },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx), query },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsCompareEvents.parse(response);
@@ -315,7 +319,11 @@ export async function listRunsLegacy(
 	const response = await makeHoneyHiveRequest<ExperimentsListRunsResponse>(
 		'/v1/runs',
 		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl, query: parsedInput },
+		{
+			method: 'GET',
+			baseUrl: await resolveDataPlaneUrl(ctx),
+			query: parsedInput,
+		},
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsListRunsLegacy.parse(response);
@@ -339,7 +347,11 @@ export async function createRunLegacy(
 	const response = await makeHoneyHiveRequest<ExperimentsCreateRunResponse>(
 		'/v1/runs',
 		ctx.key,
-		{ method: 'POST', baseUrl: ctx.options?.baseUrl, body: parsedInput },
+		{
+			method: 'POST',
+			baseUrl: await resolveDataPlaneUrl(ctx),
+			body: parsedInput,
+		},
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsCreateRunLegacy.parse(response);
@@ -363,7 +375,7 @@ export async function getRunLegacy(
 	const response = await makeHoneyHiveRequest<ExperimentsGetRunResponse>(
 		`/v1/runs/${encodeURIComponent(parsedInput.run_id)}`,
 		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl },
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx) },
 	);
 	const parsed =
 		HoneyHiveEndpointOutputSchemas.experimentsGetRunLegacy.parse(response);

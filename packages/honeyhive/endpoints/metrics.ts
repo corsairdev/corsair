@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
-import { makeHoneyHiveRequest } from '../client';
+import { makeHoneyHiveRequest, resolveDataPlaneUrl } from '../client';
 import type {
 	MetricsCreateInput,
 	MetricsCreateResponse,
@@ -34,7 +34,7 @@ export async function listMetrics(
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			query: parsedInput,
 		},
 	);
@@ -60,7 +60,7 @@ export async function createMetric(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body: parsedInput,
 		},
 	);
@@ -87,7 +87,7 @@ export async function updateMetric(
 		ctx.key,
 		{
 			method: 'PUT',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body,
 		},
 	);
@@ -113,7 +113,7 @@ export async function deleteMetric(
 		ctx.key,
 		{
 			method: 'DELETE',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 		},
 	);
 	const parsed = HoneyHiveEndpointOutputSchemas.metricsDelete.parse(response);
@@ -138,7 +138,7 @@ export async function runMetric(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body: parsedInput,
 		},
 	);
@@ -165,7 +165,7 @@ export async function listMetricVersions(
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 		},
 	);
 	const parsed =
@@ -193,7 +193,7 @@ export async function createMetricVersion(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body,
 		},
 	);
@@ -221,7 +221,7 @@ export async function deployMetricVersion(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 		},
 	);
 	const parsed =

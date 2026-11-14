@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
-import { makeHoneyHiveRequest } from '../client';
+import {
+	makeHoneyHiveRequest,
+	resolveControlPlaneKey,
+	resolveControlPlaneUrl,
+} from '../client';
 import type {
 	ProjectsCreateInput,
 	ProjectsCreateResponse,
@@ -24,10 +28,10 @@ export async function createProject(
 	const { workspace_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<ProjectsCreateResponse>(
 		`/v1/workspaces/${encodeURIComponent(workspace_id)}/projects`,
-		ctx.key,
+		await resolveControlPlaneKey(ctx),
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: resolveControlPlaneUrl(ctx),
 			body,
 		},
 	);
@@ -50,10 +54,10 @@ export async function getProject(
 	const parsedInput = HoneyHiveEndpointInputSchemas.projectsGet.parse(input);
 	const response = await makeHoneyHiveRequest<ProjectsGetResponse>(
 		`/v1/projects/${encodeURIComponent(parsedInput.project_id)}`,
-		ctx.key,
+		await resolveControlPlaneKey(ctx),
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: resolveControlPlaneUrl(ctx),
 		},
 	);
 	const parsed = HoneyHiveEndpointOutputSchemas.projectsGet.parse(response);
@@ -76,10 +80,10 @@ export async function updateProject(
 	const { project_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<ProjectsUpdateResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}`,
-		ctx.key,
+		await resolveControlPlaneKey(ctx),
 		{
 			method: 'PUT',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: resolveControlPlaneUrl(ctx),
 			body,
 		},
 	);
@@ -102,10 +106,10 @@ export async function deleteProject(
 	const parsedInput = HoneyHiveEndpointInputSchemas.projectsDelete.parse(input);
 	const response = await makeHoneyHiveRequest<ProjectsDeleteResponse>(
 		`/v1/projects/${encodeURIComponent(parsedInput.project_id)}`,
-		ctx.key,
+		await resolveControlPlaneKey(ctx),
 		{
 			method: 'DELETE',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: resolveControlPlaneUrl(ctx),
 		},
 	);
 	const parsed = HoneyHiveEndpointOutputSchemas.projectsDelete.parse(response);

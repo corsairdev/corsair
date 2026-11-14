@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
-import { makeHoneyHiveRequest } from '../client';
+import {
+	makeHoneyHiveRequest,
+	resolveDataPlaneKey,
+	resolveDataPlaneUrl,
+} from '../client';
 import type {
 	EventsCreateBatchInput,
 	EventsCreateBatchResponse,
@@ -30,7 +34,7 @@ export async function createEvent(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body: parsedInput,
 		},
 	);
@@ -57,7 +61,7 @@ export async function createEventBatch(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body: parsedInput,
 		},
 	);
@@ -81,8 +85,8 @@ export async function getEvent(
 	const parsedInput = HoneyHiveEndpointInputSchemas.eventsGet.parse(input);
 	const response = await makeHoneyHiveRequest<EventsGetResponse>(
 		`/v1/projects/${encodeURIComponent(parsedInput.project_id)}/events/${encodeURIComponent(parsedInput.event_id)}`,
-		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl },
+		await resolveDataPlaneKey(ctx),
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx) },
 	);
 	const parsed = HoneyHiveEndpointOutputSchemas.eventsGet.parse(response);
 
@@ -105,7 +109,7 @@ export async function getEventLegacy(
 	const response = await makeHoneyHiveRequest<EventsGetResponse>(
 		`/v1/events/${encodeURIComponent(parsedInput.event_id)}`,
 		ctx.key,
-		{ method: 'GET', baseUrl: ctx.options?.baseUrl },
+		{ method: 'GET', baseUrl: await resolveDataPlaneUrl(ctx) },
 	);
 	const parsed = HoneyHiveEndpointOutputSchemas.eventsGetLegacy.parse(response);
 
@@ -130,7 +134,7 @@ export async function updateEvent(
 		ctx.key,
 		{
 			method: 'PUT',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body,
 		},
 	);
@@ -154,10 +158,10 @@ export async function searchEvents(
 	const { project_id, ...body } = parsedInput;
 	const response = await makeHoneyHiveRequest<EventsSearchResponse>(
 		`/v1/projects/${encodeURIComponent(project_id)}/events/search`,
-		ctx.key,
+		await resolveDataPlaneKey(ctx),
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body,
 		},
 	);
@@ -184,7 +188,7 @@ export async function searchEventsLegacy(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body: parsedInput,
 		},
 	);

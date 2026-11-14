@@ -36,19 +36,43 @@ import { HoneyHiveSchema } from './schema';
 export type HoneyHivePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/** Data plane URL for dedicated or self-hosted HoneyHive. Defaults to the account's `base_url`, then https://api.dp1.us.honeyhive.ai. */
 	baseUrl?: string;
+	/** Control plane URL for self-hosted HoneyHive. Defaults to https://api.cp.us.honeyhive.ai. */
+	controlPlaneUrl?: string;
+	/** Data plane fine-grained key (`hh_fgdp_`) for project-scoped operations. Defaults to the account's `data_plane_api_key`. */
+	dataPlaneKey?: string;
+	/** Control plane fine-grained key (`hh_fgcp_`) for `projects.*`. Defaults to the account's `control_plane_api_key`. */
+	controlPlaneKey?: string;
 	hooks?: InternalHoneyHivePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof honeyHiveEndpointsNested>;
 };
 
+export const honeyHiveAuthConfig = {
+	api_key: {
+		// base_url: data plane URL for dedicated/self-hosted deployments (optional).
+		// data_plane_api_key / control_plane_api_key: fine-grained keys for the
+		// project-scoped and project-management routes, which reject the classic key.
+		account: [
+			'base_url',
+			'data_plane_api_key',
+			'control_plane_api_key',
+		] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type HoneyHiveContext = CorsairPluginContext<
 	typeof HoneyHiveSchema,
-	HoneyHivePluginOptions
+	HoneyHivePluginOptions,
+	undefined,
+	typeof honeyHiveAuthConfig
 >;
 
-export type HoneyHiveKeyBuilderContext =
-	KeyBuilderContext<HoneyHivePluginOptions>;
+export type HoneyHiveKeyBuilderContext = KeyBuilderContext<
+	HoneyHivePluginOptions,
+	typeof honeyHiveAuthConfig
+>;
 
 export type HoneyHiveBoundEndpoints = BindEndpoints<
 	typeof honeyHiveEndpointsNested
@@ -429,11 +453,12 @@ export const honeyHiveEndpointMeta = {
 	},
 	'datasets.update': {
 		riskLevel: 'destructive',
-		description: 'Update an existing dataset in a project',
+		description:
+			'Update a dataset in a project; a datapoints list replaces its whole membership',
 	},
 	'datasets.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a dataset from a project',
+		description: 'Delete a dataset and its datapoints from a project',
 	},
 	'datasets.addDatapoints': {
 		riskLevel: 'destructive',
@@ -453,7 +478,8 @@ export const honeyHiveEndpointMeta = {
 	},
 	'datasets.updateLegacy': {
 		riskLevel: 'destructive',
-		description: 'Update a dataset (legacy)',
+		description:
+			'Update a dataset (legacy); a datapoints list replaces its whole membership',
 	},
 	'datasets.deleteLegacy': {
 		riskLevel: 'destructive',
@@ -577,15 +603,11 @@ export const honeyHiveEndpointMeta = {
 	},
 	'projects.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a project',
+		description: 'Delete (archive) a project',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof honeyHiveEndpointsNested
 >;
-
-export const honeyHiveAuthConfig = {
-	api_key: {},
-} as const satisfies PluginAuthConfig;
 
 export type BaseHoneyHivePlugin<T extends HoneyHivePluginOptions> =
 	CorsairPlugin<
@@ -594,7 +616,8 @@ export type BaseHoneyHivePlugin<T extends HoneyHivePluginOptions> =
 		typeof honeyHiveEndpointsNested,
 		Record<string, never>,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof honeyHiveAuthConfig
 	>;
 
 export type InternalHoneyHivePlugin =

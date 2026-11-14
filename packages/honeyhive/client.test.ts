@@ -36,7 +36,7 @@ function makeApiError(
 			body: requestBody as unknown,
 		},
 		{
-			url: 'https://api.honeyhive.ai/v1/events',
+			url: 'https://api.dp1.us.honeyhive.ai/v1/events',
 			ok: false,
 			status,
 			statusText: message,
@@ -204,10 +204,8 @@ describe('Credential and secret redaction', () => {
 			error: 'Unauthorized',
 			token: '[REDACTED]',
 		});
-		expect(result.request?.body).toEqual({
-			apiKey: '[REDACTED]',
-			safeField: 'test',
-		});
+		// The request body (caller payload) is dropped from the propagated error.
+		expect(result.request?.body).toBeUndefined();
 	});
 
 	it('redacts ApiError when request or body is undefined', () => {
@@ -256,7 +254,7 @@ describe('Transport rate limit handling', () => {
 					ok: false,
 					status: 429,
 					statusText: 'Too Many Requests',
-					url: 'https://api.honeyhive.ai/v1/events',
+					url: 'https://api.dp1.us.honeyhive.ai/v1/events',
 					headers: new Headers({
 						'Content-Type': 'application/json',
 						'retry-after': '4',

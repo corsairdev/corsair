@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
-import { makeHoneyHiveRequest } from '../client';
+import { makeHoneyHiveRequest, resolveDataPlaneUrl } from '../client';
 import type {
 	SessionsCreateEventBatchInput,
 	SessionsCreateEventBatchResponse,
@@ -22,7 +22,7 @@ export async function createSession(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body: parsedInput,
 		},
 	);
@@ -52,7 +52,7 @@ export async function createSessionEventBatch(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body: { events: parsedInput.events },
 		},
 	);

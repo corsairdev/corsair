@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HoneyHiveContext } from '..';
-import { makeHoneyHiveRequest } from '../client';
+import { makeHoneyHiveRequest, resolveDataPlaneUrl } from '../client';
 import type {
 	ConfigurationsCreateInput,
 	ConfigurationsCreateResponse,
@@ -27,7 +27,7 @@ export async function listConfigurations(
 		ctx.key,
 		{
 			method: 'GET',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			query: parsedInput,
 		},
 	);
@@ -55,7 +55,7 @@ export async function createConfiguration(
 		ctx.key,
 		{
 			method: 'POST',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body: parsedInput,
 		},
 	);
@@ -84,7 +84,7 @@ export async function updateConfiguration(
 		ctx.key,
 		{
 			method: 'PUT',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 			body,
 		},
 	);
@@ -112,7 +112,7 @@ export async function deleteConfiguration(
 		ctx.key,
 		{
 			method: 'DELETE',
-			baseUrl: ctx.options?.baseUrl,
+			baseUrl: await resolveDataPlaneUrl(ctx),
 		},
 	);
 	const parsed =

@@ -29,6 +29,8 @@ jest.mock('./client', () => {
 	};
 });
 
+const DP = 'https://api.dp1.us.honeyhive.ai';
+const CP = 'https://api.cp.us.honeyhive.ai';
 const mockedRequest = jest.mocked(client.makeHoneyHiveRequest);
 const mockedLogEvent = jest.mocked(logEventFromContext);
 
@@ -43,6 +45,12 @@ function buildMockContext(): HoneyHiveContext {
 			issue_new_dek: () => Promise.resolve('test-dek'),
 			get_api_key: () => Promise.resolve('hh-api-key-test'),
 			set_api_key: () => Promise.resolve(),
+			get_base_url: () => Promise.resolve(null),
+			set_base_url: () => Promise.resolve(),
+			get_data_plane_api_key: () => Promise.resolve('hh_fgdp_test'),
+			set_data_plane_api_key: () => Promise.resolve(),
+			get_control_plane_api_key: () => Promise.resolve('hh_fgcp_test'),
+			set_control_plane_api_key: () => Promise.resolve(),
 			get_webhook_signature: () => Promise.resolve(null),
 			set_webhook_signature: () => Promise.resolve(),
 		},
@@ -73,6 +81,7 @@ describe('1. Sessions endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { session_id: 's-1', session_name: 'test-session' },
 			},
 		);
@@ -99,6 +108,7 @@ describe('1. Sessions endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { events: [{ event_type: 'model', inputs: { query: 'hi' } }] },
 			},
 		);
@@ -126,6 +136,7 @@ describe('2. Events endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { project_id: 'proj-1', event_name: 'llm_call' },
 			},
 		);
@@ -150,6 +161,7 @@ describe('2. Events endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { events: [{ event_name: 'e1' }, { event_name: 'e2' }] },
 			},
 		);
@@ -172,8 +184,8 @@ describe('2. Events endpoints', () => {
 		expect(result).toEqual({ event: { id: 'evt-1' } });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/p%2F1/events/e%2F1',
-			'hh-api-key-test',
-			{ method: 'GET' },
+			'hh_fgdp_test',
+			{ method: 'GET', baseUrl: DP },
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
@@ -192,7 +204,7 @@ describe('2. Events endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/events/e-1',
 			'hh-api-key-test',
-			{ method: 'GET' },
+			{ method: 'GET', baseUrl: DP },
 		);
 	});
 
@@ -210,6 +222,7 @@ describe('2. Events endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'PUT',
+				baseUrl: DP,
 				body: { metadata: { reviewed: true } },
 			},
 		);
@@ -226,9 +239,10 @@ describe('2. Events endpoints', () => {
 		expect(result).toEqual({ events: [], count: 0 });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/events/search',
-			'hh-api-key-test',
+			'hh_fgdp_test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { limit: 10 },
 			},
 		);
@@ -245,6 +259,7 @@ describe('2. Events endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { limit: 5 },
 			},
 		);
@@ -263,9 +278,10 @@ describe('3. Datasets endpoints', () => {
 		expect(result).toEqual({ datasets: [{ id: 'ds-1' }] });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/datasets',
-			'hh-api-key-test',
+			'hh_fgdp_test',
 			{
 				method: 'GET',
+				baseUrl: DP,
 				query: { name: 'eval_set' },
 			},
 		);
@@ -282,9 +298,10 @@ describe('3. Datasets endpoints', () => {
 		expect(result).toEqual({ inserted: true });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/datasets',
-			'hh-api-key-test',
+			'hh_fgdp_test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { name: 'new_dataset' },
 			},
 		);
@@ -302,9 +319,10 @@ describe('3. Datasets endpoints', () => {
 		expect(result).toEqual({ updated: true });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/datasets/ds-1',
-			'hh-api-key-test',
+			'hh_fgdp_test',
 			{
 				method: 'PATCH',
+				baseUrl: DP,
 				body: { name: 'updated_dataset' },
 			},
 		);
@@ -321,8 +339,8 @@ describe('3. Datasets endpoints', () => {
 		expect(result).toEqual({ deleted: true });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/datasets/ds-1',
-			'hh-api-key-test',
-			{ method: 'DELETE' },
+			'hh_fgdp_test',
+			{ method: 'DELETE', baseUrl: DP },
 		);
 	});
 
@@ -339,9 +357,10 @@ describe('3. Datasets endpoints', () => {
 		expect(result).toEqual({ inserted: true });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/datasets/ds-1/datapoints',
-			'hh-api-key-test',
+			'hh_fgdp_test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { data: [{ prompt: 'hi' }], mapping: { inputs: ['prompt'] } },
 			},
 		);
@@ -359,8 +378,8 @@ describe('3. Datasets endpoints', () => {
 		expect(result).toEqual({ deleted: true });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/datasets/ds-1/datapoints/dp-1',
-			'hh-api-key-test',
-			{ method: 'DELETE' },
+			'hh_fgdp_test',
+			{ method: 'DELETE', baseUrl: DP },
 		);
 	});
 
@@ -370,7 +389,7 @@ describe('3. Datasets endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/datasets',
 			'hh-api-key-test',
-			{ method: 'GET', query: { name: 'legacy' } },
+			{ method: 'GET', baseUrl: DP, query: { name: 'legacy' } },
 		);
 
 		mockedRequest.mockResolvedValue({ inserted: true });
@@ -378,7 +397,7 @@ describe('3. Datasets endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/datasets',
 			'hh-api-key-test',
-			{ method: 'POST', body: { name: 'legacy' } },
+			{ method: 'POST', baseUrl: DP, body: { name: 'legacy' } },
 		);
 
 		mockedRequest.mockResolvedValue({ updated: true });
@@ -386,7 +405,7 @@ describe('3. Datasets endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/datasets/ds-1',
 			'hh-api-key-test',
-			{ method: 'PUT', body: { name: 'new' } },
+			{ method: 'PUT', baseUrl: DP, body: { name: 'new' } },
 		);
 
 		mockedRequest.mockResolvedValue({ deleted: true });
@@ -394,7 +413,7 @@ describe('3. Datasets endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/datasets/ds-1',
 			'hh-api-key-test',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', baseUrl: DP },
 		);
 	});
 });
@@ -408,8 +427,8 @@ describe('4. Experiments endpoints', () => {
 		expect(result).toEqual({ runs: [] });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs',
-			'hh-api-key-test',
-			{ method: 'GET', query: {} },
+			'hh_fgdp_test',
+			{ method: 'GET', baseUrl: DP, query: {} },
 		);
 	});
 
@@ -424,9 +443,10 @@ describe('4. Experiments endpoints', () => {
 		expect(result).toEqual({ run_id: 'r-1', status: 'running' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs',
-			'hh-api-key-test',
+			'hh_fgdp_test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { name: 'eval_run_1' },
 			},
 		);
@@ -437,8 +457,8 @@ describe('4. Experiments endpoints', () => {
 		await Experiments.getRun(ctx, { project_id: 'proj-1', run_id: 'r-1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/r-1',
-			'hh-api-key-test',
-			{ method: 'GET' },
+			'hh_fgdp_test',
+			{ method: 'GET', baseUrl: DP },
 		);
 
 		mockedRequest.mockResolvedValue({ updated: true });
@@ -449,8 +469,8 @@ describe('4. Experiments endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/r-1',
-			'hh-api-key-test',
-			{ method: 'PATCH', body: { status: 'completed' } },
+			'hh_fgdp_test',
+			{ method: 'PATCH', baseUrl: DP, body: { status: 'completed' } },
 		);
 	});
 
@@ -459,8 +479,8 @@ describe('4. Experiments endpoints', () => {
 		await Experiments.deleteRun(ctx, { project_id: 'proj-1', run_id: 'r-1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/r-1',
-			'hh-api-key-test',
-			{ method: 'DELETE' },
+			'hh_fgdp_test',
+			{ method: 'DELETE', baseUrl: DP },
 		);
 	});
 
@@ -472,8 +492,8 @@ describe('4. Experiments endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/r-1/summary',
-			'hh-api-key-test',
-			{ method: 'GET', query: {} },
+			'hh_fgdp_test',
+			{ method: 'GET', baseUrl: DP, query: {} },
 		);
 
 		mockedRequest.mockResolvedValue({ metrics: [] });
@@ -483,8 +503,8 @@ describe('4. Experiments endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/r-1/metrics',
-			'hh-api-key-test',
-			{ method: 'GET', query: {} },
+			'hh_fgdp_test',
+			{ method: 'GET', baseUrl: DP, query: {} },
 		);
 
 		mockedRequest.mockResolvedValue({ schema: {} });
@@ -494,16 +514,16 @@ describe('4. Experiments endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/r-1/schema',
-			'hh-api-key-test',
-			{ method: 'GET', query: {} },
+			'hh_fgdp_test',
+			{ method: 'GET', baseUrl: DP, query: {} },
 		);
 
 		mockedRequest.mockResolvedValue({ schema: {} });
 		await Experiments.getRunsSchema(ctx, { project_id: 'proj-1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/schema',
-			'hh-api-key-test',
-			{ method: 'GET', query: {} },
+			'hh_fgdp_test',
+			{ method: 'GET', baseUrl: DP, query: {} },
 		);
 	});
 
@@ -516,9 +536,10 @@ describe('4. Experiments endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/r-new/compare/r-old',
-			'hh-api-key-test',
+			'hh_fgdp_test',
 			{
 				method: 'GET',
+				baseUrl: DP,
 				query: {},
 			},
 		);
@@ -531,9 +552,10 @@ describe('4. Experiments endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/proj-1/runs/r-new/compare/r-old/events',
-			'hh-api-key-test',
+			'hh_fgdp_test',
 			{
 				method: 'GET',
+				baseUrl: DP,
 				query: {},
 			},
 		);
@@ -544,6 +566,7 @@ describe('4. Experiments endpoints', () => {
 		await Experiments.listRunsLegacy(ctx, {});
 		expect(mockedRequest).toHaveBeenCalledWith('/v1/runs', 'hh-api-key-test', {
 			method: 'GET',
+			baseUrl: DP,
 			query: {},
 		});
 
@@ -551,6 +574,7 @@ describe('4. Experiments endpoints', () => {
 		await Experiments.createRunLegacy(ctx, { name: 'legacy' });
 		expect(mockedRequest).toHaveBeenCalledWith('/v1/runs', 'hh-api-key-test', {
 			method: 'POST',
+			baseUrl: DP,
 			body: { name: 'legacy' },
 		});
 
@@ -559,7 +583,7 @@ describe('4. Experiments endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/runs/r-1',
 			'hh-api-key-test',
-			{ method: 'GET' },
+			{ method: 'GET', baseUrl: DP },
 		);
 	});
 });
@@ -572,7 +596,7 @@ describe('5. Metrics endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/metrics',
 			'hh-api-key-test',
-			{ method: 'GET', query: { type: 'eval' } },
+			{ method: 'GET', baseUrl: DP, query: { type: 'eval' } },
 		);
 	});
 
@@ -584,6 +608,7 @@ describe('5. Metrics endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { name: 'metric_1', type: 'deterministic' },
 			},
 		);
@@ -593,7 +618,7 @@ describe('5. Metrics endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/metrics/m-1',
 			'hh-api-key-test',
-			{ method: 'PUT', body: { description: 'updated' } },
+			{ method: 'PUT', baseUrl: DP, body: { description: 'updated' } },
 		);
 
 		mockedRequest.mockResolvedValue({ deleted: true });
@@ -601,7 +626,7 @@ describe('5. Metrics endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/metrics/m-1',
 			'hh-api-key-test',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', baseUrl: DP },
 		);
 
 		mockedRequest.mockResolvedValue({ result: 'pass' });
@@ -611,6 +636,7 @@ describe('5. Metrics endpoints', () => {
 			'hh-api-key-test',
 			{
 				method: 'POST',
+				baseUrl: DP,
 				body: { metric: { id: 'm-1' }, event: { query: 'test' } },
 			},
 		);
@@ -622,7 +648,7 @@ describe('5. Metrics endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/metrics/m-1/versions',
 			'hh-api-key-test',
-			{ method: 'GET' },
+			{ method: 'GET', baseUrl: DP },
 		);
 
 		mockedRequest.mockResolvedValue({ version_id: 'v-1' });
@@ -633,7 +659,7 @@ describe('5. Metrics endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/metrics/m-1/versions',
 			'hh-api-key-test',
-			{ method: 'POST', body: { message: 'test version' } },
+			{ method: 'POST', baseUrl: DP, body: { message: 'test version' } },
 		);
 
 		mockedRequest.mockResolvedValue({ deployed: true });
@@ -644,7 +670,7 @@ describe('5. Metrics endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/metrics/m-1/versions/v-1/deploy',
 			'hh-api-key-test',
-			{ method: 'POST' },
+			{ method: 'POST', baseUrl: DP },
 		);
 	});
 });
@@ -656,7 +682,7 @@ describe('6. Configurations endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/configurations',
 			'hh-api-key-test',
-			{ method: 'GET', query: { name: 'cfg_1' } },
+			{ method: 'GET', baseUrl: DP, query: { name: 'cfg_1' } },
 		);
 
 		mockedRequest.mockResolvedValue({ insertedId: 'c-1' });
@@ -664,7 +690,7 @@ describe('6. Configurations endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/configurations',
 			'hh-api-key-test',
-			{ method: 'POST', body: { name: 'cfg_1' } },
+			{ method: 'POST', baseUrl: DP, body: { name: 'cfg_1' } },
 		);
 
 		mockedRequest.mockResolvedValue({ updated: true });
@@ -672,7 +698,7 @@ describe('6. Configurations endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/configurations/c-1',
 			'hh-api-key-test',
-			{ method: 'PUT', body: { name: 'cfg_2' } },
+			{ method: 'PUT', baseUrl: DP, body: { name: 'cfg_2' } },
 		);
 
 		mockedRequest.mockResolvedValue({ deleted: true });
@@ -680,7 +706,7 @@ describe('6. Configurations endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/configurations/c-1',
 			'hh-api-key-test',
-			{ method: 'DELETE' },
+			{ method: 'DELETE', baseUrl: DP },
 		);
 	});
 });
@@ -694,32 +720,32 @@ describe('7. Projects endpoints', () => {
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/workspaces/ws-1/projects',
-			'hh-api-key-test',
-			{ method: 'POST', body: { name: 'Project Alpha' } },
+			'hh_fgcp_test',
+			{ method: 'POST', baseUrl: CP, body: { name: 'Project Alpha' } },
 		);
 
 		mockedRequest.mockResolvedValue({ success: true, project: { id: 'p-1' } });
 		await Projects.get(ctx, { project_id: 'p-1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/p-1',
-			'hh-api-key-test',
-			{ method: 'GET' },
+			'hh_fgcp_test',
+			{ method: 'GET', baseUrl: CP },
 		);
 
 		mockedRequest.mockResolvedValue({ success: true, updated: true });
 		await Projects.update(ctx, { project_id: 'p-1', name: 'Project Beta' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/p-1',
-			'hh-api-key-test',
-			{ method: 'PUT', body: { name: 'Project Beta' } },
+			'hh_fgcp_test',
+			{ method: 'PUT', baseUrl: CP, body: { name: 'Project Beta' } },
 		);
 
 		mockedRequest.mockResolvedValue({ success: true, deleted: true });
 		await Projects.delete(ctx, { project_id: 'p-1' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/projects/p-1',
-			'hh-api-key-test',
-			{ method: 'DELETE' },
+			'hh_fgcp_test',
+			{ method: 'DELETE', baseUrl: CP },
 		);
 	});
 });
