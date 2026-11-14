@@ -423,7 +423,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/aliases',
-			'unit-test-token',
+			context,
 			{ method: 'POST', query: { fields: 'id' }, body: { alias: 'p:biology' } },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -444,7 +444,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/aliases/alias-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -465,7 +465,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/aliases',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', pageToken: 'sample-query', pageSize: 1 },
@@ -497,7 +497,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/itemId-123/addOnAttachments',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: {},
@@ -532,7 +532,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'DELETE',
 				query: { fields: 'id', postId: 'sample-query' },
@@ -563,7 +563,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', postId: 'sample-query' },
@@ -595,7 +595,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/itemId-123/addOnAttachments',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -640,7 +640,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', postId: 'postId-123', updateMask: 'title' },
@@ -677,7 +677,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -709,7 +709,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -730,7 +730,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -753,7 +753,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/itemId-123/addOnContext',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {},
@@ -784,7 +784,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -821,7 +821,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/id-123:modifyAssignees',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -850,7 +850,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/announcements/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title' },
@@ -882,7 +882,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnAttachments',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: {},
@@ -917,7 +917,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'DELETE',
 				query: { fields: 'id', postId: 'sample-query' },
@@ -948,7 +948,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', postId: 'sample-query' },
@@ -980,7 +980,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnAttachments',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -1021,7 +1021,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', postId: 'sample-query', updateMask: 'title' },
@@ -1057,7 +1057,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnAttachments/attachmentId-123/studentSubmissions/submissionId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', postId: 'sample-query' },
@@ -1091,7 +1091,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnAttachments/attachmentId-123/studentSubmissions',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', pageSize: 1, pageToken: 'sample-query' },
@@ -1127,7 +1127,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnAttachments/attachmentId-123/studentSubmissions/submissionId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: {
@@ -1160,7 +1160,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -1185,7 +1185,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1206,7 +1206,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1227,7 +1227,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/itemId-123/addOnContext',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {},
@@ -1258,7 +1258,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -1293,7 +1293,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/id-123:modifyAssignees',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -1322,7 +1322,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title' },
@@ -1355,7 +1355,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/rubrics',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -1388,7 +1388,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/rubrics/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1413,7 +1413,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/rubrics/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1437,7 +1437,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/rubrics',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', pageToken: 'sample-query', pageSize: 1 },
@@ -1471,7 +1471,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/rubrics/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title' },
@@ -1506,7 +1506,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/studentSubmissions/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1539,7 +1539,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/studentSubmissions',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -1578,7 +1578,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/studentSubmissions/id-123:modifyAttachments',
-			'unit-test-token',
+			context,
 			{ method: 'POST', query: { fields: 'id' }, body: { addAttachments: [] } },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1608,7 +1608,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/studentSubmissions/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'draftGrade' },
@@ -1640,7 +1640,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/studentSubmissions/id-123:reclaim',
-			'unit-test-token',
+			context,
 			{ method: 'POST', query: { fields: 'id' }, body: {} },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1668,7 +1668,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/studentSubmissions/id-123:return',
-			'unit-test-token',
+			context,
 			{ method: 'POST', query: { fields: 'id' }, body: {} },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1696,7 +1696,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWork/courseWorkId-123/studentSubmissions/id-123:turnIn',
-			'unit-test-token',
+			context,
 			{ method: 'POST', query: { fields: 'id' }, body: {} },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1724,7 +1724,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/itemId-123/addOnAttachments',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: {},
@@ -1759,7 +1759,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'DELETE',
 				query: { fields: 'id', postId: 'sample-query' },
@@ -1790,7 +1790,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', postId: 'sample-query' },
@@ -1822,7 +1822,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/itemId-123/addOnAttachments',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -1863,7 +1863,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/itemId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title', postId: 'sample-query' },
@@ -1893,7 +1893,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -1918,7 +1918,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1939,7 +1939,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -1962,7 +1962,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/itemId-123/addOnContext',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {},
@@ -1995,7 +1995,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -2029,7 +2029,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/courseWorkMaterials/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title' },
@@ -2054,15 +2054,11 @@ describe('Google Classroom operations', () => {
 			},
 		);
 		expect(result).toEqual(response);
-		expect(mockRequest).toHaveBeenLastCalledWith(
-			'/v1/courses',
-			'unit-test-token',
-			{
-				method: 'POST',
-				query: { fields: 'id' },
-				body: { name: 'Biology', ownerId: 'me' },
-			},
-		);
+		expect(mockRequest).toHaveBeenLastCalledWith('/v1/courses', context, {
+			method: 'POST',
+			query: { fields: 'id' },
+			body: { name: 'Biology', ownerId: 'me' },
+		});
 		expect(consoleInfo).toHaveBeenLastCalledWith(
 			'Google Classroom operation completed',
 			{ operationId: 'courses.create' },
@@ -2082,7 +2078,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2104,7 +2100,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2125,7 +2121,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/gradingPeriodSettings',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2152,22 +2148,18 @@ describe('Google Classroom operations', () => {
 			},
 		);
 		expect(result).toEqual(response);
-		expect(mockRequest).toHaveBeenLastCalledWith(
-			'/v1/courses',
-			'unit-test-token',
-			{
-				method: 'GET',
-				query: {
-					fields: 'id',
-					courseStates: ['COURSE_STATE_UNSPECIFIED'],
-					pageSize: 1,
-					teacherId: 'sample-query',
-					pageToken: 'sample-query',
-					studentId: 'sample-query',
-				},
-				body: undefined,
+		expect(mockRequest).toHaveBeenLastCalledWith('/v1/courses', context, {
+			method: 'GET',
+			query: {
+				fields: 'id',
+				courseStates: ['COURSE_STATE_UNSPECIFIED'],
+				pageSize: 1,
+				teacherId: 'sample-query',
+				pageToken: 'sample-query',
+				studentId: 'sample-query',
 			},
-		);
+			body: undefined,
+		});
 		expect(consoleInfo).toHaveBeenLastCalledWith(
 			'Google Classroom operation completed',
 			{ operationId: 'courses.list' },
@@ -2188,7 +2180,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'name' },
@@ -2220,7 +2212,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/posts/postId-123/addOnAttachments',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { itemId: 'itemId-123' },
@@ -2255,7 +2247,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/posts/postId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'DELETE',
 				query: { fields: 'id', itemId: 'sample-query' },
@@ -2284,7 +2276,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/posts/postId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', itemId: 'sample-query' },
@@ -2314,7 +2306,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/posts/postId-123/addOnAttachments',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -2353,7 +2345,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/posts/postId-123/addOnAttachments/attachmentId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title', itemId: 'sample-query' },
@@ -2389,7 +2381,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/posts/postId-123/addOnAttachments/attachmentId-123/studentSubmissions/submissionId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', itemId: 'sample-query' },
@@ -2422,7 +2414,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/posts/postId-123/addOnAttachments/attachmentId-123/studentSubmissions/submissionId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: {
@@ -2453,7 +2445,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/posts/postId-123/addOnContext',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { itemId: 'itemId-123' },
@@ -2479,7 +2471,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/studentGroups',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -2504,7 +2496,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/studentGroups/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2525,7 +2517,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/studentGroups',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', pageToken: 'sample-query', pageSize: 1 },
@@ -2551,7 +2543,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/studentGroups/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title' },
@@ -2582,7 +2574,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/studentGroups/studentGroupId-123/studentGroupMembers',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -2613,7 +2605,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/studentGroups/studentGroupId-123/studentGroupMembers/userId-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2639,7 +2631,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/studentGroups/studentGroupId-123/studentGroupMembers',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', pageSize: 1, pageToken: 'sample-query' },
@@ -2665,7 +2657,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/students',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -2690,7 +2682,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/students/userId-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2711,7 +2703,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/students/userId-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2732,7 +2724,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/students',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', pageSize: 1, pageToken: 'sample-query' },
@@ -2758,7 +2750,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/teachers',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -2783,7 +2775,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/teachers/userId-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2804,7 +2796,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/teachers/userId-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2825,7 +2817,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/teachers',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', pageSize: 1, pageToken: 'sample-query' },
@@ -2851,7 +2843,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/topics',
-			'unit-test-token',
+			context,
 			{ method: 'POST', query: { fields: 'id' }, body: { name: 'Unit 1' } },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2872,7 +2864,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/topics/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2893,7 +2885,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/topics/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -2914,7 +2906,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/topics',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: { fields: 'id', pageToken: 'sample-query', pageSize: 1 },
@@ -2940,7 +2932,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/topics/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title' },
@@ -2967,7 +2959,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/id-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PUT',
 				query: { fields: 'id' },
@@ -2993,7 +2985,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/courses/courseId-123/gradingPeriodSettings',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'title' },
@@ -3018,7 +3010,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/invitations/id-123:accept',
-			'unit-test-token',
+			context,
 			{ method: 'POST', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -3038,19 +3030,15 @@ describe('Google Classroom operations', () => {
 			body: { userId: 'student-123', courseId: 'course-123', role: 'STUDENT' },
 		});
 		expect(result).toEqual(response);
-		expect(mockRequest).toHaveBeenLastCalledWith(
-			'/v1/invitations',
-			'unit-test-token',
-			{
-				method: 'POST',
-				query: { fields: 'id' },
-				body: {
-					userId: 'student-123',
-					courseId: 'course-123',
-					role: 'STUDENT',
-				},
+		expect(mockRequest).toHaveBeenLastCalledWith('/v1/invitations', context, {
+			method: 'POST',
+			query: { fields: 'id' },
+			body: {
+				userId: 'student-123',
+				courseId: 'course-123',
+				role: 'STUDENT',
 			},
-		);
+		});
 		expect(consoleInfo).toHaveBeenLastCalledWith(
 			'Google Classroom operation completed',
 			{ operationId: 'invitations.create' },
@@ -3069,7 +3057,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/invitations/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -3091,7 +3079,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/invitations/id-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -3117,21 +3105,17 @@ describe('Google Classroom operations', () => {
 			},
 		);
 		expect(result).toEqual(response);
-		expect(mockRequest).toHaveBeenLastCalledWith(
-			'/v1/invitations',
-			'unit-test-token',
-			{
-				method: 'GET',
-				query: {
-					fields: 'id',
-					userId: 'sample-query',
-					pageToken: 'sample-query',
-					courseId: 'sample-query',
-					pageSize: 1,
-				},
-				body: undefined,
+		expect(mockRequest).toHaveBeenLastCalledWith('/v1/invitations', context, {
+			method: 'GET',
+			query: {
+				fields: 'id',
+				userId: 'sample-query',
+				pageToken: 'sample-query',
+				courseId: 'sample-query',
+				pageSize: 1,
 			},
-		);
+			body: undefined,
+		});
 		expect(consoleInfo).toHaveBeenLastCalledWith(
 			'Google Classroom operation completed',
 			{ operationId: 'invitations.list' },
@@ -3157,23 +3141,19 @@ describe('Google Classroom operations', () => {
 			},
 		});
 		expect(result).toEqual(response);
-		expect(mockRequest).toHaveBeenLastCalledWith(
-			'/v1/registrations',
-			'unit-test-token',
-			{
-				method: 'POST',
-				query: { fields: 'id' },
-				body: {
-					cloudPubsubTopic: {
-						topicName: 'projects/classroom-demo/topics/updates',
-					},
-					feed: {
-						feedType: 'COURSE_ROSTER_CHANGES',
-						courseRosterChangesInfo: { courseId: 'course-123' },
-					},
+		expect(mockRequest).toHaveBeenLastCalledWith('/v1/registrations', context, {
+			method: 'POST',
+			query: { fields: 'id' },
+			body: {
+				cloudPubsubTopic: {
+					topicName: 'projects/classroom-demo/topics/updates',
+				},
+				feed: {
+					feedType: 'COURSE_ROSTER_CHANGES',
+					courseRosterChangesInfo: { courseId: 'course-123' },
 				},
 			},
-		);
+		});
 		expect(consoleInfo).toHaveBeenLastCalledWith(
 			'Google Classroom operation completed',
 			{ operationId: 'registrations.create' },
@@ -3192,7 +3172,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/registrations/registrationId-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -3214,7 +3194,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/userProfiles/userId-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -3241,7 +3221,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/userProfiles/studentId-123/guardianInvitations',
-			'unit-test-token',
+			context,
 			{
 				method: 'POST',
 				query: { fields: 'id' },
@@ -3272,7 +3252,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/userProfiles/studentId-123/guardianInvitations/invitationId-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -3301,7 +3281,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/userProfiles/studentId-123/guardianInvitations',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {
@@ -3338,7 +3318,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/userProfiles/studentId-123/guardianInvitations/invitationId-123',
-			'unit-test-token',
+			context,
 			{
 				method: 'PATCH',
 				query: { fields: 'id', updateMask: 'state' },
@@ -3366,7 +3346,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/userProfiles/studentId-123/guardians/guardianId-123',
-			'unit-test-token',
+			context,
 			{ method: 'DELETE', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -3390,7 +3370,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/userProfiles/studentId-123/guardians/guardianId-123',
-			'unit-test-token',
+			context,
 			{ method: 'GET', query: { fields: 'id' }, body: undefined },
 		);
 		expect(consoleInfo).toHaveBeenLastCalledWith(
@@ -3416,7 +3396,7 @@ describe('Google Classroom operations', () => {
 		expect(result).toEqual(response);
 		expect(mockRequest).toHaveBeenLastCalledWith(
 			'/v1/userProfiles/studentId-123/guardians',
-			'unit-test-token',
+			context,
 			{
 				method: 'GET',
 				query: {

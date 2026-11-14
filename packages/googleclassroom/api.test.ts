@@ -15,7 +15,7 @@ liveTest(
 		if (!accessToken) return;
 		const result = await makeGoogleClassroomRequest(
 			'/v1/userProfiles/me',
-			accessToken,
+			{ key: accessToken },
 			{ method: 'GET', query: {} },
 		);
 		expect(

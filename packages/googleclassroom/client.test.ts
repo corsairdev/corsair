@@ -1,12 +1,16 @@
 import { AuthMissingError } from 'corsair/core';
 import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import {
 	GOOGLE_CLASSROOM_API_BASE,
 	makeGoogleClassroomRequest,
 } from './client';
 
-jest.mock('corsair/http', () => ({ request: jest.fn() }));
+jest.mock('corsair/http', () => {
+	const actual =
+		jest.requireActual<typeof import('corsair/http')>('corsair/http');
+	return { ...actual, request: jest.fn() };
+});
 
 const mockedRequest = jest.mocked(request);
 
@@ -18,10 +22,14 @@ describe('Google Classroom HTTP client', () => {
 	it('uses OAuth bearer auth, the stable v1 host, JSON, and query parameters', async () => {
 		mockedRequest.mockResolvedValue({ ok: true });
 
-		await makeGoogleClassroomRequest('/v1/courses', 'access-token', {
-			method: 'GET',
-			query: { pageSize: 10, pageToken: 'next-page' },
-		});
+		await makeGoogleClassroomRequest(
+			'/v1/courses',
+			{ key: 'access-token' },
+			{
+				method: 'GET',
+				query: { pageSize: 10, pageToken: 'next-page' },
+			},
+		);
 
 		expect(mockedRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -48,11 +56,15 @@ describe('Google Classroom HTTP client', () => {
 		mockedRequest.mockResolvedValue({ id: 'course-123' });
 		const body = { name: 'Biology', ownerId: 'me' };
 
-		await makeGoogleClassroomRequest('/v1/courses', 'access-token', {
-			method: 'POST',
-			body,
-			query: { fields: 'id' },
-		});
+		await makeGoogleClassroomRequest(
+			'/v1/courses',
+			{ key: 'access-token' },
+			{
+				method: 'POST',
+				body,
+				query: { fields: 'id' },
+			},
+		);
 
 		expect(mockedRequest).toHaveBeenCalledWith(
 			expect.any(Object),
@@ -67,7 +79,7 @@ describe('Google Classroom HTTP client', () => {
 
 	it('fails before transport when the resolved OAuth token is empty', async () => {
 		await expect(
-			makeGoogleClassroomRequest('/v1/courses', ''),
+			makeGoogleClassroomRequest('/v1/courses', { key: '' }),
 		).rejects.toBeInstanceOf(AuthMissingError);
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
@@ -77,7 +89,7 @@ describe('Google Classroom HTTP client', () => {
 		mockedRequest.mockRejectedValue(error);
 
 		await expect(
-			makeGoogleClassroomRequest('/v1/courses', 'access-token'),
+			makeGoogleClassroomRequest('/v1/courses', { key: 'access-token' }),
 		).rejects.toBe(error);
 	});
 
@@ -132,5 +144,65 @@ describe('Google Classroom HTTP client', () => {
 			);
 		}
 		fetchMock.mockRestore();
+	});
+});
+
+function unauthorized(): ApiError {
+	return new ApiError(
+		{ method: 'PATCH', url: '/v1/courses/course-1' },
+		{
+			url: 'https://classroom.googleapis.com/v1/courses/course-1',
+			ok: false,
+			status: 401,
+			statusText: 'Unauthorized',
+			body: { error: { code: 401, status: 'UNAUTHENTICATED' } },
+		},
+		'Unauthorized',
+	);
+}
+
+describe('Google Classroom 401 refresh', () => {
+	beforeEach(() => mockedRequest.mockReset());
+
+	it('refreshes the token once and retries only the failed write', async () => {
+		mockedRequest
+			.mockRejectedValueOnce(unauthorized())
+			.mockResolvedValueOnce({ id: 'course-1' });
+		const refresh = jest.fn().mockResolvedValue('fresh-token');
+		await expect(
+			makeGoogleClassroomRequest(
+				'/v1/courses/course-1',
+				{ key: 'stale-token', _refreshAuth: refresh },
+				{ method: 'PATCH', body: { name: 'x' }, query: { updateMask: 'name' } },
+			),
+		).resolves.toEqual({ id: 'course-1' });
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+		expect(mockedRequest.mock.calls[1]?.[0].HEADERS).toMatchObject({
+			Authorization: 'Bearer fresh-token',
+		});
+	});
+
+	it('rethrows a second 401 without refreshing again', async () => {
+		const failure = unauthorized();
+		mockedRequest.mockRejectedValue(failure);
+		const refresh = jest.fn().mockResolvedValue('fresh-token');
+		await expect(
+			makeGoogleClassroomRequest('/v1/courses/course-1', {
+				key: 'stale-token',
+				_refreshAuth: refresh,
+			}),
+		).rejects.toBe(failure);
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+	});
+
+	it('does not refresh without a refresher', async () => {
+		const failure = unauthorized();
+		mockedRequest.mockRejectedValue(failure);
+		await expect(
+			makeGoogleClassroomRequest('/v1/courses', { key: 't' }),
+		).rejects.toBe(failure);
+		expect(mockedRequest).toHaveBeenCalledTimes(1);
 	});
 });

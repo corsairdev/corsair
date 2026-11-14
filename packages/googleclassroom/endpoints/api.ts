@@ -14,7 +14,11 @@ import {
 	GoogleClassroomEndpointOutputSchemas,
 } from './types';
 
-type OperationContext = CorsairContext & Pick<GoogleClassroomContext, 'key'>;
+type OperationContext = CorsairContext &
+	Pick<GoogleClassroomContext, 'key'> & {
+		// Set by core's OAuth keyBuilder; refreshes the access token after a 401.
+		_refreshAuth?: () => Promise<string>;
+	};
 type RouteInput = { pathParams: object; query: object; body?: object };
 type RouteDefinition =
 	(typeof GOOGLE_CLASSROOM_ROUTES)[GoogleClassroomOperationId];
@@ -66,7 +70,7 @@ function defineOperation<TInput extends RouteInput, TOutput>(
 		const parsedInput = inputSchema.parse(input);
 		const response = await makeGoogleClassroomRequest(
 			encodeRoute(route.path, parsedInput.pathParams),
-			ctx.key,
+			ctx,
 			{
 				method: route.method,
 				query: cleanQuery(parsedInput.query),
