@@ -608,11 +608,17 @@ export function trustpilot<const T extends TrustpilotPluginOptions>(
 			if (source !== 'endpoint') return '';
 			const operation = ctx.meteredOperationId;
 			if (operation && publicOperations.has(operation)) {
-				const key =
-					options.apiKey ??
-					(ctx.authType === 'api_key'
-						? await ctx.keys.get_api_key()
-						: undefined);
+				let key = options.apiKey;
+				if (!key && ctx.authType === 'api_key') {
+					key = (await ctx.keys.get_api_key()) ?? undefined;
+				}
+				if (!key && ctx.authType === 'oauth_2') {
+					// Trustpilot's API key is the OAuth app's client id, so an
+					// oauth_2 connection calls the public APIs with it.
+					key =
+						(await ctx.keys.get_integration_credentials()).client_id ??
+						undefined;
+				}
 				if (key) return key;
 				throw new AuthMissingError('trustpilot', 'api_key');
 			}

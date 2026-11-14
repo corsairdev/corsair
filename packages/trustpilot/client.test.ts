@@ -217,3 +217,64 @@ describe('Trustpilot HTTP client', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
+
+describe('Trustpilot key builder for public operations', () => {
+	const oauthKeys = (clientId: string | null) => ({
+		get_dek: async () => 'dek',
+		issue_new_dek: async () => 'dek',
+		get_api_key: async () => null,
+		set_api_key: async (_value: string | null) => undefined,
+		get_access_token: async () => 'stored-access-token',
+		set_access_token: async (_value: string | null) => undefined,
+		get_refresh_token: async () => null,
+		set_refresh_token: async (_value: string | null) => undefined,
+		get_expires_at: async () => null,
+		set_expires_at: async (_value: string | null) => undefined,
+		get_scope: async () => null,
+		set_scope: async (_value: string | null) => undefined,
+		get_webhook_signature: async () => null,
+		set_webhook_signature: async (_value: string | null) => undefined,
+		get_integration_credentials: async () => ({
+			client_id: clientId,
+			client_secret: 'trustpilot-client-secret',
+			redirect_url: 'https://app.example.invalid/callback',
+		}),
+	});
+
+	it('sends the OAuth app client id as the API key on an oauth_2 connection', async () => {
+		const keyBuilder = trustpilot({ authType: 'oauth_2' }).keyBuilder;
+		if (!keyBuilder) throw new Error('key builder missing');
+		const context = {
+			authType: 'oauth_2',
+			options: { authType: 'oauth_2' },
+			tenantId: 'tenant-1',
+			meteredOperationId: 'businessUnits.find',
+			keys: oauthKeys('trustpilot-client-id'),
+		} satisfies TrustpilotKeyBuilderContext;
+		await expect(keyBuilder(context, 'endpoint')).resolves.toBe(
+			'trustpilot-client-id',
+		);
+	});
+
+	it('prefers the apiKey option and raises AuthMissingError without any key', async () => {
+		const withOption = trustpilot({
+			authType: 'oauth_2',
+			apiKey: 'option-api-key',
+		}).keyBuilder;
+		const withoutKey = trustpilot({ authType: 'oauth_2' }).keyBuilder;
+		if (!withOption || !withoutKey) throw new Error('key builder missing');
+		const context = {
+			authType: 'oauth_2',
+			options: { authType: 'oauth_2' },
+			tenantId: 'tenant-1',
+			meteredOperationId: 'reviews.latest',
+			keys: oauthKeys(null),
+		} satisfies TrustpilotKeyBuilderContext;
+		await expect(withOption(context, 'endpoint')).resolves.toBe(
+			'option-api-key',
+		);
+		await expect(withoutKey(context, 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+	});
+});
