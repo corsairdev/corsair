@@ -1,0 +1,64 @@
+displayName: Stack Exchange
+description: Read public and authenticated Stack Exchange content across individual sites and the network, and invoke documented API v2.3 write methods with OAuth user authorization.
+recommendedAuth: api_key
+examples:
+  read:
+    path: site.read
+    title: List recent Stack Overflow questions
+    args:
+      route: questions
+      site: stackoverflow
+      parameters:
+        pagesize: 10
+  write:
+    path: site.write
+    title: Preview question markdown
+    args:
+      route: render-question
+      site: stackoverflow
+      parameters:
+        title: A question about API integration
+        body: Markdown body for rendering only
+        tags: api;testing
+overviewNote: >-
+  Select a documented method with the route field. Per-site methods require a site
+  parameter; network methods do not. OAuth connection requests the documented
+  `read_inbox`, `write_access`, and `private_info` scopes together so every
+  user-context method can be called. Stack Exchange requires a registered
+  redirect URI; expiring tokens have no refresh token and must be reconnected.
+apiExamples:
+  site.read:
+    args:
+      route: questions
+      site: stackoverflow
+      parameters:
+        pagesize: 10
+  site.write:
+    args:
+      route: render-question
+      site: stackoverflow
+      parameters:
+        title: A question about API integration
+        body: Markdown body for rendering only
+        tags: api;testing
+  network.read:
+    args:
+      route: sites
+apiNotes:
+  site.read: >-
+    `route` selects one of the per-site v2.3 methods listed in the package route
+    catalog. `parameters` must use fields documented for that method. The method
+    documentation remains authoritative for required inputs, sort enums and
+    response item fields.
+  site.write: >-
+    POST methods share one conservative destructive-risk operation. Use only a
+    user-authorized OAuth token with `write_access` for write methods; methods
+    requiring authentication but no write scope are marked in the route catalog.
+    Write parameters are form-urlencoded. Review Stack Exchange's write policy
+    before enabling these operations.
+  network.read: >-
+    Network methods omit the `site` parameter. OAuth methods specify whether
+    `read_inbox`, `private_info`, or user authentication is needed in the route
+    catalog. Pagination is exposed as `page` and `pagesize`; callers must honor
+    `has_more` and `backoff` in the common response wrapper. `filters/create`
+    defaults to GET and accepts POST when the include/exclude list is too large.
