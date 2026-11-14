@@ -1,0 +1,180 @@
+displayName: CloudConvert
+description: >-
+  Create, wait for, inspect, list and delete CloudConvert jobs and tasks; cancel
+  or retry tasks; create GCS/S3 export jobs; discover operations and formats; and
+  view account credits with API-key authentication. Job-level webhook fields are
+  not exposed. See https://cloudconvert.com/docs/api-reference/jobs and
+  https://cloudconvert.com/docs/api-reference/tasks.
+recommendedAuth: api_key
+overviewNote: >-
+  CloudConvert warns that its synchronous endpoints can time out for long-running
+  jobs and tasks. Prefer async jobs plus status reads for long work. The
+  provider's `redirect=true` returns raw export-file content; this JSON plugin
+  rejects that option. Job-level `webhook_url` is not exposed. Export credentials
+  are stored in Corsair's encrypted per-tenant key manager and are not endpoint
+  arguments. Add an `export/url` task to make a downloadable URL available in
+  the finished export task's `result.files[].url`. Do not send credentials as
+  extra task fields: when an endpoint requires approval (including strict
+  mode), Corsair records raw incoming arguments before endpoint validation, so
+  an invalid request containing secret fields could still expose them to the
+  local permissions table or hosted Hub approval.
+examples:
+  read:
+    path: jobs.list
+    title: List recent jobs
+    args:
+      perPage: 10
+  write:
+    path: jobs.create
+    title: Create a conversion job
+    args:
+      tasks:
+        import_file:
+          operation: import/url
+          url: https://example.test/input.docx
+        convert:
+          operation: convert
+          input: import_file
+          output_format: pdf
+        export_file:
+          operation: export/url
+          input: convert
+      tag: request-123
+apiNotes:
+  jobs.create: >-
+    This example includes an `export/url` task so the completed job has a
+    downloadable file. Read `result.files[].url` from the finished export task;
+    use `jobs.get` for status polling on long jobs. The generic task schema
+    rejects credential fields such as `private_key` and `secret_access_key`.
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  jobs.createAndWait: >-
+    This example includes an `export/url` task. Read `result.files[].url` from
+    the completed export task. Synchronous calls are bounded by `syncTimeoutMs`
+    (5 minutes by default, up to 10 minutes); use async jobs for long work.
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  jobs.get: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  jobs.wait: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  jobs.list: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.list: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.get: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.wait: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.cancel: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.retry: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  operations.list: >-
+    `options[].type` is a string discriminator, not a TypeScript primitive or
+    identifier union. Its literal values are `"string"`, `"boolean"`,
+    `"integer"`, `"float"`, `"enum"`, and `"dictionary"`.
+  formats.listSupported: >-
+    `options[].type` is a string discriminator, not a TypeScript primitive or
+    identifier union. Its literal values are `"string"`, `"boolean"`,
+    `"integer"`, `"float"`, `"enum"`, and `"dictionary"`.
+  tasks.createExportGoogleCloudStorage: >-
+    Before calling, store `export_gcs_project_id`, `export_gcs_client_email`,
+    and `export_gcs_private_key` with the tenant's CloudConvert key manager.
+    The private key is encrypted at rest and is resolved after approval; it is
+    not part of this endpoint's arguments. The response `status` values are
+    the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
+  tasks.createExportS3: >-
+    Before calling, store `export_s3_access_key_id` and
+    `export_s3_secret_access_key` with the tenant's CloudConvert key manager.
+    Store `export_s3_session_token` when using temporary credentials. These
+    credential fields are encrypted at rest and are not endpoint arguments.
+    The response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+apiExamples:
+  jobs.create:
+    tasks:
+      import_file:
+        operation: import/url
+        url: https://example.test/input.docx
+      convert:
+        operation: convert
+        input: import_file
+        output_format: pdf
+      export_file:
+        operation: export/url
+        input: convert
+    tag: request-123
+  jobs.createAndWait:
+    tasks:
+      import_file:
+        operation: import/url
+        url: https://example.test/input.docx
+      convert:
+        operation: convert
+        input: import_file
+        output_format: pdf
+      export_file:
+        operation: export/url
+        input: convert
+  jobs.get:
+    jobId: job-id
+  jobs.wait:
+    jobId: job-id
+  jobs.list:
+    include:
+      - tasks
+    perPage: 10
+  jobs.remove:
+    jobId: job-id
+  tasks.createExportGoogleCloudStorage:
+    exportTaskName: export
+    sourceTasks:
+      imported:
+        operation: import/url
+        url: https://example.test/input.pdf
+    input: imported
+    bucket: bucket-name
+  tasks.createExportS3:
+    exportTaskName: export
+    sourceTasks:
+      imported:
+        operation: import/url
+        url: https://example.test/input.pdf
+    input: imported
+    bucket: bucket-name
+    region: us-east-1
+  tasks.list:
+    include:
+      - retries
+      - depends_on_tasks
+    perPage: 10
+  tasks.get:
+    taskId: task-id
+    include:
+      - retries
+      - depends_on_tasks
+      - payload
+      - job
+  tasks.wait:
+    taskId: task-id
+  tasks.cancel:
+    taskId: task-id
+  tasks.retry:
+    taskId: task-id
+  tasks.remove:
+    taskId: task-id
+  operations.list:
+    operation: convert
+    inputFormat: docx
+    outputFormat: pdf
+  formats.listSupported: {}
+  users.show: {}

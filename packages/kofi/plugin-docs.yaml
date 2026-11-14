@@ -1,0 +1,65 @@
+displayName: Ko-fi
+description: Payment notifications from Ko-fi - receive the webhook Ko-fi sends when a donation, membership payment, shop order or commission is paid, with every delivery verified against the account's token. Ko-fi publishes no REST API.
+domain: ko-fi.com
+recommendedAuth: api_key
+overviewNote: |
+  Paste your webhook URL and copy the verification token from your Ko-fi page under Settings, Webhooks. That token is the only credential this plugin needs. Store it as the account's API key (`pnpm corsair setup --plugin=kofi api_key=<token>`, or the API key field on Hub's connect page), as the account's `verification_token`, or pass it as the `key` option.
+
+  How a delivery arrives:
+
+  - **Ko-fi POSTs form-encoded, not JSON.** The body is `application/x-www-form-urlencoded` with a single `data` field holding the payment as a JSON string. `processWebhook` runs `JSON.parse` on a string body, so neither the raw text nor `request.json()` works: the route reads the `data` field and passes the payment object, as below. Use this route for Ko-fi instead of the generic one on the Webhooks page.
+  - **Every delivery carries a `verification_token`**, and the plugin's handler compares it in constant time before it accepts the payment. With no token configured the delivery is refused rather than accepted: an unverified payment notification would let whoever posted to the URL trigger a sale. The one exception is a delivery Hub forwards with `hubVerified`: Hub checked the token before forwarding, so the handler skips its own comparison and needs no local token.
+  - **Act on a payment in an `after` hook, not a `before` hook.** Core runs `webhookHooks.before` ahead of the handler, so a `before` hook also sees deliveries whose token is wrong. `after` runs only when the handler accepted the delivery.
+  - **A refused delivery answers 401** (missing or wrong token) **or 400** (not a Ko-fi payment). Ko-fi retries anything other than a 200, with the same `message_id`.
+  - **With `multiTenancy`, give each tenant its own URL**, such as `https://<your-app>/api/webhook?tenantId=acme`, and register it on that tenant's Ko-fi page. A delivery names no Ko-fi account, so the `tenantId` in the URL is what picks the tenant whose token, hooks and data handle it; without it the delivery runs as `default`.
+
+  ```ts app/api/webhook/route.ts
+  import { processWebhook } from "corsair";
+  import { corsair } from "@/server/corsair";
+
+  export async function POST(request: Request) {
+      const headers = Object.fromEntries(request.headers);
+      const query = Object.fromEntries(new URL(request.url).searchParams);
+      // Ko-fi's body is a form with one `data` field holding the payment JSON.
+      const data = new URLSearchParams(await request.text()).get("data");
+      // unknown: the payment is untrusted JSON from the request; the plugin
+      // checks its token and shape before anything uses it.
+      let payment: Record<string, unknown>;
+      try {
+          payment = JSON.parse(data ?? "");
+      } catch {
+          return Response.json({ success: false }, { status: 400 });
+      }
+      const result = await processWebhook(corsair, headers, payment, query);
+      if (!result.plugin) {
+          return Response.json({ success: false }, { status: 404 });
+      }
+      const status =
+          result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+      return Response.json(result.response ?? { success: true }, { status });
+  }
+  ```
+
+  The four payment types:
+
+  - **`Donation`** is a one-off tip. `amount` is a decimal string such as `5.00`, not a number, and `message` holds the note left with it.
+  - **`Subscription`** is a membership payment. It fires on every payment, not only the first, so use `is_first_subscription_payment` to tell them apart, and `tier_name` for the tier.
+  - **`Shop Order`** carries `shop_items`, and `shipping` when the goods are physical.
+  - **`Commission`** is a paid commission. Ko-fi documents the type but publishes no example payload, so its fields follow the same base shape and may vary.
+
+  Things to know before you call:
+
+  - **There is no API to call.** `api.ko-fi.com` does not resolve, and Ko-fi's help page says the API is "currently limited to when a payment is made". `webhooks.listEvents` therefore returns the documented payment types from Ko-fi's reference and makes no request.
+  - **No payments are stored locally.** The plugin declares no entities, and Ko-fi has no API to read payments back from, so keep what you need from each delivery in a `webhookHooks` `after` hook. When Corsair has a database, each delivery's event log entry keeps the message ID, amount, currency and whether it was a membership payment.
+  - **Ko-fi only tells you about payments.** It cannot notify you when a membership ends, so a lapse has to be inferred from the absence of a payment or read from Ko-fi itself.
+  - **A retry keeps its `message_id`.** Ko-fi retries when the endpoint does not answer 200, with the same `message_id` each time, so that field is what makes a delivery safe to de-duplicate.
+  - **Supporter details are personal data.** The plugin logs the amount, currency and message ID, and never the supporter's name, email, address or message.
+examples:
+  read:
+    path: webhooks.listEvents
+    title: List the payment types Ko-fi can send
+    args: {}
+apiExamples:
+  webhooks.listEvents: {}
+apiNotes:
+  webhooks.listEvents: 'Returns the four documented payment types from Ko-fi’s webhook reference. Makes no API call, because Ko-fi has none.'
