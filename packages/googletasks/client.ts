@@ -57,6 +57,32 @@ function sendGoogleTasksRequest(
 	});
 }
 
+// A failed write would otherwise carry the submitted task (title, notes) on
+// ApiError.request. Rebuild the error without the request body; status, provider
+// body, message and rate-limit fields stay as core set them.
+function withoutRequestBody(error: unknown): unknown {
+	if (!(error instanceof ApiError) || error.request?.body === undefined) {
+		return error;
+	}
+	return new ApiError(
+		{ ...error.request, body: undefined },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
 // The provider payload is untrusted until the operation-specific output schema parses it.
 // A 401 refreshes the OAuth token once and retries only the request that failed, the
 // same as the other Google plugins: Google rejected it before running it, so writes are
@@ -70,8 +96,14 @@ export async function makeGoogleTasksRequest(
 	try {
 		return await sendGoogleTasksRequest(path, ctx.key, options);
 	} catch (error) {
-		if (!isUnauthorized(error) || !ctx._refreshAuth) throw error;
+		if (!isUnauthorized(error) || !ctx._refreshAuth) {
+			throw withoutRequestBody(error);
+		}
 		const freshKey = await ctx._refreshAuth();
-		return sendGoogleTasksRequest(path, freshKey, options);
+		try {
+			return await sendGoogleTasksRequest(path, freshKey, options);
+		} catch (retryError) {
+			throw withoutRequestBody(retryError);
+		}
 	}
 }

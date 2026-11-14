@@ -73,6 +73,47 @@ describe('Google Tasks OAuth client', () => {
 		},
 	);
 
+	it('drops the submitted task from a failed write but keeps status and retry data', async () => {
+		const failure = new ApiError(
+			{
+				method: 'POST',
+				url: '/tasks/v1/lists/l/tasks',
+				body: { title: 'Call Dr. Lee', notes: 'private note' },
+			},
+			{
+				url: 'https://tasks.googleapis.com/tasks/v1/lists/l/tasks',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: { code: 429, status: 'RESOURCE_EXHAUSTED' } },
+			},
+			'Google API error',
+			{ retryAfter: 4000, rateLimitRemaining: 0 },
+		);
+		mockedRequest.mockRejectedValue(failure);
+		const thrown = await makeGoogleTasksRequest(
+			'/tasks/v1/lists/l/tasks',
+			{ key: 'private-access-token' },
+			{
+				method: 'POST',
+				body: { title: 'Call Dr. Lee', notes: 'private note' },
+			},
+		).catch((error: unknown) => error);
+		expect(thrown).toBeInstanceOf(ApiError);
+		const error = thrown as ApiError;
+		expect(error.request.body).toBeUndefined();
+		expect(error.request.method).toBe('POST');
+		expect(JSON.stringify(error)).not.toContain('private note');
+		expect(error.status).toBe(429);
+		expect(error.statusText).toBe('Too Many Requests');
+		expect(error.message).toBe('Google API error');
+		expect(error.body).toEqual({
+			error: { code: 429, status: 'RESOURCE_EXHAUSTED' },
+		});
+		expect(error.retryAfter).toBe(4000);
+		expect(error.rateLimitRemaining).toBe(0);
+	});
+
 	it('extracts Retry-After with the real corsair/http transport', async () => {
 		const actualHttp =
 			jest.requireActual<typeof import('corsair/http')>('corsair/http');
