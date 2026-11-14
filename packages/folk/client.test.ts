@@ -4,6 +4,7 @@ import {
 	FOLK_API_BASE,
 	FolkAPIError,
 	flattenFilter,
+	folkErrorInfo,
 	makeFolkRequest,
 	redactSensitiveData,
 } from './client';
@@ -104,7 +105,7 @@ describe('client.ts', () => {
 			expect(mockRequest).not.toHaveBeenCalled();
 		});
 
-		it('wraps ApiError into FolkAPIError extracting status, code, and details', async () => {
+		it('passes core ApiError through with Folk error code, message and details', async () => {
 			const errorPayload = {
 				error: {
 					code: 'RESOURCE_NOT_FOUND',
@@ -123,15 +124,18 @@ describe('client.ts', () => {
 				{ method: 'GET' },
 			).catch((e: unknown) => e);
 
-			expect(caught).toBeInstanceOf(FolkAPIError);
-			if (!(caught instanceof FolkAPIError)) {
-				throw new Error('Expected FolkAPIError');
+			expect(caught).toBeInstanceOf(ApiError);
+			if (!(caught instanceof ApiError)) {
+				throw new Error('Expected ApiError');
 			}
 			expect(caught.status).toBe(404);
-			expect(caught.code).toBe('RESOURCE_NOT_FOUND');
 			expect(caught.message).toBe('Person not found');
-			expect(caught.requestId).toBe('req-1234');
-			expect(caught.details).toEqual({ field: 'personId' });
+			expect(caught.body).toEqual(errorPayload);
+			expect(folkErrorInfo(caught)).toEqual({
+				code: 'RESOURCE_NOT_FOUND',
+				requestId: 'req-1234',
+				details: { field: 'personId' },
+			});
 		});
 
 		it('redacts explicit API keys from thrown error messages and causes on transport Error', async () => {
@@ -179,24 +183,78 @@ describe('client.ts', () => {
 				method: 'GET',
 			}).catch((e: unknown) => e);
 
-			expect(caught).toBeInstanceOf(FolkAPIError);
-			if (!(caught instanceof FolkAPIError)) {
-				throw new Error('Expected FolkAPIError');
+			expect(caught).toBeInstanceOf(ApiError);
+			if (!(caught instanceof ApiError)) {
+				throw new Error('Expected ApiError');
 			}
+			expect(caught.status).toBe(401);
 			expect(caught.message).not.toContain(secretKey);
 			expect(caught.message).toContain('[REDACTED]');
-			expect(caught.cause).toBeInstanceOf(Error);
-			if (caught.cause instanceof Error) {
-				expect(caught.cause.message).not.toContain(secretKey);
-				expect(caught.cause.message).toContain('[REDACTED]');
+			expect(JSON.stringify(caught)).not.toContain(secretKey);
+		});
+
+		it('leaves the sent body and query off the ApiError and masks email addresses', async () => {
+			const errorPayload = {
+				error: {
+					code: 'VALIDATION_ERROR',
+					message: 'A person with email alice@example.com already exists',
+					requestId: 'req-1',
+					details: { email: 'alice@example.com', field: 'emails' },
+				},
+			};
+			mockRequest.mockRejectedValue(
+				new ApiError(
+					{
+						method: 'POST',
+						url: '/people',
+						body: { firstName: 'Alice', emails: ['alice@example.com'] },
+						query: { 'filter[emails][like]': 'alice@example.com' },
+					},
+					{
+						url: 'https://api.folk.app/v1/people?filter%5Bemails%5D%5Blike%5D=alice%40example.com',
+						ok: false,
+						status: 422,
+						statusText: 'Unprocessable Entity',
+						body: errorPayload,
+					},
+					'Unprocessable Entity',
+					{ retryAfter: 1000 },
+				),
+			);
+
+			// `unknown` because catch blocks receive an untyped rejection value before assertion.
+			const caught: unknown = await makeFolkRequest('/people', 'token-test', {
+				method: 'POST',
+				body: { firstName: 'Alice', emails: ['alice@example.com'] },
+			}).catch((e: unknown) => e);
+
+			expect(caught).toBeInstanceOf(ApiError);
+			if (!(caught instanceof ApiError)) {
+				throw new Error('Expected ApiError');
 			}
-			expect(caught.requestId).not.toContain(secretKey);
-			expect(JSON.stringify(caught.body)).not.toContain(secretKey);
-			expect(JSON.stringify(caught.details)).not.toContain(secretKey);
+			expect(caught.status).toBe(422);
+			expect(caught.retryAfter).toBe(1000);
+			expect(caught.request.body).toBeUndefined();
+			expect(caught.request.query).toBeUndefined();
+			const serialized = JSON.stringify({ ...caught, message: caught.message });
+			expect(serialized).not.toContain('alice@example.com');
+			expect(serialized).not.toContain('alice%40example.com');
+			expect(serialized).not.toContain('Alice');
+			expect(caught.message).toBe('A person with email [email] already exists');
+			expect(folkErrorInfo(caught).details).toEqual({
+				email: '[email]',
+				field: 'emails',
+			});
 		});
 	});
 
 	describe('flattenFilter', () => {
+		it('keeps array values so they go out as repeated query keys', () => {
+			expect(
+				flattenFilter({ groups: { all: { id: ['grp_A', 'grp_B'] } } }),
+			).toEqual({ 'filter[groups][all][id]': ['grp_A', 'grp_B'] });
+		});
+
 		it('flattens nested filter objects into Folk query key format', () => {
 			const filter = {
 				status: { eq: 'active' },

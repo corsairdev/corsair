@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FolkEndpoints } from '..';
+import type { FolkQueryValue } from '../client';
 import { flattenFilter, makeFolkRequest } from '../client';
 import type {
 	CompaniesCreateResponse,
@@ -12,7 +13,7 @@ import { FolkEndpointInputSchemas, FolkEndpointOutputSchemas } from './types';
 
 export const list: FolkEndpoints['companiesList'] = async (ctx, input) => {
 	const parsedInput = FolkEndpointInputSchemas.companiesList.parse(input);
-	const query: Record<string, string | number | boolean | undefined> = {};
+	const query: Record<string, FolkQueryValue | undefined> = {};
 	if (parsedInput.limit !== undefined) query.limit = parsedInput.limit;
 	if (parsedInput.cursor !== undefined) query.cursor = parsedInput.cursor;
 	if (parsedInput.combinator !== undefined)

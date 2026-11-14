@@ -22,6 +22,21 @@ const SENSITIVE_KEY_NAMES = new Set([
 
 const REDACTED = '[REDACTED]';
 
+// Folk echoes contact email addresses in validation messages; R8 keeps them out of errors.
+const EMAIL_PATTERN = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+
+// `unknown` because error bodies are untrusted JSON of any shape.
+function maskEmails(value: unknown): unknown {
+	if (typeof value === 'string') return value.replace(EMAIL_PATTERN, '[email]');
+	if (Array.isArray(value)) return value.map(maskEmails);
+	if (value !== null && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, val]) => [key, maskEmails(val)]),
+		);
+	}
+	return value;
+}
+
 /**
  * Recursively redacts sensitive field names and occurrences of explicit secrets.
  *
@@ -74,8 +89,8 @@ export function redactSensitiveData(
 export function flattenFilter(
 	filter: Record<string, unknown>,
 	prefix = 'filter',
-): Record<string, string | number | boolean> {
-	const result: Record<string, string | number | boolean> = {};
+): Record<string, FolkQueryValue> {
+	const result: Record<string, FolkQueryValue> = {};
 	for (const [key, value] of Object.entries(filter)) {
 		if (value === null || value === undefined) continue;
 		if (typeof value === 'object' && !Array.isArray(value)) {
@@ -90,10 +105,25 @@ export function flattenFilter(
 			typeof value === 'boolean'
 		) {
 			result[`${prefix}[${key}]`] = value;
+		} else if (Array.isArray(value)) {
+			// Core sends an array as repeated keys, e.g. filter[groups][all][id]=a&filter[groups][all][id]=b.
+			const items = value.filter(
+				(item): item is string | number | boolean =>
+					typeof item === 'string' ||
+					typeof item === 'number' ||
+					typeof item === 'boolean',
+			);
+			if (items.length > 0) result[`${prefix}[${key}]`] = items;
 		}
 	}
 	return result;
 }
+
+export type FolkQueryValue =
+	| string
+	| number
+	| boolean
+	| Array<string | number | boolean>;
 
 // `unknown` because response JSON or error payload is an untrusted arbitrary object until inspected.
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -142,7 +172,7 @@ export type FolkRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	// `unknown` because request bodies vary per endpoint schema before JSON serialization.
 	body?: Record<string, unknown>;
-	query?: Record<string, string | number | boolean | undefined>;
+	query?: Record<string, FolkQueryValue | undefined>;
 	headers?: Record<string, string>;
 };
 
@@ -190,46 +220,45 @@ export async function makeFolkRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Core's ApiError goes through (R8) so status, retryAfter and isRateLimitError()
+			// keep working. It is rebuilt without the sent body and query, which carry contact
+			// names and emails, with the API key and secret-named fields redacted and email
+			// addresses masked in Folk's message and body. folkErrorInfo() reads the code,
+			// requestId and details back out.
 			// `unknown` because provider error bodies are untrusted JSON until inspected.
-			const rawBody: unknown = error.body;
-			let parsedCode: string | undefined;
-			let parsedMessage: string | undefined;
-			let parsedRequestId: string | undefined;
-			// `unknown` because error details shape varies per error code in Folk's API.
-			let parsedDetails: unknown;
-
-			if (isRecord(rawBody) && 'error' in rawBody && isRecord(rawBody.error)) {
-				const errObj = rawBody.error;
-				if (typeof errObj.code === 'string') parsedCode = errObj.code;
-				if (typeof errObj.message === 'string') parsedMessage = errObj.message;
-				if (typeof errObj.requestId === 'string')
-					parsedRequestId = errObj.requestId;
-				parsedDetails = errObj.details;
-			}
-
-			const sanitizedBody = redactSensitiveData(rawBody, secrets);
-			const sanitizedDetails = redactSensitiveData(parsedDetails, secrets);
-			const rawMessage = parsedMessage || error.message;
-			const sanitized = redactSensitiveData(rawMessage, secrets);
-			const message = typeof sanitized === 'string' ? sanitized : rawMessage;
-			const sanitizedCode =
-				typeof parsedCode === 'string'
-					? (redactSensitiveData(parsedCode, secrets) as string)
+			const safeBody: unknown = maskEmails(
+				redactSensitiveData(error.body, secrets),
+			);
+			const folkMessage =
+				isRecord(safeBody) &&
+				isRecord(safeBody.error) &&
+				typeof safeBody.error.message === 'string'
+					? safeBody.error.message
 					: undefined;
-			const sanitizedRequestId =
-				typeof parsedRequestId === 'string'
-					? (redactSensitiveData(parsedRequestId, secrets) as string)
-					: undefined;
-
-			throw new FolkAPIError(message, {
-				status: error.status,
-				code: sanitizedCode,
-				requestId: sanitizedRequestId,
-				retryAfter: error.retryAfter,
-				details: sanitizedDetails,
-				body: sanitizedBody,
-				cause: new Error(message),
-			});
+			const safeMessage =
+				folkMessage ??
+				(maskEmails(redactSensitiveData(error.message, secrets)) as string);
+			const url = new URL(error.url, FOLK_API_BASE);
+			url.search = '';
+			throw new ApiError(
+				{ ...error.request, body: undefined, query: undefined },
+				{
+					url: url.toString(),
+					ok: false,
+					status: error.status,
+					statusText: maskEmails(
+						redactSensitiveData(error.statusText, secrets),
+					) as string,
+					body: safeBody,
+				},
+				safeMessage,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
 
 		if (error instanceof Error) {
@@ -243,4 +272,24 @@ export async function makeFolkRequest<T>(
 
 		throw new FolkAPIError('Unknown Folk API error');
 	}
+}
+
+/**
+ * Folk's error code, request id and details from a thrown ApiError body
+ * (`{ error: { code, message, requestId, details } }`).
+ */
+export function folkErrorInfo(error: ApiError): {
+	code?: string;
+	requestId?: string;
+	// `unknown` because Folk's details shape varies per error code.
+	details?: unknown;
+} {
+	const body = error.body;
+	if (!isRecord(body) || !isRecord(body.error)) return {};
+	const { code, requestId, details } = body.error;
+	return {
+		...(typeof code === 'string' ? { code } : {}),
+		...(typeof requestId === 'string' ? { requestId } : {}),
+		...(details !== undefined ? { details } : {}),
+	};
 }
