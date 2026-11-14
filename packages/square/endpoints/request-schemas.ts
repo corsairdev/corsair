@@ -3812,6 +3812,12 @@ export const BulkDeleteLocationCustomAttributesRequestLocationCustomAttributeDel
 				'The key of the associated custom attribute definition. Represented as a qualified key if the requesting app is not the definition owner.',
 			)
 			.optional(),
+		location_id: z
+			.string()
+			.describe(
+				"The ID of the location whose custom attribute to delete. Square's request example sends it; the spec's schema does not list it.",
+			)
+			.optional(),
 	});
 
 export const BulkDeleteLocationCustomAttributesRequestSchema = z.object({
@@ -3831,6 +3837,12 @@ export const BulkDeleteMerchantCustomAttributesRequestMerchantCustomAttributeDel
 			.string()
 			.describe(
 				'The key of the associated custom attribute definition. Represented as a qualified key if the requesting app is not the definition owner.',
+			)
+			.optional(),
+		merchant_id: z
+			.string()
+			.describe(
+				"The ID of the merchant whose custom attribute to delete. Square's request example sends it; the spec's schema does not list it.",
 			)
 			.optional(),
 	});
@@ -4467,8 +4479,952 @@ export const UpdateLocationSettingsRequestSchema = z.object({
 	),
 });
 
-export const UpdateOrderRequestSchema = z.object({
-	order: OrderSchema.describe(
+export const MeasurementUnitForUpdateSchema = z.object({
+	custom_unit: OpenObject.describe(
+		'A custom unit of measurement defined by the seller using the Point of Sale app or ad-hoc as an order line item.',
+	).optional(),
+	area_unit: MeasurementUnitAreaSchema.describe(
+		'Represents a standard area unit. See MeasurementUnitArea for possible values',
+	).optional(),
+	length_unit: MeasurementUnitLengthSchema.describe(
+		'Represents a standard length unit. See MeasurementUnitLength for possible values',
+	).optional(),
+	volume_unit: MeasurementUnitVolumeSchema.describe(
+		'Represents a standard volume unit. See MeasurementUnitVolume for possible values',
+	).optional(),
+	weight_unit: MeasurementUnitWeightSchema.describe(
+		'Represents a standard unit of weight or mass. See MeasurementUnitWeight for possible values',
+	).optional(),
+	generic_unit: MeasurementUnitGenericSchema.describe(
+		'Reserved for API integrations that lack the ability to specify a real measurement unit See MeasurementUnitGeneric for possible values',
+	).optional(),
+	time_unit: MeasurementUnitTimeSchema.describe(
+		'Represents a standard unit of time. See MeasurementUnitTime for possible values',
+	).optional(),
+	type: MeasurementUnitUnitTypeSchema.describe(
+		'Represents the type of the measurement unit. See MeasurementUnitUnitType for possible values',
+	).optional(),
+});
+
+export const OrderQuantityUnitForUpdateSchema = z.object({
+	measurement_unit: MeasurementUnitForUpdateSchema.describe(
+		'A MeasurementUnit that represents the unit of measure for the quantity.',
+	).optional(),
+	precision: z
+		.number()
+		.int()
+		.nullable()
+		.describe(
+			'For non-integer quantities, represents the number of digits after the decimal point that are recorded for this quantity.',
+		)
+		.optional(),
+	catalog_object_id: z
+		.string()
+		.nullable()
+		.describe('The catalog object ID referencing the CatalogMeasurementUnit.')
+		.optional(),
+	catalog_version: z
+		.number()
+		.int()
+		.nullable()
+		.describe(
+			'The version of the catalog object that this measurement unit references.',
+		)
+		.optional(),
+});
+
+export const OrderLineItemAppliedTaxForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the applied tax only within this order.',
+		)
+		.optional(),
+	tax_uid: z
+		.string()
+		.min(1)
+		.max(60)
+		.describe(
+			'The `uid` of the tax for which this applied tax represents. It must reference a tax present in the `order.taxes` field.',
+		)
+		.optional(),
+	applied_money: MoneySchema.describe(
+		'The amount of money applied by the tax to the line item.',
+	).optional(),
+	auto_applied: z
+		.boolean()
+		.describe(
+			'Indicates whether the tax was automatically applied to the order based on the catalog configuration. For an example, see Automatically Apply Taxes to an Order.',
+		)
+		.optional(),
+});
+
+export const OrderLineItemAppliedDiscountForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the applied discount only within this order.',
+		)
+		.optional(),
+	discount_uid: z
+		.string()
+		.min(1)
+		.max(60)
+		.describe(
+			'The `uid` of the discount that the applied discount represents. It must reference a discount present in the `order.discounts` field.',
+		)
+		.optional(),
+	applied_money: MoneySchema.describe(
+		'The amount of money applied by the discount to the line item.',
+	).optional(),
+});
+
+export const OrderLineItemAppliedServiceChargeForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the applied service charge only within this order.',
+		)
+		.optional(),
+	service_charge_uid: z
+		.string()
+		.min(1)
+		.max(60)
+		.describe(
+			'The `uid` of the service charge that the applied service charge represents. It must reference a service charge present in the `order.service_charges` field.',
+		)
+		.optional(),
+	applied_money: MoneySchema.describe(
+		'The amount of money applied by the service charge to the line item.',
+	).optional(),
+});
+
+export const OrderLineItemForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the line item only within this order.',
+		)
+		.optional(),
+	name: z
+		.string()
+		.max(512)
+		.nullable()
+		.describe('The name of the line item.')
+		.optional(),
+	quantity: z
+		.string()
+		.min(1)
+		.max(12)
+		.describe('The count, or measurement, of a line item being purchased:')
+		.optional(),
+	quantity_unit: OrderQuantityUnitForUpdateSchema.describe(
+		"The measurement unit and decimal precision that this line item's quantity is measured in.",
+	).optional(),
+	note: z
+		.string()
+		.max(2000)
+		.nullable()
+		.describe('An optional note associated with the line item.')
+		.optional(),
+	catalog_object_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe('The CatalogItemVariation ID applied to this line item.')
+		.optional(),
+	catalog_version: z
+		.number()
+		.int()
+		.nullable()
+		.describe(
+			'The version of the catalog object that this line item references.',
+		)
+		.optional(),
+	variation_name: z
+		.string()
+		.max(400)
+		.nullable()
+		.describe('The name of the variation applied to this line item.')
+		.optional(),
+	item_type: OrderLineItemItemTypeSchema.describe(
+		'The type of line item: an itemized sale, a non-itemized sale (custom amount), or the activation or reloading of a gift card. See OrderLineItemItemType for possible values',
+	).optional(),
+	metadata: z
+		.record(z.string(), z.string())
+		.nullable()
+		.describe('Application-defined data attached to this line item.')
+		.optional(),
+	modifiers: z
+		.array(OrderLineItemModifierSchema)
+		.nullable()
+		.describe('The CatalogModifiers applied to this line item.')
+		.optional(),
+	applied_taxes: z
+		.array(OrderLineItemAppliedTaxForUpdateSchema)
+		.nullable()
+		.describe('The list of references to taxes applied to this line item.')
+		.optional(),
+	applied_discounts: z
+		.array(OrderLineItemAppliedDiscountForUpdateSchema)
+		.nullable()
+		.describe('The list of references to discounts applied to this line item.')
+		.optional(),
+	applied_service_charges: z
+		.array(OrderLineItemAppliedServiceChargeForUpdateSchema)
+		.nullable()
+		.describe(
+			'The list of references to service charges applied to this line item.',
+		)
+		.optional(),
+	base_price_money: MoneySchema.describe(
+		'The base price for a single unit of the line item. Note - If inclusive tax is set on this item it will be included in this value.',
+	).optional(),
+	variation_total_price_money: MoneySchema.describe(
+		'The total price of all item variations sold in this line item. The price is calculated as `base_price_money` multiplied by `quantity`. It does not include modifiers.',
+	).optional(),
+	gross_sales_money: MoneySchema.describe(
+		"The amount of money made in gross sales for this line item. The amount is calculated as the sum of the variation's total price and each modifier's total price.",
+	).optional(),
+	total_tax_money: MoneySchema.describe(
+		'The total amount of tax money to collect for the line item.',
+	).optional(),
+	total_discount_money: MoneySchema.describe(
+		'The total amount of discount money to collect for the line item.',
+	).optional(),
+	total_money: MoneySchema.describe(
+		'The total amount of money to collect for this line item.',
+	).optional(),
+	pricing_blocklists: OrderLineItemPricingBlocklistsSchema.describe(
+		'Describes pricing adjustments that are blocked from automatic application to a line item. For more information, see Apply Taxes and Discounts.',
+	).optional(),
+	total_service_charge_money: MoneySchema.describe(
+		'The total amount of apportioned service charge money to collect for the line item.',
+	).optional(),
+});
+
+export const OrderServiceChargeForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the service charge only within this order.',
+		)
+		.optional(),
+	name: z
+		.string()
+		.max(512)
+		.nullable()
+		.describe(
+			'The name of the service charge. This is unused and null for AUTO_GRATUITY to match the behavior on Bills.',
+		)
+		.optional(),
+	catalog_object_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe(
+			'The catalog object ID referencing the service charge CatalogObject.',
+		)
+		.optional(),
+	catalog_version: z
+		.number()
+		.int()
+		.nullable()
+		.describe(
+			'The version of the catalog object that this service charge references.',
+		)
+		.optional(),
+	percentage: z
+		.string()
+		.max(10)
+		.nullable()
+		.describe(
+			'The service charge percentage as a string representation of a decimal number. For example, `"7.25"` indicates a service charge of 7.25%.',
+		)
+		.optional(),
+	amount_money: MoneySchema.describe(
+		'The amount of a non-percentage-based service charge.',
+	).optional(),
+	applied_money: MoneySchema.describe(
+		'The amount of money applied to the order by the service charge, including any inclusive tax amounts, as calculated by Square.',
+	).optional(),
+	total_money: MoneySchema.describe(
+		'The total amount of money to collect for the service charge.',
+	).optional(),
+	total_tax_money: MoneySchema.describe(
+		'The total amount of tax money to collect for the service charge.',
+	).optional(),
+	calculation_phase: OrderServiceChargeCalculationPhaseSchema.describe(
+		'The calculation phase at which to apply the service charge. See OrderServiceChargeCalculationPhase for possible values',
+	).optional(),
+	taxable: z
+		.boolean()
+		.nullable()
+		.describe(
+			'Indicates whether the service charge can be taxed. If set to `true`, order-level taxes automatically apply to the service charge.',
+		)
+		.optional(),
+	applied_taxes: z
+		.array(OrderLineItemAppliedTaxForUpdateSchema)
+		.nullable()
+		.describe(
+			'The list of references to the taxes applied to this service charge.',
+		)
+		.optional(),
+	metadata: z
+		.record(z.string(), z.string())
+		.nullable()
+		.describe('Application-defined data attached to this service charge.')
+		.optional(),
+	type: OrderServiceChargeTypeSchema.describe(
+		'The type of the service charge. See OrderServiceChargeType for possible values',
+	).optional(),
+	treatment_type: OrderServiceChargeTreatmentTypeSchema.describe(
+		'Indicates whether the service charge will be treated as a value-holding line item or apportioned toward a line item. See OrderServiceChargeTreatmentType for possible values',
+	).optional(),
+	scope: OrderServiceChargeScopeSchema.describe(
+		'Indicates the level at which the apportioned service charge applies.',
+	).optional(),
+});
+
+export const FulfillmentFulfillmentEntryForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the fulfillment entry only within this order.',
+		)
+		.optional(),
+	line_item_uid: z
+		.string()
+		.min(1)
+		.describe('The `uid` from the order line item.')
+		.optional(),
+	quantity: z
+		.string()
+		.min(1)
+		.max(12)
+		.describe(
+			'The quantity of the line item being fulfilled, formatted as a decimal number. For example, `"3"`.',
+		)
+		.optional(),
+	metadata: z
+		.record(z.string(), z.string())
+		.nullable()
+		.describe('Application-defined data attached to this fulfillment entry.')
+		.optional(),
+});
+
+export const FulfillmentForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the fulfillment only within this order.',
+		)
+		.optional(),
+	type: FulfillmentTypeSchema.describe(
+		'The type of the fulfillment. See FulfillmentType for possible values',
+	).optional(),
+	state: FulfillmentStateSchema.describe(
+		'The state of the fulfillment. See FulfillmentState for possible values',
+	).optional(),
+	line_item_application:
+		FulfillmentFulfillmentLineItemApplicationSchema.describe(
+			'Describes what order line items this fulfillment applies to. It can be `ALL` or `ENTRY_LIST` with a supplied list of fulfillment entries.',
+		).optional(),
+	entries: z
+		.array(FulfillmentFulfillmentEntryForUpdateSchema)
+		.describe('A list of entries pertaining to the fulfillment of an order.')
+		.optional(),
+	metadata: z
+		.record(z.string(), z.string())
+		.nullable()
+		.describe('Application-defined data attached to this fulfillment.')
+		.optional(),
+	pickup_details: FulfillmentPickupDetailsSchema.describe(
+		'Contains details for a pickup fulfillment. These details are required when the fulfillment type is `PICKUP`.',
+	).optional(),
+	shipment_details: FulfillmentShipmentDetailsSchema.describe(
+		'Contains details for a shipment fulfillment. These details are required when the fulfillment type is `SHIPMENT`.',
+	).optional(),
+	delivery_details: FulfillmentDeliveryDetailsSchema.describe(
+		'Describes delivery details of an order fulfillment.',
+	).optional(),
+	in_store_details: FulfillmentInStoreDetailsSchema.describe(
+		'Contains details for an in-store fulfillment. These details are required when the fulfillment type is `IN_STORE`.',
+	).optional(),
+});
+
+export const OrderReturnLineItemForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe('A unique ID for this return line-item entry.')
+		.optional(),
+	source_line_item_uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe('The `uid` of the line item in the original sale order.')
+		.optional(),
+	name: z
+		.string()
+		.max(512)
+		.nullable()
+		.describe('The name of the line item.')
+		.optional(),
+	quantity: z
+		.string()
+		.min(1)
+		.max(12)
+		.describe(
+			'The quantity returned, formatted as a decimal number. For example, `"3"`.',
+		)
+		.optional(),
+	quantity_unit: OrderQuantityUnitForUpdateSchema.describe(
+		"The unit and precision that this return line item's quantity is measured in.",
+	).optional(),
+	note: z
+		.string()
+		.max(2000)
+		.nullable()
+		.describe('The note of the return line item.')
+		.optional(),
+	catalog_object_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe('The CatalogItemVariation ID applied to this return line item.')
+		.optional(),
+	catalog_version: z
+		.number()
+		.int()
+		.nullable()
+		.describe(
+			'The version of the catalog object that this line item references.',
+		)
+		.optional(),
+	variation_name: z
+		.string()
+		.max(400)
+		.nullable()
+		.describe('The name of the variation applied to this return line item.')
+		.optional(),
+	item_type: OrderLineItemItemTypeSchema.describe(
+		'The type of line item: an itemized return, a non-itemized return (custom amount), or the return of an unactivated gift card sale. See OrderLineItemItemType for possible values',
+	).optional(),
+	return_modifiers: z
+		.array(OrderReturnLineItemModifierSchema)
+		.nullable()
+		.describe('The CatalogModifiers applied to this line item.')
+		.optional(),
+	applied_taxes: z
+		.array(OrderLineItemAppliedTaxForUpdateSchema)
+		.nullable()
+		.describe(
+			'The list of references to `OrderReturnTax` entities applied to the return line item.',
+		)
+		.optional(),
+	applied_discounts: z
+		.array(OrderLineItemAppliedDiscountForUpdateSchema)
+		.nullable()
+		.describe(
+			'The list of references to `OrderReturnDiscount` entities applied to the return line item.',
+		)
+		.optional(),
+	base_price_money: MoneySchema.describe(
+		'The base price for a single unit of the line item.',
+	).optional(),
+	variation_total_price_money: MoneySchema.describe(
+		'The total price of all item variations returned in this line item. The price is calculated as `base_price_money` multiplied by `quantity` and does not include modifiers.',
+	).optional(),
+	gross_return_money: MoneySchema.describe(
+		'The gross return amount of money calculated as (item base price + modifiers price) * quantity.',
+	).optional(),
+	total_tax_money: MoneySchema.describe(
+		'The total amount of tax money to return for the line item.',
+	).optional(),
+	total_discount_money: MoneySchema.describe(
+		'The total amount of discount money to return for the line item.',
+	).optional(),
+	total_money: MoneySchema.describe(
+		'The total amount of money to return for this line item.',
+	).optional(),
+	applied_service_charges: z
+		.array(OrderLineItemAppliedServiceChargeForUpdateSchema)
+		.nullable()
+		.describe(
+			'The list of references to `OrderReturnServiceCharge` entities applied to the return line item.',
+		)
+		.optional(),
+	total_service_charge_money: MoneySchema.describe(
+		'The total amount of apportioned service charge money to return for the line item.',
+	).optional(),
+});
+
+export const OrderReturnServiceChargeForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the return service charge only within this order.',
+		)
+		.optional(),
+	source_service_charge_uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'The service charge `uid` from the order containing the original service charge. `source_service_charge_uid` is `null` for unlinked returns.',
+		)
+		.optional(),
+	name: z
+		.string()
+		.max(255)
+		.nullable()
+		.describe('The name of the service charge.')
+		.optional(),
+	catalog_object_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe('The catalog object ID of the associated OrderServiceCharge.')
+		.optional(),
+	catalog_version: z
+		.number()
+		.int()
+		.nullable()
+		.describe(
+			'The version of the catalog object that this service charge references.',
+		)
+		.optional(),
+	percentage: z
+		.string()
+		.max(10)
+		.nullable()
+		.describe(
+			'The percentage of the service charge, as a string representation of a decimal number. For example, a value of `"7.25"` corresponds to a percentage of 7.25%.',
+		)
+		.optional(),
+	amount_money: MoneySchema.describe(
+		'The amount of a non-percentage-based service charge.',
+	).optional(),
+	applied_money: MoneySchema.describe(
+		'The amount of money applied to the order by the service charge, including any inclusive tax amounts, as calculated by Square.',
+	).optional(),
+	total_money: MoneySchema.describe(
+		'The total amount of money to collect for the service charge.',
+	).optional(),
+	total_tax_money: MoneySchema.describe(
+		'The total amount of tax money to collect for the service charge.',
+	).optional(),
+	calculation_phase: OrderServiceChargeCalculationPhaseSchema.describe(
+		'The calculation phase after which to apply the service charge. See OrderServiceChargeCalculationPhase for possible values',
+	).optional(),
+	taxable: z
+		.boolean()
+		.nullable()
+		.describe(
+			'Indicates whether the surcharge can be taxed. Service charges calculated in the `TOTAL_PHASE` cannot be marked as taxable.',
+		)
+		.optional(),
+	applied_taxes: z
+		.array(OrderLineItemAppliedTaxForUpdateSchema)
+		.nullable()
+		.describe(
+			'The list of references to `OrderReturnTax` entities applied to the `OrderReturnServiceCharge`.',
+		)
+		.optional(),
+	treatment_type: OrderServiceChargeTreatmentTypeSchema.describe(
+		'Indicates whether the service charge will be treated as a value-holding line item or apportioned toward a line item. See OrderServiceChargeTreatmentType for possible values',
+	).optional(),
+	scope: OrderServiceChargeScopeSchema.describe(
+		'Indicates the level at which the apportioned service charge applies.',
+	).optional(),
+	type: OrderServiceChargeTypeSchema.describe(
+		'The type of the service charge. See OrderServiceChargeType for possible values',
+	).optional(),
+});
+
+export const OrderReturnForUpdateSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe('A unique ID that identifies the return only within this order.')
+		.optional(),
+	source_order_id: z
+		.string()
+		.nullable()
+		.describe(
+			'An order that contains the original sale of these return line items. This is unset for unlinked returns.',
+		)
+		.optional(),
+	return_line_items: z
+		.array(OrderReturnLineItemForUpdateSchema)
+		.nullable()
+		.describe('A collection of line items that are being returned.')
+		.optional(),
+	return_service_charges: z
+		.array(OrderReturnServiceChargeForUpdateSchema)
+		.nullable()
+		.describe('A collection of service charges that are being returned.')
+		.optional(),
+	return_taxes: z
+		.array(OrderReturnTaxSchema)
+		.nullable()
+		.describe(
+			'A collection of references to taxes being returned for an order, including the total applied tax amount to be returned.',
+		)
+		.optional(),
+	return_discounts: z
+		.array(OrderReturnDiscountSchema)
+		.nullable()
+		.describe(
+			'A collection of references to discounts being returned for an order, including the total applied discount amount to be returned.',
+		)
+		.optional(),
+	return_tips: z
+		.array(OrderReturnTipSchema)
+		.nullable()
+		.describe('A collection of references to tips being returned for an order.')
+		.optional(),
+	rounding_adjustment: OrderRoundingAdjustmentSchema.describe(
+		'A positive or negative rounding adjustment to the total value being returned.',
+	).optional(),
+	return_amounts: OrderMoneyAmountsSchema.describe(
+		'An aggregate monetary value being returned by this return entry.',
+	).optional(),
+});
+
+export const AdditionalRecipientForUpdateSchema = z.object({
+	location_id: z
+		.string()
+		.min(1)
+		.max(50)
+		.describe(
+			'The location ID for a recipient (other than the merchant) receiving a portion of this tender.',
+		)
+		.optional(),
+	description: z
+		.string()
+		.max(100)
+		.nullable()
+		.describe('The description of the additional recipient.')
+		.optional(),
+	amount_money: MoneySchema.describe(
+		'The amount of money distributed to the recipient.',
+	).optional(),
+	receivable_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe(
+			'The unique ID for the RETIRED `AdditionalRecipientReceivable` object. This field should be empty for any `AdditionalRecipient` objects created after the retirement.',
+		)
+		.optional(),
+});
+
+export const TenderForUpdateSchema = z.object({
+	id: z
+		.string()
+		.max(192)
+		.describe("The tender's unique ID. It is the associated payment ID.")
+		.optional(),
+	location_id: z
+		.string()
+		.max(50)
+		.nullable()
+		.describe("The ID of the transaction's associated location.")
+		.optional(),
+	transaction_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe("The ID of the tender's associated transaction.")
+		.optional(),
+	created_at: z
+		.string()
+		.max(32)
+		.describe(
+			'The timestamp for when the tender was created, in RFC 3339 format.',
+		)
+		.optional(),
+	note: z
+		.string()
+		.max(500)
+		.nullable()
+		.describe(
+			'An optional note associated with the tender at the time of payment.',
+		)
+		.optional(),
+	amount_money: MoneySchema.describe(
+		'The total amount of the tender, including `tip_money`.',
+	).optional(),
+	tip_money: MoneySchema.describe("The tip's amount of the tender.").optional(),
+	processing_fee_money: MoneySchema.describe(
+		'The amount of any Square processing fees applied to the tender.',
+	).optional(),
+	customer_id: z
+		.string()
+		.max(191)
+		.nullable()
+		.describe(
+			"If the tender is associated with a customer or represents a customer's card on file, this is the ID of the associated customer.",
+		)
+		.optional(),
+	type: TenderTypeSchema.describe(
+		'The type of tender, such as `CARD` or `CASH`. See TenderType for possible values',
+	).optional(),
+	card_details: TenderCardDetailsSchema.describe(
+		'The details of the card tender.',
+	).optional(),
+	cash_details: TenderCashDetailsSchema.describe(
+		'The details of the cash tender.',
+	).optional(),
+	bank_account_details: TenderBankAccountDetailsSchema.describe(
+		'The details of the bank account tender.',
+	).optional(),
+	buy_now_pay_later_details: TenderBuyNowPayLaterDetailsSchema.describe(
+		'The details of a Buy Now Pay Later tender.',
+	).optional(),
+	square_account_details: TenderSquareAccountDetailsSchema.describe(
+		'The details of a Square Account tender.',
+	).optional(),
+	additional_recipients: z
+		.array(AdditionalRecipientForUpdateSchema)
+		.nullable()
+		.describe(
+			'Additional recipients (other than the merchant) receiving a portion of this tender. For example, fees assessed on the purchase by a third party integration.',
+		)
+		.optional(),
+	payment_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe(
+			'The ID of the Payment that corresponds to this tender. This value is only present for payments created with the v2 Payments API.',
+		)
+		.optional(),
+});
+
+export const RefundForUpdateSchema = z.object({
+	id: z.string().max(255).describe("The refund's unique ID.").optional(),
+	location_id: z
+		.string()
+		.max(50)
+		.describe("The ID of the refund's associated location.")
+		.optional(),
+	transaction_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe('The ID of the transaction that the refunded tender is part of.')
+		.optional(),
+	tender_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe('The ID of the refunded tender.')
+		.optional(),
+	created_at: z
+		.string()
+		.max(32)
+		.describe(
+			'The timestamp for when the refund was created, in RFC 3339 format.',
+		)
+		.optional(),
+	reason: z
+		.string()
+		.max(192)
+		.describe('The reason for the refund being issued.')
+		.optional(),
+	amount_money: MoneySchema.describe(
+		'The amount of money refunded to the buyer.',
+	).optional(),
+	status: RefundStatusSchema.describe(
+		'The current status of the refund (`PENDING`, `APPROVED`, `REJECTED`, or `FAILED`). See RefundStatus for possible values',
+	).optional(),
+	processing_fee_money: MoneySchema.describe(
+		'The amount of Square processing fee money refunded to the *merchant*.',
+	).optional(),
+	additional_recipients: z
+		.array(AdditionalRecipientForUpdateSchema)
+		.nullable()
+		.describe(
+			'Additional recipients (other than the merchant) receiving a portion of this refund. For example, fees assessed on a refund of a purchase by a third party integration.',
+		)
+		.optional(),
+});
+
+export const OrderRewardForUpdateSchema = z.object({
+	id: z.string().min(1).describe('The identifier of the reward.').optional(),
+	reward_tier_id: z
+		.string()
+		.min(1)
+		.describe('The identifier of the reward tier corresponding to this reward.')
+		.optional(),
+});
+
+export const OrderForUpdateSchema = z.object({
+	id: z.string().describe("The order's unique ID.").optional(),
+	location_id: z
+		.string()
+		.min(1)
+		.describe(
+			'The ID of the seller location that this order is associated with.',
+		)
+		.optional(),
+	reference_id: z
+		.string()
+		.max(40)
+		.nullable()
+		.describe(
+			'A client-specified ID to associate an entity in another system with this order.',
+		)
+		.optional(),
+	source: OrderSourceSchema.describe(
+		'The latest source details of the order.',
+	).optional(),
+	customer_id: z
+		.string()
+		.max(191)
+		.nullable()
+		.describe('The ID of the customer associated with the order.')
+		.optional(),
+	line_items: z
+		.array(OrderLineItemForUpdateSchema)
+		.nullable()
+		.describe('The line items included in the order.')
+		.optional(),
+	taxes: z
+		.array(OrderLineItemTaxSchema)
+		.nullable()
+		.describe('The list of all taxes associated with the order.')
+		.optional(),
+	discounts: z
+		.array(OrderLineItemDiscountSchema)
+		.nullable()
+		.describe('The list of all discounts associated with the order.')
+		.optional(),
+	service_charges: z
+		.array(OrderServiceChargeForUpdateSchema)
+		.nullable()
+		.describe('A list of service charges applied to the order.')
+		.optional(),
+	fulfillments: z
+		.array(FulfillmentForUpdateSchema)
+		.nullable()
+		.describe('Details about order fulfillment.')
+		.optional(),
+	returns: z
+		.array(OrderReturnForUpdateSchema)
+		.describe(
+			'A collection of items from sale orders being returned in this one. Normally part of an itemized return or exchange.',
+		)
+		.optional(),
+	return_amounts: OrderMoneyAmountsSchema.describe(
+		'The rollup of the returned money amounts.',
+	).optional(),
+	net_amounts: OrderMoneyAmountsSchema.describe(
+		'The net money amounts (sale money - return money).',
+	).optional(),
+	rounding_adjustment: OrderRoundingAdjustmentSchema.describe(
+		'A positive rounding adjustment to the total of the order.',
+	).optional(),
+	tenders: z
+		.array(TenderForUpdateSchema)
+		.describe('The tenders that were used to pay for the order.')
+		.optional(),
+	refunds: z
+		.array(RefundForUpdateSchema)
+		.describe('The refunds that are part of this order.')
+		.optional(),
+	metadata: z
+		.record(z.string(), z.string())
+		.nullable()
+		.describe('Application-defined data attached to this order.')
+		.optional(),
+	created_at: z
+		.string()
+		.describe(
+			'The timestamp for when the order was created, at server side, in RFC 3339 format (for example, "2016-09-04T23:59:33.123Z").',
+		)
+		.optional(),
+	updated_at: z
+		.string()
+		.describe(
+			'The timestamp for when the order was last updated, at server side, in RFC 3339 format (for example, "2016-09-04T23:59:33.123Z").',
+		)
+		.optional(),
+	closed_at: z
+		.string()
+		.describe(
+			'The timestamp for when the order reached a terminal state, in RFC 3339 format (for example "2016-09-04T23:59:33.123Z").',
+		)
+		.optional(),
+	state: OrderStateSchema.describe(
+		'The current state of the order. See OrderState for possible values',
+	).optional(),
+	version: z
+		.number()
+		.int()
+		.describe(
+			'The version number, which is incremented each time an update is committed to the order.',
+		)
+		.optional(),
+	total_money: MoneySchema.describe(
+		'The total amount of money to collect for the order.',
+	).optional(),
+	total_tax_money: MoneySchema.describe(
+		'The total amount of tax money to collect for the order.',
+	).optional(),
+	total_discount_money: MoneySchema.describe(
+		'The total amount of discount money to collect for the order.',
+	).optional(),
+	total_tip_money: MoneySchema.describe(
+		'The total amount of tip money to collect for the order.',
+	).optional(),
+	total_service_charge_money: MoneySchema.describe(
+		'The total amount of money collected in service charges for the order.',
+	).optional(),
+	ticket_name: z
+		.string()
+		.max(255)
+		.nullable()
+		.describe(
+			'A short-term identifier for the order (such as a customer first name, table number, or auto-generated order number that resets daily).',
+		)
+		.optional(),
+	pricing_options: OrderPricingOptionsSchema.describe(
+		"Pricing options for an order. The options affect how the order's price is calculated.",
+	).optional(),
+	rewards: z
+		.array(OrderRewardForUpdateSchema)
+		.describe('A set-like list of Rewards that have been added to the Order.')
+		.optional(),
+	net_amount_due_money: MoneySchema.describe(
+		'The net amount of money due on the order.',
+	).optional(),
+});
+
+export const UpdateOrderRequestForUpdateSchema = z.object({
+	order: OrderForUpdateSchema.describe(
 		'The sparse order containing only the fields to update and the version to which the update is being applied.',
 	).optional(),
 	fields_to_clear: z

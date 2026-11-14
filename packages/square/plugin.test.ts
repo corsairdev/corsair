@@ -317,6 +317,20 @@ describe('Square plugin definition', () => {
 		);
 	});
 
+	it.each([
+		[undefined, 'https://connect.squareup.com'],
+		['production', 'https://connect.squareup.com'],
+		['sandbox', 'https://connect.squareupsandbox.com'],
+	] as const)(
+		'sends OAuth to the host of the %s environment',
+		(environment, host) => {
+			expect(square({ environment }).oauthConfig).toMatchObject({
+				authUrl: `${host}/oauth2/authorize`,
+				tokenUrl: `${host}/oauth2/token`,
+			});
+		},
+	);
+
 	it('keeps DEFAULT the last error handler whatever the caller adds', () => {
 		const custom = square({
 			errorHandlers: {
@@ -352,4 +366,74 @@ describe('Square plugin definition', () => {
 		walk(plugin.endpoints ?? {});
 		expect(leaves).toHaveLength(123);
 	});
+});
+
+type DocsExample = {
+	path?: string;
+	// unknown: example args are free-form YAML; each operation's schema checks them.
+	args?: Record<string, unknown>;
+};
+
+// jest-yaml-transform turns the yaml into a plain object.
+const docs: {
+	examples?: Record<string, DocsExample>;
+	apiExamples?: Record<string, DocsExample>;
+} = require('./plugin-docs.yaml');
+
+const inputSchemas = new Map(
+	Object.entries(squareEndpointSchemas).map(([op, { input }]) => [op, input]),
+);
+
+const docsExamples: [string, DocsExample][] = [
+	...Object.entries(docs.examples ?? {}).map(
+		([name, example]): [string, DocsExample] => [
+			`${name} (${example.path})`,
+			example,
+		],
+	),
+	...Object.entries(docs.apiExamples ?? {}).map(
+		([op, example]): [string, DocsExample] => [op, { ...example, path: op }],
+	),
+];
+
+describe('plugin-docs.yaml examples', () => {
+	it('has an example for every operation', () => {
+		expect(Object.keys(docs.apiExamples ?? {}).sort()).toEqual(paths);
+	});
+
+	// Input schemas drop keys they don't list, so a misspelled key would still
+	// parse: the parsed value must keep every key the example shows.
+	it.each(docsExamples)(
+		'%s parses against its input schema and keeps every key',
+		(_, example) => {
+			const input = example.path ? inputSchemas.get(example.path) : undefined;
+			expect(input).toBeDefined();
+			const result = input?.safeParse(example.args ?? {});
+			expect(result?.error?.issues ?? []).toEqual([]);
+			expect(result?.data).toEqual(example.args ?? {});
+		},
+	);
+
+	// First bytes of each type Square accepts for uploads.
+	const MAGIC: Record<string, string> = {
+		'image/jpeg': 'ffd8ff',
+		'image/png': '89504e47',
+		'application/pdf': '25504446',
+	};
+
+	it.each(['disputes.createEvidenceFile', 'invoices.createAttachment'])(
+		'%s example uploads a real file of its content_type',
+		(op) => {
+			const args = docs.apiExamples?.[op]?.args ?? {};
+			const type = String(args.content_type);
+			const bytes = Buffer.from(String(args.file_base64), 'base64');
+			expect(MAGIC[type]).toBeDefined();
+			expect(bytes.subarray(0, 4).toString('hex')).toMatch(
+				new RegExp(`^${MAGIC[type]}`),
+			);
+			expect(String(args.filename)).toMatch(
+				type === 'image/jpeg' ? /\.jpe?g$/ : /\.(png|pdf)$/,
+			);
+		},
+	);
 });

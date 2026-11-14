@@ -6033,7 +6033,8 @@ await corsair.square.api.customAttributes.location.bulkDelete({
 
 ```ts
 Record<string, {
-  key?: string
+  key?: string,
+  location_id?: string
 }>
 ```
 </Accordion>
@@ -6516,7 +6517,8 @@ await corsair.square.api.customAttributes.merchant.bulkDelete({
 
 ```ts
 Record<string, {
-  key?: string
+  key?: string,
+  merchant_id?: string
 }>
 ```
 </Accordion>
@@ -8694,9 +8696,9 @@ Uploads a file to use as evidence in a dispute challenge. The endpoint accepts H
 await corsair.square.api.disputes.createEvidenceFile({
 	dispute_id: '<dispute id>',
 	idempotency_key: '<idempotency key>',
-	file_base64: 'aGVsbG8gd29ybGQ=',
-	filename: 'evidence.txt',
-	content_type: 'image/png',
+	file_base64: '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=',
+	filename: 'receipt.jpg',
+	content_type: 'image/jpeg',
 });
 ```
 
@@ -9803,7 +9805,12 @@ Uploads a file and attaches it to an invoice. This endpoint accepts HTTP multipa
 **Risk:** `write`
 
 ```ts
-await corsair.square.api.invoices.createAttachment({ invoice_id: '<invoice id>', file_base64: 'aGVsbG8gd29ybGQ=', filename: 'evidence.txt' });
+await corsair.square.api.invoices.createAttachment({
+	invoice_id: '<invoice id>',
+	file_base64: '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=',
+	filename: 'receipt.jpg',
+	content_type: 'image/jpeg',
+});
 ```
 
 **Input**
@@ -10628,7 +10635,7 @@ Updates an invoice. This endpoint supports sparse updates, so you only need to s
 ```ts
 await corsair.square.api.invoices.update({
 	invoice_id: '<invoice id>',
-	invoice: {},
+	invoice: { version: 1, title: 'November services' },
 });
 ```
 
@@ -16188,7 +16195,11 @@ Search all orders for one or more locations. Orders include all sales, returns, 
 **Risk:** `read`
 
 ```ts
-await corsair.square.api.orders.search({ cursor: '<cursor>', limit: 1 });
+await corsair.square.api.orders.search({
+	location_ids: ['<location id>'],
+	cursor: '<cursor>',
+	limit: 1,
+});
 ```
 
 **Input**
@@ -16965,12 +16976,18 @@ await corsair.square.api.orders.search({ cursor: '<cursor>', limit: 1 });
 
 `orders.update`
 
-Updates an open order by adding, replacing, or deleting fields. Orders with a `COMPLETED` or `CANCELED` state cannot be updated. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.
+Updates an open order by adding, replacing, or deleting fields. Orders with a `COMPLETED` or `CANCELED` state cannot be updated. Send only the fields to change, plus the order's current version. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.
 
 **Risk:** `write`
 
 ```ts
-await corsair.square.api.orders.update({ order_id: '<order id>' });
+await corsair.square.api.orders.update({
+	order_id: '<order id>',
+	order: {
+		version: 1,
+		line_items: [{ uid: '<line item uid>', note: 'Extra hot' }],
+	},
+});
 ```
 
 **Input**
@@ -16988,7 +17005,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
 ```ts
 {
   id?: string,
-  location_id: string,
+  location_id?: string,
   reference_id?: string | null,
   source?: {
     name?: string | null
@@ -16997,13 +17014,10 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
   line_items?: {
     uid?: string | null,
     name?: string | null,
-    quantity: string,
+    quantity?: string,
     quantity_unit?: {
       measurement_unit?: {
-        custom_unit?: {
-          name: string,
-          abbreviation: string
-        },
+        custom_unit?: Record<string, any>,
         area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
         length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
         volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -17041,7 +17055,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     }[] | null,
     applied_taxes?: {
       uid?: string | null,
-      tax_uid: string,
+      tax_uid?: string,
       applied_money?: {
         amount?: number | null,
         currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -17050,7 +17064,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     }[] | null,
     applied_discounts?: {
       uid?: string | null,
-      discount_uid: string,
+      discount_uid?: string,
       applied_money?: {
         amount?: number | null,
         currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -17058,7 +17072,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     }[] | null,
     applied_service_charges?: {
       uid?: string | null,
-      service_charge_uid: string,
+      service_charge_uid?: string,
       applied_money?: {
         amount?: number | null,
         currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -17171,7 +17185,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     taxable?: boolean | null,
     applied_taxes?: {
       uid?: string | null,
-      tax_uid: string,
+      tax_uid?: string,
       applied_money?: {
         amount?: number | null,
         currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -17190,8 +17204,8 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     line_item_application?: ALL | ENTRY_LIST,
     entries?: {
       uid?: string | null,
-      line_item_uid: string,
-      quantity: string,
+      line_item_uid?: string,
+      quantity?: string,
       metadata?: Record<string, string> | null
     }[],
     metadata?: Record<string, string> | null,
@@ -17361,13 +17375,10 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       uid?: string | null,
       source_line_item_uid?: string | null,
       name?: string | null,
-      quantity: string,
+      quantity?: string,
       quantity_unit?: {
         measurement_unit?: {
-          custom_unit?: {
-            name: string,
-            abbreviation: string
-          },
+          custom_unit?: Record<string, any>,
           area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
           length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
           volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -17403,7 +17414,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       }[] | null,
       applied_taxes?: {
         uid?: string | null,
-        tax_uid: string,
+        tax_uid?: string,
         applied_money?: {
           amount?: number | null,
           currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -17412,7 +17423,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       }[] | null,
       applied_discounts?: {
         uid?: string | null,
-        discount_uid: string,
+        discount_uid?: string,
         applied_money?: {
           amount?: number | null,
           currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -17444,7 +17455,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       },
       applied_service_charges?: {
         uid?: string | null,
-        service_charge_uid: string,
+        service_charge_uid?: string,
         applied_money?: {
           amount?: number | null,
           currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -17482,7 +17493,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       taxable?: boolean | null,
       applied_taxes?: {
         uid?: string | null,
-        tax_uid: string,
+        tax_uid?: string,
         applied_money?: {
           amount?: number | null,
           currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -17636,7 +17647,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
     },
     customer_id?: string | null,
-    type: CARD | CASH | THIRD_PARTY_CARD | SQUARE_GIFT_CARD | NO_SALE | BANK_ACCOUNT | WALLET | BUY_NOW_PAY_LATER | SQUARE_ACCOUNT | OTHER,
+    type?: CARD | CASH | THIRD_PARTY_CARD | SQUARE_GIFT_CARD | NO_SALE | BANK_ACCOUNT | WALLET | BUY_NOW_PAY_LATER | SQUARE_ACCOUNT | OTHER,
     card_details?: {
       status?: AUTHORIZED | CAPTURED | VOIDED | FAILED,
       card?: {
@@ -17701,9 +17712,9 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       status?: AUTHORIZED | CAPTURED | VOIDED | FAILED
     },
     additional_recipients?: {
-      location_id: string,
+      location_id?: string,
       description?: string | null,
-      amount_money: {
+      amount_money?: {
         amount?: number | null,
         currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
       },
@@ -17712,25 +17723,25 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     payment_id?: string | null
   }[],
   refunds?: {
-    id: string,
-    location_id: string,
+    id?: string,
+    location_id?: string,
     transaction_id?: string | null,
     tender_id?: string | null,
     created_at?: string,
-    reason: string,
-    amount_money: {
+    reason?: string,
+    amount_money?: {
       amount?: number | null,
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
     },
-    status: PENDING | APPROVED | REJECTED | FAILED,
+    status?: PENDING | APPROVED | REJECTED | FAILED,
     processing_fee_money?: {
       amount?: number | null,
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
     },
     additional_recipients?: {
-      location_id: string,
+      location_id?: string,
       description?: string | null,
-      amount_money: {
+      amount_money?: {
         amount?: number | null,
         currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
       },
@@ -17769,8 +17780,8 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     auto_apply_taxes?: boolean | null
   },
   rewards?: {
-    id: string,
-    reward_tier_id: string
+    id?: string,
+    reward_tier_id?: string
   }[],
   net_amount_due_money?: {
     amount?: number | null,
@@ -18496,7 +18507,14 @@ Creates a Square-hosted checkout page. Applications can share the resulting paym
 **Risk:** `write`
 
 ```ts
-await corsair.square.api.paymentLinks.create({});
+await corsair.square.api.paymentLinks.create({
+	idempotency_key: '<a unique key>',
+	quick_pay: {
+		name: 'Coffee',
+		price_money: { amount: 450, currency: 'USD' },
+		location_id: '<location id>',
+	},
+});
 ```
 
 **Input**
@@ -21305,7 +21323,7 @@ Voids a payment by the idempotency_key of the payments.create call that made it;
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.square.api.payments.cancelByIdempotencyKey({ idempotency_key: '<the idempotency_key of the payments.create call to void>' });
+await corsair.square.api.payments.cancelByIdempotencyKey({ idempotency_key: '<key of the payments.create to void>' });
 ```
 
 **Input**

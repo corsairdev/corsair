@@ -1043,7 +1043,7 @@ export const squareEndpointMeta = {
 	'orders.update': {
 		riskLevel: 'write',
 		description:
-			"Updates an open order by adding, replacing, or deleting fields. Orders with a `COMPLETED` or `CANCELED` state cannot be updated. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.",
+			"Updates an open order by adding, replacing, or deleting fields. Orders with a `COMPLETED` or `CANCELED` state cannot be updated. Send only the fields to change, plus the order's current version. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.",
 	},
 	'webhookSubscriptions.update': {
 		riskLevel: 'write',
@@ -1289,6 +1289,9 @@ export function square<const T extends SquarePluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	// Square's OAuth pages and token endpoint live on the API host of each
+	// environment; a sandbox app is unknown to production and the other way round.
+	const host = SQUARE_BASE_URLS[options.environment ?? 'production'];
 	return {
 		id: 'square',
 		authConfig: squareAuthConfig,
@@ -1296,8 +1299,8 @@ export function square<const T extends SquarePluginOptions>(
 		options: options,
 		oauthConfig: {
 			providerName: 'Square',
-			authUrl: 'https://connect.squareup.com/oauth2/authorize',
-			tokenUrl: 'https://connect.squareup.com/oauth2/token',
+			authUrl: `${host}/oauth2/authorize`,
+			tokenUrl: `${host}/oauth2/token`,
 			// The scopes Square's spec lists for the operations in this plugin.
 			scopes: [
 				'APPOINTMENTS_BUSINESS_SETTINGS_READ',
@@ -1359,7 +1362,7 @@ export function square<const T extends SquarePluginOptions>(
 				// client id and secret in a JSON body, on the same host as the API.
 				return getOAuthAccessToken(ctx, {
 					plugin: 'square',
-					tokenUrl: `${SQUARE_BASE_URLS[options.environment ?? 'production']}/oauth2/token`,
+					tokenUrl: `${host}/oauth2/token`,
 					tokenAuthMethod: 'body',
 					bodyFormat: 'json',
 				});

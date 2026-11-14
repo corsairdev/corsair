@@ -2713,6 +2713,64 @@ describe('Square request details', () => {
 		);
 	});
 
+	// UpdateOrderRequest.order: "The sparse order containing only the fields to
+	// update and the version to which the update is being applied."
+	describe('sparse order updates', () => {
+		it('sends a sparse order: the version and one changed line item', async () => {
+			fetchMock.mockResolvedValueOnce(
+				jsonResponse({ order: { id: 'O1', version: 3 } }),
+			);
+			const order = { version: 2, line_items: [{ uid: 'x', note: 'n' }] };
+			// endpoint() takes untyped input, as an agent would send it.
+			await endpoint(api(), 'orders.update')({ order_id: 'O1', order });
+			expect(jsonBody(sentRequest(fetchMock))).toEqual({ order });
+		});
+
+		const price = { amount: 100, currency: 'USD' };
+		it.each([
+			[
+				'location_id',
+				{
+					line_items: [{ name: 'Tea', quantity: '1', base_price_money: price }],
+				},
+			],
+			[
+				'quantity',
+				{
+					location_id: 'L1',
+					line_items: [{ name: 'Tea', base_price_money: price }],
+				},
+			],
+		])(
+			'still refuses orders.create without %s, before calling Square',
+			async (_field, order) => {
+				await expect(
+					endpoint(api(), 'orders.create')({ order }),
+				).rejects.toThrow();
+				expect(fetchMock).not.toHaveBeenCalled();
+			},
+		);
+
+		it('tells the agent to send only the fields to change, plus the version', () => {
+			expect(squareEndpointMeta['orders.update'].description).toContain(
+				"Send only the fields to change, plus the order's current version.",
+			);
+		});
+	});
+
+	// Square's own request examples name the target of each bulk delete entry
+	// (BulkDeleteLocationCustomAttributesRequest: { key: 'bestseller',
+	// location_id: 'L0TBCBTB7P8RQ' }); the entry schemas list only key.
+	it.each([
+		['location', 'location_id', 'L0TBCBTB7P8RQ'],
+		['merchant', 'merchant_id', 'DM7VKY8Q63GNP'],
+	])('keeps the %s id on each bulk delete entry', async (kind, idField, id) => {
+		fetchMock.mockResolvedValueOnce(jsonResponse({ values: {} }));
+		const values = { id1: { key: 'bestseller', [idField]: id } };
+		await endpoint(api(), `customAttributes.${kind}.bulkDelete`)({ values });
+		expect(jsonBody(sentRequest(fetchMock))).toEqual({ values });
+	});
+
 	it('drops fields that are not in the spec instead of sending them', async () => {
 		fetchMock.mockResolvedValueOnce(jsonResponse({ customer: {} }));
 		await endpoint(

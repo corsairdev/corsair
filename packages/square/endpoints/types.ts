@@ -53,7 +53,7 @@ import {
 	UpdateLocationRequestSchema as InUpdateLocationRequestSchema,
 	UpdateLocationSettingsRequestSchema as InUpdateLocationSettingsRequestSchema,
 	UpdateMerchantCustomAttributeDefinitionRequestSchema as InUpdateMerchantCustomAttributeDefinitionRequestSchema,
-	UpdateOrderRequestSchema as InUpdateOrderRequestSchema,
+	UpdateOrderRequestForUpdateSchema as InUpdateOrderRequestForUpdateSchema,
 	UpdatePaymentLinkRequestSchema as InUpdatePaymentLinkRequestSchema,
 	UpdatePaymentRequestSchema as InUpdatePaymentRequestSchema,
 	UpdateWebhookSubscriptionRequestSchema as InUpdateWebhookSubscriptionRequestSchema,
@@ -935,7 +935,7 @@ export const SquareEndpointInputSchemas = {
 			.string()
 			.describe('The ID of the location for which to retrieve settings.'),
 	}),
-	ordersUpdate: InUpdateOrderRequestSchema.extend({
+	ordersUpdate: InUpdateOrderRequestForUpdateSchema.extend({
 		order_id: z.string().describe('The ID of the order to update.'),
 	}),
 	webhookSubscriptionsUpdate: InUpdateWebhookSubscriptionRequestSchema.extend({
