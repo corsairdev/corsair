@@ -8,7 +8,7 @@ const segment = z
 		(value) => value !== '.' && value !== '..' && !/[\\/"'?#]/.test(value),
 		'Unsafe path segment',
 	);
-const linkId = segment.regex(/lnk_\w+|\d+/);
+const linkId = segment.regex(/^(?:lnk_\w+|\d+)$/);
 const deleteLinkId = segment.regex(/^lnk_(.*)_(.*)$/);
 const timestamp = z.union([z.string(), z.number().int()]).nullable();
 const linkFields = {
@@ -46,37 +46,71 @@ const writeFields = {
 		.nullable()
 		.optional(),
 };
+// Responses are parsed loosely: Short.io leaves unset fields null and may add
+// enum values later, and one unexpected field should not fail a whole read.
+// Inputs above stay strict.
+const respString = z.string().nullish();
+const respBool = z.boolean().nullish();
+const respNumber = z.number().nullish();
+const respTimestamp = z.union([z.string(), z.number()]).nullish();
+function openEnum<const T extends readonly [string, ...string[]]>(values: T) {
+	return z.union([z.enum(values), z.string()]).nullish();
+}
 export const ShortioLinkSchema = z
 	.object({
-		...linkFields,
 		originalURL: z.string(),
 		path: z.string().nullable(),
 		idString: z.string(),
-		id: z.string(),
+		id: z.union([z.string(), z.number()]),
 		shortURL: z.string(),
 		secureShortURL: z.string(),
-		redirectType: z.enum(['301', '302', '307', '308']).optional(),
-		FolderId: z.string().nullable().optional(),
-		DomainId: z.number().int().optional(),
-		OwnerId: z.number().int().optional(),
-		hasPassword: z.boolean().optional(),
+		cloaking: respBool,
+		password: respString,
+		expiresAt: respTimestamp,
+		expiredURL: respString,
+		title: respString,
+		tags: z.array(z.string()).nullish(),
+		utmSource: respString,
+		utmMedium: respString,
+		utmCampaign: respString,
+		utmTerm: respString,
+		utmContent: respString,
+		ttl: respTimestamp,
+		androidURL: respString,
+		iphoneURL: respString,
+		createdAt: respTimestamp,
+		clicksLimit: respNumber,
+		passwordContact: respBool,
+		skipQS: respBool,
+		archived: respBool,
+		splitURL: respString,
+		splitPercent: respNumber,
+		integrationAdroll: respString,
+		integrationFB: respString,
+		integrationGA: respString,
+		integrationGTM: respString,
+		redirectType: z.union([z.string(), z.number()]).nullish(),
+		FolderId: respString,
+		DomainId: respNumber,
+		OwnerId: respNumber,
+		hasPassword: respBool,
 		User: z
 			.object({
-				id: z.number().int(),
-				name: z.string().nullable(),
-				email: z.string(),
-				photoURL: z.string().nullable(),
+				id: respNumber,
+				name: respString,
+				email: respString,
+				photoURL: respString,
 			})
 			.loose()
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 const domainBase = z
 	.object({
-		id: z.number().int().min(1),
+		id: z.number().int(),
 		hostname: z.string(),
-		unicodeHostname: z.string(),
-		state: z.enum([
+		unicodeHostname: respString,
+		state: openEnum([
 			'extra_records',
 			'not_registered',
 			'configured',
@@ -84,13 +118,13 @@ const domainBase = z
 			'registration_pending',
 			'not_verified',
 		]),
-		createdAt: z.string(),
-		updatedAt: z.string(),
-		TeamId: z.number().int().nullable().optional(),
-		hasFavicon: z.boolean(),
-		segmentKey: z.string().optional(),
-		hideReferer: z.boolean(),
-		linkType: z.enum([
+		createdAt: respString,
+		updatedAt: respString,
+		TeamId: respNumber,
+		hasFavicon: respBool,
+		segmentKey: respString,
+		hideReferer: respBool,
+		linkType: openEnum([
 			'increment',
 			'random',
 			'secure',
@@ -98,35 +132,37 @@ const domainBase = z
 			'eight-char',
 			'ten-char',
 		]),
-		cloaking: z.boolean(),
-		hideVisitorIp: z.boolean(),
-		enableAI: z.boolean(),
-		httpsLevel: z.enum(['none', 'redirect', 'hsts']),
-		httpsLinks: z.boolean().nullable(),
-		redirect404: z.string().optional(),
-		webhookURL: z.string().optional(),
-		integrationGA: z.string().optional(),
-		integrationFB: z.string().optional(),
-		integrationAdroll: z.string().optional(),
-		integrationGTM: z.string().optional(),
+		cloaking: respBool,
+		hideVisitorIp: respBool,
+		enableAI: respBool,
+		httpsLevel: openEnum(['none', 'redirect', 'hsts']),
+		httpsLinks: respBool,
+		redirect404: respString,
+		webhookURL: respString,
+		integrationGA: respString,
+		integrationFB: respString,
+		integrationAdroll: respString,
+		integrationGTM: respString,
 		// Short.io specifies arbitrary values in clientStorage, not a fixed structure.
-		clientStorage: z.record(z.string(), z.unknown()),
-		caseSensitive: z.boolean(),
-		incrementCounter: z.string(),
-		robots: z.enum(['allow', 'disallow', 'noindex']),
-		sslCertExpirationDate: z.string().optional(),
-		sslCertInstalledSuccess: z.boolean().optional(),
-		domainRegistrationId: z.number().int().optional(),
-		UserId: z.number().int().optional(),
-		exportEnabled: z.boolean(),
+		clientStorage: z.record(z.string(), z.unknown()).nullish(),
+		caseSensitive: respBool,
+		incrementCounter: z.union([z.string(), z.number()]).nullish(),
+		robots: openEnum(['allow', 'disallow', 'noindex']),
+		sslCertExpirationDate: respString,
+		sslCertInstalledSuccess: respBool,
+		domainRegistrationId: respNumber,
+		UserId: respNumber,
+		exportEnabled: respBool,
 	})
 	.loose();
 export const ShortioDomainListItemSchema = domainBase.extend({
-	isFavorite: z.boolean(),
+	isFavorite: respBool,
 });
+// The stored entity holds fields from both the list and the detail response.
 export const ShortioDomainSchema = domainBase.extend({
-	ipExclusions: z.array(z.string()),
-	userPlan: z.enum(['tiny', 'hobby', 'small', 'standard', 'large']),
+	isFavorite: respBool,
+	ipExclusions: z.array(z.string()).nullish(),
+	userPlan: openEnum(['tiny', 'hobby', 'small', 'standard', 'large']),
 });
 const success = z
 	.object({ success: z.boolean(), error: z.string().optional() })

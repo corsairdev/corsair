@@ -251,7 +251,7 @@ describe('Short.io public request seam', () => {
 					mediaType: 'body' in fixture ? 'application/json' : undefined,
 				}),
 			);
-			expect(transport.rateLimitConfig.maxRetries).toBe(0);
+			expect(transport.rateLimitConfig.maxRetries).toBe(3);
 		},
 	);
 	it.each(['', '.', '..', 'a/b', 'a\\b', 'a"b', "a'b", 'a?b', 'a#b'])(
@@ -268,9 +268,10 @@ describe('Short.io public request seam', () => {
 		},
 	);
 	it('checks documented identifier patterns and encodes valid path segments', async () => {
-		await expect(
-			call('links', 'get', ctx, { linkId: 'invalid' }),
-		).rejects.toThrow();
+		for (const linkId of ['invalid', 'abc123', 'lnk_1x/', '12a']) {
+			await expect(call('links', 'get', ctx, { linkId })).rejects.toThrow();
+			await expect(call('links', 'update', ctx, { linkId })).rejects.toThrow();
+		}
 		await expect(
 			call('links', 'delete', ctx, { link_id: 'lnk_1' }),
 		).rejects.toThrow();
@@ -293,6 +294,36 @@ describe('Short.io public request seam', () => {
 			call('links', 'get', ctx, { linkId: 'lnk_1' }),
 		).rejects.toThrow();
 	});
+	it('parses nulls and new enum values the reference does not list', async () => {
+		mockRequest.mockResolvedValue([
+			{
+				...domain,
+				state: 'some_new_state',
+				linkType: 'twelve-char',
+				integrationGA: null,
+				integrationFB: null,
+				integrationAdroll: null,
+				integrationGTM: null,
+				redirect404: null,
+				webhookURL: null,
+				segmentKey: null,
+				isFavorite: false,
+			},
+		]);
+		await expect(call('domains', 'list', ctx, {})).resolves.toHaveLength(1);
+		mockRequest.mockResolvedValue({
+			...link,
+			id: 123,
+			title: null,
+			tags: null,
+			utmSource: null,
+			password: null,
+			redirectType: 302,
+		});
+		await expect(
+			call('links', 'get', ctx, { linkId: 'lnk_123' }),
+		).resolves.toMatchObject({ id: 123, redirectType: 302 });
+	});
 	it('sends a bodyless update when no request body is supplied', async () => {
 		mockRequest.mockResolvedValue(link);
 		await call('links', 'update', ctx, { linkId: 'lnk_1' });
@@ -305,7 +336,7 @@ describe('Short.io public request seam', () => {
 			}),
 		);
 	});
-	it('preserves 429 status, body, and retry-after without replaying writes', async () => {
+	it('preserves 429 status, body, and retry-after after core retries', async () => {
 		mockRequest.mockRejectedValue(
 			new ApiError(
 				{ method: 'POST', url: '/links' },
