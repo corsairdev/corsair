@@ -59,7 +59,7 @@ A paid commission. Ko-fi documents the type but publishes no example payload.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; compared before anything is handled. |
+| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment. |
 | `message_id` | `string` | Yes | Unique per delivery, and stable across a retry. |
 | `timestamp` | `string` | Yes | When the payment happened, ISO 8601. Ko-fi documents it as required. |
 | `type` | `Donation \| Subscription \| Shop Order \| Commission` | Yes | — |
@@ -178,7 +178,7 @@ A tip or donation. `amount` is a decimal string, and `message` holds the note le
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; compared before anything is handled. |
+| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment. |
 | `message_id` | `string` | Yes | Unique per delivery, and stable across a retry. |
 | `timestamp` | `string` | Yes | When the payment happened, ISO 8601. Ko-fi documents it as required. |
 | `type` | `Donation \| Subscription \| Shop Order \| Commission` | Yes | — |
@@ -297,7 +297,7 @@ A shop purchase, with `shop_items` and, for physical goods, `shipping`.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; compared before anything is handled. |
+| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment. |
 | `message_id` | `string` | Yes | Unique per delivery, and stable across a retry. |
 | `timestamp` | `string` | Yes | When the payment happened, ISO 8601. Ko-fi documents it as required. |
 | `type` | `Donation \| Subscription \| Shop Order \| Commission` | Yes | — |
@@ -416,7 +416,7 @@ A membership payment, which fires on every payment including the first. `tier_na
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; compared before anything is handled. |
+| `verification_token` | `string` | Yes | The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment. |
 | `message_id` | `string` | Yes | Unique per delivery, and stable across a retry. |
 | `timestamp` | `string` | Yes | When the payment happened, ISO 8601. Ko-fi documents it as required. |
 | `type` | `Donation \| Subscription \| Shop Order \| Commission` | Yes | — |

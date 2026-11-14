@@ -31,7 +31,7 @@ export const KofiPaymentSchema = z
 		verification_token: z
 			.string()
 			.describe(
-				'The token from your Ko-fi webhooks page; compared before anything is handled.',
+				'The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment.',
 			),
 		message_id: z
 			.string()
