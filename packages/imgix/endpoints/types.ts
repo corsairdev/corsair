@@ -14,12 +14,29 @@ export const JsonApiVersionSchema = z
 export const JsonApiMetaSchema = z
 	.object({
 		total: z.number().optional(),
+		// Asset lists return cursor values as strings, e.g. { current: "0", next: "2", hasMore: true, totalRecords: "7" }
 		cursor: z
 			.object({
-				current: z.string().nullable().optional(),
-				next: z.string().nullable().optional(),
-				has_next: z.boolean().optional(),
+				current: z.string().nullish(),
+				next: z.string().nullish(),
+				hasMore: z.boolean().nullish(),
+				totalRecords: z.string().or(z.number()).nullish(),
 			})
+			// `passthrough` because imgix also returns estimatedRecords on some lists
+			.passthrough()
+			.optional(),
+		// Sources and reports lists return page-number pagination
+		pagination: z
+			.object({
+				currentPage: z.number().nullish(),
+				hasNextPage: z.boolean().nullish(),
+				nextPage: z.number().nullish(),
+				pageSize: z.number().nullish(),
+				totalPages: z.number().nullish(),
+				totalRecords: z.number().nullish(),
+			})
+			// `passthrough` because pagination also carries previous-page fields
+			.passthrough()
 			.optional(),
 		page: z
 			.object({
@@ -45,41 +62,51 @@ export const DeploymentTypeSchema = z.enum([
 	's3_compatible',
 ]);
 
+// Values allowed in a source's default_params object, e.g. { auto: "format", q: 75 }
+const DefaultParamsSchema = z.record(
+	z.string(),
+	z.string().or(z.number()).or(z.boolean()),
+);
+
 export const SourceDeploymentSchema = z
 	.object({
-		type: DeploymentTypeSchema.optional(),
-		s3_bucket: z.string().optional(),
-		s3_prefix: z.string().optional(),
-		s3_access_key: z.string().optional(),
-		s3_secret_key: z.string().optional(),
-		webfolder_base_url: z.string().optional(),
-		gcs_bucket: z.string().optional(),
-		gcs_prefix: z.string().optional(),
-		gcs_project_id: z.string().optional(),
-		gcs_client_email: z.string().optional(),
-		gcs_private_key: z.string().optional(),
-		azure_account_name: z.string().optional(),
-		azure_container_name: z.string().optional(),
-		azure_access_key: z.string().optional(),
-		webproxy_base_url: z.string().optional(),
-		imgix_subdomains: z.array(z.string()).optional(),
-		custom_domains: z.array(z.string()).optional(),
-		default_params: z.string().optional(),
-		secure_url_token: z.string().optional(),
-		cache_ttl_value: z.number().optional(),
-		cache_ttl_error: z.number().optional(),
+		// Open string: new accounts get an `imgix_storage` source that the create enum does not list
+		type: z.string().nullish(),
+		s3_bucket: z.string().nullish(),
+		s3_prefix: z.string().nullish(),
+		s3_access_key: z.string().nullish(),
+		webfolder_base_url: z.string().nullish(),
+		gcs_bucket: z.string().nullish(),
+		gcs_prefix: z.string().nullish(),
+		gcs_access_key: z.string().nullish(),
+		azure_account: z.string().nullish(),
+		azure_bucket: z.string().nullish(),
+		azure_prefix: z.string().nullish(),
+		azure_service_type: z.string().nullish(),
+		access_key_id: z.string().nullish(),
+		bucket_name: z.string().nullish(),
+		endpoint_url: z.string().nullish(),
+		region: z.string().nullish(),
+		storage_provider: z.string().nullish(),
+		imgix_subdomains: z.array(z.string()).nullish(),
+		custom_domains: z.array(z.string()).nullish(),
+		// `unknown` values because default_params maps imgix render params to strings or numbers
+		default_params: z.record(z.string(), z.unknown()).nullish(),
+		secure_url_enabled: z.boolean().nullish(),
+		cache_ttl_behavior: z.string().nullish(),
+		cache_ttl_value: z.number().nullish(),
+		cache_ttl_error: z.number().nullish(),
 	})
 	// `passthrough` because source deployment attributes can contain provider-specific configuration
 	.passthrough();
 
 export const SourceAttributesSchema = z
 	.object({
-		name: z.string().optional(),
-		deployment_status: z.string().optional(),
-		enabled: z.boolean().optional(),
-		deployment: SourceDeploymentSchema.optional(),
-		created_at: z.number().or(z.string()).optional(),
-		updated_at: z.number().or(z.string()).optional(),
+		name: z.string().nullish(),
+		deployment_status: z.string().nullish(),
+		enabled: z.boolean().nullish(),
+		deployment: SourceDeploymentSchema.nullish(),
+		date_deployed: z.number().nullish(),
 	})
 	// `passthrough` because Imgix source attributes can vary across deployment types
 	.passthrough();
@@ -96,7 +123,9 @@ export const SourceResourceSchema = z
 export const SourcesListInputSchema = z
 	.object({
 		filter_name: z.string().optional(),
-		filter_deployment_type: DeploymentTypeSchema.optional(),
+		filter_deployment_type: DeploymentTypeSchema.or(
+			z.literal('imgix_storage'),
+		).optional(),
 		filter_enabled: z.boolean().optional(),
 		sort: z.string().optional(),
 		fields: z.string().optional(),
@@ -118,26 +147,41 @@ export const SourcesCreateInputSchema = z
 	.object({
 		name: z.string().min(1),
 		deployment_type: DeploymentTypeSchema,
+		// At least one *.imgix.net subdomain is required, given without the domain (["foo"] for foo.imgix.net)
+		imgix_subdomains: z.array(z.string().min(1)).min(1),
+		// s3
 		s3_bucket: z.string().optional(),
 		s3_prefix: z.string().optional(),
 		s3_access_key: z.string().optional(),
 		s3_secret_key: z.string().optional(),
-		webfolder_base_url: z.string().optional(),
+		// webfolder
+		webfolder_base_url: z.string().url().optional(),
+		// gcs
 		gcs_bucket: z.string().optional(),
 		gcs_prefix: z.string().optional(),
-		gcs_project_id: z.string().optional(),
-		gcs_client_email: z.string().optional(),
-		gcs_private_key: z.string().optional(),
-		azure_account_name: z.string().optional(),
-		azure_container_name: z.string().optional(),
-		azure_access_key: z.string().optional(),
-		webproxy_base_url: z.string().optional(),
-		imgix_subdomains: z.array(z.string()).optional(),
+		gcs_access_key: z.string().optional(),
+		gcs_secret_key: z.string().optional(),
+		// azure
+		azure_account: z.string().optional(),
+		azure_bucket: z.string().optional(),
+		azure_prefix: z.string().optional(),
+		azure_sas_string: z.string().optional(),
+		azure_service_type: z.enum(['blob', 'file']).optional(),
+		// s3_compatible
+		access_key_id: z.string().optional(),
+		bucket_name: z.string().optional(),
+		endpoint_url: z.string().url().optional(),
+		region: z.string().optional(),
+		secret_key: z.string().optional(),
+		storage_provider: z
+			.enum(['DigitalOcean', 'Linode', 'Wasabi', 'R2'])
+			.optional(),
+		// all types
 		custom_domains: z.array(z.string()).optional(),
-		default_params: z.string().optional(),
-		secure_url_token: z.string().optional(),
-		cache_ttl_value: z.number().int().optional(),
-		cache_ttl_error: z.number().int().optional(),
+		default_params: DefaultParamsSchema.optional(),
+		secure_url_enabled: z.boolean().optional(),
+		cache_ttl_value: z.number().int().min(1800).max(31536000).optional(),
+		cache_ttl_error: z.number().int().min(1).max(31536000).optional(),
 	})
 	.strict();
 
@@ -169,11 +213,11 @@ export const SourcesUpdateInputSchema = z
 		source_id: z.string().min(1),
 		name: z.string().optional(),
 		enabled: z.boolean().optional(),
-		default_params: z.string().optional(),
+		default_params: DefaultParamsSchema.optional(),
 		custom_domains: z.array(z.string()).optional(),
-		cache_ttl_value: z.number().int().optional(),
-		cache_ttl_error: z.number().int().optional(),
-		secure_url_token: z.string().optional(),
+		cache_ttl_value: z.number().int().min(1800).max(31536000).optional(),
+		cache_ttl_error: z.number().int().min(1).max(31536000).optional(),
+		secure_url_enabled: z.boolean().optional(),
 	})
 	.strict();
 
@@ -191,20 +235,25 @@ export const SourcesUpdateOutputSchema = z
 
 export const AssetAttributesSchema = z
 	.object({
-		origin_path: z.string().optional(),
-		content_type: z.string().optional(),
-		file_size: z.number().optional(),
-		width: z.number().optional(),
-		height: z.number().optional(),
-		dpi_width: z.number().optional(),
-		dpi_height: z.number().optional(),
-		color_model: z.string().optional(),
-		color_profile: z.string().optional(),
-		has_alpha: z.boolean().optional(),
-		// `unknown` because custom_fields can store arbitrary user-defined metadata values
-		custom_fields: z.record(z.string(), z.unknown()).optional(),
-		created_at: z.number().or(z.string()).optional(),
-		updated_at: z.number().or(z.string()).optional(),
+		origin_path: z.string().nullish(),
+		source_id: z.string().nullish(),
+		name: z.string().nullish(),
+		description: z.string().nullish(),
+		content_type: z.string().nullish(),
+		media_kind: z.string().nullish(),
+		file_size: z.number().nullish(),
+		media_width: z.number().nullish(),
+		media_height: z.number().nullish(),
+		dpi_width: z.number().nullish(),
+		dpi_height: z.number().nullish(),
+		color_model: z.string().nullish(),
+		color_profile: z.string().nullish(),
+		has_frames: z.boolean().nullish(),
+		categories: z.array(z.string()).nullish(),
+		// `unknown` because custom_fields can store arbitrary user-defined metadata values; imgix returns null when none are set
+		custom_fields: z.record(z.string(), z.unknown()).nullish(),
+		date_created: z.number().nullish(),
+		date_modified: z.number().nullish(),
 	})
 	// `passthrough` because asset attributes contain variable technical and EXIF metadata
 	.passthrough();
@@ -225,8 +274,8 @@ export const AssetsListInputSchema = z
 		sort: z.string().optional(),
 		fields: z.string().optional(),
 		page_cursor: z.string().optional(),
-		page_number: z.number().int().min(0).optional(),
-		page_size: z.number().int().min(1).max(100).optional(),
+		// Sent as page[limit]; imgix caps a page at 1000 assets
+		page_size: z.number().int().min(1).max(1000).optional(),
 	})
 	.strict();
 
@@ -460,12 +509,12 @@ export const PurgesCreateOutputSchema = z
 
 export const ReportAttributesSchema = z
 	.object({
-		completed: z.boolean(),
-		files: z.array(z.string()),
-		period_start: z.number(),
-		period_end: z.number(),
-		report_key: z.string(),
-		report_type: z.string(),
+		completed: z.boolean().nullish(),
+		files: z.array(z.string()).nullish(),
+		period_start: z.number().nullish(),
+		period_end: z.number().nullish(),
+		report_key: z.string().nullish(),
+		report_type: z.string().nullish(),
 	})
 	// `passthrough` because report attributes can contain extra analytics metadata
 	.passthrough();
@@ -521,22 +570,51 @@ export const ReportsGetOutputSchema = z
 
 export const GenerationsCreateVideoInputSchema = z
 	.object({
-		prompt: z.string().min(1),
-		source: z.string().url(),
-		duration: z.number().positive().optional(),
-		aspect_ratio: z.string().optional(),
+		// Image on an imgix Source with Image to Video enabled
+		url: z.string().url(),
+		model: z.enum(['auto', 'klingai', 'veo3.1', 'veo3.1-fast']).optional(),
+		// Required by the veo models, optional for auto and klingai
+		prompt: z.string().min(1).optional(),
+		duration: z.number().int().positive().optional(),
+		aspect_ratio: z.enum(['16:9', '9:16']).optional(),
 	})
 	.strict();
 
+const VideoJobResourceSchema = z
+	.object({
+		id: z.string(),
+		type: z.string().nullish(),
+		attributes: z
+			.object({
+				// started, preparing, ready or errored; open string so a new status does not break polling
+				status: z.string(),
+				created_at: z.number().nullish(),
+				updated_at: z.number().nullish(),
+				result: z
+					.object({ url: z.string().nullish() })
+					// `passthrough` because results may gain fields such as resolution
+					.passthrough()
+					.nullish(),
+				error: z
+					.object({
+						code: z.number().nullish(),
+						message: z.string().nullish(),
+					})
+					// `passthrough` because error objects may carry provider detail
+					.passthrough()
+					.nullish(),
+			})
+			// `passthrough` because job attributes may gain fields
+			.passthrough(),
+	})
+	// `passthrough` because JSON:API resources can include links
+	.passthrough();
+
 export const GenerationsCreateVideoOutputSchema = z
 	.object({
-		job_id: z.string(),
-		status: z
-			.enum(['pending', 'processing', 'ready', 'errored'])
-			.or(z.string()),
-		created_at: z.string().optional(),
+		data: VideoJobResourceSchema,
 	})
-	// `passthrough` because generation job payloads can include progress or model details
+	// `passthrough` because responses may include jsonapi or meta
 	.passthrough();
 
 export const GenerationsGetVideoJobInputSchema = z
@@ -547,14 +625,9 @@ export const GenerationsGetVideoJobInputSchema = z
 
 export const GenerationsGetVideoJobOutputSchema = z
 	.object({
-		job_id: z.string(),
-		status: z
-			.enum(['pending', 'processing', 'ready', 'errored'])
-			.or(z.string()),
-		url: z.string().url().nullable().optional(),
-		error: z.string().nullable().optional(),
+		data: VideoJobResourceSchema,
 	})
-	// `passthrough` because completed job payloads include video resolution and metadata
+	// `passthrough` because responses may include jsonapi or meta
 	.passthrough();
 
 export const GenerationsGetAltTextInputSchema = z
@@ -569,6 +642,8 @@ export const GenerationsGetAltTextInputSchema = z
 export const GenerationsGetAltTextOutputSchema = z
 	.object({
 		alt_text: z.record(z.string(), z.string()),
+		failed_languages: z.array(z.string()).nullish(),
+		overridden_languages: z.array(z.string()).nullish(),
 	})
 	// `passthrough` because response may include detected language or confidence scores
 	.passthrough();
@@ -577,13 +652,15 @@ export const GenerationsOverrideAltTextInputSchema = z
 	.object({
 		url: z.string().url().optional(),
 		url64: z.string().optional(),
-		alt_text: z.record(z.string(), z.string()),
+		// A null value removes that language's override
+		alt_text: z.record(z.string(), z.string().min(1).max(2000).nullable()),
 	})
 	.strict();
 
 export const GenerationsOverrideAltTextOutputSchema = z
 	.object({
 		alt_text: z.record(z.string(), z.string()),
+		removed_languages: z.array(z.string()).nullish(),
 	})
 	// `passthrough` because response echoes updated overrides and metadata
 	.passthrough();

@@ -103,8 +103,9 @@ describe('Imgix schema', () => {
 			const valid = {
 				name: 'New GCS Source',
 				deployment_type: 'gcs' as const,
+				imgix_subdomains: ['my-gcs'],
 				gcs_bucket: 'my-gcs-bucket',
-				gcs_project_id: 'proj-123',
+				gcs_access_key: 'GOOG123',
 			};
 			expect(SourcesCreateInputSchema.parse(valid)).toEqual(valid);
 
@@ -380,17 +381,33 @@ describe('Imgix schema', () => {
 	describe('Generations (Video & AI) schemas', () => {
 		it('validates GenerationsCreateVideoInputSchema and OutputSchema', () => {
 			const valid = {
+				url: 'https://assets.imgix.net/mountain.jpg',
+				model: 'veo3.1' as const,
 				prompt: 'Cinematic pan across the mountain landscape',
-				source: 'https://assets.imgix.net/mountain.jpg',
-				duration: 5,
-				aspect_ratio: '16:9',
+				duration: 6,
+				aspect_ratio: '16:9' as const,
 			};
 			expect(GenerationsCreateVideoInputSchema.parse(valid)).toEqual(valid);
+			// prompt is optional for the auto and klingai models
+			expect(
+				GenerationsCreateVideoInputSchema.parse({
+					url: 'https://assets.imgix.net/mountain.jpg',
+				}),
+			).toEqual({ url: 'https://assets.imgix.net/mountain.jpg' });
+			// `unknown` because testing runtime rejection of the old `source` field
+			const withSource: unknown = {
+				source: 'https://assets.imgix.net/mountain.jpg',
+			};
+			expect(() =>
+				GenerationsCreateVideoInputSchema.parse(withSource),
+			).toThrow();
 
 			const output = {
-				job_id: 'job_vid_123',
-				status: 'pending',
-				created_at: '2024-01-01T00:00:00Z',
+				data: {
+					type: 'job',
+					id: 'job_vid_123',
+					attributes: { status: 'started', created_at: 1792783178 },
+				},
 			};
 			expect(GenerationsCreateVideoOutputSchema.parse(output)).toEqual(output);
 		});
@@ -400,10 +417,16 @@ describe('Imgix schema', () => {
 			expect(GenerationsGetVideoJobInputSchema.parse(valid)).toEqual(valid);
 
 			const output = {
-				job_id: 'job_vid_123',
-				status: 'ready',
-				url: 'https://assets.imgix.net/mountain.mp4',
-				error: null,
+				data: {
+					type: 'job',
+					id: 'job_vid_123',
+					attributes: {
+						status: 'ready',
+						created_at: 1792783178,
+						updated_at: 1792783410,
+						result: { url: 'https://assets.imgix.net/mountain.jpg?itv=1' },
+					},
+				},
 			};
 			expect(GenerationsGetVideoJobOutputSchema.parse(output)).toEqual(output);
 		});

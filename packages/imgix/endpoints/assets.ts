@@ -20,10 +20,8 @@ export const list: ImgixEndpoints['assets.list'] = async (ctx, input) => {
 	if (parsedInput.fields !== undefined) query.fields = parsedInput.fields;
 	if (parsedInput.page_cursor !== undefined)
 		query['page[cursor]'] = parsedInput.page_cursor;
-	if (parsedInput.page_number !== undefined)
-		query['page[number]'] = parsedInput.page_number;
 	if (parsedInput.page_size !== undefined)
-		query['page[size]'] = parsedInput.page_size;
+		query['page[limit]'] = parsedInput.page_size;
 
 	const response = await makeImgixRequest(ctx.key, {
 		method: 'GET',
@@ -60,7 +58,7 @@ export const get: ImgixEndpoints['assets.get'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'imgix.assets.get',
-		{ source_id: parsedInput.source_id, id: parsed.data.id },
+		{ source_id: parsedInput.source_id },
 		'completed',
 	);
 
@@ -91,7 +89,7 @@ export const update: ImgixEndpoints['assets.update'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'imgix.assets.update',
-		{ source_id: parsedInput.source_id, id: parsed.data.id },
+		{ source_id: parsedInput.source_id },
 		'completed',
 	);
 
@@ -110,8 +108,10 @@ export const addFromOrigin: ImgixEndpoints['assets.addFromOrigin'] = async (
 		path: `sources/${encodeURIComponent(parsedInput.source_id)}/assets/add/${encodePath(parsedInput.origin_path)}`,
 	});
 
-	const parsed =
-		ImgixEndpointOutputSchemas['assets.addFromOrigin'].parse(response);
+	// imgix answers a queued add with an empty 202 body, which arrives as '' or undefined
+	const parsed = ImgixEndpointOutputSchemas['assets.addFromOrigin'].parse(
+		response === '' || response === undefined ? {} : response,
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -132,7 +132,9 @@ export const upload: ImgixEndpoints['assets.upload'] = async (ctx, input) => {
 	}
 
 	const buffer = Buffer.from(parsedInput.content_base64, 'base64');
-	const uploadBody = new Blob([buffer], { type: 'application/octet-stream' });
+	const uploadBody = new Blob([buffer], {
+		type: parsedInput.content_type ?? 'application/octet-stream',
+	});
 
 	const response = await makeImgixRequest(ctx.key, {
 		method: 'POST',
@@ -140,7 +142,7 @@ export const upload: ImgixEndpoints['assets.upload'] = async (ctx, input) => {
 		query,
 		body: uploadBody,
 		headers: {
-			'Content-Type': 'application/octet-stream',
+			'Content-Type': parsedInput.content_type ?? 'application/octet-stream',
 		},
 	});
 

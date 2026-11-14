@@ -103,6 +103,120 @@ describe('Imgix endpoints', () => {
 			);
 		});
 
+		it('sources.list parses a live imgix_storage source with object default_params', async () => {
+			// Trimmed from a live imgix response (11-15): every new account gets this source
+			const liveResponse = {
+				data: [
+					{
+						attributes: {
+							date_deployed: 1794696159,
+							deployment: {
+								cache_ttl_behavior: 'enforce_minimum',
+								cache_ttl_error: 300,
+								cache_ttl_value: 5184000,
+								custom_domains: [],
+								default_params: {},
+								image_error: null,
+								image_missing: null,
+								imgix_subdomains: ['example-subdomain'],
+								request_authentication: null,
+								secure_url_enabled: false,
+								type: 'imgix_storage',
+							},
+							deployment_status: 'deployed',
+							enabled: true,
+							name: 'Imgix Storage',
+							robots: null,
+						},
+						id: 'src_live',
+						type: 'sources',
+					},
+				],
+				included: [],
+				jsonapi: { version: '1.0' },
+				meta: {
+					pagination: {
+						currentPage: 0,
+						hasNextPage: false,
+						pageSize: 20,
+						totalPages: 1,
+						totalRecords: 1,
+					},
+				},
+			};
+			mockedRequest.mockResolvedValue(liveResponse);
+
+			const result = await Sources.list(mockCtx, {});
+
+			expect(result.data[0]?.attributes.deployment?.type).toBe('imgix_storage');
+			expect(result.data[0]?.attributes.deployment?.default_params).toEqual({});
+		});
+
+		it('sources.create maps documented gcs, azure and s3_compatible fields', async () => {
+			mockedRequest.mockResolvedValue({
+				data: { id: 'src_new', type: 'sources', attributes: {} },
+			});
+
+			await Sources.create(mockCtx, {
+				name: 'GCS',
+				deployment_type: 'gcs',
+				imgix_subdomains: ['gcs-sub'],
+				gcs_bucket: 'bucket',
+				gcs_access_key: 'GOOG1',
+				gcs_secret_key: 'gsecret',
+			});
+			await Sources.create(mockCtx, {
+				name: 'Azure',
+				deployment_type: 'azure',
+				imgix_subdomains: ['az-sub'],
+				azure_account: 'acct',
+				azure_bucket: 'container',
+				azure_sas_string: 'sv=1',
+				azure_service_type: 'blob',
+			});
+			await Sources.create(mockCtx, {
+				name: 'R2',
+				deployment_type: 's3_compatible',
+				imgix_subdomains: ['r2-sub'],
+				storage_provider: 'R2',
+				access_key_id: 'ak',
+				secret_key: 'sk',
+				bucket_name: 'b',
+				endpoint_url: 'https://example.r2.cloudflarestorage.com',
+			});
+
+			const deployments = mockedRequest.mock.calls.map(
+				(call) =>
+					(
+						call[1]?.body as {
+							data: { attributes: { deployment: Record<string, unknown> } };
+						}
+					).data.attributes.deployment,
+			);
+			expect(deployments[0]).toEqual({
+				type: 'gcs',
+				imgix_subdomains: ['gcs-sub'],
+				gcs_bucket: 'bucket',
+				gcs_access_key: 'GOOG1',
+				gcs_secret_key: 'gsecret',
+			});
+			expect(deployments[1]).toMatchObject({
+				type: 'azure',
+				azure_account: 'acct',
+				azure_bucket: 'container',
+				azure_sas_string: 'sv=1',
+				azure_service_type: 'blob',
+			});
+			expect(deployments[2]).toMatchObject({
+				type: 's3_compatible',
+				storage_provider: 'R2',
+				access_key_id: 'ak',
+				secret_key: 'sk',
+				bucket_name: 'b',
+				endpoint_url: 'https://example.r2.cloudflarestorage.com',
+			});
+		});
+
 		it('sources.create formats JSON:API payload and logs deployment', async () => {
 			const mockResponse = {
 				data: {
@@ -116,6 +230,7 @@ describe('Imgix endpoints', () => {
 			const result = await Sources.create(mockCtx, {
 				name: 'Created S3',
 				deployment_type: 's3',
+				imgix_subdomains: ['created-s3'],
 				s3_bucket: 'my-bucket',
 				s3_access_key: 'AKIA123',
 				s3_secret_key: 'secret123',
@@ -134,6 +249,7 @@ describe('Imgix endpoints', () => {
 								name: 'Created S3',
 								deployment: {
 									type: 's3',
+									imgix_subdomains: ['created-s3'],
 									s3_bucket: 'my-bucket',
 									s3_access_key: 'AKIA123',
 									s3_secret_key: 'secret123',
@@ -154,7 +270,11 @@ describe('Imgix endpoints', () => {
 
 		it('sources.create rejects invalid inputs without making network call', async () => {
 			await expect(
-				Sources.create(mockCtx, { name: '', deployment_type: 's3' }),
+				Sources.create(mockCtx, {
+					name: '',
+					deployment_type: 's3',
+					imgix_subdomains: ['x'],
+				}),
 			).rejects.toThrow();
 
 			expect(mockedRequest).not.toHaveBeenCalled();
@@ -200,7 +320,7 @@ describe('Imgix endpoints', () => {
 				source_id: 'src_123',
 				name: 'Updated Name',
 				enabled: false,
-				default_params: 'auto=format',
+				default_params: { auto: 'format' },
 			});
 
 			expect(result).toEqual(mockResponse);
@@ -216,7 +336,7 @@ describe('Imgix endpoints', () => {
 							attributes: {
 								name: 'Updated Name',
 								enabled: false,
-								deployment: { default_params: 'auto=format' },
+								deployment: { default_params: { auto: 'format' } },
 							},
 						},
 					},
@@ -334,6 +454,133 @@ describe('Imgix endpoints', () => {
 					path: 'sources/src_123/assets/add/raw/banner.jpg',
 				}),
 			);
+		});
+
+		it('assets.addFromOrigin accepts the documented empty 202 body', async () => {
+			mockedRequest.mockResolvedValueOnce('');
+			await expect(
+				Assets.addFromOrigin(mockCtx, {
+					source_id: 'src_123',
+					origin_path: 'raw/banner.jpg',
+				}),
+			).resolves.toEqual({});
+
+			mockedRequest.mockResolvedValueOnce(undefined);
+			await expect(
+				Assets.addFromOrigin(mockCtx, {
+					source_id: 'src_123',
+					origin_path: 'raw/banner.jpg',
+				}),
+			).resolves.toEqual({});
+		});
+
+		it('assets.list sends page_size as page[limit] and parses a live response with nulls', async () => {
+			// Trimmed from a live imgix response (11-15): unanalyzed assets return null for most fields
+			const liveResponse = {
+				data: [
+					{
+						attributes: {
+							analyzed_tags: null,
+							categories: null,
+							color_model: null,
+							color_profile: null,
+							colors: null,
+							content_type: 'video/mp4',
+							custom_fields: null,
+							date_created: 1794696177,
+							date_modified: null,
+							description: null,
+							dpi_height: null,
+							dpi_width: null,
+							file_size: 64555030,
+							has_frames: null,
+							media_height: null,
+							media_kind: 'VIDEO',
+							media_width: null,
+							name: null,
+							origin_path: '/paraglider.mp4',
+							source_id: 'src_123',
+							tags: null,
+							uploaded_by_api: false,
+						},
+						id: 'src_123/paraglider.mp4',
+						type: 'assets',
+					},
+				],
+				included: [],
+				jsonapi: { version: '1.0' },
+				meta: {
+					cursor: {
+						current: '0',
+						hasMore: true,
+						next: '2',
+						totalRecords: '7',
+					},
+				},
+			};
+			mockedRequest.mockResolvedValue(liveResponse);
+
+			const result = await Assets.list(mockCtx, {
+				source_id: 'src_123',
+				page_size: 2,
+			});
+
+			expect(result.data[0]?.attributes.custom_fields).toBeNull();
+			expect(result.meta?.cursor?.next).toBe('2');
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'test-imgix-api-key',
+				expect.objectContaining({
+					path: 'assets/src_123',
+					query: { 'page[limit]': 2 },
+				}),
+			);
+		});
+
+		it('assets.get and assets.update keep the asset path out of event payloads', async () => {
+			const response = {
+				data: {
+					id: 'src_123/customers/alice@example.com/photo.jpg',
+					type: 'assets',
+					attributes: { custom_fields: null },
+				},
+			};
+			mockedRequest.mockResolvedValue(response);
+
+			await Assets.get(mockCtx, {
+				source_id: 'src_123',
+				origin_path: 'customers/alice@example.com/photo.jpg',
+			});
+			await Assets.update(mockCtx, {
+				source_id: 'src_123',
+				origin_path: 'customers/alice@example.com/photo.jpg',
+				custom_fields: { sku: '1' },
+			});
+
+			for (const call of mockedLogEvent.mock.calls) {
+				expect(JSON.stringify(call[2])).not.toContain('alice@example.com');
+			}
+		});
+
+		it('assets.upload sends the given content_type with the raw bytes', async () => {
+			mockedRequest.mockResolvedValue({});
+
+			await Assets.upload(mockCtx, {
+				source_id: 'src_123',
+				origin_path: 'uploads/pixel.png',
+				content_base64: 'aGVsbG8=',
+				content_type: 'image/png',
+			});
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'test-imgix-api-key',
+				expect.objectContaining({
+					headers: { 'Content-Type': 'image/png' },
+				}),
+			);
+			const requestBody = mockedRequest.mock.calls[0]?.[1]?.body;
+			expect(requestBody).toBeInstanceOf(Blob);
+			if (requestBody instanceof Blob)
+				expect(requestBody.type).toBe('image/png');
 		});
 
 		it('assets.upload wraps decoded file bytes in an octet-stream Blob', async () => {
@@ -553,16 +800,20 @@ describe('Imgix endpoints', () => {
 	});
 
 	describe('Generations', () => {
-		it('generations.createVideo triggers asynchronous video generation', async () => {
+		it('generations.createVideo sends url (not source) and parses the job envelope', async () => {
+			// Documented response at docs.imgix.com/apis/generations/video-generation
 			const mockResponse = {
-				job_id: 'vid_job_1',
-				status: 'pending',
+				data: {
+					type: 'job',
+					id: '66523ecdc9e5a19840c20941',
+					attributes: { status: 'started', created_at: 1792783178 },
+				},
 			};
 			mockedRequest.mockResolvedValue(mockResponse);
 
 			const result = await Generations.createVideo(mockCtx, {
-				prompt: 'Gentle waves on beach',
-				source: 'https://assets.imgix.net/ocean.jpg',
+				url: 'https://assets.imgix.net/ocean.jpg',
+				model: 'auto',
 				duration: 4,
 				aspect_ratio: '16:9',
 			});
@@ -574,29 +825,58 @@ describe('Imgix endpoints', () => {
 					method: 'POST',
 					path: 'generations/video',
 					body: {
-						prompt: 'Gentle waves on beach',
-						source: 'https://assets.imgix.net/ocean.jpg',
+						url: 'https://assets.imgix.net/ocean.jpg',
+						model: 'auto',
 						duration: 4,
 						aspect_ratio: '16:9',
 					},
 				}),
 			);
+			expect(mockedLogEvent).toHaveBeenCalledWith(
+				mockCtx,
+				'imgix.generations.createVideo',
+				{ job_id: '66523ecdc9e5a19840c20941', status: 'started' },
+				'completed',
+			);
 		});
 
-		it('generations.getVideoJob polls video generation status', async () => {
-			const mockResponse = {
-				job_id: 'vid_job_1',
-				status: 'ready',
-				url: 'https://assets.imgix.net/ocean.mp4',
-				error: null,
+		it('generations.getVideoJob parses ready and errored job envelopes', async () => {
+			const ready = {
+				data: {
+					type: 'job',
+					id: 'vid_job_1',
+					attributes: {
+						status: 'ready',
+						created_at: 1792783178,
+						updated_at: 1792783410,
+						result: {
+							url: 'https://your-domain.imgix.net/image.jpg?itv=ef22b73a53&variant=542db280',
+						},
+					},
+				},
 			};
-			mockedRequest.mockResolvedValue(mockResponse);
+			mockedRequest.mockResolvedValueOnce(ready);
+			await expect(
+				Generations.getVideoJob(mockCtx, { job_id: 'vid_job_1' }),
+			).resolves.toEqual(ready);
 
-			const result = await Generations.getVideoJob(mockCtx, {
-				job_id: 'vid_job_1',
-			});
+			const errored = {
+				data: {
+					type: 'job',
+					id: 'vid_job_2',
+					attributes: {
+						status: 'errored',
+						created_at: 1792783178,
+						updated_at: 1792783410,
+						error: { code: 500, message: 'failed to generate' },
+					},
+				},
+			};
+			mockedRequest.mockResolvedValueOnce(errored);
+			await expect(
+				Generations.getVideoJob(mockCtx, { job_id: 'vid_job_2' }),
+			).resolves.toEqual(errored);
 
-			expect(result).toEqual(mockResponse);
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'test-imgix-api-key',
 				expect.objectContaining({
@@ -609,6 +889,8 @@ describe('Imgix endpoints', () => {
 		it('generations.getAltText fetches AI alt text', async () => {
 			const mockResponse = {
 				alt_text: { en: 'A serene beach landscape' },
+				failed_languages: [],
+				overridden_languages: [],
 			};
 			mockedRequest.mockResolvedValue(mockResponse);
 
@@ -654,6 +936,25 @@ describe('Imgix endpoints', () => {
 					},
 				}),
 			);
+		});
+
+		it('generations.overrideAltText accepts null to remove an override', async () => {
+			const mockResponse = {
+				alt_text: { en: 'Official brand beach background' },
+				removed_languages: ['fr'],
+			};
+			mockedRequest.mockResolvedValue(mockResponse);
+
+			const result = await Generations.overrideAltText(mockCtx, {
+				url: 'https://assets.imgix.net/beach.jpg',
+				alt_text: { en: 'Official brand beach background', fr: null },
+			});
+
+			expect(result).toEqual(mockResponse);
+			expect(mockedRequest.mock.calls[0]?.[1]?.body).toEqual({
+				url: 'https://assets.imgix.net/beach.jpg',
+				alt_text: { en: 'Official brand beach background', fr: null },
+			});
 		});
 	});
 });

@@ -11,10 +11,9 @@ export const createVideo: ImgixEndpoints['generations.createVideo'] = async (
 		ImgixEndpointInputSchemas['generations.createVideo'].parse(input);
 
 	// `unknown` because payload attributes vary across provider parameters
-	const body: Record<string, unknown> = {
-		prompt: parsedInput.prompt,
-		source: parsedInput.source,
-	};
+	const body: Record<string, unknown> = { url: parsedInput.url };
+	if (parsedInput.model !== undefined) body.model = parsedInput.model;
+	if (parsedInput.prompt !== undefined) body.prompt = parsedInput.prompt;
 	if (parsedInput.duration !== undefined) body.duration = parsedInput.duration;
 	if (parsedInput.aspect_ratio !== undefined)
 		body.aspect_ratio = parsedInput.aspect_ratio;
@@ -31,7 +30,7 @@ export const createVideo: ImgixEndpoints['generations.createVideo'] = async (
 	await logEventFromContext(
 		ctx,
 		'imgix.generations.createVideo',
-		{ job_id: parsed.job_id, status: parsed.status },
+		{ job_id: parsed.data.id, status: parsed.data.attributes.status },
 		'completed',
 	);
 
@@ -56,7 +55,7 @@ export const getVideoJob: ImgixEndpoints['generations.getVideoJob'] = async (
 	await logEventFromContext(
 		ctx,
 		'imgix.generations.getVideoJob',
-		{ job_id: parsed.job_id, status: parsed.status },
+		{ job_id: parsed.data.id, status: parsed.data.attributes.status },
 		'completed',
 	);
 

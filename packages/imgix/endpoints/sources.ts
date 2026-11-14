@@ -50,56 +50,20 @@ export const list: ImgixEndpoints['sources.list'] = async (ctx, input) => {
 export const create: ImgixEndpoints['sources.create'] = async (ctx, input) => {
 	const parsedInput = ImgixEndpointInputSchemas['sources.create'].parse(input);
 
-	// `unknown` because deployment attributes vary across provider parameters
-	const deployment: Record<string, unknown> = {
-		type: parsedInput.deployment_type,
-	};
-	if (parsedInput.s3_bucket !== undefined)
-		deployment.s3_bucket = parsedInput.s3_bucket;
-	if (parsedInput.s3_prefix !== undefined)
-		deployment.s3_prefix = parsedInput.s3_prefix;
-	if (parsedInput.s3_access_key !== undefined)
-		deployment.s3_access_key = parsedInput.s3_access_key;
-	if (parsedInput.s3_secret_key !== undefined)
-		deployment.s3_secret_key = parsedInput.s3_secret_key;
-	if (parsedInput.webfolder_base_url !== undefined)
-		deployment.webfolder_base_url = parsedInput.webfolder_base_url;
-	if (parsedInput.gcs_bucket !== undefined)
-		deployment.gcs_bucket = parsedInput.gcs_bucket;
-	if (parsedInput.gcs_prefix !== undefined)
-		deployment.gcs_prefix = parsedInput.gcs_prefix;
-	if (parsedInput.gcs_project_id !== undefined)
-		deployment.gcs_project_id = parsedInput.gcs_project_id;
-	if (parsedInput.gcs_client_email !== undefined)
-		deployment.gcs_client_email = parsedInput.gcs_client_email;
-	if (parsedInput.gcs_private_key !== undefined)
-		deployment.gcs_private_key = parsedInput.gcs_private_key;
-	if (parsedInput.azure_account_name !== undefined)
-		deployment.azure_account_name = parsedInput.azure_account_name;
-	if (parsedInput.azure_container_name !== undefined)
-		deployment.azure_container_name = parsedInput.azure_container_name;
-	if (parsedInput.azure_access_key !== undefined)
-		deployment.azure_access_key = parsedInput.azure_access_key;
-	if (parsedInput.webproxy_base_url !== undefined)
-		deployment.webproxy_base_url = parsedInput.webproxy_base_url;
-	if (parsedInput.imgix_subdomains !== undefined)
-		deployment.imgix_subdomains = parsedInput.imgix_subdomains;
-	if (parsedInput.custom_domains !== undefined)
-		deployment.custom_domains = parsedInput.custom_domains;
-	if (parsedInput.default_params !== undefined)
-		deployment.default_params = parsedInput.default_params;
-	if (parsedInput.secure_url_token !== undefined)
-		deployment.secure_url_token = parsedInput.secure_url_token;
-	if (parsedInput.cache_ttl_value !== undefined)
-		deployment.cache_ttl_value = parsedInput.cache_ttl_value;
-	if (parsedInput.cache_ttl_error !== undefined)
-		deployment.cache_ttl_error = parsedInput.cache_ttl_error;
+	// Every input field other than name and deployment_type is a deployment
+	// attribute under the same name in the imgix API (the input schema is strict).
+	const { name, deployment_type, ...deploymentFields } = parsedInput;
+	// `unknown` because deployment attributes vary across source types
+	const deployment: Record<string, unknown> = { type: deployment_type };
+	for (const [field, value] of Object.entries(deploymentFields)) {
+		if (value !== undefined) deployment[field] = value;
+	}
 
 	const body = {
 		data: {
 			type: 'sources',
 			attributes: {
-				name: parsedInput.name,
+				name,
 				deployment,
 			},
 		},
@@ -171,8 +135,8 @@ export const update: ImgixEndpoints['sources.update'] = async (ctx, input) => {
 		deployment.cache_ttl_value = parsedInput.cache_ttl_value;
 	if (parsedInput.cache_ttl_error !== undefined)
 		deployment.cache_ttl_error = parsedInput.cache_ttl_error;
-	if (parsedInput.secure_url_token !== undefined)
-		deployment.secure_url_token = parsedInput.secure_url_token;
+	if (parsedInput.secure_url_enabled !== undefined)
+		deployment.secure_url_enabled = parsedInput.secure_url_enabled;
 
 	if (Object.keys(deployment).length > 0) {
 		attributes.deployment = deployment;

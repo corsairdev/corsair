@@ -234,7 +234,7 @@ export const imgixEndpointMeta = {
 	'assets.addFromOrigin': {
 		riskLevel: 'write',
 		description:
-			'Queue an existing origin asset to be indexed into the Imgix Asset Manager',
+			'Queue an existing origin asset to be indexed into the Imgix Asset Manager (imgix answers 202 with no body, returned as {})',
 	},
 	'assets.upload': {
 		riskLevel: 'write',
@@ -284,8 +284,10 @@ export const imgixEndpointMeta = {
 			'Poll the status and retrieve result URL of an asynchronous video generation job',
 	},
 	'generations.getAltText': {
-		riskLevel: 'read',
-		description: 'Generate or retrieve AI-generated alt text for an image',
+		// AI generation billed per request (cached languages are free); regenerate also drops manual overrides
+		riskLevel: 'destructive',
+		description:
+			'Generate or retrieve AI alt text for an image (new languages consume AI credits; regenerate replaces stored text and overrides)',
 	},
 	'generations.overrideAltText': {
 		riskLevel: 'write',
