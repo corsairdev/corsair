@@ -506,6 +506,7 @@ describe('cashLocations endpoints', () => {
 
 	it('cashLocations.list refuses a call without the required search center', async () => {
 		// GET /cash-locations marks provider, latitude and longitude required.
+		// @ts-expect-error provider, latitude and longitude are left out on purpose.
 		await expect(CashLocations.list(ctx, { limit: 50 })).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});

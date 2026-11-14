@@ -185,7 +185,11 @@ export type PolygonCredentials = {
  * already in this process's memory, and a fast hash of a credential is what
  * CodeQL flags as weak password hashing.
  */
-type CachedToken = { apiSecret: string; accessToken: string; expiresAt: number };
+type CachedToken = {
+	apiSecret: string;
+	accessToken: string;
+	expiresAt: number;
+};
 const tokenCache = new Map<string, CachedToken>();
 /** In-flight token requests, so parallel calls mint one token, not one each. */
 const inFlightTokens = new Map<

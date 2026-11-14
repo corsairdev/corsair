@@ -340,7 +340,7 @@ describe('makePolygonRequest', () => {
 
 	it('drops the request body from the ApiError, since a customer write carries personal data', async () => {
 		// Core builds ApiError from the request it sent, body included.
-		mockRequest.mockImplementation(async (_config, options) => {
+		mockRequest.mockImplementation((_config, options) => {
 			throw new ApiError(
 				options,
 				{
@@ -348,7 +348,11 @@ describe('makePolygonRequest', () => {
 					ok: false,
 					status: 400,
 					statusText: 'Bad Request',
-					body: { error: 'InvalidArgument', code: 2001, msg: 'invalid argument' },
+					body: {
+						error: 'InvalidArgument',
+						code: 2001,
+						msg: 'invalid argument',
+					},
 				},
 				'invalid argument',
 			);

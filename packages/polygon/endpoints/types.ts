@@ -386,7 +386,9 @@ export const WalletResourceBalanceSchema = z
 		balance: z
 			.string()
 			.nullish()
-			.describe('Signed fixed-point decimal string; negative after a clawback.'),
+			.describe(
+				'Signed fixed-point decimal string; negative after a clawback.',
+			),
 		estimatedValueUsd: z.string().nullish(),
 	})
 	.loose();
@@ -479,7 +481,11 @@ const WalletsListOutputSchema = z.object(paginationOutputFields).extend({
 
 export type WalletsListOutput = z.infer<typeof WalletsListOutputSchema>;
 
-export const WALLET_CREATE_TYPES = ['custodial', 'noncustodial', 'fiat'] as const;
+export const WALLET_CREATE_TYPES = [
+	'custodial',
+	'noncustodial',
+	'fiat',
+] as const;
 
 export const WalletsCreateInputSchema = z
 	.object({
@@ -519,11 +525,18 @@ export const WalletsCreateInputSchema = z
 				issue('networkFamily is for noncustodial wallets.', 'networkFamily');
 		} else if (value.type === 'noncustodial') {
 			if (networkFamily === undefined)
-				issue('A noncustodial wallet needs details.networkFamily.', 'networkFamily');
+				issue(
+					'A noncustodial wallet needs details.networkFamily.',
+					'networkFamily',
+				);
 			if (network !== undefined || asset !== undefined)
-				issue('A noncustodial wallet takes only details.networkFamily.', 'network');
+				issue(
+					'A noncustodial wallet takes only details.networkFamily.',
+					'network',
+				);
 		} else {
-			if (asset !== 'usd') issue('A fiat wallet needs details.asset: usd.', 'asset');
+			if (asset !== 'usd')
+				issue('A fiat wallet needs details.asset: usd.', 'asset');
 			if (network !== undefined || networkFamily !== undefined)
 				issue('A fiat wallet takes only details.asset.', 'network');
 		}
@@ -1224,7 +1237,9 @@ const CashLocationsListInputSchema = z.object({
 	provider: z
 		.string()
 		.min(1)
-		.describe('The cash provider configuration to query, as set up for this project.'),
+		.describe(
+			'The cash provider configuration to query, as set up for this project.',
+		),
 	latitude: z.number().min(-90).max(90).describe('Search center latitude.'),
 	longitude: z.number().min(-180).max(180).describe('Search center longitude.'),
 	radius: z
@@ -1236,7 +1251,9 @@ const CashLocationsListInputSchema = z.object({
 	flow: z
 		.enum(['cash_in', 'cash_out'])
 		.optional()
-		.describe('Only locations that take deposits (`cash_in`) or pay out (`cash_out`).'),
+		.describe(
+			'Only locations that take deposits (`cash_in`) or pay out (`cash_out`).',
+		),
 	customerId: z
 		.string()
 		.min(1)

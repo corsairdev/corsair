@@ -66,7 +66,14 @@ export const create: PolygonEndpoints['walletsCreate'] = (ctx, input) =>
 			requiresIdempotencyKey: true,
 		},
 		input,
-		({ idempotencyKey: _ignored, customerId, type, details, label, metadata }) => ({
+		({
+			idempotencyKey: _ignored,
+			customerId,
+			type,
+			details,
+			label,
+			metadata,
+		}) => ({
 			method: 'POST',
 			path: '/wallets',
 			body: { customerId, type, details, label, metadata },

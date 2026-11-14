@@ -256,7 +256,10 @@ describe('input validation before the request', () => {
 					} as never,
 					amount: '10.00',
 				},
-				destination: { type: 'bankUs', details: { id: 'ext_1', asset: 'usd', network: 'ach' } },
+				destination: {
+					type: 'bankUs',
+					details: { id: 'ext_1', asset: 'usd', network: 'ach' },
+				},
 			}),
 		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
@@ -337,7 +340,10 @@ describe('input validation before the request', () => {
 					details: { id: 'wlt_1', asset: 'usdc', network: 'polygon' },
 					amount: '10.00',
 				},
-				destination: { type: 'bankUs', details: { id: 'ext_1', asset: 'usd', network: 'ach' } },
+				destination: {
+					type: 'bankUs',
+					details: { id: 'ext_1', asset: 'usd', network: 'ach' },
+				},
 			}),
 		);
 
