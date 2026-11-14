@@ -4,20 +4,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
-export class SvixAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly status: number,
-		public readonly retryAfter?: number,
-		// HTTP error bodies can be arbitrary JSON, text, or empty, so no fixed shape is safe.
-		public readonly body?: unknown,
-	) {
-		super(message);
-		this.name = 'SvixAPIError';
-	}
-}
+import { request } from 'corsair/http';
 
 const rateLimitConfig: RateLimitConfig = {
 	enabled: true,
@@ -27,10 +14,31 @@ const rateLimitConfig: RateLimitConfig = {
 	headerNames: { retryAfter: 'Retry-After' },
 };
 
-export type SvixRegion = 'eu' | 'us' | 'ca' | 'au';
+export const SVIX_REGIONS = ['us', 'eu', 'in', 'ca', 'au'] as const;
+export type SvixRegion = (typeof SVIX_REGIONS)[number];
+
+function isSvixRegion(value: string | undefined): value is SvixRegion {
+	return SVIX_REGIONS.includes(value as SvixRegion);
+}
+
+/**
+ * Svix API keys end in their region (`….us`, `….eu`, …), the same rule the
+ * official SDKs use to pick the host. An explicit `region` option wins; a key
+ * without a region suffix uses the global host.
+ */
+export function svixBaseUrl(apiKey: string, region?: SvixRegion): string {
+	if (region !== undefined) {
+		if (!isSvixRegion(region)) throw new Error('Invalid Svix region');
+		return `https://api.${region}.svix.com`;
+	}
+	const suffix = apiKey.split('.')[1];
+	return isSvixRegion(suffix)
+		? `https://api.${suffix}.svix.com`
+		: 'https://api.svix.com';
+}
 
 export async function makeSvixRequest(
-	region: SvixRegion,
+	region: SvixRegion | undefined,
 	path: string,
 	apiKey: string,
 	options: {
@@ -44,10 +52,8 @@ export async function makeSvixRequest(
 	// The response is untrusted and varies by operation; the caller validates it.
 ): Promise<unknown> {
 	if (!apiKey.trim()) throw new AuthMissingError('svix', 'api_key');
-	if (!['eu', 'us', 'ca', 'au'].includes(region))
-		throw new Error('Invalid Svix region');
 	const config: OpenAPIConfig = {
-		BASE: `https://api.${region}.svix.com`,
+		BASE: svixBaseUrl(apiKey, region),
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -64,24 +70,8 @@ export async function makeSvixRequest(
 				? undefined
 				: { 'Idempotency-Key': options.idempotencyKey },
 	};
-	try {
-		// The endpoint-specific output schema, not this shared transport, determines the response type.
-		return await request<unknown>(config, requestOptions, { rateLimitConfig });
-	} catch (error) {
-		if (error instanceof ApiError) {
-			// Provider error bodies may be non-objects; inspect detail only after narrowing.
-			const body: unknown = error.body;
-			const data =
-				body && typeof body === 'object'
-					? (body as Record<string, unknown>)
-					: undefined;
-			throw new SvixAPIError(
-				typeof data?.detail === 'string' ? data.detail : error.message,
-				error.status,
-				error.retryAfter,
-				body,
-			);
-		}
-		throw error;
-	}
+	// Core's ApiError passes through unchanged so its status and retryAfter
+	// reach the error handlers. The endpoint-specific output schema, not this
+	// shared transport, determines the response type.
+	return request<unknown>(config, requestOptions, { rateLimitConfig });
 }

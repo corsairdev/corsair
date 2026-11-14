@@ -39,20 +39,15 @@ export function endpoint<K extends SvixOperationName>(name: K) {
 		for (const key of route.query) {
 			if (data[key] !== undefined && data[key] !== null) query[key] = data[key];
 		}
-		const result = await makeSvixRequest(
-			ctx.options?.region ?? 'eu',
-			path,
-			ctx.key,
-			{
-				method: route.method,
-				query: Object.keys(query).length ? query : undefined,
-				body: route.hasBody ? data.body : undefined,
-				idempotencyKey:
-					typeof data.idempotencyKey === 'string'
-						? data.idempotencyKey
-						: undefined,
-			},
-		);
+		const result = await makeSvixRequest(ctx.options?.region, path, ctx.key, {
+			method: route.method,
+			query: Object.keys(query).length ? query : undefined,
+			body: route.hasBody ? data.body : undefined,
+			idempotencyKey:
+				typeof data.idempotencyKey === 'string'
+					? data.idempotencyKey
+					: undefined,
+		});
 		return SvixEndpointOutputSchemas[name].parse(
 			result,
 		) as SvixEndpointOutputs[K];

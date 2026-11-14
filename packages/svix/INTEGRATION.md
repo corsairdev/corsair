@@ -1,14 +1,16 @@
 # Svix integration
 
-This integration targets Svix's webhook delivery API. Configure an API key and
-the region containing your Svix environment (`eu`, `us`, `ca`, or `au`); the
-default is `eu`. Requests use `https://api.<region>.svix.com` and bearer
-authentication. Store credentials securely; never commit them to source control.
+This integration targets Svix's webhook delivery API. Configure an API key;
+the host comes from the key's region suffix (`.us`, `.eu`, `.in`, `.ca`, `.au`)
+the same way Svix's SDKs pick it, and a key without a suffix uses
+`https://api.svix.com`. The optional `region` option overrides the suffix.
+Requests use bearer authentication. Store credentials securely; never commit
+them to source control.
 
 ```ts
 import { svix } from '@corsair-dev/svix';
 
-const plugin = svix({ key: process.env.SVIX_API_KEY, region: 'us' });
+const plugin = svix({ key: process.env.SVIX_API_KEY });
 ```
 
 The integration exposes **61 operations**: applications (6), endpoints (21), event

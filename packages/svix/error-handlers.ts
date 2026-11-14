@@ -1,16 +1,15 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SvixAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
-// Never replay writes, including after a rate limit.
+// Core's request() already retries a 429 with Retry-After; never replay here.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof SvixAPIError && error.status === 429,
+		match: (error: Error) => error instanceof ApiError && error.status === 429,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) =>
-			error instanceof SvixAPIError &&
+			error instanceof ApiError &&
 			(error.status === 401 || error.status === 403),
 		handler: async () => ({ maxRetries: 0 }),
 	},

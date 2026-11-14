@@ -78,9 +78,10 @@ pnpm add @corsair-dev/svix
 
 Auth: API key. Corsair prompts your tenant for credentials on first use.
 
-Choose the Svix region containing your environment with `svix({ region: 'eu' })`
-(the default), or use `us`, `ca`, or `au`. Requests use bearer authentication
-against `https://api.<region>.svix.com`.
+Requests use bearer authentication. The host comes from the API key's region
+suffix, as in Svix's own SDKs: a key ending in `.us`, `.eu`, `.in`, `.ca` or
+`.au` calls `https://api.<region>.svix.com`, and a key without one calls
+`https://api.svix.com`. `svix({ region: 'us' })` overrides the suffix.
 
 The 61 operations cover applications (6), endpoints (21), event types (7),
 messages and pollers (11), delivery attempts (7), and operational webhook

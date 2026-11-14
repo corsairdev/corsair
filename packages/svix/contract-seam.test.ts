@@ -1,4 +1,5 @@
 import {
+	AuthMissingError,
 	createCorsair,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
@@ -6,7 +7,7 @@ import {
 	runWithMode,
 } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { SvixAPIError } from './client';
+import { svixBaseUrl } from './client';
 import fixtures from './contract-fixtures.json';
 import type { SvixContext } from './index';
 import { svix, svixEndpointMeta, svixEndpointSchemas } from './index';
@@ -211,7 +212,18 @@ describe('Svix OpenAPI request seam', () => {
 	});
 
 	it('classifies rate limits without replay', async () => {
-		const error = new SvixAPIError('rate limit', 429, 5000);
+		const error = new ApiError(
+			{ method: 'POST', url: '/api/v1/app' },
+			{
+				url: 'https://api.us.svix.com/api/v1/app',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			},
+			'rate limit',
+			{ retryAfter: 5000 },
+		);
 		const handler = plugin.errorHandlers?.RATE_LIMIT_ERROR;
 		const context = {
 			pluginId: 'svix',
@@ -243,8 +255,7 @@ describe('Svix OpenAPI request seam', () => {
 		await expect(
 			call('applications', 'create', ctx, { body: { name: 'App' } }),
 		).rejects.toMatchObject({
-			name: 'SvixAPIError',
-			message: 'Rate limited',
+			name: 'ApiError',
 			status: 429,
 			retryAfter: 5000,
 			body,
@@ -340,6 +351,43 @@ describe('Svix OpenAPI request seam', () => {
 		});
 		expect(mockRequest.mock.calls[0][1].url).toContain(
 			'/consumer/customer%201%3Ablue',
+		);
+	});
+
+	it.each([
+		['sk_test.us', undefined, 'https://api.us.svix.com'],
+		['sk_test.eu', undefined, 'https://api.eu.svix.com'],
+		['sk_test.in', undefined, 'https://api.in.svix.com'],
+		['sk_test.ca', undefined, 'https://api.ca.svix.com'],
+		['sk_test.au', undefined, 'https://api.au.svix.com'],
+		['testsk_without_region', undefined, 'https://api.svix.com'],
+		['sk_test.us', 'eu', 'https://api.eu.svix.com'],
+	] as const)(
+		'picks the host for key %s with region %s',
+		(key, region, base) => {
+			expect(svixBaseUrl(key, region)).toBe(base);
+		},
+	);
+
+	it('calls the region in the stored key when no region option is set', async () => {
+		mockRequest.mockResolvedValue({ data: [], done: true, iterator: null });
+		await call(
+			'applications',
+			'list',
+			{ key: 'sk_test.us', options: {} } as SvixContext,
+			{},
+		);
+		expect(mockRequest.mock.calls[0][0].BASE).toBe('https://api.us.svix.com');
+	});
+
+	it('raises AuthMissingError from the keyBuilder when no key is stored', async () => {
+		const keyBuilder = svix().keyBuilder;
+		const keyCtx = {
+			authType: 'api_key',
+			keys: { get_api_key: async () => null },
+		} as unknown as Parameters<NonNullable<typeof keyBuilder>>[0];
+		await expect(keyBuilder?.(keyCtx, 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
 		);
 	});
 });

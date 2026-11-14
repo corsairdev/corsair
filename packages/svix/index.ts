@@ -445,7 +445,10 @@ export const svixEndpointMeta = {
 	},
 	'eventTypes.patch': { riskLevel: 'write', description: 'Patch Event Type' },
 	'messages.list': { riskLevel: 'read', description: 'List Messages' },
-	'messages.create': { riskLevel: 'write', description: 'Create Message' },
+	'messages.create': {
+		riskLevel: 'write',
+		description: 'Create Message',
+	},
 	'messages.createBatch': {
 		riskLevel: 'write',
 		description: 'Quickly Create a Batch of Messages',
@@ -488,7 +491,10 @@ export const svixEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete attempt response body',
 	},
-	'attempts.resend': { riskLevel: 'write', description: 'Resend Webhook' },
+	'attempts.resend': {
+		riskLevel: 'write',
+		description: 'Resend Webhook',
+	},
 	'messages.pollerPoll': { riskLevel: 'read', description: 'Poller Poll' },
 	'messages.pollerConsumerSeek': {
 		riskLevel: 'write',
@@ -568,8 +574,11 @@ export function svix<const T extends SvixPluginOptions>(
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: SvixKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
-			if (source === 'endpoint' && ctx.authType === 'api_key')
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const key = await ctx.keys.get_api_key();
+				if (!key) throw new AuthMissingError('svix', 'api_key');
+				return key;
+			}
 			throw new AuthMissingError('svix', 'api_key');
 		},
 	} as BaseSvixPlugin<T>;
