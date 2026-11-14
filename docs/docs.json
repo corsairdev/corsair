@@ -2709,6 +2709,14 @@
                 ]
               },
               {
+                "group": "Kontent.ai",
+                "pages": [
+                  "plugins/kontentai/overview",
+                  "plugins/kontentai/api",
+                  "plugins/kontentai/database"
+                ]
+              },
+              {
                 "group": "Leexi",
                 "pages": [
                   "plugins/leexi/overview",
