@@ -24,9 +24,12 @@ describe('plugin-docs.yaml examples', () => {
 	});
 
 	it.each(apiExamples)('%s example passes its input schema', (key, example) => {
-		// The examples are JavaScript object literals as they appear in the docs.
-		// unknown: the evaluated literal is checked by the schema below.
-		const input: unknown = new Function(`return (${example.call});`)();
+		// The examples are object literals as they appear in the docs. They are
+		// parsed as YAML flow mappings (unquoted keys, quoted strings, arrays),
+		// never executed.
+		// unknown: the parsed literal is checked by the schema below.
+		const input: unknown = parseYaml(example.call);
+		expect(typeof input === 'object' && input !== null).toBe(true);
 		const result =
 			folkEndpointSchemas[key as OperationKey].input.safeParse(input);
 		expect(result.success ? 'ok' : result.error.issues).toBe('ok');
