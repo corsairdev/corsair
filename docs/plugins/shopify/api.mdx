@@ -310,7 +310,7 @@ await corsair.shopify.api.customers.get({ id: 'gid://shopify/Customer/1' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-Personal data depends on the app access: without the customer scopes the name, email and phone come back null with an ACCESS_DENIED warning, and the rest of the customer is returned.
+Needs protected customer data access on the app. Fields the app was not granted (name, email, phone) come back null with an ACCESS_DENIED warning, and the rest of the customer is returned.
 
 
 
@@ -376,7 +376,7 @@ await corsair.shopify.api.customers.list({ first: 10 });
 | `after` | `string` | No | Cursor from a previous page. |
 | `query` | `string` | No | — |
 
-Personal data depends on the app access: a custom app with the customer scopes receives names and emails, and without them Shopify nulls every PII field and returns an ACCESS_DENIED warning beside the rows. The plugin keeps the rows either way. Ids, order counts and spend are always returned.
+Needs protected customer data access on the app; without it the call fails. With access to the Customer object but not to a field (Name, Email, Phone, Address), Shopify nulls that field and returns an ACCESS_DENIED warning beside the rows, and the plugin keeps the rows.
 
 
 
@@ -527,9 +527,9 @@ await corsair.shopify.api.inventory.adjust({ inventoryItemId: 'gid://shopify/Inv
 | `delta` | `number` | Yes | Signed change: positive adds stock, negative removes it. |
 | `reason` | `string` | Yes | Inventory change reason, e.g. "correction" or "received". |
 | `changeFromQuantity` | `number \| null` | No | Expected quantity before the change. Set it to turn the write into a compare-and-swap, which fails when the current quantity differs. Omit it to skip that check. |
-| `idempotencyKey` | `string` | No | Key that makes this adjustment safe to repeat. Generated per call when omitted; supply your own to make a retry of the same logical adjustment reuse it. |
+| `idempotencyKey` | `string` | No | Key that makes this adjustment safe to repeat. A new key is generated for each call when omitted, so two identical adjustments both apply; pass the same key again only when retrying the same adjustment. |
 
-Adjusts the available quantity by a signed delta at one location. A positive delta adds stock and a negative one removes it.
+Adjusts the available quantity by a signed delta at one location. A positive delta adds stock and a negative one removes it. Each call sends a new idempotency key unless you pass idempotencyKey; pass the same key only to retry the same adjustment.
 
 
 
@@ -1944,7 +1944,7 @@ await corsair.shopify.api.variants.update({ productId: 'gid://shopify/Product/10
 | `compareAtPrice` | `string` | No | — |
 | `sku` | `string` | No | SKU for this variant. Sent as inventoryItem.sku, which is where the API stores it. |
 | `barcode` | `string` | No | Barcode value; sent in the barcodes list, not the deprecated barcode field. |
-| `barcodeType` | `UPC \| EAN \| ISBN \| GTIN \| ASIN \| NS_PID` | No | Barcode standard. Defaults to UPC when barcode is set. |
+| `barcodeType` | `UPC \| EAN \| ISBN \| GTIN \| ASIN \| NS_PID` | No | Barcode standard. When omitted the value is stored without a type and is not checked against a standard. |
 | `inventoryPolicy` | `DENY \| CONTINUE` | No | — |
 
 
