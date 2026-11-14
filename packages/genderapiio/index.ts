@@ -124,17 +124,17 @@ const defaultAuthType = 'api_key' as const;
 
 const genderApiIoEndpointMeta = {
 	'gender.infer': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Infer gender from a name, an email address or a username, with a confidence, the source that answered (dataset or AI) and the credits it cost',
 	},
 	'gender.batch': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Infer gender for up to 50 names, emails or usernames in one request. An item can fail on its own, and only successful items are billed',
 	},
 	'phone.validate': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Validate and format a phone number, returning its E.164 form, country and calling code',
 	},

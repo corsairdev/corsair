@@ -172,7 +172,7 @@ Free, and `meta.access.mode` tells an IP trial from a keyed call.
 
 Infer gender for up to 50 names, emails or usernames in one request. An item can fail on its own, and only successful items are billed
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.genderapiio.api.gender.batch({ items: [{ type: 'name', value: 'Sophia' }, { type: 'name', value: 'Michael', country: 'US' }] });
@@ -299,7 +299,7 @@ Up to 50 items (10 on the IP trial); defaults to `ai_mode: off`, unlike a single
 
 Infer gender from a name, an email address or a username, with a confidence, the source that answered (dataset or AI) and the credits it cost
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.genderapiio.api.gender.infer({ type: 'name', value: 'Sophia', country: 'US' });
@@ -392,7 +392,7 @@ await corsair.genderapiio.api.gender.infer({ type: 'name', value: 'Sophia', coun
 
 Validate and format a phone number, returning its E.164 form, country and calling code
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.genderapiio.api.phone.validate({ number: '+14155552671', country: 'US' });

@@ -60,16 +60,17 @@ describe('genderapiio plugin definition', () => {
 		]);
 	});
 
-	it('marks credit-spending calls destructive and the free account routes read', () => {
+	it('gives every endpoint a description and a read risk level', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const entry of Object.values(meta)) {
 			expect(entry.description?.length).toBeGreaterThan(20);
 		}
-		// Every prediction and phone validation costs credits (R8).
-		expect(meta['gender.infer']?.riskLevel).toBe('destructive');
-		expect(meta['gender.batch']?.riskLevel).toBe('destructive');
-		expect(meta['phone.validate']?.riskLevel).toBe('destructive');
+		// Predictions and phone validation use credits but only return data, so
+		// they stay read, as metered reads do in the Ahrefs plugin (R8 scope).
+		expect(meta['gender.infer']?.riskLevel).toBe('read');
+		expect(meta['gender.batch']?.riskLevel).toBe('read');
+		expect(meta['phone.validate']?.riskLevel).toBe('read');
 		expect(meta['account.usage']?.riskLevel).toBe('read');
 		expect(meta['account.capabilities']?.riskLevel).toBe('read');
 		expect(meta['account.errorCatalog']?.riskLevel).toBe('read');
