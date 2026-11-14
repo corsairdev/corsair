@@ -17,7 +17,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete a bill.',
 	},
 	'v11.bills_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -26,7 +26,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v11.bills_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v11.bills_pdf': {
@@ -131,7 +131,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete a credit note.',
 	},
 	'v11.creditnotes_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -140,7 +140,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v11.creditnotes_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v11.creditnotes_pdf': {
@@ -217,7 +217,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete an estimate.',
 	},
 	'v11.estimates_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -226,7 +226,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v11.estimates_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v11.estimates_pdf': {
@@ -287,7 +287,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete an invoice.',
 	},
 	'v11.invoices_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -296,7 +296,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v11.invoices_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v11.invoices_pdf': {
@@ -418,7 +418,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete a supplier credit.',
 	},
 	'v11.suppliercredits_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -427,7 +427,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v11.suppliercredits_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v11.suppliercredits_pdf': {
@@ -512,7 +512,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete a bill.',
 	},
 	'v12.bills_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -521,7 +521,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v12.bills_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v12.bills_pdf': {
@@ -790,7 +790,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete a credit note.',
 	},
 	'v12.creditnotes_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -799,7 +799,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v12.creditnotes_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v12.creditnotes_pdf': {
@@ -908,7 +908,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete a delivery note.',
 	},
 	'v12.deliverynotes_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -917,7 +917,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v12.deliverynotes_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v12.deliverynotes_pdf': {
@@ -1042,7 +1042,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete an estimate.',
 	},
 	'v12.estimates_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -1051,7 +1051,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v12.estimates_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v12.estimates_pdf': {
@@ -1212,7 +1212,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete a goods receipt.',
 	},
 	'v12.goodsreceipts_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -1221,7 +1221,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v12.goodsreceipts_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v12.goodsreceipts_pdf': {
@@ -1294,7 +1294,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete an invoice.',
 	},
 	'v12.invoices_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -1303,7 +1303,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v12.invoices_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v12.invoices_pdf': {
@@ -1631,7 +1631,7 @@ export const elorusEndpointMeta = {
 		description: 'Delete a supplier credit.',
 	},
 	'v12.suppliercredits_email_from_template': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"The subject and message are rendered from the template resolved via templateid, or the organization's default template if not provided.",
 	},
@@ -1640,7 +1640,7 @@ export const elorusEndpointMeta = {
 		description: 'Get the default document email fields.',
 	},
 	'v12.suppliercredits_email_create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send the document by email.',
 	},
 	'v12.suppliercredits_pdf': {

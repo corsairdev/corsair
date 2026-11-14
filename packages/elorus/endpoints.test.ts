@@ -3,6 +3,7 @@ import type { z } from 'zod';
 import { ElorusEndpoints, ElorusRegisteredHandlers } from './endpoints';
 import { elorusEndpointMeta } from './endpoints/meta';
 import { elorusOperationSpecs } from './endpoints/specs';
+import type { ElorusOperationKey } from './endpoints/types';
 import { elorusOperationSchemas } from './endpoints/types';
 import type { ElorusContext } from './index';
 
@@ -158,9 +159,20 @@ describe('Elorus REST operation coverage', () => {
 		expect(
 			elorusOperationSpecs['v12.timeentries_mark_unbilled'].riskLevel,
 		).toBe('write');
-		expect(elorusOperationSpecs['v12.invoices_email_create'].riskLevel).toBe(
-			'write',
+		// R8: an operation that sends a message is destructive.
+		const sends = Object.entries(elorusOperationSpecs).filter(
+			([, spec]) =>
+				spec.operationId.endsWith('_email_create') ||
+				spec.operationId.endsWith('_email_from_template'),
 		);
+		expect(sends).toHaveLength(24);
+		for (const [key, spec] of sends) {
+			expect([key, spec.riskLevel]).toEqual([key, 'destructive']);
+			expect([
+				key,
+				elorusEndpointMeta[key as ElorusOperationKey].riskLevel,
+			]).toEqual([key, 'destructive']);
+		}
 		expect(elorusOperationSpecs['v12.invoices_mark_void'].riskLevel).toBe(
 			'destructive',
 		);

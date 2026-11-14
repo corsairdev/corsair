@@ -38,8 +38,9 @@ PDF and attachment-file operations return
 to 25 MiB. Elorus's documented list responses use page-number pagination; this
 plugin does not automatically request later pages.
 
-Deletes and document voiding are marked destructive. Other mutations, email
-sending, and billing-state changes are writes. The official references do not
+Deletes, document voiding and email sending (`*_email_create`,
+`*_email_from_template`) are marked destructive. Other mutations and
+billing-state changes are writes. The official references do not
 specify a general rate limit or idempotency key. A 429 preserves `Retry-After`,
 but requests are not automatically retried, avoiding accidental replay of
 accounting side effects.
