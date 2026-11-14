@@ -16,7 +16,7 @@ description: "API reference for Cloudflare Browser Run: every `cloudflarebrowser
 
 Capture a page accessibility tree: https://developers.cloudflare.com/browser-run/quick-actions/accessibility-tree-endpoint/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.accessibilityTree.capture({
@@ -169,7 +169,7 @@ await corsair.cloudflarebrowserrendering.api.browser.close({ accountId: 'acct-12
 
 Acquire a browser session with optional guardrails: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/create/.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.browser.create({
@@ -387,7 +387,7 @@ await corsair.cloudflarebrowserrendering.api.browser.version({ accountId: 'acct-
 
 Fetch rendered HTML through Browser Run Quick Actions: https://developers.cloudflare.com/browser-run/quick-actions/content-endpoint/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.content.fetch({
@@ -598,7 +598,7 @@ await corsair.cloudflarebrowserrendering.api.crawl.get({ accountId: 'acct-123', 
 
 Start an asynchronous site crawl: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.crawl.start({
@@ -727,7 +727,7 @@ await corsair.cloudflarebrowserrendering.api.crawl.start({
 
 Extract structured page data using a prompt or JSON schema: https://developers.cloudflare.com/browser-run/quick-actions/json-endpoint/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.json.extract({
@@ -840,7 +840,7 @@ await corsair.cloudflarebrowserrendering.api.json.extract({
 
 Retrieve links from a rendered page: https://developers.cloudflare.com/browser-run/quick-actions/links-endpoint/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.links.list({
@@ -946,7 +946,7 @@ await corsair.cloudflarebrowserrendering.api.links.list({
 
 Convert rendered page content to Markdown: https://developers.cloudflare.com/browser-run/quick-actions/markdown-endpoint/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.markdown.convert({
@@ -1050,7 +1050,7 @@ await corsair.cloudflarebrowserrendering.api.markdown.convert({
 
 Render a page to JSON-safe base64 PDF data: https://developers.cloudflare.com/browser-run/quick-actions/pdf-endpoint/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.pdf.render({ accountId: 'acct-123', browser: 'kitesurf', cacheTTL: 0, body: { url: 'https://example.com', pdfOptions: { format: 'a4' } } });
@@ -1183,7 +1183,7 @@ await corsair.cloudflarebrowserrendering.api.pdf.render({ accountId: 'acct-123',
 
 Extract selected HTML elements: https://developers.cloudflare.com/browser-run/quick-actions/scrape-endpoint/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.scrape.extract({
@@ -1316,7 +1316,7 @@ await corsair.cloudflarebrowserrendering.api.scrape.extract({
 
 Capture a screenshot as JSON-safe base64 data: https://developers.cloudflare.com/browser-run/quick-actions/screenshot-endpoint/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.screenshot.capture({ accountId: 'acct-123', browser: 'kitesurf', cacheTTL: 30, body: { url: 'https://example.com', screenshotOptions: { fullPage: true } } });
@@ -1535,7 +1535,7 @@ await corsair.cloudflarebrowserrendering.api.sessions.list({ accountId: 'acct-12
 
 Capture multiple page formats in one request: https://developers.cloudflare.com/browser-run/quick-actions/snapshot/.
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudflarebrowserrendering.api.snapshot.capture({

@@ -248,52 +248,52 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const cloudflareBrowserRenderingEndpointMeta = {
 	'content.fetch': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Fetch rendered HTML through Browser Run Quick Actions: https://developers.cloudflare.com/browser-run/quick-actions/content-endpoint/.',
 	},
 	'markdown.convert': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Convert rendered page content to Markdown: https://developers.cloudflare.com/browser-run/quick-actions/markdown-endpoint/.',
 	},
 	'snapshot.capture': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Capture multiple page formats in one request: https://developers.cloudflare.com/browser-run/quick-actions/snapshot/.',
 	},
 	'accessibilityTree.capture': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Capture a page accessibility tree: https://developers.cloudflare.com/browser-run/quick-actions/accessibility-tree-endpoint/.',
 	},
 	'scrape.extract': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Extract selected HTML elements: https://developers.cloudflare.com/browser-run/quick-actions/scrape-endpoint/.',
 	},
 	'json.extract': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Extract structured page data using a prompt or JSON schema: https://developers.cloudflare.com/browser-run/quick-actions/json-endpoint/.',
 	},
 	'links.list': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Retrieve links from a rendered page: https://developers.cloudflare.com/browser-run/quick-actions/links-endpoint/.',
 	},
 	'screenshot.capture': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Capture a screenshot as JSON-safe base64 data: https://developers.cloudflare.com/browser-run/quick-actions/screenshot-endpoint/.',
 	},
 	'pdf.render': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Render a page to JSON-safe base64 PDF data: https://developers.cloudflare.com/browser-run/quick-actions/pdf-endpoint/.',
 	},
 	'crawl.start': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Start an asynchronous site crawl: https://developers.cloudflare.com/browser-run/quick-actions/crawl-endpoint/.',
 	},
@@ -318,7 +318,7 @@ const cloudflareBrowserRenderingEndpointMeta = {
 			'Get details for a Browser Rendering session: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/session/methods/get/.',
 	},
 	'browser.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Acquire a browser session with optional guardrails: https://developers.cloudflare.com/api/resources/browser_rendering/subresources/devtools/subresources/browser/methods/create/.',
 	},
