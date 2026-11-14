@@ -1,0 +1,153 @@
+---
+title: "Kanbanize plugin"
+sidebarTitle: "Overview"
+description: "Kanban boards with Kanbanize (now Businessmap) - manage boards, workflows, columns and lanes, create and move cards with their custom fields, subtasks and comments, and read tags, users and the account's request limits."
+---
+
+Use **Kanbanize** through Corsair: one client, typed API calls.
+
+Create a key in Businessmap under My Account, API, then Show API key. It acts as the user who owns it, with exactly their board permissions. Generating a new key deletes the current one permanently.
+
+Two things are needed before the first call:
+
+- **The account subdomain.** Every account is served from its own host: `acme` for `acme.kanbanize.com`. Connect delivers it as the `subdomain` credential; the plugin option of the same name overrides it. A call with neither throws before any request is sent.
+- **A board's structure.** Cards live in a column on a lane, inside a workflow. `workflows.list`, `columns.list` and `lanes.list` read the IDs a card needs; a board with no workflow cannot take cards.
+
+Things to know before you call:
+
+- **Booleans are `0` and `1`.** Businessmap validates `is_archived`, `is_enabled`, `is_blocked` and friends as integers, so the plugin takes `0` or `1` rather than `true` or `false`. Passing a boolean is rejected before the request.
+- **A column is a main column or a subcolumn.** A main column takes `workflow_id` and a `section` (`1` backlog, `2` requested, `3` progress, `4` done). A subcolumn takes `parent_column_id` and no section. Sending both, or neither, is rejected locally.
+- **A lane sits on a workflow or under another lane.** Same rule: `workflow_id` or `parent_lane_id`, never both.
+- **Lists are comma-joined.** `card_ids`, `board_ids` and the rest travel as one comma-separated value, which is how the API documents them. Pass an array and the plugin joins it.
+- **Paging.** Only `cards.list` pages, with `page` and `per_page` (200 by default, 1000 at most). It returns `next_page`, which is null on the last page.
+- **Deletes answer 204.** `boards.delete`, `workflows.delete`, `columns.delete`, `lanes.delete`, `cards.delete`, `subtasks.delete` and `webhooks.delete` return `{ success: true }` once the API answers, and throw on a 404 or 403.
+- **Rate limits.** The account has an hourly and a minutely ceiling, 600 and 30 by default; read them with `limits.get`. A limit answer carries the seconds to wait, which the plugin turns into the retry delay, and a bare 429 from a gateway is treated the same. Only reads are replayed after a 5xx, because a retried card create would leave a duplicate.
+- **Webhooks.** `webhooks.create` registers a URL with Businessmap, which then posts that board's events to it. The plugin does not handle the deliveries itself; point the URL at your own endpoint.
+
+**What you get:**
+
+- 39 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/kanbanize better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/kanbanize better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/kanbanize better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/kanbanize better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { kanbanize } from '@corsair-dev/kanbanize';
+
+export const corsair = createCorsair({
+	plugins: [
+		kanbanize(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Kanbanize API key before the first call: `pnpm corsair setup --plugin=kanbanize --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+kanbanize()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'kanbanize',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the cards on a board**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kanbanize.api.cards.list({
+	board_ids: [1075],
+	expand: ['custom_fields'],
+});
+```
+
+
+**Create a card in a column**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kanbanize.api.cards.create({
+	title: 'Ship the pricing page',
+	column_id: 15876,
+	lane_id: 9838,
+	description: 'The page is written; it needs the new plan table.',
+});
+```
+
+
+See the full list on the [API](/plugins/kanbanize/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/kanbanize/api">
+    Every `kanbanize.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

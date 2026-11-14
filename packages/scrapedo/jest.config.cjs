@@ -1,0 +1,60 @@
+module.exports = {
+	preset: 'ts-jest',
+	testEnvironment: 'node',
+	roots: ['<rootDir>'],
+	testMatch: [
+		'**/*.test.ts',
+		'**/tests/**/*.test.ts',
+		'**/plugins/**/*.test.ts',
+		'**/setup/**/*.test.ts',
+	],
+	// api.test.ts calls the live API and spends credits; only test:live, whose
+	// --testPathIgnorePatterns replaces this list, runs it.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
+	collectCoverageFrom: [
+		'**/*.ts',
+		'!**/*.d.ts',
+		'!**/node_modules/**',
+		'!**/dist/**',
+		'!jest.config.ts',
+		'!tests/**',
+	],
+	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+	transform: {
+		'^.+\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',
+		'^.+\\.ts$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+					verbatimModuleSyntax: false,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+				},
+			},
+		],
+		'.*\\.js$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+				},
+			},
+		],
+	},
+	moduleNameMapper: {
+		'^corsair$': '<rootDir>/../corsair/index.ts',
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/tests$': '<rootDir>/../corsair/tests.ts',
+		'^(\\.\\.?/.*)\\.js$': '$1',
+	},
+	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	extensionsToTreatAsEsm: ['.ts'],
+	testTimeout: 30000,
+	verbose: true,
+};
