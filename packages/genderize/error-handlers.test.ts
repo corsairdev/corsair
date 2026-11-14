@@ -1,7 +1,12 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GenderizeAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/**
+ * An HTTP failure is core's ApiError, as `request()` throws it; a request that
+ * got no answer is a GenderizeAPIError.
+ */
 function apiError(options: {
 	status?: number;
 	method?: string;
@@ -9,8 +14,26 @@ function apiError(options: {
 	timedOut?: boolean;
 	retryAfter?: number;
 	reason?: string;
-}) {
-	return new GenderizeAPIError('failed', options);
+}): Error {
+	if (options.status === undefined) {
+		return new GenderizeAPIError('failed', {
+			method: options.method ?? 'GET',
+			transport: options.transport,
+			timedOut: options.timedOut,
+		});
+	}
+	return new ApiError(
+		{ method: 'GET', url: '/' },
+		{
+			url: 'https://api.genderize.io/',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: options.reason === undefined ? {} : { error: options.reason },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**

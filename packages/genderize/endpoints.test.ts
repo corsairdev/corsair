@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { GenderizeAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { GenderizeAPIError, genderizeErrorInfo } from './client';
 import { batch, predict } from './endpoints';
 import { GenderizeEndpointInputSchemas } from './endpoints/types';
 import {
@@ -76,11 +77,11 @@ function lastRequest() {
 // unknown: the rejection value is untyped by definition.
 async function failure(
 	run: Promise<unknown>,
-): Promise<GenderizeAPIError & Error> {
+): Promise<Error & Partial<ApiError> & Partial<GenderizeAPIError>> {
 	try {
 		await run;
 	} catch (error) {
-		return error as GenderizeAPIError & Error;
+		return error as Error & Partial<ApiError> & Partial<GenderizeAPIError>;
 	}
 	throw new Error('expected the call to fail, but it resolved');
 }
@@ -153,14 +154,14 @@ describe('Genderize client', () => {
 		expect(lastRequest().query.apikey).toBe(API_KEY);
 	});
 
-	it('wraps a refused key in GenderizeAPIError with its reason', async () => {
+	it('keeps a refused key core ApiError, with its reason', async () => {
 		respond(invalidKey, 401);
 		const error = await failure(invoke(predict, { name: 'Alice' }));
 
-		expect(error).toBeInstanceOf(GenderizeAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(401);
-		expect(error.reason).toBe('Invalid API key');
-		expect(error.isAuthError).toBe(true);
+		expect(genderizeErrorInfo(error).reason).toBe('Invalid API key');
+		expect(genderizeErrorInfo(error).isAuthError).toBe(true);
 		expect(error.message).toContain('Genderize 401: Invalid API key');
 	});
 
@@ -168,8 +169,8 @@ describe('Genderize client', () => {
 		respond(subscriptionInactive, 402);
 		const error = await failure(invoke(predict, { name: 'Alice' }));
 
-		expect(error.isSubscriptionError).toBe(true);
-		expect(error.isAuthError).toBe(false);
+		expect(genderizeErrorInfo(error).isSubscriptionError).toBe(true);
+		expect(genderizeErrorInfo(error).isAuthError).toBe(false);
 	});
 
 	it('reads Retry-After off a 429', async () => {
@@ -181,7 +182,7 @@ describe('Genderize client', () => {
 		);
 		const error = await failure(invoke(predict, { name: 'Alice' }));
 
-		expect(error.isRateLimit).toBe(true);
+		expect(genderizeErrorInfo(error).isRateLimit).toBe(true);
 		// corsair/http normalises Retry-After to milliseconds.
 		expect(error.retryAfter).toBe(30_000);
 	});
@@ -199,7 +200,23 @@ describe('Genderize client', () => {
 		);
 		const error = await failure(invoke(predict, { name: 'Alice' }));
 
-		expect(error.remaining).toBe(3);
+		expect(genderizeErrorInfo(error).remaining).toBe(3);
+	});
+
+	it('keeps the names and the key off the error', async () => {
+		respond(invalidKey, 401);
+		const error = await failure(
+			invoke(batch, { names: ['Zelophehad', 'Quirinus'] }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const text = `${String(error)} ${JSON.stringify(error)}`;
+		expect(text).not.toContain('Zelophehad');
+		expect(text).not.toContain('Quirinus');
+		expect(text).not.toContain(API_KEY);
+		expect(error.request?.query).toBeUndefined();
+		expect(error.url).not.toContain('?');
+		expect(error.body).toEqual({ error: 'Invalid API key' });
 	});
 
 	it('marks a dropped connection as a transport failure', async () => {
@@ -260,8 +277,8 @@ describe('genderize.name.predict', () => {
 		respond(missingName, 422);
 		const error = await failure(invoke(predict, { name: 'Alice' }));
 
-		expect(error.isValidationError).toBe(true);
-		expect(error.reason).toBe("Missing 'name' parameter");
+		expect(genderizeErrorInfo(error).isValidationError).toBe(true);
+		expect(genderizeErrorInfo(error).reason).toBe("Missing 'name' parameter");
 	});
 
 	it('logs the prediction without the name', async () => {
@@ -327,8 +344,10 @@ describe('genderize.batch.names', () => {
 		respond(requestTooLow, 429);
 		const error = await failure(invoke(batch, { names: ['Alice', 'Bob'] }));
 
-		expect(error.isRateLimit).toBe(true);
-		expect(error.reason).toBe('Request limit too low to process request');
+		expect(genderizeErrorInfo(error).isRateLimit).toBe(true);
+		expect(genderizeErrorInfo(error).reason).toBe(
+			'Request limit too low to process request',
+		);
 	});
 
 	it('counts the unmatched names, because a batch is charged per name', async () => {
@@ -354,7 +373,7 @@ describe('genderize.batch.names', () => {
 		respond(invalidName, 422);
 		const error = await failure(invoke(batch, { names: ['Alice'] }));
 
-		expect(error.isValidationError).toBe(true);
+		expect(genderizeErrorInfo(error).isValidationError).toBe(true);
 	});
 });
 

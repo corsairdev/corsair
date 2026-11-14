@@ -23,18 +23,18 @@ export type GenderizeCredentials = {
 };
 
 /**
+ * A Genderize request that got no answer: a reset, DNS failure, abort or
+ * timeout.
+ *
+ * An HTTP error stays core's `ApiError` (see `sanitizeApiError`), so its status,
+ * Retry-After and rate-limit fields reach core and the error handlers.
+ * `genderizeErrorInfo` reads either kind.
+ *
  * A name that is not in the data set answers 200 with `gender: null`,
  * `probability: 0` and `count: 0`. That is a result, not a failure, and the
  * schemas say so, so nothing here treats it as an error.
  */
 export class GenderizeAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from `Retry-After`, when Genderize sent one. */
-	readonly retryAfter?: number;
-	/** Genderize's own `error` string, such as `Invalid API key`. */
-	readonly reason?: string;
-	/** Requests left in the current window, from `X-Rate-Limit-Remaining`. */
-	readonly remaining?: number;
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
@@ -43,10 +43,6 @@ export class GenderizeAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			retryAfter?: number;
-			reason?: string;
-			remaining?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -54,37 +50,56 @@ export class GenderizeAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'GenderizeAPIError';
-		this.status = options.status;
-		this.retryAfter = options.retryAfter;
-		this.reason = options.reason;
-		this.remaining = options.remaining;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
+}
 
+/** What a Genderize failure means to a caller, read from either error kind. */
+export type GenderizeErrorInfo = {
+	status?: number;
+	/** Milliseconds from `Retry-After`, when Genderize sent one. */
+	retryAfter?: number;
+	/** Genderize's own `error` string, such as `Invalid API key`. */
+	reason?: string;
+	/** Requests left in the current window, from `X-Rate-Limit-Remaining`. */
+	remaining?: number;
+	method?: string;
+	transport: boolean;
+	timedOut: boolean;
 	/**
 	 * 429 covers both the monthly quota and the short-term throttle, which the
 	 * docs list as `Request limit reached` and `Request too low to process`.
 	 */
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
+	isRateLimit: boolean;
 	/** The key was not recognized. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
+	isAuthError: boolean;
 	/** The subscription behind the key is paused, expired or unpaid. */
-	get isSubscriptionError(): boolean {
-		return this.status === 402;
-	}
-
+	isSubscriptionError: boolean;
 	/** The name was missing, empty or malformed. */
-	get isValidationError(): boolean {
-		return this.status === 422;
-	}
+	isValidationError: boolean;
+};
+
+// unknown: anything can be thrown; only ApiError and GenderizeAPIError carry fields.
+export function genderizeErrorInfo(error: unknown): GenderizeErrorInfo {
+	const http = error instanceof ApiError ? error : undefined;
+	const transport = error instanceof GenderizeAPIError ? error : undefined;
+	const status = http?.status;
+	const reason = http ? asRecord(http.body)?.error : undefined;
+	return {
+		status,
+		retryAfter: http?.retryAfter,
+		reason: typeof reason === 'string' ? reason : undefined,
+		remaining: http?.rateLimitRemaining,
+		method: http?.request.method ?? transport?.method,
+		transport: transport?.transport ?? false,
+		timedOut: transport?.timedOut ?? false,
+		isRateLimit: status === 429,
+		isAuthError: status === 401,
+		isSubscriptionError: status === 402,
+		isValidationError: status === 422,
+	};
 }
 
 /** The `error` string Genderize sent, or a readable fallback. */
@@ -143,19 +158,7 @@ export async function makeGenderizeRequest(
 		});
 		return result;
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const reason = asRecord(error.body)?.error;
-			throw new GenderizeAPIError(
-				describeGenderizeError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					retryAfter: error.retryAfter,
-					reason: typeof reason === 'string' ? reason : undefined,
-					remaining: error.rateLimitRemaining,
-					method: 'GET',
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new GenderizeAPIError(error.message, {
@@ -170,6 +173,35 @@ export async function makeGenderizeRequest(
 			transport: true,
 		});
 	}
+}
+
+/**
+ * Core's `ApiError` keeps the sent query and URL, and here they carry the names
+ * looked up, which are personal data, beside the key. The error is rebuilt as
+ * an `ApiError` with the same status and rate-limit fields, Genderize's
+ * `{ error }` as the body, and the query dropped from both the request and the
+ * URL.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const { query: _query, ...request } = error.request;
+	const reason = asRecord(error.body)?.error;
+	return new ApiError(
+		{ ...request, url: request.url.split('?')[0] ?? request.url },
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: typeof reason === 'string' ? { error: reason } : {},
+		},
+		describeGenderizeError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /**

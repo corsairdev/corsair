@@ -167,7 +167,8 @@ export function genderize<const T extends GenderizePluginOptions>(
 	} satisfies InternalGenderizePlugin;
 }
 
-export { GenderizeAPIError } from './client';
+export type { GenderizeErrorInfo } from './client';
+export { GenderizeAPIError, genderizeErrorInfo } from './client';
 
 export type {
 	GenderizeBatchInput,
