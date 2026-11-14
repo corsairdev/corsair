@@ -231,6 +231,7 @@ export const BaseProviders = [
 	'elevenlabs',
 	'emailoctopus',
 	'emelia',
+	'endorsal',
 	'enginemailer',
 	'enigma',
 	'epicgames',
@@ -783,6 +784,7 @@ export const ProviderDisplayNames = {
 	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	endorsal: 'Endorsal',
 	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
@@ -1342,6 +1344,7 @@ export type AllProviders =
 	| 'elevenlabs'
 	| 'emailoctopus'
 	| 'emelia'
+	| 'endorsal'
 	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'

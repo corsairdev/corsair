@@ -1,0 +1,133 @@
+---
+title: "Endorsal plugin"
+sidebarTitle: "Overview"
+description: "Manage Endorsal contacts, testimonials, tags, widgets, Wall of Love, and AutoRequest campaigns."
+---
+
+Use **Endorsal** through Corsair: one client, typed API calls.
+
+Generate a property-specific key at https://app.endorsal.io/account/api. The plugin sends it as `Authorization: Bearer <key>` on every call. The reference marks GET keys as optional, but the API answers 401 to every route without one, so the plugin asks for a key before any call. The plugin uses the API host `https://api.endorsal.io` and never puts credentials in query parameters.
+
+The published OpenAPI document currently defines 25 REST operations. List routes return the complete collection and expose no page or cursor parameters. Search conditions are AND-combined; `in` requires an array. Testimonial status fields (`approved`, `featured`) are numeric. `widgets.byId.get` and `wallOfLove.get` support `render: true`, which returns rendered HTML rather than the normal JSON resource.
+
+The `POST /superlinks` route is not present in the current published OpenAPI document, so it is intentionally excluded. Webhooks are outside this integration's scope.
+
+**What you get:**
+
+- 25 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/endorsal better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/endorsal better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/endorsal better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/endorsal better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { endorsal } from '@corsair-dev/endorsal';
+
+export const corsair = createCorsair({
+	plugins: [
+		endorsal(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Endorsal API key before the first call: `pnpm corsair setup --plugin=endorsal --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+endorsal()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'endorsal',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`autorequests.campaigns.byId.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.endorsal.api.autorequests.campaigns.byId.get({ id: 'campaign_123' });
+```
+
+
+**`contacts.byId.delete`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.endorsal.api.contacts.byId.delete({ id: 'contact_123' });
+```
+
+
+See the full list on the [API](/plugins/endorsal/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/endorsal/api">
+    Every `endorsal.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
