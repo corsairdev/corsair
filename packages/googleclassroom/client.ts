@@ -23,6 +23,7 @@ export type GoogleClassroomRequestOptions = {
 	query?: Record<string, GoogleClassroomQueryValue>;
 };
 
+// `unknown` because a caught value can be anything; instanceof narrows it before status is read.
 function isUnauthorized(error: unknown): boolean {
 	return error instanceof ApiError && error.status === 401;
 }
