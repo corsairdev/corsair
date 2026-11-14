@@ -53,6 +53,7 @@ async function resolve(
 	for (const entry of Object.values(handlers)) {
 		if (!entry) continue;
 		if (entry.match(error, context)) {
+			// Record<string, unknown>: the handler's retry strategy is checked field by field.
 			return (await entry.handler(error, context)) as Record<string, unknown>;
 		}
 	}

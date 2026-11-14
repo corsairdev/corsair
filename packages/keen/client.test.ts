@@ -179,6 +179,7 @@ describe('makeKeenRequest', () => {
 		const error = await makeKeenRequest(
 			{ apiKey: API_KEY, projectId: PROJECT_ID },
 			{ method: 'GET', path: '/events' },
+			// unknown: a rejected request can carry any thrown value.
 		).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
@@ -206,6 +207,7 @@ describe('makeKeenRequest', () => {
 				path: '/events/purchases',
 				body: { card: 'secret-4111' },
 			},
+			// unknown: a rejected request can carry any thrown value.
 		).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
@@ -225,6 +227,7 @@ describe('makeKeenRequest', () => {
 		const error = (await makeKeenRequest(
 			{ apiKey: API_KEY, projectId: PROJECT_ID },
 			{ method: 'GET', path: '/events' },
+			// unknown: a rejected request can carry any thrown value.
 		).catch((caught: unknown) => caught)) as Error;
 
 		expect(error).toMatchObject({
@@ -280,6 +283,7 @@ describe('makeKeenRequest', () => {
 		const error = await makeKeenRequest(
 			{ apiKey: API_KEY, projectId: PROJECT_ID },
 			{ method: 'GET', path: '/events' },
+			// unknown: a rejected request can carry any thrown value.
 		).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
@@ -293,6 +297,7 @@ describe('makeKeenRequest', () => {
 		const error = await makeKeenRequest(
 			{ apiKey: API_KEY, projectId: PROJECT_ID },
 			{ method: 'GET', path: '/events' },
+			// unknown: a rejected request can carry any thrown value.
 		).catch((caught: unknown) => caught);
 
 		expect(error).toMatchObject({ status: 403 });
