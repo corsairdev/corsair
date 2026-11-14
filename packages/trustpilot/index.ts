@@ -434,8 +434,9 @@ const trustpilotEndpointMeta = {
 			'Create a product review invitation link and consume invitation allowance',
 	},
 	'productReviews.createComment': {
-		riskLevel: 'write',
-		description: 'Add a business comment to a product review conversation',
+		riskLevel: 'destructive',
+		description:
+			'Publish a business comment on a product review conversation (public, seen by the reviewer)',
 	},
 	'productReviews.getConversation': {
 		riskLevel: 'read',
@@ -446,8 +447,9 @@ const trustpilotEndpointMeta = {
 		description: 'Get one comment from a product review conversation',
 	},
 	'productReviews.updateComment': {
-		riskLevel: 'write',
-		description: 'Edit a business comment in a product review conversation',
+		riskLevel: 'destructive',
+		description:
+			'Replace the text of a published business comment on a product review conversation',
 	},
 	'productReviews.publicConversation': {
 		riskLevel: 'read',
