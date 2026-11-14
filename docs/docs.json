@@ -1715,6 +1715,14 @@
                 ]
               },
               {
+                "group": "DigiCert",
+                "pages": [
+                  "plugins/digicert/overview",
+                  "plugins/digicert/api",
+                  "plugins/digicert/database"
+                ]
+              },
+              {
                 "group": "DigitalOcean",
                 "pages": [
                   "plugins/digitalocean/overview",

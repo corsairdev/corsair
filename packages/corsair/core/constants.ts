@@ -203,6 +203,7 @@ export const BaseProviders = [
 	'desktime',
 	'devinmcp',
 	'diffbot',
+	'digicert',
 	'digitalocean',
 	'discord',
 	'dnsfilter',
@@ -738,6 +739,7 @@ export const ProviderDisplayNames = {
 	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
+	digicert: 'DigiCert',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dnsfilter: 'DNSFilter',
@@ -1280,6 +1282,7 @@ export type AllProviders =
 	| 'desktime'
 	| 'devinmcp'
 	| 'diffbot'
+	| 'digicert'
 	| 'digitalocean'
 	| 'discord'
 	| 'dnsfilter'
