@@ -10,6 +10,8 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
+// The endpoint only reads key; event logging is mocked. A full context requires
+// framework-managed fields that this request-seam test does not exercise.
 const ctx = { key: 'test-key' } as NeverBounceContext;
 const fixture = {
 	status: 'success',
@@ -79,8 +81,11 @@ describe('NeverBounce single.check', () => {
 		global.fetch = jest.fn();
 		const endpoint = neverbounce().endpoints!.single.check;
 		await expect(endpoint(ctx, { email: '' })).rejects.toThrow();
+		// As with ctx, only key is read and logging is mocked; the remaining
+		// framework-managed context fields are unnecessary for this fixture.
+		const missingKeyCtx = { key: '' } as NeverBounceContext;
 		await expect(
-			endpoint({ key: '' } as NeverBounceContext, {
+			endpoint(missingKeyCtx, {
 				email: 'user@example.com',
 			}),
 		).rejects.toThrow(AuthMissingError);
@@ -96,6 +101,8 @@ describe('NeverBounce single.check', () => {
 		);
 		global.fetch = fetchMock;
 		const plugin = neverbounce();
+		// JavaScript may throw any value, so narrow the caught value before
+		// inspecting ApiError properties instead of assuming its type.
 		let caught: unknown;
 		try {
 			await plugin.endpoints!.single.check(ctx, { email: 'user@example.com' });

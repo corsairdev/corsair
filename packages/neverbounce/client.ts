@@ -12,11 +12,14 @@ export class NeverBounceAPIError extends Error {
 	}
 }
 
+// HTTP responses are untrusted; the endpoint validates success data with Zod,
+// so assigning a more specific return type here would assume that validation.
 export async function makeNeverBounceRequest(
 	apiKey: string,
 	query: CheckInput,
 ): Promise<unknown> {
 	if (!apiKey) throw new AuthMissingError('neverbounce', 'api_key');
+	// Keep the raw response unknown until the endpoint's Zod schema validates it.
 	const result: unknown = await request(
 		{
 			BASE: 'https://api.neverbounce.com/v4.2',
