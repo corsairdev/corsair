@@ -323,6 +323,8 @@ describe('Help Scout Client & Transport', () => {
 			);
 			mockRequest.mockRejectedValueOnce(rawError);
 			const caught = (await makeHelpscoutRequest('/customers', 'k').catch(
+				// unknown: a rejected promise can carry any value; the cast below
+				// narrows it to the ApiError this test throws.
 				(e: unknown) => e,
 			)) as ApiError;
 			expect(caught).toBe(rawError);

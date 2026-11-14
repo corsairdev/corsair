@@ -6,7 +6,7 @@ description: "Manage mailboxes, conversations, customer profiles, threads, tags,
 
 Use **Help Scout** through Corsair: one client, typed API calls.
 
-**Authentication.** Help Scout has no API keys. Create an app under Your Profile > My Apps and connect each Help Scout account with OAuth 2: Corsair refreshes the 2-day access token with the stored refresh token, and once more after a 401. For a single Help Scout account, `clientCredentials: true` in plugin options mints tokens from the app's own id and secret instead (Help Scout's client-credentials grant), so no connect step is needed; leave it off when tenants connect their own accounts, because those tokens reach the account that owns the app. Passing `key` in plugin options sends that token as is, with no refresh.
+**Authentication.** Help Scout has no API keys. Create an app under Your Profile > My Apps and connect each Help Scout account with OAuth 2: Corsair refreshes the 2-day access token with the stored refresh token, and on a read it refreshes once more and retries after a 401 (writes are not retried, so a write that gets a 401 fails and can be run again). For a single Help Scout account, `clientCredentials: true` in plugin options mints tokens from the app's own id and secret instead (Help Scout's client-credentials grant), so no connect step is needed; leave it off when tenants connect their own accounts, because those tokens reach the account that owns the app. Passing `key` in plugin options sends that token as is, with no refresh.
 
 **Rate Limiting.** The Mailbox API enforces rate limits per tenant. Corsair's HTTP transport retries a 429 up to three times, honoring `Retry-After`.
 
