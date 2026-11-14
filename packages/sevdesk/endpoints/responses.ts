@@ -90,10 +90,23 @@ export function toResponseSchema(schema: z.core.$ZodType): z.ZodType {
 					.map((option) => scalarSchema(option)),
 			);
 			const [only] = [...kinds];
-			const base = kinds.size === 1 && only ? only : booleanLike;
+			// Mixed numbers and strings stay `string | number`; booleans join only when an option is one.
+			const base =
+				kinds.size === 1 && only
+					? only
+					: kinds.has(booleanLike)
+						? booleanLike
+						: stringLike;
 			return hasNull ? base.nullable() : base;
 		}
 		return z.union(options.map((option) => toResponseSchema(option)));
+	}
+	if (schema instanceof z.ZodIntersection) {
+		// Both sides are checked, so both need the lenient copy (the reset answers and custom field settings use one).
+		return z.intersection(
+			toResponseSchema(schema.def.left),
+			toResponseSchema(schema.def.right),
+		);
 	}
 	if (isScalar(schema)) return scalarSchema(schema);
 	// JSON values and `undefined` are kept as generated.

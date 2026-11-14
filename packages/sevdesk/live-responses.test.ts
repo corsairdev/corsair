@@ -1,5 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import { sevdeskEndpointsNested } from './endpoints';
+import { toResponseSchema } from './endpoints/responses';
 import type { SevdeskContext } from './index';
 import { sevdesk } from './index';
 
@@ -464,5 +466,69 @@ describe('sevDesk live request shapes', () => {
 		);
 		expect(meta?.['export.exportDatevCSV']?.riskLevel).toBe('destructive');
 		expect(meta?.['export.exportDatevXML']?.riskLevel).toBe('read');
+	});
+});
+
+describe('sevDesk lenient response copies', () => {
+	it('parses reset-to-open answers whose intersection holds nulls and numbers', async () => {
+		respond({
+			objects: {
+				id: 600001,
+				objectName: 'Invoice',
+				invoiceNumber: 'RE-1000',
+				payDate: null,
+				status: '100',
+				enshrined: null,
+				sumNet: '10',
+			},
+		});
+		const out = await sevdeskEndpointsNested.invoice.invoiceResetToOpen(ctx, {
+			path: { invoiceId: 600001 },
+		});
+		expect(out.objects?.id).toBe(600001);
+		expect(out.objects?.payDate).toBeNull();
+		respond({
+			objects: {
+				id: '700001',
+				objectName: 'CreditNote',
+				taxText: null,
+				customerInternalNote: null,
+				sumNet: 10,
+			},
+		});
+		const draft =
+			await sevdeskEndpointsNested.creditNote.creditNoteResetToDraft(ctx, {
+				path: { creditNoteId: 700001 },
+			});
+		expect(draft.objects?.id).toBe('700001');
+	});
+	it('parses custom fields whose setting carries null fields', async () => {
+		respond({
+			objects: [
+				{
+					id: '800001',
+					objectName: 'ContactCustomField',
+					value: 'x',
+					contactCustomFieldSetting: {
+						id: 900001,
+						objectName: 'ContactCustomFieldSetting',
+						description: null,
+					},
+				},
+			],
+		});
+		const out = await sevdeskEndpointsNested.contactField.getContactFields(
+			ctx,
+			{},
+		);
+		expect(out.objects?.[0]?.id).toBe('800001');
+	});
+	it('keeps booleans out of number-or-string unions', () => {
+		const schema = toResponseSchema(z.union([z.number(), z.string()]));
+		expect(schema.safeParse('2').success).toBe(true);
+		expect(schema.safeParse(2).success).toBe(true);
+		expect(schema.safeParse(true).success).toBe(false);
+		const flag = toResponseSchema(z.union([z.boolean(), z.string()]));
+		expect(flag.safeParse(true).success).toBe(true);
 	});
 });
