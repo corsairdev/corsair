@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import { describeKitError, makeKitRequest, readErrors } from './client';
 
 const API_KEY = 'kit-test-key';
@@ -148,12 +149,11 @@ describe('makeKitRequest', () => {
 		await expect(
 			makeKitRequest(API_KEY, { method: 'POST', path: '/v4/subscribers' }),
 		).rejects.toMatchObject({
-			name: 'KitAPIError',
+			name: 'ApiError',
 			status: 422,
-			errors: ['Email address is invalid', 'Custom field missing'],
+			body: { errors: ['Email address is invalid', 'Custom field missing'] },
 			message: 'Kit 422: Email address is invalid; Custom field missing',
-			method: 'POST',
-			transport: false,
+			request: { method: 'POST' },
 		});
 	});
 
@@ -167,20 +167,53 @@ describe('makeKitRequest', () => {
 
 		await expect(
 			makeKitRequest(API_KEY, { method: 'GET', path: '/v4/account' }),
-		).rejects.toMatchObject({ retryAfter: 6000, isRateLimit: true });
+		).rejects.toMatchObject({ retryAfter: 6000, status: 429 });
 	});
 
-	it('keeps no body on the error and no cause that holds one', async () => {
-		respond({ errors: ['a@b.example is invalid'] }, 422);
+	it('passes an HTTP failure on as core ApiError', async () => {
+		respond({ errors: ['Not found'] }, 404);
+
+		await expect(
+			makeKitRequest(API_KEY, { method: 'GET', path: '/v4/subscribers/9' }),
+		).rejects.toBeInstanceOf(ApiError);
+	});
+
+	it('keeps no subscriber address anywhere on the error', async () => {
+		respond(
+			{
+				errors: ['a@b.example is invalid'],
+				subscriber: { email_address: 'a@b.example' },
+			},
+			422,
+		);
 
 		// unknown: the rejection is an error whose fields the assertions read.
 		const error = (await makeKitRequest(API_KEY, {
 			method: 'POST',
 			path: '/v4/subscribers',
-		}).catch((caught: unknown) => caught)) as Error;
+			body: { email_address: 'a@b.example' },
+		}).catch((caught: unknown) => caught)) as ApiError;
 
-		expect(error).not.toHaveProperty('body');
+		expect(error.message).toBe('Kit 422: [email] is invalid');
+		expect(error.body).toEqual({ errors: ['[email] is invalid'] });
 		expect(error.cause).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('a@b.example');
+		expect(JSON.stringify(error.request)).not.toContain('a@b.example');
+	});
+
+	it('keeps the address in an untag query off the error', async () => {
+		respond({ errors: ['Not found'] }, 404);
+
+		// unknown: the rejection is an error whose fields the assertions read.
+		const error = (await makeKitRequest(API_KEY, {
+			method: 'DELETE',
+			path: '/v4/tags/31/subscribers',
+			query: { email_address: 'a@b.example' },
+		}).catch((caught: unknown) => caught)) as ApiError;
+
+		expect(JSON.stringify(error)).not.toContain('a@b.example');
+		expect(error.url).not.toContain('a%40b.example');
+		expect(JSON.stringify(error.request)).not.toContain('a@b.example');
 	});
 
 	it('marks a transport failure and keeps its cause, which never held a body', async () => {

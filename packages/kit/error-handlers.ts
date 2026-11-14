@@ -1,8 +1,16 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { KitAPIError } from './client';
 
+// An HTTP error from Kit is core's ApiError; KitAPIError is a request that got
+// no answer.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KitAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	return error instanceof KitAPIError ? error.method : undefined;
 }
 
 // Kit documents 401, 403, 404, 413, 422 and 429 on the v4 routes, plus the
@@ -11,11 +19,11 @@ export const errorHandlers = {
 	// A 429 is one of Kit's two request limits. It sends Retry-After, so the
 	// handler waits that when it arrives and backs off otherwise.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => error instanceof KitAPIError && error.isRateLimit,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof KitAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -33,7 +41,7 @@ export const errorHandlers = {
 	// A payload Kit refuses for its size. A retry sends the same payload, so
 	// this is not retried.
 	PAYLOAD_TOO_LARGE_ERROR: {
-		match: (error: Error) => error instanceof KitAPIError && error.isTooLarge,
+		match: (error: Error) => statusOf(error) === 413,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404 is an unknown subscriber, tag or form, and 422 a field Kit refused.
@@ -50,9 +58,7 @@ export const errorHandlers = {
 	// existing one on a repeat, but a tag or form subscribe could double-apply.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof KitAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
@@ -63,16 +69,14 @@ export const errorHandlers = {
 	TIMEOUT_ERROR: {
 		match: (error: Error) => error instanceof KitAPIError && error.timedOut,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof KitAPIError && error.method === 'GET' ? 1 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 1 : 0,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
 	NETWORK_ERROR: {
 		match: (error: Error) => error instanceof KitAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof KitAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

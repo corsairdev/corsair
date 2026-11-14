@@ -231,7 +231,8 @@ const kitEndpointMeta = {
 			'Forms by status, cursor-paged, optionally with each one’s subscriber count',
 	},
 	'forms.subscribe': {
-		riskLevel: 'write',
+		// The form's incentive email goes to the subscriber, so this sends.
+		riskLevel: 'destructive',
 		description:
 			'Add an existing subscriber to a form, which applies the form’s incentive and records when they were added. Create the subscriber first',
 	},

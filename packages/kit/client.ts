@@ -44,19 +44,13 @@ const KIT_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A Kit failure.
+ * A Kit request that got no answer: a reset, DNS failure, abort or timeout.
  *
- * `errors` is flattened into one message so a caller sees every reason Kit gave
- * rather than the first. The body is dropped: a subscriber create echoes the
- * address back, and an address is personal data that should not ride along on
- * an error into a log.
+ * An HTTP error from Kit stays core's `ApiError` (see `sanitizeApiError`), so
+ * its status, Retry-After and rate-limit fields reach core and the error
+ * handlers.
  */
 export class KitAPIError extends Error {
-	readonly status?: number;
-	/** Every message Kit sent, in its own order. */
-	readonly errors: string[];
-	/** Milliseconds from a Retry-After header, when Kit sent one. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
 	readonly transport: boolean;
@@ -66,9 +60,6 @@ export class KitAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			errors?: string[];
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
@@ -76,31 +67,19 @@ export class KitAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KitAPIError';
-		this.status = options.status;
-		this.errors = options.errors ?? [];
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
+// Kit's messages can quote the address a request carried, such as
+// "a@b.example is invalid". An address is personal data, so it is replaced
+// before a message reaches an error.
+const EMAIL_ADDRESS = /[^\s@<>"'(),;:]+@[^\s@<>"'(),;:]+\.[^\s@<>"'(),;:]+/g;
 
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	/** The key is real but the plan or the account does not permit this call. */
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
-
-	/** The payload is larger than Kit takes in one request. */
-	get isTooLarge(): boolean {
-		return this.status === 413;
-	}
+export function redactEmails(text: string): string {
+	return text.replace(EMAIL_ADDRESS, '[email]');
 }
 
 /** Kit's messages joined, with the status in front. */
@@ -112,7 +91,9 @@ export function describeKitError(
 	fallback: string,
 ): string {
 	const messages = readErrors(body);
-	const text = messages.length > 0 ? messages.join('; ') : fallback;
+	const text = redactEmails(
+		messages.length > 0 ? messages.join('; ') : fallback,
+	);
 	return status === undefined ? text : `Kit ${status}: ${text}`;
 }
 
@@ -162,18 +143,7 @@ export async function makeKitRequest(
 			rateLimitConfig: KIT_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const errors = readErrors(error.body);
-			throw new KitAPIError(
-				describeKitError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					errors,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			// A transport failure never had a response body, so its cause is safe.
@@ -186,6 +156,40 @@ export async function makeKitRequest(
 		}
 		throw new KitAPIError('Unknown Kit error', { method, transport: true });
 	}
+}
+
+/**
+ * Core's `ApiError` keeps `request.body`, which holds the subscriber's address
+ * and fields, and Kit's error body can echo the address back. The error is
+ * rebuilt as an `ApiError` with the same status and rate-limit fields, Kit's
+ * reasons (addresses replaced) as both the message and the body, and the sent
+ * body and query dropped: an untag carries the address in its query.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const errors = readErrors(error.body).map(redactEmails);
+	return new ApiError(
+		request,
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: { errors },
+		},
+		describeKitError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 /** Drops the keys whose value is undefined, so a query carries only what was asked for. */

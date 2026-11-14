@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { KitAPIError } from './client';
 import { Account, CustomFields, Forms, Subscribers, Tags } from './endpoints';
 import {
@@ -474,6 +475,21 @@ describe('tags.tagSubscriber', () => {
 		});
 	});
 
+	it.each([
+		['no subscriber', {}],
+		['a non-numeric ID', { subscriber: { id: 'invalid' } }],
+	])('fails on a 200 with %s instead of reporting success', async (_, body) => {
+		respond(body, 200);
+
+		await expect(
+			invoke(Tags.tagSubscriber, {
+				tagId: 31,
+				email_address: 'jordan@acme.example',
+			}),
+		).rejects.toThrow('Kit answered the tagging without a subscriber ID');
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
 	it('logs the tag and never the address', async () => {
 		respond({ subscriber }, 200);
 
@@ -607,10 +623,9 @@ describe('error envelopes', () => {
 
 		await expect(invoke(Account.get, {})).rejects.toMatchObject({
 			status: 401,
-			isAuthError: true,
-			errors: ['The API key is invalid'],
+			body: { errors: ['The API key is invalid'] },
 			message: 'Kit 401: The API key is invalid',
-			method: 'GET',
+			request: { method: 'GET' },
 		});
 	});
 
@@ -629,10 +644,12 @@ describe('error envelopes', () => {
 			invoke(Subscribers.create, { email_address: 'not-an-address' }),
 		).rejects.toMatchObject({
 			status: 422,
-			errors: [
-				'Email address is invalid',
-				'Custom field last_name does not exist',
-			],
+			body: {
+				errors: [
+					'Email address is invalid',
+					'Custom field last_name does not exist',
+				],
+			},
 			message:
 				'Kit 422: Email address is invalid; Custom field last_name does not exist',
 		});
@@ -643,7 +660,6 @@ describe('error envelopes', () => {
 
 		await expect(invoke(Account.get, {})).rejects.toMatchObject({
 			status: 403,
-			isPermissionError: true,
 		});
 	});
 
@@ -656,14 +672,15 @@ describe('error envelopes', () => {
 		expect(String(error)).not.toContain(API_KEY);
 	});
 
-	it('keeps no body on the error, so an echoed address cannot follow it into a log', async () => {
-		respond(unprocessable, 422);
+	it('keeps the address off the error, so it cannot follow it into a log', async () => {
+		respond({ errors: ['a@b.example is already taken'] }, 422);
 
 		const error = await caught(
 			invoke(Subscribers.create, { email_address: 'a@b.example' }),
 		);
 
-		expect(error).not.toHaveProperty('body');
+		expect(JSON.stringify(error)).not.toContain('a@b.example');
+		expect((error as ApiError).message).not.toContain('a@b.example');
 	});
 
 	it('marks a transport failure and keeps the method', async () => {
@@ -679,14 +696,15 @@ describe('error envelopes', () => {
 	});
 });
 
-describe('the KitAPIError shape', () => {
-	it('carries the status, the reasons and no body', async () => {
+describe('the error an HTTP failure arrives as', () => {
+	it('is core ApiError with the status and the reasons', async () => {
 		respond(unprocessable, 422);
 
 		const error = await caught(invoke(Account.get, {}));
 
-		expect(error).toBeInstanceOf(KitAPIError);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).not.toBeInstanceOf(KitAPIError);
 		expect(error).toMatchObject({ status: 422 });
-		expect((error as KitAPIError).errors).toHaveLength(2);
+		expect((error as ApiError).body.errors).toHaveLength(2);
 	});
 });

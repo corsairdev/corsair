@@ -311,7 +311,7 @@ await corsair.kit.api.forms.list({ include: ['subscriber_count'], status: 'activ
 
 Add an existing subscriber to a form, which applies the form’s incentive and records when they were added. Create the subscriber first
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.kit.api.forms.subscribe({ form_id: 12, email_address: 'jordan@acme.example', referrer: 'https://acme.example/blog' });

@@ -80,13 +80,18 @@ export const tagSubscriber: KitEndpoints['tagsTagSubscriber'] = (ctx, input) =>
 		}),
 		{
 			// unknown: raw is Kit's `{ subscriber }` body; only its ID is kept.
+			// A body without a numeric subscriber ID is not a tagging Kit
+			// confirmed, so it fails rather than reporting success.
 			shape: (raw: unknown, { tagId, email_address }) => {
 				const id = asRecord(asRecord(raw)?.subscriber)?.id;
+				if (typeof id !== 'number' || !Number.isInteger(id)) {
+					throw new Error('Kit answered the tagging without a subscriber ID');
+				}
 				return {
 					success: true as const,
 					tag_id: tagId,
 					email_address,
-					subscriber_id: typeof id === 'number' ? id : undefined,
+					subscriber_id: id,
 				};
 			},
 			// The address is not logged, only the tag it went on.

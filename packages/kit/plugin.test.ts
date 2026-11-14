@@ -83,7 +83,7 @@ describe('kit plugin definition', () => {
 			'customFields.create': 'write',
 			'customFields.update': 'write',
 			'forms.list': 'read',
-			'forms.subscribe': 'write',
+			'forms.subscribe': 'destructive',
 		});
 	});
 

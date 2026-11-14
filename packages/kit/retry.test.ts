@@ -101,7 +101,7 @@ describe('retry behaviour', () => {
 					.catch((caught: unknown) => caught),
 			);
 
-			expect(error).toMatchObject({ status: 429, isRateLimit: true });
+			expect(error).toMatchObject({ status: 429, name: 'ApiError' });
 			// One attempt plus three retries.
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
@@ -116,7 +116,6 @@ describe('retry behaviour', () => {
 
 			await expect(corsair.kit.api.account.get({})).rejects.toMatchObject({
 				status: 401,
-				isAuthError: true,
 			});
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
@@ -147,7 +146,7 @@ describe('retry behaviour', () => {
 				corsair.kit.api.subscribers.create({
 					email_address: 'a@b.example',
 				}),
-			).rejects.toMatchObject({ status: 413, isTooLarge: true });
+			).rejects.toMatchObject({ status: 413 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();

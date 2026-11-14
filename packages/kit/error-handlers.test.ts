@@ -1,15 +1,32 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { KitAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An answered request fails as core's ApiError; one that got no answer as
+// KitAPIError.
 function apiError(options: {
 	status?: number;
 	method?: string;
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new KitAPIError('failed', options);
+}): Error {
+	if (options.status === undefined) {
+		return new KitAPIError('failed', options);
+	}
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/v4/test' },
+		{
+			url: 'https://api.kit.com/v4/test',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: { errors: ['failed'] },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -125,6 +142,16 @@ describe('error handler selection', () => {
 		zodError.name = 'ZodError';
 
 		await expect(resolve(zodError)).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('matches the core ApiError a Kit 429 arrives as', async () => {
+		const error = apiError({ status: 429, retryAfter: 2000 });
+
+		expect(error).toBeInstanceOf(ApiError);
+		await expect(resolve(error)).resolves.toMatchObject({
+			maxRetries: 3,
+			headersRetryAfterMs: 2000,
+		});
 	});
 
 	it('does not retry anything else', async () => {
