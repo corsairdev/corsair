@@ -69,7 +69,7 @@ const neverbounceEndpointMeta = {
 		// metered reads stay `read` (as in the Ahrefs and Kickbox plugins).
 		riskLevel: 'read',
 		description:
-			'Verify an email address (valid, invalid, disposable, catchall or unknown); uses one verification credit',
+			'Verify one email address as it comes in, such as a form signup (valid, invalid, disposable, catchall or unknown); uses one verification credit. NeverBounce may lock the account if this is looped over an existing list; lists belong in its bulk jobs',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof neverbounceEndpointsNested
