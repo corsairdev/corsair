@@ -4487,5 +4487,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/cloudlayer",
+    "dir": "packages/cloudlayer",
+    "name": "Cloudlayer",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-14",
+    "package": "@corsair-dev/companyenrich",
+    "dir": "packages/companyenrich",
+    "name": "CompanyEnrich",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
