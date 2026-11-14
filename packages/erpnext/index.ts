@@ -19,6 +19,7 @@ import {
 	erpnextEndpointSchemas,
 	erpnextEndpoints,
 } from './endpoints';
+import { resolveErpnextBaseUrl } from './endpoints/factory';
 import { errorHandlers } from './error-handlers';
 import { ErpnextSchema } from './schema';
 
@@ -212,6 +213,10 @@ export function erpnext<const T extends ErpnextPluginOptions>(
 			if (!credential) {
 				throw new AuthMissingError('erpnext', 'api_key');
 			}
+			// A key pair without its site can't be sent anywhere: a missing
+			// base_url throws AuthMissingError here (so Corsair offers a connect
+			// link), and a non-https or malformed one is rejected before use.
+			await resolveErpnextBaseUrl({ options: ctx.options, keys: ctx.keys });
 			return credential;
 		},
 	} satisfies InternalErpnextPlugin;

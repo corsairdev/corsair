@@ -1,4 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import { ErpnextAPIError, makeErpnextRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -50,13 +51,13 @@ function wrappedError(status: number, retryAfter?: number): ErpnextAPIError {
 }
 
 describe('ERPNext error handlers', () => {
-	it('preserves status and Retry-After through the client wrapping', async () => {
+	it('lets core ApiError through unchanged, with status and Retry-After', async () => {
 		const mockFetch = jest
 			.spyOn(global, 'fetch')
 			.mockImplementation(async () => {
-				return new Response('{"exc": "Too Many Requests"}', {
-					status: 429,
-					headers: { 'content-type': 'application/json', 'Retry-After': '7' },
+				return new Response('{"exc_type": "PermissionError"}', {
+					status: 403,
+					headers: { 'content-type': 'application/json' },
 				});
 			});
 		try {
@@ -64,39 +65,48 @@ describe('ERPNext error handlers', () => {
 				OPTIONS.url ?? '',
 				BASE_URL,
 				'test-key:test-secret',
-			).catch((caught: unknown) => caught)) as ErpnextAPIError;
-			expect(error).toBeInstanceOf(ErpnextAPIError);
-			expect(error.status).toBe(429);
-			// The header is in seconds on the wire and milliseconds once the
-			// shared transport parsed it, so the handlers can price retries
-			// with headersRetryAfterMs without re-scaling.
-			expect(error.retryAfter).toBe(7000);
-			expect(error.body).toEqual({ exc: 'Too Many Requests' });
+			).catch((caught: unknown) => caught)) as ApiError;
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).not.toBeInstanceOf(ErpnextAPIError);
+			expect(error.status).toBe(403);
+			expect(error.body).toEqual({ exc_type: 'PermissionError' });
+			const context = contextOf('documents.list', error);
+			expect(errorHandlers.PERMISSION_ERROR?.match(error, context)).toBe(true);
 		} finally {
 			mockFetch.mockRestore();
 		}
 	});
 
-	it('keeps the shared transport from replaying requests (one retry owner)', async () => {
-		// The transport answers 429 exactly once; with maxRetries 0 it must
-		// surface the error instead of sleeping and retrying internally.
+	it('keeps core 429 retries in the transport, honouring Retry-After', async () => {
+		jest.useFakeTimers();
 		let calls = 0;
 		const mockFetch = jest
 			.spyOn(global, 'fetch')
 			.mockImplementation(async () => {
 				calls++;
-				return new Response('Too Many Requests', {
-					status: 429,
-					headers: { 'content-type': 'text/plain', 'Retry-After': '1' },
+				if (calls === 1) {
+					return new Response('Too Many Requests', {
+						status: 429,
+						headers: { 'content-type': 'text/plain', 'Retry-After': '1' },
+					});
+				}
+				return new Response('{"message": "Administrator"}', {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
 				});
 			});
 		try {
-			await expect(
-				makeErpnextRequest(OPTIONS.url ?? '', BASE_URL, 'test-key:test-secret'),
-			).rejects.toThrow(ErpnextAPIError);
-			expect(calls).toBe(1);
+			const pending = makeErpnextRequest<{ message: string }>(
+				OPTIONS.url ?? '',
+				BASE_URL,
+				'test-key:test-secret',
+			);
+			await jest.runAllTimersAsync();
+			await expect(pending).resolves.toEqual({ message: 'Administrator' });
+			expect(calls).toBe(2);
 		} finally {
 			mockFetch.mockRestore();
+			jest.useRealTimers();
 		}
 	});
 
@@ -127,7 +137,7 @@ describe('ERPNext error handlers', () => {
 		{ status: 422, handler: 'VALIDATION_ERROR' as const, label: 'validation' },
 	])(
 		'classifies HTTP $status as $handler and never retries it',
-		({ status, handler }) => {
+		async ({ status, handler }) => {
 			const error = wrappedError(status);
 			expect(
 				errorHandlers[handler]?.match(
@@ -135,7 +145,7 @@ describe('ERPNext error handlers', () => {
 					contextOf('documents.list', error),
 				),
 			).toBe(true);
-			expect(
+			await expect(
 				errorHandlers[handler]?.handler(
 					error,
 					contextOf('documents.list', error),
@@ -178,41 +188,20 @@ describe('ERPNext error handlers', () => {
 		}
 	});
 
-	it('retries only read-risk operations on a 429, with the provider delay', async () => {
+	it('does not replay a 429 on top of the transport retries', async () => {
 		const rateLimit = wrappedError(429, 7000);
-		// A read: the full budget, the provider-requested delay preserved.
-		expect(
-			await errorHandlers.RATE_LIMIT_ERROR?.handler(
-				rateLimit,
-				contextOf('documents.list', rateLimit),
-			),
-		).toEqual({
-			maxRetries: 5,
-			retryStrategy: 'exponential_backoff',
-			headersRetryAfterMs: 7000,
-		});
-		// A write: replaying a create after an ambiguous failure could apply
-		// the change twice, so a single attempt only.
-		expect(
-			await errorHandlers.RATE_LIMIT_ERROR?.handler(
-				rateLimit,
-				contextOf('documents.create', rateLimit),
-			),
-		).toEqual({ maxRetries: 0 });
-		// A destructive delete: same single-attempt rule.
-		expect(
-			await errorHandlers.RATE_LIMIT_ERROR?.handler(
-				rateLimit,
-				contextOf('documents.delete', rateLimit),
-			),
-		).toEqual({ maxRetries: 0 });
-		// Unknown operations default to unsafe.
-		expect(
-			await errorHandlers.RATE_LIMIT_ERROR?.handler(
-				rateLimit,
-				contextOf('not.an.operation', rateLimit),
-			),
-		).toEqual({ maxRetries: 0 });
+		for (const operation of [
+			'documents.list',
+			'documents.create',
+			'documents.delete',
+		]) {
+			expect(
+				await errorHandlers.RATE_LIMIT_ERROR?.handler(
+					rateLimit,
+					contextOf(operation, rateLimit),
+				),
+			).toEqual({ maxRetries: 0 });
+		}
 	});
 
 	it('retries only read-risk operations on server errors', async () => {

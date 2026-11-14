@@ -1,4 +1,8 @@
-import { makeErpnextRequest } from '../client';
+import {
+	makeErpnextRequest,
+	missingErpnextBaseUrl,
+	normalizeErpnextBaseUrl,
+} from '../client';
 import type { ErpnextCredentialOptions } from '../credentials';
 import { explicitErpnextCredential } from '../credentials';
 import type { ErpnextOperationKey } from '../operations';
@@ -52,20 +56,20 @@ export type ErpnextEndpointHandler<K extends ErpnextOperationKey> = (
  * secret to a different site.
  */
 export async function resolveErpnextBaseUrl(
-	ctx: ErpnextHandlerContext,
+	ctx: Pick<ErpnextHandlerContext, 'options' | 'keys'>,
 ): Promise<string> {
 	const options = ctx.options ?? {};
 	const explicit = explicitErpnextCredential(options);
 	// A malformed compact key is still explicit: the key builder rejects it,
 	// so the host must not fall back to a tenant-stored site behind its back.
 	if (explicit.kind !== 'none') {
-		const option = options.baseUrl;
+		const option = options.baseUrl?.trim();
 		if (!option) {
-			throw new Error(
-				'[erpnext] missing baseUrl plugin option: explicit credentials must pair with the explicitly configured site origin, for example https://yourcompany.frappe.cloud',
+			throw missingErpnextBaseUrl(
+				'missing baseUrl plugin option: explicit credentials must pair with the explicitly configured site origin, for example https://yourcompany.frappe.cloud',
 			);
 		}
-		return option;
+		return normalizeErpnextBaseUrl(option);
 	}
 	// With an account key manager bound, the tenant account is the only
 	// source of both halves: the credential above came from that account, so
@@ -74,23 +78,23 @@ export async function resolveErpnextBaseUrl(
 	// a different site, and sending this tenant's key pair there is the
 	// cross-site leak this rule exists to prevent.
 	if (ctx.keys) {
-		const stored = await ctx.keys.get_base_url?.();
+		const stored = (await ctx.keys.get_base_url?.())?.trim();
 		if (!stored) {
-			throw new Error(
-				'[erpnext] missing tenant base_url: the stored credential has no site origin, so no request was sent',
+			throw missingErpnextBaseUrl(
+				'missing tenant base_url: the stored credential has no site origin, so no request was sent. Connect the account with its site URL, for example https://yourcompany.frappe.cloud',
 			);
 		}
-		return stored;
+		return normalizeErpnextBaseUrl(stored);
 	}
 	// No account key manager bound (no database): the plugin options are the
 	// only credential source too, so they are also the host source.
-	const option = options.baseUrl;
+	const option = options.baseUrl?.trim();
 	if (!option) {
-		throw new Error(
-			'[erpnext] missing baseUrl: set the plugin option or connect a tenant with a stored base_url, for example https://yourcompany.frappe.cloud',
+		throw missingErpnextBaseUrl(
+			'missing baseUrl: set the plugin option or connect a tenant with a stored base_url, for example https://yourcompany.frappe.cloud',
 		);
 	}
-	return option;
+	return normalizeErpnextBaseUrl(option);
 }
 
 function encodeSegment(name: string, value: string): string {

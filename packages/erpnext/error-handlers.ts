@@ -3,11 +3,17 @@ import type {
 	EndpointRiskLevel,
 	ErrorContext,
 } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { ErpnextAPIError } from './client';
 import { ERPNEXT_OPERATIONS } from './operations';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof ErpnextAPIError ? error.status : undefined;
+	// JSON calls throw core's ApiError unchanged; binary downloads throw
+	// ErpnextAPIError with the same status field.
+	if (error instanceof ApiError || error instanceof ErpnextAPIError) {
+		return error.status;
+	}
+	return undefined;
 }
 
 const riskByOperation = new Map<string, EndpointRiskLevel>(
@@ -32,18 +38,9 @@ function isReplaySafe(context: ErrorContext): boolean {
 export const errorHandlers: CorsairErrorHandler = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error, context: ErrorContext) => {
-			if (!isReplaySafe(context)) return { maxRetries: 0 };
-			const retryAfter =
-				error instanceof ErpnextAPIError ? error.retryAfter : undefined;
-			return {
-				maxRetries: 5,
-				retryStrategy: 'exponential_backoff' as const,
-				// Preserve the provider-requested delay in full; capping it made
-				// reads retry while the site still considered them blocked.
-				headersRetryAfterMs: retryAfter,
-			};
-		},
+		// Core's request() already retried the 429 three times, honouring
+		// Retry-After, so the handler does not replay the endpoint again.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,

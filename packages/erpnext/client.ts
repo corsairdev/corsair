@@ -1,8 +1,5 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 /**
@@ -16,6 +13,52 @@ export function trimTrailingSlashes(url: string): string {
 		trimmed = trimmed.slice(0, -1);
 	}
 	return trimmed;
+}
+
+/**
+ * Validates a site origin before any credential is sent to it: an absolute
+ * https URL with a host, no embedded credentials, query or fragment. A path
+ * prefix (a site behind a reverse proxy) is kept, without trailing slashes.
+ * The value comes from plugin options or the tenant's stored base_url, so a
+ * typo or a plain-http URL fails here instead of sending the token in clear
+ * text or to an unexpected host.
+ */
+export function normalizeErpnextBaseUrl(url: string): string {
+	const trimmed = url.trim();
+	let parsed: URL;
+	try {
+		parsed = new URL(trimmed);
+	} catch {
+		throw new Error(
+			'[erpnext] base URL must be an absolute https:// URL, for example https://yourcompany.frappe.cloud',
+		);
+	}
+	if (parsed.protocol !== 'https:') {
+		throw new Error('[erpnext] base URL must use https');
+	}
+	if (!parsed.hostname) {
+		throw new Error('[erpnext] base URL must include a host');
+	}
+	if (parsed.username || parsed.password) {
+		throw new Error('[erpnext] base URL must not include credentials');
+	}
+	if (
+		parsed.search ||
+		parsed.hash ||
+		trimmed.includes('?') ||
+		trimmed.includes('#')
+	) {
+		throw new Error('[erpnext] base URL must not include a query or fragment');
+	}
+	return `${parsed.origin}${trimTrailingSlashes(parsed.pathname)}`;
+}
+
+/**
+ * A missing site origin is a missing connection setting: AuthMissingError
+ * lets Corsair offer a connect link that asks for the account's base_url.
+ */
+export function missingErpnextBaseUrl(detail: string): AuthMissingError {
+	return new AuthMissingError('erpnext', 'api_key', `[erpnext] ${detail}`);
 }
 
 export class ErpnextAPIError extends Error {
@@ -66,18 +109,6 @@ export function erpnextAuthorizationHeader(key: string): string {
 	return `token ${key}`;
 }
 
-// Frappe does not document central rate limits; instances answer 429 with
-// Retry-After when throttled. Retrying belongs to the endpoint-level error
-// handlers, which can tell reads from writes, so the transport never replays
-// a request here.
-const NO_TRANSPORT_RETRIES: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'Retry-After' },
-};
-
 export type ErpnextRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	// `unknown` is intentional here: bodies are provider-defined payloads
@@ -123,17 +154,10 @@ export async function makeErpnextRequest<T>(
 		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: NO_TRANSPORT_RETRIES,
-		});
-	} catch (error) {
-		if (error instanceof ErpnextAPIError) throw error;
-		if (error instanceof Error) {
-			throw new ErpnextAPIError(error.message, { cause: error });
-		}
-		throw new ErpnextAPIError('Unknown ERPNext API error');
-	}
+	// Core's ApiError passes through unchanged (its status and retryAfter
+	// drive the error handlers), and core's request() keeps its default 429
+	// retries, which honour Retry-After.
+	return request<T>(config, requestOptions);
 }
 
 /**
