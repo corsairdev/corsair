@@ -242,22 +242,22 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const companyenrichEndpointMeta = {
 	'companies.get': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per expansion (financial, keywords, NAICS codes, technologies, workforce with 12 months of history).',
 	},
 	'companies.enrichByDomain': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Enrich a company from its domain, optionally waiting for on-demand enrichment. Costs 1 credit per success.',
 	},
 	'companies.enrichByProperties': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Enrich a company from identifying properties such as name or social URLs. Costs 1 credit when a company is returned.',
 	},
 	'companies.enrichBatch': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Enrich up to 50 company domains in one request. Costs 1 credit per unique company found.',
 	},
@@ -267,12 +267,12 @@ const companyenrichEndpointMeta = {
 			'Suggest up to 10 companies whose domain starts with the query. Free.',
 	},
 	'companies.workforce': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Get observed headcount and department breakdowns for one company by ID or domain, 12 months of history per page. Costs 1 credit per page.',
 	},
 	'companies.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Search companies by filters, a semantic query or lookalike seed domains, with cursor pagination. Costs 1 credit per company (2 semantic, 5 lookalike).',
 	},
@@ -287,22 +287,22 @@ const companyenrichEndpointMeta = {
 			'Preview up to 25 matching companies with the search ranking. Free, needs a plan with previews.',
 	},
 	'people.get': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Get a stored person by their CompanyEnrich ID. Costs 2 credits, plus 1 for the education expansion and 1 per unique company for the company expansion.',
 	},
 	'people.enrich': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Enrich a person from their email address. Costs 5 credits when a person is returned.',
 	},
 	'people.findEmail': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Find the work email of a person on a company domain (BETA). Costs 10 credits for a previously unseen email.',
 	},
 	'people.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Search people by person filters, a natural-language query and an optional company query, with cursor pagination. Costs 2 credits per person.',
 	},
