@@ -1236,12 +1236,14 @@ const sevdeskEndpointMeta = {
 			'Update export config. Changes Sevdesk data or starts an export job.',
 	},
 	'export.exportDatevDepricated': {
-		riskLevel: 'read',
-		description: 'Export datev. Reads Sevdesk data.',
+		riskLevel: 'destructive',
+		description:
+			'Export datev. With enshrine: true it enshrines the exported documents, which cannot be undone (GoBD).',
 	},
 	'export.exportDatevCSV': {
-		riskLevel: 'read',
-		description: 'Start DATEV CSV ZIP export. Reads Sevdesk data.',
+		riskLevel: 'destructive',
+		description:
+			'Start DATEV CSV ZIP export. With enshrineDocuments: true it enshrines the exported documents, which cannot be undone (GoBD).',
 	},
 	'export.exportDatevXML': {
 		riskLevel: 'read',
