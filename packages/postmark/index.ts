@@ -367,6 +367,7 @@ export type {
 	StatsSendsOutput,
 	StreamsActionOutput,
 	StreamsArchiveInput,
+	StreamsArchiveOutput,
 	StreamsGetInput,
 	StreamsListInput,
 	StreamsListOutput,

@@ -104,7 +104,7 @@ describe('response parsing', () => {
 		mockedRequest.mockResolvedValue({
 			ID: 'broadcast-1',
 			Name: 'Newsletter',
-			MessageStreamType: 'Broadcast',
+			MessageStreamType: 'Broadcasts',
 			ArchivedAt: '2024-06-01T00:00:00Z',
 		});
 

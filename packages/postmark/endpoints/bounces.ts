@@ -30,8 +30,9 @@ export const list: PostmarkEndpoints['bouncesList'] = (ctx, input) =>
 			method: 'GET',
 			path: '/bounces',
 			query: {
-				count: Count,
-				offset: Offset,
+				// Postmark requires both, so a call without them gets the first page.
+				count: Count ?? 100,
+				offset: Offset ?? 0,
 				type: Type,
 				inactive: Inactive,
 				emailFilter: EmailFilter,
@@ -106,7 +107,7 @@ export const overview: PostmarkEndpoints['statsOverview'] = (ctx, input) =>
 				messagestream: MessageStream,
 			},
 		}),
-		{ log: (_, result) => ({ outbound: result.Outbound ?? undefined }) },
+		{ log: (_, result) => ({ sent: result.Sent ?? undefined }) },
 	);
 
 export const sends: PostmarkEndpoints['statsSends'] = (ctx, input) =>

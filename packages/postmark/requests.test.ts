@@ -186,7 +186,7 @@ describe('templates endpoints', () => {
 
 		const result = await Templates.validate(ctx, {
 			HtmlBody: '<b>{{name}}</b>',
-			TemplateModel: { name: 'Kevin' },
+			TestRenderModel: { name: 'Kevin' },
 		});
 
 		const request = sentRequest();
@@ -273,7 +273,7 @@ describe('streams endpoints', () => {
 	});
 
 	it('streams.archive posts to the archive sub-path', async () => {
-		mockedRequest.mockResolvedValue({ Message: 'Stream archived.' });
+		mockedRequest.mockResolvedValue({ ID: 'broadcast-1', ServerID: 1 });
 
 		const result = await Server.archiveStream(ctx, { id: 'broadcast-1' });
 
@@ -281,7 +281,7 @@ describe('streams endpoints', () => {
 			method: 'POST',
 			path: '/message-streams/broadcast-1/archive',
 		});
-		expect(result.Message).toBe('Stream archived.');
+		expect(result.ID).toBe('broadcast-1');
 	});
 });
 
@@ -343,7 +343,7 @@ describe('bounces endpoints', () => {
 
 describe('stats endpoints', () => {
 	it('stats.overview sends the lowercase window parameters', async () => {
-		mockedRequest.mockResolvedValue({ Outbound: 100, Opens: 50 });
+		mockedRequest.mockResolvedValue({ Sent: 100, Opens: 50 });
 
 		const result = await Bounces.overview(ctx, {
 			Tag: 'welcome',
@@ -362,7 +362,7 @@ describe('stats endpoints', () => {
 				messagestream: 'outbound',
 			},
 		});
-		expect(result.Outbound).toBe(100);
+		expect(result.Sent).toBe(100);
 	});
 
 	it('stats.sends reads the daily count series', async () => {
@@ -383,5 +383,126 @@ describe('stats endpoints', () => {
 			},
 		});
 		expect(result.Days).toHaveLength(1);
+	});
+});
+
+// Shapes taken from Postmark's API reference (postmarkapp.com/developer/api).
+describe('documented request and response shapes', () => {
+	it('templates.list sends the required Count and Offset when the caller omits them', async () => {
+		mockedRequest.mockResolvedValue({ TotalCount: 0, Templates: [] });
+
+		await Templates.list(ctx, {});
+
+		expect(sentRequest().query).toMatchObject({ Count: 100, Offset: 0 });
+	});
+
+	it('bounces.list sends the required count and offset when the caller omits them', async () => {
+		mockedRequest.mockResolvedValue({ TotalCount: 0, Bounces: [] });
+
+		await Bounces.list(ctx, {});
+
+		expect(sentRequest().query).toMatchObject({ count: 100, offset: 0 });
+	});
+
+	it('templates.validate sends the model as TestRenderModel and keeps the rendered output', async () => {
+		mockedRequest.mockResolvedValue({
+			AllContentIsValid: true,
+			HtmlBody: {
+				ContentIsValid: true,
+				ValidationErrors: [],
+				RenderedContent: '<b>Kevin</b>',
+			},
+			SuggestedTemplateModel: { name: 'name_Value' },
+		});
+
+		const result = await Templates.validate(ctx, {
+			HtmlBody: '<b>{{name}}</b>',
+			TestRenderModel: { name: 'Kevin' },
+		});
+
+		expect(sentRequest().body).toEqual({
+			HtmlBody: '<b>{{name}}</b>',
+			TestRenderModel: { name: 'Kevin' },
+		});
+		expect(result.HtmlBody?.RenderedContent).toBe('<b>Kevin</b>');
+		expect(result.SuggestedTemplateModel).toEqual({ name: 'name_Value' });
+	});
+
+	it('streams.list filters broadcast streams with the documented Broadcasts value', async () => {
+		mockedRequest.mockResolvedValue({ MessageStreams: [], TotalCount: 0 });
+
+		await Server.streams(ctx, { MessageStreamType: 'Broadcasts' });
+
+		expect(sentRequest().query).toMatchObject({
+			MessageStreamType: 'Broadcasts',
+		});
+	});
+
+	it('streams.archive keeps the id, server and purge date the route answers', async () => {
+		mockedRequest.mockResolvedValue({
+			ID: 'transactional-dev',
+			ServerID: 123457,
+			ExpectedPurgeDate: '2020-08-30T12:30:00.00-04:00',
+		});
+
+		const result = await Server.archiveStream(ctx, { id: 'transactional-dev' });
+
+		expect(result).toEqual({
+			ID: 'transactional-dev',
+			ServerID: 123457,
+			ExpectedPurgeDate: '2020-08-30T12:30:00.00-04:00',
+		});
+	});
+
+	it('templates.update accepts an empty LayoutTemplate, which removes the layout', async () => {
+		mockedRequest.mockResolvedValue({ TemplateId: 1, Name: 'x' });
+
+		await Templates.update(ctx, { idOrAlias: 'welcome', LayoutTemplate: '' });
+
+		expect(sentRequest().body).toEqual({ LayoutTemplate: '' });
+	});
+
+	it('stats.overview declares the documented outbound counters and logs Sent', async () => {
+		const documented = {
+			Sent: 615,
+			Bounced: 64,
+			SMTPApiErrors: 25,
+			BounceRate: 10.406,
+			SpamComplaints: 10,
+			SpamComplaintsRate: 1.626,
+			Opens: 166,
+			UniqueOpens: 26,
+			Tracked: 111,
+			WithLinkTracking: 90,
+			WithOpenTracking: 51,
+			TotalTrackedLinksSent: 60,
+			UniqueLinksClicked: 30,
+			TotalClicks: 72,
+			WithClientRecorded: 14,
+			WithPlatformRecorded: 10,
+		};
+		mockedRequest.mockResolvedValue(documented);
+
+		const result = await Bounces.overview(ctx, {});
+
+		expect(result.Sent).toBe(615);
+		expect(result.TotalClicks).toBe(72);
+		expect(mockedLog).toHaveBeenCalledWith(
+			ctx,
+			'postmark.stats.overview',
+			{ sent: 615 },
+			'completed',
+		);
+	});
+
+	it('stats.sends keeps the aggregate Sent next to Days', async () => {
+		mockedRequest.mockResolvedValue({
+			Days: [{ Date: '2014-01-01', Sent: 140 }],
+			Sent: 140,
+		});
+
+		const result = await Bounces.sends(ctx, {});
+
+		expect(result.Sent).toBe(140);
 	});
 });

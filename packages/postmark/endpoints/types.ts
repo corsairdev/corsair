@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 /**
  * Any JSON value. `Metadata` on a send is an open key-value map and a template's
- * `TemplateModel` is arbitrary, so both are described exactly rather than left
+ * `TestRenderModel` is arbitrary, so both are described exactly rather than left
  * untyped.
  */
 export type PostmarkJsonValue =
@@ -218,8 +218,13 @@ const TemplatesListInputSchema = z.object({
 		.min(1)
 		.max(500)
 		.optional()
-		.describe('How many templates to return, at most 500.'),
-	Offset: z.number().int().min(0).optional().describe('How many to skip.'),
+		.describe('How many templates to return, at most 500. Defaults to 100.'),
+	Offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('How many to skip. Defaults to 0.'),
 	TemplateType: z
 		.enum(POSTMARK_TEMPLATE_TYPES)
 		.optional()
@@ -293,7 +298,10 @@ export const TemplatesUpdateInputSchema = z
 		TextBody: z.string().min(1).optional(),
 		Alias: z.string().min(1).optional(),
 		TemplateType: z.enum(POSTMARK_TEMPLATE_TYPES).optional(),
-		LayoutTemplate: z.string().min(1).optional(),
+		LayoutTemplate: z
+			.string()
+			.optional()
+			.describe('The layout alias to use. An empty string removes the layout.'),
 	})
 	.superRefine((value, ctx) => {
 		const { idOrAlias: _ignored, ...changes } = value;
@@ -325,6 +333,10 @@ const ValidatedPartSchema = z
 		// formats per case, so the list passes through rather than pinning a shape.
 		RenderErrors: z.array(PostmarkJsonValueSchema).nullish(),
 		ValidationErrors: z.array(PostmarkJsonValueSchema).nullish(),
+		RenderedContent: z
+			.string()
+			.nullish()
+			.describe('The content rendered against the test model.'),
 	})
 	.loose();
 
@@ -336,6 +348,11 @@ const ValidatedTemplateOutputSchema = z
 		HtmlBody: ValidatedPartSchema.nullish(),
 		TextBody: ValidatedPartSchema.nullish(),
 		Subject: ValidatedPartSchema.nullish(),
+		// unknown: a model Postmark derives from whatever keys the template uses.
+		SuggestedTemplateModel: z
+			.record(z.string(), PostmarkJsonValueSchema)
+			.nullish()
+			.describe('A model with every key the template content references.'),
 	})
 	.loose();
 
@@ -347,8 +364,11 @@ const TemplatesValidateInputSchema = z.object({
 	Subject: z.string().optional(),
 	HtmlBody: z.string().min(1).optional(),
 	TextBody: z.string().min(1).optional(),
-	// unknown: `TemplateModel` is arbitrary data the template renders against.
-	TemplateModel: z.record(z.string(), PostmarkJsonValueSchema).optional(),
+	// unknown: the model is arbitrary data the template renders against.
+	TestRenderModel: z
+		.record(z.string(), PostmarkJsonValueSchema)
+		.optional()
+		.describe('The model to render the template content against.'),
 });
 
 export type TemplatesValidateInput = z.infer<
@@ -436,7 +456,7 @@ export const MessageStreamSchema = z
 		MessageStreamType: z
 			.string()
 			.nullish()
-			.describe('`Transactional`, `Inbound` or `Broadcast`.'),
+			.describe('`Transactional`, `Inbound` or `Broadcasts`.'),
 		CreatedAt: z.string().nullish(),
 		UpdatedAt: z.string().nullish(),
 		ArchivedAt: z.string().nullish(),
@@ -449,9 +469,9 @@ export type PostmarkMessageStream = z.infer<typeof MessageStreamSchema>;
 
 const StreamsListInputSchema = z.object({
 	MessageStreamType: z
-		.enum(['Transactional', 'Inbound', 'Broadcast'])
+		.enum(['All', 'Transactional', 'Inbound', 'Broadcasts'])
 		.optional()
-		.describe('Only streams of this kind.'),
+		.describe('Only streams of this kind. Defaults to `All`.'),
 	IncludeArchivedStreams: z
 		.boolean()
 		.optional()
@@ -462,6 +482,7 @@ export type StreamsListInput = z.infer<typeof StreamsListInputSchema>;
 
 const StreamsListOutputSchema = z.object({
 	MessageStreams: z.array(MessageStreamSchema),
+	TotalCount: z.number().nullish(),
 });
 
 export type StreamsListOutput = z.infer<typeof StreamsListOutputSchema>;
@@ -483,6 +504,21 @@ const StreamActionOutputSchema = z.object({
 });
 
 export type StreamsActionOutput = z.infer<typeof StreamActionOutputSchema>;
+
+/** The archive route answers the stream id, its server and the purge date. */
+const StreamArchiveOutputSchema = z
+	.object({
+		ID: z.string().nullish(),
+		// The field table says string and the example shows a number.
+		ServerID: z.union([z.number(), z.string()]).nullish(),
+		ExpectedPurgeDate: z
+			.string()
+			.nullish()
+			.describe('The stream is deleted on this date unless it is restored.'),
+	})
+	.loose();
+
+export type StreamsArchiveOutput = z.infer<typeof StreamArchiveOutputSchema>;
 
 // ── bounces ───────────────────────────────────────────────────────────────
 
@@ -519,8 +555,13 @@ const BouncesListInputSchema = z.object({
 		.min(1)
 		.max(500)
 		.optional()
-		.describe('How many bounces to return, at most 500.'),
-	Offset: z.number().int().min(0).optional().describe('How many to skip.'),
+		.describe('How many bounces to return, at most 500. Defaults to 100.'),
+	Offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('How many to skip. Defaults to 0.'),
 	Type: z
 		.string()
 		.min(1)
@@ -627,21 +668,23 @@ export type StatsOverviewInput = z.infer<typeof StatsOverviewInputSchema>;
 
 const StatsOverviewOutputSchema = z
 	.object({
-		Inbound: z.number().nullish(),
-		Outbound: z.number().nullish(),
-		Transatlantic: z.number().nullish(),
-		Tracked: z.number().nullish(),
+		Sent: z.number().nullish(),
+		Bounced: z.number().nullish(),
+		SMTPApiErrors: z.number().nullish(),
+		BounceRate: z.number().nullish().describe('A percentage of Sent.'),
+		SpamComplaints: z.number().nullish(),
+		SpamComplaintsRate: z.number().nullish().describe('A percentage of Sent.'),
 		Opens: z.number().nullish(),
 		UniqueOpens: z.number().nullish(),
-		OpenRate: z.number().nullish(),
-		Clicks: z.number().nullish(),
+		Tracked: z.number().nullish(),
+		WithLinkTracking: z.number().nullish(),
+		WithOpenTracking: z.number().nullish(),
+		TotalTrackedLinksSent: z.number().nullish(),
 		UniqueLinksClicked: z.number().nullish(),
-		ClickRate: z.number().nullish(),
-		UniqueClicks: z.number().nullish(),
-		Bounces: z.number().nullish(),
-		BounceRate: z.number().nullish(),
-		SpamComplaints: z.number().nullish(),
-		SpamComplaintsRate: z.number().nullish(),
+		TotalClicks: z.number().nullish(),
+		WithClientRecorded: z.number().nullish(),
+		WithPlatformRecorded: z.number().nullish(),
+		WithReadTimeRecorded: z.number().nullish(),
 	})
 	.loose();
 
@@ -652,6 +695,7 @@ const StatsSendsInputSchema = z.object(statsQueryFields);
 export type StatsSendsInput = z.infer<typeof StatsSendsInputSchema>;
 
 const StatsSendsOutputSchema = z.object({
+	Sent: z.number().nullish().describe('The total across the window.'),
 	Days: z.array(
 		z
 			.object({
@@ -701,7 +745,7 @@ export type PostmarkEndpointOutputs = {
 	serverUpdate: PostmarkServer;
 	streamsList: StreamsListOutput;
 	streamsGet: PostmarkMessageStream;
-	streamsArchive: StreamsActionOutput;
+	streamsArchive: StreamsArchiveOutput;
 	bouncesList: BouncesListOutput;
 	bouncesGet: PostmarkBounce;
 	bouncesActivate: BounceActivatedOutput;
@@ -748,7 +792,7 @@ export const PostmarkEndpointOutputSchemas = {
 	serverUpdate: ServerSchema,
 	streamsList: StreamsListOutputSchema,
 	streamsGet: MessageStreamSchema,
-	streamsArchive: StreamActionOutputSchema,
+	streamsArchive: StreamArchiveOutputSchema,
 	bouncesList: BouncesListOutputSchema,
 	bouncesGet: BounceSchema,
 	bouncesActivate: BounceActivatedOutputSchema,

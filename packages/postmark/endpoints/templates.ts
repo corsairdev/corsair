@@ -18,7 +18,9 @@ export const list: PostmarkEndpoints['templatesList'] = (ctx, input) =>
 		({ Count, Offset, TemplateType }) => ({
 			method: 'GET',
 			path: '/templates',
-			query: { Count, Offset, TemplateType },
+			// Postmark requires Count and Offset, so a call without them gets the
+			// first page.
+			query: { Count: Count ?? 100, Offset: Offset ?? 0, TemplateType },
 		}),
 		{ log: (_, result) => ({ count: result.Templates.length }) },
 	);
