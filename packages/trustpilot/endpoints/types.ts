@@ -353,6 +353,8 @@ const schemas = {
 		.strict(),
 } as const;
 
+// Output strings are plain z.string(): Trustpilot passes through consumer-typed emails and merchant
+// product URLs as given, and a format check here would fail a whole page over one record.
 const link = z
 	.object({
 		href: z.string().nullable(),
@@ -397,7 +399,7 @@ const review = z
 const privateReview = review
 	.extend({
 		referenceId: z.string().nullable().optional(),
-		referralEmail: z.string().email().nullable().optional(),
+		referralEmail: z.string().nullable().optional(),
 		reportData: z
 			.object({
 				source: z.string().nullable().optional(),
@@ -424,7 +426,7 @@ const privateReview = review
 									.object({
 										submittedAt: z.string().nullable().optional(),
 										name: z.string().nullable().optional(),
-										email: z.string().email().nullable().optional(),
+										email: z.string().nullable().optional(),
 										address: z.string().nullable().optional(),
 										phoneNumber: z.string().nullable().optional(),
 										referenceId: z.string().nullable().optional(),
@@ -521,10 +523,10 @@ const privateProductReview = productReview
 		product: z
 			.object({
 				id: z.string().nullable().optional(),
-				productUrl: z.string().url().nullable().optional(),
+				productUrl: z.string().nullable().optional(),
 				productImages: z
 					.array(
-						z.object({ type: z.string(), url: z.string().url() }).passthrough(),
+						z.object({ type: z.string(), url: z.string() }).passthrough(),
 					)
 					.optional(),
 				name: z.string().nullable().optional(),
@@ -538,14 +540,14 @@ const privateProductReview = productReview
 		consumer: z
 			.object({
 				id: z.string().nullable().optional(),
-				email: z.string().email().nullable().optional(),
+				email: z.string().nullable().optional(),
 				name: z.string().nullable().optional(),
 			})
 			.passthrough()
 			.optional(),
 		referenceId: z.string().nullable().optional(),
 		locale: z.string().nullable().optional(),
-		redirectUri: z.string().url().nullable().optional(),
+		redirectUri: z.string().nullable().optional(),
 		state: z.string().nullable().optional(),
 		hasModerationHistory: z.boolean().optional(),
 		conversationId: z.string().nullable().optional(),
@@ -755,7 +757,7 @@ const outputSchemas = {
 	'consumerProfiles.bulk': z
 		.object({
 			consumers: z.record(z.string(), profile),
-			notFoundConsumerIds: z.array(z.string()),
+			notFoundConsumerIds: z.array(z.string().nullable()),
 		})
 		.passthrough(),
 	'consumerProfiles.createDisplayName': z.string().nullable(),
@@ -785,7 +787,7 @@ const outputSchemas = {
 		.object({ summaries: z.array(productSummary) })
 		.passthrough(),
 	'productReviews.invitationLink': z
-		.object({ reviewLinkId: z.string(), reviewUrl: z.string().url() })
+		.object({ reviewLinkId: z.string(), reviewUrl: z.string() })
 		.passthrough(),
 	'productReviews.createComment': z
 		.object({
@@ -928,7 +930,7 @@ const outputSchemas = {
 		})
 		.passthrough(),
 	'invitations.link': z
-		.object({ id: z.string(), url: z.string().url() })
+		.object({ id: z.string(), url: z.string() })
 		.passthrough(),
 	'dataSolutions.searchBusinessUnits': z
 		.object({
