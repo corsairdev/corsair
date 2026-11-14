@@ -16,16 +16,17 @@ pnpm add @corsair-dev/postiz
 | `integrations.findSlot` | `postiz.api.integrations.findSlot` | `read` | Read a channel's next free posting slot |
 | `integrations.isConnected` | `postiz.api.integrations.isConnected` | `read` | Confirm the API key is valid and the workspace is reachable |
 | `integrations.list` | `postiz.api.integrations.list` | `read` | List the connected channels, optionally narrowed to one customer group |
-| `media.list` | `postiz.api.media.list` | `read` | Page through the organization's media library |
+| `media.list` | `postiz.api.media.list` | `read` | Page through the organization's media library, optionally filtered by file name |
+| `media.uploadFromUrl` | `postiz.api.media.uploadFromUrl` | `write` | Copy a file from a public URL into the media library, for use as a post attachment |
 | `notifications.list` | `postiz.api.notifications.list` | `read` | Page through the organization notifications, newest first |
-| `posts.changeStatus` | `postiz.api.posts.changeStatus` | `write` | Move a post between draft and scheduled, without touching its content or date |
+| `posts.changeStatus` | `postiz.api.posts.changeStatus` | `destructive` | Move a post between draft and scheduled. Scheduling queues it to publish at its stored date to every channel it targets |
 | `posts.create` | `postiz.api.posts.create` | `destructive` | Create a post as a draft, scheduled, or published immediately. A schedule or an immediate post goes out to every listed channel and cannot be recalled by this plugin once published |
 | `posts.delete` | `postiz.api.posts.delete` | `destructive` | Delete a post, which also deletes every post in its group. A published post stays live on the platform |
 | `posts.list` | `postiz.api.posts.list` | `read` | List posts in a date window with their state, release URL and any platform error |
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: API key. Corsair prompts your tenant for credentials on first use. For a self-hosted Postiz, set the account's `base_url` to the instance's https URL; leave it empty for Postiz Cloud.
 
 ## Webhooks
 

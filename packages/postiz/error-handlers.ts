@@ -30,8 +30,9 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Core's request() has already retried the 429 three times, honouring
-	// Retry-After, before this sees it. The public API allows 30 requests an
-	// hour, so another round here would only spend more of that budget.
+	// Retry-After, before this sees it. The create-post route allows 90-100
+	// requests an hour for the whole instance, so another round here would only
+	// spend more of that budget.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async () => ({ maxRetries: 0 }),
