@@ -170,9 +170,9 @@ const PHONE_NUMBER = /\+?\(?\d[\d\s().-]{5,}\d/g;
 
 /**
  * The string values a request sent (body, query, token), longest first, so a
- * message that quotes any of them back can have it replaced. Values shorter
- * than 3 characters are skipped: they are flags and small numbers, and
- * replacing them would garble the message.
+ * message that quotes any of them back can have it replaced. Every length
+ * counts, because a customer can be named "Li"; `redactPersonal` matches the
+ * short ones only as whole words.
  */
 // unknown: the sent body is any JSON the endpoint's schema built.
 export function sentValues(...sources: unknown[]): string[] {
@@ -180,7 +180,7 @@ export function sentValues(...sources: unknown[]): string[] {
 	// unknown: walks nested JSON of any shape.
 	const walk = (value: unknown): void => {
 		if (typeof value === 'string') {
-			if (value.length >= 3) found.add(value);
+			if (value.trim().length > 0) found.add(value);
 		} else if (typeof value === 'number' && Math.abs(value) >= 1_000_000) {
 			found.add(String(value));
 		} else if (Array.isArray(value)) {
@@ -207,10 +207,13 @@ export function redactPersonal(text: string, sent: string[] = []): string {
 				: match;
 		});
 	for (const value of sent) {
-		redacted = redacted.replace(
-			new RegExp(escapeRegExp(value), 'gi'),
-			'[redacted]',
-		);
+		// A value of 3 characters or fewer is matched as a whole word, so "Li"
+		// is caught without rewriting "Invalid".
+		const pattern =
+			value.length <= 3
+				? `(?<![\\p{L}\\p{N}])${escapeRegExp(value)}(?![\\p{L}\\p{N}])`
+				: escapeRegExp(value);
+		redacted = redacted.replace(new RegExp(pattern, 'giu'), '[redacted]');
 	}
 	return redacted;
 }

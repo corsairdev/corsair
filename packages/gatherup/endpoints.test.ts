@@ -806,6 +806,26 @@ describe('error envelopes', () => {
 		expect((error as Error).message).toContain('Duplicate customer');
 	});
 
+	it('keeps a two-letter name GatherUp quotes back out of both error paths', async () => {
+		const input = {
+			businessId: 34291,
+			customerFirstName: 'Li',
+			customerLastName: 'Ng',
+			customerEmail: 'li.ng@example.com',
+		};
+		respond({ errorCode: 11, errorMessage: 'Invalid customer: Li Ng' }, 400);
+		const httpError = await caught(invoke(Customers.create, input));
+		respond({ errorCode: 11, errorMessage: 'Invalid customer: Li Ng' });
+		const bodyError = await caught(invoke(Customers.create, input));
+
+		for (const error of [httpError, bodyError]) {
+			const text = `${String(error)} ${JSON.stringify(error)}`;
+			expect(text).not.toMatch(/\bLi\b/);
+			expect(text).not.toMatch(/\bNg\b/);
+			expect((error as Error).message).toContain('Invalid customer');
+		}
+	});
+
 	it('keeps the token and client ID out of the error', async () => {
 		respond(unauthorized, 401);
 
