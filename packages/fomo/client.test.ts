@@ -248,6 +248,47 @@ describe('makeFomoRequest client', () => {
 		}
 	});
 
+	it("keeps customer fields out of core's 422 fallback message", async () => {
+		// Core's real request(): a 422 body with no message, error or detail is
+		// copied whole into ApiError.message.
+		mockRequest.mockImplementation(jest.requireActual('corsair/http').request);
+		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					errors: { title: ['is too long'] },
+					event: {
+						email_address: 'jane@example.com',
+						first_name: 'Jane',
+						ip_address: '203.0.113.7',
+					},
+				}),
+				{ status: 422, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+
+		try {
+			// `unknown` because caught rejection value has no static type before runtime assertion.
+			const caught = await makeFomoRequest(
+				'/applications/me/events',
+				'my-token-123',
+				{ method: 'POST', body: { event: { title: 'x' } } },
+			).catch((e: unknown) => e);
+
+			expect(caught).toBeInstanceOf(ApiError);
+			if (caught instanceof ApiError) {
+				expect(caught.status).toBe(422);
+				expect(caught.message).toContain('Generic Error: status: 422');
+				expect(caught.message).toContain('is too long');
+				const exposed = `${caught.message} ${String(caught.stack)}`;
+				for (const value of ['jane', 'Jane', '203.0.113.7', 'my-token-123']) {
+					expect(exposed).not.toContain(value);
+				}
+			}
+		} finally {
+			fetchSpy.mockRestore();
+		}
+	});
+
 	it('keeps customer data that Fomo echoes in its reply off the rebuilt ApiError', async () => {
 		const failed = new ApiError(
 			{ method: 'POST', url: '/applications/me/events' },

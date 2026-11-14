@@ -128,6 +128,32 @@ export function redactMessage(message: string, apiKey?: string): string {
 	return sanitized;
 }
 
+/**
+ * When Fomo's error body has no `message`, `error` or `detail`, core copies the
+ * whole body into the message ("Generic Error: ... body: {...}"), customer
+ * fields included. That copy is swapped for the cleaned body; if it can't be
+ * found, the message keeps only the status.
+ */
+function fallbackMessageFromCleanBody(
+	error: ApiError,
+	// `unknown` because the cleaned body is still arbitrary JSON.
+	cleanBody: unknown,
+): string {
+	if (!error.message.startsWith('Generic Error:')) return error.message;
+	let rawBody: string | undefined;
+	let safeBody: string | undefined;
+	try {
+		rawBody = JSON.stringify(error.body, null, 2);
+		safeBody = JSON.stringify(cleanBody, null, 2);
+	} catch {
+		rawBody = undefined;
+	}
+	if (rawBody && safeBody && error.message.includes(rawBody)) {
+		return error.message.replace(rawBody, () => safeBody ?? '');
+	}
+	return `Generic Error: status: ${error.status}; status text: ${error.statusText}`;
+}
+
 export async function makeFomoRequest<T>(
 	endpoint: string,
 	apiKey?: string,
@@ -176,10 +202,15 @@ export async function makeFomoRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const sanitizedMessage = maskEmails(redactMessage(error.message, apiKey));
 			// `unknown` because error response body contains arbitrary JSON that must be sanitized.
 			const sanitizedResponseBody: unknown = redactCustomerData(
 				redactValue(error.body, apiKey),
+			);
+			const sanitizedMessage = maskEmails(
+				redactMessage(
+					fallbackMessageFromCleanBody(error, sanitizedResponseBody),
+					apiKey,
+				),
 			);
 			// The sent body (event customer fields: email, name, IP) and the query (search values)
 			// stay off the error (R8); status, retryAfter and Fomo's own reply are kept.
