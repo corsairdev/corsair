@@ -279,7 +279,8 @@ const RESPONSE_FIXTURES: Record<DocumentsOperationKey, unknown> = {
 		},
 	},
 	// The resource DELETE route answers {"message": "ok"} with HTTP 200.
-	'documents.delete': { message: 'ok' },
+	// Live ERPNext v16 answer to DELETE /api/resource/{doctype}/{name}.
+	'documents.delete': { data: 'ok' },
 	// frappe/client.py set_value answers the updated document.
 	'documents.setValue': {
 		message: {

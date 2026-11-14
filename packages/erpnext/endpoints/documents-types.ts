@@ -256,12 +256,18 @@ const DocumentsGetWithMetaOutputSchema = z
 	})
 	.loose();
 
-// The resource DELETE route answers {"message": "ok"} on success.
+// The resource DELETE route answers {"data": "ok"} on Frappe v15 and v16
+// (frappe/api/v1.py delete_doc returns "ok", which the API handler puts
+// under `data`; seen live on v16). Older sites answered {"message": "ok"}.
 const DocumentsDeleteOutputSchema = z
 	.object({
-		message: z.string(),
+		data: z.string().optional(),
+		message: z.string().optional(),
 	})
-	.loose();
+	.loose()
+	.refine((body) => body.data !== undefined || body.message !== undefined, {
+		message: 'the delete answer carries neither data nor message',
+	});
 
 // set_value answers the updated document, get_value a field-to-value dict,
 // and rename_doc the new name; the message envelope is the only contract
