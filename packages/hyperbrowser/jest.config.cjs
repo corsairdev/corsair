@@ -49,6 +49,10 @@ module.exports = {
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	// api.test.ts hits the real Hyperbrowser API and spends credits; `pnpm
+	// test:live` runs it explicitly. Default `pnpm test` ignores it even
+	// when HYPERBROWSER_API_KEY happens to be exported.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,

@@ -1,4 +1,6 @@
+import { hyperbrowserEntities } from './database';
+
 export const HyperbrowserSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: hyperbrowserEntities,
 } as const;

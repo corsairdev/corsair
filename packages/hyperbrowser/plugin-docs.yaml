@@ -1,4 +1,84 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Hyperbrowser"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Hyperbrowser
+description: Fast cloud browsers for AI agents, web scraping, multi-page crawling, searching, and structured data extraction.
+domain: hyperbrowser.ai
+recommendedAuth: api_key
+overviewNote: |
+  Hyperbrowser provides managed cloud browser sessions and web automation APIs. Authenticate requests using an API key passed in the `x-api-key` header. Get an API key from the Hyperbrowser dashboard at https://app.hyperbrowser.ai/.
+
+  Key features:
+  - **Browser Sessions**: Launch headless or headed browser sessions with Playwright, Puppeteer, stealth anti-bot protection, residential proxies, and automatic CAPTCHA solving.
+  - **Persistent Profiles**: Maintain persistent browser cookies, local storage, and authentication state across multiple browser sessions.
+  - **Web Scraping & Extraction**: Asynchronous jobs for scraping single pages, batch scraping URL sets, multi-page web crawling, and extracting structured data with AI.
+  - **Web Search & Fetch**: Fetch rendered web pages in markdown, HTML, or screenshot formats, and search the web with clean structured results.
+
+  Credit consumption: Operations that launch browser sessions, trigger CAPTCHA evaluations, or start scrape/crawl/extract jobs consume compute credits according to your Hyperbrowser plan.
+references:
+  - title: Hyperbrowser Documentation
+    url: https://docs.hyperbrowser.ai/
+  - title: Hyperbrowser API Reference
+    url: https://hyperbrowser.ai/docs
+examples:
+  read:
+    path: profiles.list
+    title: List browser profiles
+    args: {}
+  write:
+    path: web.search
+    title: Search the web
+    args:
+      query: 'Hyperbrowser documentation'
+apiExamples:
+  profiles.fork:
+    call: "{ id: 'prof_example_123', name: 'Forked Profile' }"
+  profiles.get:
+    call: "{ id: 'prof_example_123' }"
+  profiles.delete:
+    call: "{ id: 'prof_example_123' }"
+  sessions.get:
+    call: "{ id: 'sess_example_123' }"
+  sessions.stop:
+    call: "{ id: 'sess_example_123' }"
+  sessions.update:
+    call: "{ id: 'sess_example_123', type: 'solveCaptchas', params: { solveCaptchas: true } }"
+  sessions.evaluateCaptcha:
+    call: "{ id: 'sess_example_123' }"
+  sessions.getRecordingUrl:
+    call: "{ id: 'sess_example_123' }"
+  sessions.getVideoRecordingUrl:
+    call: "{ id: 'sess_example_123' }"
+  sessions.getDownloadsUrl:
+    call: "{ id: 'sess_example_123' }"
+  scrape.create:
+    call: "{ url: 'https://example.com' }"
+  scrape.get:
+    call: "{ id: 'job_example_123' }"
+  scrape.getStatus:
+    call: "{ id: 'job_example_123' }"
+  scrape.createBatch:
+    call: "{ urls: ['https://example.com'] }"
+  scrape.getBatch:
+    call: "{ id: 'batch_example_123' }"
+  scrape.getBatchStatus:
+    call: "{ id: 'batch_example_123' }"
+  crawl.create:
+    call: "{ url: 'https://example.com' }"
+  crawl.get:
+    call: "{ id: 'crawl_example_123' }"
+  crawl.getStatus:
+    call: "{ id: 'crawl_example_123' }"
+  crawl.createWeb:
+    call: "{ url: 'https://example.com' }"
+  crawl.getWeb:
+    call: "{ id: 'crawl_example_123' }"
+  crawl.getWebStatus:
+    call: "{ id: 'crawl_example_123' }"
+  extract.create:
+    call: "{ urls: ['https://example.com'] }"
+  extract.get:
+    call: "{ id: 'extract_example_123' }"
+  extract.getStatus:
+    call: "{ id: 'extract_example_123' }"
+  web.fetch:
+    call: "{ url: 'https://example.com' }"
+  web.search:
+    call: "{ query: 'Hyperbrowser cloud browser' }"
