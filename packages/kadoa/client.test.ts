@@ -1,6 +1,9 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	KADOA_STREAM_TIMEOUT_MS,
+	KadoaAPIError,
+	kadoaErrorCode,
 	makeKadoaRequest,
 	messageResult,
 } from './client';
@@ -138,11 +141,10 @@ describe('makeKadoaRequest', () => {
 		await expect(
 			makeKadoaRequest(API_KEY, { method: 'GET', path: '/v4/workflows' }),
 		).rejects.toMatchObject({
-			name: 'KadoaAPIError',
+			name: 'ApiError',
 			status: 401,
 			message: 'Kadoa 401: Unauthorized',
-			method: 'GET',
-			transport: false,
+			request: { method: 'GET' },
 		});
 	});
 
@@ -152,16 +154,56 @@ describe('makeKadoaRequest', () => {
 			429,
 		);
 
-		await expect(
-			makeKadoaRequest(API_KEY, {
-				method: 'PUT',
-				path: '/v4/workflows/wf/run',
+		const error = await makeKadoaRequest(API_KEY, {
+			method: 'PUT',
+			path: '/v4/workflows/wf/run',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toMatchObject({ status: 429 });
+		expect(kadoaErrorCode(error)).toBe('PIPELINE_CROWDED');
+	});
+
+	it('lets core ApiError through with its status and rate-limit fields', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'Too many requests' }), {
+				status: 429,
+				headers: {
+					'Content-Type': 'application/json',
+					'Retry-After': '2',
+					'X-RateLimit-Remaining': '0',
+				},
 			}),
-		).rejects.toMatchObject({
+		);
+
+		const error = await makeKadoaRequest(API_KEY, {
+			method: 'GET',
+			path: '/v4/workflows',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
 			status: 429,
-			code: 'PIPELINE_CROWDED',
-			isRateLimit: true,
+			retryAfter: 2000,
+			message: 'Kadoa 429: Too many requests',
 		});
+	});
+
+	it('rejects a key with a line break without quoting it', async () => {
+		const badKey = 'tk-secret-part\nsecond-line';
+
+		const error = await makeKadoaRequest(badKey, {
+			method: 'GET',
+			path: '/v4/workflows',
+		}).catch((caught: unknown) => caught);
+
+		// Outside jest, Node's Headers TypeError quotes the whole value; jest's
+		// separate realm hides that, so the message is asserted directly.
+		expect(error).toBeInstanceOf(KadoaAPIError);
+		expect(error).toMatchObject({
+			message: expect.stringContaining('line break'),
+		});
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(inspect(error, { depth: 10 })).not.toContain('tk-secret-part');
 	});
 
 	it('reads the error field of a body that has no message', async () => {
@@ -190,20 +232,6 @@ describe('makeKadoaRequest', () => {
 		).rejects.toMatchObject({ retryAfter: 3000 });
 	});
 
-	it('keeps no body on the error, so a secret cannot follow it into a log', async () => {
-		respond({ error: 'Bad request', value: 'hunter2' }, 400);
-
-		// unknown: the rejection is an error whose fields the assertions read.
-		const error = (await makeKadoaRequest(API_KEY, {
-			method: 'POST',
-			path: '/v4/variables/',
-		}).catch((caught: unknown) => caught)) as Error;
-
-		expect(error).not.toHaveProperty('body');
-		expect(JSON.stringify(error)).not.toContain('hunter2');
-		expect(String(error)).not.toContain('hunter2');
-	});
-
 	it('does not keep the sent body on the error through its cause', async () => {
 		respond({ error: false, message: 'Duplicate key' }, 409);
 
@@ -214,7 +242,8 @@ describe('makeKadoaRequest', () => {
 			body: { key: 'login', value: 'hunter2', dataType: 'SECRET' },
 		}).catch((caught: unknown) => caught)) as Error;
 
-		expect(error).toMatchObject({ name: 'KadoaAPIError', status: 409 });
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 409 });
 		expect(error.cause).toBeUndefined();
 		expect(inspect(error, { depth: 10 })).not.toContain('hunter2');
 	});
@@ -225,12 +254,13 @@ describe('makeKadoaRequest', () => {
 			409,
 		);
 
-		await expect(
-			makeKadoaRequest(API_KEY, {
-				method: 'GET',
-				path: '/v4/workflows/wf/data',
-			}),
-		).rejects.toMatchObject({ status: 409, code: 'DATA_NOT_PUBLISHED' });
+		const error = await makeKadoaRequest(API_KEY, {
+			method: 'GET',
+			path: '/v4/workflows/wf/data',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toMatchObject({ status: 409 });
+		expect(kadoaErrorCode(error)).toBe('DATA_NOT_PUBLISHED');
 	});
 
 	it('waits five minutes for a request that asks for it', async () => {
@@ -254,7 +284,6 @@ describe('makeKadoaRequest', () => {
 			makeKadoaRequest(API_KEY, { method: 'GET', path: '/v4/workflows' }),
 		).rejects.toMatchObject({
 			name: 'KadoaAPIError',
-			status: undefined,
 			transport: true,
 			method: 'GET',
 			message: 'fetch failed',

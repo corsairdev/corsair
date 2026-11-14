@@ -1,15 +1,34 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import { KadoaAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+// An answered request fails as core's ApiError, as the client throws it; one
+// that got no answer fails as KadoaAPIError.
 function apiError(options: {
 	status?: number;
-	method?: string;
+	method?: ApiRequestOptions['method'];
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
-}) {
-	return new KadoaAPIError('failed', options);
+}): Error {
+	const method = options.method ?? 'GET';
+	if (options.status === undefined) {
+		return new KadoaAPIError('failed', { ...options, method });
+	}
+	return new ApiError(
+		{ method, url: '/v4/workflows' },
+		{
+			url: 'https://api.kadoa.com/v4/workflows',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: {},
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**

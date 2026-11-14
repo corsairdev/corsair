@@ -1,8 +1,11 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { KadoaAPIError } from './client';
 
+// Kadoa's HTTP errors arrive as core's ApiError; KadoaAPIError is only a
+// request that got no answer, so it carries no status.
 function statusOf(error: Error): number | undefined {
-	return error instanceof KadoaAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 export const errorHandlers = {
@@ -11,12 +14,11 @@ export const errorHandlers = {
 	// on their own and no write here is repeated by asking again: `run` was not
 	// accepted at all, so a retry starts the run rather than starting it twice.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof KadoaAPIError && error.status === 429,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof KadoaAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -61,9 +63,9 @@ export const errorHandlers = {
 	// two copies behind.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof KadoaAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

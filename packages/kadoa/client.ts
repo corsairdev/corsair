@@ -61,18 +61,12 @@ const KADOA_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * - `{ error: string, reason, recoveryHint?, existingState? }` on a 409 or 429
  *   from the run route
  *
- * Neither body is kept on the error, and core's `ApiError` is not attached
- * as `cause` either: its `request.body` holds what was sent, and a variable's
- * value or a run's `variables` can be a credential that would then reach any
- * log line that prints the error. Status, reason, method and Retry-After are
- * copied instead.
+ * An HTTP error from Kadoa stays core's `ApiError` (see `sanitizeApiError`), so
+ * its status, Retry-After and rate-limit fields reach core and the error
+ * handlers. `KadoaAPIError` covers the failures that never got an answer: a
+ * reset, DNS failure, abort or timeout, and a key that cannot be sent.
  */
 export class KadoaAPIError extends Error {
-	readonly status?: number;
-	/** Machine-readable reason, e.g. `PIPELINE_CROWDED`. */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when Kadoa sent one. */
-	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
 	/** True when the request never reached Kadoa: a reset, DNS failure or abort. */
@@ -83,38 +77,58 @@ export class KadoaAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
 		} = {},
 	) {
-		const apiError =
-			options.cause instanceof ApiError ? options.cause : undefined;
-		// A transport error carries no request body, so it can stay the cause.
-		super(
-			message,
-			options.cause && !apiError ? { cause: options.cause } : undefined,
-		);
+		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KadoaAPIError';
-		this.status = options.status ?? apiError?.status;
-		this.retryAfter = options.retryAfter ?? apiError?.retryAfter;
-		this.method = options.method ?? apiError?.request.method;
-		this.code = readCode(apiError?.body);
+		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** True for a 5xx that Kadoa answered, as opposed to a dropped connection. */
-	get isServerError(): boolean {
-		return (this.status ?? 0) >= 500;
-	}
 }
+
+/**
+ * The machine-readable reason Kadoa put in an error body, such as
+ * `PIPELINE_CROWDED` on a 429 or `DATA_NOT_PUBLISHED` on a data 409.
+ */
+export function kadoaErrorCode(error: unknown): string | undefined {
+	return error instanceof ApiError ? readCode(error.body) : undefined;
+}
+
+/**
+ * Core's `ApiError` keeps `request.body`, which here can be a variable's value
+ * or a run's `variables`, and either can be a credential that would reach any
+ * log line printing the error. The error is rebuilt as an `ApiError` with the
+ * same status, response body and rate-limit fields, Kadoa's message in front,
+ * and the sent body dropped.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const { body: _body, formData: _formData, ...request } = error.request;
+	return new ApiError(
+		request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeKadoaError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+// CR, LF and NUL make `new Headers()` throw a TypeError that quotes the whole
+// header value, which here is the key.
+const INVALID_HEADER_CHARACTERS = /[\r\n\0]/;
 
 /**
  * The message Kadoa put in an error body, with the status and reason in front
@@ -162,6 +176,13 @@ export async function makeKadoaRequest(
 	apiKey: string,
 	{ method, path, query, body, timeoutMs }: KadoaRequest,
 ): Promise<unknown> {
+	if (INVALID_HEADER_CHARACTERS.test(apiKey)) {
+		throw new KadoaAPIError(
+			'The Kadoa API key contains a line break or NUL character. Save the key again without it.',
+			{ method },
+		);
+	}
+
 	const config: OpenAPIConfig = {
 		BASE: KADOA_API_BASE,
 		VERSION: '4.0.0',
@@ -184,12 +205,7 @@ export async function makeKadoaRequest(
 			rateLimitConfig: KADOA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new KadoaAPIError(
-				describeKadoaError(error.status, error.body, error.message),
-				{ cause: error },
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new KadoaAPIError(error.message, {

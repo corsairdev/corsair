@@ -436,7 +436,7 @@ export function kadoa<const T extends KadoaPluginOptions>(
 	} satisfies InternalKadoaPlugin;
 }
 
-export { KadoaAPIError } from './client';
+export { KadoaAPIError, kadoaErrorCode } from './client';
 
 export type {
 	ChangeGetInput,

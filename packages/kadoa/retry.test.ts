@@ -91,7 +91,10 @@ describe('retry behaviour', () => {
 					.catch((caught: unknown) => caught),
 			);
 
-			expect(error).toMatchObject({ status: 429, code: 'PIPELINE_CROWDED' });
+			expect(error).toMatchObject({
+				status: 429,
+				body: { reason: 'PIPELINE_CROWDED' },
+			});
 			// One attempt plus three retries.
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
