@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/langchain",
-  "version": "0.1.26",
+  "version": "0.1.32",
   "description": "Corsair tools for LangChain.js / LangGraph — expose 200+ integrations to your agents with managed OAuth and credentials that stay in your own database.",
   "keywords": [
     "langchain",

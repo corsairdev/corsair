@@ -1,0 +1,3836 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: DigiCert
+description: Manage DigiCert CertCentral, Report Library, Account Manager, Private CA, Trust Lifecycle Manager, and Content Trust API operations.
+recommendedAuth: api_key
+overviewNote: |
+  The plugin implements all 656 currently documented non-webhook HTTP endpoints across DigiCert families and all 663 route/query modes. CertCentral and Report Library use `X-DC-DEVKEY`; DigiCert ONE APIs use a separate service-user token in `x-api-key`; Content Trust operations that document OAuth2 also accept `authType: 'oauth_2'` with the `service` scope. Public TLM version and CSC info operations need no key. Webhook operations are out of scope, five deprecated TLM routes are excluded, and 14 CertCentral Discovery catalog operations were discontinued on October 1, 2026. DigiCert ONE also offers mTLS, which this plugin does not implement. See `route-inventory.md` for per-family counts, exclusions, and sources.
+examples:
+  read:
+    path: accountManager.locales
+    title: List Account Manager locales
+  write:
+    path: trustLifecycle.addCertificateTags
+    title: Add tags to a certificate
+    args:
+      certificateId: '00000000-0000-0000-0000-000000000000'
+      tags:
+        - reviewed
+apiExamples:
+  users.list:
+    call: '{}'
+  orders.list:
+    call: '{}'
+  organizations.list:
+    call: '{}'
+  certificates.listIntermediates:
+    call: '{}'
+  accountManager.locales:
+    call: '{}'
+  privateCA.helper:
+    call: '{}'
+  privateCA.verifyTemplate:
+    call: "{ template: '{\"name\":\"TLS\"}' }"
+  reportLibrary.names:
+    call: '{}'
+  reportLibrary.types:
+    call: '{}'
+  reportLibrary.history:
+    call: '{}'
+  reportLibrary.details:
+    call: "{ reportIdentifier: '00000000-0000-4000-8000-000000000001' }"
+  customReports.orders:
+    call: "{ fields: ['id', 'status'], status: 'issued', limit: 5 }"
+  customReports.orderById:
+    call: "{ id: 123, fields: ['id', 'common_name', 'status'] }"
+  trustLifecycle.version:
+    call: '{}'
+  trustLifecycle.addCertificateTags:
+    call: "{ certificateId: '00000000-0000-0000-0000-000000000000', tags: ['reviewed'] }"
+  contentTrust.infoV0:
+    call: "{ lang: 'en-US' }"
+  contentTrust.infoV1:
+    call: "{ lang: 'en-US' }"
+  accountManagerApi.listApiTokens:
+    args:
+      query:
+        user_id: example
+  accountManagerApi.createApiToken:
+    args:
+      body:
+        name: example
+  accountManagerApi.getApiTokenById:
+    args:
+      path:
+        id: example
+  accountManagerApi.updateApiToken:
+    args:
+      path:
+        id: example
+      body:
+        name: example
+  accountManagerApi.deleteApiToken:
+    args:
+      path:
+        id: example
+  accountManagerApi.createAccount:
+    args:
+      body:
+        name: example
+        service_period:
+          to: example
+  accountManagerApi.getAccountDetails:
+    args:
+      path:
+        account_id: example
+  accountManagerApi.updateAccount:
+    args:
+      path:
+        account_id: example
+      body:
+        name: example
+        service_period:
+          to: example
+  accountManagerApi.enableClientAuthCertificate:
+    args:
+      path:
+        certificate_id: example
+  accountManagerApi.getOrganizationDetails:
+    args:
+      path:
+        organization_id: example
+  accountManagerApi.getUserDetails:
+    args:
+      path:
+        user_id: example
+  accountManagerApi.deleteUser:
+    args:
+      path:
+        user_id: example
+  accountManagerApi.updateUser:
+    args:
+      path:
+        user_id: example
+  privateCAApi.getGetAnAiaIssuerFile:
+    args:
+      path:
+        id: example
+  privateCAApi.getGetAnAiaIssuerFileBlob:
+    args:
+      path:
+        id: example
+  privateCAApi.putUpdateAnAiaIssuerFile:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postCreateOrUpdateSamlConfiguration:
+    args:
+      body:
+        idpCertificate: example
+        idpEntityId: example
+        idpMetadataXml: example
+        idpSsoUrl: example
+        spAcsUrl: example
+  privateCAApi.postParseIdPMetadata:
+    args:
+      body: {}
+  privateCAApi.postAssertionConsumerService:
+    args:
+      body:
+        SAMLResponse: example
+  privateCAApi.postSingleLogoutService:
+    args:
+      body:
+        SAMLRequest: example
+  privateCAApi.postCreateACa:
+    args:
+      body: {}
+  privateCAApi.deleteDeletesAPendingSignCa:
+    args:
+      path:
+        id: example
+  privateCAApi.getGetACa:
+    args:
+      path:
+        id: example
+  privateCAApi.deleteDeleteCaAccounts:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postAddCaAccounts:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.putSetCaAccounts:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.putSetTheActiveAiaIssuerForACa:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.putSetTheActiveCrlForACa:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postSetACaBlob:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaAiaIssuerConfiguration:
+    args:
+      path:
+        id: example
+  privateCAApi.putSetCaAiaIssuerConfiguration:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaCertPoliciesConfiguration:
+    args:
+      path:
+        id: example
+  privateCAApi.putSetCaCertPoliciesConfiguration:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.putSetCaIssuanceCertConfig:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaCertificateChains:
+    args:
+      path:
+        id: example
+  privateCAApi.postAddACertificateChainToACa:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.deleteDeleteACertificateChain:
+    args:
+      path:
+        id: example
+        chainID: example
+  privateCAApi.getGetACertificateChain:
+    args:
+      path:
+        id: example
+        chainID: example
+  privateCAApi.putUpdateACertificateChain:
+    args:
+      path:
+        id: example
+        chainID: example
+      body: {}
+  privateCAApi.putSetIncludeAllCertsInCrl:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaCrlIssuanceConfig:
+    args:
+      path:
+        id: example
+  privateCAApi.putSetCaCrlIssuanceConfig:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaOcspGenerationConfig:
+    args:
+      path:
+        id: example
+  privateCAApi.putSetCaOcspGenerationConfig:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaOcspIssuanceConfig:
+    args:
+      path:
+        id: example
+  privateCAApi.putSetCaOcspIssuanceConfig:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaOcspResponderConfig:
+    args:
+      path:
+        id: example
+  privateCAApi.putSetCaOcspResponderConfig:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.putSetAdditionalSettings:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetACaCsr:
+    args:
+      path:
+        id: example
+  privateCAApi.postDecryptAPkcs7:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getDownloadACa:
+    args:
+      path:
+        id: example
+  privateCAApi.postEncryptAPkcs7:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetTheRootCaHierarchy:
+    args:
+      path:
+        id: example
+  privateCAApi.getGetCaNotes:
+    args:
+      path:
+        id: example
+  privateCAApi.postCreateCaNote:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaOcspConfig:
+    args:
+      path:
+        id: example
+  privateCAApi.postRecertifiesExistingCaByCaId:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postRecertifiesACaWithANewImportedCertificate:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postCreateCaReinstateRequest:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaReinstateRequest:
+    args:
+      path:
+        id: example
+        requestId: example
+  privateCAApi.postApproveCaReinstateRequest:
+    args:
+      path:
+        id: example
+        requestId: example
+  privateCAApi.postRejectCaReinstateRequest:
+    args:
+      path:
+        id: example
+        requestId: example
+  privateCAApi.postCreateCaRevokeRequest:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaRevokeRequest:
+    args:
+      path:
+        id: example
+        requestId: example
+  privateCAApi.postApproveCaRevokeRequest:
+    args:
+      path:
+        id: example
+        requestId: example
+  privateCAApi.postSignAnAttributeCertificate:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postSignACmpRequest:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postSignAGlobalPlatformRequest:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCaActiveStatus:
+    args:
+      path:
+        id: example
+  privateCAApi.postSetCaActiveStatus:
+    args:
+      path:
+        id: example
+      query:
+        active_status: active
+  privateCAApi.postImportACa:
+    args:
+      body: {}
+  privateCAApi.postLinkACaKey:
+    args:
+      body: {}
+  privateCAApi.postImportAnOfflineCa:
+    args:
+      body: {}
+  privateCAApi.postImportAThirdPartyCa:
+    args:
+      body: {}
+  privateCAApi.postCreateAPendingDelegatedOcspResponder:
+    args:
+      body: {}
+  privateCAApi.postCreateCertificate:
+    args:
+      body: {}
+  privateCAApi.getGetCertificate:
+    args:
+      path:
+        id: example
+  privateCAApi.getRecoverEscrowedEeKey:
+    args:
+      path:
+        id: example
+  privateCAApi.putRevokeCertificate:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postImportACertificate:
+    args:
+      body: {}
+  privateCAApi.postAddCrlInfos:
+    args:
+      body: {}
+  privateCAApi.getGetCrlInfo:
+    args:
+      path:
+        id: example
+  privateCAApi.getGetCrlBlobList:
+    args:
+      path:
+        id: example
+  privateCAApi.postImportCrlBlob:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetCrlBlob:
+    args:
+      path:
+        id: example
+        crl_number: example
+  privateCAApi.getGetCrlConfig:
+    args:
+      path:
+        id: example
+  privateCAApi.putSetCrlConfig:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.postCreateCrlNow:
+    args:
+      path:
+        id: example
+  privateCAApi.postImportAClientKey:
+    args:
+      body:
+        app_reference_id: example
+        partition_id: example
+        provider: example
+  privateCAApi.postCreateAnOcspResponder:
+    args:
+      body: {}
+  privateCAApi.getGetAnOcspResponder:
+    args:
+      path:
+        id: example
+  privateCAApi.putSetAnOcspResponderStatus:
+    args:
+      path:
+        id: example
+        action: example
+  privateCAApi.putSetAnOcspBlob:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getDownloadAnOcspResponderCsr:
+    args:
+      path:
+        id: example
+  privateCAApi.postImportAnOcspResponder:
+    args:
+      body: {}
+  privateCAApi.postCreateAPendingOcspResponder:
+    args:
+      body: {}
+  privateCAApi.getHandleScepGetOperations:
+    args:
+      path:
+        profileID: example
+      query:
+        operation: GetCACert
+  privateCAApi.postHandleScepPkiOperation:
+    args:
+      path:
+        profileID: example
+      body: [1]
+  privateCAApi.postCreateACustomCertificateTemplate:
+    args:
+      body: {}
+  privateCAApi.getGetACertificateTemplate:
+    args:
+      path:
+        id: example
+  privateCAApi.putUpdateACustomCertificateTemplate:
+    args:
+      path:
+        id: example
+      body: {}
+  privateCAApi.getGetAAccountsCertificateTemplateIsAssignedTo:
+    args:
+      path:
+        id: example
+  privateCAApi.putActivateACustomCertificateTemplate:
+    args:
+      path:
+        id: example
+  privateCAApi.putDeactivateACustomCertificateTemplate:
+    args:
+      path:
+        id: example
+  privateCAApi.postVerifyAsn1Template:
+    args:
+      body: {}
+  trustLifecycleApi.addSystemScanUsingPostpublic:
+    args:
+      body:
+        account_id: {}
+        targets: {}
+        options: {}
+        schedule:
+          frequency: ONE_TIME
+          start_time: {}
+  trustLifecycleApi.abortSystemScanUsingPostpublic:
+    args:
+      path:
+        agentId: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.suspendSystemScanUsingPostpublic:
+    args:
+      query:
+        account_id: {}
+      body: {}
+  trustLifecycleApi.resumeSystemScanUsingPostpublic:
+    args:
+      query:
+        account_id: {}
+      body: {}
+  trustLifecycleApi.skipFutureSystemScanScheduleUsingPostpublic:
+    args:
+      path:
+        agentId: {}
+        time: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.restoreSystemScanScheduleUsingPostpublic:
+    args:
+      path:
+        agentId: {}
+        time: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.deletePastSystemScanUsingPostpublic:
+    args:
+      path:
+        agentId: {}
+        scanId: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.listUpcomingSystemScansUsingGetpublic:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.listPastSystemScansUsingGetpublic:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.getListAgents:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.getGetAgentById:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.updateCertDeliveryLocationForAgentPostpublic:
+    args:
+      query:
+        account_id: {}
+      body: {}
+  trustLifecycleApi.putApproveAgents:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.putVoidAgents:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.putUpdateAgent:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.putRetryAgentConfig:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postPostAgentSuggestions:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.getListAgentScripts:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postPostAgentScript:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.getGetAgentScriptById:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.putUpdateAgentScript:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.postAddAgentScriptsInBulk:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.putSuspendAgents:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.putRejectAgents:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.putReinstateAgents:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.getGetGlobalAgentSettings:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.putUpdateGlobalAgentSettings:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postCreateGlobalAgentSettings:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.getAutomationDetailsUsingGet:
+    args:
+      path:
+        automation_id: {}
+  trustLifecycleApi.updateAutomationUsingPut:
+    args:
+      path:
+        automation_id: {}
+  trustLifecycleApi.retryAutomationUsingPut:
+    args:
+      path:
+        automation_id: {}
+  trustLifecycleApi.cancelAutomationUsingPut:
+    args:
+      path:
+        automation_id: {}
+  trustLifecycleApi.getInventoryDetailsUsingGet:
+    args:
+      path:
+        automation_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.getGetBusinessUnitById:
+    args:
+      path:
+        bu_id: {}
+  trustLifecycleApi.deleteDeleteBusinessUnit:
+    args:
+      path:
+        bu_id: {}
+  trustLifecycleApi.putUpdateBusinessUnitLicense:
+    args:
+      path:
+        bu_id: {}
+  trustLifecycleApi.putAssignAnAdminToABusinessUnit:
+    args:
+      path:
+        id: {}
+      body:
+        id: {}
+  trustLifecycleApi.deleteRemoveAnAdminFromABusinessUnit:
+    args:
+      path:
+        id: {}
+        adminId: {}
+  trustLifecycleApi.getListCertificateOwners:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postCreateCertificateOwners:
+    args:
+      body:
+        account_id: {}
+        certificate_owner:
+          email: {}
+  trustLifecycleApi.getGetCertificateOwnerById:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.putUpdateCertificateOwnerDetailsForAGivenCertificateOwnerId:
+    args:
+      path:
+        id: {}
+      body:
+        account_id: {}
+        certificate_owner:
+          email: {}
+  trustLifecycleApi.deleteDeleteCertificateOwner:
+    args:
+      path:
+        id: {}
+  trustLifecycleApi.putAddCertificateOwnersMappingForCertificate:
+    args:
+      path:
+        id: {}
+      body:
+        account_id: {}
+        certificate_owner_ids: {}
+  trustLifecycleApi.deleteDeleteCertificateOwnerMappingsForACertificate:
+    args:
+      path:
+        id: {}
+      body:
+        account_id: {}
+        certificate_owner_ids: {}
+  trustLifecycleApi.postPickUpCertificate:
+    args:
+      path:
+        request_id: {}
+  trustLifecycleApi.postApproveEscrowedCertificateRecovery:
+    args:
+      path:
+        serial_number: {}
+  trustLifecycleApi.postRenewCertificate:
+    args:
+      path:
+        serial_number: {}
+  trustLifecycleApi.postBulkUpdateTags:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postBulkReplaceTags:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.publicCertificateSearchSummary:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.publicGetCertUsingId:
+    args:
+      path:
+        certificate_id: {}
+  trustLifecycleApi.getGetCertificateBySerialNumber:
+    args:
+      path:
+        serial_number: {}
+  trustLifecycleApi.postRecoverEscrowedCertificateBySerialNumber:
+    args:
+      path:
+        serial_number: {}
+  trustLifecycleApi.certRevokeBySerial:
+    args:
+      path:
+        serial_number: {}
+  trustLifecycleApi.deleteResumeSuspendedCertificate:
+    args:
+      path:
+        serial_number: {}
+  trustLifecycleApi.getAdditionalFormatsBySerialNumber:
+    args:
+      path:
+        serial_number: {}
+  trustLifecycleApi.listByAccountUsingPost:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.suggestionsUsingGet:
+    args:
+      path:
+        field: provider
+      query:
+        account_id: {}
+  trustLifecycleApi.getDetailsByIdUsingGet:
+    args:
+      path:
+        connector_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.updateUsingPut1:
+    args:
+      path:
+        connector_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.deleteByIdUsingDelete:
+    args:
+      path:
+        connector_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.runNowUsingPost:
+    args:
+      path:
+        connector_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.stopUsingPost:
+    args:
+      path:
+        connector_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.testConnectionUsingPost:
+    args:
+      path:
+        connector_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.unlinkUsingPost:
+    args:
+      path:
+        connector_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.getConnectorMetadataUsingGet:
+    args:
+      path:
+        connector_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.getListCustomAttributes:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postCreateCustomAttribute:
+    args:
+      body:
+        account_id: {}
+        custom_attribute:
+          name: {}
+          type: TEXT_FIELD
+  trustLifecycleApi.getListCustomAttributesForCertificate:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.putAddCustomAttributesMappingForCertificate:
+    args:
+      path:
+        id: {}
+      body:
+        account_id: {}
+        custom_attributes_request: {}
+  trustLifecycleApi.deleteDeleteCustomAttributesMappingForCertificate:
+    args:
+      path:
+        id: {}
+      body:
+        account_id: {}
+        custom_attribute_ids: {}
+  trustLifecycleApi.getGetCustomAttributeById:
+    args:
+      path:
+        id: {}
+  trustLifecycleApi.putUpdateCustomAttribute:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+      body:
+        custom_attribute:
+          name: {}
+          type: TEXT_FIELD
+  trustLifecycleApi.deleteDeleteCustomAttribute:
+    args:
+      path:
+        id: {}
+  trustLifecycleApi.getCertificateCountsBySourceTypes:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.deleteCertificatesBySourceTypes:
+    args:
+      query:
+        account_id: {}
+        source_type: {}
+  trustLifecycleApi.getListDevices:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postAddDevices:
+    args:
+      query:
+        account_id: {}
+      body:
+        devices: {}
+  trustLifecycleApi.deleteDeleteDevicesBulk:
+    args:
+      query:
+        account_id: {}
+      body:
+        deviceInventoryIds: {}
+  trustLifecycleApi.getGetDevice:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.putUpdateDevice:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+      body: {}
+  trustLifecycleApi.deleteDeleteDevice:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.postImportDevicesFromCsv:
+    args:
+      query:
+        account_id: {}
+      body:
+        file: {}
+  trustLifecycleApi.getExportDevicesToCsv:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.putLinkDevicesToAProfile:
+    args:
+      path:
+        profileId: {}
+      query:
+        account_id: {}
+      body:
+        deviceInventoryIds: {}
+  trustLifecycleApi.putUnlinkDevicesFromAProfile:
+    args:
+      path:
+        profileId: {}
+      query:
+        account_id: {}
+      body:
+        deviceInventoryIds: {}
+  trustLifecycleApi.putBulkMapDevicesToProfiles:
+    args:
+      query:
+        account_id: {}
+      body:
+        deviceInventoryIds: {}
+        profileIds: {}
+  trustLifecycleApi.deleteBulkUnmapDevicesFromProfiles:
+    args:
+      query:
+        account_id: {}
+      body:
+        deviceInventoryIds: {}
+        profileIds: {}
+  trustLifecycleApi.getUnsecured:
+    args:
+      query:
+        account:
+          id: {}
+          name: {}
+  trustLifecycleApi.getUnsecuredCount:
+    args:
+      query:
+        account:
+          id: {}
+          name: {}
+  trustLifecycleApi.getPortletCount:
+    args:
+      query:
+        account_id: {}
+        portlet_ids: {}
+  trustLifecycleApi.getAutomatableEndpoint:
+    args:
+      query:
+        account:
+          id: {}
+          name: {}
+  trustLifecycleApi.getAutomatableCount:
+    args:
+      query:
+        account:
+          id: {}
+          name: {}
+  trustLifecycleApi.getInventoryDetails:
+    args:
+      path:
+        id: {}
+      query:
+        instance_type: {}
+        account_id: {}
+        inventory_type: {}
+  trustLifecycleApi.getDiscoveredEndpoints:
+    args:
+      query:
+        account:
+          id: {}
+          name: {}
+  trustLifecycleApi.getDiscoveredEndpointsCount:
+    args:
+      query:
+        account:
+          id: {}
+          name: {}
+  trustLifecycleApi.getInstancesList:
+    args:
+      query:
+        account:
+          id: {}
+          name: {}
+        certificateThumbprint: {}
+  trustLifecycleApi.putUpdateStatusOfManualApprovalEnrollment:
+    args:
+      path:
+        enrollment_id: {}
+  trustLifecycleApi.getGetEnrollmentDetailsByEnrollmentCode:
+    args:
+      path:
+        enrollment_code: {}
+      query:
+        seat_id: {}
+  trustLifecycleApi.getGetEnrollmentDetailsById:
+    args:
+      path:
+        enrollment_id: {}
+  trustLifecycleApi.getAttributesOfRenewableCertificateUsingCertIdUsingGet:
+    args:
+      path:
+        certificate_id: {}
+  trustLifecycleApi.postRenewCertificateEnrollmentUsingCertificateId:
+    args:
+      path:
+        certificate_id: {}
+  trustLifecycleApi.handleGetCaCertsOperationUsingGet:
+    args:
+      path:
+        profileId: {}
+  trustLifecycleApi.handleSimpleEnrollOperationUsingPost:
+    args:
+      path:
+        profileId: {}
+  trustLifecycleApi.handleSimpleReEnrollOperationUsingPost:
+    args:
+      path:
+        profileId: {}
+  trustLifecycleApi.listSensorIntegrations:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.getSensorIntegrationById:
+    args:
+      path:
+        integration_id: {}
+  trustLifecycleApi.getGetListOfDnsIntegrations:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postVoidById:
+    args:
+      path:
+        integration_id: {}
+  trustLifecycleApi.getSensorIntegrationAppParameters:
+    args:
+      path:
+        application_name: AWS
+  trustLifecycleApi.postCreateANewProfile:
+    args:
+      body:
+        name: {}
+        business_unit_id: {}
+        ica:
+          id: {}
+        account_id: {}
+        template_id: {}
+        enrollment_method: digicert_desktop_client
+        authentication_method: third_party_app
+        seat_id_mapping: email
+        renewal_window_days: {}
+  trustLifecycleApi.putUpdateProfile:
+    args:
+      path:
+        profile_id: {}
+      body:
+        name: {}
+        business_unit_id: {}
+        ica:
+          id: {}
+        account_id: {}
+        template_id: {}
+        enrollment_method: digicert_desktop_client
+        authentication_method: third_party_app
+        seat_id_mapping: email
+        renewal_window_days: {}
+  trustLifecycleApi.getGetProfileById:
+    args:
+      path:
+        profile_id: {}
+  trustLifecycleApi.getGetProfileById_2316fef:
+    args:
+      path:
+        profile_id: {}
+  trustLifecycleApi.getGetAuditLogEventById:
+    args:
+      path:
+        event_id: {}
+  trustLifecycleApi.getListRules:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.postCreateRule:
+    args:
+      body:
+        account_id: {}
+        name: {}
+        type: certificate
+  trustLifecycleApi.deleteDeleteRules:
+    args:
+      query:
+        account_id: {}
+      body: {}
+  trustLifecycleApi.getGetRuleById:
+    args:
+      path:
+        id: {}
+  trustLifecycleApi.putUpdateRule:
+    args:
+      path:
+        id: {}
+      body:
+        account_id: {}
+        name: {}
+        type: certificate
+  trustLifecycleApi.postRunRuleNow:
+    args:
+      path:
+        ruleId: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.listOfScansUsingGet:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.addScanUsingPost:
+    args:
+      body:
+        account_id: {}
+        config: {}
+        frequency: DAILY
+        name: {}
+  trustLifecycleApi.deleteScanUsingPost:
+    args:
+      query:
+        account_id: {}
+      body: {}
+  trustLifecycleApi.editScanUsingPut:
+    args:
+      body:
+        account_id: {}
+        config: {}
+        frequency: DAILY
+        name: {}
+  trustLifecycleApi.getDetailsUsingGet1:
+    args:
+      path:
+        scan_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.abortScanUsingPost:
+    args:
+      path:
+        scan_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.publicListPastScansUsingGet:
+    args:
+      path:
+        id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.getGetSeatByIdentifier:
+    args:
+      path:
+        seat_id: {}
+      query:
+        seat_type_id: USER_SEAT
+  trustLifecycleApi.putUpdateSeat:
+    args:
+      path:
+        seat_id: {}
+  trustLifecycleApi.deleteDeleteSeat:
+    args:
+      path:
+        seat_id: {}
+      query:
+        seat_type_id: USER_SEAT
+  trustLifecycleApi.putAssignSeatToAnotherBusinessUnit:
+    args:
+      path:
+        seat_id: {}
+        new_business_unit_id: {}
+      query:
+        business_unit_id: {}
+  trustLifecycleApi.listSensors:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.allocateNewSensorUsingPost:
+    args:
+      query:
+        account_id: {}
+  trustLifecycleApi.getGetSensorById:
+    args:
+      path:
+        sensor_id: {}
+      query:
+        account_id: {}
+  trustLifecycleApi.getSensorTemplateFileUsingGet:
+    args:
+      path:
+        license_key: {}
+  contentTrustApi.verifyAuditLog:
+    args:
+      path:
+        id: example
+  contentTrustApi.getById:
+    args:
+      path:
+        id: example
+  contentTrustApi.createRecurringCredential:
+    args:
+      body:
+        account:
+          id: example
+        label: example
+        profileId: example
+  contentTrustApi.updateCredential:
+    args:
+      path:
+        credentialId: example
+      query:
+        user_id: example
+      body: {}
+  contentTrustApi.credentialsInfo:
+    args:
+      body:
+        credentialID: example
+  contentTrustApi.authorizeCredentials:
+    args:
+      body:
+        hash: [example]
+        credentialID: example
+        numSignatures: 1
+  contentTrustApi.extendTransaction:
+    args:
+      body:
+        hash: [example]
+        credentialID: example
+        SAD: example
+  contentTrustApi.credentialSendOtp:
+    args:
+      body:
+        credentialID: example
+  contentTrustApi.signHash:
+    args:
+      body:
+        hash: [example]
+        signAlgo: example
+        credentialID: example
+        SAD: example
+  contentTrustApi.timeStampToken:
+    args:
+      body:
+        hash: example
+        hashAlgo: example
+  contentTrustApi.credentialsInfo1:
+    args:
+      body:
+        credentialID: example
+  contentTrustApi.authorizeCredentials1:
+    args:
+      body:
+        hash: [example]
+        credentialID: example
+        numSignatures: 1
+  contentTrustApi.extendTransaction1:
+    args:
+      body:
+        hash: [example]
+        credentialID: example
+        SAD: example
+  contentTrustApi.credentialSendOtp1:
+    args:
+      body:
+        credentialID: example
+  contentTrustApi.signHash1:
+    args:
+      body:
+        hash: [example]
+        signAlgo: example
+        credentialID: example
+        SAD: example
+  contentTrustApi.timeStampToken1:
+    args:
+      body:
+        hash: example
+        hashAlgo: example
+  contentTrustApi.reject:
+    args:
+      path:
+        validationId: example
+      query:
+        account_id: example
+      body:
+        reason: TECH_PHOTO
+  contentTrustApi.getValidationDetails:
+    args:
+      path:
+        userId: example
+      query:
+        account_id: example
+  contentTrustApi.revalidate:
+    args:
+      path:
+        validationId: example
+      query:
+        account_id: example
+  contentTrustApi.approve:
+    args:
+      path:
+        validationId: example
+      query:
+        account_id: example
+      body:
+        account:
+          id: example
+        contact_data:
+          mobile_phone: example
+          email: 'jane.doe@example.com'
+        user_data:
+          first_name: example
+          last_name: example
+        identification_document:
+          country: example
+          number: example
+          date_issued: example
+          valid_until: example
+          type: PASSPORT
+  contentTrustApi.listValidations:
+    args:
+      query:
+        account_id: example
+  contentTrustApi.createValidation:
+    args:
+      body:
+        account:
+          id: example
+        associated_users: {}
+  contentTrustApi.getValidation:
+    args:
+      path:
+        validationId: example
+      query:
+        account_id: example
+  contentTrustApi.resendEmail:
+    args:
+      path:
+        validationId: example
+      query:
+        account_id: example
+  contentTrustApi.cancelValidation:
+    args:
+      path:
+        validationId: example
+      query:
+        account_id: example
+  contentTrustApi.retryValidation:
+    args:
+      path:
+        validationId: example
+  contentTrustApi.enableValidation:
+    args:
+      path:
+        validationId: example
+      body: {}
+  contentTrustApi.disableValidation:
+    args:
+      path:
+        validationId: example
+      body: {}
+  contentTrustApi.invalidateValidation:
+    args:
+      path:
+        validationId: example
+      body: {}
+  contentTrustApi.approvePendingSignerApproval:
+    args:
+      path:
+        validationId: example
+  contentTrustApi.rejectPendingSignerApproval:
+    args:
+      path:
+        validationId: example
+      body:
+        reason: VALIDATION_IN_PROCESS
+  contentTrustApi.approveValidationOrganization:
+    args:
+      path:
+        validationId: example
+  contentTrustApi.rejectValidationOrganization:
+    args:
+      path:
+        validationId: example
+      body:
+        reason: TECH_PHOTO
+  contentTrustApi.enhanceHash:
+    args:
+      body: {}
+  contentTrustApi.enhanceSignature:
+    args:
+      body: {}
+  contentTrustApi.setupAccount:
+    args:
+      body:
+        account_name: example
+        locale: example
+        is_delegated: true
+        admin_user:
+          first_name: example
+          last_name: example
+          email: 'jane.doe@example.com'
+          user_name: example
+          phone_number: example
+          locale: example
+          id: example
+        service_user:
+          email: 'jane.doe@example.com'
+        organization_details:
+          name: example
+          address: example
+          address2: example
+          country: example
+          organization_contact:
+            first_name: example
+            last_name: example
+            email: 'jane.doe@example.com'
+            job_title: example
+            telephone: example
+          authorized_representative:
+            - first_name: example
+              last_name: example
+              email: 'jane.doe@example.com'
+              job_title: example
+              telephone: example
+  contentTrustApi.updateAccount:
+    args:
+      path:
+        onboardingId: example
+      body: {}
+  contentTrustApi.createUserInAm:
+    args:
+      body:
+        email: 'jane.doe@example.com'
+        first_name: example
+        last_name: example
+        user_name: example
+        user_type: example
+        accounts: [example]
+        roles: [AM_ACCOUNT_ADMIN]
+        is_pipl_accepted: true
+        is_tou_accepted: true
+  contentTrustApi.updateUserData:
+    args:
+      path:
+        userId: example
+      body:
+        account:
+          id: example
+  contentTrustApi.createRecurringCredentialV2:
+    args:
+      body:
+        label: example
+        productName: example
+        organization:
+          id: 1
+          contacts:
+            - contact_type: VERIFIED_CONTACT
+        userId: example
+  contentTrustApi.getCredentialByName:
+    args:
+      path:
+        name: example
+  contentTrustApi.cancelCredentialByName:
+    args:
+      path:
+        name: example
+      body:
+        notes: example
+  contentTrustApi.revokeCredentials:
+    args:
+      path:
+        name: example
+      query:
+        user_id: example
+  contentTrustApi.replaceClientAdmin:
+    args:
+      path:
+        userId: example
+      body:
+        email: 'jane.doe@example.com'
+        first_name: example
+        last_name: example
+        user_name: example
+  certcentralApi.addCustomField:
+    args:
+      body:
+        label: example
+  certcentralApi.bulkAddFields:
+    args:
+      body:
+        metadata: [example]
+        label: example
+  certcentralApi.configureOidcSso:
+    args:
+      body:
+        provider_url: example
+        client_id: example
+        client_secret: example
+        friendly_name: example
+        scope_parameter: example
+  certcentralApi.deleteCustomField:
+    args:
+      path:
+        metadata_id: example
+  certcentralApi.editCustomField:
+    args:
+      path:
+        metadata_id: example
+      body:
+        label: example
+  certcentralApi.inviteDetails:
+    args:
+      path:
+        invite_id: example
+  certcentralApi.listInvites:
+    args:
+      query: {}
+  certcentralApi.moveOrders:
+    args:
+      path:
+        target_account_id: 1
+      body:
+        order_ids: example
+  certcentralApi.resendInvite:
+    args:
+      path:
+        invite_id: example
+  certcentralApi.sendInvite:
+    args:
+      body:
+        emails: [example]
+        subaccount_type: example
+  certcentralApi.updateAccountNotificationSettings:
+    args:
+      body:
+        account_settings: [example]
+        name: example
+        value: example
+  certcentralApi.updateInviteStatus:
+    args:
+      path:
+        invite_id: example
+      body:
+        status: example
+  certcentralApi.updateOidcSsoConfiguration:
+    args:
+      body:
+        provider_url: example
+        client_id: example
+        client_secret: example
+        friendly_name: example
+        scope_parameter: example
+  certcentralApi.updateSamlEntity:
+    args:
+      path:
+        entity_id: example
+      body:
+        attribute_mapping: example
+        friendly_name: example
+  certcentralApi.acmeExternalAccountBinding:
+    args:
+      body:
+        name: example
+        product_name_id: example
+        validity_years: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.createKey:
+    args:
+      path:
+        user_id: example
+      body:
+        name: example
+  certcentralApi.editKey:
+    args:
+      path:
+        key_id: example
+      body:
+        name: example
+  certcentralApi.getKeyInfo:
+    args:
+      path:
+        key_id: example
+  certcentralApi.updateAcmeRestrictions:
+    args:
+      path:
+        key_id: example
+  certcentralApi.updateKeyStatus:
+    args:
+      path:
+        key_id: example
+      body:
+        status: example
+  certcentralApi.containerPermissions:
+    args:
+      path:
+        permission: example
+  certcentralApi.addNote:
+    args:
+      path:
+        certificate_id: example
+      body:
+        text: example
+  certcentralApi.archiveCertificate:
+    args:
+      path:
+        certificate_id: example
+  certcentralApi.certificateChain:
+    args:
+      path:
+        certificate_id: example
+  certcentralApi.downloadCertificateByFormatOrderId:
+    args:
+      path:
+        order_id: example
+        format_type: example
+  certcentralApi.downloadCertificateByFormat:
+    args:
+      path:
+        certificate_id: example
+        format_type: example
+  certcentralApi.downloadCertificateOrderId:
+    args:
+      path:
+        order_id: example
+  certcentralApi.emailCertificate:
+    args:
+      path:
+        certificate_id: example
+      body:
+        emails: [example]
+        certificate_collect_format: example
+  certcentralApi.listCertificateNotes:
+    args:
+      path:
+        certificate_id: example
+  certcentralApi.restoreCertificate:
+    args:
+      path:
+        certificate_id: example
+  certcentralApi.revokeCertificate:
+    args:
+      path:
+        certificate_identifier: example
+  certcentralApi.activateContainer:
+    args:
+      path:
+        container_id: example
+  certcentralApi.containerInfo:
+    args:
+      path:
+        container_id: example
+  certcentralApi.createContainer:
+    args:
+      path:
+        container_id: example
+      body:
+        name: example
+  certcentralApi.deactivateContainer:
+    args:
+      path:
+        container_id: example
+  certcentralApi.editContainer:
+    args:
+      path:
+        container_id: example
+      body:
+        name: example
+  certcentralApi.listChildContainers:
+    args:
+      path:
+        container_id: example
+  certcentralApi.listContainerOrganizations:
+    args:
+      path:
+        container_id: example
+  certcentralApi.listContainerRoles:
+    args:
+      path:
+        container_id: example
+  certcentralApi.listTemplates:
+    args:
+      path:
+        container_id: example
+  certcentralApi.parentContainerInfo:
+    args:
+      path:
+        container_id: example
+  certcentralApi.productLimits:
+    args:
+      path:
+        container-id: example
+  certcentralApi.templateInfo:
+    args:
+      path:
+        container_id: example
+        template_id: example
+  certcentralApi.updateAllowedDomains:
+    args:
+      path:
+        container_id: example
+      body:
+        allowed_domain_names: [example]
+  certcentralApi.updateOrganizationAssignments:
+    args:
+      path:
+        container_id: example
+      body:
+        organization_id_assignments: [example]
+  certcentralApi.updateRenewalNotificationRecipients:
+    args:
+      path:
+        container_id: example
+      body:
+        name: example
+        value: example
+        allow_override: true
+        inheritable: true
+  certcentralApi.updateUserAssignments:
+    args:
+      path:
+        container_id: example
+      body:
+        user_id_assignments: [example]
+  certcentralApi.allowlistIssuingCertificateAuthority:
+    args:
+      body:
+        issuer_brand: example
+  certcentralApi.disableCtLogMonitoring:
+    args:
+      path:
+        order_id: example
+  certcentralApi.downloadCertificateSerialNumber:
+    args:
+      path:
+        order_id: example
+        serial_id: example
+  certcentralApi.enableCtLogMonitoring:
+    args:
+      path:
+        order_id: example
+  certcentralApi.getAllowlistedIssuingCaBrandDetails:
+    args:
+      query: {}
+  certcentralApi.getCtLogDetailsForACertificate:
+    args:
+      path:
+        order_id: example
+        certificate_serial_number: example
+  certcentralApi.getCtLogMonitoringStatus:
+    args:
+      path:
+        order_id: example
+  certcentralApi.getCtLogsOrderId:
+    args:
+      path:
+        order_id: example
+      query: {}
+  certcentralApi.activateDomainLocking:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.activateDomain:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.addDomain:
+    args:
+      body:
+        name: example
+        organization: example
+        id: 1
+        validations: [example]
+        type: example
+  certcentralApi.changeDcvMethod:
+    args:
+      path:
+        domain_id: example
+      body:
+        dcv_method: example
+  certcentralApi.checkCaaDomainLock:
+    args:
+      path:
+        domain_id: example
+      body:
+        account_token: example
+  certcentralApi.deactivateDomainLocking:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.deactivateDomain:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.deleteDomain:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.domainEmails:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.domainInfo:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.listDomains:
+    args:
+      query: {}
+  certcentralApi.ovEvSslCheckDcv:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.ovEvSslGenerateDcvToken:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.resendDcvEmail:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.submitForValidation:
+    args:
+      path:
+        domain_id: example
+      body:
+        validations: [example]
+        type: example
+  certcentralApi.validationDetails:
+    args:
+      path:
+        domain_id: example
+  certcentralApi.listBalanceHistory:
+    args:
+      query: {}
+  certcentralApi.listPurchaseHistory:
+    args:
+      query: {}
+  certcentralApi.listReplacementBenefits:
+    args:
+      body:
+        domains: [example]
+  certcentralApi.priceEstimate:
+    args:
+      body:
+        certificate: example
+        dns_names: [example]
+        order_validity: example
+        years: 1
+        days: 1
+        validity_years: 1
+        product_name_id: example
+        country: example
+        city: example
+        state: example
+        zip: example
+  certcentralApi.receiptInfo:
+    args:
+      path:
+        receipt_id: example
+  certcentralApi.transferFunds:
+    args:
+      body:
+        amount: 1
+        from_container_id: 1
+        to_container_id: 1
+  certcentralApi.voucherPriceEstimate:
+    args:
+      body:
+        vouchers: [example]
+        product_name_id: example
+        quantity: 1
+        country: example
+        city: example
+  certcentralApi.addIpRestriction:
+    args:
+      path:
+        container_id: example
+      body:
+        ip_address: example
+        ip_address_end: example
+  certcentralApi.deleteIpRestriction:
+    args:
+      path:
+        container_id: example
+        rule_id: example
+  certcentralApi.listIpRestrictions:
+    args:
+      path:
+        container_id: example
+  certcentralApi.digiCertOrderId:
+    args:
+      path:
+        legacy_order_id: example
+  certcentralApi.addNote_504f5354:
+    args:
+      path:
+        order_id: example
+      body:
+        text: example
+  certcentralApi.additionalEmails:
+    args:
+      path:
+        order_id: example
+      body:
+        additional_emails: [example]
+  certcentralApi.changeCtStatus:
+    args:
+      path:
+        order_id: example
+      body:
+        disable_ct: true
+  certcentralApi.changeOrderContainer:
+    args:
+      path:
+        order_id: example
+        container_id: example
+  certcentralApi.deleteCustomField_44454c45:
+    args:
+      path:
+        order_id: example
+        metadata_id: example
+  certcentralApi.deleteNoteDeleteNote:
+    args:
+      path:
+        order_id: example
+        note_id: example
+  certcentralApi.deleteOrderDeleteOrder:
+    args:
+      path:
+        order_id: example
+  certcentralApi.deleteRenewalMessage:
+    args:
+      path:
+        order_id: example
+  certcentralApi.duplicateCertificate:
+    args:
+      path:
+        order_id: example
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+  certcentralApi.dvSslChangeDcvMethod:
+    args:
+      path:
+        order_id: example
+      body:
+        dcv_method: example
+  certcentralApi.dvSslCheckDcv:
+    args:
+      path:
+        order_id: example
+      body:
+        dns_name: example
+        dcv_method: example
+  certcentralApi.generateDcvToken:
+    args:
+      path:
+        order_id: example
+  certcentralApi.dvSslResendEmails:
+    args:
+      path:
+        order_id: example
+      body:
+        domain: example
+        email: 'jane.doe@example.com'
+  certcentralApi.editCustomFieldValue:
+    args:
+      path:
+        order_id: example
+      body:
+        metadata_id: 1
+        value: example
+  certcentralApi.editDomainsOnAPendingOrderOrReissue:
+    args:
+      path:
+        order_id: example
+      body:
+        certificate: example
+  certcentralApi.editGuestAccessOrder:
+    args:
+      path:
+        order_id: example
+      body:
+        enable_guest_access: 1
+  certcentralApi.editNote:
+    args:
+      path:
+        order_id: example
+        note_id: example
+      body:
+        text: example
+  certcentralApi.emailSiteSeal:
+    args:
+      path:
+        order_id: example
+  certcentralApi.getOrdersByAlternativeOrderId:
+    args:
+      path:
+        alternative_order_id: example
+  certcentralApi.listDuplicates:
+    args:
+      path:
+        order_id: example
+  certcentralApi.listOrderNotes:
+    args:
+      path:
+        order_id: example
+  certcentralApi.listReissues:
+    args:
+      path:
+        order_id: example
+  certcentralApi.orderAatlNaturalPersonCertificate:
+    args:
+      body:
+        certificate: example
+        usage_designation: example
+        cs_provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        csa_agreed_to: true
+        order_validity: example
+        years: 1
+        individual: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderAatlNaturalPersonInOrganisationCertificate:
+    args:
+      body:
+        certificate: example
+        usage_designation: example
+        cs_provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        csa_agreed_to: true
+        order_validity: example
+        years: 1
+        individual: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        organization: example
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderAatlOrganizationEsealCertificate:
+    args:
+      body:
+        certificate: example
+        usage_designation: example
+        cs_provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        csa_agreed_to: true
+        order_validity: example
+        years: 1
+        requester: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderBasicEvOrderBasicEv:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.orderMultiYearPlanOrderMultiYearPlan:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        metadata_id: 1
+        value: example
+  certcentralApi.orderBasicOv:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.orderClientCertificate:
+    args:
+      path:
+        client_certificate_id: example
+      body:
+        certificate: example
+        emails: [example]
+        signature_hash: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        id: 1
+        order_validity: example
+        years: 1
+        metadata_id: 1
+        value: example
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+  certcentralApi.orderCodeSigningCertificate:
+    args:
+      path:
+        code_signing_certificate_id: example
+      body:
+        certificate: example
+        signature_hash: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        order_validity: example
+        years: 1
+        addr1: example
+        method: example
+        metadata_id: 1
+        value: example
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+  certcentralApi.orderCommonMarkCertificateCmc:
+    args:
+      body:
+        certificate: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        metadata_id: 1
+        value: example
+  certcentralApi.orderDocumentSigningCertificate:
+    args:
+      path:
+        document_certificate_id: example
+      body:
+        certificate: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        name: example
+        addr1: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        subject: example
+        phone: example
+        metadata_id: 1
+        value: example
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+  certcentralApi.orderDocumentSigningForEmployee:
+    args:
+      body:
+        certificate: example
+        usage_designation: example
+        cs_provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        csa_agreed_to: true
+        subject: example
+        given_name: example
+        surname: example
+        job_title: example
+        phone: example
+        email: 'jane.doe@example.com'
+        order_validity: example
+        years: 1
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderDocumentSigningForIndividual:
+    args:
+      body:
+        certificate: example
+        usage_designation: example
+        cs_provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        csa_agreed_to: true
+        order_validity: example
+        years: 1
+        individual: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderDocumentSigningForOrganization:
+    args:
+      body:
+        certificate: example
+        usage_designation: example
+        cs_provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        csa_agreed_to: true
+        order_validity: example
+        years: 1
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderDvSsl:
+    args:
+      path:
+        dv_ssl_certificate_id: example
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        dns_name: example
+        email_domain: 'jane.doe@example.com'
+        id: 1
+        metadata_id: 1
+        value: example
+        first_name: example
+        last_name: example
+        telephone: example
+  certcentralApi.orderEuQualifiedESealPsd2:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        psp_roles: [example]
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderEuQualifiedESeal:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderEuQualifiedPersonalOrganisation:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        common_name_indictator: example
+        individual: example
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        organization: example
+        id: 1
+        contacts: [example]
+        metadata_id: 1
+        value: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderEuQualifiedPersonal:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        common_name_indicator: example
+        individual: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        country: example
+        state: example
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        method: example
+        id: 1
+        metadata_id: 1
+        value: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderGeoTrustDvSsl:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        dns_name: example
+        email_domain: 'jane.doe@example.com'
+        id: 1
+        metadata_id: 1
+        value: example
+        first_name: example
+        last_name: example
+        telephone: example
+  certcentralApi.orderInfo:
+    args:
+      path:
+        order_id: example
+  certcentralApi.orderOvEvSslOrderOvEvSsl:
+    args:
+      path:
+        ssl_certificate_id: example
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.orderSecureSiteSslOrderSecureSiteSsl:
+    args:
+      path:
+        ssl_certificate_id: example
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.orderPkioAuthenticationOrEncryptionCitizen:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        ship_info: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationPerson:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        individual: example
+        csa_agreed_to: true
+        cs_provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationServices:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioAuthenticationOrEncryptionPrivatePerson:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioAuthenticationOrEncryptionPrivateProfessional:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioAuthenticationOrEncryptionProfessional:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        individual: example
+        csa_agreed_to: true
+        cs_provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioCitizenSigning:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioPersonalOrganisationSigning:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioPrivatePersonSigningOrderPkioPrivatePersonSigning:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        individual: example
+        id: 1
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioPrivateProfessionalSigningOrderPkioPrivateProfessionalSigning:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        individual: example
+        id: 1
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioPrivateServicesServer:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        csr: example
+        csa_agreed_to: true
+        id: 1
+        organization: example
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+        city: example
+        country: example
+  certcentralApi.orderPkioProfessionalSigning:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPkioQualifiedESeal:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        profile_option: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderPrivateSsl:
+    args:
+      path:
+        private_ssl_certificate_id: example
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.orderSecureEmailCertificate:
+    args:
+      body:
+        certificate: example
+        emails: [example]
+        usage_designation: example
+        signature_hash: example
+        order_validity: example
+  certcentralApi.orderSecureSiteEv:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        metadata_id: 1
+        value: example
+  certcentralApi.orderSecureSiteOv:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.orderSecureSiteProEvSsl:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.orderSecureSiteProSsl:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+        metadata_id: 1
+        value: example
+  certcentralApi.orderSslTypeHint:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        order_validity: example
+        years: 1
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        id: 1
+  certcentralApi.orderSwissClientAuthenticationCertificate:
+    args:
+      body:
+        certificate: example
+        emails: [example]
+        signature_hash: example
+        id: 1
+        csa_agreed_to: true
+        order_validity: example
+        years: 1
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+        city: example
+        country: example
+  certcentralApi.orderSwissQualifiedCertificateForIndividualInOrganisation:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        requester: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        job_title: example
+        organization: example
+        id: 1
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderSwissQualifiedCertificateForIndividual:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        requester: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        job_title: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderSwissRegulatedCertificateForIndividualInOrganisation:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        individual: example
+        id: 1
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        requester: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        job_title: example
+        organization: example
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderSwissRegulatedCertificateForIndividual:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        individual: example
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        requester: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        job_title: example
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderSwissRegulatedCertificateForOrganisation:
+    args:
+      body:
+        certificate: example
+        signature_hash: example
+        id: 1
+        csa_agreed_to: true
+        provisioning_method: example
+        name: example
+        addr1: example
+        addr2: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+        requester: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        telephone: example
+        job_title: example
+        organization: example
+        contacts: [example]
+        payment_method: example
+        credit_card: example
+        number: example
+        expiration_month: example
+        expiration_year: example
+        cvv: example
+        cardholder_name: example
+        set_as_default: example
+        address: example
+  certcentralApi.orderVerifiedMarkCertificateVmc:
+    args:
+      body:
+        certificate: example
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        metadata_id: 1
+        value: example
+  certcentralApi.orderX9PkiForTls:
+    args:
+      body:
+        certificate: example
+        common_name: example
+        csr: example
+        signature_hash: example
+        id: 1
+        csa_agreed_to: true
+        organization: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        order_validity: example
+        years: 1
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+  certcentralApi.purchaseKeyLockerSignatures:
+    args:
+      path:
+        order_id: example
+      body:
+        signature_units: 1
+        payment_method: example
+  certcentralApi.reissueCertificate:
+    args:
+      path:
+        order_id: example
+      body:
+        certificate: example
+        signature_hash: example
+        name: example
+        addr1: example
+        city: example
+        state: example
+        zip: example
+        country: example
+        method: example
+  certcentralApi.resendOrderApprovalEmail:
+    args:
+      path:
+        order_id: example
+      body:
+        emails: [example]
+  certcentralApi.revokeOrderCertificates:
+    args:
+      path:
+        order_id: example
+  certcentralApi.siteSealSettings:
+    args:
+      path:
+        order_id: example
+  certcentralApi.updateAutoReissueSettings:
+    args:
+      path:
+        order_id: example
+      body:
+        auto_reissue: 1
+  certcentralApi.updateCsr:
+    args:
+      path:
+        order_id: example
+      body:
+        csr: example
+  certcentralApi.updateOrderContacts:
+    args:
+      path:
+        order_id: example
+      body:
+        contacts: [example]
+        contact_type: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+  certcentralApi.updateOrderStatus:
+    args:
+      path:
+        order_id: example
+      body:
+        status: example
+  certcentralApi.updateRenewalMessage:
+    args:
+      path:
+        order_id: example
+  certcentralApi.updateRenewalNotificationSettings:
+    args:
+      path:
+        order_id: example
+        status: example
+  certcentralApi.orderValidationStatus:
+    args:
+      path:
+        order_id: example
+  certcentralApi.viewNote:
+    args:
+      path:
+        order_id: example
+        note_id: example
+  certcentralApi.activateOrganization:
+    args:
+      path:
+        organization_id: example
+  certcentralApi.createOrganization:
+    args:
+      body:
+        name: example
+        country: example
+        address: example
+        city: example
+        state: example
+        zip: example
+        telephone: example
+        organization_contact: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        type: example
+  certcentralApi.deactivateOrganization:
+    args:
+      path:
+        organization_id: example
+  certcentralApi.deleteOrganization:
+    args:
+      path:
+        organization_id: example
+  certcentralApi.organizationAndTechnicalContactInfo:
+    args:
+      path:
+        organization_id: example
+  certcentralApi.organizationInfo:
+    args:
+      path:
+        organization_id: example
+  certcentralApi.submitForValidation_504f5354:
+    args:
+      path:
+        organization_id: example
+      body:
+        validations: [example]
+        type: example
+  certcentralApi.updateOrganizationAndTechnicalContact:
+    args:
+      path:
+        organization_id: example
+      body:
+        contacts: [example]
+  certcentralApi.validationDetails_4745542f:
+    args:
+      path:
+        organization_id: example
+  certcentralApi.productInfo:
+    args:
+      path:
+        name_id: example
+  certcentralApi.orderReport:
+    args:
+      query: {}
+  certcentralApi.listRequests:
+    args:
+      query: {}
+  certcentralApi.requestInfo:
+    args:
+      path:
+        request_id: example
+  certcentralApi.updateCsrForAPendingReissueRequest:
+    args:
+      path:
+        request_id: example
+  certcentralApi.updateRequestStatus:
+    args:
+      path:
+        request_id: example
+      body:
+        status: example
+  certcentralApi.addOrRemoveFunds:
+    args:
+      path:
+        subaccount_id: example
+      body:
+        amount: 1
+        transaction_type: example
+  certcentralApi.balanceDetails:
+    args:
+      path:
+        subaccount_id: example
+  certcentralApi.createSubaccount:
+    args:
+      body:
+        account_type: example
+        allowed_grandchildren: [example]
+        user: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        organization: example
+        name: example
+        address: example
+        zip: example
+        city: example
+        state: example
+        country: example
+  certcentralApi.createUnitOrder:
+    args:
+      body:
+        unit_account_id: 1
+        bundle: [example]
+        product_name_id: example
+        units: 1
+  certcentralApi.editSubaccount:
+    args:
+      path:
+        subaccount_id: example
+  certcentralApi.listSubaccountDomains:
+    args:
+      path:
+        subaccount_id: example
+  certcentralApi.listSubaccountOrders:
+    args:
+      query: {}
+  certcentralApi.listSubaccountOrganizations:
+    args:
+      path:
+        subaccount_id: example
+  certcentralApi.listSubaccountProductLimits:
+    args:
+      path:
+        subaccount_id: example
+  certcentralApi.listSubaccountProducts:
+    args:
+      path:
+        subaccount_id: example
+  certcentralApi.listSubaccounts:
+    args:
+      query: {}
+  certcentralApi.listUnitOrders:
+    args:
+      query: {}
+  certcentralApi.setSubaccountProducts:
+    args:
+      path:
+        subaccount_id: example
+      body:
+        products: [example]
+  certcentralApi.subaccountInfo:
+    args:
+      path:
+        subaccount_id: example
+  certcentralApi.subaccountOrderInfo:
+    args:
+      path:
+        order_id: example
+  certcentralApi.subaccountReport:
+    args:
+      path:
+        subaccount_id: example
+  certcentralApi.addServiceUserAddServiceUser:
+    args:
+      body:
+        is_api_only: true
+        email: 'jane.doe@example.com'
+        api_name: example
+  certcentralApi.addUserAddUser:
+    args:
+      body:
+        username: example
+        first_name: example
+        last_name: example
+        email: 'jane.doe@example.com'
+        access_roles: [example]
+        container_id_assignments: [example]
+  certcentralApi.approveUserInvitation:
+    args:
+      path:
+        invitation_id: example
+      body:
+        status: example
+        requested_user: example
+        container_id_assignments: [example]
+        access_roles: [example]
+  certcentralApi.changeUserRole:
+    args:
+      path:
+        user_id: example
+      body:
+        access_roles: [example]
+        id: 1
+  certcentralApi.createVerifiedContactDelegation:
+    args:
+      body:
+        user_id: 1
+        delegated_verified_contact_id: 1
+  certcentralApi.deleteUser:
+    args:
+      path:
+        user_id: example
+  certcentralApi.editServiceUserEditServiceUser:
+    args:
+      path:
+        user_id: example
+      body:
+        email: 'jane.doe@example.com'
+  certcentralApi.editUserEditUser:
+    args:
+      path:
+        user_id: example
+      body:
+        email: 'jane.doe@example.com'
+  certcentralApi.listServiceUsers:
+    args:
+      query: {}
+  certcentralApi.listUserInvitations:
+    args:
+      query: {}
+  certcentralApi.resendCreateUserEmail:
+    args:
+      path:
+        user_id: example
+  certcentralApi.updateContainerAssignments:
+    args:
+      path:
+        user_id: example
+      body:
+        container_id_assignments: [example]
+  certcentralApi.userInfo:
+    args:
+      path:
+        user_id: example
+  certcentralApi.usernameAvailability:
+    args:
+      path:
+        user_name: example
+  certcentralApi.validateVmcOrCmcLogoFormatEncoded:
+    args:
+      body:
+        logo: example
+  certcentralApi.cancelVoucherCode:
+    args:
+      path:
+        id: example
+  certcentralApi.createVoucherOrder:
+    args:
+      body:
+        vouchers: [example]
+        product_name_id: example
+        quantity: 1
+        payment_method: example
+        number: example
+        expiration_month: 1
+        expiration_year: 1
+        cvv: 1
+        cardholder_name: example
+        address: example
+        city: example
+        country: example
+        name: example
+        organization_name: example
+        email: 'jane.doe@example.com'
+  certcentralApi.getVoucherOrderDetails:
+    args:
+      path:
+        id: example
+  certcentralApi.listAllVoucherOrders:
+    args:
+      query: {}
+  certcentralApi.listCodesForVoucherOrder:
+    args:
+      path:
+        voucher_order_id: example
+  certcentralApi.listUsedVoucherCodes:
+    args:
+      query: {}
+  certcentralApi.disableScanning:
+    args:
+      path:
+        order_id: example
+  certcentralApi.downloadResults:
+    args:
+      path:
+        order_id: example
+        domain_name: example
+  certcentralApi.enableScanning:
+    args:
+      path:
+        order_id: example
+  certcentralApi.getEnabledStatus:
+    args:
+      path:
+        order_id: example
+  certcentralApi.getNotificationSettings:
+    args:
+      path:
+        order_id: example
+  certcentralApi.getScanDetails:
+    args:
+      path:
+        order_id: example
+      query: {}
+  certcentralApi.rescanDomain:
+    args:
+      path:
+        order_id: example
+        domain: example
+  reportLibraryApi.createReport:
+    args:
+      body:
+        display_name: example
+        schedule:
+          frequency: example
+        format: [example]
+        report_metadata:
+          report_type: example
+  reportLibraryApi.deleteReportRun:
+    args:
+      path:
+        report_identifier: example
+        report_run_identifier: example
+  reportLibraryApi.deleteReport:
+    args:
+      path:
+        report_identifier: example
+  reportLibraryApi.deleteScheduledReport:
+    args:
+      path:
+        report_identifier: example
+  reportLibraryApi.downloadReport:
+    args:
+      path:
+        report_identifier: 00000000-0000-4000-8000-000000000001
+        report_run_identifier: 00000000-0000-4000-8000-000000000002
+      query:
+        report_format: EXCEL
+  reportLibraryApi.startReportRun:
+    args:
+      path:
+        report_identifier: 00000000-0000-4000-8000-000000000001
+  reportLibraryApi.editReport:
+    args:
+      path:
+        report_identifier: example
+      body:
+        display_name: example
+        schedule:
+          frequency: example
+        format: [example]
+        report_metadata:
+          report_type: example
+  reportLibraryApi.getJsonReport:
+    args:
+      path:
+        report_identifier: example
+        report_run_identifier: example
+apiNotes:
+  users.list: 'Uses offset and limit pagination; `without_container` controls whether the nested primary container is returned.'
+  orders.list: 'Uses offset and limit pagination; available filters and the maximum limit are documented in the CertCentral route reference.'
+  organizations.list: 'Uses offset and limit pagination; `include_validation` adds validation-related response fields.'
+  certificates.listIntermediates: 'Returns PEM certificate content; avoid logging response bodies.'
+  accountManager.locales: 'Uses the DigiCert ONE service-user token stored in `digicert_one_api_key`, sent as `x-api-key`.'
+  privateCA.helper: 'Uses the DigiCert ONE service-user token stored in `digicert_one_api_key`, sent as `x-api-key`.'
+  privateCA.verifyTemplate: 'Validates the required template string and returns no content on a successful 204 response.'
+  reportLibrary.names: 'Uses the separate Report Library regional host and CertCentral API key.'
+  reportLibrary.types: 'Report types and supported formats vary by account and current service configuration.'
+  reportLibrary.history: 'Uses offset and limit pagination; includes scheduled report records and individual run records.'
+  reportLibrary.details: 'Requires a UUID report identifier; use the Report Library route family, not the Services API host.'
+  customReports.orders: 'The result fields are determined by `fields`; pagination and filters are serialized into the documented GraphQL query.'
+  customReports.orderById: 'Requires an order ID and at least one requested field; its response keys depend on the selected fields.'
+  trustLifecycle.version: 'This DigiCert ONE route is explicitly unauthenticated in the official OpenAPI document.'
+  trustLifecycle.addCertificateTags: 'This is a write operation; tag changes use the separate DigiCert ONE service-user token, not the CertCentral key.'
+  contentTrust.infoV0: 'CSC v0 info is public in the OpenAPI security declaration; other CSC methods use different authentication and are not exposed here.'
+  contentTrust.infoV1: 'CSC v1 info is public in the OpenAPI security declaration; other CSC methods use different authentication and are not exposed here.'
