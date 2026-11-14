@@ -32,12 +32,6 @@ export type KontentPluginOptions = {
 	 * published read needs.
 	 */
 	key?: string;
-	/**
-	 * A Delivery API key. Overrides the account's stored `delivery_api_key`.
-	 * Needed for `preview` reads (preview access) and for every read in an
-	 * environment with secure access turned on (secure access).
-	 */
-	deliveryApiKey?: string;
 	hooks?: InternalKontentPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof kontentaiEndpointsNested>;

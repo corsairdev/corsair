@@ -450,6 +450,29 @@ describe('the stored Delivery API key', () => {
 		).resolves.toMatchObject({ items: expect.any(Array) });
 		expect(lastRequest().headers.get('authorization')).toBeNull();
 	});
+
+	it('is read only from the account, never from plugin options', async () => {
+		respond(items);
+		respond(itemDetail);
+		const ctx = {
+			key: ENVIRONMENT_ID,
+			options: { deliveryApiKey: 'option-key' },
+			keys: { get_delivery_api_key: async (): Promise<string | null> => null },
+		};
+
+		await (Items.list as never as AnyEndpoint)(ctx as never, {} as never);
+		expect(lastRequest().headers.get('authorization')).toBeNull();
+
+		ctx.keys.get_delivery_api_key = async () => 'stored-key';
+		await (Items.get as never as AnyEndpoint)(
+			ctx as never,
+			{ codename: 'about_us', preview: true } as never,
+		);
+		expect(lastRequest().origin).toBe('https://preview-deliver.kontent.ai');
+		expect(lastRequest().headers.get('authorization')).toBe(
+			'Bearer stored-key',
+		);
+	});
 });
 
 describe('the environment ID', () => {

@@ -28,10 +28,11 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	// Core builds `ctx.keys` only with a database and a kek. Without one there
-	// is no stored Delivery API key, and a published read needs none.
-	const deliveryApiKey =
-		ctx.options.deliveryApiKey ?? (await ctx.keys?.get_delivery_api_key());
+	// The Delivery API key comes only from the account's stored
+	// `delivery_api_key`, never from plugin options (R8, Credentials). Core
+	// builds `ctx.keys` only with a database and a kek. Without one there is no
+	// stored Delivery API key, and a published read needs none.
+	const deliveryApiKey = await ctx.keys?.get_delivery_api_key();
 	const raw = await makeKontentRequest(
 		ctx.key,
 		toRequest(parsed),
