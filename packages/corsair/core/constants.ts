@@ -462,6 +462,7 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'textrazor',
+	'thinkific',
 	'ticketmaster',
 	'ticktick',
 	'tikhub',
@@ -997,6 +998,7 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
+	thinkific: 'Thinkific',
 	ticketmaster: 'Ticketmaster',
 	ticktick: 'TickTick',
 	tikhub: 'TikHub',
@@ -1539,6 +1541,7 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'textrazor'
+	| 'thinkific'
 	| 'ticketmaster'
 	| 'ticktick'
 	| 'tikhub'
