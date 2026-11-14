@@ -3423,6 +3423,14 @@
                 ]
               },
               {
+                "group": "ProAbono",
+                "pages": [
+                  "plugins/proabono/overview",
+                  "plugins/proabono/api",
+                  "plugins/proabono/database"
+                ]
+              },
+              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
