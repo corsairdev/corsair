@@ -11,12 +11,14 @@ const coin = {
 	priceUsd: null,
 	marketCapUsd: null,
 };
-const paged = (results: unknown[]) => ({
+const paged = <T>(results: T[]) => ({
 	offset: 20,
 	limit: 20,
 	count: results.length,
 	results,
 });
+// Each case exercises a different endpoint and response shape, so the shared
+// table cannot use one narrower output type; the endpoint schemas validate it.
 const cases: {
 	name: keyof typeof minerstatEndpointSchemas;
 	call: () => Promise<unknown>;
@@ -237,6 +239,17 @@ it('accepts the documented algorithms list example without pagination metadata',
 		}),
 	);
 	await expect(api.algorithms.list({})).resolves.toEqual(response);
+});
+it('validates unchecked responses at each public endpoint', async () => {
+	for (const { call } of cases) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({}), {
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(call()).rejects.toBeDefined();
+	}
+	expect(fetchMock).toHaveBeenCalledTimes(cases.length);
 });
 it('rejects unsafe slugs before sending a request', async () => {
 	for (const slug of ['', '.', '..', 'a/b', 'a\\b', '"x"', "'x'"]) {

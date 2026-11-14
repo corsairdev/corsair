@@ -4,6 +4,8 @@ import { request } from 'corsair/http';
 
 export const MINERSTAT_API_BASE = 'https://api.minerstat.com';
 
+// The transport serves multiple routes and cannot verify a route-specific shape;
+// callers must validate the untrusted response with their endpoint output schema.
 export async function makeMinerstatRequest(
 	key: string,
 	options: ApiRequestOptions,
@@ -16,6 +18,7 @@ export async function makeMinerstatRequest(
 		CREDENTIALS: 'omit',
 		ENCODE_PATH: encodeURIComponent,
 	};
+	// Keep the HTTP result unchecked until the endpoint's Zod parser validates it.
 	return request<unknown>(
 		config,
 		{ ...options, headers: { ...options.headers, 'X-Api-Key': key } },
