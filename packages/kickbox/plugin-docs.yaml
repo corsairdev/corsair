@@ -1,0 +1,39 @@
+displayName: Kickbox
+description: Email verification with Kickbox - verify a single address for deliverability, role, free and disposable flags, typo suggestions and a Sendex quality score, and check whether a domain is a known disposable one for free.
+domain: kickbox.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Kickbox under API Keys, then Add. The key is sent in the query string as `apikey`, which is how the verification endpoint documents it.
+
+  Things to know before you call:
+
+  - **A refused key and a spent balance are both a 403.** A refused key carries `code: "FORBIDDEN"`; a spent balance carries only `message: "Insufficient balance"`, which the plugin reports as `INSUFFICIENT_BALANCE` (`isQuotaError`), not as an auth error. The plugin also throws on any `200` whose body says `"success": false`, so a verification result with every field missing is never returned as an answer.
+  - **Testing without credits.** A Sandbox key (it starts with `test_`) returns mock results and spends nothing. Addresses such as `rejected-email@example.com`, `low-quality@example.com` or `insufficient-balance@example.com` force each result; anything else comes back `deliverable`.
+  - **`verify.verify` spends one credit.** It is a write for that reason. `verify.disposable` is free and uses Kickbox's open host, which takes no key.
+  - **The four results.** `deliverable` means accepted by the SMTP server; `undeliverable` rejected; `risky` accepted but with a quality problem such as an accept-all domain; `unknown` when the server could not be reached. `reason` says which of those applied.
+  - **Accept-all domains.** `accept_all: true` means the domain accepts every address, so `deliverable` there is weaker evidence than elsewhere. Kickbox usually reports that as `risky`.
+  - **The Sendex score** runs from 0 (no quality) to 1 (perfect) and is a different measure from the verdict: a `deliverable` address can still score low.
+  - **No automatic replay of a paid check.** A verification that times out or loses its connection is not retried, because Kickbox may already have charged for it; retry it yourself if you want to. A 429 or a 5xx, which carry no verdict, are retried. The free disposable check is retried on any of these.
+  - **A refused key is not retried.** Regenerating a key in the dashboard kills the old one, so a 403 usually means it was replaced.
+  - **The EU host.** An account created at `app.eu.kickbox.com` is served from `api.eu.kickbox.com`, so set the `region` option to `eu` or every verification answers 403 `FORBIDDEN`. A key from one host is refused on the other.
+  - **The address never reaches a log.** The plugin logs the domain and the verdict rather than the address, because an email is personal data.
+  - **Webhooks.** The plugin does not receive Kickbox webhooks; none are configured here.
+examples:
+  read:
+    path: verify.disposable
+    title: Check a disposable domain
+    args:
+      address: mailinator.com
+  write:
+    path: verify.verify
+    title: Verify one address
+    args:
+      email: test@example.com
+apiExamples:
+  verify.verify:
+    call: "{ email: 'bill.lumbergh@gamil.com' }"
+  verify.disposable:
+    call: "{ address: 'mailinator.com' }"
+apiNotes:
+  verify.verify: 'Spends one credit. Answers `result`, `reason`, the role, free and disposable flags, a `did_you_mean` suggestion and a `sendex` score from 0 to 1.'
+  verify.disposable: 'Free, on Kickbox’s open host, which takes no key. Pass an address or a bare domain.'

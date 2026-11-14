@@ -1,0 +1,2065 @@
+---
+title: "Eventee API reference"
+sidebarTitle: "API"
+description: "API reference for the Eventee plugin in Corsair: every `eventee.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attendee Check In
+
+### patch
+
+`attendeeCheckIn.patch`
+
+Check in an attendee or undo their event check-in
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.attendeeCheckIn.patch({ attendee_id: 7, checkin: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attendee_id` | `number` | Yes | — |
+| `checkin` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `photo` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `company` | `string` | No | — |
+| `position` | `string` | No | — |
+| `imported` | `boolean` | No | — |
+| `anonymous` | `boolean` | No | — |
+| `invited` | `boolean` | No | — |
+| `email_valid` | `boolean` | No | — |
+| `has_tickets` | `boolean` | No | — |
+| `tickets_count` | `number` | No | — |
+| `group_id` | `number \| null` | No | — |
+| `checked_at` | `string \| null` | No | — |
+| `registered_at` | `string \| null` | No | — |
+| `account_deleted` | `boolean` | No | — |
+
+
+
+---
+
+## Attendee Invite
+
+### put
+
+`attendeeInvite.put`
+
+Invite attendees by email with optional profile details and tickets
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.attendeeInvite.put({ users: [{ email: 'jane.doe@example.com', first_name: 'Jane', send_email: false }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+The first 25 users are processed immediately and the rest in the background. Eventee skips event admins/moderators and entries it rejects. Every email is validated locally first, so one malformed address fails the whole call before anything is sent. `send_email: true` makes Eventee email each person an invitation; leave it unset or false for a silent import.
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  email: string,
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  position?: string,
+  photo?: string,
+  phone?: string,
+  bio?: string,
+  web?: string,
+  facebook_link?: string,
+  twitter_link?: string,
+  linked_in_link?: string,
+  group_id?: number,
+  send_email?: boolean,
+  tickets?: {
+    number: string,
+    title?: string,
+    type?: plain | barcode | qr
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `qr_code` | `string` | Yes | — |
+
+
+
+---
+
+## Attendees
+
+### delete
+
+`attendees.delete`
+
+Remove an attendee, their event participation, invitation and tickets
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.attendees.delete({ email: 'jane.doe@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Plain email address; the plugin URL-encodes it for Eventee. |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`attendees.get`
+
+List event participants with roles, groups and check-in details
+
+**Risk:** `read`
+
+```ts
+await corsair.eventee.api.attendees.get({});
+```
+
+**Input:** _empty object_
+
+Eventee returns all participants in one response with no pagination. Emails can be non-contactable placeholders for anonymous or deleted accounts.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  email?: string,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  position?: string,
+  role?: a | m | l | e,
+  group_id?: number | null,
+  url?: string,
+  tickets?: {
+    number?: string,
+    title?: string,
+    type?: string
+  }[],
+  checked_at?: string | null,
+  registered_at?: string | null,
+  account_deleted?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Content
+
+### get
+
+`content.get`
+
+Read the complete event program, speakers, halls, breaks and labels
+
+**Risk:** `read`
+
+```ts
+await corsair.eventee.api.content.get({ date: '2024-06-01', with_overlapping: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `with_overlapping` | `boolean` | No | — |
+
+Output type note: Eventee's OpenAPI omits item schemas for session fields `files`, `visible_in_groups` and `mandatory_for_groups`; these remain `unknown[]` and render as `any[]` in compact type blocks.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `halls` | `object[]` | Yes | — |
+| `days` | `object[]` | Yes | — |
+| `lectures` | `object[]` | Yes | Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[]. |
+| `workshops` | `object[]` | Yes | Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[]. |
+| `pauses` | `object[]` | Yes | — |
+| `speakers` | `object[]` | Yes | — |
+| `tracks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="halls full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  order?: number,
+  event_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  stream?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="days full type">
+
+```ts
+{
+  id: number,
+  date?: string,
+  event_id?: number,
+  content_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="lectures full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  description?: string,
+  start?: string,
+  end?: string,
+  event_day_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  discussion?: boolean,
+  panel_discussion?: boolean | number,
+  code?: string,
+  moderating?: boolean,
+  polling?: boolean,
+  checkin?: boolean,
+  type?: 0 | 1,
+  mentoring?: boolean,
+  hall_id?: number,
+  speakers?: number[],
+  files?: any[],
+  available?: number,
+  booked?: boolean,
+  capacity?: number,
+  booking_info?: {
+    id?: number,
+    capacity?: number,
+    speaker_id?: number | null,
+    lecture_id?: number,
+    available?: number,
+    booked?: boolean,
+    booked_attendees?: number[]
+  }[],
+  stream?: {
+    code?: string,
+    url?: string,
+    available?: boolean,
+    is_live?: boolean,
+    streamable_type?: string,
+    streamable_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    availability?: string | null,
+    type?: string
+  } | null,
+  virtual_meeting?: string | null,
+  tracks?: number[],
+  event_id?: number,
+  qr_code_url?: string,
+  overlapping?: boolean,
+  visible_in_groups?: any[],
+  mandatory_for_groups?: any[],
+  mandatory?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="workshops full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  description?: string,
+  start?: string,
+  end?: string,
+  event_day_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  discussion?: boolean,
+  panel_discussion?: boolean | number,
+  code?: string,
+  moderating?: boolean,
+  polling?: boolean,
+  checkin?: boolean,
+  type?: 0 | 1,
+  mentoring?: boolean,
+  hall_id?: number,
+  speakers?: number[],
+  files?: any[],
+  available?: number,
+  booked?: boolean,
+  capacity?: number,
+  booking_info?: {
+    id?: number,
+    capacity?: number,
+    speaker_id?: number | null,
+    lecture_id?: number,
+    available?: number,
+    booked?: boolean,
+    booked_attendees?: number[]
+  }[],
+  stream?: {
+    code?: string,
+    url?: string,
+    available?: boolean,
+    is_live?: boolean,
+    streamable_type?: string,
+    streamable_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    availability?: string | null,
+    type?: string
+  } | null,
+  virtual_meeting?: string | null,
+  tracks?: number[],
+  event_id?: number,
+  qr_code_url?: string,
+  overlapping?: boolean,
+  visible_in_groups?: any[],
+  mandatory_for_groups?: any[],
+  mandatory?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pauses full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  description?: string,
+  start?: string,
+  end?: string,
+  event_day_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  event_id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="speakers full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  email?: string,
+  phone?: string,
+  bio_html?: string,
+  web?: string,
+  facebook?: string,
+  twitter?: string,
+  linkedIn?: string,
+  instagram?: string,
+  position?: string,
+  company?: string,
+  country?: string,
+  language?: string,
+  event_id?: number,
+  order?: number,
+  photo?: string | null,
+  thumbnail?: string | null,
+  bio?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tracks full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  color?: string,
+  order?: number,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Content Reset
+
+### delete
+
+`contentReset.delete`
+
+Irreversibly delete all program content, halls, speakers and labels
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.contentReset.delete({});
+```
+
+**Input:** _empty object_
+
+Irreversibly removes every session, break, hall, speaker and label in the event. This does not remove partners, attendees, registrations or groups.
+
+
+**Output:** `undefined`
+
+
+---
+
+## Groups
+
+### get
+
+`groups.get`
+
+List attendee groups and their enabled app features
+
+**Risk:** `read`
+
+```ts
+await corsair.eventee.api.groups.get({});
+```
+
+**Input:** _empty object_
+
+Eventee returns all attendee groups in one response; no pagination is documented.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  public_name?: string,
+  color?: string,
+  emoji?: string,
+  agenda?: boolean,
+  questions?: boolean,
+  polling?: boolean,
+  newsfeed?: boolean,
+  networking?: boolean,
+  session_ratings?: boolean,
+  social_wall?: boolean,
+  gamification?: boolean,
+  ticket_names?: string[],
+  is_default?: boolean,
+  notification_suffix?: string,
+  event_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Hall
+
+### delete
+
+`hall.delete`
+
+Delete a hall and every session placed in it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.hall.delete({ hall_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hall_id` | `number` | Yes | — |
+
+Deleting a hall also deletes every session assigned to that hall.
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### patch
+
+`hall.patch`
+
+Update a hall and its live stream assignment
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.hall.patch({ hall_id: 1, name: 'Main Stage', order: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hall_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `order` | `number` | No | — |
+| `stream` | `string` | No | — |
+
+`name` is required and an omitted `order` is kept, but an omitted `stream` removes the hall's live stream. Pass the current `stream` code to keep it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `order` | `number` | No | — |
+| `event_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `stream` | `string \| null` | No | — |
+
+
+
+---
+
+### post
+
+`hall.post`
+
+Create a hall for sessions in the event program
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.hall.post({ name: 'Main Stage', order: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `order` | `number` | No | — |
+| `stream` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `order` | `number` | No | — |
+| `event_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `stream` | `string \| null` | No | — |
+
+
+
+---
+
+## Label
+
+### delete
+
+`label.delete`
+
+Delete a label and remove it from all sessions
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.label.delete({ track_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `track_id` | `number` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### patch
+
+`label.patch`
+
+Update an event program label
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.label.patch({ track_id: 1, name: 'Technology', color: '#3B82F6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `track_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | Yes | — |
+| `order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `order` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### post
+
+`label.post`
+
+Create a colored label for categorizing sessions
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.label.post({ name: 'Technology', color: '#3B82F6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | Yes | — |
+| `order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `order` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Partner
+
+### delete
+
+`partner.delete`
+
+Delete a partner and all of its detail page sections
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.partner.delete({ partner_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partner_id` | `number` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`partner.get`
+
+List all event partners with sponsor and exhibitor details
+
+**Risk:** `read`
+
+```ts
+await corsair.eventee.api.partner.get({});
+```
+
+**Input:** _empty object_
+
+Eventee returns all partners in one response; no pagination is documented.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  company?: string,
+  description?: string,
+  web?: string,
+  email?: string,
+  phone?: string,
+  address?: string,
+  code?: string,
+  created_at?: string,
+  updated_at?: string,
+  sections?: {
+    id?: number,
+    type?: number,
+    data?: string,
+    order?: number
+  }[],
+  exhibitor?: boolean,
+  sponsor?: boolean,
+  exhibitor_info?: {
+    booth_number?: string,
+    order?: number,
+    photo?: {
+      id?: number,
+      width?: number,
+      height?: number,
+      type?: string,
+      url?: string,
+      thumbnail?: string,
+      giphy_id?: string | null
+    }
+  } | null,
+  sponsor_info?: {
+    order?: number,
+    sponsor_category_id?: string | null,
+    photo?: {
+      id?: number,
+      width?: number,
+      height?: number,
+      type?: string,
+      url?: string,
+      thumbnail?: string,
+      giphy_id?: string | null
+    }
+  } | null,
+  logo?: {
+    id?: number,
+    width?: number,
+    height?: number,
+    type?: string,
+    url?: string,
+    thumbnail?: string,
+    giphy_id?: string | null
+  } | null,
+  photo?: {
+    id?: number,
+    width?: number,
+    height?: number,
+    type?: string,
+    url?: string,
+    thumbnail?: string,
+    giphy_id?: string | null
+  } | null,
+  qr_code_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`partner.patch`
+
+Replace a partner profile and sponsor or exhibitor media
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.partner.patch({ partner_id: 1, company: 'Acme Corp', logo_url: 'https://acme.example.com/logo.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partner_id` | `number` | Yes | — |
+| `company` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `logo_url` | `string` | No | — |
+| `photo_url` | `string` | No | — |
+| `booth_number` | `string` | No | — |
+| `web` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+
+This is a replacement update: omitted text fields are cleared, and omitted logo_url/photo_url remove the sponsor/exhibitor listing.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `company` | `string` | No | — |
+| `description` | `string` | No | — |
+| `web` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+| `code` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `sections` | `object[]` | No | — |
+| `exhibitor` | `boolean` | No | — |
+| `sponsor` | `boolean` | No | — |
+| `exhibitor_info` | `object \| null` | No | — |
+| `sponsor_info` | `object \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `photo` | `object \| null` | No | — |
+| `qr_code_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sections full type">
+
+```ts
+{
+  id?: number,
+  type?: number,
+  data?: string,
+  order?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="exhibitor_info full type">
+
+```ts
+{
+  booth_number?: string,
+  order?: number,
+  photo?: {
+    id?: number,
+    width?: number,
+    height?: number,
+    type?: string,
+    url?: string,
+    thumbnail?: string,
+    giphy_id?: string | null
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="sponsor_info full type">
+
+```ts
+{
+  order?: number,
+  sponsor_category_id?: string | null,
+  photo?: {
+    id?: number,
+    width?: number,
+    height?: number,
+    type?: string,
+    url?: string,
+    thumbnail?: string,
+    giphy_id?: string | null
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="logo full type">
+
+```ts
+{
+  id?: number,
+  width?: number,
+  height?: number,
+  type?: string,
+  url?: string,
+  thumbnail?: string,
+  giphy_id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="photo full type">
+
+```ts
+{
+  id?: number,
+  width?: number,
+  height?: number,
+  type?: string,
+  url?: string,
+  thumbnail?: string,
+  giphy_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`partner.post`
+
+Create an event sponsor or exhibitor partner profile
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.partner.post({ company: 'Acme Corp', logo_url: 'https://acme.example.com/logo.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `logo_url` | `string` | No | — |
+| `photo_url` | `string` | No | — |
+| `booth_number` | `string` | No | — |
+| `web` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+
+At least one of logo_url or photo_url is required. logo_url lists the partner as a sponsor; photo_url lists it as an exhibitor.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `company` | `string` | No | — |
+| `description` | `string` | No | — |
+| `web` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+| `code` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `sections` | `object[]` | No | — |
+| `exhibitor` | `boolean` | No | — |
+| `sponsor` | `boolean` | No | — |
+| `exhibitor_info` | `object \| null` | No | — |
+| `sponsor_info` | `object \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `photo` | `object \| null` | No | — |
+| `qr_code_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sections full type">
+
+```ts
+{
+  id?: number,
+  type?: number,
+  data?: string,
+  order?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="exhibitor_info full type">
+
+```ts
+{
+  booth_number?: string,
+  order?: number,
+  photo?: {
+    id?: number,
+    width?: number,
+    height?: number,
+    type?: string,
+    url?: string,
+    thumbnail?: string,
+    giphy_id?: string | null
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="sponsor_info full type">
+
+```ts
+{
+  order?: number,
+  sponsor_category_id?: string | null,
+  photo?: {
+    id?: number,
+    width?: number,
+    height?: number,
+    type?: string,
+    url?: string,
+    thumbnail?: string,
+    giphy_id?: string | null
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="logo full type">
+
+```ts
+{
+  id?: number,
+  width?: number,
+  height?: number,
+  type?: string,
+  url?: string,
+  thumbnail?: string,
+  giphy_id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="photo full type">
+
+```ts
+{
+  id?: number,
+  width?: number,
+  height?: number,
+  type?: string,
+  url?: string,
+  thumbnail?: string,
+  giphy_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Partner Sections
+
+### patch
+
+`partnerSections.patch`
+
+Replace a partner detail page sections list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.partnerSections.patch({ partner_id: 1, sections: [{ type: 0, title: 'About Acme' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partner_id` | `number` | Yes | — |
+| `sections` | `object[]` | Yes | — |
+
+Replaces the full ordered section list; omitted sections are deleted. Types 0-5 represent heading, HTML, links, images, files and social links.
+
+<AccordionGroup>
+<Accordion title="sections full type">
+
+```ts
+(
+  {
+    id?: number,
+    type: 0,
+    title?: string,
+    align?: left | center | right
+  } | {
+    id?: number,
+    type: 1,
+    html?: string,
+    align?: left | center | right
+  } | {
+    id?: number,
+    type: 2,
+    urls?: {
+      text?: string,
+      url?: string
+    }[]
+  } | {
+    id?: number,
+    type: 3,
+    images?: string[]
+  } | {
+    id?: number,
+    type: 4,
+    files?: string[]
+  } | {
+    id?: number,
+    type: 5,
+    facebook?: string,
+    twitter?: string,
+    linkedIn?: string,
+    youtube?: string,
+    instagram?: string,
+    general?: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `company` | `string` | No | — |
+| `description` | `string` | No | — |
+| `web` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `address` | `string` | No | — |
+| `code` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `sections` | `object[]` | No | — |
+| `exhibitor` | `boolean` | No | — |
+| `sponsor` | `boolean` | No | — |
+| `exhibitor_info` | `object \| null` | No | — |
+| `sponsor_info` | `object \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `photo` | `object \| null` | No | — |
+| `qr_code_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sections full type">
+
+```ts
+{
+  id?: number,
+  type?: number,
+  data?: string,
+  order?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="exhibitor_info full type">
+
+```ts
+{
+  booth_number?: string,
+  order?: number,
+  photo?: {
+    id?: number,
+    width?: number,
+    height?: number,
+    type?: string,
+    url?: string,
+    thumbnail?: string,
+    giphy_id?: string | null
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="sponsor_info full type">
+
+```ts
+{
+  order?: number,
+  sponsor_category_id?: string | null,
+  photo?: {
+    id?: number,
+    width?: number,
+    height?: number,
+    type?: string,
+    url?: string,
+    thumbnail?: string,
+    giphy_id?: string | null
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="logo full type">
+
+```ts
+{
+  id?: number,
+  width?: number,
+  height?: number,
+  type?: string,
+  url?: string,
+  thumbnail?: string,
+  giphy_id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="photo full type">
+
+```ts
+{
+  id?: number,
+  width?: number,
+  height?: number,
+  type?: string,
+  url?: string,
+  thumbnail?: string,
+  giphy_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pause
+
+### delete
+
+`pause.delete`
+
+Remove a break from the event program
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.pause.delete({ pause_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pause_id` | `number` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### patch
+
+`pause.patch`
+
+Update a break in the event program
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.pause.patch({ pause_id: 1, name: 'Coffee Break', start: '2024-06-01 10:00:00', end: '2024-06-01 10:30:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pause_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `event_day_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `event_id` | `number` | No | — |
+
+
+
+---
+
+### post
+
+`pause.post`
+
+Add a break to the event program
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.pause.post({ name: 'Coffee Break', start: '2024-06-01 10:00:00', end: '2024-06-01 10:30:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `event_day_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `event_id` | `number` | No | — |
+
+
+
+---
+
+## Registration Invite
+
+### put
+
+`registrationInvite.put`
+
+Create or update event registrations by email
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.registrationInvite.put({ registrations: [{ email: 'jane.doe@example.com', first_name: 'Jane' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registrations` | `object[]` | Yes | — |
+
+The first 25 registrations are processed immediately and the rest in the background. Eventee skips entries it rejects; duplicate emails update existing registrations. Every email is validated locally first, so one malformed address fails the whole call before anything is sent. `send_email: true` makes Eventee email each person; leave it unset or false for a silent import.
+
+<AccordionGroup>
+<Accordion title="registrations full type">
+
+```ts
+{
+  email: string,
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  position?: string,
+  photo?: string,
+  phone?: string,
+  bio?: string,
+  web?: string,
+  facebook_link?: string,
+  twitter_link?: string,
+  linked_in_link?: string,
+  group_id?: number,
+  send_email?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `qr_code` | `string` | Yes | — |
+
+
+
+---
+
+## Registrations
+
+### delete
+
+`registrations.delete`
+
+Delete an event registration by email address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.registrations.delete({ email: 'jane.doe@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Plain email address; the plugin URL-encodes it for Eventee. |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`registrations.get`
+
+List event registrations with statuses and profile details
+
+**Risk:** `read`
+
+```ts
+await corsair.eventee.api.registrations.get({});
+```
+
+**Input:** _empty object_
+
+Eventee returns all registrations in one response with no pagination. Status values are 0 pending, 1 confirmed, and 2 declined. Output type note: `answer_histories` and `form_answers` remain `unknown[]` because the OpenAPI omits their item schemas; compact type blocks render them as `any[]`.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  email?: string,
+  email_valid?: boolean | null,
+  status?: 0 | 1 | 2 | null,
+  first_name?: string,
+  last_name?: string,
+  photo?: string | null,
+  phone?: string,
+  bio?: string,
+  web?: string,
+  facebook_link?: string,
+  twitter_link?: string,
+  linkedIn_link?: string,
+  position?: string,
+  company?: string,
+  answer_histories?: any[],
+  group_id?: number | null,
+  created_at?: string,
+  updated_at?: string,
+  form_id?: string | null,
+  form_answers?: any[],
+  account_deleted?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reviews
+
+### get
+
+`reviews.get`
+
+List attendee ratings and comments for event sessions
+
+**Risk:** `read`
+
+```ts
+await corsair.eventee.api.reviews.get({});
+```
+
+**Input:** _empty object_
+
+Eventee returns all session reviews in one response; no pagination is documented. Nested session fields `files`, `visible_in_groups` and `mandatory_for_groups` remain `unknown[]` because their item schemas are omitted by the OpenAPI and render as `any[]` in compact type blocks.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  stars?: number,
+  comment?: string,
+  device?: string,
+  OS?: string,
+  lecture_id?: number,
+  user_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  username?: string,
+  userphoto?: string,
+  account_deleted?: boolean,
+  lecture?: {
+    id: number,
+    name?: string,
+    description?: string,
+    start?: string,
+    end?: string,
+    event_day_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    discussion?: boolean,
+    panel_discussion?: boolean | number,
+    code?: string,
+    moderating?: boolean,
+    polling?: boolean,
+    checkin?: boolean,
+    type?: 0 | 1,
+    mentoring?: boolean,
+    hall_id?: number,
+    speakers?: number[],
+    files?: any[],
+    available?: number,
+    booked?: boolean,
+    capacity?: number,
+    booking_info?: {
+      id?: number,
+      capacity?: number,
+      speaker_id?: number | null,
+      lecture_id?: number,
+      available?: number,
+      booked?: boolean,
+      booked_attendees?: number[]
+    }[],
+    stream?: {
+      code?: string,
+      url?: string,
+      available?: boolean,
+      is_live?: boolean,
+      streamable_type?: string,
+      streamable_id?: number,
+      created_at?: string,
+      updated_at?: string,
+      availability?: string | null,
+      type?: string
+    } | null,
+    virtual_meeting?: string | null,
+    tracks?: number[],
+    event_id?: number,
+    qr_code_url?: string,
+    overlapping?: boolean,
+    visible_in_groups?: any[],
+    mandatory_for_groups?: any[],
+    mandatory?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Session
+
+### delete
+
+`session.delete`
+
+Delete a session including its questions, polls, bookings and ratings
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.session.delete({ lecture_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lecture_id` | `number` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### patch
+
+`session.patch`
+
+Update a lecture or workshop and its scheduling details
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.session.patch({ lecture_id: 1, name: 'Opening Keynote', start: '2024-06-01 09:00:00', end: '2024-06-01 10:00:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lecture_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `type` | `0 \| 1` | No | — |
+| `hall_id` | `number` | No | — |
+| `speakers` | `number[]` | No | — |
+| `tracks` | `number[]` | No | — |
+| `discussion` | `boolean` | No | — |
+| `moderating` | `boolean` | No | — |
+| `polling` | `boolean` | No | — |
+| `capacity` | `number` | No | — |
+| `stream` | `string` | No | — |
+| `virtual_meeting` | `string` | No | — |
+
+Omitted speakers and tracks are removed and omitted type/capacity reset, while hall and stream are kept. Output type note: Eventee's OpenAPI omits item schemas for session fields `files`, `visible_in_groups` and `mandatory_for_groups`; these remain `unknown[]` and render as `any[]` in compact type blocks.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `event_day_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `discussion` | `boolean` | No | — |
+| `panel_discussion` | `boolean \| number` | No | — |
+| `code` | `string` | No | — |
+| `moderating` | `boolean` | No | — |
+| `polling` | `boolean` | No | — |
+| `checkin` | `boolean` | No | — |
+| `type` | `0 \| 1` | No | — |
+| `mentoring` | `boolean` | No | — |
+| `hall_id` | `number` | No | — |
+| `speakers` | `number[]` | No | — |
+| `files` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
+| `available` | `number` | No | — |
+| `booked` | `boolean` | No | — |
+| `capacity` | `number` | No | — |
+| `booking_info` | `object[]` | No | — |
+| `stream` | `object \| null` | No | — |
+| `virtual_meeting` | `string \| null` | No | — |
+| `tracks` | `number[]` | No | — |
+| `event_id` | `number` | No | — |
+| `qr_code_url` | `string` | No | — |
+| `overlapping` | `boolean` | No | — |
+| `visible_in_groups` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
+| `mandatory_for_groups` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
+| `mandatory` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="booking_info full type">
+
+```ts
+{
+  id?: number,
+  capacity?: number,
+  speaker_id?: number | null,
+  lecture_id?: number,
+  available?: number,
+  booked?: boolean,
+  booked_attendees?: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="stream full type">
+
+```ts
+{
+  code?: string,
+  url?: string,
+  available?: boolean,
+  is_live?: boolean,
+  streamable_type?: string,
+  streamable_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  availability?: string | null,
+  type?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`session.post`
+
+Create a lecture or bookable workshop in the event program
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.session.post({ name: 'Opening Keynote', start: '2024-06-01 09:00:00', end: '2024-06-01 10:00:00', hall_id: 1, type: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `type` | `0 \| 1` | No | — |
+| `hall_id` | `number` | Yes | — |
+| `speakers` | `number[]` | No | — |
+| `tracks` | `number[]` | No | — |
+| `discussion` | `boolean` | No | — |
+| `moderating` | `boolean` | No | — |
+| `polling` | `boolean` | No | — |
+| `checkin` | `boolean` | No | — |
+| `capacity` | `number` | No | — |
+| `stream` | `string` | No | — |
+| `virtual_meeting` | `string` | No | — |
+
+Output type note: Eventee's OpenAPI omits item schemas for session fields `files`, `visible_in_groups` and `mandatory_for_groups`; these remain `unknown[]` and render as `any[]` in compact type blocks.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `event_day_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `discussion` | `boolean` | No | — |
+| `panel_discussion` | `boolean \| number` | No | — |
+| `code` | `string` | No | — |
+| `moderating` | `boolean` | No | — |
+| `polling` | `boolean` | No | — |
+| `checkin` | `boolean` | No | — |
+| `type` | `0 \| 1` | No | — |
+| `mentoring` | `boolean` | No | — |
+| `hall_id` | `number` | No | — |
+| `speakers` | `number[]` | No | — |
+| `files` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
+| `available` | `number` | No | — |
+| `booked` | `boolean` | No | — |
+| `capacity` | `number` | No | — |
+| `booking_info` | `object[]` | No | — |
+| `stream` | `object \| null` | No | — |
+| `virtual_meeting` | `string \| null` | No | — |
+| `tracks` | `number[]` | No | — |
+| `event_id` | `number` | No | — |
+| `qr_code_url` | `string` | No | — |
+| `overlapping` | `boolean` | No | — |
+| `visible_in_groups` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
+| `mandatory_for_groups` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
+| `mandatory` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="booking_info full type">
+
+```ts
+{
+  id?: number,
+  capacity?: number,
+  speaker_id?: number | null,
+  lecture_id?: number,
+  available?: number,
+  booked?: boolean,
+  booked_attendees?: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="stream full type">
+
+```ts
+{
+  code?: string,
+  url?: string,
+  available?: boolean,
+  is_live?: boolean,
+  streamable_type?: string,
+  streamable_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  availability?: string | null,
+  type?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Speaker
+
+### delete
+
+`speaker.delete`
+
+Delete a speaker and remove them from all sessions
+
+**Risk:** `destructive`
+
+```ts
+await corsair.eventee.api.speaker.delete({ speakerTmp_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `speakerTmp_id` | `number` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### patch
+
+`speaker.patch`
+
+Update fields on an event speaker profile
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.speaker.patch({ speakerTmp_id: 1, position: 'CTO' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `speakerTmp_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `photo` | `string` | No | — |
+| `bio` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `web` | `string` | No | — |
+| `linkedIn` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `facebook` | `string` | No | — |
+| `instagram` | `string` | No | — |
+| `country` | `string` | No | — |
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `bio_html` | `string` | No | — |
+| `web` | `string` | No | — |
+| `facebook` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `linkedIn` | `string` | No | — |
+| `instagram` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `country` | `string` | No | — |
+| `language` | `string` | No | — |
+| `event_id` | `number` | No | — |
+| `order` | `number` | No | — |
+| `photo` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `bio` | `string` | No | — |
+
+
+
+---
+
+### post
+
+`speaker.post`
+
+Create a speaker profile for the event
+
+**Risk:** `write`
+
+```ts
+await corsair.eventee.api.speaker.post({ name: 'Jane Doe', email: 'jane.doe@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `photo` | `string` | No | — |
+| `bio` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `web` | `string` | No | — |
+| `linkedIn` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `facebook` | `string` | No | — |
+| `instagram` | `string` | No | — |
+| `country` | `string` | No | — |
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `bio_html` | `string` | No | — |
+| `web` | `string` | No | — |
+| `facebook` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `linkedIn` | `string` | No | — |
+| `instagram` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `country` | `string` | No | — |
+| `language` | `string` | No | — |
+| `event_id` | `number` | No | — |
+| `order` | `number` | No | — |
+| `photo` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `bio` | `string` | No | — |
+
+
+
+---
+
