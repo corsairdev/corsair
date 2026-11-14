@@ -64,9 +64,9 @@ describe('gamma plugin definition', () => {
 				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
 			),
 		).toEqual({
-			'generations.create': 'write',
+			'generations.create': 'destructive',
 			'generations.get': 'read',
-			'agent.generate': 'write',
+			'agent.generate': 'destructive',
 			'agent.get': 'read',
 			'gammas.get': 'read',
 			'gammas.search': 'read',

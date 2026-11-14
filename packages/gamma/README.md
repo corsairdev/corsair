@@ -12,7 +12,7 @@ pnpm add @corsair-dev/gamma
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `agent.generate` | `gamma.api.agent.generate` | `write` | Start a Gamma 5 agent generation from one brief, with a theme, template, quality preset and up to 10 source URLs. Spends credits |
+| `agent.generate` | `gamma.api.agent.generate` | `destructive` | Start a Gamma 5 agent generation from one brief, with a theme, template, quality preset and up to 10 source URLs. Spends credits |
 | `agent.get` | `gamma.api.agent.get` | `read` | Where an agent generation stands, with the same terminal states as a Classic one |
 | `exports.get` | `gamma.api.exports.get` | `read` | Where an export stands. `completed` carries a download URL that works for anyone holding it, for about a week |
 | `exports.start` | `gamma.api.exports.start` | `write` | Start an export of an existing gamma to PDF, PPTX or PNG, returning an `exportId`. A PNG export is a zip of one image per card |
@@ -21,7 +21,7 @@ pnpm add @corsair-dev/gamma
 | `gammas.delete` | `gamma.api.gammas.delete` | `destructive` | Delete a gamma permanently. Needs a workspace admin role |
 | `gammas.get` | `gamma.api.gammas.get` | `read` | One gamma’s title, author, folder, theme, archive state and thumbnail |
 | `gammas.search` | `gamma.api.gammas.search` | `read` | Full-text search over the gammas the caller can read. Needs `q` or a filter (`createdBy`, `updatedAfter`, `updatedBefore`) |
-| `generations.create` | `gamma.api.generations.create` | `write` | Start a Classic generation from text or a `pages` array, at once returning a `generationId` to poll. Spends credits. Use it for webpages and multi-page gammas; the agent route covers a single new presentation |
+| `generations.create` | `gamma.api.generations.create` | `destructive` | Start a Classic generation from text or a `pages` array, at once returning a `generationId` to poll. Spends credits. Use it for webpages and multi-page gammas; the agent route covers a single new presentation |
 | `generations.get` | `gamma.api.generations.get` | `read` | Where a Classic generation stands: `pending` is not final, `completed` carries the gamma ID, URL and any export URL, `failed` carries the error |
 | `themes.list` | `gamma.api.themes.list` | `read` | Workspace and official themes, with the ID a generation takes |
 

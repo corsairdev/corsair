@@ -16,7 +16,7 @@ description: "API reference for the Gamma plugin in Corsair: every `gamma.api.*`
 
 Start a Gamma 5 agent generation from one brief, with a theme, template, quality preset and up to 10 source URLs. Spends credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gamma.api.agent.generate({ prompt: 'A deck about solar power for a finance audience', format: 'presentation', quality: 'standard', sourceUrls: ['https://acme.example/report'] });
@@ -500,7 +500,7 @@ await corsair.gamma.api.gammas.search({ q: 'quarterly review', limit: 10, includ
 
 Start a Classic generation from text or a `pages` array, at once returning a `generationId` to poll. Spends credits. Use it for webpages and multi-page gammas; the agent route covers a single new presentation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gamma.api.generations.create({ inputText: 'Create a presentation about renewable energy', textMode: 'generate', format: 'presentation', numCards: 12 });
