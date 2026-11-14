@@ -1,0 +1,1236 @@
+---
+title: "Pointagram API reference"
+sidebarTitle: "API"
+description: "API reference for the Pointagram plugin in Corsair: every `pointagram.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Competitions
+
+### get
+
+`competitions.get`
+
+Read one competition by id
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.competitions.get({ id: 3545 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the competition. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `repeat_end_date` | `string \| null` | No | — |
+| `grand_target` | `string \| number \| null` | No | — |
+| `invindual_player_targets` | `string \| number \| null` | No | — |
+| `is_stopped` | `string \| number \| null` | No | — |
+| `access_key` | `string \| null` | No | — |
+| `competition_type` | `string \| number \| null` | No | — |
+| `db_display_order` | `string \| null` | No | — |
+| `use_target` | `string \| number \| null` | No | — |
+| `winner_rule` | `string \| number \| null` | No | — |
+| `groupingmode` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`competitions.list`
+
+List competitions, optionally narrowed to one player, id or access key
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.competitions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_by` | `string` | No | Which player field the filter is matched against. The docs name Email, Name and External Id. |
+| `filter` | `string` | No | Lists only competitions for the given player. |
+| `competition_id` | `string` | No | Lists only the competition with this id. |
+| `accesskey` | `string` | No | Lists only the competition with this access id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `competitions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="competitions full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  repeat_end_date?: string | null,
+  grand_target?: string | number | null,
+  invindual_player_targets?: string | number | null,
+  is_stopped?: string | number | null,
+  access_key?: string | null,
+  competition_type?: string | number | null,
+  db_display_order?: string | null,
+  use_target?: string | number | null,
+  winner_rule?: string | number | null,
+  groupingmode?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### players
+
+`competitions.players`
+
+List the players in a competition with their score and rank
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.competitions.players({ id: 3545 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the competition. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `players` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="players full type">
+
+```ts
+{
+  profile_id?: string | number | null,
+  name?: string | null,
+  invidual_target?: string | number | null,
+  current_score?: string | number | null,
+  rank?: string | number | null,
+  rank_locked?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Players
+
+### create
+
+`players.create`
+
+Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice
+
+**Risk:** `write`
+
+```ts
+await corsair.pointagram.api.players.create({ player_name: 'Axl Rose', player_email: 'axl@pointagram.com', player_external_id: '121212', offline: '0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `player_name` | `string` | Yes | The name shown in Pointagram. |
+| `player_email` | `string` | No | Where the invitation goes. |
+| `player_external_id` | `string` | No | Your own identifier, kept on the player. |
+| `offline` | `boolean \| 0 \| 1 \| 0 \| 1` | No | 1 creates the player without sending an invitation; 0 invites them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_id` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`players.delete`
+
+Soft delete a player. Pointagram keeps the record for you to anonymize in the app, and refuses to remove admin users
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pointagram.api.players.delete({ id: 989 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The profile id of the player to remove. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | Pointagram's confirmation text. |
+
+
+
+---
+
+### get
+
+`players.get`
+
+Read one player by profile id
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.players.get({ id: 989 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The profile id of the player. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `player_name` | `string \| null` | No | — |
+| `emailaddress` | `string \| null` | No | — |
+| `player_email` | `string \| null` | No | — |
+| `external_id` | `string \| number \| null` | No | — |
+| `player_external_id` | `string \| number \| null` | No | — |
+| `is_org_admin` | `string \| number \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `icon_url` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`players.list`
+
+List players, optionally filtered by name, email or external id, with `next_offset` paging
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.players.list({ limit: 25, offset: '527947' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_by` | `string` | No | Which player field the filter is matched against. The docs name Email, Name and External Id. |
+| `filter` | `string` | No | Search value, matched against `search_by`. |
+| `limit` | `number` | No | Page size. Defaults to 50, and the maximum is 1000. |
+| `offset` | `string` | No | The previous page's `pagination.next_offset`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `players` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="players full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  player_name?: string | null,
+  emailaddress?: string | null,
+  player_email?: string | null,
+  external_id?: string | number | null,
+  player_external_id?: string | number | null,
+  is_org_admin?: string | number | null,
+  icon?: string | null,
+  icon_url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit?: string | number | null,
+  offset?: string | number | null,
+  next_offset?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`players.update`
+
+Update a player's name, email, external id or online status
+
+**Risk:** `write`
+
+```ts
+await corsair.pointagram.api.players.update({ id: 989, player_name: 'Axl Rose', player_email: 'axl@pointagram.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The profile id of the player to update. |
+| `player_name` | `string` | No | The name shown in Pointagram. |
+| `player_email` | `string` | No | Where the invitation goes. |
+| `player_external_id` | `string` | No | Your own identifier, kept on the player. |
+| `offline` | `boolean \| 0 \| 1 \| 0 \| 1` | No | 1 keeps the player offline; 0 makes them online. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_id` | `string \| number \| null` | No | — |
+
+
+
+---
+
+## Reward Store
+
+### item
+
+`rewardStore.item`
+
+Read one reward store item
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.rewardStore.item({ id: 23, profileid: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the reward item. |
+| `profileid` | `string` | Yes | The profile id the request acts for. |
+| `storeid` | `string` | No | Which store to read the item from. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `currency` | `string \| number \| null` | No | — |
+| `price` | `string \| number \| null` | No | — |
+| `stock` | `string \| number \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `endDate` | `string \| null` | No | — |
+| `publishphase` | `string \| number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `scoreseriesid` | `string \| number \| null` | No | — |
+| `currencyname` | `string \| null` | No | — |
+| `currencyicon` | `string \| null` | No | — |
+| `currencysingular` | `string \| null` | No | — |
+| `currencyplural` | `string \| null` | No | — |
+| `coins` | `string \| number \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `currencyicon_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  linkid?: string | number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### items
+
+`rewardStore.items`
+
+List the items in a reward store
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.rewardStore.items({ profileid: '1234', storeid: '7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileid` | `string` | Yes | The profile id the request acts for. |
+| `storeid` | `string` | No | Which store to read items from. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reward_items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reward_items full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  image?: string | null,
+  currency?: string | number | null,
+  price?: string | number | null,
+  stock?: string | number | null,
+  startDate?: string | null,
+  endDate?: string | null,
+  publishphase?: string | number | null,
+  description?: string | null,
+  scoreseriesid?: string | number | null,
+  currencyname?: string | null,
+  currencyicon?: string | null,
+  currencysingular?: string | null,
+  currencyplural?: string | null,
+  coins?: string | number | null,
+  tags?: {
+    id?: string | number | null,
+    name?: string | null,
+    linkid?: string | number | null
+  }[] | null,
+  image_url?: string | null,
+  currencyicon_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purchase
+
+`rewardStore.purchase`
+
+Spend a player's currency on a reward store item, which creates an order to fulfil
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pointagram.api.rewardStore.purchase({ profileid: '1234', quantity: 2, itemid: 23 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileid` | `string` | Yes | The player the order is for. Without admin access it must be your own profile id. |
+| `quantity` | `number` | Yes | How many of the item. |
+| `itemid` | `string \| number` | Yes | The id of the reward item to order. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `purchase_id` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### purchases
+
+`rewardStore.purchases`
+
+List the orders in a reward store, for one member or for everyone
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.rewardStore.purchases({ profileid: '1234', viewmember: 'all' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileid` | `string` | Yes | The profile id the request acts for. |
+| `viewmember` | `string` | No | The group id of a member whose orders to read, or 'all' for every purchase. Defaults to your own. |
+| `storeid` | `string` | No | Which store to read orders from. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `purchases` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="purchases full type">
+
+```ts
+{
+  id?: string | number | null,
+  group_member?: string | number | null,
+  deliverystatus?: string | null,
+  updated?: string | null,
+  delivered_date?: string | null,
+  bought_date?: string | null,
+  reward_item?: string | number | null,
+  quantity?: string | number | null,
+  name?: string | null,
+  description?: string | null,
+  itemicon?: string | null,
+  profile_id?: string | number | null,
+  profileicon?: string | null,
+  profilename?: string | null,
+  itemicon_url?: string | null,
+  profileicon_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### revokePurchase
+
+`rewardStore.revokePurchase`
+
+Revoke an order. The docs do not say whether the spent currency is returned, so treat it as final
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pointagram.api.rewardStore.revokePurchase({ id: 27, profileid: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the purchase to revoke. |
+| `profileid` | `string` | Yes | The profile id the request acts for. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | Pointagram's confirmation text. |
+
+
+
+---
+
+### settings
+
+`rewardStore.settings`
+
+Read the reward store settings and currencies for a profile
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.rewardStore.settings({ profileid: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileid` | `string` | Yes | The profile id the request acts for. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `pggroup` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `active` | `string \| number \| null` | No | — |
+| `canedit` | `string \| number \| null` | No | — |
+| `currencies` | `object[] \| string \| null` | No | The currencies this store accepts. |
+| `orders` | `string \| number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="currencies full type">
+
+```ts
+{
+  id?: string | number | null,
+  icon?: string | null,
+  name?: string | null,
+  currencyid?: string | number | null,
+  coins?: string | number | null
+}[] | string | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updatePurchase
+
+`rewardStore.updatePurchase`
+
+Move an order along its delivery status: PURCHASED, PROCESSED or DELIVERED. Needs admin rights
+
+**Risk:** `write`
+
+```ts
+await corsair.pointagram.api.rewardStore.updatePurchase({ id: 27, profileid: '1234', deliverystatus: 'PROCESSED' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the purchase. |
+| `profileid` | `string` | Yes | The profile id the request acts for. |
+| `deliverystatus` | `PURCHASED \| PROCESSED \| DELIVERED` | Yes | The new delivery status. Needs admin rights. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | Pointagram's confirmation text. |
+
+
+
+---
+
+## Score Series
+
+### addPoints
+
+`scoreSeries.addPoints`
+
+Score points for a player in a score series, optionally with a comment, tags and a transaction reference that makes a repeat call replace the earlier one
+
+**Risk:** `write`
+
+```ts
+await corsair.pointagram.api.scoreSeries.addPoints({ player_email: 'harry@pointagram.com', scoreseries_id: 180, points: 120, tags: [{ name: 'North' }], source_score_id: 'order-991' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `player_id` | `string \| number` | No | — |
+| `player_name` | `string` | No | — |
+| `player_email` | `string` | No | — |
+| `player_external_id` | `string` | No | — |
+| `scoreseries_id` | `string \| number` | No | — |
+| `scoreseries_name` | `string` | No | — |
+| `points` | `number` | No | How many points to add. Supply this or pointtype_name. |
+| `pointtype_name` | `string` | No | A point type scores a fixed number of points; the score series must define it. |
+| `source_score_id` | `string` | No | Your transaction reference. Sending it again revokes the earlier transaction and adds a new one, so a retried call does not double-score. |
+| `comment` | `string` | No | Shown with the point in the news feed. |
+| `score_time` | `string` | No | When the points were scored, if not now. Sent unchanged, so include the offset. |
+| `tags` | `object[]` | No | Tags to display with the scored point. |
+| `create_player` | `boolean \| 0 \| 1 \| 0 \| 1` | No | 1 creates the player when no player with that id, name, email or external id exists. |
+| `create_tags` | `boolean \| 0 \| 1 \| 0 \| 1` | No | 1 creates tags that do not exist yet. |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `insid` | `string \| number \| null` | No | The id of the transaction. |
+
+
+
+---
+
+### get
+
+`scoreSeries.get`
+
+Read one score series by id
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.scoreSeries.get({ id: 180 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the score series. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `point_name_singular` | `string \| null` | No | — |
+| `point_name_plural` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `icon_url` | `string \| null` | No | — |
+
+
+
+---
+
+### history
+
+`scoreSeries.history`
+
+Read the points history of a score series, filtered by tag, point type, team, player and time window, with `next_offset` paging
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.scoreSeries.history({ id: 180, time_from: '2026-01-01 00:00:00', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the score series. |
+| `tags_filter` | `object[]` | No | Only points matching all of these tag or point type filters. |
+| `tags_or_filter` | `object[]` | No | Only points matching any of these tag or point type filters. |
+| `teams_filter` | `(string \| number)[]` | No | Only points scored by players in these teams. |
+| `player_filter` | `(string \| number)[]` | No | Only points scored by these players. |
+| `time_from` | `string` | No | UTC start, such as 2022-12-05 23:00:00. |
+| `time_to` | `string` | No | UTC end, such as 2022-12-05 23:00:00. |
+| `show_revoked` | `boolean` | No | Include points that were revoked, which are hidden by default. |
+| `limit` | `number` | No | Page size. Defaults to 50, and the maximum is 1000. |
+| `offset` | `string` | No | The previous page's `pagination.next_offset`. |
+
+<AccordionGroup>
+<Accordion title="tags_filter full type">
+
+```ts
+{
+  id: string,
+  type: 1 | 2
+}[]
+```
+</Accordion>
+
+<Accordion title="tags_or_filter full type">
+
+```ts
+{
+  id: string,
+  type: 1 | 2
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `history` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="history full type">
+
+```ts
+{
+  id?: string | number | null,
+  profile_id?: string | number | null,
+  icon?: string | null,
+  name?: string | null,
+  emailaddress?: string | null,
+  score?: string | number | null,
+  comment?: string | null,
+  timestamp?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit?: string | number | null,
+  offset?: string | number | null,
+  next_offset?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`scoreSeries.list`
+
+List score series
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.scoreSeries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `series` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="series full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  point_name_singular?: string | null,
+  point_name_plural?: string | null,
+  icon?: string | null,
+  icon_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pointTypes
+
+`scoreSeries.pointTypes`
+
+List the point types a score series defines
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.scoreSeries.pointTypes({ id: 180 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the score series. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pointtypes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pointtypes full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### addPlayer
+
+`teams.addPlayer`
+
+Add a player to a team, identified by player id, external id or email
+
+**Risk:** `write`
+
+```ts
+await corsair.pointagram.api.teams.addPlayer({ id: 3, player_id: 989 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the team. |
+| `player_id` | `string \| number` | No | — |
+| `player_external_id` | `string` | No | — |
+| `player_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | Pointagram's confirmation text. |
+
+
+
+---
+
+### create
+
+`teams.create`
+
+Create a team with a name and an icon
+
+**Risk:** `write`
+
+```ts
+await corsair.pointagram.api.teams.create({ team_name: 'The Bulls', icon: 'Bulls.png', filter_ignore: '0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | Yes | The name shown in Pointagram. |
+| `icon` | `string` | Yes | The icon file name, from the standard set or one you uploaded in Pointagram. |
+| `filter_ignore` | `boolean \| 0 \| 1 \| 0 \| 1` | No | 1 exempts this team from the account filter settings. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### get
+
+`teams.get`
+
+Read one team by id
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.teams.get({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the team. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `icon_url` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.teams.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  icon?: string | null,
+  icon_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPlayers
+
+`teams.listPlayers`
+
+List the players in a team
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.teams.listPlayers({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the team. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `players` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="players full type">
+
+```ts
+{
+  profile_id?: string | number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removePlayer
+
+`teams.removePlayer`
+
+Remove a player from a team. The player keeps their points and stays in Pointagram
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pointagram.api.teams.removePlayer({ id: 3, player_id: 989 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the team. |
+| `player_id` | `string \| number` | Yes | The profile id of the player to remove. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | Pointagram's confirmation text. |
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Update a team's name, icon or filter setting
+
+**Risk:** `write`
+
+```ts
+await corsair.pointagram.api.teams.update({ id: 3, team_name: 'The Sharks', icon: 'Sharks.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The id of the team to update. |
+| `team_name` | `string` | Yes | The name shown in Pointagram. |
+| `icon` | `string` | Yes | The icon file name, from the standard set or one you uploaded in Pointagram. |
+| `filter_ignore` | `boolean \| 0 \| 1 \| 0 \| 1` | No | 1 exempts this team from the account filter settings. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string \| number \| null` | No | — |
+
+
+
+---
+
+## Test
+
+### credentials
+
+`test.credentials`
+
+Confirm the Api-Key and Api-User pair and read the organization it belongs to; touches no tenant data
+
+**Risk:** `read`
+
+```ts
+await corsair.pointagram.api.test.credentials({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string \| null` | No | The account the key belongs to. |
+
+
+
+---
+

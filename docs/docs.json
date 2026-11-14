@@ -3423,6 +3423,14 @@
                 ]
               },
               {
+                "group": "Pointagram",
+                "pages": [
+                  "plugins/pointagram/overview",
+                  "plugins/pointagram/api",
+                  "plugins/pointagram/database"
+                ]
+              },
+              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
