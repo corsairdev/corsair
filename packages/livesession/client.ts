@@ -16,9 +16,6 @@ export const LIVESESSION_API_BASE = 'https://api.livesession.io/v1';
 export type LiveSessionHttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export class LiveSessionAPIError extends Error {
-	public readonly status?: number;
-	public readonly body?: unknown;
-	public readonly retryAfter?: number;
 	public readonly method?: LiveSessionHttpMethod;
 
 	// unknown is necessary because LiveSession error bodies are provider-defined
@@ -30,11 +27,6 @@ export class LiveSessionAPIError extends Error {
 		super(message, options?.cause ? { cause: options.cause } : undefined);
 		this.name = 'LiveSessionAPIError';
 		this.method = options?.method;
-		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.body = options.cause.body;
-			this.retryAfter = options.cause.retryAfter;
-		}
 	}
 }
 
@@ -80,17 +72,6 @@ function config(apiKey: string): OpenAPIConfig {
 
 // unknown is necessary because the provider error body is arbitrary JSON; it is
 // narrowed with `in` checks before any field is read.
-function messageFromBody(body: unknown): string | undefined {
-	if (!body || typeof body !== 'object' || !('error' in body)) {
-		return undefined;
-	}
-	const error = body.error;
-	if (!error || typeof error !== 'object' || !('message' in error)) {
-		return undefined;
-	}
-	return typeof error.message === 'string' ? error.message : undefined;
-}
-
 export async function makeLiveSessionRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -121,12 +102,10 @@ export async function makeLiveSessionRequest<T>(
 				method === 'GET' ? READ_RATE_LIMIT_CONFIG : WRITE_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new LiveSessionAPIError(
-				messageFromBody(error.body) ?? error.message,
-				{ cause: error, method },
-			);
-		}
+		// Core's ApiError carries the status and Retry-After the 429 handler
+		// matches on, so it must reach core unchanged; wrapping it would hide
+		// both from the handler.
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) {
 			throw new LiveSessionAPIError(error.message, {
 				cause: error,

@@ -1,16 +1,13 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { LiveSessionAPIError } from './client';
 
 function statusOf(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.status;
-	if (error instanceof LiveSessionAPIError) return error.status;
 	return undefined;
 }
 
 function retryAfterOf(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.retryAfter;
-	if (error instanceof LiveSessionAPIError) return error.retryAfter;
 	return undefined;
 }
 

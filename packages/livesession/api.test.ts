@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import { LiveSessionAPIError, makeLiveSessionRequest } from './client';
 import type { LiveSessionContext } from './index';
 import { liveSessionEndpointSchemas, livesession } from './index';
@@ -461,6 +461,28 @@ describe('LiveSession output validation and errors', () => {
 		await expect(
 			livesession({ key: 'test-token' }).endpoints!.websites.list(mockCtx, {}),
 		).rejects.toBeInstanceOf(LiveSessionAPIError);
+	});
+
+	it('lets core ApiError through unchanged for the rate-limit handler', async () => {
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/sites' },
+			{
+				url: 'https://api.livesession.io/v1/websites',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: { message: 'slow down' } },
+			},
+			'Too Many Requests',
+			{ retryAfter: 2 },
+		);
+		mockRequest.mockRejectedValue(apiError);
+
+		await expect(
+			livesession({ key: 'test-token' }).endpoints!.websites.list(mockCtx, {}),
+		).rejects.toBe(apiError);
+		expect(apiError.status).toBe(429);
+		expect(apiError.retryAfter).toBe(2);
 	});
 
 	it('rejects requests when no token reaches the transport', async () => {
