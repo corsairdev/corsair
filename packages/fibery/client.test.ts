@@ -236,6 +236,7 @@ describe('Fibery HTTP client', () => {
 			'Unauthorized token',
 		);
 		mockRequest.mockRejectedValue(transportError);
+		// `unknown` because a rejected promise can carry any thrown value; the checks below narrow it.
 		const error = await makeFiberyRequest('/api/commands', 'token', {
 			workspaceUrl,
 		}).catch((caught: unknown) => caught);
@@ -270,6 +271,7 @@ describe('Fibery HTTP client', () => {
 				{ retryAfter: 1500, rateLimitRemaining: 0 },
 			),
 		);
+		// `unknown` because a rejected promise can carry any thrown value; the checks below narrow it.
 		const error = await makeFiberyRequest('/api/commands', 'api-secret', {
 			workspaceUrl,
 			method: 'POST',
