@@ -530,6 +530,7 @@ export const BaseProviders = [
 	'surf',
 	'suzanne',
 	'svix',
+	'sympla',
 	'synthflowai',
 	'taggun',
 	'tally',
@@ -1143,6 +1144,7 @@ export const ProviderDisplayNames = {
 	surf: 'Surf',
 	suzanne: 'Suzanne',
 	svix: 'Svix',
+	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
 	tally: 'Tally',
@@ -1763,6 +1765,7 @@ export type AllProviders =
 	| 'surf'
 	| 'suzanne'
 	| 'svix'
+	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
 	| 'tally'

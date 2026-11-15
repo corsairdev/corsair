@@ -1,0 +1,18 @@
+displayName: Sympla
+description: List events for a Sympla organizer. The key is sent in the s_token header.
+domain: sympla.com.br
+recommendedAuth: api_key
+overviewNote: |
+  An empty token comes back as HTTP 401 with code 100. The client does not send a bearer token.
+examples:
+  read:
+    path: events.list
+    title: List Sympla events
+    args:
+      page: 1
+apiNotes:
+  events.list: |
+    Page starts at 1 when you set it. sort is ASC or DESC. Omit a filter to take the service default.
+apiExamples:
+  events.list:
+    page: 1
