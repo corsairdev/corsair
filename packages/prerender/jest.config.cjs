@@ -2,6 +2,8 @@ module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
+	// api.test.ts calls the real API; `pnpm test:live` runs it on purpose.
+	testPathIgnorePatterns: ['/node_modules/', 'api\\.test\\.ts$'],
 	testMatch: [
 		'**/*.test.ts',
 		'**/tests/**/*.test.ts',
