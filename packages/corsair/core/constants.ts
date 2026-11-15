@@ -567,6 +567,7 @@ export const BaseProviders = [
 	'todoist',
 	'toggl',
 	'tokenmetrics',
+	'toneden',
 	'tpscheck',
 	'trello',
 	'tripadvisor',
@@ -1194,6 +1195,7 @@ export const ProviderDisplayNames = {
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
+	toneden: 'ToneDen',
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
@@ -1828,6 +1830,7 @@ export type AllProviders =
 	| 'todoist'
 	| 'toggl'
 	| 'tokenmetrics'
+	| 'toneden'
 	| 'tpscheck'
 	| 'trello'
 	| 'tripadvisor'
