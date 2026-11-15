@@ -133,7 +133,7 @@ function buildCloudSurface<Plugins extends readonly CorsairPlugin[]>(
 
 	if (opts.multiTenancy) {
 		return {
-			withTenant: (tenantId: string) => {
+			withTenant: (tenantId: string, _options?: unknown) => {
 				if (!tenantId) {
 					throw new Error(
 						'corsair.withTenant(tenantId): tenantId must be a non-empty string',

@@ -17,6 +17,8 @@ export type AccountLookupInput = {
 	integrationName: string;
 	tenantId: string;
 	ensureProvisioned?: () => Promise<void>;
+	/** Strict selection by ref (2+ accounts and no ref throws). Absent = oldest. */
+	account?: { ref?: string; kek: string };
 };
 
 export type IntegrationAccountRow = {
@@ -77,10 +79,18 @@ export async function resolveIntegrationAndAccount(
 			);
 		}
 
-		const account = await findAccountRow(input.database.db, {
+		const where = {
 			tenantId: input.tenantId,
 			integrationId: integration.id,
-		});
+		};
+		const account = input.account
+			? await resolveAccount({
+					db: input.database.db,
+					kek: input.account.kek,
+					...where,
+					ref: input.account.ref,
+				})
+			: await findAccountRow(input.database.db, where);
 
 		if (!account) {
 			if (!provisionAttempted && input.ensureProvisioned) {

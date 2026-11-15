@@ -119,7 +119,10 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	if (config.multiTenancy) {
 		const tenantWrapper = Object.assign(
 			{
-				withTenant: (tenantId: string) => {
+				withTenant: (
+					tenantId: string,
+					options?: { accounts?: Record<string, string | undefined> },
+				) => {
 					if (!tenantId) {
 						throw new Error(
 							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
@@ -134,6 +137,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						manualConfig: config.manual,
 						hubConfig: internalConfig.hub,
 						internalConfig,
+						accounts: options?.accounts ?? {},
 					});
 					return Object.assign(client as object, {
 						[CORSAIR_INTERNAL]: internalConfig,

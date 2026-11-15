@@ -234,7 +234,10 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
  * Also includes integration-level `keys` for managing shared secrets (OAuth2 client credentials, etc.)
  */
 export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
-	withTenant: (tenantId: string) => CorsairClient<Plugins>;
+	withTenant: (
+		tenantId: string,
+		options?: { accounts?: { [P in Plugins[number]['id']]?: string } },
+	) => CorsairClient<Plugins>;
 	/**
 	 * Integration-level key managers for each plugin.
 	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
@@ -290,6 +293,7 @@ function createAccountIdResolver(
 	integrationName: string,
 	tenantId: string,
 	ensureProvisioned?: () => Promise<void>,
+	account?: { ref?: string; kek: string },
 ): () => Promise<string> {
 	let cachedAccountId: string | null = null;
 
@@ -305,8 +309,11 @@ function createAccountIdResolver(
 			integrationName,
 			tenantId,
 			ensureProvisioned,
+			account,
 		});
 
+		// An unbound scope re-resolves each call so a later second account is seen.
+		if (account && !account.ref) return accountId;
 		cachedAccountId = accountId;
 		return cachedAccountId;
 	};
@@ -412,6 +419,8 @@ export type BuildCorsairClientOptions = {
 	hubConfig?: HubConfig;
 	/** Internal config for lazy tenant provisioning on first use. */
 	internalConfig?: CorsairInternalConfig;
+	/** Per-plugin account refs from withTenant. Present (even empty) = strict account selection. */
+	accounts?: Record<string, string | undefined>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -439,6 +448,7 @@ export function buildCorsairClient<
 		manualConfig,
 		hubConfig,
 		internalConfig,
+		accounts,
 	} = options;
 
 	// Canonical tenant scope for this client. Single-tenant clients pass no
@@ -451,6 +461,12 @@ export function buildCorsairClient<
 		internalConfig && database
 			? () => ensureTenantProvisioned(internalConfig, effectiveTenantId)
 			: undefined;
+
+	for (const id of Object.keys(accounts ?? {})) {
+		if (!plugins.some((p) => p.id === id)) {
+			throw new Error(`withTenant: no plugin "${id}"`);
+		}
+	}
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
 	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
@@ -469,6 +485,7 @@ export function buildCorsairClient<
 			plugin.id,
 			effectiveTenantId,
 			ensureProvisioned,
+			accounts && kek ? { ref: accounts[plugin.id], kek } : undefined,
 		);
 
 		// Create typed entity clients from plugin schema, nested under `db`
@@ -522,6 +539,7 @@ export function buildCorsairClient<
 				database,
 				extraAccountFields,
 				ensureProvisioned,
+				account: accounts ? { ref: accounts[plugin.id] } : undefined,
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}
