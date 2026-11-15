@@ -341,6 +341,21 @@ it('returns an empty asset list for the documented 204', async () => {
 		api.modelingRequests.assets({ modeling_request_id_or_sku: 'SKU' }),
 	).resolves.toEqual({ data: [] });
 });
+it.each([
+	['products.list', () => api.products.list({})],
+	['modelingRequests.list', () => api.modelingRequests.list({})],
+	['embeds.list', () => api.embeds.list({ product_id: 1 })],
+	['workspaces.list', () => api.workspaces.list({})],
+])('%s fails on a 200 with an unreadable body', async (_name, call) => {
+	mock.mockResolvedValueOnce(
+		new Response('{"data": [', {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+		}),
+	);
+	jest.spyOn(console, 'error').mockImplementation(() => {});
+	await expect(call()).rejects.toBeDefined();
+});
 it('still throws when a list parent is missing', async () => {
 	mock.mockResolvedValueOnce(
 		new Response(JSON.stringify({ data: null }), {

@@ -24,10 +24,14 @@ function endpoint<I extends Schema, O extends Schema>(
 // empty modeling-request asset list with 204. Both mean "no results", so lists
 // return them instead of throwing. A 404 whose body is not an empty list (a
 // missing parent, `{ "data": null }`) still throws.
+// Core resolves a 204, a body without Content-Type and unparseable JSON all as
+// undefined, so only the asset list (the route documented to answer 204) reads
+// undefined as empty; on the other lists it fails the output schema.
 function listEndpoint<I extends Schema, O extends Schema>(
 	input: I,
 	output: O,
 	build: (args: z.output<I>) => ApiRequestOptions,
+	emptyOnNoContent = false,
 ) {
 	return async (
 		ctx: ModelryContext,
@@ -36,7 +40,9 @@ function listEndpoint<I extends Schema, O extends Schema>(
 		const parsed = input.parse(args);
 		try {
 			const res = await makeModelryRequest(ctx.key, build(parsed));
-			return output.parse(res === undefined ? { data: [] } : res);
+			return output.parse(
+				res === undefined && emptyOnNoContent ? { data: [] } : res,
+			);
 		} catch (error) {
 			const data = error instanceof ApiError ? error.body?.data : undefined;
 			if (error instanceof ApiError && error.status === 404) {
@@ -140,6 +146,7 @@ export const modelingRequests_assets = listEndpoint(
 		path: { modeling_request_id_or_sku: a.modeling_request_id_or_sku },
 		query: { page: a.page, per_page: a.per_page },
 	}),
+	true,
 );
 export const productAssets_create = endpoint(
 	t.productAssets_createInput,
