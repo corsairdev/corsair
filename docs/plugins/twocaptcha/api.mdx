@@ -1,0 +1,211 @@
+---
+title: "2Captcha API reference"
+sidebarTitle: "API"
+description: "API reference for the 2Captcha plugin in Corsair: every `twocaptcha.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### balance
+
+`account.balance`
+
+Read the account balance
+
+**Risk:** `read`
+
+```ts
+await corsair.twocaptcha.api.account.balance({});
+```
+
+**Input:** _empty object_
+
+`request` holds the amount as a number.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `request` | `string \| number \| null` | No | — |
+| `error_text` | `string \| null` | No | — |
+
+
+
+---
+
+### reportCorrect
+
+`account.reportCorrect`
+
+Report a token the site accepted, which improves the account solving rating
+
+**Risk:** `write`
+
+```ts
+await corsair.twocaptcha.api.account.reportCorrect({ task_id: '734920165' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | A task whose token the site accepted |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `request` | `string \| number \| null` | No | — |
+| `error_text` | `string \| null` | No | — |
+
+
+
+---
+
+### reportIncorrect
+
+`account.reportIncorrect`
+
+Report a token the site rejected, which refunds the task
+
+**Risk:** `write`
+
+```ts
+await corsair.twocaptcha.api.account.reportIncorrect({ task_id: '734920165' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | A task whose token the site rejected; the account is refunded |
+
+Refunds the task and asks the workers again. Use it when the site rejects a token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `request` | `string \| number \| null` | No | — |
+| `error_text` | `string \| null` | No | — |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a captcha-solving task and charge the account for it; returns the task id to poll
+
+**Risk:** `write`
+
+```ts
+await corsair.twocaptcha.api.tasks.create({ type: 'RecaptchaV2TaskProxyless', task: { websiteURL: 'https://example.com/login', websiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `RecaptchaV2TaskProxyless \| RecaptchaV3TaskProxyless \| RecaptchaV2EnterpriseTaskProxyless \| HCaptchaTaskProxyless \| FunCaptchaTaskProxyless \| TurnstileTaskProxyless \| GeeTestTaskProxyless \| AmazonTaskProxyless \| KeyCaptchaTaskProxyless \| LeminTaskProxyless \| CapyTaskProxyless \| AtbCaptchaTaskProxyless` | Yes | — |
+| `task` | `object` | Yes | — |
+| `soft_id` | `number` | No | Referral id; leave it out to send none |
+| `callback` | `string` | No | A URL to POST the result to instead of polling |
+
+Billable from this call. `task` takes the per-kind fields; the key is `websiteKey`, `sitekey` or `websitePublicKey` depending on the kind.
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  websiteURL?: string,
+  websiteKey?: string,
+  sitekey?: string,
+  websitePublicKey?: string,
+  websiteSToken?: string,
+  recaptchaDataSValue?: string,
+  pageAction?: string,
+  minScore?: number,
+  enterprisePayload?: Record<string, JsonValue>,
+  isInvisible?: boolean,
+  userAgent?: string,
+  proxyType?: http | https | socks4 | socks5,
+  proxyAddress?: string,
+  proxyPort?: number,
+  proxyLogin?: string,
+  proxyPassword?: string,
+  gt?: string,
+  challenge?: string,
+  apiServer?: string,
+  jsApiKey?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `request` | `string \| number \| null` | No | — |
+| `error_text` | `string \| null` | No | — |
+
+
+
+---
+
+### result
+
+`tasks.result`
+
+Read a task result, returning a not-ready state while the captcha is still being solved
+
+**Risk:** `read`
+
+```ts
+await corsair.twocaptcha.api.tasks.result({ task_id: '734920165' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | The task id `tasks.create` returned |
+
+A still-solving task answers `status: 0` with `CAPCHA_NOT_READY`, which is returned as a state rather than thrown. Poll until `status` is 1.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `request` | `string \| number \| null` | No | — |
+| `error_text` | `string \| null` | No | — |
+| `solution` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
