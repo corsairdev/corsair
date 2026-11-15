@@ -936,13 +936,6 @@ export const appointmentsUpdate = {
 				'ID of the template that is sent to the customer with the API call',
 		},
 		{
-			name: 'sendsms',
-			type: 'boolean',
-			required: false,
-			description:
-				'Send a confirmation SMS to the phone number that was specified in the phone parameter (1 = yes, 0 = no).',
-		},
-		{
 			name: 'msgtypesms',
 			type: 'number',
 			required: false,
@@ -4609,13 +4602,6 @@ export const serviceGroupsUpdate = {
 			description: 'ID of the service group that gets updated',
 		},
 		{
-			name: 'servicegroupde',
-			type: 'string',
-			required: false,
-			description:
-				'Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen',
-		},
-		{
 			name: 'additionaltextde',
 			type: 'string',
 			required: false,
@@ -5178,13 +5164,15 @@ export const vouchersUpdate = {
 	method: 'PUT',
 	path: '/api/voucher',
 	riskLevel: 'write',
-	description: 'Update an existing voucher',
+	description:
+		'Update an existing voucher, found by its internal iid (from vouchers.list), not its code',
 	params: [
 		{
-			name: 'id',
-			type: 'string',
+			name: 'iid',
+			type: 'number',
 			required: true,
-			description: 'ID of the voucher',
+			description:
+				'Internal ID of the voucher: the iid field from vouchers.list',
 		},
 		{
 			name: 'description',

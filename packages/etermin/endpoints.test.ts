@@ -179,7 +179,6 @@ describe('eTermin public endpoint seams', () => {
 			publicEndpoint('serviceGroups', 'update')(context as ETerminContext, {
 				servicegroupid: 1,
 				displayindex: 1,
-				servicegroupfr: 'Consultations',
 				additionaltextfr: 'Choisissez une consultation',
 				errormsgfr: 'Valeur invalide',
 			}),

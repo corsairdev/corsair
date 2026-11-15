@@ -193,9 +193,45 @@ export async function makeETerminRequest<T>(
 	};
 	// Core's ApiError goes through unchanged (R8): its status and retryAfter
 	// are what the error handlers match, and core already redacts the request.
-	return request<T>(config, requestOptions, {
+	// unknown: reads are JSON, but most writes answer XML text (below).
+	const result: unknown = await request<unknown>(config, requestOptions, {
 		rateLimitConfig: transportRateLimit,
 	});
+	return (parseETerminXmlResponse(result) ?? result) as T;
+}
+
+const XML_ENTITIES: Record<string, string> = {
+	'&amp;': '&',
+	'&lt;': '<',
+	'&gt;': '>',
+	'&quot;': '"',
+	'&apos;': "'",
+};
+
+/**
+ * Most eTermin writes answer `application/xml` whatever the Accept header,
+ * e.g. `<response><id>9833</id><status>200</status><statusmsg>Created
+ * successfully!</statusmsg></response>` (live run, 11-16). Core hands that
+ * back as text, so it is turned into `{ id, status, statusmsg }` here; any
+ * other value (JSON reads, the appointment create object) passes unchanged.
+ */
+export function parseETerminXmlResponse(
+	// unknown: whatever core's request() returned for this call
+	value: unknown,
+): Record<string, string | number> | undefined {
+	if (typeof value !== 'string') return undefined;
+	const body = /^\s*<response>([\s\S]*)<\/response>\s*$/.exec(value)?.[1];
+	if (body === undefined) return undefined;
+	const fields: Record<string, string | number> = {};
+	for (const [, tag, raw] of body.matchAll(/<(\w+)>([^<]*)<\/\1>|<(\w+)\/>/g)) {
+		if (!tag) continue;
+		const text = (raw ?? '').replace(
+			/&(amp|lt|gt|quot|apos);/g,
+			(entity) => XML_ENTITIES[entity] ?? entity,
+		);
+		fields[tag] = tag === 'status' && /^\d+$/.test(text) ? Number(text) : text;
+	}
+	return fields;
 }
 
 /**
@@ -227,5 +263,10 @@ export async function makeETerminSyncRequest<T>(
 			'eTermin sync response did not include a valid synctoken header',
 		);
 	}
-	return { appointments: body as T, synctoken: Number(nextToken) };
+	// No changes since the token: eTermin answers 200 with an empty body (live
+	// run, 11-16), which means an empty list, not a malformed reply.
+	return {
+		appointments: (body === undefined ? [] : body) as T,
+		synctoken: Number(nextToken),
+	};
 }

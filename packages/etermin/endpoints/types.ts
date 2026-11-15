@@ -34,8 +34,7 @@ function withLanguageFields<T extends z.ZodObject<z.ZodRawShape>>(
 const serviceLanguageField =
 	/^(service|info|emailtxt|pricesuffix|capseltext)[a-z]{2,}$/;
 const serviceGroupLanguageField = /^(servicegroup|additionaltext)[a-z]{2,}$/;
-const serviceGroupUpdateLanguageField =
-	/^(servicegroup|additionaltext|errormsg)[a-z]{2,}$/;
+const serviceGroupUpdateLanguageField = /^(additionaltext|errormsg)[a-z]{2,}$/;
 
 export const ETerminEndpointInputSchemas = {
 	anchorTimesList: z
@@ -641,12 +640,9 @@ export const ETerminEndpointInputSchemas = {
 				.describe(
 					'ID of the template that is sent to the customer with the API call',
 				),
-			sendsms: z
-				.boolean()
-				.optional()
-				.describe(
-					'Send a confirmation SMS to the phone number that was specified in the phone parameter (1 = yes, 0 = no).',
-				),
+			// sendsms is in the reference but eTermin answers 404 "Invalid column
+			// name 'sendsms'" whenever it is sent (live run, 11-16), so it is left
+			// out; msgtypesms alone works.
 			msgtypesms: z
 				.number()
 				.int()
@@ -3095,16 +3091,8 @@ export const ETerminEndpointInputSchemas = {
 				.number()
 				.int()
 				.describe('ID of the service group that gets updated'),
-			servicegroupde: z
-				.string()
-				.optional()
-				.describe(
-					'Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen',
-				),
-			servicegroupen: z
-				.string()
-				.optional()
-				.describe('Name of the service group in English.'),
+			// No servicegroup<lang> names here: eTermin answers 404 "Invalid
+			// column name 'servicegroupde'" on update (live run, 11-16).
 			additionaltextde: z
 				.string()
 				.optional()
@@ -3505,7 +3493,14 @@ export const ETerminEndpointInputSchemas = {
 		.strict(),
 	vouchersUpdate: z
 		.object({
-			id: z.string().describe('ID of the voucher'),
+			// The reference says id, but eTermin answers 400 "Parameter iid is
+			// missing!" without iid and a SQL error when id is sent too (live run).
+			iid: z
+				.number()
+				.int()
+				.describe(
+					'Internal ID of the voucher: the iid field from vouchers.list',
+				),
 			description: z.string().optional().describe('Description of the voucher'),
 			priceinclvat: z
 				.number()
