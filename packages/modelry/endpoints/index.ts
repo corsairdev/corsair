@@ -25,8 +25,10 @@ function endpoint<I extends Schema, O extends Schema>(
 // return them instead of throwing. A 404 whose body is not an empty list (a
 // missing parent, `{ "data": null }`) still throws.
 // Core resolves a 204, a body without Content-Type and unparseable JSON all as
-// undefined, so only the asset list (the route documented to answer 204) reads
-// undefined as empty; on the other lists it fails the output schema.
+// undefined, so the asset list (the route documented to answer 204) asks core
+// to raise a 204 as an ApiError through the request's `errors` map. Only that
+// confirmed 204 reads as empty; an unreadable 200 fails the output schema on
+// every list.
 function listEndpoint<I extends Schema, O extends Schema>(
 	input: I,
 	output: O,
@@ -38,12 +40,24 @@ function listEndpoint<I extends Schema, O extends Schema>(
 		args: z.input<I>,
 	): Promise<z.output<O>> => {
 		const parsed = input.parse(args);
+		const options = build(parsed);
 		try {
-			const res = await makeModelryRequest(ctx.key, build(parsed));
 			return output.parse(
-				res === undefined && emptyOnNoContent ? { data: [] } : res,
+				await makeModelryRequest(
+					ctx.key,
+					emptyOnNoContent
+						? { ...options, errors: { ...options.errors, 204: 'No Content' } }
+						: options,
+				),
 			);
 		} catch (error) {
+			if (
+				emptyOnNoContent &&
+				error instanceof ApiError &&
+				error.status === 204
+			) {
+				return output.parse({ data: [] });
+			}
 			const data = error instanceof ApiError ? error.body?.data : undefined;
 			if (error instanceof ApiError && error.status === 404) {
 				if (Array.isArray(data) && data.length === 0) {

@@ -346,6 +346,10 @@ it.each([
 	['modelingRequests.list', () => api.modelingRequests.list({})],
 	['embeds.list', () => api.embeds.list({ product_id: 1 })],
 	['workspaces.list', () => api.workspaces.list({})],
+	[
+		'modelingRequests.assets',
+		() => api.modelingRequests.assets({ modeling_request_id_or_sku: 'SKU' }),
+	],
 ])('%s fails on a 200 with an unreadable body', async (_name, call) => {
 	mock.mockResolvedValueOnce(
 		new Response('{"data": [', {
@@ -355,6 +359,12 @@ it.each([
 	);
 	jest.spyOn(console, 'error').mockImplementation(() => {});
 	await expect(call()).rejects.toBeDefined();
+});
+it('fails the asset list on a 200 with no Content-Type', async () => {
+	mock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+	await expect(
+		api.modelingRequests.assets({ modeling_request_id_or_sku: 'SKU' }),
+	).rejects.toBeDefined();
 });
 it('still throws when a list parent is missing', async () => {
 	mock.mockResolvedValueOnce(
