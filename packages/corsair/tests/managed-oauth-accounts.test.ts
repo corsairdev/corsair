@@ -28,6 +28,7 @@ import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-
 const KEK = 'test-kek-with-at-least-32-characters!!';
 const SECRET = 'csec_accounts';
 
+// A minimal plugin literal; the full CorsairPlugin generics are not needed here.
 const gmail = {
 	id: 'gmail',
 	options: { authType: 'managed' as const },
@@ -45,7 +46,7 @@ describe('managed oauth delivery by account identity', () => {
 			database: env.db,
 			kek: KEK,
 			multiTenancy: true,
-		} as any);
+		});
 		// A Kysely input is assumed Postgres; the sqlite test DB has no FOR UPDATE.
 		getCorsairInternal(corsair).database!.isPg = false;
 		await setupCorsair(corsair, { tenantId: 't1' });
@@ -65,6 +66,11 @@ describe('managed oauth delivery by account identity', () => {
 			extraAccountFields: ['team_id'],
 			account: ref ? { ref } : undefined,
 		});
+	// The manager's static type carries no plugin-specific account fields.
+	const teamIdOf = (ref: string) =>
+		(
+			km(ref) as unknown as { get_team_id(): Promise<string | null> }
+		).get_team_id();
 	const deliver = (
 		accessToken: string,
 		account?: { id: string; label?: string },
@@ -133,8 +139,8 @@ describe('managed oauth delivery by account identity', () => {
 		);
 		await deliver('at-a', { id: 'a' });
 		await deliver('at-b', { id: 'b' });
-		expect(await km('b').get_team_id()).toBe('T-at-b');
-		expect(await km('a').get_team_id()).toBe('T-at-a');
+		expect(await teamIdOf('b')).toBe('T-at-b');
+		expect(await teamIdOf('a')).toBe('T-at-a');
 	});
 
 	it('tunnel oauth.tokens payload with account reaches the delivery', async () => {

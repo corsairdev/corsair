@@ -6,6 +6,7 @@ import {
 	encryptDEK,
 	generateDEK,
 } from '../core/auth/encryption';
+import type { CorsairTenantWrapper } from '../core/client';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { setupCorsair } from '../setup';
@@ -13,6 +14,7 @@ import { processCorsair } from '../tunnel/index';
 import { processWebhook } from '../webhooks/index';
 import * as tenantLinks from '../webhooks/tenant-links';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
+import type { EndpointCtx } from './multi-account-fixtures';
 import { createTestDatabase } from './setup-db';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
@@ -28,6 +30,7 @@ function signedHeaders(body: string, secret: string) {
 const teamOf = (request: { body: unknown }) =>
 	(request.body as { team_id?: string }).team_id;
 
+// A minimal plugin literal; the full CorsairPlugin generics are not needed here.
 const slack = {
 	id: 'slack',
 	options: { authType: 'oauth_2' as const },
@@ -45,7 +48,7 @@ const slack = {
 		events: {
 			message: {
 				match: () => true,
-				handler: async (ctx: any) => {
+				handler: async (ctx: EndpointCtx) => {
 					await ctx.db.notes.upsertByEntityId('n1', { title: 'hi' });
 					return { success: true };
 				},
@@ -56,7 +59,7 @@ const slack = {
 
 describe('webhooks run as the account the delivery matched', () => {
 	let env: ReturnType<typeof createTestDatabase>;
-	let corsair: any;
+	let corsair: CorsairTenantWrapper<readonly [CorsairPlugin]>;
 	beforeEach(async () => {
 		env = createTestDatabase();
 		corsair = createCorsair({
@@ -64,7 +67,7 @@ describe('webhooks run as the account the delivery matched', () => {
 			database: env.db,
 			kek: KEK,
 			multiTenancy: true,
-		} as any);
+		});
 		getCorsairInternal(corsair).database!.isPg = false;
 		await setupCorsair(corsair, { tenantId: 't1' });
 		await env.db.deleteFrom('corsair_accounts').execute();
