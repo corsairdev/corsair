@@ -130,6 +130,13 @@ describe('Geokeo client', () => {
 		expect(result.results).toEqual([]);
 	});
 
+	it('rejects a ZERO_RESULTS answer whose results field is not a list', async () => {
+		respond({ status: 'ZERO_RESULTS', results: 'corrupted' });
+		const error = await failure(invoke(forwardGeocode, { q: 'xyzzyplugh' }));
+
+		expect(error.name).toBe('ZodError');
+	});
+
 	it('marks a dropped connection as a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 		const error = await failure(invoke(forwardGeocode, { q: 'x' }));

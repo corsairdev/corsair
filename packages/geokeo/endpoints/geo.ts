@@ -29,9 +29,11 @@ function withParsedNumbers(raw: unknown): unknown {
 	const rows = record?.results;
 	// Live, ZERO_RESULTS arrives as `{"status":"ZERO_RESULTS"}` with no
 	// `results` key at all. It is a documented answer (not charged), so it is
-	// returned as an empty list, as the plugin documents.
+	// returned as an empty list, as the plugin documents. A `results` value
+	// that is present but not a list stays as sent, so the schema rejects it.
 	if (!Array.isArray(rows)) {
-		return record?.status === GEOKEO_STATUS.ZERO_RESULTS
+		return record?.status === GEOKEO_STATUS.ZERO_RESULTS &&
+			!('results' in record)
 			? { ...record, results: [] }
 			: raw;
 	}
