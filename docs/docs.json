@@ -3296,6 +3296,13 @@
                 ]
               },
               {
+                "group": "Microsoft Clarity",
+                "pages": [
+                  "plugins/microsoftclarity/overview",
+                  "plugins/microsoftclarity/api"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",

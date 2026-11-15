@@ -1,0 +1,14 @@
+displayName: Microsoft Clarity
+description: Export Microsoft Clarity project dashboard metrics with optional dimension breakdowns.
+domain: clarity.microsoft.com
+overviewNote: |
+  The Data Export API allows 10 requests per project per day, covers the previous 1 to 3 days, and returns at most 1,000 rows without pagination. Project admins generate a bearer token in Settings > Data Export.
+examples:
+  read:
+    path: insights.get
+    title: Export live project insights
+    args:
+      numOfDays: 1
+      dimension1: OS
+apiNotes:
+  insights.get: "Use `numOfDays` 1, 2, or 3 and up to three optional dimension values. Metric information fields vary with the metric and requested breakdown."
