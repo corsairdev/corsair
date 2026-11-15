@@ -1420,11 +1420,11 @@ export const forceManagerEndpointMeta = {
 		description: 'Delete Branch (DELETE /branches/{ID})',
 	},
 	'bulks.bulkCreateResources': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Bulk Create Resources (POST /VALUE/bulk)',
 	},
 	'bulks.bulkUpdateResources': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Bulk Update Resources (PUT /VALUE/bulk)',
 	},
 	'bulks.bulkDeleteResources': {
@@ -1715,7 +1715,7 @@ export const forceManagerEndpointMeta = {
 		description: 'List Calendar (GET /calendar)',
 	},
 	'eventsTasks.createCalendar': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create Calendar (POST /calendar)',
 	},
 	'eventsTasks.getCalendar': {
@@ -1723,7 +1723,7 @@ export const forceManagerEndpointMeta = {
 		description: 'Get Calendar (GET /calendar/{ID})',
 	},
 	'eventsTasks.updateCalendar': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Update Calendar (PUT /calendar/{ID})',
 	},
 	'eventsTasks.deleteCalendar': {
@@ -2326,7 +2326,7 @@ export const forceManagerEndpointMeta = {
 		description: 'List Users (GET /users)',
 	},
 	'usersEntity.createUser': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create User (POST /users)',
 	},
 	'usersEntity.getUser': {
@@ -2334,7 +2334,7 @@ export const forceManagerEndpointMeta = {
 		description: 'Get User (GET /users/{ID})',
 	},
 	'usersEntity.updateUser': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Update User (PUT /users/{ID})',
 	},
 	'usersEntity.deleteUser': {

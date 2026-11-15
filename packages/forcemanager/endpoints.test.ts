@@ -14,6 +14,18 @@ import { forceManagerEndpointMeta, forceManagerEndpointSchemas } from './index';
 
 const forceManagerEndpointsNested = ForceManagerEndpoints;
 
+// Writes that can email people or add a charge, so R8 makes them destructive: calendar `sendNotification`
+// emails invitations to contacts, user `billable` adds a paid seat, and the bulk routes take any resource
+// name (`users`, `calendar`, ...).
+const SENDS_OR_CHARGES = new Set<string>([
+	'createCalendar',
+	'updateCalendar',
+	'createUser',
+	'updateUser',
+	'bulkCreateResources',
+	'bulkUpdateResources',
+]);
+
 // `unknown` is needed to safely inspect the heterogeneous operation fixtures.
 function recordOf(value: unknown): Record<string, unknown> {
 	if (value === null || typeof value !== 'object' || Array.isArray(value))
@@ -107,7 +119,7 @@ describe('ForceManager operation registry and wire behavior', () => {
 			expect(metadata?.riskLevel).toBe(
 				definition.method === 'GET'
 					? 'read'
-					: definition.method === 'DELETE'
+					: definition.method === 'DELETE' || SENDS_OR_CHARGES.has(route.name)
 						? 'destructive'
 						: 'write',
 			);
