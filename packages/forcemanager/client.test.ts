@@ -1,9 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
-import {
-	ForceManagerAPIError,
-	forceManagerBaseUrl,
-	makeForceManagerRequest,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { forceManagerBaseUrl, makeForceManagerRequest } from './client';
 
 describe('ForceManager HTTP client', () => {
 	afterEach(() => jest.restoreAllMocks());
@@ -93,9 +90,11 @@ describe('ForceManager HTTP client', () => {
 			},
 		).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(ForceManagerAPIError);
-		if (!(error instanceof Error))
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError))
 			throw new Error('Expected a safe ForceManager error');
+		expect(error.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('private-value');
 		expect(error.message).not.toContain('private-value');
 		expect(error.message).not.toContain('private-session-key');
 	});
@@ -113,8 +112,8 @@ describe('ForceManager HTTP client', () => {
 			method: 'GET',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(ForceManagerAPIError);
-		if (!(error instanceof ForceManagerAPIError))
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError))
 			throw new Error('Expected a rate-limit error');
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(4000);

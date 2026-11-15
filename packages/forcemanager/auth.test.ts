@@ -1,7 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import {
 	clearForceManagerSessionCache,
-	ForceManagerAPIError,
 	makeForceManagerRequest,
 	packForceManagerCredentials,
 	parseForceManagerCredentials,
@@ -165,11 +165,15 @@ describe('ForceManager session login', () => {
 			method: 'GET',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(ForceManagerAPIError);
-		if (!(error instanceof Error)) throw new Error('Expected an error');
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw new Error('Expected an ApiError');
+		expect(error.status).toBe(400);
 		expect(error.message).toBe(
 			'ForceManager login failed with HTTP 400: invalid credentials.',
 		);
+		// The login body carries the private key, so the error drops it.
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('private-key');
 		expect(error.message).not.toContain('private-key');
 		expect(error.message).not.toContain('public-key');
 	});

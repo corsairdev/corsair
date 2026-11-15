@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import { ForceManagerAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -71,5 +72,27 @@ describe('ForceManager error handling', () => {
 		)?.[0];
 
 		expect(firstMatchingHandler).toBe('RATE_LIMIT_ERROR');
+	});
+
+	it('matches the core ApiError the client rethrows', async () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/accounts' },
+			{
+				url: 'https://api.forcemanager.com/api/v4/accounts',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: undefined,
+			},
+			'ForceManager request failed with HTTP 429',
+			{ retryAfter: 4000 },
+		);
+		const firstMatchingHandler = Object.entries(errorHandlers).find(
+			([, handler]) => handler.match(error),
+		)?.[0];
+		expect(firstMatchingHandler).toBe('RATE_LIMIT_ERROR');
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({ maxRetries: 3, headersRetryAfterMs: 4000 });
 	});
 });

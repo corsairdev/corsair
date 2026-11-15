@@ -83,16 +83,35 @@ function providerMessage(body: unknown): string | undefined {
 	return undefined;
 }
 
-// `unknown` because transport failures may be non-Error values; only status, Retry-After and the
-// provider's own short error text are kept (never the request, its headers or the full body).
+function stripQuery(url: string): string {
+	const index = url.indexOf('?');
+	return index === -1 ? url : url.slice(0, index);
+}
+
+// `unknown` because transport failures may be non-Error values. An HTTP failure stays a core ApiError
+// with its status, Retry-After and rate-limit fields, so core's 401 and 429 handling still sees them; it
+// is rebuilt without the request body (the login body holds the private key), the query or the provider
+// body, and its message keeps only the provider's own short error text.
 function toForceManagerError(error: unknown, label: string): Error {
 	if (error instanceof ForceManagerAPIError) return error;
 	if (error instanceof ApiError) {
 		const detail = providerMessage(error.body);
-		return new ForceManagerAPIError(
+		return new ApiError(
+			{ method: error.request.method, url: stripQuery(error.request.url) },
+			{
+				url: stripQuery(error.url),
+				ok: false,
+				status: error.status,
+				statusText: error.statusText,
+				body: undefined,
+			},
 			`${label} failed with HTTP ${error.status}${detail ? `: ${detail}` : ''}`,
-			error.status,
-			error.retryAfter,
+			{
+				retryAfter: error.retryAfter,
+				rateLimitReset: error.rateLimitReset,
+				rateLimitRemaining: error.rateLimitRemaining,
+				rateLimitLimit: error.rateLimitLimit,
+			},
 		);
 	}
 	return new ForceManagerAPIError(`${label} failed`);
@@ -244,7 +263,7 @@ export async function makeForceManagerRequest<T = unknown>(
 	try {
 		return await send<T>(path, token, input, environment);
 	} catch (error: unknown) {
-		if (!(error instanceof ForceManagerAPIError) || error.status !== 401) {
+		if (!(error instanceof ApiError) || error.status !== 401) {
 			throw error;
 		}
 		// The token lapsed before the cache expected it to: forget it and retry once with a fresh login.
