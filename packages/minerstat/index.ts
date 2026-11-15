@@ -95,18 +95,46 @@ export const minerstatEndpointSchemas = {
 	typeof minerstatEndpointsNested
 >;
 const minerstatEndpointMeta = {
-	'coins.list': { riskLevel: 'read', description: 'List coins' },
-	'coins.get': { riskLevel: 'read', description: 'Get coins' },
-	'coins.history': { riskLevel: 'read', description: 'History coins' },
-	'hardware.list': { riskLevel: 'read', description: 'List hardware' },
-	'hardware.get': { riskLevel: 'read', description: 'Get hardware' },
-	'algorithms.list': { riskLevel: 'read', description: 'List algorithms' },
-	'algorithms.get': { riskLevel: 'read', description: 'Get algorithms' },
-	'pools.list': { riskLevel: 'read', description: 'List pools' },
-	'pools.get': { riskLevel: 'read', description: 'Get pools' },
+	'coins.list': {
+		riskLevel: 'read',
+		description: 'List mineable coins with network, price and confidence data',
+	},
+	'coins.get': {
+		riskLevel: 'read',
+		description: 'Get one coin by slug, with identity and supply fields',
+	},
+	'coins.history': {
+		riskLevel: 'read',
+		description: 'List network snapshots for one coin, newest first',
+	},
+	'hardware.list': {
+		riskLevel: 'read',
+		description: 'List mining hardware (ASIC, GPU, CPU, FPGA)',
+	},
+	'hardware.get': {
+		riskLevel: 'read',
+		description: 'Get one hardware device by slug, with its spec sheet',
+	},
+	'algorithms.list': {
+		riskLevel: 'read',
+		description: 'List mining algorithms with coin counts',
+	},
+	'algorithms.get': {
+		riskLevel: 'read',
+		description: 'Get one algorithm with its coins and benchmarked hardware',
+	},
+	'pools.list': {
+		riskLevel: 'read',
+		description: 'List mining pools with fees and liveness',
+	},
+	'pools.get': {
+		riskLevel: 'read',
+		description: 'Get one pool with per-coin fees and payout schemes',
+	},
 	'profitability.rank': {
 		riskLevel: 'read',
-		description: 'Rank profitability',
+		description:
+			'Rank coins by mining profit for hardware or a hashrate (Enterprise plan)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof minerstatEndpointsNested
