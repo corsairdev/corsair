@@ -528,6 +528,7 @@ export const BaseProviders = [
 	'supabase',
 	'supadata',
 	'surf',
+	'surveymonkey',
 	'suzanne',
 	'svix',
 	'synthflowai',
@@ -1141,6 +1142,7 @@ export const ProviderDisplayNames = {
 	supabase: 'Supabase',
 	supadata: 'Supadata',
 	surf: 'Surf',
+	surveymonkey: 'SurveyMonkey',
 	suzanne: 'Suzanne',
 	svix: 'Svix',
 	synthflowai: 'Synthflow AI',
@@ -1761,6 +1763,7 @@ export type AllProviders =
 	| 'supabase'
 	| 'supadata'
 	| 'surf'
+	| 'surveymonkey'
 	| 'suzanne'
 	| 'svix'
 	| 'synthflowai'
