@@ -61,7 +61,7 @@ pnpm add @corsair-dev/postalytics
 
 Auth: API key. Postalytics uses HTTP Basic with the API key as the username and an empty password. Corsair prompts your tenant for credentials on first use. Set `sandbox: true` when constructing the plugin to use the sandbox host.
 
-Postalytics documents a limit of three requests per second. A 429 is retried up to three times, waiting the `Retry-After` time when Postalytics sends one and backing off exponentially (1 s, 2 s, 4 s) when it doesn't. When `Retry-After` asks for more than 60 seconds, the error goes straight back to the caller.
+Postalytics documents a limit of three requests per second. A 429 is retried up to three times, waiting the `Retry-After` time when Postalytics sends a positive one and backing off exponentially (1 s, 2 s, 4 s) when it sends none or `Retry-After: 0`. When `Retry-After` asks for more than 60 seconds, the error goes straight back to the caller.
 
 ## Webhooks
 

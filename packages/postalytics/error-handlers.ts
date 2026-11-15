@@ -8,12 +8,18 @@ export const errorHandlers = {
 	// this handler is the only 429 retry. A 429 means Postalytics refused the
 	// request before running it, so replaying it is safe for writes too. A wait
 	// over a minute (a quota reset, not a burst limit) goes back to the caller.
+	// `Retry-After: 0` counts as no wait given: the retry backs off 1 s, 2 s,
+	// 4 s instead of firing at once into a three-requests-per-second limit.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => error instanceof PostalyticsRateLimitError,
 		handler: async (error: Error) => {
-			const waitMs =
+			const retryAfterMs =
 				error instanceof PostalyticsRateLimitError
 					? error.retryAfterMs
+					: undefined;
+			const waitMs =
+				retryAfterMs !== undefined && retryAfterMs > 0
+					? retryAfterMs
 					: undefined;
 			if (waitMs !== undefined && waitMs > MAX_RETRY_WAIT_MS)
 				return { maxRetries: 0 };

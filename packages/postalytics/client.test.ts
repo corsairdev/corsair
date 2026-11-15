@@ -276,6 +276,16 @@ describe('Postalytics request seam', () => {
 			handler.handler(new PostalyticsRateLimitError('limited', 3_600_000)),
 		).resolves.toEqual({ maxRetries: 0 });
 	});
+	it('backs off exponentially when Retry-After is 0', async () => {
+		const handler = errorHandlers.RATE_LIMIT_ERROR;
+		await expect(
+			handler.handler(new PostalyticsRateLimitError('limited', 0)),
+		).resolves.toEqual({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff',
+			headersRetryAfterMs: undefined,
+		});
+	});
 	it('does not send credentials to an absolute or scheme-relative URL', async () => {
 		for (const path of [
 			'https://example.org',
