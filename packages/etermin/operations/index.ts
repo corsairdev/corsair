@@ -1617,11 +1617,11 @@ export const calendarsUpdate = {
 			description: 'Name of the calendar. This name is used for all languages',
 		},
 		{
-			name: 'descriptionlanguagecode',
+			name: 'descriptionde',
 			type: 'string',
 			required: false,
 			description:
-				'e.g. descriptionde adds additional information for this calendar in German language. descriptionen in English etc.',
+				'Description of the calendar in German. For other languages use descriptionLANGUAGECODE, e.g. descriptionen.',
 		},
 		{
 			name: 'descriptiondisplaytype',

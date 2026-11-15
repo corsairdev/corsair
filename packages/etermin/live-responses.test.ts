@@ -100,3 +100,15 @@ describe('eTermin inputs the live API refuses', () => {
 		).toBe(true);
 	});
 });
+
+describe('eTermin calendar descriptions per language', () => {
+	it('accepts descriptionen and friends on calendars.update', () => {
+		// PUT /api/calendar id=... descriptionen=... set DescriptionEN live.
+		const schema = ETerminEndpointInputSchemas.calendarsUpdate;
+		expect(
+			schema.safeParse({ id: 1, descriptionen: 'Consultations' }).success,
+		).toBe(true);
+		expect(schema.safeParse({ id: 1, descriptionen: 3 }).success).toBe(false);
+		expect(schema.safeParse({ id: 1, nonsense: 'x' }).success).toBe(false);
+	});
+});

@@ -42,6 +42,8 @@ function withLanguageFields<Shape extends z.ZodRawShape>(
 	});
 }
 
+// descriptionde, descriptionen, ...: a calendar's description per language.
+const calendarDescriptionLanguageField = /^description[a-z]{2}$/;
 const serviceLanguageField =
 	/^(service|info|emailtxt|pricesuffix|capseltext)[a-z]{2,}$/;
 const serviceGroupLanguageField = /^(servicegroup|additionaltext)[a-z]{2,}$/;
@@ -1024,19 +1026,16 @@ export const ETerminEndpointInputSchemas = {
 		})
 		.strict(),
 	calendarsCreate: z.object({}).strict(),
-	calendarsUpdate: z
-		.object({
+	calendarsUpdate: withLanguageFields(
+		z.object({
 			id: z.number().int().describe('ID of the calendar'),
 			calendarname: z
 				.string()
 				.optional()
 				.describe('Name of the calendar. This name is used for all languages'),
-			descriptionlanguagecode: z
-				.string()
-				.optional()
-				.describe(
-					'e.g. descriptionde adds additional information for this calendar in German language. descriptionen in English etc.',
-				),
+			// Per-language descriptions (descriptionde, descriptionen, ...) come in
+			// through withLanguageFields below; the reference's
+			// "descriptionlanguagecode" is a placeholder, not a field.
 			descriptiondisplaytype: z
 				.number()
 				.int()
@@ -1110,8 +1109,9 @@ export const ETerminEndpointInputSchemas = {
 				.number()
 				.optional()
 				.describe('Start number of the waiting number'),
-		})
-		.strict(),
+		}),
+		calendarDescriptionLanguageField,
+	),
 	calendarsDelete: z
 		.object({
 			id: z.string().describe('ID of the calendar'),
