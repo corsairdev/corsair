@@ -1,6 +1,6 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
-import type { z } from 'zod';
+import { z } from 'zod';
 import type { ForceManagerContext } from '..';
 import type { ForceManagerEnvironment } from '../client';
 import { makeForceManagerRequest } from '../client';
@@ -25,12 +25,60 @@ function parseSchema<S extends z.ZodType>(
 	return result.data;
 }
 
+const responseSchemaCache = new WeakMap<z.ZodType, z.ZodType>();
+
+/**
+ * The operation schemas come from the OpenAPI examples, so they say `string` where real records hold
+ * `null`, and pin one scalar type per field. Those strict shapes stay on the inputs and in the docs; a
+ * response is parsed with this looser copy instead, so a call that already ran on ForceManager is not
+ * reported as failed because a field came back empty or as a number. Object shapes are kept: every
+ * known field may be missing or null, scalars accept any JSON scalar, unknown fields pass through.
+ */
+export function toResponseSchema(schema: z.ZodType): z.ZodType {
+	const cached = responseSchemaCache.get(schema);
+	if (cached) return cached;
+	let loose: z.ZodType = schema;
+	if (schema instanceof z.ZodObject) {
+		const shape: Record<string, z.ZodType> = {};
+		for (const [key, value] of Object.entries(schema.shape)) {
+			shape[key] = toResponseSchema(value as z.ZodType).nullish();
+		}
+		loose = z.object(shape).passthrough();
+	} else if (
+		schema instanceof z.ZodOptional ||
+		schema instanceof z.ZodNullable
+	) {
+		loose = toResponseSchema(schema.unwrap() as z.ZodType).nullish();
+	} else if (schema instanceof z.ZodArray) {
+		loose = z.array(toResponseSchema(schema.element as z.ZodType));
+	} else if (schema instanceof z.ZodRecord) {
+		loose = z.record(
+			z.string(),
+			toResponseSchema(schema.valueType as z.ZodType).nullish(),
+		);
+	} else if (schema instanceof z.ZodUnion) {
+		const options = schema.options as readonly z.ZodType[];
+		loose = z.union(options.map((option) => toResponseSchema(option)));
+	} else if (
+		schema instanceof z.ZodString ||
+		schema instanceof z.ZodNumber ||
+		schema instanceof z.ZodBoolean ||
+		schema instanceof z.ZodEnum
+	) {
+		loose = z.union([z.string(), z.number(), z.boolean()]);
+	}
+	responseSchemaCache.set(schema, loose);
+	return loose;
+}
+
 // `unknown` because transport JSON has no trusted static type before this operation's schema check.
 function assertOperationOutput<K extends OperationKey>(
 	key: K,
 	value: unknown,
 ): asserts value is OperationOutput<K> {
-	const result = operationDefinitions[key].output.safeParse(value);
+	const result = toResponseSchema(operationDefinitions[key].output).safeParse(
+		value,
+	);
 	if (!result.success) throw result.error;
 }
 
