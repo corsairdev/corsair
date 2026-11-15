@@ -411,6 +411,7 @@ export const BaseProviders = [
 	'placid',
 	'plain',
 	'ploid',
+	'prismic',
 	'posthog',
 	'postman',
 	'prisma',
@@ -988,6 +989,7 @@ export const ProviderDisplayNames = {
 	placid: 'Placid',
 	plain: 'Plain',
 	ploid: 'Ploid',
+	prismic: 'Prismic',
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
@@ -1572,6 +1574,7 @@ export type AllProviders =
 	| 'placid'
 	| 'plain'
 	| 'ploid'
+	| 'prismic'
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
