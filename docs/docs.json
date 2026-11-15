@@ -1211,14 +1211,6 @@
                 ]
               },
               {
-                "group": "Cert Spotter",
-                "pages": [
-                  "plugins/certspotter/overview",
-                  "plugins/certspotter/api",
-                  "plugins/certspotter/database"
-                ]
-              },
-              {
                 "group": "Chaser",
                 "pages": [
                   "plugins/chaser/overview",

@@ -12,7 +12,7 @@ pnpm add @corsair-dev/certspotter
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `firehose` | `certspotter.api.firehose` | `read` | Read the continuous stream of new issuances across every log; requires a Firehose subscription and a cursor to continue from |
+| `firehose.list` | `certspotter.api.firehose.list` | `read` | Read the continuous stream of new issuances across every log; requires a Firehose subscription and a cursor to continue from |
 | `issuances.list` | `certspotter.api.issuances.list` | `read` | List the unexpired certificate issuances for a domain, newest last, with an `after` cursor for paging |
 
 ## Auth
