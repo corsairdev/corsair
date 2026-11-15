@@ -1,0 +1,968 @@
+{
+  "id": "refiner",
+  "displayName": "Refiner",
+  "description": "Identify users, track events, store and tag survey responses, read NPS and CSAT reports, and manage contacts, surveys and segments with Refiner.",
+  "npmPackageName": "@corsair-dev/refiner",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "refiner.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the subscription plan, monthly usage against each limit, and the environments in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "{ plan?: string | null, mtu_count?: number | null, mtu_limit?: number | null, mte_count?: number | null, mpv_count?: number | null, mpv_limit?: number | null, msr_count?: number | null, msr_limit?: number | null } | null"
+          },
+          {
+            "key": "environments",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, mtu?: number | null, mte?: number | null, mpv?: number | null, msr?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact and all their survey responses; overwrite traits with users.identify instead when the responses must survive",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Your user ID, or an email address."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string",
+            "description": "A Refiner contact UUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact and everything on record for them by user ID, email or Refiner UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Your user ID, or an email address."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string",
+            "description": "A Refiner contact UUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "remote_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Your own user ID."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_seen_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null> | null",
+            "description": "Every trait on record: the ones you sent, merged with this contact's survey answers."
+          },
+          {
+            "key": "segments",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, is_manual?: boolean | null }[] | null"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ uuid?: string | null, remote_id?: string | null, domain?: string | null, display_name?: string | null, first_seen_at?: string | null, last_seen_at?: string | null, attributes?: Record<string, string | number | boolean | null> | never[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with their traits, segments and account, filtered by survey or segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based. Defaults to 1."
+          },
+          {
+            "key": "page_cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The next_page_cursor from the previous page. Faster than numeric paging on a large set."
+          },
+          {
+            "key": "page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100, maximum 1,000."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "display_name | email | first_seen_at | last_seen_at | last_form_submission_at",
+            "description": "Defaults to first_seen_at."
+          },
+          {
+            "key": "form_uuid",
+            "optional": true,
+            "type": "string",
+            "description": "Only contacts linked to this survey."
+          },
+          {
+            "key": "segment_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Match email, ID or name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ uuid?: string | null, remote_id?: string | null, email?: string | null, display_name?: string | null, first_seen_at?: string | null, last_seen_at?: string | null, attributes?: Record<string, string | number | boolean | null> | null, segments?: { uuid?: string | null, name?: string | null, is_manual?: boolean | null }[] | null, account?: { uuid?: string | null, remote_id?: string | null, domain?: string | null, display_name?: string | null, first_seen_at?: string | null, last_seen_at?: string | null, attributes?: Record<string, string | number | boolean | null> | never[] | null } | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ items_count?: number | null, current_page?: number | null, last_page?: number | null, page_length?: number | null, next_page_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.forms.archive",
+      "shortPath": "forms.archive",
+      "description": "Archive a survey; Refiner archives rather than deletes, and an archived survey still appears under all_with_archived",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The survey to archive. Refiner archives rather than deletes."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.forms.duplicate",
+      "shortPath": "forms.duplicate",
+      "description": "Duplicate a survey into a new draft under a new name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The survey to duplicate."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The new survey's name. The copy is created as a draft."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source_form_uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "new_form_uuid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.forms.history",
+      "shortPath": "forms.history",
+      "description": "List the previous versions of a survey, each with its full configuration and question set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The survey whose history to read."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ uuid?: string | null, action?: string | null, snapshot?: Record<string, JsonValue> | null, created_at?: string | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ items_count?: number | null, current_page?: number | null, last_page?: number | null, page_length?: number | null, next_page_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List surveys by state, optionally with their configuration and response and view counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": true,
+            "type": "all | published | drafts | archived | all_with_archived",
+            "description": "Which surveys to include. Defaults to all."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_config",
+            "optional": true,
+            "type": "boolean",
+            "description": "The survey configuration and each element's. Its format may change as features are added."
+          },
+          {
+            "key": "include_info",
+            "optional": true,
+            "type": "boolean",
+            "description": "Creation and publishing dates, response and view counts, and the folder."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, channels?: string[] | null, published_at?: string | null, archived_at?: string | null, created_at?: string | null, updated_at?: string | null, responses_count?: number | null, views_count?: number | null, first_form_view_at?: string | null, last_form_view_at?: string | null, folder?: string | Record<string, never> | null, page_url?: string | null, config?: Record<string, JsonValue> | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ items_count?: number | null, current_page?: number | null, last_page?: number | null, page_length?: number | null, next_page_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.forms.publish",
+      "shortPath": "forms.publish",
+      "description": "Publish a survey, or unpublish it with published: false so it stops collecting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The survey to publish or unpublish."
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean",
+            "description": "False unpublishes the survey. Defaults to true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.reporting.get",
+      "shortPath": "reporting.get",
+      "description": "Compute an NPS, CSAT, ratings, distribution or count report over a date range and any filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "nps | csat | ratings | distribution | count",
+            "description": "Which report to compute."
+          },
+          {
+            "key": "question_identifiers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only count data points for these questions. Omitted means every question matching the type."
+          },
+          {
+            "key": "tag_uuids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "form_uuids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "segment_uuids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "date_range_start",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601. Defaults to seven days ago."
+          },
+          {
+            "key": "date_range_end",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601. Defaults to the end of today."
+          },
+          {
+            "key": "response_data",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Survey answers to match, keyed by question identifier. Every key must match."
+          },
+          {
+            "key": "contact_data",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Contact traits to match, keyed by trait slug."
+          },
+          {
+            "key": "account_data",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Account traits to match, keyed by trait slug."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, number> | null",
+            "description": "A bucket label to count, such as {\"detractors\": 5, \"promoters\": 40}."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "nps",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "csat",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sum",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "average",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "responses",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "datapoints",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "views",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "date_range_start",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_range_end",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.responses.list",
+      "shortPath": "responses.list",
+      "description": "List survey responses and views, filtered by survey, segment, tag, date, answers or contact traits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based. Defaults to 1."
+          },
+          {
+            "key": "page_cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The next_page_cursor from the previous page. Faster than numeric paging on a large set."
+          },
+          {
+            "key": "page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100, maximum 1,000."
+          },
+          {
+            "key": "form_uuid",
+            "optional": true,
+            "type": "string",
+            "description": "Only this survey."
+          },
+          {
+            "key": "form_uuids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these surveys."
+          },
+          {
+            "key": "segment_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segment_uuids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_uuids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "date_range_start",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601, such as 2024-01-01 or 2024-01-01 00:00:00."
+          },
+          {
+            "key": "date_range_end",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "completed | partials | all",
+            "description": "completed is the default; partials adds incomplete ones; all adds dismissed survey views."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Match the contact ID, Refiner UUID, email or name."
+          },
+          {
+            "key": "with_attributes",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include every attribute on record for each contact."
+          },
+          {
+            "key": "response_data",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Survey answers to match, keyed by question identifier. Every key must match."
+          },
+          {
+            "key": "contact_data",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Contact traits to match, keyed by trait slug."
+          },
+          {
+            "key": "account_data",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Account traits to match, keyed by trait slug."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ uuid?: string | null, first_shown_at?: string | null, last_shown_at?: string | null, show_counter?: number | null, first_data_reception_at?: string | null, last_data_reception_at?: string | null, completed_at?: string | null, received_at?: string | null, dismissed_at?: string | null, form?: { uuid?: string | null, name?: string | null } | null, data?: Record<string, string | number | boolean | null> | null, contact?: { uuid?: string | null, remote_id?: string | null, email?: string | null, display_name?: string | null, attributes?: Record<string, string | number | boolean | null> | never[] | null, account?: { uuid?: string | null, remote_id?: string | null, domain?: string | null, display_name?: string | null, first_seen_at?: string | null, last_seen_at?: string | null, attributes?: Record<string, string | number | boolean | null> | never[] | null } | null } | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ items_count?: number | null, current_page?: number | null, last_page?: number | null, page_length?: number | null, next_page_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.responses.store",
+      "shortPath": "responses.store",
+      "description": "Store a survey response for a user on an existing survey, to import history or feed a custom survey UI. Answers go in as top-level keys named by question identifier, such as { id: 'user-1', form_uuid, nps: 9, feedback: 'Fast setup' }",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Your user ID."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Instead of an id."
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string",
+            "description": "A Refiner contact UUID."
+          },
+          {
+            "key": "form_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The survey the response belongs to. It may be empty and unpublished, as long as it exists."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601, when the response was recorded. Defaults to now, so set it on a historical import."
+          },
+          {
+            "key": "prevent_duplicates",
+            "optional": true,
+            "type": "boolean",
+            "description": "Refiner detects duplicates by default; false turns that off."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 20 tags for the response."
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "A nested account object, with at least an id, to group the contact under one account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "The new response UUID."
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.responses.tag",
+      "shortPath": "responses.tag",
+      "description": "Add tags to an existing survey response, up to 20",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The survey response to tag."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 20 tags. Tags already on the response are kept."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List segments, reporting whether each is hand-curated or computed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, is_manual?: boolean | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ items_count?: number | null, current_page?: number | null, last_page?: number | null, page_length?: number | null, next_page_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.segments.sync",
+      "shortPath": "segments.sync",
+      "description": "Add a user to a manual segment, or remove them, creating the contact when no match exists",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Your user ID."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Instead of an id."
+          },
+          {
+            "key": "segment_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The manual segment. A computed segment cannot be edited this way."
+          },
+          {
+            "key": "remove",
+            "optional": true,
+            "type": "boolean",
+            "description": "True removes the user instead of adding them. Refiner exposes both through one route, so the plugin picks DELETE for removal."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "segment_uuid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.users.identify",
+      "shortPath": "users.identify",
+      "description": "Identify a user by ID or email, creating the contact on first sight. Every other top-level key is saved as a trait, such as { id: 'user-1', plan: 'pro', signed_up_at: '2024-01-15' }",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Your user ID. One of id, email is required."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Instead of an id."
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "A nested account object, with at least an id, to group users under one account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_uuid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "refiner.api.users.track",
+      "shortPath": "users.track",
+      "description": "Track a named event for a user, creating the contact when no match exists",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Your user ID."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Instead of an id."
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string",
+            "description": "The event name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

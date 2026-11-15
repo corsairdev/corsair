@@ -169,6 +169,11 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://cdn.prod.website-files.com/65d658559223871198e78bca/6995e1929b75bc0cd4eecdfa_griptape%20favicon2.png',
 	postman:
 		'https://www.postman.com/_mk-www-next/icons/android-chrome-512x512.png',
+	// The site's apple touch icon (black cubes on a white tile, same as its
+	// light-mode favicon); twenty-icons served the dark-mode one, white on
+	// transparent, which disappears on a light background.
+	stackai:
+		'https://framerusercontent.com/images/V6q3uNO6whySwl1EXE4Yv0Krf8.png',
 	recallai:
 		'https://cdn.prod.website-files.com/620d732b1f1f7b244ac89f0e/620d732c1f1f7ba1edc89f35_Favicon%20256.png',
 	// The site only has a 32px favicon; the context.dev Brand API has the same
@@ -183,6 +188,11 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// linguapop.eu only has a 32px favicon; the context.dev Brand API has the
 	// same boxed "L" at 128px.
 	linguapop: 'https://media.brand.dev/696c8734-772f-402c-8de8-fc9fbcdfd9c8.png',
+	// klazify.com's own favicon (the black K). Its web-app manifest icon is a
+	// Woord badge copied from a sibling product, which twenty-icons picked up.
+	klazify: 'https://www.klazify.com/img/favicon.png',
+	// ramp.com's own 180px touch icon; twenty-icons only has the 32px favicon.
+	ramp: 'https://ramp.com/apple-touch-icon.png',
 	// The site's own 256px touch icon (the tag gun); its favicon is 32px.
 	taggun: 'https://www.taggun.io/apple-touch-icon.png',
 	zoom: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/fc/d0/96/fcd09664-56c3-f856-4311-da9dcbae1fd2/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.png',

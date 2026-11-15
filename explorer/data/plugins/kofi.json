@@ -1,0 +1,481 @@
+{
+  "id": "kofi",
+  "displayName": "Ko-fi",
+  "description": "Payment notifications from Ko-fi - receive the webhook Ko-fi sends when a donation, membership payment, shop order or commission is paid, with every delivery verified against the account's token. Ko-fi publishes no REST API.",
+  "npmPackageName": "@corsair-dev/kofi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 4,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "verification_token"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kofi.api.webhooks.listEvents",
+      "shortPath": "webhooks.listEvents",
+      "description": "List the payment types Ko-fi can deliver, from its webhook reference; makes no API call, because Ko-fi has no REST API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ type: string, description: string, docs_url: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "kofi.webhooks.commission",
+      "shortPath": "commission",
+      "description": "A paid commission. Ko-fi documents the type but publishes no example payload.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verification_token",
+            "optional": false,
+            "type": "string",
+            "description": "The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment."
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique per delivery, and stable across a retry."
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string",
+            "description": "When the payment happened, ISO 8601. Ko-fi documents it as required."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Donation | Subscription | Shop Order | Commission"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The supporter’s display name, or `Anonymous`."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string",
+            "description": "A decimal string, such as `5.00`, not a number. Ko-fi documents it as required."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A link to the transaction on Ko-fi."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present only when the supporter shared it with the creator."
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 4217, such as `USD`. Ko-fi documents it as required."
+          },
+          {
+            "key": "is_subscription_payment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_first_subscription_payment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "kofi_transaction_id",
+            "optional": false,
+            "type": "string",
+            "description": "Ko-fi’s transaction identifier. Ko-fi documents it as required."
+          },
+          {
+            "key": "tier_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The membership tier, on a Subscription only."
+          },
+          {
+            "key": "shop_items",
+            "optional": true,
+            "type": "{ direct_link_code?: string | null, variation_name?: string | null, quantity?: number | null }[] | null",
+            "description": "On a Shop Order only."
+          },
+          {
+            "key": "shipping",
+            "optional": true,
+            "type": "{ full_name?: string | null, street_address?: string | null, city?: string | null, state_or_province?: string | null, postal_code?: string | null, country?: string | null, country_code?: string | null, telephone?: string | null } | null",
+            "description": "On a physical Shop Order only."
+          }
+        ]
+      },
+      "responseType": "{ verification_token: string, message_id: string, timestamp: string, type: Donation | Subscription | Shop Order | Commission, is_public?: boolean | null, from_name?: string | null, message?: string | null, amount: string, url?: string | null, email?: string | null, currency: string, is_subscription_payment?: boolean | null, is_first_subscription_payment?: boolean | null, kofi_transaction_id: string, tier_name?: string | null, shop_items?: { direct_link_code?: string | null, variation_name?: string | null, quantity?: number | null }[] | null, shipping?: { full_name?: string | null, street_address?: string | null, city?: string | null, state_or_province?: string | null, postal_code?: string | null, country?: string | null, country_code?: string | null, telephone?: string | null } | null }",
+      "usageExample": "kofi({\n    webhookHooks: {\n        commission: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "kofi.webhooks.donation",
+      "shortPath": "donation",
+      "description": "A tip or donation. `amount` is a decimal string, and `message` holds the note left with it.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verification_token",
+            "optional": false,
+            "type": "string",
+            "description": "The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment."
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique per delivery, and stable across a retry."
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string",
+            "description": "When the payment happened, ISO 8601. Ko-fi documents it as required."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Donation | Subscription | Shop Order | Commission"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The supporter’s display name, or `Anonymous`."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string",
+            "description": "A decimal string, such as `5.00`, not a number. Ko-fi documents it as required."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A link to the transaction on Ko-fi."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present only when the supporter shared it with the creator."
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 4217, such as `USD`. Ko-fi documents it as required."
+          },
+          {
+            "key": "is_subscription_payment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_first_subscription_payment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "kofi_transaction_id",
+            "optional": false,
+            "type": "string",
+            "description": "Ko-fi’s transaction identifier. Ko-fi documents it as required."
+          },
+          {
+            "key": "tier_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The membership tier, on a Subscription only."
+          },
+          {
+            "key": "shop_items",
+            "optional": true,
+            "type": "{ direct_link_code?: string | null, variation_name?: string | null, quantity?: number | null }[] | null",
+            "description": "On a Shop Order only."
+          },
+          {
+            "key": "shipping",
+            "optional": true,
+            "type": "{ full_name?: string | null, street_address?: string | null, city?: string | null, state_or_province?: string | null, postal_code?: string | null, country?: string | null, country_code?: string | null, telephone?: string | null } | null",
+            "description": "On a physical Shop Order only."
+          }
+        ]
+      },
+      "responseType": "{ verification_token: string, message_id: string, timestamp: string, type: Donation | Subscription | Shop Order | Commission, is_public?: boolean | null, from_name?: string | null, message?: string | null, amount: string, url?: string | null, email?: string | null, currency: string, is_subscription_payment?: boolean | null, is_first_subscription_payment?: boolean | null, kofi_transaction_id: string, tier_name?: string | null, shop_items?: { direct_link_code?: string | null, variation_name?: string | null, quantity?: number | null }[] | null, shipping?: { full_name?: string | null, street_address?: string | null, city?: string | null, state_or_province?: string | null, postal_code?: string | null, country?: string | null, country_code?: string | null, telephone?: string | null } | null }",
+      "usageExample": "kofi({\n    webhookHooks: {\n        donation: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "kofi.webhooks.shopOrder",
+      "shortPath": "shopOrder",
+      "description": "A shop purchase, with `shop_items` and, for physical goods, `shipping`.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verification_token",
+            "optional": false,
+            "type": "string",
+            "description": "The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment."
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique per delivery, and stable across a retry."
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string",
+            "description": "When the payment happened, ISO 8601. Ko-fi documents it as required."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Donation | Subscription | Shop Order | Commission"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The supporter’s display name, or `Anonymous`."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string",
+            "description": "A decimal string, such as `5.00`, not a number. Ko-fi documents it as required."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A link to the transaction on Ko-fi."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present only when the supporter shared it with the creator."
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 4217, such as `USD`. Ko-fi documents it as required."
+          },
+          {
+            "key": "is_subscription_payment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_first_subscription_payment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "kofi_transaction_id",
+            "optional": false,
+            "type": "string",
+            "description": "Ko-fi’s transaction identifier. Ko-fi documents it as required."
+          },
+          {
+            "key": "tier_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The membership tier, on a Subscription only."
+          },
+          {
+            "key": "shop_items",
+            "optional": true,
+            "type": "{ direct_link_code?: string | null, variation_name?: string | null, quantity?: number | null }[] | null",
+            "description": "On a Shop Order only."
+          },
+          {
+            "key": "shipping",
+            "optional": true,
+            "type": "{ full_name?: string | null, street_address?: string | null, city?: string | null, state_or_province?: string | null, postal_code?: string | null, country?: string | null, country_code?: string | null, telephone?: string | null } | null",
+            "description": "On a physical Shop Order only."
+          }
+        ]
+      },
+      "responseType": "{ verification_token: string, message_id: string, timestamp: string, type: Donation | Subscription | Shop Order | Commission, is_public?: boolean | null, from_name?: string | null, message?: string | null, amount: string, url?: string | null, email?: string | null, currency: string, is_subscription_payment?: boolean | null, is_first_subscription_payment?: boolean | null, kofi_transaction_id: string, tier_name?: string | null, shop_items?: { direct_link_code?: string | null, variation_name?: string | null, quantity?: number | null }[] | null, shipping?: { full_name?: string | null, street_address?: string | null, city?: string | null, state_or_province?: string | null, postal_code?: string | null, country?: string | null, country_code?: string | null, telephone?: string | null } | null }",
+      "usageExample": "kofi({\n    webhookHooks: {\n        shopOrder: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "kofi.webhooks.subscription",
+      "shortPath": "subscription",
+      "description": "A membership payment, which fires on every payment including the first. `tier_name` names the tier.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verification_token",
+            "optional": false,
+            "type": "string",
+            "description": "The token from your Ko-fi webhooks page; the plugin handler compares it before accepting the payment."
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique per delivery, and stable across a retry."
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string",
+            "description": "When the payment happened, ISO 8601. Ko-fi documents it as required."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Donation | Subscription | Shop Order | Commission"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The supporter’s display name, or `Anonymous`."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string",
+            "description": "A decimal string, such as `5.00`, not a number. Ko-fi documents it as required."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "A link to the transaction on Ko-fi."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Present only when the supporter shared it with the creator."
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 4217, such as `USD`. Ko-fi documents it as required."
+          },
+          {
+            "key": "is_subscription_payment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_first_subscription_payment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "kofi_transaction_id",
+            "optional": false,
+            "type": "string",
+            "description": "Ko-fi’s transaction identifier. Ko-fi documents it as required."
+          },
+          {
+            "key": "tier_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The membership tier, on a Subscription only."
+          },
+          {
+            "key": "shop_items",
+            "optional": true,
+            "type": "{ direct_link_code?: string | null, variation_name?: string | null, quantity?: number | null }[] | null",
+            "description": "On a Shop Order only."
+          },
+          {
+            "key": "shipping",
+            "optional": true,
+            "type": "{ full_name?: string | null, street_address?: string | null, city?: string | null, state_or_province?: string | null, postal_code?: string | null, country?: string | null, country_code?: string | null, telephone?: string | null } | null",
+            "description": "On a physical Shop Order only."
+          }
+        ]
+      },
+      "responseType": "{ verification_token: string, message_id: string, timestamp: string, type: Donation | Subscription | Shop Order | Commission, is_public?: boolean | null, from_name?: string | null, message?: string | null, amount: string, url?: string | null, email?: string | null, currency: string, is_subscription_payment?: boolean | null, is_first_subscription_payment?: boolean | null, kofi_transaction_id: string, tier_name?: string | null, shop_items?: { direct_link_code?: string | null, variation_name?: string | null, quantity?: number | null }[] | null, shipping?: { full_name?: string | null, street_address?: string | null, city?: string | null, state_or_province?: string | null, postal_code?: string | null, country?: string | null, country_code?: string | null, telephone?: string | null } | null }",
+      "usageExample": "kofi({\n    webhookHooks: {\n        subscription: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

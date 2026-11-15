@@ -1,0 +1,632 @@
+{
+  "id": "customjs",
+  "displayName": "CustomJS",
+  "description": "Render HTML or Markdown to PDF, capture screenshots after browser automation, run inline JavaScript, scrape pages with exact steps or an AI agent, and publish hosted HTML pages.",
+  "npmPackageName": "@corsair-dev/customjs",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "customjs.api.auth.check",
+      "shortPath": "auth.check",
+      "description": "Verify the API key and read its workspace name, rate-limit window and suspension state; the key and JWT in the raw answer are dropped",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace the key belongs to."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace name."
+          },
+          {
+            "key": "maxRequestCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "Requests allowed in one rate-limit window."
+          },
+          {
+            "key": "inActive",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when the workspace is suspended."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number | null",
+            "description": "Workspace creation time, milliseconds since the epoch."
+          },
+          {
+            "key": "utmSource",
+            "optional": true,
+            "type": "string | null",
+            "description": "How the account found CustomJS, when it was recorded."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.javascript.run",
+      "shortPath": "javascript.run",
+      "description": "Run JavaScript inline with the given input and return what it produced as text; the code can call any bundled NPM module and reach the network",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "JavaScript run as the body of a function. `input` holds the request value, and `return` sends the result back."
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "JsonValue",
+            "description": "Either a JSON value or a JSON string; CustomJS hands back whatever it is given."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "string",
+            "description": "The script return value as text, or an empty string."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.javascript.runBinary",
+      "shortPath": "javascript.runBinary",
+      "description": "Run JavaScript inline and return its Buffer result as base64, for PDFs and images; the code can call any bundled NPM module and reach the network",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "JavaScript whose return value is a file, usually a Buffer from `HTML2PDF` or `SCREENSHOT`."
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "JsonValue",
+            "description": "Either a JSON value or a JSON string; CustomJS hands back whatever it is given."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string",
+            "description": "The file bytes, base64 encoded."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The `content-type` CustomJS answered with."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size in bytes."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.pages.create",
+      "shortPath": "pages.create",
+      "description": "Publish an HTML page to a new live URL; CustomJS does not enforce unique names, so a repeated call publishes a second page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A label for the page. CustomJS does not enforce uniqueness."
+          },
+          {
+            "key": "htmlContent",
+            "optional": false,
+            "type": "string",
+            "description": "The full HTML document to host."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string",
+            "description": "A custom slug for the page URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID used to update or delete the page."
+          },
+          {
+            "key": "shortId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The generated path segment in `htmlFileUrl`."
+          },
+          {
+            "key": "htmlFileUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The live URL of the page."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "CustomJS status text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.pages.delete",
+      "shortPath": "pages.delete",
+      "description": "Delete a hosted page, which takes its live URL down permanently; an unknown page ID fails with a 404",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string",
+            "description": "The page to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "CustomJS deleted the page. An unknown page ID fails with a 404 instead."
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.pages.list",
+      "shortPath": "pages.list",
+      "description": "List the hosted HTML pages in the workspace with their live URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "{ pageId: string, name: string, htmlFileUrl: string, type?: string | null, workspaceId?: string | null, origin?: string | null, timestamp?: number | null, createdAt?: number | null, updatedAt?: number | null }[]",
+            "description": "Every page in the workspace."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.pages.update",
+      "shortPath": "pages.update",
+      "description": "Replace the HTML of a hosted page in place, keeping its live URL, and optionally rename it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string",
+            "description": "The page to replace, from `pages.list`."
+          },
+          {
+            "key": "htmlContent",
+            "optional": false,
+            "type": "string",
+            "description": "The new HTML document."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "A new name for the page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "htmlFileUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Unchanged by an update."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.pdf.fromHtml",
+      "shortPath": "pdf.fromHtml",
+      "description": "Render HTML or a Nunjucks template to PDF in Chromium, returning the bytes as base64 with an optional page size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "HTML document, optionally with Nunjucks placeholders such as `{{ name }}`."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Values for the Nunjucks placeholders. Supplying any renders the HTML as a template first."
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ pdfWidthMm?: number, pdfHeightMm?: number }",
+            "description": "Page size."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string",
+            "description": "The file bytes, base64 encoded."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The `content-type` CustomJS answered with."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size in bytes."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.pdf.fromMarkdown",
+      "shortPath": "pdf.fromMarkdown",
+      "description": "Render Markdown to PDF, returning the bytes as base64",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string",
+            "description": "Markdown text to render."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string",
+            "description": "The file bytes, base64 encoded."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The `content-type` CustomJS answered with."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size in bytes."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.scrape.agent",
+      "shortPath": "scrape.agent",
+      "description": "Give an AI agent a plain-language goal and let it drive a browser for up to maxSteps actions; it bills model tokens and can submit forms on the site it visits",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "goal",
+            "optional": false,
+            "type": "string",
+            "description": "The task in plain language. Include the URL here, for example \"Go to shop.example.com and list every product name and price\"."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Starting page, when it is not written into the goal."
+          },
+          {
+            "key": "maxSteps",
+            "optional": true,
+            "type": "number",
+            "description": "Browser actions the agent may take. Defaults to 10."
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "ai_extract | text | html | markdown | screenshot",
+            "description": "What the agent returns. Defaults to `ai_extract`."
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Login field values. The agent fills the matching fields automatically, so this is a secret and is never logged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "`success` when the run finished."
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "number | null",
+            "description": "Steps that ran."
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ step: number, type: string, action?: string | null, url?: string | null, selector?: string | null, success?: boolean | null }[] | null",
+            "description": "Per-step log."
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ data: string | number | boolean | null | JsonValue[] | Record<string, JsonValue>, format?: string | null } | null",
+            "description": "What the agent found."
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ promptTokens?: number | null, completionTokens?: number | null, totalTokens?: number | null, estimatedCostUsd?: number | null } | null",
+            "description": "Model tokens used."
+          },
+          {
+            "key": "screenshots",
+            "optional": true,
+            "type": "{ step: number, url: string }[] | null",
+            "description": "Screenshots taken while it worked."
+          },
+          {
+            "key": "sessionUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "S3 URL of the full session log, kept for 30 days."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.scrape.page",
+      "shortPath": "scrape.page",
+      "description": "Drive a browser through exact steps (navigate, click, type, evaluate and extract) and return the extracted values, with no model tokens spent per step",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The page the first step opens."
+          },
+          {
+            "key": "commands",
+            "optional": false,
+            "type": "({ action: navigate, url: string } | { action: click, selector: string } | { action: type, selector: string, value: string } | { action: wait, ms: number } | { action: extract, selector: string, multiple?: boolean, attribute?: string, as?: string } | { action: screenshot, as?: string } | { action: scroll, direction?: up | down, amount?: number } | { action: evaluate, expression: string, as?: string })[]",
+            "description": "Exact browser steps to run. Command mode costs no model tokens per step."
+          },
+          {
+            "key": "returnType",
+            "optional": true,
+            "type": "json | text | html | markdown | screenshot",
+            "description": "`json` returns every `extract` result as an object. `text`, `html` and `markdown` return the final page. `screenshot` returns the S3 URL of the last screenshot. Defaults to `json`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "`success` when the run finished."
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "number | null",
+            "description": "Steps that ran."
+          },
+          {
+            "key": "extractions",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "One entry per command with an `as` key: extract results, screenshot URLs, and evaluate output."
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ step: number, type: string, action?: string | null, url?: string | null, selector?: string | null, success?: boolean | null }[] | null",
+            "description": "Per-step log of what ran."
+          },
+          {
+            "key": "returnType",
+            "optional": true,
+            "type": "string | null",
+            "description": "The `returnType` that was used."
+          },
+          {
+            "key": "screenshots",
+            "optional": true,
+            "type": "{ step: number, url: string }[] | null",
+            "description": "Screenshots taken during the run."
+          },
+          {
+            "key": "sessionUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "S3 URL of the full session log, kept for 30 days."
+          }
+        ]
+      }
+    },
+    {
+      "path": "customjs.api.screenshot.capture",
+      "shortPath": "screenshot.capture",
+      "description": "Capture a URL as PNG after optional click, type, wait and scroll steps, cropped to a box when one is given",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to capture."
+          },
+          {
+            "key": "commands",
+            "optional": true,
+            "type": "({ action: click, selector: string } | { action: type, selector: string, value: string } | { action: wait, value: number } | { action: scroll, value: number })[]",
+            "description": "Browser actions to run in order before the capture."
+          },
+          {
+            "key": "box",
+            "optional": true,
+            "type": "{ x: number, y: number, width: number, height: number }",
+            "description": "Capture only this region. CustomJS applies it only when both `width` and `height` are greater than 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string",
+            "description": "The file bytes, base64 encoded."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The `content-type` CustomJS answered with."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size in bytes."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
