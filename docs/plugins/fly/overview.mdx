@@ -1,14 +1,14 @@
 ---
 title: "Fly.io plugin"
 sidebarTitle: "Overview"
-description: "Manage Fly.io apps, organizations, health checks, add-ons, and WireGuard connections through its GraphQL API."
+description: "Manage Fly.io apps, Machines, volumes, secrets, certificates and IP addresses through Fly's public Machines REST API."
 ---
 
 Use **Fly.io** through Corsair: one client, typed API calls.
 
 **What you get:**
 
-- 31 typed API operations
+- 54 typed API operations
 
 ## Setup
 
@@ -94,19 +94,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.userOnlyToken`**
+**`apps.get`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.fly.api.account.userOnlyToken({});
+await tenant.fly.api.apps.get({});
 ```
 
 
-**`addOns.create`**
+**`apps.create`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.fly.api.addOns.create({});
+await tenant.fly.api.apps.create({});
 ```
 
 
