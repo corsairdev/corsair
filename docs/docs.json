@@ -2208,6 +2208,14 @@
                 ]
               },
               {
+                "group": "Findymail",
+                "pages": [
+                  "plugins/findymail/overview",
+                  "plugins/findymail/api",
+                  "plugins/findymail/database"
+                ]
+              },
+              {
                 "group": "FinerWorks",
                 "pages": [
                   "plugins/finerworks/overview",
@@ -2428,6 +2436,22 @@
                 ]
               },
               {
+                "group": "Gigasheet",
+                "pages": [
+                  "plugins/gigasheet/overview",
+                  "plugins/gigasheet/api",
+                  "plugins/gigasheet/database"
+                ]
+              },
+              {
+                "group": "Gift Up!",
+                "pages": [
+                  "plugins/giftup/overview",
+                  "plugins/giftup/api",
+                  "plugins/giftup/database"
+                ]
+              },
+              {
                 "group": "GIPHY",
                 "pages": [
                   "plugins/giphy/overview",
@@ -2455,11 +2479,27 @@
                 ]
               },
               {
+                "group": "Givebutter",
+                "pages": [
+                  "plugins/givebutter/overview",
+                  "plugins/givebutter/api",
+                  "plugins/givebutter/database"
+                ]
+              },
+              {
                 "group": "Gladia",
                 "pages": [
                   "plugins/gladia/overview",
                   "plugins/gladia/api",
                   "plugins/gladia/database"
+                ]
+              },
+              {
+                "group": "Gleap",
+                "pages": [
+                  "plugins/gleap/overview",
+                  "plugins/gleap/api",
+                  "plugins/gleap/database"
                 ]
               },
               {
@@ -3331,6 +3371,14 @@
                 ]
               },
               {
+                "group": "Motion",
+                "pages": [
+                  "plugins/motion/overview",
+                  "plugins/motion/api",
+                  "plugins/motion/database"
+                ]
+              },
+              {
                 "group": "MrScraper",
                 "pages": [
                   "plugins/mrscraper/overview",
@@ -3647,11 +3695,43 @@
                 ]
               },
               {
+                "group": "Postmark",
+                "pages": [
+                  "plugins/postmark/overview",
+                  "plugins/postmark/api",
+                  "plugins/postmark/database"
+                ]
+              },
+              {
+                "group": "Prismic",
+                "pages": [
+                  "plugins/prismic/overview",
+                  "plugins/prismic/api",
+                  "plugins/prismic/database"
+                ]
+              },
+              {
                 "group": "Postalytics",
                 "pages": [
                   "plugins/postalytics/overview",
                   "plugins/postalytics/api",
                   "plugins/postalytics/database"
+                ]
+              },
+              {
+                "group": "PostGrid",
+                "pages": [
+                  "plugins/postgrid/overview",
+                  "plugins/postgrid/api",
+                  "plugins/postgrid/database"
+                ]
+              },
+              {
+                "group": "Polygon OMS",
+                "pages": [
+                  "plugins/polygon/overview",
+                  "plugins/polygon/api",
+                  "plugins/polygon/database"
                 ]
               },
               {
@@ -3665,19 +3745,19 @@
                 ]
               },
               {
+                "group": "Postiz",
+                "pages": [
+                  "plugins/postiz/overview",
+                  "plugins/postiz/api",
+                  "plugins/postiz/database"
+                ]
+              },
+              {
                 "group": "Postman",
                 "pages": [
                   "plugins/postman/overview",
                   "plugins/postman/api",
                   "plugins/postman/database"
-                ]
-              },
-              {
-                "group": "Postmark",
-                "pages": [
-                  "plugins/postmark/overview",
-                  "plugins/postmark/api",
-                  "plugins/postmark/database"
                 ]
               },
               {
@@ -3697,11 +3777,11 @@
                 ]
               },
               {
-                "group": "Prismic",
+                "group": "ProAbono",
                 "pages": [
-                  "plugins/prismic/overview",
-                  "plugins/prismic/api",
-                  "plugins/prismic/database"
+                  "plugins/proabono/overview",
+                  "plugins/proabono/api",
+                  "plugins/proabono/database"
                 ]
               },
               {
@@ -3710,6 +3790,14 @@
                   "plugins/pushbullet/overview",
                   "plugins/pushbullet/api",
                   "plugins/pushbullet/database"
+                ]
+              },
+              {
+                "group": "Pushover",
+                "pages": [
+                  "plugins/pushover/overview",
+                  "plugins/pushover/api",
+                  "plugins/pushover/database"
                 ]
               },
               {
@@ -4252,6 +4340,14 @@
                 ]
               },
               {
+                "group": "Short.io",
+                "pages": [
+                  "plugins/shortio/overview",
+                  "plugins/shortio/api",
+                  "plugins/shortio/database"
+                ]
+              },
+              {
                 "group": "Shortcut",
                 "pages": [
                   "plugins/shortcut/overview",
@@ -4325,6 +4421,14 @@
                   "plugins/stackexchange/overview",
                   "plugins/stackexchange/api",
                   "plugins/stackexchange/database"
+                ]
+              },
+              {
+                "group": "StackAI",
+                "pages": [
+                  "plugins/stackai/overview",
+                  "plugins/stackai/api",
+                  "plugins/stackai/database"
                 ]
               },
               {
@@ -4620,6 +4724,14 @@
                   "plugins/tripadvisor/overview",
                   "plugins/tripadvisor/api",
                   "plugins/tripadvisor/database"
+                ]
+              },
+              {
+                "group": "Trustpilot",
+                "pages": [
+                  "plugins/trustpilot/overview",
+                  "plugins/trustpilot/api",
+                  "plugins/trustpilot/database"
                 ]
               },
               {
