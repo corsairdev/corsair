@@ -29,6 +29,10 @@ const SENSITIVE_FIELD_NAMES = new Set([
 	'token',
 	'secret',
 	'sitetoken',
+	// People search terms and filters hold names, phones and other profile
+	// data, so they never stay on an error.
+	'query',
+	'filters',
 	'email',
 	'customer',
 	'person',

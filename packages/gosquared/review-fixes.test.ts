@@ -314,6 +314,32 @@ describe('round 3 review fixes', () => {
 		expect(sanitized.url).toContain('limit=10');
 	});
 
+	it('masks a People search term and filters in a failed request', () => {
+		const url =
+			'https://api.gosquared.com/people/v1/people?query=Alice%20Smith&filters=%5B%7B%22path%22%3A%22name%22%2C%22value%22%3A%22Bob%20Jones%22%7D%5D&limit=10';
+		const err = new ApiError(
+			{
+				method: 'GET',
+				url: '/people/v1/people',
+				query: {
+					query: 'Alice Smith',
+					filters: '[{"path":"name","value":"Bob Jones"}]',
+					limit: 10,
+				},
+			},
+			{ url, ok: false, status: 400, statusText: 'Bad Request', body: {} },
+			'Bad Request',
+		);
+		const sanitized = sanitizeError(err) as ApiError;
+		const text = decodeURIComponent(
+			`${sanitized.url} ${sanitized.request.url} ${JSON.stringify(sanitized.request.query)}`,
+		);
+		expect(text).not.toContain('Alice');
+		expect(text).not.toContain('Bob');
+		expect(sanitized.url).toContain('limit=10');
+		expect(sanitized.request.query?.limit).toBe(10);
+	});
+
 	it('tracking.trackEvent keeps the event name out of the completion event', async () => {
 		const { logEventFromContext } = jest.requireMock('corsair/core') as {
 			logEventFromContext: jest.Mock;
