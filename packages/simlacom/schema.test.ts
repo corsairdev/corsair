@@ -91,8 +91,13 @@ describe('OpenAPI-derived Zod schemas', () => {
 			success: true,
 			versions: ['5'],
 		};
+		const ticketChannelInput: SimlaComEndpointInputs['dataBook.referenceTicketChannelsCreate.post'] =
+			{
+				body: { ticketChannel: { name: 'Phone' } },
+			};
 		expect(listInput.query?.page).toBe(2);
 		expect(versionOutput.versions?.[0]).toBe('5');
+		expect(ticketChannelInput.body.ticketChannel.name).toBe('Phone');
 		const contact: OpenApiCustomerContact = { customer: null };
 		expect(contact.customer).toBeNull();
 	});
@@ -179,6 +184,20 @@ describe('OpenAPI-derived Zod schemas', () => {
 		expect(
 			callEvent?.safeParse({
 				body: { phone: '+12025550123', type: 'in', code: '101' },
+			}).success,
+		).toBe(true);
+	});
+
+	it('enforces required fields added through an OpenAPI allOf override', () => {
+		const createChannel = SIMLACOM_INPUT_SCHEMAS.get(
+			'dataBook.referenceTicketChannelsCreate.post',
+		);
+		expect(
+			createChannel?.safeParse({ body: { ticketChannel: {} } }).success,
+		).toBe(false);
+		expect(
+			createChannel?.safeParse({
+				body: { ticketChannel: { name: 'Phone' } },
 			}).success,
 		).toBe(true);
 	});

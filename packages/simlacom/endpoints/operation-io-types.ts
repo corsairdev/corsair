@@ -8316,7 +8316,7 @@ export type SimlaComEndpointInputs = {
 	};
 	'dataBook.referenceTicketChannels.get': {};
 	'dataBook.referenceTicketChannelsCreate.post': {
-		body: { ticketChannel: OpenApiTicketChannelInput & JsonValue };
+		body: { ticketChannel: OpenApiTicketChannelInput & { name: JsonValue } };
 	};
 	'dataBook.referenceTicketChannelsByIdEdit.post': {
 		path: { id: string };
@@ -8324,7 +8324,9 @@ export type SimlaComEndpointInputs = {
 	};
 	'dataBook.referenceTicketStatusGroups.get': {};
 	'dataBook.referenceTicketStatusGroupsCreate.post': {
-		body: { ticketStatusGroup: OpenApiTicketStatusGroupInput & JsonValue };
+		body: {
+			ticketStatusGroup: OpenApiTicketStatusGroupInput & { name: JsonValue };
+		};
 	};
 	'dataBook.referenceTicketStatusGroupsByIdEdit.post': {
 		path: { id: string };
@@ -8332,7 +8334,12 @@ export type SimlaComEndpointInputs = {
 	};
 	'dataBook.referenceTicketStatuses.get': {};
 	'dataBook.referenceTicketStatusesCreate.post': {
-		body: { ticketStatus: OpenApiTicketStatusInput & JsonValue };
+		body: {
+			ticketStatus: OpenApiTicketStatusInput & {
+				name: JsonValue;
+				group: JsonValue;
+			};
+		};
 	};
 	'dataBook.referenceTicketStatusesByIdEdit.post': {
 		path: { id: string };
@@ -8340,7 +8347,12 @@ export type SimlaComEndpointInputs = {
 	};
 	'dataBook.referenceTicketSubtopics.get': {};
 	'dataBook.referenceTicketSubtopicsCreate.post': {
-		body: { ticketSubtopic: OpenApiTicketSubtopicInput & JsonValue };
+		body: {
+			ticketSubtopic: OpenApiTicketSubtopicInput & {
+				name: JsonValue;
+				topic: JsonValue;
+			};
+		};
 	};
 	'dataBook.referenceTicketSubtopicsByIdEdit.post': {
 		path: { id: string };
@@ -8348,7 +8360,7 @@ export type SimlaComEndpointInputs = {
 	};
 	'dataBook.referenceTicketTopics.get': {};
 	'dataBook.referenceTicketTopicsCreate.post': {
-		body: { ticketTopic: OpenApiTicketTopicInput & JsonValue };
+		body: { ticketTopic: OpenApiTicketTopicInput & { name: JsonValue } };
 	};
 	'dataBook.referenceTicketTopicsByIdEdit.post': {
 		path: { id: string };
@@ -8356,7 +8368,7 @@ export type SimlaComEndpointInputs = {
 	};
 	'dataBook.referenceTicketTypes.get': {};
 	'dataBook.referenceTicketTypesCreate.post': {
-		body: { ticketType: OpenApiTicketTypeInput & JsonValue };
+		body: { ticketType: OpenApiTicketTypeInput & { name: JsonValue } };
 	};
 	'dataBook.referenceTicketTypesByIdEdit.post': {
 		path: { id: string };
@@ -8645,15 +8657,23 @@ export type SimlaComEndpointInputs = {
 		};
 	};
 	'tickets.commentsCreate.post': {
-		body?: { comment: OpenApiTicketCommentCreateInput & JsonValue };
+		body?: {
+			comment: OpenApiTicketCommentCreateInput & {
+				ticket: JsonValue;
+				text: JsonValue;
+			};
+		};
 	};
 	'tickets.commentsByIdDelete.post': { path: { id: number } };
 	'tickets.commentsByIdEdit.post': {
 		path: { id: number };
-		body?: { comment: OpenApiTicketCommentInput & JsonValue };
+		body?: { comment: OpenApiTicketCommentInput & { text: JsonValue } };
 	};
 	'tickets.create.post': {
-		body?: { ticket: OpenApiTicketCreateInput & JsonValue; site?: string };
+		body?: {
+			ticket: OpenApiTicketCreateInput & { customer: JsonValue };
+			site?: string;
+		};
 	};
 	'tickets.history.get': {
 		query: {
