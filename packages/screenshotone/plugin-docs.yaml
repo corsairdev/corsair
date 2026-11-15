@@ -1,0 +1,33 @@
+displayName: ScreenshotOne
+description: Read ScreenshotOne usage and devices, and take a still, animated, or bulk screenshot.
+domain: screenshotone.com
+recommendedAuth: api_key
+overviewNote: |
+  The key is the access_key query parameter. Empty-key requests returned HTTP 400. GET /usage and GET /devices returned access_key_required. GET /take and GET /animate returned request_not_valid because an empty access_key is not allowed. POST /bulk with an empty access_key query returned access_key_required. POST /take with an empty access_key in the JSON body returned request_not_valid. The plugin uses GET /take so the response is JSON. Screenshot URLs are returned and not stored. User agent strings are not stored. Take, animate, and bulk spend plan requests.
+examples:
+  read:
+    path: usage.get
+    title: Read usage
+    args: {}
+apiNotes:
+  usage.get: |
+    GET /usage. Stores total, available, used, and the concurrency bucket on id plan.
+  devices.list: |
+    GET /devices. Stores id, name, width, and height.
+  shots.take: |
+    GET /take with response_type=json. Returns screenshot_url. The target URL is not stored.
+  shots.animate: |
+    GET /animate with response_type=json. Returns screenshot_url.
+  shots.bulk: |
+    POST /bulk. Returns response URLs with access_key removed. execute defaults to false.
+apiExamples:
+  usage.get:
+    call: "{}"
+  devices.list:
+    call: "{}"
+  shots.take:
+    call: "{ url: 'https://example.com' }"
+  shots.animate:
+    call: "{ url: 'https://example.com', scenario: 'scroll' }"
+  shots.bulk:
+    call: "{ urls: ['https://example.com'] }"

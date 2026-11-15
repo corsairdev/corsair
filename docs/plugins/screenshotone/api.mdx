@@ -1,0 +1,204 @@
+---
+title: "ScreenshotOne API reference"
+sidebarTitle: "API"
+description: "API reference for ScreenshotOne: every `screenshotone.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Devices
+
+### list
+
+`devices.list`
+
+List device presets. User agent strings are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.screenshotone.api.devices.list({});
+```
+
+**Input:** _empty object_
+
+GET /devices. Stores id, name, width, and height.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `devices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="devices full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  width?: number,
+  height?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shots
+
+### animate
+
+`shots.animate`
+
+Take an animated screenshot. This spends a request from the plan.
+
+**Risk:** `write`
+
+```ts
+await corsair.screenshotone.api.shots.animate({ url: 'https://example.com', scenario: 'scroll' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `scenario` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `format` | `string` | No | — |
+
+GET /animate with response_type=json. Returns screenshot_url.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `screenshotUrl` | `string` | Yes | — |
+
+
+
+---
+
+### bulk
+
+`shots.bulk`
+
+Build bulk screenshot URLs. execute true spends requests immediately.
+
+**Risk:** `write`
+
+```ts
+await corsair.screenshotone.api.shots.bulk({ urls: ['https://example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+| `execute` | `boolean` | No | — |
+
+POST /bulk. Returns response URLs with access_key removed. execute defaults to false.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+
+
+
+---
+
+### take
+
+`shots.take`
+
+Take a screenshot. This spends a request from the plan.
+
+**Risk:** `write`
+
+```ts
+await corsair.screenshotone.api.shots.take({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `scenario` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `format` | `string` | No | — |
+
+GET /take with response_type=json. Returns screenshot_url. The target URL is not stored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `screenshotUrl` | `string` | Yes | — |
+
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Read the current plan usage and request bucket.
+
+**Risk:** `read`
+
+```ts
+await corsair.screenshotone.api.usage.get({});
+```
+
+**Input:** _empty object_
+
+GET /usage. Stores total, available, used, and the concurrency bucket on id plan.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  id: string,
+  total?: number,
+  available?: number,
+  used?: number,
+  concurrencyLimit?: number,
+  concurrencyRemaining?: number,
+  concurrencyReset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
