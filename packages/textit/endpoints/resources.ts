@@ -197,6 +197,8 @@ export const Media = z
 	.loose();
 export const Message = z
 	.object({
+		// Not in the reference, but live responses carry it and message_actions takes it.
+		id: z.number().nullish(),
 		uuid: z.string().nullish(),
 		contact: named.nullish(),
 		urn: z.string().nullish(),

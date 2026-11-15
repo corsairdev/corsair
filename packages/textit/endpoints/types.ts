@@ -40,8 +40,10 @@ const eventFields = {
 };
 const hasExactlyOneEventTarget = (v: { message?: string; flow?: string }) =>
 	Boolean(v.message) !== Boolean(v.flow);
+// TextIt replaces the whole event on update and requires campaign there too
+// (live 400 "campaign: This field is required."); it must be the event's own campaign.
 const eventBody = z
-	.object({ campaign: text.optional(), ...eventFields })
+	.object({ campaign: text, ...eventFields })
 	.refine(hasExactlyOneEventTarget, 'Specify either message or flow');
 
 // Public schemas use the provider's wire names. No identifiers occur in a path
@@ -65,19 +67,14 @@ export const TextItEndpointInputSchemas = {
 	}),
 	campaignsList: z.object({ ...cursor, ...dates, uuid: text.optional() }),
 	campaignsCreate: z.object({ name: text, group: text }),
-	campaignsUpdate: z.object({
-		...uuid,
-		name: text.optional(),
-		group: text.optional(),
-	}),
+	// Updates replace the campaign: TextIt rejects a body without name or group (live 400).
+	campaignsUpdate: z.object({ ...uuid, name: text, group: text }),
 	campaignEventsList: z.object({
 		...cursor,
 		uuid: text.optional(),
 		campaign: text.optional(),
 	}),
-	campaignEventsCreate: z
-		.object({ campaign: text, ...eventFields })
-		.refine(hasExactlyOneEventTarget, 'Specify either message or flow'),
+	campaignEventsCreate: eventBody,
 	campaignEventsUpdate: z.object({ ...uuid, body: eventBody }),
 	campaignEventsDelete: z.object(uuid),
 	channelsList: z.object({
@@ -122,12 +119,11 @@ export const TextItEndpointInputSchemas = {
 		name: text,
 		type: z.enum(['text', 'number', 'datetime', 'state', 'district', 'ward']),
 	}),
+	// Updates replace the field: TextIt rejects a body without name or type (live 400).
 	fieldsUpdate: z.object({
 		...keyed,
-		name: text.optional(),
-		type: z
-			.enum(['text', 'number', 'datetime', 'state', 'district', 'ward'])
-			.optional(),
+		name: text,
+		type: z.enum(['text', 'number', 'datetime', 'state', 'district', 'ward']),
 	}),
 	flowStartsList: z.object({ ...cursor, uuid: text.optional() }),
 	flowStartsCreate: z.object({

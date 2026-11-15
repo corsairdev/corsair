@@ -75,9 +75,9 @@ const cases: Case[] = [
 		operation: 'campaigns.update',
 		method: 'POST',
 		path: 'campaigns',
-		input: { uuid: 'campaign', name: 'New' },
+		input: { uuid: 'campaign', name: 'New', group: 'group' },
 		query: { uuid: 'campaign' },
-		body: { name: 'New' },
+		body: { name: 'New', group: 'group' },
 		response: { uuid: 'campaign', name: 'New' },
 	},
 	{
@@ -116,6 +116,7 @@ const cases: Case[] = [
 		input: {
 			uuid: 'event',
 			body: {
+				campaign: 'campaign',
 				relative_to: 'date',
 				offset: 7,
 				unit: 'days',
@@ -125,6 +126,7 @@ const cases: Case[] = [
 		},
 		query: { uuid: 'event' },
 		body: {
+			campaign: 'campaign',
 			relative_to: 'date',
 			offset: 7,
 			unit: 'days',
@@ -211,9 +213,9 @@ const cases: Case[] = [
 		operation: 'fields.update',
 		method: 'POST',
 		path: 'fields',
-		input: { key: 'nickname', name: 'New' },
+		input: { key: 'nickname', name: 'New', type: 'text' },
 		query: { key: 'nickname' },
-		body: { name: 'New' },
+		body: { name: 'New', type: 'text' },
 		response: { key: 'nickname', name: 'New' },
 	},
 	{
@@ -689,6 +691,31 @@ describe('TextIt public request seam', () => {
 		).rejects.toThrow();
 		await expect(
 			textItEndpointsNested.groups.delete(ctx, { uuid: '' }),
+		).rejects.toThrow();
+		// TextIt answers 400 to partial updates of these resources (live run 11-15).
+		await expect(
+			textItEndpointsNested.campaigns.update(ctx, {
+				uuid: 'campaign',
+				name: 'New',
+			} as never),
+		).rejects.toThrow();
+		await expect(
+			textItEndpointsNested.fields.update(ctx, {
+				key: 'nickname',
+				name: 'New',
+			} as never),
+		).rejects.toThrow();
+		await expect(
+			textItEndpointsNested.campaignEvents.update(ctx, {
+				uuid: 'event',
+				body: {
+					relative_to: 'date',
+					offset: 1,
+					unit: 'days',
+					delivery_hour: 9,
+					message: 'Hello',
+				},
+			} as never),
 		).rejects.toThrow();
 		await expect(
 			textItEndpointsNested.contacts.delete(ctx, {

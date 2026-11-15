@@ -6,6 +6,8 @@ overviewNote: |
   TextIt API v2 uses an API token from your TextIt account. List operations return a page with `next`, `previous` and `results`; pass the `cursor` from the next link to request another page.
 
   - Sending messages and broadcasts and starting flows can contact real people. Bulk contact and message actions include permanent deletion.
+  - Campaign, campaign event and field updates replace the record, so they need the same fields as a create (TextIt answers 400 otherwise). A group used by a campaign can't be deleted until the campaign is archived in TextIt.
+  - Message actions apply only to incoming messages and take the integer `id` that `messages.list` returns.
   - Updating a contact by URN creates it if the URN is unknown. `messageActions.apply` returns `undefined` on complete success or an object `{ failures: [...] }` when some messages could not be updated; access the failed IDs through `result.failures`.
   - Upload media with a `Blob` using `media.upload`; its UUID can be used in message attachments.
   - Rate-limited requests are retried up to three times, waiting for TextIt's `Retry-After`. Other failures throw Corsair's `ApiError` with the HTTP `status` and TextIt's error body; the default handlers do not replay writes.
@@ -23,13 +25,13 @@ apiExamples:
   campaignEvents.create:
     call: '{ "campaign": "f14e4ff0-724d-43fe-a953-1d16aefd1c00", "relative_to": "registration", "offset": 7, "unit": "days", "delivery_hour": 9, "message": "Hello!" }'
   campaignEvents.update:
-    args: { uuid: "6a6d7531-6b44-4c45-8c33-957ddd8dfabc", body: { relative_to: registration, offset: 7, unit: days, delivery_hour: 9, message: "Hello!" } }
+    args: { uuid: "6a6d7531-6b44-4c45-8c33-957ddd8dfabc", body: { campaign: "f14e4ff0-724d-43fe-a953-1d16aefd1c00", relative_to: registration, offset: 7, unit: days, delivery_hour: 9, message: "Hello!" } }
   campaignEvents.delete:
     args: { uuid: "6a6d7531-6b44-4c45-8c33-957ddd8dfabc" }
   campaigns.create:
     args: { name: Reminders, group: "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab" }
   campaigns.update:
-    args: { uuid: "f14e4ff0-724d-43fe-a953-1d16aefd1c00", name: Reminders }
+    args: { uuid: "f14e4ff0-724d-43fe-a953-1d16aefd1c00", name: Reminders, group: "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab" }
   contactActions.apply:
     call: '{ "contacts": ["d33e9ad5-5c35-414c-abd4-e7451c69ff1d"], "action": "add", "group": "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab" }'
   contacts.delete:
@@ -39,7 +41,7 @@ apiExamples:
   fields.create:
     call: '{ "name": "Nickname", "type": "text" }'
   fields.update:
-    args: { key: nickname, name: Nickname }
+    args: { key: nickname, name: Nickname, type: text }
   flowStarts.create:
     args: { flow: "5f05311e-8f81-4a67-a5b5-1501b6d6496a", contacts: ["d33e9ad5-5c35-414c-abd4-e7451c69ff1d"] }
   globals.create:

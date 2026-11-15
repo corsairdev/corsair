@@ -293,7 +293,7 @@ const textItEndpointMeta = {
 	'messageActions.apply': {
 		riskLevel: 'destructive',
 		description:
-			'Apply a bulk message action, including permanent deletion; inspect failures.',
+			'Label, archive, restore or permanently delete incoming messages by integer id; inspect failures.',
 	},
 	'runs.list': { riskLevel: 'read', description: 'List flow runs.' },
 	'resthooks.list': {
