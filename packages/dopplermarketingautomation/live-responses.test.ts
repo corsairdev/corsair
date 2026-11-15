@@ -158,7 +158,11 @@ describe('Doppler errors', () => {
 				email: 'customer@example.com',
 			})
 			.catch((caught: unknown) => caught); // unknown: rejection value, inspected below
-		const serialized = JSON.stringify(error, Object.getOwnPropertyNames(error));
+		// Own fields plus message, serialized without a key filter so nested
+		// body values (the _links hrefs) are checked too.
+		const { message } = error as Error;
+		const serialized = JSON.stringify({ ...(error as object), message });
+		expect(serialized).toContain('[email]');
 		expect(serialized).not.toMatch(/customer(%40|@)example\.com/);
 		expect(serialized).not.toMatch(/owner(%40|@)example\.com/);
 		expect(error).toMatchObject({ status: 403 });
