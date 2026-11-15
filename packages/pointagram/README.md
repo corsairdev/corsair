@@ -15,11 +15,11 @@ pnpm add @corsair-dev/pointagram
 | `competitions.get` | `pointagram.api.competitions.get` | `read` | Read one competition by id |
 | `competitions.list` | `pointagram.api.competitions.list` | `read` | List competitions, optionally narrowed to one player, id or access key |
 | `competitions.players` | `pointagram.api.competitions.players` | `read` | List the players in a competition with their score and rank |
-| `players.create` | `pointagram.api.players.create` | `destructive` | Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice |
+| `players.create` | `pointagram.api.players.create` | `destructive` | Create a player with a name and an email or external id; an online player is also invited. A player whose external id already exists is reported as a failure, not created twice |
 | `players.delete` | `pointagram.api.players.delete` | `destructive` | Soft delete a player. Pointagram keeps the record for you to anonymize in the app, and refuses to remove admin users |
 | `players.get` | `pointagram.api.players.get` | `read` | Read one player by profile id |
 | `players.list` | `pointagram.api.players.list` | `read` | List players, optionally filtered by name, email or external id, with `next_offset` paging |
-| `players.update` | `pointagram.api.players.update` | `write` | Update a player's name, email, external id or online status |
+| `players.update` | `pointagram.api.players.update` | `destructive` | Update a player's name, email, external id or online status; making a player online invites them |
 | `rewardStore.item` | `pointagram.api.rewardStore.item` | `read` | Read one reward store item |
 | `rewardStore.items` | `pointagram.api.rewardStore.items` | `read` | List the items in a reward store |
 | `rewardStore.purchase` | `pointagram.api.rewardStore.purchase` | `destructive` | Spend a player's currency on a reward store item, which creates an order to fulfil |
@@ -27,9 +27,9 @@ pnpm add @corsair-dev/pointagram
 | `rewardStore.revokePurchase` | `pointagram.api.rewardStore.revokePurchase` | `destructive` | Revoke an order. The docs do not say whether the spent currency is returned, so treat it as final |
 | `rewardStore.settings` | `pointagram.api.rewardStore.settings` | `read` | Read the reward store settings and currencies for a profile |
 | `rewardStore.updatePurchase` | `pointagram.api.rewardStore.updatePurchase` | `write` | Move an order along its delivery status: PURCHASED, PROCESSED or DELIVERED. Needs admin rights |
-| `scoreSeries.addPoints` | `pointagram.api.scoreSeries.addPoints` | `write` | Score points for a player in a score series, optionally with a comment, tags and a transaction reference that makes a repeat call replace the earlier one |
+| `scoreSeries.addPoints` | `pointagram.api.scoreSeries.addPoints` | `destructive` | Score points for a player in a score series, optionally with a comment, tags and a transaction reference that makes a repeat call replace the earlier one |
 | `scoreSeries.get` | `pointagram.api.scoreSeries.get` | `read` | Read one score series by id |
-| `scoreSeries.history` | `pointagram.api.scoreSeries.history` | `read` | Read the points history of a score series, filtered by tag, point type, team, player and time window, with `next_offset` paging |
+| `scoreSeries.history` | `pointagram.api.scoreSeries.history` | `read` | Read the points history of a score series, filtered by tag, point type, team, player and time window, with `next_offset` paging. A series with no points yet answers "Score serie not found" |
 | `scoreSeries.list` | `pointagram.api.scoreSeries.list` | `read` | List score series |
 | `scoreSeries.pointTypes` | `pointagram.api.scoreSeries.pointTypes` | `read` | List the point types a score series defines |
 | `teams.addPlayer` | `pointagram.api.teams.addPlayer` | `write` | Add a player to a team, identified by player id, external id or email |
