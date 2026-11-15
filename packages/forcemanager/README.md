@@ -35,8 +35,9 @@ Select the documented sandbox base with
   the schemas come from show strings where real records often hold `null`.
 - Deletes are `destructive`, and so are the writes that can email people or
   add a charge: calendar create/update (`sendNotification` emails invitations
-  to contacts), user create/update (`billable` adds a paid seat) and the
-  generic bulk create/update routes, which accept any resource name.
+  to contacts), user create/update (an active user can take a paid seat; the
+  response's `billable` field reports it) and the generic bulk create/update
+  routes, which accept any resource name.
 - Webhook management is not exposed.
 
 The following documented operations are intentionally out of scope: the five
