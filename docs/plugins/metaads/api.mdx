@@ -410,14 +410,12 @@ Create a targeted ad set with a budget and schedule
 
 ```ts
 await corsair.metaads.api.adSets.create({
-	accountId: '1234567890',
-	campaignId: '120000000000001',
-	name: 'Sample ad set',
-	targeting: {
-		geo_locations: {
-			countries: ['US'],
-		},
-	},
+  accountId: "1234567890",
+  campaignId: "120000000000001",
+  name: "Sample ad set",
+  optimizationGoal: "REACH",
+  billingEvent: "IMPRESSIONS",
+  targeting: { geo_locations: { countries: ["US"] } },
 });
 ```
 
@@ -897,12 +895,13 @@ Upload a batch of SHA-256 customer hashes to a custom audience
 
 ```ts
 await corsair.metaads.api.audiences.usersAdd({
-	audienceId: '120000000000005',
-	hashes: ['f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79'],
-	sessionId: 123456789,
-	batchSequence: 1,
-	lastBatch: true,
-	estimatedTotal: 1,
+  audienceId: "120000000000005",
+  schema: "EMAIL_SHA256",
+  hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+  sessionId: 123456789,
+  batchSequence: 1,
+  lastBatch: true,
+  estimatedTotal: 1,
 });
 ```
 
@@ -945,8 +944,9 @@ Remove a batch of SHA-256 customer hashes from a custom audience
 
 ```ts
 await corsair.metaads.api.audiences.usersRemove({
-	audienceId: '120000000000005',
-	hashes: ['f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79'],
+  audienceId: "120000000000005",
+  schema: "EMAIL_SHA256",
+  hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
 });
 ```
 
@@ -987,9 +987,10 @@ Create a campaign that can spend an ad account budget
 
 ```ts
 await corsair.metaads.api.campaigns.create({
-	accountId: '1234567890',
-	name: 'Sample campaign',
-	specialAdCategories: [],
+  accountId: "1234567890",
+  name: "Sample campaign",
+  objective: "OUTCOME_TRAFFIC",
+  specialAdCategories: [],
 });
 ```
 
@@ -1664,7 +1665,7 @@ Permanently enable an Insights feature for an ad account
 **Risk:** `destructive`
 
 ```ts
-await corsair.metaads.api.insights.enableFeature({ accountId: '1234567890' });
+await corsair.metaads.api.insights.enableFeature({ accountId: "1234567890", featureName: "impression_device" });
 ```
 
 **Input**

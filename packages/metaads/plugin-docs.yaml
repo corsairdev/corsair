@@ -45,9 +45,13 @@ apiExamples:
   campaigns.get:
     campaignId: "120000000000001"
   campaigns.create:
-    accountId: "1234567890"
-    name: "Sample campaign"
-    specialAdCategories: []
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Sample campaign",
+        objective: "OUTCOME_TRAFFIC",
+        specialAdCategories: [],
+      }
   campaigns.update:
     campaignId: "120000000000001"
     name: "Updated campaign"
@@ -58,12 +62,15 @@ apiExamples:
   adSets.get:
     adSetId: "120000000000002"
   adSets.create:
-    accountId: "1234567890"
-    campaignId: "120000000000001"
-    name: "Sample ad set"
-    targeting:
-      geo_locations:
-        countries: [US]
+    call: |-
+      {
+        accountId: "1234567890",
+        campaignId: "120000000000001",
+        name: "Sample ad set",
+        optimizationGoal: "REACH",
+        billingEvent: "IMPRESSIONS",
+        targeting: { geo_locations: { countries: ["US"] } },
+      }
   adSets.update:
     adSetId: "120000000000002"
     name: "Updated ad set"
@@ -111,15 +118,23 @@ apiExamples:
   audiences.sessionsList:
     audienceId: "120000000000005"
   audiences.usersAdd:
-    audienceId: "120000000000005"
-    hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"]
-    sessionId: 123456789
-    batchSequence: 1
-    lastBatch: true
-    estimatedTotal: 1
+    call: |-
+      {
+        audienceId: "120000000000005",
+        schema: "EMAIL_SHA256",
+        hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+        sessionId: 123456789,
+        batchSequence: 1,
+        lastBatch: true,
+        estimatedTotal: 1,
+      }
   audiences.usersRemove:
-    audienceId: "120000000000005"
-    hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"]
+    call: |-
+      {
+        audienceId: "120000000000005",
+        schema: "EMAIL_SHA256",
+        hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+      }
   insights.list:
     accountId: "1234567890"
     fields: [impressions, spend]
@@ -141,4 +156,5 @@ apiExamples:
   insights.listEnabledFeatures:
     accountId: "1234567890"
   insights.enableFeature:
-    accountId: "1234567890"
+    call: |-
+      { accountId: "1234567890", featureName: "impression_device" }
