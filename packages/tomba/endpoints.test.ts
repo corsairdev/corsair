@@ -1,13 +1,27 @@
 import { z } from 'zod';
+import { withoutAccountSecrets } from './endpoints/account';
 import { TombaEndpointOutputSchemas } from './endpoints/types';
 import {
 	account,
 	company,
+	companyFindLive,
+	domainSearchLive,
+	domainStatusLive,
 	emailCount,
+	emailFormatLive,
+	emailSourcesLive,
+	locationLive,
 	person,
+	personFindLive,
 	personNotFound,
+	phoneFinderEmptyLive,
 	phoneValidation,
+	rateLimitsLive,
+	revealLive,
+	similarLive,
 	suggestion,
+	suggestionsLive,
+	technologyLive,
 	verification,
 } from './test-fixtures';
 
@@ -82,8 +96,10 @@ describe('output schemas keep the provider field names', () => {
 		const parsed = TombaEndpointOutputSchemas.phoneValidator.parse({
 			data: phoneValidation,
 		});
-		expect(parsed.data.valid).toBe(true);
-		expect(parsed.data.line_type).toBe('MOBILE');
+		expect(parsed.data).toMatchObject({
+			valid: true,
+			line_type: 'FIXED_LINE_OR_MOBILE',
+		});
 	});
 
 	it('parses the account with its credit counters', () => {
@@ -92,9 +108,22 @@ describe('output schemas keep the provider field names', () => {
 		});
 		expect(parsed.data.requests?.domains?.available).toBe(100);
 		expect(parsed.data.requests?.domains?.used).toBe(12);
-		// The account body also carries secret_token; it is not in the schema, so
-		// it never reaches a caller that parses through it.
+	});
+
+	it('drops the account secret_token and intercom_user_jwt before parsing', () => {
+		const parsed = TombaEndpointOutputSchemas.getAccount.parse(
+			withoutAccountSecrets({
+				data: {
+					...account,
+					secret_token: 'must-not-reach-the-agent',
+					intercom_user_jwt: 'must-not-reach-the-agent',
+				},
+			}),
+		);
+		// The schema is loose, so without the shape step both would pass through.
 		expect(parsed.data).not.toHaveProperty('secret_token');
+		expect(parsed.data).not.toHaveProperty('intercom_user_jwt');
+		expect(parsed.data.first_name).toBe('Ada');
 	});
 
 	it('parses a company profile', () => {
@@ -102,15 +131,16 @@ describe('output schemas keep the provider field names', () => {
 			data: company,
 		});
 		expect(parsed.data.name).toBe('Stripe');
-		expect(parsed.data.facebook).toBeNull();
+		// Social profiles arrive as objects with a handle, not as URLs.
+		expect(parsed.data.linkedin?.handle).toBe('stripe');
 	});
 
 	it('parses the combined answer with both objects', () => {
 		const parsed = TombaEndpointOutputSchemas.combinedFind.parse({
-			data: { person, company },
+			data: { person: personFindLive.data, company },
 		});
-		expect(parsed.data.person?.full_name).toBe('Jane Doe');
-		expect(parsed.data.company?.industry).toBe('Financial Services');
+		expect(parsed.data.person?.name?.fullName).toBe('Jane Doe');
+		expect(parsed.data.company?.domain).toBe('stripe.com');
 	});
 
 	it('parses an email count with department and seniority maps', () => {
@@ -126,6 +156,50 @@ describe('output schemas keep the provider field names', () => {
 			data: [suggestion],
 		});
 		expect(parsed.data[0]?.domain).toBe('stripe.com');
+	});
+});
+
+describe('the shapes the live API returned (11-16)', () => {
+	it.each([
+		['rateLimits', rateLimitsLive],
+		['domainStatus', domainStatusLive],
+		['emailFormat', emailFormatLive],
+		['location', locationLive],
+		['technology', technologyLive],
+		['similar', similarLive],
+		['domainSuggestions', suggestionsLive],
+		['emailSources', emailSourcesLive],
+		['searchCompanies', revealLive],
+		['companyFind', companyFindLive],
+		['personFind', personFindLive],
+		['phoneFinder', phoneFinderEmptyLive],
+		['phoneValidator', { data: [] }],
+		[
+			'domainSearch',
+			{
+				data: { organization: domainSearchLive.organization, emails: [person] },
+				meta: domainSearchLive.meta,
+			},
+		],
+	] as const)('parses %s', (name, body) => {
+		expect(() => TombaEndpointOutputSchemas[name].parse(body)).not.toThrow();
+	});
+
+	it('reads rate limits as an object keyed by route', () => {
+		const parsed = TombaEndpointOutputSchemas.rateLimits.parse(rateLimitsLive);
+		expect(parsed.data?.['email-finder']?.limits?.daily).toBe(5);
+	});
+
+	it('reads domain status at the top level, with no data envelope', () => {
+		const parsed =
+			TombaEndpointOutputSchemas.domainStatus.parse(domainStatusLive);
+		expect(parsed).toMatchObject({ domain: 'stripe.com', webmail: false });
+	});
+
+	it('reads the company search page under data.companies', () => {
+		const parsed = TombaEndpointOutputSchemas.searchCompanies.parse(revealLive);
+		expect(parsed.data.companies[0]?.name).toBe('Acme Payments');
+		expect(parsed.meta?.limit).toBe(50);
 	});
 });
 
@@ -147,7 +221,7 @@ describe('wrong-shaped bodies fail loudly', () => {
 	it('rejects a domain search whose emails is not an array', () => {
 		expect(() =>
 			TombaEndpointOutputSchemas.domainSearch.parse({
-				data: { organization: company, emails: {} },
+				data: { organization: domainSearchLive.organization, emails: {} },
 			}),
 		).toThrow(z.ZodError);
 	});

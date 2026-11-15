@@ -25,8 +25,8 @@ export const emailVerifier: TombaEndpoints['verifierEmail'] = async (
 		}),
 		{
 			log: (_parsed, result) => ({
-				status: result.data.email.status,
-				score: result.data.email.score,
+				status: result.data.email.status ?? undefined,
+				score: result.data.email.score ?? undefined,
 			}),
 		},
 	);
@@ -52,9 +52,12 @@ export const phoneValidator: TombaEndpoints['verifierPhone'] = async (
 			},
 		}),
 		{
-			log: (_parsed, result) => ({
-				valid: result.data.valid ?? false,
-				line_type: result.data.line_type ?? undefined,
-			}),
+			log: (_parsed, result) =>
+				Array.isArray(result.data)
+					? { valid: false }
+					: {
+							valid: result.data.valid ?? false,
+							line_type: result.data.line_type ?? undefined,
+						},
 		},
 	);

@@ -1,3 +1,4 @@
+import { withoutAccountSecrets } from './endpoints/account';
 import { tomba, tombaEndpointSchemas } from './index';
 
 /**
@@ -44,9 +45,9 @@ describeIfKeys('Tomba live API', () => {
 	}
 
 	it('reads the account through the output schema', async () => {
-		const parsed = account.output.parse(await get('me'));
+		const parsed = account.output.parse(withoutAccountSecrets(await get('me')));
 		expect(parsed.data).toBeDefined();
-		// The account body carries secret_token; the schema drops it.
+		// The account body carries secret_token; the endpoint drops it.
 		expect(parsed.data).not.toHaveProperty('secret_token');
 	});
 

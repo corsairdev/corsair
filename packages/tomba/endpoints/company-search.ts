@@ -29,7 +29,7 @@ export const search: TombaEndpoints['companySearch'] = async (ctx, input) =>
 			log: (parsed, result) => ({
 				has_query: parsed.query !== undefined,
 				page: parsed.page ?? 1,
-				companies: result.data.length,
+				companies: result.data.companies.length,
 			}),
 		},
 	);

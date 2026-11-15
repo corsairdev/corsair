@@ -150,9 +150,14 @@ export const similar: TombaEndpoints['domainSimilar'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: 'similar',
-			query: { domain: parsed.domain },
+			query: { domain: parsed.domain, page: parsed.page, limit: parsed.limit },
 		}),
-		{ log: (parsed) => ({ domain: parsed.domain }) },
+		{
+			log: (parsed, result) => ({
+				domain: parsed.domain,
+				companies: result.data.length,
+			}),
+		},
 	);
 
 export const domainStatus: TombaEndpoints['domainStatus'] = async (
@@ -175,7 +180,7 @@ export const domainStatus: TombaEndpoints['domainStatus'] = async (
 		{
 			log: (parsed, result) => ({
 				domain: parsed.domain,
-				status: result.data.status ?? undefined,
+				webmail: result.webmail ?? undefined,
 			}),
 		},
 	);
@@ -195,14 +200,9 @@ export const suggestions: TombaEndpoints['domainSuggestions'] = async (
 		(parsed) => ({
 			method: 'GET',
 			path: 'domain-suggestions',
-			query: { domain: parsed.domain },
+			query: { query: parsed.query },
 		}),
-		{
-			log: (parsed, result) => ({
-				domain: parsed.domain,
-				suggestions: result.data.length,
-			}),
-		},
+		{ log: (_parsed, result) => ({ suggestions: result.data.length }) },
 	);
 
 export const emailSources: TombaEndpoints['domainEmailSources'] = async (
@@ -220,7 +220,8 @@ export const emailSources: TombaEndpoints['domainEmailSources'] = async (
 		(parsed) => ({
 			method: 'GET',
 			path: 'email-sources',
-			query: { domain: parsed.domain },
+			query: { email: parsed.email },
 		}),
-		{ log: (parsed) => ({ domain: parsed.domain }) },
+		// The input is a person's address, so only the count is logged.
+		{ log: (_parsed, result) => ({ sources: result.data.length }) },
 	);

@@ -78,9 +78,9 @@ const PagedEnvelope = <T extends z.ZodType>(data: T) =>
 			meta: z
 				.object({
 					total: z.number().nullish(),
-					current_page: z.number().nullish(),
-					last_page: z.number().nullish(),
-					per_page: z.number().nullish(),
+					pageSize: z.number().nullish(),
+					current: z.number().nullish(),
+					total_pages: z.number().nullish(),
 				})
 				.loose()
 				.nullish(),
@@ -116,27 +116,195 @@ const AccountSchema = z
 			})
 			.loose()
 			.nullish(),
+		credits: z
+			.record(
+				z.string(),
+				z
+					.object({
+						plan: z.number().nullish(),
+						used: z.number().nullish(),
+						packs: z.number().nullish(),
+						remaining: z.number().nullish(),
+					})
+					.loose(),
+			)
+			.nullish()
+			.describe(
+				'Search and verification credits: plan, used, packs, remaining',
+			),
 	})
 	.loose();
 export type AccountOutput = z.output<typeof AccountSchema>;
 
+// unknown: Tomba sends some counts and years as numbers on one route and as
+// strings on another.
+const NumberOrString = z.union([z.number(), z.string()]);
+
+const HandleSchema = z
+	.object({ handle: z.string().nullish() })
+	.loose()
+	.nullish();
+
+/** The organization block of a domain search. */
+const OrganizationSchema = z
+	.object({
+		website_url: z.string().nullish(),
+		organization: z.string().nullish(),
+		location: z
+			.object({
+				country: z.string().nullish(),
+				city: z.string().nullish(),
+				state: z.string().nullish(),
+				street_address: z.string().nullish(),
+				postal_code: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		social_links: z.record(z.string(), z.string().nullish()).nullish(),
+		disposable: z.boolean().nullish(),
+		webmail: z.boolean().nullish(),
+		phone_number: z.boolean().nullish(),
+		industries: z.string().nullish(),
+		founded: NumberOrString.nullish(),
+		company_size: z.string().nullish(),
+		company_type: z.string().nullish(),
+		revenue: NumberOrString.nullish(),
+		accept_all: z.boolean().nullish(),
+		description: z.string().nullish(),
+		pattern: z.string().nullish(),
+		total_similar: z.number().nullish(),
+		keywords: z.array(z.string()).nullish(),
+		last_updated: z.string().nullish(),
+	})
+	.loose();
+
+/** A company profile from `companies/find` and `combined/find`. */
 const CompanySchema = z
 	.object({
 		name: z.string().nullish(),
-		website_url: z.string().nullish(),
+		legalName: z.string().nullish(),
 		domain: z.string().nullish(),
-		industry: z.string().nullish(),
-		country: z.string().nullish(),
-		size: z.string().nullish(),
-		linkedin: z.string().nullish(),
-		twitter: z.string().nullish(),
-		facebook: z.string().nullish(),
-		revenue: z.string().nullish(),
+		domainAliases: z.array(z.string()).nullish(),
+		site: z
+			.object({
+				phoneNumbers: z.array(z.string()).nullish(),
+				emailAddresses: z.array(z.string()).nullish(),
+			})
+			.loose()
+			.nullish(),
+		category: z
+			.object({
+				sector: z.string().nullish(),
+				industryGroup: z.string().nullish(),
+				industry: z.string().nullish(),
+				subIndustry: z.string().nullish(),
+				sicCode: z.string().nullish(),
+				naicsCode: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		tags: z.array(z.string()).nullish(),
 		description: z.string().nullish(),
+		foundedYear: NumberOrString.nullish(),
 		location: z.string().nullish(),
+		geo: z
+			.object({
+				city: z.string().nullish(),
+				state: z.string().nullish(),
+				country: z.string().nullish(),
+				countryCode: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		logo: z.string().nullish(),
+		facebook: HandleSchema,
+		linkedin: HandleSchema,
+		twitter: HandleSchema,
+		type: z.string().nullish(),
+		metrics: z
+			.object({
+				employees: NumberOrString.nullish(),
+				annualRevenue: NumberOrString.nullish(),
+				estimatedAnnualRevenue: NumberOrString.nullish(),
+			})
+			.loose()
+			.nullish(),
+		tech: z.array(z.string()).nullish(),
 	})
 	.loose();
 export type CompanyOutput = z.output<typeof CompanySchema>;
+
+/** A person profile from `people/find` and `combined/find`. */
+const PersonProfileSchema = z
+	.object({
+		name: z
+			.object({
+				fullName: z.string().nullish(),
+				givenName: z.string().nullish(),
+				familyName: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		email: z.string().nullish(),
+		location: z.string().nullish(),
+		gender: z.string().nullish(),
+		geo: z
+			.object({
+				city: z.string().nullish(),
+				state: z.string().nullish(),
+				country: z.string().nullish(),
+				countryCode: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		bio: z.string().nullish(),
+		site: z.string().nullish(),
+		avatar: z.string().nullish(),
+		employment: z
+			.object({
+				domain: z.string().nullish(),
+				name: z.string().nullish(),
+				title: z.string().nullish(),
+				role: z.string().nullish(),
+				subRole: z.string().nullish(),
+				seniority: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		facebook: HandleSchema,
+		github: HandleSchema,
+		twitter: HandleSchema,
+		linkedin: HandleSchema,
+		verification: VerificationSchema.nullish(),
+		phone: z.boolean().nullish(),
+	})
+	.loose();
+export type PersonProfileOutput = z.output<typeof PersonProfileSchema>;
+
+/** A company in a `reveal/search` page. */
+const RevealCompanySchema = z
+	.object({
+		name: z.string().nullish(),
+		description: z.string().nullish(),
+		website_url: z.string().nullish(),
+		industry: z.string().nullish(),
+		company_size: z.string().nullish(),
+		type: z.string().nullish(),
+		founded: NumberOrString.nullish(),
+		country: z.string().nullish(),
+		state: z.string().nullish(),
+		city: z.string().nullish(),
+		street_address: z.string().nullish(),
+		postal_code: z.string().nullish(),
+		revenue: NumberOrString.nullish(),
+		total_emails: z.number().nullish(),
+		total_similar: z.number().nullish(),
+		phone_number: z.boolean().nullish(),
+		linkedin_url: z.string().nullish(),
+		facebook_url: z.string().nullish(),
+		twitter_url: z.string().nullish(),
+	})
+	.loose();
 
 const EmailCountSchema = z
 	.object({
@@ -151,64 +319,111 @@ const EmailCountSchema = z
 
 const EmailFormatSchema = z
 	.object({
-		domain: z.string().nullish(),
-		format: z.string().nullish(),
-		patterns: z.array(z.object({}).loose()).nullish(),
+		format: z.string().nullish().describe('Such as {first}.{last}'),
+		percentage: z.number().nullish(),
 	})
 	.loose();
 
 const LocationSchema = z
 	.object({
-		domain: z.string().nullish(),
-		location: z.record(z.string(), z.number()).nullish(),
+		name: z.string().nullish().describe('Two-letter country code'),
+		total: z.number().nullish(),
 	})
 	.loose();
 
 const TechnologySchema = z
 	.object({
-		domain: z.string().nullish(),
-		technologies: z.array(z.object({}).loose()).nullish(),
+		slug: z.string().nullish(),
+		name: z.string().nullish(),
+		icon: z.string().nullish(),
+		website: z.string().nullish(),
+		description: z.string().nullish(),
+		categories: z
+			.array(
+				z
+					.object({
+						id: NumberOrString.nullish(),
+						slug: z.string().nullish(),
+						name: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
 	})
 	.loose();
 
 const SimilarSchema = z
 	.object({
-		domain: z.string().nullish(),
-		similar: z.array(z.object({}).loose()).nullish(),
+		website_url: z.string().nullish(),
+		name: z.string().nullish(),
+		industries: z.string().nullish(),
 	})
 	.loose();
 
 const DomainStatusSchema = z
 	.object({
 		domain: z.string().nullish(),
-		status: z.string().nullish().describe('Tomba reachability verdict'),
+		webmail: z.boolean().nullish(),
+		disposable: z.boolean().nullish(),
 	})
 	.loose();
 
 const SuggestionSchema = z
 	.object({
+		name: z.string().nullish(),
 		domain: z.string().nullish(),
-		company: z.string().nullish(),
+		email_count: z.number().nullish(),
 	})
 	.loose();
 
 const PhoneValidationSchema = z
 	.object({
-		phone: z.string().nullish(),
+		email: z.string().nullish(),
+		domain: z.string().nullish(),
 		valid: z.boolean().nullish(),
+		local_format: z.string().nullish(),
+		intl_format: z.string().nullish(),
+		e164_format: z.string().nullish(),
+		rfc3966_format: z.string().nullish(),
 		country_code: z.string().nullish(),
 		line_type: z.string().nullish(),
 		carrier: z.string().nullish(),
-		e164_format: z.string().nullish(),
-		international_format: z.string().nullish(),
-		local_format: z.string().nullish(),
+		region: z
+			.object({ name: z.string().nullish(), code: z.string().nullish() })
+			.loose()
+			.nullish(),
+		timezones: z.array(z.string()).nullish(),
 	})
 	.loose();
 export type PhoneValidationOutput = z.output<typeof PhoneValidationSchema>;
 
 const RateLimitsSchema = z
 	.object({
-		data: z.array(z.object({}).loose()).nullish(),
+		data: z
+			.record(
+				z.string(),
+				z
+					.object({
+						limits: z
+							.object({
+								rps: z.number().nullish(),
+								rpm: z.number().nullish(),
+								daily: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+						usage: z
+							.object({
+								rpm_used: z.number().nullish(),
+								daily_used: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+					})
+					.loose(),
+			)
+			.nullish()
+			.describe('Limits and usage keyed by route, such as email-finder'),
 	})
 	.loose();
 
@@ -264,7 +479,7 @@ export type DomainSearchInput = z.input<typeof DomainSearchInputSchema>;
 const DomainSearchOutputSchema = PagedEnvelope(
 	z
 		.object({
-			organization: CompanySchema.nullish(),
+			organization: OrganizationSchema.nullish(),
 			emails: z.array(PersonSchema),
 		})
 		.loose(),
@@ -364,8 +579,10 @@ const PhoneFinderInputSchema = z
 	});
 export type PhoneFinderInput = z.input<typeof PhoneFinderInputSchema>;
 
+// One number as an object, every number as an array with `full`, and an empty
+// array when nothing was found.
 const PhoneFinderOutputSchema = DataEnvelope(
-	z.object({}).loose().describe('Phone records for the person'),
+	z.union([PhoneValidationSchema, z.array(PhoneValidationSchema)]),
 );
 
 // ---------------------------------------------------------------------------
@@ -384,23 +601,25 @@ const EmailVerifierOutputSchema = DataEnvelope(
 		.object({
 			email: z
 				.object({
-					email: z.string(),
+					email: z.string().nullish(),
 					status: z
 						.string()
+						.nullish()
 						.describe('valid, invalid, accept_all, disposable or unknown'),
 					result: z
 						.string()
+						.nullish()
 						.describe('deliverable, undeliverable, risky, or empty'),
-					score: z.number(),
-					regex: z.boolean(),
-					gibberish: z.boolean(),
-					disposable: z.boolean(),
-					accept_all: z.boolean(),
-					block: z.boolean(),
-					greylisted: z.boolean(),
-					mx_check: z.boolean(),
-					smtp_check: z.boolean(),
-					smtp_server: z.boolean(),
+					score: z.number().nullish(),
+					regex: z.boolean().nullish(),
+					gibberish: z.boolean().nullish(),
+					disposable: z.boolean().nullish(),
+					accept_all: z.boolean().nullish(),
+					block: z.boolean().nullish(),
+					greylisted: z.boolean().nullish(),
+					mx_check: z.boolean().nullish(),
+					smtp_check: z.boolean().nullish(),
+					smtp_server: z.boolean().nullish(),
 					smtp_provider: z.string().nullish(),
 					mx: z
 						.object({ records: z.array(z.string()).nullish() })
@@ -426,7 +645,10 @@ const PhoneValidatorInputSchema = z.object({
 });
 export type PhoneValidatorInput = z.input<typeof PhoneValidatorInputSchema>;
 
-const PhoneValidatorOutputSchema = DataEnvelope(PhoneValidationSchema);
+// A number that is not valid answers 200 with an empty `data` array.
+const PhoneValidatorOutputSchema = DataEnvelope(
+	z.union([PhoneValidationSchema, z.array(PhoneValidationSchema)]),
+);
 export type PhoneValidatorOutput = z.output<typeof PhoneValidatorOutputSchema>;
 
 // ---------------------------------------------------------------------------
@@ -446,7 +668,7 @@ const PersonFindInputSchema = z.object({
 });
 export type PersonFindInput = z.input<typeof PersonFindInputSchema>;
 
-const PersonFindOutputSchema = DataEnvelope(PersonSchema);
+const PersonFindOutputSchema = DataEnvelope(PersonProfileSchema);
 export type PersonFindOutput = z.output<typeof PersonFindOutputSchema>;
 
 const CombinedFindInputSchema = z.object({
@@ -457,7 +679,7 @@ export type CombinedFindInput = z.input<typeof CombinedFindInputSchema>;
 const CombinedFindOutputSchema = DataEnvelope(
 	z
 		.object({
-			person: PersonSchema.nullish(),
+			person: PersonProfileSchema.nullish(),
 			company: CompanySchema.nullish(),
 		})
 		.loose(),
@@ -482,29 +704,55 @@ export type EmailCountOutput = z.output<typeof EmailCountOutputSchema>;
 const EmailFormatInputSchema = z.object({ domain: z.string().min(1) });
 export type EmailFormatInput = z.input<typeof EmailFormatInputSchema>;
 
-const EmailFormatOutputSchema = DataEnvelope(EmailFormatSchema);
+const EmailFormatOutputSchema = DataEnvelope(z.array(EmailFormatSchema));
 
 const LocationInputSchema = z.object({ domain: z.string().min(1) });
 export type LocationInput = z.input<typeof LocationInputSchema>;
 
-const LocationOutputSchema = DataEnvelope(LocationSchema);
+const LocationOutputSchema = DataEnvelope(z.array(LocationSchema));
 
 const TechnologyInputSchema = z.object({ domain: z.string().min(1) });
 export type TechnologyInput = z.input<typeof TechnologyInputSchema>;
 
-const TechnologyOutputSchema = DataEnvelope(TechnologySchema);
+const TechnologyOutputSchema = z
+	.object({
+		domain: z.string().nullish(),
+		data: z.array(TechnologySchema),
+	})
+	.loose();
 
-const SimilarInputSchema = z.object({ domain: z.string().min(1) });
+const SimilarInputSchema = z.object({
+	domain: z.string().min(1),
+	page: z.number().int().min(1).optional().describe('Default 1'),
+	limit: z
+		.union([
+			z.literal(10),
+			z.literal(20),
+			z.literal(50),
+			z.literal(100),
+			z.literal(150),
+			z.literal(200),
+			z.literal(250),
+		])
+		.optional()
+		.describe('Companies per page, default 10; 1 search credit per 10'),
+});
 export type SimilarInput = z.input<typeof SimilarInputSchema>;
 
-const SimilarOutputSchema = DataEnvelope(SimilarSchema);
+const SimilarOutputSchema = PagedEnvelope(z.array(SimilarSchema));
 
 const DomainStatusInputSchema = z.object({ domain: z.string().min(1) });
 export type DomainStatusInput = z.input<typeof DomainStatusInputSchema>;
 
-const DomainStatusOutputSchema = DataEnvelope(DomainStatusSchema);
+// The only route that is not wrapped in `data`.
+const DomainStatusOutputSchema = DomainStatusSchema;
 
-const DomainSuggestionsInputSchema = z.object({ domain: z.string().min(1) });
+const DomainSuggestionsInputSchema = z.object({
+	query: z
+		.string()
+		.min(1)
+		.describe('Company name or domain to match, such as stripe'),
+});
 export type DomainSuggestionsInput = z.input<
 	typeof DomainSuggestionsInputSchema
 >;
@@ -514,12 +762,19 @@ export type DomainSuggestionsOutput = z.output<
 	typeof DomainSuggestionsOutputSchema
 >;
 
-const EmailSourcesInputSchema = z.object({ domain: z.string().min(1) });
+const EmailSourcesInputSchema = z.object({
+	email: z.email().describe('The address whose sources to list'),
+});
 export type EmailSourcesInput = z.input<typeof EmailSourcesInputSchema>;
 
-const EmailSourcesOutputSchema = DataEnvelope(
-	z.object({}).loose().describe('Sources for the domain'),
-);
+const EmailSourcesOutputSchema = z
+	.object({
+		data: z
+			.array(SourceSchema)
+			.describe('Up to 20 pages; empty, with HTTP 201, when there are none'),
+		email: z.string().nullish(),
+	})
+	.loose();
 
 // ---------------------------------------------------------------------------
 // company search
@@ -568,7 +823,23 @@ const SearchCompaniesInputSchema = z
 	});
 export type SearchCompaniesInput = z.input<typeof SearchCompaniesInputSchema>;
 
-const SearchCompaniesOutputSchema = DataEnvelope(z.array(CompanySchema));
+const SearchCompaniesOutputSchema = z
+	.object({
+		success: z.boolean().nullish(),
+		data: z.object({ companies: z.array(RevealCompanySchema) }).loose(),
+		meta: z
+			.object({
+				total: z.number().nullish(),
+				page: z.number().nullish(),
+				limit: z.number().nullish(),
+				pages: z.number().nullish(),
+				// unknown: the filters Tomba generated from the query, by field.
+				filters: z.record(z.string(), z.unknown()).nullish(),
+			})
+			.loose()
+			.nullish(),
+	})
+	.loose();
 export type SearchCompaniesOutput = z.output<
 	typeof SearchCompaniesOutputSchema
 >;

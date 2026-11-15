@@ -10,10 +10,19 @@ import {
 import {
 	account,
 	company,
+	domainSearchLive,
+	domainStatusLive,
 	emailCount,
+	emailFormatLive,
+	emailSourcesLive,
+	locationLive,
 	person,
 	phoneValidation,
+	rateLimitsLive,
+	revealLive,
+	similarLive,
 	suggestion,
+	technologyLive,
 	verification,
 } from './test-fixtures';
 import { captureError, invoke } from './test-helpers';
@@ -70,17 +79,25 @@ describe('account', () => {
 		expect(result.data.confirmed).toBe(true);
 	});
 
-	it('account.get never logs the secret_token the body carries', async () => {
-		respond({ data: { ...account, secret_token: 'must-not-be-logged' } });
+	it('account.get drops the secret_token and intercom_user_jwt the body carries', async () => {
+		respond({
+			data: {
+				...account,
+				secret_token: 'must-not-be-returned',
+				intercom_user_jwt: 'must-not-be-returned',
+			},
+		});
 
-		await invoke(AccountEndpoints.get, {});
-		// The log callback is asserted through the module mock in plugin.test;
-		// here it is enough that the call succeeded without the secret.
-		expect(lastRequest().path).toBe('/v1/me');
+		const result = (await invoke(AccountEndpoints.get, {})) as {
+			data: Record<string, unknown>;
+		};
+
+		expect(JSON.stringify(result)).not.toContain('must-not-be-returned');
+		expect(result.data.first_name).toBe('Ada');
 	});
 
 	it('account.rateLimits GETs v1/rate-limits', async () => {
-		respond({ data: [{ route: 'me', limits: {} }] });
+		respond(rateLimitsLive);
 
 		await invoke(AccountEndpoints.rateLimits, {});
 
@@ -95,8 +112,8 @@ describe('account', () => {
 describe('finder', () => {
 	it('finder.domainSearch GETs v1/domain-search with paging', async () => {
 		respond({
-			data: { organization: company, emails: [person] },
-			meta: { total: 681, current_page: 1, last_page: 14, per_page: 50 },
+			data: { organization: domainSearchLive.organization, emails: [person] },
+			meta: { ...domainSearchLive.meta, total: 681 },
 		});
 
 		const result = (await invoke(FinderEndpoints.domainSearch, {
@@ -313,22 +330,22 @@ describe('company, person and combined', () => {
 	});
 
 	it('company.search POSTs a plain-language query to v1/reveal/search', async () => {
-		respond({ data: [company] });
+		respond(revealLive);
 
 		const result = (await invoke(CompanyEndpoints.search, {
 			query: 'Fintech companies in France',
-		})) as { data: unknown[] };
+		})) as { data: { companies: unknown[] } };
 
 		expectAuthenticated();
 		expect(lastRequest()).toMatchObject({
 			path: '/v1/reveal/search',
 			method: 'POST',
 		});
-		expect(result.data).toHaveLength(1);
+		expect(result.data.companies).toHaveLength(1);
 	});
 
 	it('company.search sends structured filters and the page', async () => {
-		respond({ data: [company] });
+		respond(revealLive);
 
 		await invoke(CompanyEndpoints.search, {
 			filters: { industry: { include: ['financial services'] } },
@@ -405,7 +422,7 @@ describe('domain data', () => {
 	});
 
 	it('domain.emailFormat GETs v1/email-format', async () => {
-		respond({ data: { domain: 'stripe.com', format: '{first}.{last}' } });
+		respond(emailFormatLive);
 
 		await invoke(DomainEndpoints.emailFormat, { domain: 'stripe.com' });
 
@@ -417,7 +434,7 @@ describe('domain data', () => {
 	});
 
 	it('domain.location GETs v1/location', async () => {
-		respond({ data: { domain: 'stripe.com', location: { US: 400 } } });
+		respond(locationLive);
 
 		await invoke(DomainEndpoints.location, { domain: 'stripe.com' });
 
@@ -429,7 +446,7 @@ describe('domain data', () => {
 	});
 
 	it('domain.technology GETs v1/technology', async () => {
-		respond({ data: { domain: 'stripe.com', technologies: [] } });
+		respond(technologyLive);
 
 		await invoke(DomainEndpoints.technology, { domain: 'stripe.com' });
 
@@ -441,34 +458,44 @@ describe('domain data', () => {
 	});
 
 	it('domain.similar GETs v1/similar', async () => {
-		respond({ data: { domain: 'stripe.com', similar: [] } });
+		respond(similarLive);
 
-		await invoke(DomainEndpoints.similar, { domain: 'stripe.com' });
+		await invoke(DomainEndpoints.similar, {
+			domain: 'stripe.com',
+			page: 2,
+			limit: 20,
+		});
 
 		expectAuthenticated();
 		expect(lastRequest()).toMatchObject({ path: '/v1/similar', method: 'GET' });
+		expect(lastRequest().query).toEqual({
+			domain: 'stripe.com',
+			page: '2',
+			limit: '20',
+		});
 	});
 
 	it('domain.status GETs v1/domain-status', async () => {
-		respond({ data: { domain: 'stripe.com', status: 'valid' } });
+		respond(domainStatusLive);
 
 		const result = (await invoke(DomainEndpoints.status, {
 			domain: 'stripe.com',
-		})) as { data: { status?: string | null } };
+		})) as { webmail?: boolean | null; disposable?: boolean | null };
 
 		expectAuthenticated();
 		expect(lastRequest()).toMatchObject({
 			path: '/v1/domain-status',
 			method: 'GET',
 		});
-		expect(result.data.status).toBe('valid');
+		// No data envelope on this route.
+		expect(result).toMatchObject({ webmail: false, disposable: false });
 	});
 
 	it('domain.suggestions GETs v1/domain-suggestions', async () => {
 		respond({ data: [suggestion] });
 
 		const result = (await invoke(DomainEndpoints.suggestions, {
-			domain: 'stripe.com',
+			query: 'stripe',
 		})) as { data: unknown[] };
 
 		expectAuthenticated();
@@ -476,61 +503,66 @@ describe('domain data', () => {
 			path: '/v1/domain-suggestions',
 			method: 'GET',
 		});
+		// The reference names the parameter `query`; `domain` is ignored.
+		expect(lastRequest().query).toEqual({ query: 'stripe' });
 		expect(result.data).toHaveLength(1);
 	});
 
 	it('domain.emailSources GETs v1/email-sources', async () => {
-		respond({ data: { sources: [] } });
+		respond(emailSourcesLive);
 
-		await invoke(DomainEndpoints.emailSources, { domain: 'stripe.com' });
+		const result = (await invoke(DomainEndpoints.emailSources, {
+			email: 'jane.doe@stripe.com',
+		})) as { data: unknown[] };
 
 		expectAuthenticated();
 		expect(lastRequest()).toMatchObject({
 			path: '/v1/email-sources',
 			method: 'GET',
 		});
+		// The route looks up one address; it has no domain parameter.
+		expect(lastRequest().query).toEqual({ email: 'jane.doe@stripe.com' });
+		expect(result.data).toHaveLength(1);
 	});
 });
 
 describe('credential handling', () => {
-	it('reports a missing API secret before sending anything', async () => {
+	function ctxWithKey(key: string) {
+		return {
+			key,
+			authType: 'api_key',
+			options: {},
+			tenantId: 'default',
+			keys: {
+				get_api_key: async () => 'tb-test-key',
+				get_api_secret: async () => 'tb-test-secret',
+			},
+		} as never;
+	}
+
+	it('refuses a key without the packed secret before sending anything', async () => {
 		const error = await captureError(
-			AccountEndpoints.get(
-				{
-					key: 'tb-test-key',
-					authType: 'api_key',
-					options: {},
-					tenantId: 'default',
-					keys: {
-						get_api_key: async () => 'tb-test-key',
-						get_api_secret: async () => null,
-					},
-				} as never,
-				{} as never,
-			),
+			AccountEndpoints.get(ctxWithKey('tb-test-key'), {} as never),
 		);
 
-		expect((error as Error).message).toContain('API secret is missing');
+		expect((error as Error).message).toContain('incomplete');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('prefers the inline secret over the stored one', async () => {
+	it('reads both credentials from ctx.key, never from options', async () => {
 		respond({ data: account });
 
 		await AccountEndpoints.get(
 			{
-				key: 'tb-test-key',
-				authType: 'api_key',
-				options: { apiSecret: 'inline-secret' },
-				tenantId: 'default',
-				keys: {
-					get_api_key: async () => 'tb-test-key',
-					get_api_secret: async () => 'stored-secret',
-				},
+				...(ctxWithKey(
+					JSON.stringify({ apiKey: 'from-key', apiSecret: 'from-key-secret' }),
+				) as object),
+				options: { apiSecret: 'from-options' },
 			} as never,
 			{} as never,
 		);
 
-		expect(lastRequest().headers.get('x-tomba-secret')).toBe('inline-secret');
+		expect(lastRequest().headers.get('x-tomba-key')).toBe('from-key');
+		expect(lastRequest().headers.get('x-tomba-secret')).toBe('from-key-secret');
 	});
 });
