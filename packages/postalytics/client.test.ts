@@ -1,3 +1,4 @@
+import { ZodError } from 'zod';
 import { makePostalyticsRequest, PostalyticsRateLimitError } from './client';
 import type { PostalyticsContext, PostalyticsKeyBuilderContext } from './index';
 import { postalytics, postalyticsEndpointSchemas } from './index';
@@ -78,16 +79,18 @@ describe('Postalytics request seam', () => {
 			name: 'The Architect',
 			size: '0',
 		};
-		mockFetch.mockResolvedValue(
-			new Response(JSON.stringify([invalidTemplate]), { status: 200 }),
+		mockFetch.mockImplementation(
+			async () =>
+				new Response(JSON.stringify([invalidTemplate]), { status: 200 }),
 		);
 		const endpoints = postalytics().endpoints!;
-		await expect(
-			endpoints.templates.getAllTemplates(ctx, {}),
-		).rejects.toThrow();
+		await expect(endpoints.templates.getAllTemplates(ctx, {})).rejects.toThrow(
+			ZodError,
+		);
 		await expect(
 			endpoints.templates.getTemplate(ctx, { id: 42 }),
-		).rejects.toThrow();
+		).rejects.toThrow(ZodError);
+		expect(mockFetch).toHaveBeenCalledTimes(2);
 	});
 	it('gets an account from the sandbox using its numeric ID', async () => {
 		mockFetch.mockResolvedValue(new Response('[]', { status: 200 }));
