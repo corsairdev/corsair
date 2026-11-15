@@ -96,18 +96,22 @@ export const AssetSchema = z
 		lng: number,
 		geo_timestamp: text,
 		altitude: number,
+		// Same JSON-array column as forms' template_fields: allow false for empty.
 		field_data: z
-			.array(
-				z
-					.object({
-						uuid: text,
-						fieldType: text,
-						fieldName: text,
-						fieldValue: text,
-						sortOrder: number,
-					})
-					.loose(),
-			)
+			.union([
+				z.array(
+					z
+						.object({
+							uuid: text,
+							fieldType: text,
+							fieldName: text,
+							fieldValue: text,
+							sortOrder: number,
+						})
+						.loose(),
+				),
+				z.literal(false),
+			])
 			.nullish(),
 	})
 	.loose();
@@ -127,17 +131,21 @@ export const FormSchema = z
 		can_be_used_independently: text,
 		badge_mandatory_state: text,
 		badge_name: text,
+		// ServiceM8 sends false instead of an empty array (seen live on forms).
 		template_fields: z
-			.array(
-				z
-					.object({
-						name: text,
-						fieldType: text,
-						value: text,
-						sortOrder: number,
-					})
-					.loose(),
-			)
+			.union([
+				z.array(
+					z
+						.object({
+							name: text,
+							fieldType: text,
+							value: text,
+							sortOrder: number,
+						})
+						.loose(),
+				),
+				z.literal(false),
+			])
 			.nullish(),
 	})
 	.loose();

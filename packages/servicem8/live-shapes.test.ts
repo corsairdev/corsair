@@ -63,6 +63,14 @@ const client = {
 	is_individual: 0,
 	billing_attention: '0',
 };
+const form = {
+	uuid: '550e8400-e29b-41d4-a716-446655440007',
+	active: 1,
+	name: 'Job Safety Analysis',
+	can_be_used_independently: '0',
+	// ServiceM8 sends false, not [], when a form has no template fields.
+	template_fields: false,
+};
 const note = {
 	uuid: '550e8400-e29b-41d4-a716-446655440006',
 	active: 1,
@@ -82,6 +90,8 @@ describe('ServiceM8 live response shapes', () => {
 		['jobActivities.retrieve', activity],
 		['clients.retrieve', client],
 		['notes.retrieve', note],
+		['forms.list', { data: [form] }],
+		['forms.retrieve', form],
 	] as const)('%s parses what the API sends', (name, body) => {
 		const parsed = EndpointOutputSchemas[name].safeParse(body);
 		expect(parsed.success ? [] : parsed.error.issues).toEqual([]);
