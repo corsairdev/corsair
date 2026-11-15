@@ -5,7 +5,7 @@ function createApiError(status: number, message: string): ApiError {
 	return new ApiError(
 		{ method: 'GET', url: '/test' },
 		{
-			url: 'https://app.hubplanner.com/api/v1/test',
+			url: 'https://api.hubplanner.com/v1/test',
 			ok: false,
 			status,
 			statusText: message,

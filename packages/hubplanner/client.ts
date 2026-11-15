@@ -1,5 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class HubPlannerAPIError extends Error {
@@ -12,7 +16,35 @@ export class HubPlannerAPIError extends Error {
 	}
 }
 
-export const HUBPLANNER_API_BASE = 'https://app.hubplanner.com/api/v1';
+export const HUBPLANNER_API_BASE = 'https://api.hubplanner.com/v1';
+
+/**
+ * Core's default 429 handling, minus the `x-ratelimit-reset` header. Hub Planner sends that header on
+ * every response as the epoch second its daily quota (6000 calls) resets, so the default config would
+ * sleep until the next day on a quota 429. Burst 429s carry `Retry-After`, which is still honoured.
+ */
+export const HUBPLANNER_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
+
+// `unknown` because provider error bodies are arbitrary JSON (or text).
+function redactValue(value: unknown, apiKey: string): unknown {
+	if (typeof value === 'string') return value.split(apiKey).join('[REDACTED]');
+	if (Array.isArray(value))
+		return value.map((item) => redactValue(item, apiKey));
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([k, v]) => [k, redactValue(v, apiKey)]),
+		);
+	}
+	return value;
+}
 
 /**
  * Redacts API credentials in-place without replacing the ApiError instance.
@@ -21,6 +53,15 @@ export const HUBPLANNER_API_BASE = 'https://app.hubplanner.com/api/v1';
  */
 // `unknown` because catch blocks and untrusted error sources can produce any thrown value.
 export function redactInPlace(error: unknown, apiKey?: string): void {
+	// The submitted body (names, emails, notes) stays out of the error; status and headers stay.
+	if (error instanceof ApiError && error.request && 'body' in error.request) {
+		const { body: _submitted, ...requestWithoutBody } = error.request;
+		Object.defineProperty(error, 'request', {
+			value: requestWithoutBody,
+			configurable: true,
+			writable: true,
+		});
+	}
 	if (!apiKey) return;
 
 	if (error instanceof ApiError) {
@@ -35,9 +76,11 @@ export function redactInPlace(error: unknown, apiKey?: string): void {
 		if (typeof error.message === 'string') {
 			error.message = error.message.split(apiKey).join('[REDACTED]');
 		}
-		if (typeof error.body === 'string') {
+		// Hub Planner echoes a rejected key in its JSON 401 body (`message` and
+		// `properties.additionalInformation.authHeaders`), so objects are redacted as well as strings.
+		if (error.body !== undefined && error.body !== null) {
 			Object.defineProperty(error, 'body', {
-				value: error.body.split(apiKey).join('[REDACTED]'),
+				value: redactValue(error.body, apiKey),
 				configurable: true,
 				writable: true,
 			});
@@ -104,7 +147,9 @@ export async function makeHubPlannerRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: HUBPLANNER_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		redactInPlace(error, apiKey);
 		if (error instanceof Error) {

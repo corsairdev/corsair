@@ -38,7 +38,7 @@ function createApiError(
 			headers: reqHeaders,
 		},
 		{
-			url: 'https://app.hubplanner.com/api/v1/project',
+			url: 'https://api.hubplanner.com/v1/project',
 			ok: false,
 			status,
 			statusText: message,
@@ -54,6 +54,10 @@ beforeEach(() => {
 });
 
 describe('makeHubPlannerRequest', () => {
+	it('uses the documented API host (app.hubplanner.com/api/v1 answers 401 to API keys)', () => {
+		expect(HUBPLANNER_API_BASE).toBe('https://api.hubplanner.com/v1');
+	});
+
 	it('sends Authorization header with raw API key without Bearer prefix', async () => {
 		mockRequest.mockResolvedValueOnce([{ _id: 'proj-1', name: 'Test' }]);
 
@@ -150,6 +154,20 @@ describe('makeHubPlannerRequest', () => {
 		expect((thrownError as Error).message).toContain('[REDACTED]');
 	});
 
+	it('keeps core 429 retries but ignores the daily x-ratelimit-reset header', async () => {
+		mockRequest.mockResolvedValueOnce([]);
+		await makeHubPlannerRequest('/project', 'valid-key', { method: 'GET' });
+		const [, , transportOptions] = mockRequest.mock.calls[0] ?? [];
+		expect(transportOptions?.rateLimitConfig).toMatchObject({
+			enabled: true,
+			maxRetries: 3,
+			headerNames: { retryAfter: 'retry-after' },
+		});
+		expect(
+			transportOptions?.rateLimitConfig?.headerNames.resetTime,
+		).toBeUndefined();
+	});
+
 	it('wraps unknown non-Error throws in HubPlannerAPIError', async () => {
 		mockRequest.mockRejectedValueOnce('raw string error');
 
@@ -178,6 +196,54 @@ describe('makeHubPlannerRequest', () => {
 });
 
 describe('redactInPlace helper', () => {
+	it('redacts the key Hub Planner echoes inside a JSON error body', () => {
+		const key = 'live-shaped-key-123';
+		// Shape of the live 401 body for a rejected key.
+		const err = new ApiError(
+			{ method: 'GET', url: '/project', headers: { Authorization: key } },
+			{
+				url: 'https://api.hubplanner.com/v1/project',
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				body: {
+					message: `The API Key you've specified (${key}) is invalid`,
+					error: 'OAUTH_ERROR_TOKEN_NOT_VALID',
+					properties: { additionalInformation: { authHeaders: key } },
+				},
+			},
+			'Unauthorized',
+		);
+		redactInPlace(err, key);
+		expect(JSON.stringify(err.body)).not.toContain(key);
+		expect(err.body.properties.additionalInformation.authHeaders).toBe(
+			'[REDACTED]',
+		);
+		expect(err.status).toBe(401);
+	});
+
+	it('drops the submitted request body from the error', () => {
+		const err = new ApiError(
+			{
+				method: 'POST',
+				url: '/resource',
+				body: { firstName: 'Ada', email: 'ada@example.com' },
+			},
+			{
+				url: 'https://api.hubplanner.com/v1/resource',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: { message: 'Provided property is incorrect - type.' },
+			},
+			'Bad Request',
+		);
+		redactInPlace(err, 'some-key');
+		expect(err.request.body).toBeUndefined();
+		expect(JSON.stringify(err)).not.toContain('ada@example.com');
+		expect(err.body.message).toBe('Provided property is incorrect - type.');
+	});
+
 	it('does nothing when apiKey is omitted or empty', () => {
 		const err = new Error('Regular error message');
 		redactInPlace(err, undefined);
@@ -216,7 +282,7 @@ describe('real transport Retry-After handling', () => {
 		});
 
 		const config: OpenAPIConfig = {
-			BASE: 'https://app.hubplanner.com/api/v1',
+			BASE: 'https://api.hubplanner.com/v1',
 			VERSION: '1.0.0',
 			WITH_CREDENTIALS: false,
 			CREDENTIALS: 'omit',
