@@ -10,6 +10,7 @@ import {
 	isCredentialRejection,
 	makePointagramRequest,
 	POINTAGRAM_API_BASE,
+	reportsInvalidCredentials,
 } from './client';
 import {
 	CompetitionSchema,
@@ -48,7 +49,19 @@ function dataOf(
 	if (envelope === null || typeof envelope !== 'object') {
 		throw new Error('Pointagram returned a body that is not an envelope');
 	}
-	return (envelope as Record<string, unknown>).data; // unknown: untyped envelope.
+	const record = envelope as Record<string, unknown>; // unknown: untyped envelope.
+	// The endpoints refuse these envelopes before parsing; so does this helper,
+	// or a 200 `Error` envelope with `data: {}` would pass the credential test.
+	if (
+		typeof record.status !== 'string' ||
+		!/^ok$/i.test(record.status) ||
+		reportsInvalidCredentials(envelope)
+	) {
+		throw new Error(
+			`Pointagram returned a failed envelope (status ${String(record.status)})`,
+		);
+	}
+	return record.data;
 }
 
 describeLive('Pointagram live API', () => {
