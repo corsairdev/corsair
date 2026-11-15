@@ -467,6 +467,6 @@ it('asks for approval before ordering a model or deciding a QA round', () => {
 		'productAssets.delete',
 		'embeds.delete',
 	] as const) {
-		expect(meta[name].riskLevel).toBe('destructive');
+		expect(meta?.[name]?.riskLevel).toBe('destructive');
 	}
 });
