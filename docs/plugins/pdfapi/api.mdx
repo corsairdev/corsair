@@ -1,0 +1,166 @@
+---
+title: "PDF-API.io API reference"
+sidebarTitle: "API"
+description: "API reference for the PDF-API.io plugin in Corsair: every `pdfapi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Templates
+
+### listTemplates
+
+`templates.listTemplates`
+
+Returns the templates in the PDF-API.io account
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfapi.api.templates.listTemplates({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name: string,
+  team_name?: string | null,
+  team_id?: string | number | null,
+  type?: string | null,
+  created_at?: string | null,
+  meta?: Record<string, any> | any[] | null,
+  variables?: Record<string, any>[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### mergeTemplates
+
+`templates.mergeTemplates`
+
+Renders and merges multiple templates into one PDF document
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdfapi.api.templates.mergeTemplates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+| `output` | `pdf \| url` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id: string | number,
+  data: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+| `data` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### renderTemplate
+
+`templates.renderTemplate`
+
+Renders a template into a PDF document from placeholder values
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdfapi.api.templates.renderTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `output` | `pdf \| url` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+| `data` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### retrieveTemplate
+
+`templates.retrieveTemplate`
+
+Returns one template with its variables by its template id
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfapi.api.templates.retrieveTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `team_name` | `string \| null` | No | — |
+| `team_id` | `string \| number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `meta` | `Record<string, any> \| any[] \| null` | No | — |
+| `variables` | `Record<string, any>[]` | No | — |
+
+
+
+---
+

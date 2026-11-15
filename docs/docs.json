@@ -1829,6 +1829,14 @@
                 ]
               },
               {
+                "group": "DocsBot AI",
+                "pages": [
+                  "plugins/docsbotai/overview",
+                  "plugins/docsbotai/api",
+                  "plugins/docsbotai/database"
+                ]
+              },
+              {
                 "group": "Docsumo",
                 "pages": [
                   "plugins/docsumo/overview",
@@ -2017,6 +2025,14 @@
                 ]
               },
               {
+                "group": "ERPNext",
+                "pages": [
+                  "plugins/erpnext/overview",
+                  "plugins/erpnext/api",
+                  "plugins/erpnext/database"
+                ]
+              },
+              {
                 "group": "eSignatures",
                 "pages": [
                   "plugins/esignatures/overview",
@@ -2189,6 +2205,14 @@
                   "plugins/finage/overview",
                   "plugins/finage/api",
                   "plugins/finage/database"
+                ]
+              },
+              {
+                "group": "Findymail",
+                "pages": [
+                  "plugins/findymail/overview",
+                  "plugins/findymail/api",
+                  "plugins/findymail/database"
                 ]
               },
               {
@@ -2388,6 +2412,38 @@
                 ]
               },
               {
+                "group": "Geocodio",
+                "pages": [
+                  "plugins/geocodio/overview",
+                  "plugins/geocodio/api",
+                  "plugins/geocodio/database"
+                ]
+              },
+              {
+                "group": "Geokeo",
+                "pages": [
+                  "plugins/geokeo/overview",
+                  "plugins/geokeo/api",
+                  "plugins/geokeo/database"
+                ]
+              },
+              {
+                "group": "GetProspect",
+                "pages": [
+                  "plugins/getprospect/overview",
+                  "plugins/getprospect/api",
+                  "plugins/getprospect/database"
+                ]
+              },
+              {
+                "group": "Gigasheet",
+                "pages": [
+                  "plugins/gigasheet/overview",
+                  "plugins/gigasheet/api",
+                  "plugins/gigasheet/database"
+                ]
+              },
+              {
                 "group": "GIPHY",
                 "pages": [
                   "plugins/giphy/overview",
@@ -2415,11 +2471,27 @@
                 ]
               },
               {
+                "group": "Givebutter",
+                "pages": [
+                  "plugins/givebutter/overview",
+                  "plugins/givebutter/api",
+                  "plugins/givebutter/database"
+                ]
+              },
+              {
                 "group": "Gladia",
                 "pages": [
                   "plugins/gladia/overview",
                   "plugins/gladia/api",
                   "plugins/gladia/database"
+                ]
+              },
+              {
+                "group": "Gleap",
+                "pages": [
+                  "plugins/gleap/overview",
+                  "plugins/gleap/api",
+                  "plugins/gleap/database"
                 ]
               },
               {
@@ -2480,6 +2552,14 @@
                   "plugins/googlecalendar/api",
                   "plugins/googlecalendar/database",
                   "plugins/googlecalendar/webhooks"
+                ]
+              },
+              {
+                "group": "Google Classroom",
+                "pages": [
+                  "plugins/googleclassroom/overview",
+                  "plugins/googleclassroom/api",
+                  "plugins/googleclassroom/database"
                 ]
               },
               {
@@ -2544,6 +2624,30 @@
                 ]
               },
               {
+                "group": "Google Tasks",
+                "pages": [
+                  "plugins/googletasks/overview",
+                  "plugins/googletasks/api",
+                  "plugins/googletasks/database"
+                ]
+              },
+              {
+                "group": "Gorgias",
+                "pages": [
+                  "plugins/gorgias/overview",
+                  "plugins/gorgias/api",
+                  "plugins/gorgias/database"
+                ]
+              },
+              {
+                "group": "GoSquared",
+                "pages": [
+                  "plugins/gosquared/overview",
+                  "plugins/gosquared/api",
+                  "plugins/gosquared/database"
+                ]
+              },
+              {
                 "group": "Grafana",
                 "pages": [
                   "plugins/grafana/overview",
@@ -2557,6 +2661,14 @@
                   "plugins/griptape/overview",
                   "plugins/griptape/api",
                   "plugins/griptape/database"
+                ]
+              },
+              {
+                "group": "Grist",
+                "pages": [
+                  "plugins/grist/overview",
+                  "plugins/grist/api",
+                  "plugins/grist/database"
                 ]
               },
               {
@@ -2590,6 +2702,14 @@
                   "plugins/hackernews/get-credentials",
                   "plugins/hackernews/api",
                   "plugins/hackernews/database"
+                ]
+              },
+              {
+                "group": "Handwrytten",
+                "pages": [
+                  "plugins/handwrytten/overview",
+                  "plugins/handwrytten/api",
+                  "plugins/handwrytten/database"
                 ]
               },
               {
@@ -2651,6 +2771,14 @@
                 ]
               },
               {
+                "group": "HoneyHive",
+                "pages": [
+                  "plugins/honeyhive/overview",
+                  "plugins/honeyhive/api",
+                  "plugins/honeyhive/database"
+                ]
+              },
+              {
                 "group": "Hookdeck",
                 "pages": [
                   "plugins/hookdeck/overview",
@@ -2664,6 +2792,14 @@
                   "plugins/htmltoimage/overview",
                   "plugins/htmltoimage/api",
                   "plugins/htmltoimage/database"
+                ]
+              },
+              {
+                "group": "Hub Planner",
+                "pages": [
+                  "plugins/hubplanner/overview",
+                  "plugins/hubplanner/api",
+                  "plugins/hubplanner/database"
                 ]
               },
               {
@@ -2701,6 +2837,22 @@
                 ]
               },
               {
+                "group": "Hyperbrowser",
+                "pages": [
+                  "plugins/hyperbrowser/overview",
+                  "plugins/hyperbrowser/api",
+                  "plugins/hyperbrowser/database"
+                ]
+              },
+              {
+                "group": "Ignisign",
+                "pages": [
+                  "plugins/ignisign/overview",
+                  "plugins/ignisign/api",
+                  "plugins/ignisign/database"
+                ]
+              },
+              {
                 "group": "ImageKit",
                 "pages": [
                   "plugins/imagekit/overview",
@@ -2730,6 +2882,14 @@
                   "plugins/imgbb/overview",
                   "plugins/imgbb/api",
                   "plugins/imgbb/database"
+                ]
+              },
+              {
+                "group": "Imgix",
+                "pages": [
+                  "plugins/imgix/overview",
+                  "plugins/imgix/api",
+                  "plugins/imgix/database"
                 ]
               },
               {
@@ -2909,6 +3069,14 @@
                 ]
               },
               {
+                "group": "Kommo",
+                "pages": [
+                  "plugins/kommo/overview",
+                  "plugins/kommo/api",
+                  "plugins/kommo/database"
+                ]
+              },
+              {
                 "group": "Kontent.ai",
                 "pages": [
                   "plugins/kontentai/overview",
@@ -2991,6 +3159,14 @@
                 ]
               },
               {
+                "group": "LiveSession",
+                "pages": [
+                  "plugins/livesession/overview",
+                  "plugins/livesession/api",
+                  "plugins/livesession/database"
+                ]
+              },
+              {
                 "group": "Loyverse",
                 "pages": [
                   "plugins/loyverse/overview",
@@ -3048,6 +3224,14 @@
                 ]
               },
               {
+                "group": "Make",
+                "pages": [
+                  "plugins/make/overview",
+                  "plugins/make/api",
+                  "plugins/make/database"
+                ]
+              },
+              {
                 "group": "Mapbox",
                 "pages": [
                   "plugins/mapbox/overview",
@@ -3088,6 +3272,14 @@
                 ]
               },
               {
+                "group": "Memberstack",
+                "pages": [
+                  "plugins/memberstack/overview",
+                  "plugins/memberstack/api",
+                  "plugins/memberstack/database"
+                ]
+              },
+              {
                 "group": "Merriam-Webster",
                 "pages": [
                   "plugins/merriamwebsterdict/overview",
@@ -3102,6 +3294,14 @@
                   "plugins/teams/api",
                   "plugins/teams/database",
                   "plugins/teams/webhooks"
+                ]
+              },
+              {
+                "group": "Minerstat",
+                "pages": [
+                  "plugins/minerstat/overview",
+                  "plugins/minerstat/api",
+                  "plugins/minerstat/database"
                 ]
               },
               {
@@ -3147,6 +3347,22 @@
                 ]
               },
               {
+                "group": "MoonClerk",
+                "pages": [
+                  "plugins/moonclerk/overview",
+                  "plugins/moonclerk/api",
+                  "plugins/moonclerk/database"
+                ]
+              },
+              {
+                "group": "Motion",
+                "pages": [
+                  "plugins/motion/overview",
+                  "plugins/motion/api",
+                  "plugins/motion/database"
+                ]
+              },
+              {
                 "group": "MrScraper",
                 "pages": [
                   "plugins/mrscraper/overview",
@@ -3176,6 +3392,14 @@
                   "plugins/netsuite/overview",
                   "plugins/netsuite/api",
                   "plugins/netsuite/database"
+                ]
+              },
+              {
+                "group": "NeverBounce",
+                "pages": [
+                  "plugins/neverbounce/overview",
+                  "plugins/neverbounce/api",
+                  "plugins/neverbounce/database"
                 ]
               },
               {
@@ -3342,11 +3566,27 @@
                 ]
               },
               {
+                "group": "Parallel",
+                "pages": [
+                  "plugins/parallel/overview",
+                  "plugins/parallel/api",
+                  "plugins/parallel/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
                   "plugins/parseur/api",
                   "plugins/parseur/database"
+                ]
+              },
+              {
+                "group": "PDF-API.io",
+                "pages": [
+                  "plugins/pdfapi/overview",
+                  "plugins/pdfapi/api",
+                  "plugins/pdfapi/database"
                 ]
               },
               {
@@ -3423,6 +3663,62 @@
                 ]
               },
               {
+                "group": "Pointagram",
+                "pages": [
+                  "plugins/pointagram/overview",
+                  "plugins/pointagram/api",
+                  "plugins/pointagram/database"
+                ]
+              },
+              {
+                "group": "Polygon.io",
+                "pages": [
+                  "plugins/polygonio/overview",
+                  "plugins/polygonio/api",
+                  "plugins/polygonio/database"
+                ]
+              },
+              {
+                "group": "Postmark",
+                "pages": [
+                  "plugins/postmark/overview",
+                  "plugins/postmark/api",
+                  "plugins/postmark/database"
+                ]
+              },
+              {
+                "group": "Prismic",
+                "pages": [
+                  "plugins/prismic/overview",
+                  "plugins/prismic/api",
+                  "plugins/prismic/database"
+                ]
+              },
+              {
+                "group": "Postalytics",
+                "pages": [
+                  "plugins/postalytics/overview",
+                  "plugins/postalytics/api",
+                  "plugins/postalytics/database"
+                ]
+              },
+              {
+                "group": "PostGrid",
+                "pages": [
+                  "plugins/postgrid/overview",
+                  "plugins/postgrid/api",
+                  "plugins/postgrid/database"
+                ]
+              },
+              {
+                "group": "Polygon OMS",
+                "pages": [
+                  "plugins/polygon/overview",
+                  "plugins/polygon/api",
+                  "plugins/polygon/database"
+                ]
+              },
+              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
@@ -3433,11 +3729,27 @@
                 ]
               },
               {
+                "group": "Postiz",
+                "pages": [
+                  "plugins/postiz/overview",
+                  "plugins/postiz/api",
+                  "plugins/postiz/database"
+                ]
+              },
+              {
                 "group": "Postman",
                 "pages": [
                   "plugins/postman/overview",
                   "plugins/postman/api",
                   "plugins/postman/database"
+                ]
+              },
+              {
+                "group": "Prerender",
+                "pages": [
+                  "plugins/prerender/overview",
+                  "plugins/prerender/api",
+                  "plugins/prerender/database"
                 ]
               },
               {
@@ -3462,6 +3774,14 @@
                   "plugins/pushbullet/overview",
                   "plugins/pushbullet/api",
                   "plugins/pushbullet/database"
+                ]
+              },
+              {
+                "group": "Pushover",
+                "pages": [
+                  "plugins/pushover/overview",
+                  "plugins/pushover/api",
+                  "plugins/pushover/database"
                 ]
               },
               {
@@ -3928,6 +4248,14 @@
                 ]
               },
               {
+                "group": "Sendbird",
+                "pages": [
+                  "plugins/sendbird/overview",
+                  "plugins/sendbird/api",
+                  "plugins/sendbird/database"
+                ]
+              },
+              {
                 "group": "SendGrid",
                 "pages": [
                   "plugins/sendgrid/overview",
@@ -3954,11 +4282,27 @@
                 ]
               },
               {
+                "group": "ServiceM8",
+                "pages": [
+                  "plugins/servicem8/overview",
+                  "plugins/servicem8/api",
+                  "plugins/servicem8/database"
+                ]
+              },
+              {
                 "group": "ServiceNow",
                 "pages": [
                   "plugins/servicenow/overview",
                   "plugins/servicenow/api",
                   "plugins/servicenow/database"
+                ]
+              },
+              {
+                "group": "sevdesk",
+                "pages": [
+                  "plugins/sevdesk/overview",
+                  "plugins/sevdesk/api",
+                  "plugins/sevdesk/database"
                 ]
               },
               {
@@ -3977,6 +4321,22 @@
                   "plugins/shippo/api",
                   "plugins/shippo/database",
                   "plugins/shippo/webhooks"
+                ]
+              },
+              {
+                "group": "Short.io",
+                "pages": [
+                  "plugins/shortio/overview",
+                  "plugins/shortio/api",
+                  "plugins/shortio/database"
+                ]
+              },
+              {
+                "group": "Shortcut",
+                "pages": [
+                  "plugins/shortcut/overview",
+                  "plugins/shortcut/api",
+                  "plugins/shortcut/database"
                 ]
               },
               {
@@ -4037,6 +4397,14 @@
                   "plugins/spotify/get-credentials",
                   "plugins/spotify/api",
                   "plugins/spotify/database"
+                ]
+              },
+              {
+                "group": "Stack Exchange",
+                "pages": [
+                  "plugins/stackexchange/overview",
+                  "plugins/stackexchange/api",
+                  "plugins/stackexchange/database"
                 ]
               },
               {
@@ -4108,6 +4476,14 @@
                 ]
               },
               {
+                "group": "Svix",
+                "pages": [
+                  "plugins/svix/overview",
+                  "plugins/svix/api",
+                  "plugins/svix/database"
+                ]
+              },
+              {
                 "group": "Synthflow AI",
                 "pages": [
                   "plugins/synthflowai/overview",
@@ -4165,6 +4541,14 @@
                   "plugins/telegram/api",
                   "plugins/telegram/database",
                   "plugins/telegram/webhooks"
+                ]
+              },
+              {
+                "group": "TextIt",
+                "pages": [
+                  "plugins/textit/overview",
+                  "plugins/textit/api",
+                  "plugins/textit/database"
                 ]
               },
               {
@@ -4316,6 +4700,14 @@
                   "plugins/tripadvisor/overview",
                   "plugins/tripadvisor/api",
                   "plugins/tripadvisor/database"
+                ]
+              },
+              {
+                "group": "Trustpilot",
+                "pages": [
+                  "plugins/trustpilot/overview",
+                  "plugins/trustpilot/api",
+                  "plugins/trustpilot/database"
                 ]
               },
               {
