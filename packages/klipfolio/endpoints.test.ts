@@ -796,7 +796,6 @@ describe('Klipfolio endpoint request seams', () => {
 			id: 'id-1',
 			annotationId: 'annotationId-1',
 			client_id: 'client_id-1',
-			'annotation id': 'annotation id-1',
 			body: 'body-1',
 		} as never);
 		expect(request).toHaveBeenCalledWith(
@@ -806,7 +805,6 @@ describe('Klipfolio endpoint request seams', () => {
 				method: 'PUT',
 				body: {
 					client_id: 'client_id-1',
-					'annotation id': 'annotation id-1',
 					body: 'body-1',
 				},
 			},
@@ -840,7 +838,7 @@ describe('Klipfolio endpoint request seams', () => {
 			client_id: 'client_id-1',
 			title: 'title-1',
 			wire_id: 'wire_id-1',
-			'workspace.datasources': ['workspace.datasources-1'],
+			workspace: { datasources: ['datasource-1'] },
 			components: ['components-1'],
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/klips/id-1/schema', {
@@ -848,7 +846,7 @@ describe('Klipfolio endpoint request seams', () => {
 			body: {
 				client_id: 'client_id-1',
 				title: 'title-1',
-				'workspace.datasources': ['workspace.datasources-1'],
+				workspace: { datasources: ['datasource-1'] },
 				components: ['components-1'],
 				id: 'wire_id-1',
 			},
@@ -1139,12 +1137,16 @@ describe('Klipfolio endpoint request seams', () => {
 		await updateTabLayout(ctx, {
 			id: 'id-1',
 			client_id: 'client_id-1',
-			type: 'type-1',
-			state: 'state-1',
+			type: '100',
+			state: { 'instance-1': { region: 'region-1', idx: 1 } },
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/tabs/id-1/layout', {
 			method: 'PUT',
-			body: { client_id: 'client_id-1', type: 'type-1', state: 'state-1' },
+			body: {
+				client_id: 'client_id-1',
+				type: '100',
+				state: { 'instance-1': { region: 'region-1', idx: 1 } },
+			},
 		});
 		await retrieveTabShareRights(ctx, {
 			id: 'id-1',
@@ -1271,16 +1273,12 @@ describe('Klipfolio endpoint request seams', () => {
 			id: 'id-1',
 			groupId: 'groupId-1',
 			client_id: 'client_id-1',
-			'user id': 'user id-1',
-			group_id: 'group_id-1',
 			can_edit: true,
 		} as never);
 		expect(request).toHaveBeenCalledWith(ctx, '/users/id-1/groups/groupId-1', {
 			method: 'PUT',
 			body: {
 				client_id: 'client_id-1',
-				'user id': 'user id-1',
-				group_id: 'group_id-1',
 				can_edit: true,
 			},
 		});

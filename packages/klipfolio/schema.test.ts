@@ -183,6 +183,47 @@ describe('Klipfolio schema', () => {
 		).toBe(true);
 	});
 
+	it('accepts the documented request examples', () => {
+		const ok = (
+			operation: keyof typeof KlipfolioEndpointInputSchemas,
+			// unknown: example inputs copied from Klipfolio's API reference
+			value: unknown,
+		) =>
+			expect(
+				KlipfolioEndpointInputSchemas[operation].safeParse(value).success,
+			).toBe(true);
+		// PUT /klips/{id}/annotations/{id} -d {'body': 'Updated annotation'}
+		ok('updateKlipAnnotation', {
+			id: 'k1',
+			annotationId: 'a1',
+			body: 'Updated annotation',
+		});
+		// PUT /users/{id}/groups/{id} with no body
+		ok('updateUserGroup', { id: 'u1', groupId: 'g1' });
+		// PUT /tabs/{id}/layout -d {'type': '100', 'state': {...}}
+		ok('updateTabLayout', {
+			id: 't1',
+			type: '100',
+			state: { '04462abd': { region: 'region-1', idx: 1 } },
+		});
+		// PUT /klips/{id}/schema with a nested workspace object
+		const klipSchema = {
+			id: 'k1',
+			title: 'Default',
+			wire_id: 'k1',
+			workspace: { datasources: [] },
+			components: [{ type: 'simple_value', id: '8c79ad9b-4' }],
+		};
+		ok('updateKlipSchema', klipSchema);
+		expect(
+			KlipfolioEndpointInputSchemas.updateKlipSchema.safeParse({
+				...klipSchema,
+				workspace: undefined,
+				'workspace.datasources': [],
+			}).success,
+		).toBe(false);
+	});
+
 	it('rejects undocumented enum values at the input boundary', () => {
 		// unknown: zod v4 schema objects are exercised structurally through
 		// safeParse; stricter typing would couple the test to zod internals.

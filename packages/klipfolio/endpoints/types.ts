@@ -593,7 +593,6 @@ const UpdateKlipAnnotationInputSchema = z
 		id: z.string().min(1),
 		annotationId: z.string().min(1),
 		client_id: z.string().optional(),
-		'annotation id': z.string(),
 		body: z.string(),
 	})
 	.passthrough();
@@ -627,7 +626,8 @@ const UpdateKlipSchemaInputSchema = z
 		title: z.string(),
 		// unknown: (input key renamed: the wire body key "id" is taken by the path identifier)
 		wire_id: z.string(),
-		'workspace.datasources': z.array(z.unknown()),
+		// Data source ids the Klip reads: { workspace: { datasources: [...] } }.
+		workspace: z.object({ datasources: z.array(z.string()) }).passthrough(),
 		// unknown: each: type (string), displayName (string), id (string), nested components (array of label objects with type, displayName, size (number), fmt (string optional), role, id, formulas (array), data (array))
 		components: z.array(z.record(z.string(), z.unknown())),
 	})
@@ -891,7 +891,10 @@ const UpdateTabLayoutInputSchema = z
 		// unknown: layout type; refers to the size and number of Klip columns on the tab
 		type: z.string(),
 		// unknown: keyed by Klip id; each value has region (string) and idx (number). All details must be provided or Klips will be removed from dashboard when the command is run
-		state: z.string(),
+		// unknown: Klip positions keyed by Klip instance id, e.g.
+		// { '<instance id>': { region: 'region-1', idx: 1 } }; sent as a JSON
+		// object, not a string.
+		state: z.record(z.string(), z.unknown()),
 	})
 	.passthrough();
 
@@ -995,11 +998,9 @@ const UpdateUserGroupInputSchema = z
 		id: z.string().min(1),
 		groupId: z.string().min(1),
 		client_id: z.string().optional(),
-		// unknown: listed as body field per docs
-		'user id': z.string(),
-		group_id: z.string(),
-		// unknown: true/false
-		can_edit: z.boolean(),
+		// The user and group come from the path (documented example sends no
+		// body); can_edit lets the user edit the group's shared assets.
+		can_edit: z.boolean().optional(),
 	})
 	.passthrough();
 
