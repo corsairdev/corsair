@@ -1,0 +1,2507 @@
+---
+title: "SignWell API reference"
+sidebarTitle: "API"
+description: "API reference for the SignWell plugin in Corsair: every `signwell.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account name, logo, plan tier and default sending preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `logo_url` | `string \| null` | No | — |
+| `plan_tier` | `string` | Yes | — |
+| `preferences` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="preferences full type">
+
+```ts
+{
+  date_format?: string | null,
+  days_until_links_expire?: number | null,
+  disable_apply_everywhere?: boolean | null,
+  disable_apply_everywhere_effective?: boolean | null,
+  disable_drawn_signatures?: boolean | null,
+  disable_typed_signatures?: boolean | null,
+  disable_uploaded_signatures?: boolean | null,
+  enable_redirect?: boolean | null,
+  hide_document_id_in_audit?: boolean | null,
+  mute_branding?: boolean | null,
+  redirect_url?: string | null,
+  separate_audit_pdf?: boolean | null,
+  separate_completed_file?: boolean | null,
+  enable_nom151_compliance?: boolean | null,
+  time_zone?: string | null,
+  recipient_language?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`account.update`
+
+Change the account name, logo, time zone, date format or recipient language; only the fields you send are changed
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.account.update({ name: 'Acme Logistics', date_format: 'DD/MM/YYYY' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `logo` | `string` | No | A base64 PNG or JPG (a data URI works), or a public URL. The decoded image must be under 300 KB. |
+| `time_zone` | `string` | No | An IANA name SignWell supports. A few newer aliases are rejected: send Europe/Kiev, not Europe/Kyiv. |
+| `date_format` | `MM/DD/YYYY \| DD/MM/YYYY \| YYYY/MM/DD \| Month DD, YYYY \| MM/DD/YYYY hh:mm:ss a` | No | — |
+| `recipient_language` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `logo_url` | `string \| null` | No | — |
+| `plan_tier` | `string` | Yes | — |
+| `preferences` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="preferences full type">
+
+```ts
+{
+  date_format?: string | null,
+  days_until_links_expire?: number | null,
+  disable_apply_everywhere?: boolean | null,
+  disable_apply_everywhere_effective?: boolean | null,
+  disable_drawn_signatures?: boolean | null,
+  disable_typed_signatures?: boolean | null,
+  disable_uploaded_signatures?: boolean | null,
+  enable_redirect?: boolean | null,
+  hide_document_id_in_audit?: boolean | null,
+  mute_branding?: boolean | null,
+  redirect_url?: string | null,
+  separate_audit_pdf?: boolean | null,
+  separate_completed_file?: boolean | null,
+  enable_nom151_compliance?: boolean | null,
+  time_zone?: string | null,
+  recipient_language?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Api Applications
+
+### delete
+
+`apiApplications.delete`
+
+Delete an API application; documents and templates that reference it keep their data but lose its branding and settings
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.signwell.api.apiApplications.delete({ id: '5a67dbd7-928a-4ea0-a7e2-e476a0eb045f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The API application id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`apiApplications.get`
+
+Read one API application's name, callback URLs, owner and branding preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.apiApplications.get({ id: '5a67dbd7-928a-4ea0-a7e2-e476a0eb045f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The API application id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `callback_urls` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `owner` | `object \| null` | No | — |
+| `preferences` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: string | null,
+  account_id?: string | null,
+  name: string,
+  email: string
+} | null
+```
+</Accordion>
+
+<Accordion title="preferences full type">
+
+```ts
+{
+  button_text_color?: string | null,
+  buttons_border_radius?: number | null,
+  custom_logo_file?: string | null,
+  link_text_color?: string | null,
+  primary_color?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bulk Sends
+
+### create
+
+`bulkSends.create`
+
+Create a bulk send from a CSV of recipient rows against one or more templates; each row becomes a document and is sent
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.bulkSends.create({ template_ids: ['d7315111-c671-4b15-8354-c9a19bbaefa0'], bulk_send_csv: 'bmFtZSxlbWFpbApUZXN0LHRlc3RAZXhhbXBsZS5jb20K' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_ids` | `string[]` | Yes | — |
+| `bulk_send_csv` | `string` | Yes | The filled-in CSV, base64 encoded. |
+| `skip_row_errors` | `boolean` | No | Defaults to false, which fails the whole send on a bad row. |
+| `api_application_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `apply_signing_order` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documents_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+
+
+
+---
+
+### get
+
+`bulkSends.get`
+
+Read one bulk send with its status and counts of completed and outstanding documents
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.bulkSends.get({ id: '5a67dbd7-928a-4ea0-a7e2-e476a0eb045f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `documents_count` | `number` | Yes | — |
+| `documents_completed` | `number \| null` | No | — |
+| `documents_not_completed` | `number \| null` | No | — |
+| `created_at` | `string` | Yes | ISO 8601 timestamp. |
+| `user_id` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `templates` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCsvTemplate
+
+`bulkSends.getCsvTemplate`
+
+Get the blank CSV, base64 encoded, whose columns match the given templates
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.bulkSends.getCsvTemplate({ template_ids: ['d7315111-c671-4b15-8354-c9a19bbaefa0'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_ids` | `string[]` | Yes | The templates the CSV columns are built from. |
+
+The template ids go out as repeated template_ids[] parameters, which is how SignWell reads this array.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | The blank CSV, base64 encoded. |
+
+
+
+---
+
+### getDocuments
+
+`bulkSends.getDocuments`
+
+List the documents a bulk send created, page by page, with each document's recipients and status
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.bulkSends.getDocuments({ id: '5a67dbd7-928a-4ea0-a7e2-e476a0eb045f', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `user_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `documents` | `object[]` | Yes | — |
+| `current_page` | `number` | Yes | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `total_count` | `number` | Yes | — |
+| `total_pages` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  id: string,
+  test_mode: boolean,
+  cfr_part11?: boolean,
+  cfr_part11_signing_mode?: streamlined | per_signature | null,
+  api_application_id?: string | null,
+  requester_email_address?: string | null,
+  custom_requester_name?: string | null,
+  custom_requester_email?: string | null,
+  name?: string | null,
+  subject?: string | null,
+  message?: string | null,
+  metadata?: Record<string, string> | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  recipients?: {
+    id: string,
+    name: string,
+    email?: string | null,
+    body?: string | null,
+    message?: string | null,
+    subject?: string | null,
+    send_email?: boolean | null,
+    send_email_delay?: number | null,
+    delivery_method?: email | sms | email_and_sms | null,
+    signing_order?: number | null,
+    signing_url?: string | null,
+    embedded_signing_url?: string | null,
+    bounced?: boolean | null,
+    status?: string | null
+  }[] | null,
+  status?: string | null,
+  reminders?: boolean | null,
+  archived?: boolean | null,
+  embedded?: boolean | {
+    logo_file?: string | null,
+    logo_url?: string | null,
+    primary_color?: string | null,
+    link_text_color?: string | null,
+    button_text_color?: string | null,
+    buttons_border_radius?: number | null
+  } | null,
+  embedded_signing?: boolean | null,
+  embedded_edit_url?: string | null,
+  embedded_preview_url?: string | null,
+  apply_signing_order?: boolean | null,
+  redirect_url?: string | null,
+  decline_redirect_url?: string | null,
+  language?: string | null,
+  expires_in?: number | null,
+  decline_message?: string | null,
+  error_message?: string | null,
+  template_id?: string | null,
+  template_ids?: string[] | null,
+  embedded_signing_notifications?: boolean | null,
+  files?: {
+    name?: string | null
+  }[] | null,
+  copied_contacts?: {
+    name: string,
+    email: string
+  }[] | null,
+  allow_decline?: boolean | null,
+  allow_reassign?: boolean | null,
+  labels?: {
+    name: string,
+    color?: string
+  }[] | null,
+  conditional_rules?: Record<string, unknown>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bulkSends.list`
+
+List bulk sends page by page, optionally filtered to one user or API application
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.bulkSends.list({ page: 1, limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_email` | `string` | No | Only sends created by this user. |
+| `limit` | `number` | No | Page size; SignWell applies its own default when omitted. |
+| `page` | `number` | No | 1-based page number. |
+| `api_application_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_sends` | `object[]` | Yes | — |
+| `current_page` | `number` | Yes | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `total_count` | `number` | Yes | — |
+| `total_pages` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="bulk_sends full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  api_application_id?: string | null,
+  documents_count: number,
+  documents_completed: number,
+  documents_not_completed: number,
+  created_at: string,
+  user_id?: string | null,
+  status: string,
+  template_ids?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateCsv
+
+`bulkSends.validateCsv`
+
+Check a bulk send CSV against its templates without creating anything, and report what SignWell would change
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.bulkSends.validateCsv({ template_ids: ['d7315111-c671-4b15-8354-c9a19bbaefa0'], bulk_send_csv: 'bmFtZSxlbWFpbApUZXN0LHRlc3RAZXhhbXBsZS5jb20K' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_ids` | `string[]` | Yes | — |
+| `bulk_send_csv` | `string` | Yes | The CSV to check, base64 encoded. |
+| `skip_row_errors` | `boolean` | No | — |
+| `api_application_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `apply_signing_order` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_send_csv` | `string` | Yes | — |
+| `template_ids` | `string[]` | Yes | — |
+| `skip_row_errors` | `boolean \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Documents
+
+### create
+
+`documents.create`
+
+Create a document from one or more files and send it for signature unless draft is true; this notifies real recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.documents.create({ files: [{ name: 'offer.pdf', file_url: 'https://acme.example/offer.pdf' }], recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan@acme-logistics.com' }], subject: 'Please sign the offer', draft: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | Yes | — |
+| `recipients` | `object[]` | Yes | — |
+| `test_mode` | `boolean` | No | SignWell does not bill a test-mode document and it is not legally binding. Defaults to false. |
+| `name` | `string` | No | The document name shown in the SignWell UI. |
+| `subject` | `string` | No | Email subject. Applies to email notifications only. |
+| `message` | `string` | No | Email body. Applies to email notifications only. |
+| `draft` | `boolean` | No | When true the document is not sent. Defaults to false, which sends it immediately. |
+| `expires_in` | `number` | No | Days before the request expires. |
+| `reminders` | `boolean` | No | Send reminders on days 3, 6 and 9 to recipients who have not signed. |
+| `apply_signing_order` | `boolean` | No | Recipients sign one at a time, in order. |
+| `redirect_url` | `string` | No | Where recipients land after signing. |
+| `decline_redirect_url` | `string` | No | Where recipients land after declining. |
+| `allow_decline` | `boolean` | No | — |
+| `allow_reassign` | `boolean` | No | — |
+| `language` | `string` | No | A supported language code, such as en or fr. |
+| `text_tags` | `boolean` | No | Place fields with text tags in the document instead of coordinates. |
+| `metadata` | `Record<string, string>` | No | Your own key-value data, returned on every read. |
+| `labels` | `object[]` | No | — |
+| `attachment_requests` | `object[]` | No | — |
+| `conditional_rules` | `object[]` | No | — |
+| `api_application_id` | `string` | No | Use a specific API application's branding and settings. |
+| `self_sign` | `boolean` | No | The creator signs without any field setup, using embedded_edit_url. Unavailable on 21 CFR Part 11 documents. |
+| `with_signature_page` | `boolean` | No | Append a signature page and require every signer to sign there. |
+| `embedded_signing` | `boolean` | No | — |
+| `embedded_signing_notifications` | `boolean` | No | — |
+| `fields` | `object[]` | No | Fields per file; one inner array for each entry in files. SignWell requires at least one field when draft is false and with_signature_page is not set. |
+| `copied_contacts` | `object[]` | No | — |
+| `sms_test_email` | `boolean` | No | On a test-mode document, send SMS notifications here instead. |
+
+Set draft: true to create without notifying anyone. Without it SignWell sends the request immediately. Each file also needs file_url or file_base64, never both: the schema rejects a call that sends both or neither.
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  name: string,
+  file_url?: string,
+  file_base64?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string,
+  delivery_method?: email | sms | email_and_sms,
+  subject?: string,
+  message?: string,
+  send_email?: boolean,
+  send_email_delay?: number,
+  signing_order?: number,
+  passcode?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachment_requests full type">
+
+```ts
+{
+  name: string,
+  required: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="conditional_rules full type">
+
+```ts
+{
+  field_id: string,
+  operator?: is | is_not | contains | does_not_contain | is_empty | is_not_empty,
+  value?: string,
+  action?: show | hide | require | optional,
+  target_field_ids?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  page: number,
+  type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed,
+  required?: boolean,
+  api_id?: string,
+  value?: string,
+  width?: number,
+  height?: number,
+  validation?: {
+    number?: boolean,
+    minimum?: number,
+    maximum?: number,
+    date_format?: string,
+    regex?: string,
+    regex_error_message?: string
+  },
+  recipient_id: string
+}[][]
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `test_mode` | `boolean` | Yes | — |
+| `cfr_part11` | `boolean` | No | — |
+| `cfr_part11_signing_mode` | `streamlined \| per_signature \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `recipients` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired. |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded` | `boolean \| object \| null` | No | — |
+| `embedded_signing` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `embedded_preview_url` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `decline_message` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `template_ids` | `string[] \| null` | No | — |
+| `embedded_signing_notifications` | `boolean \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `copied_contacts` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  body?: string | null,
+  message?: string | null,
+  subject?: string | null,
+  send_email?: boolean | null,
+  send_email_delay?: number | null,
+  delivery_method?: email | sms | email_and_sms | null,
+  signing_order?: number | null,
+  signing_url?: string | null,
+  embedded_signing_url?: string | null,
+  bounced?: boolean | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="embedded full type">
+
+```ts
+boolean | {
+  logo_file?: string | null,
+  logo_url?: string | null,
+  primary_color?: string | null,
+  link_text_color?: string | null,
+  button_text_color?: string | null,
+  buttons_border_radius?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromTemplate
+
+`documents.createFromTemplate`
+
+Create a document from one or several templates, filling each placeholder with a recipient, and send it unless draft is true
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.documents.createFromTemplate({ template_id: 'd7315111-c671-4b15-8354-c9a19bbaefa0', recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan@acme-logistics.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | No | Use for one template. Supply this or template_ids, not both. |
+| `template_ids` | `string[]` | No | Use for several templates. Supply this or template_id, not both. |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `recipients` | `object[]` | Yes | — |
+| `test_mode` | `boolean` | No | — |
+| `draft` | `boolean` | No | — |
+| `embedded_signing` | `boolean` | No | — |
+| `embedded_signing_notifications` | `boolean` | No | — |
+| `api_application_id` | `string` | No | — |
+| `copied_contacts` | `object[]` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `expires_in` | `number` | No | — |
+| `reminders` | `boolean` | No | — |
+| `apply_signing_order` | `boolean` | No | — |
+| `redirect_url` | `string` | No | — |
+| `decline_redirect_url` | `string` | No | — |
+| `allow_decline` | `boolean` | No | — |
+| `allow_reassign` | `boolean` | No | — |
+| `language` | `string` | No | — |
+| `labels` | `object[]` | No | — |
+| `fields` | `Record<string, unknown>[][]` | No | Overrides for the template's field values, if any. |
+
+Supply template_id or template_ids, never both; the schema rejects a call that sends both or neither.
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email: string,
+  subject?: string,
+  message?: string,
+  passcode?: string,
+  delivery_method?: email | sms | email_and_sms
+}[]
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `test_mode` | `boolean` | Yes | — |
+| `cfr_part11` | `boolean` | No | — |
+| `cfr_part11_signing_mode` | `streamlined \| per_signature \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `recipients` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired. |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded` | `boolean \| object \| null` | No | — |
+| `embedded_signing` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `embedded_preview_url` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `decline_message` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `template_ids` | `string[] \| null` | No | — |
+| `embedded_signing_notifications` | `boolean \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `copied_contacts` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  body?: string | null,
+  message?: string | null,
+  subject?: string | null,
+  send_email?: boolean | null,
+  send_email_delay?: number | null,
+  delivery_method?: email | sms | email_and_sms | null,
+  signing_order?: number | null,
+  signing_url?: string | null,
+  embedded_signing_url?: string | null,
+  bounced?: boolean | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="embedded full type">
+
+```ts
+boolean | {
+  logo_file?: string | null,
+  logo_url?: string | null,
+  primary_color?: string | null,
+  link_text_color?: string | null,
+  button_text_color?: string | null,
+  buttons_border_radius?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`documents.delete`
+
+Delete a document and cancel any signing in progress; the document, its signatures and its audit trail are gone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.signwell.api.documents.delete({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The document id. |
+
+Deleting cancels any signing in progress and removes the document, its signatures and its audit trail.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`documents.get`
+
+Read one document with its recipients, status, embedded links and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.documents.get({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The document id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `test_mode` | `boolean` | Yes | — |
+| `cfr_part11` | `boolean` | No | — |
+| `cfr_part11_signing_mode` | `streamlined \| per_signature \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `recipients` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired. |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded` | `boolean \| object \| null` | No | — |
+| `embedded_signing` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `embedded_preview_url` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `decline_message` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `template_ids` | `string[] \| null` | No | — |
+| `embedded_signing_notifications` | `boolean \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `copied_contacts` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  body?: string | null,
+  message?: string | null,
+  subject?: string | null,
+  send_email?: boolean | null,
+  send_email_delay?: number | null,
+  delivery_method?: email | sms | email_and_sms | null,
+  signing_order?: number | null,
+  signing_url?: string | null,
+  embedded_signing_url?: string | null,
+  bounced?: boolean | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="embedded full type">
+
+```ts
+boolean | {
+  logo_file?: string | null,
+  logo_url?: string | null,
+  primary_color?: string | null,
+  link_text_color?: string | null,
+  button_text_color?: string | null,
+  buttons_border_radius?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompletedPdf
+
+`documents.getCompletedPdf`
+
+Get a temporary download URL for a completed document as a PDF or a ZIP; the file itself is not returned
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.documents.getCompletedPdf({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', audit_page: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `audit_page` | `boolean` | No | Include the audit page in the file SignWell prepares. |
+| `file_format` | `pdf \| zip` | No | zip packages the document and the audit page separately. SignWell defaults to pdf. |
+
+SignWell answers a PDF body by default. This operation asks for url_only and returns file_url, because the plugin cannot hand back binary content intact.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | A temporary download URL for the completed document. |
+| `document_id` | `string` | Yes | — |
+
+
+
+---
+
+### getNom151Certificate
+
+`documents.getNom151Certificate`
+
+Get a temporary download URL for the NOM-151 certificate of a completed document, where NOM-151 is enabled
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.documents.getNom151Certificate({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | A temporary download URL for the certificate ZIP. |
+| `document_id` | `string` | Yes | — |
+
+
+
+---
+
+### send
+
+`documents.send`
+
+Send a draft document to its recipients, optionally changing its subject, message and reminders first
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.documents.send({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', subject: 'Please sign the offer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `test_mode` | `boolean` | No | Test mode does not carry over from the draft. Set it here too, or the send is billed as live. |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `reminders` | `boolean` | No | — |
+| `apply_signing_order` | `boolean` | No | — |
+| `api_application_id` | `string` | No | — |
+| `embedded_signing` | `boolean` | No | — |
+| `embedded_signing_notifications` | `boolean` | No | — |
+| `redirect_url` | `string` | No | — |
+| `decline_redirect_url` | `string` | No | — |
+| `allow_decline` | `boolean` | No | — |
+| `allow_reassign` | `boolean` | No | — |
+| `language` | `string` | No | — |
+| `text_tags` | `boolean` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `labels` | `object[]` | No | — |
+| `attachment_requests` | `object[]` | No | — |
+| `copied_contacts` | `object[]` | No | — |
+| `fields` | `object[]` | No | Fields per file; one inner array for each entry in files. SignWell requires at least one field when draft is false and with_signature_page is not set. |
+
+A draft created in test mode is still sent live unless test_mode is set again here. The plugin sends it on every send route that accepts it.
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachment_requests full type">
+
+```ts
+{
+  name: string,
+  required: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  page: number,
+  type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed,
+  required?: boolean,
+  api_id?: string,
+  value?: string,
+  width?: number,
+  height?: number,
+  validation?: {
+    number?: boolean,
+    minimum?: number,
+    maximum?: number,
+    date_format?: string,
+    regex?: string,
+    regex_error_message?: string
+  },
+  recipient_id: string
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `test_mode` | `boolean` | Yes | — |
+| `cfr_part11` | `boolean` | No | — |
+| `cfr_part11_signing_mode` | `streamlined \| per_signature \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `recipients` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired. |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded` | `boolean \| object \| null` | No | — |
+| `embedded_signing` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `embedded_preview_url` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `decline_message` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `template_ids` | `string[] \| null` | No | — |
+| `embedded_signing_notifications` | `boolean \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `copied_contacts` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  body?: string | null,
+  message?: string | null,
+  subject?: string | null,
+  send_email?: boolean | null,
+  send_email_delay?: number | null,
+  delivery_method?: email | sms | email_and_sms | null,
+  signing_order?: number | null,
+  signing_url?: string | null,
+  embedded_signing_url?: string | null,
+  bounced?: boolean | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="embedded full type">
+
+```ts
+boolean | {
+  logo_file?: string | null,
+  logo_url?: string | null,
+  primary_color?: string | null,
+  link_text_color?: string | null,
+  button_text_color?: string | null,
+  buttons_border_radius?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendReminder
+
+`documents.sendReminder`
+
+Remind recipients who have not signed yet, either everyone or a named list, through their own delivery method
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.documents.sendReminder({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recipients` | `object[]` | No | Omit to remind everyone who has not signed yet. |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `recipients` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  delivery_method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateAuthentication
+
+`documents.updateAuthentication`
+
+Change or add passcodes for recipients on a sent document; only recipients who have not started signing
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.documents.updateAuthentication({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', recipients: [{ id: '1', passcode: '4821' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recipients` | `object[]` | Yes | Only recipients who have not started signing can be updated. |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  passcode?: string,
+  passcode_delivery?: {
+    enabled: boolean,
+    methods?: email[],
+    expire_after_days?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `test_mode` | `boolean` | Yes | — |
+| `cfr_part11` | `boolean` | No | — |
+| `cfr_part11_signing_mode` | `streamlined \| per_signature \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `recipients` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired. |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded` | `boolean \| object \| null` | No | — |
+| `embedded_signing` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `embedded_preview_url` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `decline_message` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `template_ids` | `string[] \| null` | No | — |
+| `embedded_signing_notifications` | `boolean \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `copied_contacts` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  body?: string | null,
+  message?: string | null,
+  subject?: string | null,
+  send_email?: boolean | null,
+  send_email_delay?: number | null,
+  delivery_method?: email | sms | email_and_sms | null,
+  signing_order?: number | null,
+  signing_url?: string | null,
+  embedded_signing_url?: string | null,
+  bounced?: boolean | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="embedded full type">
+
+```ts
+boolean | {
+  logo_file?: string | null,
+  logo_url?: string | null,
+  primary_color?: string | null,
+  link_text_color?: string | null,
+  button_text_color?: string | null,
+  buttons_border_radius?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRecipients
+
+`documents.updateRecipients`
+
+Change the name or email of recipients on a document that has been sent; only recipients who have not started signing
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.documents.updateRecipients({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan.lee@acme-logistics.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recipients` | `object[]` | Yes | Only recipients who have not started signing can be updated. |
+
+Use the recipient ids from documents.get, not the ids you supplied at creation.
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email: string,
+  subject?: string,
+  message?: string,
+  passcode?: string,
+  send_email_delay?: number,
+  delivery_method?: email | sms | email_and_sms
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `test_mode` | `boolean` | Yes | — |
+| `cfr_part11` | `boolean` | No | — |
+| `cfr_part11_signing_mode` | `streamlined \| per_signature \| null` | No | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `recipients` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired. |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded` | `boolean \| object \| null` | No | — |
+| `embedded_signing` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `embedded_preview_url` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `decline_message` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `template_ids` | `string[] \| null` | No | — |
+| `embedded_signing_notifications` | `boolean \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `copied_contacts` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `conditional_rules` | `Record<string, unknown>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  body?: string | null,
+  message?: string | null,
+  subject?: string | null,
+  send_email?: boolean | null,
+  send_email_delay?: number | null,
+  delivery_method?: email | sms | email_and_sms | null,
+  signing_order?: number | null,
+  signing_url?: string | null,
+  embedded_signing_url?: string | null,
+  bounced?: boolean | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="embedded full type">
+
+```ts
+boolean | {
+  logo_file?: string | null,
+  logo_url?: string | null,
+  primary_color?: string | null,
+  link_text_color?: string | null,
+  button_text_color?: string | null,
+  buttons_border_radius?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="copied_contacts full type">
+
+```ts
+{
+  name: string,
+  email: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Me
+
+### get
+
+`me.get`
+
+Read the authenticated user, their role and the account and workspace the API token belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.me.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Membership id. |
+| `role` | `string` | Yes | owner, admin or member. |
+| `archived` | `boolean \| null` | No | — |
+| `user` | `object` | Yes | — |
+| `account` | `object` | Yes | — |
+| `workspace` | `object` | Yes | — |
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email: string,
+  first_name?: string | null,
+  has_google_registration?: boolean | null,
+  preferences?: {
+    sales_document?: boolean | null,
+    time_zone?: string | null,
+    smart_fields?: boolean | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="account full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="contact full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  name: string,
+  company_name?: string | null,
+  phone_number?: string | null,
+  alt_phone_number?: string | null,
+  website?: string | null,
+  initials?: string | null,
+  archived?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a reusable template from files and named placeholders that recipients are filled into later
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.templates.create({ files: [{ name: 'contract.pdf', file_url: 'https://acme.example/contract.pdf' }], placeholders: [{ id: '1', name: 'Employee' }], name: 'Employment contract' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | Yes | — |
+| `placeholders` | `object[]` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `copied_placeholders` | `object[]` | No | — |
+| `draft` | `boolean` | No | — |
+| `expires_in` | `number` | No | — |
+| `reminders` | `boolean` | No | — |
+| `apply_signing_order` | `boolean` | No | — |
+| `api_application_id` | `string` | No | — |
+| `text_tags` | `boolean` | No | — |
+| `redirect_url` | `string` | No | — |
+| `decline_redirect_url` | `string` | No | — |
+| `allow_decline` | `boolean` | No | — |
+| `allow_reassign` | `boolean` | No | — |
+| `language` | `string` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `labels` | `object[]` | No | — |
+| `attachment_requests` | `object[]` | No | — |
+| `conditional_rules` | `object[]` | No | — |
+| `fields` | `object[]` | No | Fields per file; one inner array for each entry in files. |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  name: string,
+  file_url?: string,
+  file_base64?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="placeholders full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  preassigned_recipient_name?: string,
+  preassigned_recipient_email?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="copied_placeholders full type">
+
+```ts
+{
+  name: string,
+  preassigned_recipient_name?: string,
+  preassigned_recipient_email?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachment_requests full type">
+
+```ts
+{
+  name: string,
+  required: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="conditional_rules full type">
+
+```ts
+{
+  field_id: string,
+  operator?: is | is_not | contains | does_not_contain | is_empty | is_not_empty,
+  value?: string,
+  action?: show | hide | require | optional,
+  target_field_ids?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  page: number,
+  type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed,
+  required?: boolean,
+  api_id?: string,
+  value?: string,
+  width?: number,
+  height?: number,
+  validation?: {
+    number?: boolean,
+    minimum?: number,
+    maximum?: number,
+    date_format?: string,
+    regex?: string,
+    regex_error_message?: string
+  },
+  placeholder_id: string
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `copied_placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `template_link` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a template; documents already created from it are unaffected, but it cannot be used again
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.signwell.api.templates.delete({ id: 'd7315111-c671-4b15-8354-c9a19bbaefa0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The template id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template with its placeholders, files and settings
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.templates.get({ id: 'd7315111-c671-4b15-8354-c9a19bbaefa0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The template id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `copied_placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `template_link` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Change a template's name, message, placeholders, labels or sending settings
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.templates.update({ id: 'd7315111-c671-4b15-8354-c9a19bbaefa0', name: 'Employment contract (2026)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `draft` | `boolean` | No | — |
+| `expires_in` | `number` | No | — |
+| `reminders` | `boolean` | No | — |
+| `apply_signing_order` | `boolean` | No | — |
+| `api_application_id` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `decline_redirect_url` | `string` | No | — |
+| `allow_decline` | `boolean` | No | — |
+| `allow_reassign` | `boolean` | No | — |
+| `language` | `string` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `labels` | `object[]` | No | — |
+| `placeholders` | `object[]` | No | — |
+| `copied_placeholders` | `object[]` | No | — |
+| `fields` | `object[]` | No | Fields per file; one inner array for each entry in files. |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="placeholders full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  preassigned_recipient_name?: string,
+  preassigned_recipient_email?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="copied_placeholders full type">
+
+```ts
+{
+  name: string,
+  preassigned_recipient_name?: string,
+  preassigned_recipient_email?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  x: number,
+  y: number,
+  page: number,
+  type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed,
+  required?: boolean,
+  api_id?: string,
+  value?: string,
+  width?: number,
+  height?: number,
+  validation?: {
+    number?: boolean,
+    minimum?: number,
+    maximum?: number,
+    date_format?: string,
+    regex?: string,
+    regex_error_message?: string
+  },
+  placeholder_id: string
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `api_application_id` | `string \| null` | No | — |
+| `requester_email_address` | `string \| null` | No | — |
+| `custom_requester_name` | `string \| null` | No | — |
+| `custom_requester_email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `updated_at` | `string \| null` | No | ISO 8601 timestamp. |
+| `placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `copied_placeholders` | `Record<string, unknown>[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reminders` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `embedded_edit_url` | `string \| null` | No | — |
+| `template_link` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `apply_signing_order` | `boolean \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `decline_redirect_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `expires_in` | `number \| null` | No | — |
+| `files` | `object[] \| null` | No | — |
+| `allow_decline` | `boolean \| null` | No | — |
+| `allow_reassign` | `boolean \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  name: string,
+  color?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a callback URL that SignWell posts document events to; the returned id is the HMAC key for verifying deliveries
+
+**Risk:** `write`
+
+```ts
+await corsair.signwell.api.webhooks.create({ callback_url: 'https://acme.example/hooks/signwell' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callback_url` | `string` | Yes | The HTTPS endpoint SignWell posts document and template events to. |
+| `api_application_id` | `string` | No | — |
+
+The returned id is the HMAC key for verifying deliveries. Give it to the plugin as webhookSecret, or store it as the account webhook signature.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `callback_url` | `string` | Yes | — |
+| `api_application_id` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a registered webhook; SignWell stops posting to its URL immediately
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.signwell.api.webhooks.delete({ id: '0f5c4c2a-1c1f-4a2e-9f0a-6c1f2d3e4b5a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The document id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhooks registered on the account with their ids and callback URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.signwell.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | Every webhook registered on the account; this route does not page. |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  callback_url: string,
+  api_application_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
