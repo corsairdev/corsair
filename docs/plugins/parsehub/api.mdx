@@ -1,0 +1,57 @@
+---
+title: "ParseHub API reference"
+sidebarTitle: "API"
+description: "API reference for the ParseHub plugin in Corsair: every `parsehub.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Projects
+
+### list
+
+`projects.list`
+
+List projects for the authenticated ParseHub account.
+
+**Risk:** `read`
+
+```ts
+await corsair.parsehub.api.projects.list({ offset: 0, limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Zero-based start index. Default 0. |
+| `limit` | `number` | No | Page size, 1 to 20. Default 20. |
+| `include_options` | `boolean` | No | Include options_json and related fields. |
+
+Omit offset, limit, or include_options to take the service default. include_options is sent as 1 or 0.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `total_projects` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

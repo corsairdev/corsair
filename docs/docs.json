@@ -3534,6 +3534,14 @@
                 ]
               },
               {
+                "group": "ParseHub",
+                "pages": [
+                  "plugins/parsehub/overview",
+                  "plugins/parsehub/api",
+                  "plugins/parsehub/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
