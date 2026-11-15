@@ -11,6 +11,7 @@ import {
 	encryptDEK,
 	generateDEK,
 } from '../core/auth/encryption';
+import { createAccountKeyManager } from '../core/auth/key-manager';
 import { createTestDatabase } from './setup-db';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
@@ -335,5 +336,112 @@ describe('upsertAccount', () => {
 				tenantId: 't1',
 			}),
 		).rejects.toThrow("Integration 'nope' not found. Run setupCorsair first.");
+	});
+});
+
+describe('account key manager scope', () => {
+	let t: TestDb;
+	beforeEach(async () => {
+		t = createTestDatabase();
+		await seedIntegration(t);
+		await seedAccount(t, 'a-old', '2026-01-01', {
+			ref: 'old@x.com',
+			label: 'Old',
+		});
+		await seedAccount(t, 'a-new', '2026-02-01', {
+			ref: 'new@x.com',
+			label: 'New',
+		});
+	});
+	afterEach(() => t.cleanup());
+
+	const km = (account?: { ref?: string }) =>
+		createAccountKeyManager({
+			authType: 'oauth_2',
+			integrationName: 'gmail',
+			tenantId: 't1',
+			kek: KEK,
+			database: t.database,
+			account,
+		});
+	const storedConfig = async (id: string) => {
+		const row = await t.database.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('id', '=', id)
+			.executeTakeFirstOrThrow();
+		const raw =
+			typeof row.config === 'string' ? JSON.parse(row.config) : row.config;
+		return decryptConfig(raw, await decryptDEK(row.dek!, KEK));
+	};
+	const storedToken = async (id: string) =>
+		(await storedConfig(id)).access_token;
+
+	test("account scope by provider id writes and reads that account's token only", async () => {
+		const m = km({ ref: 'new@x.com' });
+		await m.set_access_token('tok-new');
+		expect(await m.get_access_token()).toBe('tok-new');
+		expect(await storedToken('a-new')).toBe('tok-new');
+		expect(await storedToken('a-old')).toBeUndefined();
+	});
+
+	test('account scope by row id works', async () => {
+		const m = km({ ref: 'a-old' });
+		await m.set_access_token('tok-old');
+		expect(await storedToken('a-old')).toBe('tok-old');
+		expect(await storedToken('a-new')).toBeUndefined();
+	});
+
+	test('account scope with no ref and two accounts throws account_required on get_access_token', async () => {
+		await expect(km({}).get_access_token()).rejects.toMatchObject({
+			code: 'account_required',
+		});
+	});
+
+	test('account scope with no ref and one account behaves like the default', async () => {
+		await t.database.db
+			.deleteFrom('corsair_accounts')
+			.where('id', '=', 'a-new')
+			.execute();
+		const m = km({});
+		await m.set_access_token('tok');
+		expect(await m.get_access_token()).toBe('tok');
+		expect(await storedToken('a-old')).toBe('tok');
+	});
+
+	test('unknown ref throws account_not_found', async () => {
+		await expect(
+			km({ ref: 'nobody@x.com' }).get_access_token(),
+		).rejects.toMatchObject({ code: 'account_not_found' });
+	});
+
+	test('an unscoped manager still writes to the oldest account', async () => {
+		await km().set_access_token('tok');
+		expect(await storedToken('a-old')).toBe('tok');
+		expect(await storedToken('a-new')).toBeUndefined();
+	});
+
+	test('a long-lived unscoped scope notices a second account added later', async () => {
+		await t.database.db
+			.deleteFrom('corsair_accounts')
+			.where('id', '=', 'a-new')
+			.execute();
+		const m = km({});
+		await m.set_access_token('tok');
+		expect(await m.get_access_token()).toBe('tok');
+		await seedAccount(t, 'a-late', '2026-03-01', { ref: 'late@x.com' });
+		await expect(m.get_access_token()).rejects.toMatchObject({
+			code: 'account_required',
+		});
+	});
+
+	test('set_access_token keeps account_ref and account_label in the sealed config', async () => {
+		await km({ ref: 'new@x.com' }).set_access_token('tok');
+		const cfg = await storedConfig('a-new');
+		expect(cfg).toMatchObject({
+			access_token: 'tok',
+			account_ref: 'new@x.com',
+			account_label: 'New',
+		});
 	});
 });

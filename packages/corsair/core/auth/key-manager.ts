@@ -1,6 +1,6 @@
 import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
-import { findAccountRow } from '../account-lookup';
+import { findAccountRow, resolveAccount } from '../account-lookup';
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -276,6 +276,8 @@ export type AccountKeyManagerOptions<T extends AuthTypes> = {
 	/** Extra account-level fields from plugin authConfig */
 	extraAccountFields?: readonly string[];
 	ensureProvisioned?: () => Promise<void>;
+	/** Scope to one named account. Absent = the default (oldest) account. */
+	account?: { ref?: string };
 };
 
 /**
@@ -295,6 +297,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		database,
 		extraAccountFields = [],
 		ensureProvisioned,
+		account: scope,
 	} = options;
 
 	// Merge base + extra fields
@@ -313,6 +316,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		config: Record<string, unknown>;
 		dek: string | null;
 	} | null = null;
+
+	// Once a ref resolves its row id is pinned; the row is still re-read each call.
+	let pinnedAccountId: string | undefined;
 
 	const getIntegration = async () => {
 		if (cachedIntegration) return cachedIntegration;
@@ -361,10 +367,32 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			while (true) {
 				const integration = await getIntegration();
 
-				const account = await findAccountRow(database.db, {
-					tenantId,
-					integrationId: integration.id,
-				});
+				const where = { tenantId, integrationId: integration.id };
+				let account:
+					| { id: string; config: unknown; dek?: string | null }
+					| undefined;
+				if (!scope) {
+					account = await findAccountRow(database.db, where);
+				} else {
+					if (pinnedAccountId) {
+						account = await database.db
+							.selectFrom('corsair_accounts')
+							.selectAll()
+							.where('id', '=', pinnedAccountId)
+							.where('tenant_id', '=', tenantId)
+							.executeTakeFirst();
+						if (!account) pinnedAccountId = undefined;
+					}
+					if (!account) {
+						account = await resolveAccount({
+							db: database.db,
+							kek,
+							...where,
+							ref: scope.ref,
+						});
+						if (account && scope.ref) pinnedAccountId = account.id;
+					}
+				}
 
 				if (!account) {
 					if (!provisionAttempted && ensureProvisioned) {
