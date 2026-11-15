@@ -1,0 +1,103 @@
+---
+title: "IP2WHOIS API reference"
+sidebarTitle: "API"
+description: "API reference for the IP2WHOIS plugin in Corsair: every `ip2whois.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Domain
+
+### lookup
+
+`domain.lookup`
+
+Look up WHOIS registration data for a domain.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ip2whois.api.domain.lookup({ domain: 'example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | Domain name, without a scheme or www. |
+
+Pass the registrable domain, without a scheme or www. The call spends credits.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `domain_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `create_date` | `string` | No | — |
+| `update_date` | `string` | No | — |
+| `expire_date` | `string` | No | — |
+| `domain_age` | `number` | No | — |
+| `whois_server` | `string` | No | — |
+| `nameservers` | `string[]` | No | — |
+
+
+
+---
+
+## Hosted
+
+### lookup
+
+`hosted.lookup`
+
+List domains hosted on an IP address.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ip2whois.api.hosted.lookup({ ip: '8.8.8.8', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | IPv4 or IPv6 address. |
+| `page` | `number` | No | Page number, starting at 1. |
+
+Pass an IPv4 or IPv6 address. Page starts at 1 when you set it. The call spends credits.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `total_domains` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `per_page` | `number` | Yes | — |
+| `total_pages` | `number` | Yes | — |
+| `domains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domain?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

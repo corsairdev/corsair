@@ -2906,6 +2906,14 @@
                 ]
               },
               {
+                "group": "IP2WHOIS",
+                "pages": [
+                  "plugins/ip2whois/overview",
+                  "plugins/ip2whois/api",
+                  "plugins/ip2whois/database"
+                ]
+              },
+              {
                 "group": "JigsawStack",
                 "pages": [
                   "plugins/jigsawstack/overview",
