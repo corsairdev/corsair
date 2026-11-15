@@ -2657,6 +2657,14 @@
                 ]
               },
               {
+                "group": "Handwrytten",
+                "pages": [
+                  "plugins/handwrytten/overview",
+                  "plugins/handwrytten/api",
+                  "plugins/handwrytten/database"
+                ]
+              },
+              {
                 "group": "Happy Scribe",
                 "pages": [
                   "plugins/happyscribe/overview",
