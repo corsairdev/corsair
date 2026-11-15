@@ -576,6 +576,8 @@ export const OrdersSendSingleInputSchema = z
 		message: z.string().min(1, 'Message is required'),
 		wishes: z.string().optional(),
 		font_label: z.string().min(1, 'font_label is required'),
+		// Saved card to charge; without it Handwrytten uses account credit or the default card
+		credit_card_id: z.number().int().optional(),
 		denomination_id: z.number().int().optional(),
 		insert_id: z.number().int().optional(),
 		bundle_id: z.number().int().optional(),

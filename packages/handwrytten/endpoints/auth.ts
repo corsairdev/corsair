@@ -25,9 +25,13 @@ export const getUser: HandwryttenEndpoints['auth.getUser'] = async (
 			baseUrl: ctx.options?.baseUrl,
 		},
 	);
+	// A missing or non-object body is an error, not an empty user.
+	if (!response || typeof response !== 'object' || Array.isArray(response)) {
+		throw new Error('Handwrytten getUser returned no user object');
+	}
 	// `uid` is the account's session token (it authenticates like a password
 	// login); it never leaves the plugin.
-	const { uid: _uid, ...safe } = (response ?? {}) as AuthGetUserResponse & {
+	const { uid: _uid, ...safe } = response as AuthGetUserResponse & {
 		uid?: unknown;
 	};
 	const parsed = HandwryttenEndpointOutputSchemas['auth.getUser'].parse(safe);
@@ -75,7 +79,8 @@ export const setTestMode: HandwryttenEndpoints['auth.setTestMode'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: parsedInput,
+			// The API documents test_mode as the integer 0 or 1.
+			body: { test_mode: parsedInput.test_mode ? 1 : 0 },
 			baseUrl: ctx.options?.baseUrl,
 		},
 	);

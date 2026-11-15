@@ -289,6 +289,7 @@ describe('Orders Endpoints', () => {
 			recipient_city: 'Austin',
 			recipient_state: 'TX',
 			recipient_zip: '78701',
+			credit_card_id: 77,
 		};
 
 		const res = await Orders.sendSingle(ctx, input);
@@ -791,6 +792,15 @@ describe('QR Codes and Prospecting', () => {
 });
 
 describe('Auth Endpoints', () => {
+	it('rejects a getUser response that is not an object', async () => {
+		for (const body of [null, [], 42]) {
+			mockedRequest.mockResolvedValueOnce(body);
+			await expect(Auth.getUser(ctx, {})).rejects.toThrow(
+				'Handwrytten getUser returned no user object',
+			);
+		}
+	});
+
 	it('handles getUser, checkAuth, setTestMode, logout', async () => {
 		mockedRequest.mockResolvedValue({
 			httpCode: 200,
@@ -825,7 +835,13 @@ describe('Auth Endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/auth/setTestMode',
 			'test-api-key',
-			{ method: 'POST', body: { test_mode: true } },
+			{ method: 'POST', body: { test_mode: 1 } },
+		);
+		await Auth.setTestMode(ctx, { test_mode: false });
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			'/auth/setTestMode',
+			'test-api-key',
+			{ method: 'POST', body: { test_mode: 0 } },
 		);
 
 		await Auth.logout(ctx, {});
