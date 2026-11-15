@@ -1,0 +1,3060 @@
+{
+  "id": "handwrytten",
+  "displayName": "Handwrytten",
+  "description": "Automated handwritten notes, cards, and direct mail platform using robotics with real pens.",
+  "npmPackageName": "@corsair-dev/handwrytten",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 55,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "handwrytten.api.addressBook.addRecipient",
+      "shortPath": "addressBook.addRecipient",
+      "description": "Add a new recipient address to the user address book",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address1",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address_id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.addSender",
+      "shortPath": "addressBook.addSender",
+      "description": "Add a new sender return address to the account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address1",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.countries",
+      "shortPath": "addressBook.countries",
+      "description": "List supported destination countries and country codes for mailing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "countries",
+            "optional": true,
+            "type": "{ id?: number | string | null, name: string, short_name?: string | null, code?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.deleteRecipient",
+      "shortPath": "addressBook.deleteRecipient",
+      "description": "Delete a recipient address from the user address book",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address_id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.deleteSender",
+      "shortPath": "addressBook.deleteSender",
+      "description": "Delete a sender return address from the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.getSender",
+      "shortPath": "addressBook.getSender",
+      "description": "Get default sender return address and account billing info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "billing_info",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.listRecipients",
+      "shortPath": "addressBook.listRecipients",
+      "description": "List saved recipient mailing addresses from the address book",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ id?: number | string | null, address_id?: number | string | null, name?: string | null, first_name?: string | null, last_name?: string | null, business_name?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: number | string | null, country?: string | null, country_id?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.listSenders",
+      "shortPath": "addressBook.listSenders",
+      "description": "List saved return/sender addresses from the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ id?: number | string | null, address_id?: number | string | null, name?: string | null, first_name?: string | null, last_name?: string | null, business_name?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, zip?: number | string | null, country?: string | null, country_id?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.setDefaultSender",
+      "shortPath": "addressBook.setDefaultSender",
+      "description": "Set an address as the default sender return address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.states",
+      "shortPath": "addressBook.states",
+      "description": "List states and provinces for a given country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "{ id?: number | string | null, name: string, short_name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.updateRecipient",
+      "shortPath": "addressBook.updateRecipient",
+      "description": "Update an existing recipient address in the user address book",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address_id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.addressBook.updateSender",
+      "shortPath": "addressBook.updateSender",
+      "description": "Update the sender return address on the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address1",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.auth.checkAuth",
+      "shortPath": "auth.checkAuth",
+      "description": "Check API key authentication status and whether test mode is active",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "login",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.auth.getUser",
+      "shortPath": "auth.getUser",
+      "description": "Get authenticated user profile details, email, and credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.auth.logout",
+      "shortPath": "auth.logout",
+      "description": "Invalidate current session credentials",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.auth.setTestMode",
+      "shortPath": "auth.setTestMode",
+      "description": "Enable or disable account test mode for simulating orders without fulfillment charges",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_mode",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.basket.clear",
+      "shortPath": "basket.clear",
+      "description": "Remove all pending orders and clear the shopping basket",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "item",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.basket.count",
+      "shortPath": "basket.count",
+      "description": "Get current item count in the shopping basket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.basket.send",
+      "shortPath": "basket.send",
+      "description": "Submit and charge all pending orders in the shopping basket for robotic fulfillment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "couponCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "check_quantity",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Order notes keyed by order id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.bundles.list",
+      "shortPath": "bundles.list",
+      "description": "List product bundles and gift pairings available to enclose with cards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "bundles",
+            "optional": true,
+            "type": "{ id: number | string, name?: string | null, description?: string | null, price?: number | string | null, delivery_cost?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.cards.categories",
+      "shortPath": "cards.categories",
+      "description": "List all card categories and taxonomies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ id: number | string, name: string, slug?: string | null, meta_title?: string | null, meta_description?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.cards.get",
+      "shortPath": "cards.get",
+      "description": "Get details, dimensions, and cover image for a specific card",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lowres",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "card",
+            "optional": true,
+            "type": "{ id: number | string, name?: string | null, title?: string | null, description?: string | null, dimension_id?: number | string | null, cover?: string | null, inside_image?: string | null, price?: number | string | null, category_id?: number | string | null, category_name?: string | null, orientation?: string | null, card_dimension?: { id?: number | string | null, closed_height?: number | string | null, closed_width?: number | string | null, character_width?: number | string | null, character_height?: number | string | null, orientation?: string | null, open_height?: number | string | null, open_width?: number | string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.cards.list",
+      "shortPath": "cards.list",
+      "description": "List available greeting cards and designs with optional filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "with_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_detailed_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lowres",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cards",
+            "optional": true,
+            "type": "{ id: number | string, name?: string | null, title?: string | null, description?: string | null, dimension_id?: number | string | null, cover?: string | null, inside_image?: string | null, price?: number | string | null, category_id?: number | string | null, category_name?: string | null, orientation?: string | null, card_dimension?: { id?: number | string | null, closed_height?: number | string | null, closed_width?: number | string | null, character_width?: number | string | null, character_height?: number | string | null, orientation?: string | null, open_height?: number | string | null, open_width?: number | string | null } | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ is_last?: boolean | number | null, next?: number | string | null, per_page?: number | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.cards.sections",
+      "shortPath": "cards.sections",
+      "description": "List cards grouped by category sections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "with_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_detailed_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lowres",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cards",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.customCards.checkImage",
+      "shortPath": "customCards.checkImage",
+      "description": "Check image quality, resolution, and DPI for printing compatibility",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "card_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.customCards.create",
+      "shortPath": "customCards.create",
+      "description": "Create a custom card template with uploaded cover or inside artwork",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dimension_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_update",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cover_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preset_cover_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cover_size_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "header_type",
+            "optional": true,
+            "type": "text | logo"
+          },
+          {
+            "key": "header_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "header_font_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "header_font_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "header_font_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "header_align",
+            "optional": true,
+            "type": "left | center | right"
+          },
+          {
+            "key": "header_logo_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "header_logo_size_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "footer_type",
+            "optional": true,
+            "type": "text | logo"
+          },
+          {
+            "key": "footer_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footer_font_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "footer_font_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footer_font_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "footer_align",
+            "optional": true,
+            "type": "left | center | right"
+          },
+          {
+            "key": "footer_logo_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "footer_logo_size_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "main_type",
+            "optional": true,
+            "type": "text | logo"
+          },
+          {
+            "key": "main_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "main_font_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "main_font_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "main_font_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "main_align",
+            "optional": true,
+            "type": "left | center | right"
+          },
+          {
+            "key": "main_logo_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "main_logo_size_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "back_type",
+            "optional": true,
+            "type": "text | logo"
+          },
+          {
+            "key": "back_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "back_font_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "back_font_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "back_font_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "back_align",
+            "optional": true,
+            "type": "left | center | right"
+          },
+          {
+            "key": "back_vertical_align",
+            "optional": true,
+            "type": "top | center | bottom"
+          },
+          {
+            "key": "back_logo_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "back_size_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "back_cover_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preset_back_cover_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "qr_code_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "qr_code_size_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "qr_code_align",
+            "optional": true,
+            "type": "left | center | right"
+          },
+          {
+            "key": "qr_code_location",
+            "optional": true,
+            "type": "header | footer"
+          },
+          {
+            "key": "qr_code_frame_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "card_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.customCards.delete",
+      "shortPath": "customCards.delete",
+      "description": "Permanently delete a custom card template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.customCards.deleteImage",
+      "shortPath": "customCards.deleteImage",
+      "description": "Delete a previously uploaded custom logo or image",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.customCards.dimensions",
+      "shortPath": "customCards.dimensions",
+      "description": "List supported card dimensions and print orientations for custom cards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "{ id?: number | string | null, closed_height?: number | string | null, closed_width?: number | string | null, character_width?: number | string | null, character_height?: number | string | null, orientation?: string | null, open_height?: number | string | null, open_width?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.customCards.listImages",
+      "shortPath": "customCards.listImages",
+      "description": "List custom logos and user-uploaded images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "logo | cover"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ id: number | string, src?: string | null, type?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.customCards.presetImages",
+      "shortPath": "customCards.presetImages",
+      "description": "List preset cover images available for custom card design",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dimension_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ id: number | string, src?: string | null, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.customCards.uploadImage",
+      "shortPath": "customCards.uploadImage",
+      "description": "Upload a custom logo or image for card customization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string",
+            "description": "Image file content, base64-encoded (JPG or PNG)"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string",
+            "description": "File name sent with the upload, e.g. logo.png"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "image/png | image/jpeg",
+            "description": "Defaults to image/png"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "logo | cover"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image_id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.fonts.list",
+      "shortPath": "fonts.list",
+      "description": "List available realistic handwriting font styles and stroke properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "fonts",
+            "optional": true,
+            "type": "{ id: string, label?: string | null, font_name?: string | null, image?: string | null, path?: string | null, font_id?: number | string | null, line_spacing?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.giftCards.list",
+      "shortPath": "giftCards.list",
+      "description": "List physical merchant gift cards and denominations that can be enclosed in notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "gcards",
+            "optional": true,
+            "type": "{ id: number | string, name?: string | null, image?: string | null, denominations?: { id: number | string, nominal?: number | string | null, price?: number | string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.inserts.list",
+      "shortPath": "inserts.list",
+      "description": "List custom marketing inserts and business cards available for envelope insertion",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_historical",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "inserts",
+            "optional": true,
+            "type": "{ id: number | string, name?: string | null, image?: string | null, price?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.orders.addToBasket",
+      "shortPath": "orders.addToBasket",
+      "description": "Add a handwritten card order to the shopping basket for batch sending",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wishes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "return_address_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ to_first_name?: string, to_last_name?: string, to_business_name?: string, to_address1: string, to_address2?: string, to_city: string, to_state?: string, to_zip: string, to_country?: string, return_first_name?: string, return_last_name?: string, return_business_name?: string, return_address1?: string, return_address2?: string, return_city?: string, return_state?: string, return_zip?: string, return_country?: string, message?: string, wishes?: string, signature_id?: number, signature2_id?: number, date_send?: string }[]",
+            "description": "Inline recipients (each with its own message), instead of saved address_ids"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "font_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_font_size",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "signature_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "signature2_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_send",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "couponCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "denomination_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "insert_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bundle_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "check_quantity",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delivery_confirmation",
+            "optional": true,
+            "type": "0 | 1 | 2"
+          },
+          {
+            "key": "stamp_option_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.orders.cancel",
+      "shortPath": "orders.cancel",
+      "description": "Cancel an order before it enters robotic production",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Get status and details for an existing order by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.orders.sendSingle",
+      "shortPath": "orders.sendSingle",
+      "description": "Place a single real handwritten card order (spends credits and triggers robotic fulfillment)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wishes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "font_label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credit_card_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "denomination_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "insert_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bundle_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "couponCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_send",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "validate_address",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delivery_confirmation",
+            "optional": true,
+            "type": "0 | 1 | 2"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stamp_option_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sender_first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_address1",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sender_address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sender_zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sender_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sender_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient_first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient_last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient_business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient_address1",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient_address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient_city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient_zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient_country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recipient_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "mail_sent",
+            "optional": true,
+            "type": "boolean | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.prospecting.calculateTargets",
+      "shortPath": "prospecting.calculateTargets",
+      "description": "Calculate target recipient counts based on demographic and geographic filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "residential | business"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownRent-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hinc-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worth-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Home-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resLen-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hAge",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "people",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marital",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "staff",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "one",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "sic",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "mask",
+            "optional": true,
+            "type": "boolean | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.prospecting.createOrder",
+      "shortPath": "prospecting.createOrder",
+      "description": "Create a direct-mail prospecting campaign order with targeted recipient lists",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wishes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "return_address_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "font",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "font_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownRent-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hinc-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worth-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Home-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resLen-d",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hAge",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "people",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marital",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "signature_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "signature2_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "must_deliver_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shipping_address_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shipping_method_id",
+            "optional": false,
+            "type": "1 | 2 | 3 | 4 | 5 | 6"
+          },
+          {
+            "key": "shipping_rate_id",
+            "optional": true,
+            "type": "1 | 2 | 3 | 4"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.prospecting.preview",
+      "shortPath": "prospecting.preview",
+      "description": "Preview prospecting order pricing and recipient volume before sending",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "return_address_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "insert_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "must_deliver_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shipping_address_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shipping_method_id",
+            "optional": false,
+            "type": "1 | 2 | 3 | 4 | 5 | 6"
+          },
+          {
+            "key": "shipping_rate_id",
+            "optional": true,
+            "type": "1 | 2 | 3 | 4"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "prices",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.qrCodes.create",
+      "shortPath": "qrCodes.create",
+      "description": "Create a dynamic trackable QR code to print on handwritten cards",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.qrCodes.dashboard",
+      "shortPath": "qrCodes.dashboard",
+      "description": "Get scan analytics and statistics for created QR codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "chart",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "map",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "recent_scans",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "total_scans",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.qrCodes.delete",
+      "shortPath": "qrCodes.delete",
+      "description": "Delete a trackable QR code by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.qrCodes.frames",
+      "shortPath": "qrCodes.frames",
+      "description": "List decorative frame designs available for printed QR codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "frames",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.qrCodes.list",
+      "shortPath": "qrCodes.list",
+      "description": "List trackable QR codes created in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ id: number | string, name?: string | null, url?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.shipping.stampOptions",
+      "shortPath": "shipping.stampOptions",
+      "description": "List postage stamp options (first-class vs presorted mail) and rates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "stamp_options",
+            "optional": true,
+            "type": "{ id: number | string, name?: string | null, description?: string | null, price?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.signatures.list",
+      "shortPath": "signatures.list",
+      "description": "List user handwriting signatures saved on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "signatures",
+            "optional": true,
+            "type": "{ id: number | string, preview?: string | null, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.templates.categories",
+      "shortPath": "templates.categories",
+      "description": "List template categories available for card messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ id: number | string, name: string, price?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a new saved message template in the user account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wishes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ id: number | string, category_id?: number | string | null, name?: string | null, message?: string | null, wishes?: string | null } | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a message template from the user account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get a specific message template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ id: number | string, category_id?: number | string | null, name?: string | null, message?: string | null, wishes?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List saved message templates with optional category filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "{ id: number | string, category_id?: number | string | null, name?: string | null, message?: string | null, wishes?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "handwrytten.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update an existing message template in the user account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wishes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "httpCode",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ id: number | string, category_id?: number | string | null, name?: string | null, message?: string | null, wishes?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
