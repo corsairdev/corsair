@@ -2404,6 +2404,14 @@
                 ]
               },
               {
+                "group": "Geokeo",
+                "pages": [
+                  "plugins/geokeo/overview",
+                  "plugins/geokeo/api",
+                  "plugins/geokeo/database"
+                ]
+              },
+              {
                 "group": "GIPHY",
                 "pages": [
                   "plugins/giphy/overview",
