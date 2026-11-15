@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
-import { makeIgnisignBinaryRequest, makeIgnisignRequest } from '../client';
+import {
+	appEnvPath,
+	makeIgnisignBinaryRequest,
+	makeIgnisignRequest,
+} from '../client';
 import type { Document, DocumentContext } from './types';
 import {
 	IgnisignEndpointInputSchemas,
@@ -14,7 +18,7 @@ export const initialize: IgnisignEndpoint<'documents.initialize'> = async (
 	const parsedInput =
 		IgnisignEndpointInputSchemas['documents.initialize'].parse(input);
 	const { appId, appEnv, ...body } = parsedInput;
-	const endpoint = `/v4/applications/${encodeURIComponent(appId)}/envs/${encodeURIComponent(appEnv)}/init-documents`;
+	const endpoint = `${appEnvPath(ctx.key, { appId, appEnv })}/init-documents`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'POST',

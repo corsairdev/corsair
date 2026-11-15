@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
-import { makeIgnisignRequest } from '../client';
+import { appEnvPath, makeIgnisignRequest } from '../client';
 import {
 	IgnisignEndpointInputSchemas,
 	IgnisignEndpointOutputSchemas,
@@ -12,7 +12,7 @@ export const create: IgnisignEndpoint<'logCapsules.create'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['logCapsules.create'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/log-capsules`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/log-capsules`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'POST',

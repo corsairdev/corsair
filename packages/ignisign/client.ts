@@ -13,6 +13,67 @@ export class IgnisignAPIError extends Error {
 }
 
 export const IGNISIGN_API_BASE = 'https://api.ignisign.io';
+
+const APP_ENVS = ['DEVELOPMENT', 'STAGING', 'PRODUCTION'] as const;
+export type IgnisignAppEnv = (typeof APP_ENVS)[number];
+
+function isAppEnv(value: string): value is IgnisignAppEnv {
+	return (APP_ENVS as readonly string[]).includes(value);
+}
+
+/**
+ * IgniSign API keys carry their application and environment:
+ * `skv2_<env>_<appId without the appId_ prefix>_<secret>` (the official SDK
+ * reads them the same way). Returns undefined for keys in another format.
+ */
+export function appScopeFromKey(
+	apiKey?: string,
+): { appId: string; appEnv: IgnisignAppEnv } | undefined {
+	if (!apiKey) return undefined;
+	const parts = apiKey.split('_');
+	if (parts.length < 4) return undefined;
+	const appEnv = (parts[1] ?? '').toUpperCase();
+	const appIdSuffix = parts[2];
+	if (!appIdSuffix || !isAppEnv(appEnv)) return undefined;
+	return { appId: `appId_${appIdSuffix}`, appEnv };
+}
+
+/** The application id: the input's override, else the one in the key. */
+export function resolveAppId(apiKey: string | undefined, appId?: string) {
+	const resolved = appId ?? appScopeFromKey(apiKey)?.appId;
+	if (!resolved) {
+		throw new IgnisignAPIError(
+			'appId is required: the connected API key does not include an application id',
+			'MISSING_APP_ID',
+		);
+	}
+	return resolved;
+}
+
+/** The environment: the input's override, else the one in the key. */
+export function resolveAppEnv(
+	apiKey: string | undefined,
+	appEnv?: IgnisignAppEnv,
+) {
+	const resolved = appEnv ?? appScopeFromKey(apiKey)?.appEnv;
+	if (!resolved) {
+		throw new IgnisignAPIError(
+			'appEnv is required: the connected API key does not include an environment',
+			'MISSING_APP_ENV',
+		);
+	}
+	return resolved;
+}
+
+/** `/v4/applications/:appId/envs/:appEnv` for the key's application. */
+export function appEnvPath(
+	apiKey: string | undefined,
+	scope: { appId?: string; appEnv?: IgnisignAppEnv },
+) {
+	const appId = resolveAppId(apiKey, scope.appId);
+	const appEnv = resolveAppEnv(apiKey, scope.appEnv);
+	return `/v4/applications/${encodeURIComponent(appId)}/envs/${encodeURIComponent(appEnv)}`;
+}
 export const IGNISIGN_TIMEOUT_MS = 30000;
 const BINARY_MAX_RETRIES = 2;
 const BINARY_MAX_RETRY_DELAY_MS = 30_000;

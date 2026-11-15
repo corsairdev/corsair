@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
-import { makeIgnisignRequest } from '../client';
+import { appEnvPath, makeIgnisignRequest } from '../client';
 import {
 	IgnisignEndpointInputSchemas,
 	IgnisignEndpointOutputSchemas,
@@ -9,7 +9,7 @@ import {
 export const signM2M: IgnisignEndpoint<'seal.signM2M'> = async (ctx, input) => {
 	const parsedInput = IgnisignEndpointInputSchemas['seal.signM2M'].parse(input);
 	const { appId, appEnv, m2mId, ...body } = parsedInput;
-	const endpoint = `/v4/applications/${encodeURIComponent(appId)}/envs/${encodeURIComponent(appEnv)}/m2m/${encodeURIComponent(m2mId)}/sign`;
+	const endpoint = `${appEnvPath(ctx.key, { appId, appEnv })}/m2m/${encodeURIComponent(m2mId)}/sign`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'POST',

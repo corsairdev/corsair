@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
-import { makeIgnisignRequest } from '../client';
+import { makeIgnisignRequest, resolveAppId } from '../client';
 import type { ApplicationContext } from './types';
 import {
 	IgnisignEndpointInputSchemas,
@@ -13,7 +13,8 @@ export const getContext: IgnisignEndpoint<'applications.getContext'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['applications.getContext'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/context`;
+	const appId = resolveAppId(ctx.key, parsedInput.appId);
+	const endpoint = `/v4/applications/${encodeURIComponent(appId)}/context`;
 	const response = await makeIgnisignRequest<ApplicationContext>(
 		endpoint,
 		ctx.key,
@@ -26,7 +27,7 @@ export const getContext: IgnisignEndpoint<'applications.getContext'> = async (
 	await logEventFromContext(
 		ctx,
 		'ignisign.applications.getContext',
-		{ appId: parsedInput.appId, appType: parsed.appType },
+		{ appId, appType: parsed.appType },
 		'completed',
 	);
 	return parsed;

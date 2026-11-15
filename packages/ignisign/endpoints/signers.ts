@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
-import { makeIgnisignRequest } from '../client';
+import { appEnvPath, makeIgnisignRequest } from '../client';
 import type { SignerCreationResponse, SignersSearchResult } from './types';
 import {
 	IgnisignEndpointInputSchemas,
@@ -14,7 +14,7 @@ export const create: IgnisignEndpoint<'signers.create'> = async (
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signers.create'].parse(input);
 	const { appId, appEnv, ...body } = parsedInput;
-	const endpoint = `/v4/applications/${encodeURIComponent(appId)}/envs/${encodeURIComponent(appEnv)}/signers`;
+	const endpoint = `${appEnvPath(ctx.key, { appId, appEnv })}/signers`;
 	const response = await makeIgnisignRequest<SignerCreationResponse>(
 		endpoint,
 		ctx.key,
@@ -40,7 +40,7 @@ export const getDetails: IgnisignEndpoint<'signers.getDetails'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signers.getDetails'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signers/${encodeURIComponent(parsedInput.signerId)}/details`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signers/${encodeURIComponent(parsedInput.signerId)}/details`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'GET',
@@ -62,7 +62,7 @@ export const getSummary: IgnisignEndpoint<'signers.getSummary'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signers.getSummary'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signers/${encodeURIComponent(parsedInput.signerId)}`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signers/${encodeURIComponent(parsedInput.signerId)}`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'GET',
@@ -85,7 +85,7 @@ export const update: IgnisignEndpoint<'signers.update'> = async (
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signers.update'].parse(input);
 	const { appId, appEnv, signerId, ...body } = parsedInput;
-	const endpoint = `/v4/applications/${encodeURIComponent(appId)}/envs/${encodeURIComponent(appEnv)}/signers/${encodeURIComponent(signerId)}`;
+	const endpoint = `${appEnvPath(ctx.key, { appId, appEnv })}/signers/${encodeURIComponent(signerId)}`;
 	const response = await makeIgnisignRequest<SignerCreationResponse>(
 		endpoint,
 		ctx.key,
@@ -111,7 +111,7 @@ export const revoke: IgnisignEndpoint<'signers.revoke'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signers.revoke'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signers/${encodeURIComponent(parsedInput.signerId)}/revoke`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signers/${encodeURIComponent(parsedInput.signerId)}/revoke`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'DELETE',
@@ -132,7 +132,7 @@ export const regenerateAuthSecret: IgnisignEndpoint<
 > = async (ctx, input) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signers.regenerateAuthSecret'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signers/${encodeURIComponent(parsedInput.signerId)}/regenerate-auth-secret`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signers/${encodeURIComponent(parsedInput.signerId)}/regenerate-auth-secret`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'PUT',
@@ -157,7 +157,7 @@ export const search: IgnisignEndpoint<'signers.search'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signers.search'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signers-search`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signers-search`;
 	const response = await makeIgnisignRequest<SignersSearchResult>(
 		endpoint,
 		ctx.key,
@@ -179,7 +179,7 @@ export const search: IgnisignEndpoint<'signers.search'> = async (
 
 export const list: IgnisignEndpoint<'signers.list'> = async (ctx, input) => {
 	const parsedInput = IgnisignEndpointInputSchemas['signers.list'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signers-paginate`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signers-paginate`;
 	const query: Record<string, string | number | undefined> = {};
 	if (parsedInput.page !== undefined) {
 		query.page = parsedInput.page;

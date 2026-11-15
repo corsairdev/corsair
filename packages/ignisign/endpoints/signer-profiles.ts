@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
-import { makeIgnisignRequest } from '../client';
+import { appEnvPath, makeIgnisignRequest } from '../client';
 import type { SignerProfile } from './types';
 import {
 	IgnisignEndpointInputSchemas,
@@ -13,7 +13,7 @@ export const list: IgnisignEndpoint<'signerProfiles.list'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signerProfiles.list'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signer-profiles`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signer-profiles`;
 	const response = await makeIgnisignRequest<SignerProfile[]>(
 		endpoint,
 		ctx.key,
@@ -38,7 +38,7 @@ export const get: IgnisignEndpoint<'signerProfiles.get'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signerProfiles.get'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signer-profiles/${encodeURIComponent(parsedInput.signerProfileId)}`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signer-profiles/${encodeURIComponent(parsedInput.signerProfileId)}`;
 	const response = await makeIgnisignRequest<SignerProfile>(endpoint, ctx.key, {
 		method: 'GET',
 	});
@@ -58,7 +58,7 @@ export const getInputsNeeded: IgnisignEndpoint<
 > = async (ctx, input) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signerProfiles.getInputsNeeded'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signer-profiles/${encodeURIComponent(parsedInput.signerProfileId)}/inputs-needed`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signer-profiles/${encodeURIComponent(parsedInput.signerProfileId)}/inputs-needed`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'GET',

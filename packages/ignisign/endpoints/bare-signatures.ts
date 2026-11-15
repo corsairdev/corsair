@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
-import { makeIgnisignRequest } from '../client';
+import {
+	appEnvPath,
+	makeIgnisignRequest,
+	resolveAppEnv,
+	resolveAppId,
+} from '../client';
 import type { BareSignatureProof } from './types';
 import {
 	IgnisignEndpointInputSchemas,
@@ -14,7 +19,7 @@ export const getConfiguration: IgnisignEndpoint<
 		IgnisignEndpointInputSchemas['bareSignatures.getConfiguration'].parse(
 			input,
 		);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/bare-signatures-configuration`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/bare-signatures-configuration`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'GET',
@@ -37,12 +42,23 @@ export const getProofToken: IgnisignEndpoint<
 > = async (ctx, input) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['bareSignatures.getProofToken'].parse(input);
-	const { appEnv, ...body } = parsedInput;
+	const appId = resolveAppId(ctx.key, parsedInput.appId);
+	const appEnv = resolveAppEnv(ctx.key, parsedInput.appEnv);
 	const endpoint = `/v4/envs/${encodeURIComponent(appEnv)}/oauth2/proofs-token`;
+	// The OAuth client is the application itself: IgniSign's SDK sends the app id
+	// as client_id and the connection's API key as client_secret.
+	const body = {
+		client_id: appId,
+		client_secret: ctx.key,
+		code_verifier: parsedInput.code_verifier,
+		redirect_uri: parsedInput.redirect_uri,
+		grant_type: 'authorization_code',
+		code: parsedInput.code,
+	};
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'POST',
-		body: body as Record<string, unknown>,
+		body,
 	});
 	const response =
 		IgnisignEndpointOutputSchemas['bareSignatures.getProofToken'].parse(
@@ -63,7 +79,8 @@ export const getProofs: IgnisignEndpoint<'bareSignatures.getProofs'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['bareSignatures.getProofs'].parse(input);
-	const endpoint = `/v4/envs/${encodeURIComponent(parsedInput.appEnv)}/bare-signatures/proofs`;
+	const appEnv = resolveAppEnv(ctx.key, parsedInput.appEnv);
+	const endpoint = `/v4/envs/${encodeURIComponent(appEnv)}/bare-signatures/proofs`;
 	// Bare signature proofs endpoint accepts token via Bearer header
 	const response = await makeIgnisignRequest<BareSignatureProof>(
 		endpoint,
@@ -78,7 +95,7 @@ export const getProofs: IgnisignEndpoint<'bareSignatures.getProofs'> = async (
 		ctx,
 		'ignisign.bareSignatures.getProofs',
 		{
-			appEnv: parsedInput.appEnv,
+			appEnv,
 			signatureRequestId: parsed.signatureRequestId,
 		},
 		'completed',

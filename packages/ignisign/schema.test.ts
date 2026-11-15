@@ -44,28 +44,25 @@ describe('Ignisign schema', () => {
 });
 
 describe('Ignisign endpoint schemas validation', () => {
-	it('accepts omitted defaulted fields in public input types and fills them when parsed', () => {
-		const initInput: IgnisignEndpointInputs['signatureRequests.init'] = {
-			appId: 'appId_abc',
-		};
-		const tokenInput: IgnisignEndpointInputs['bareSignatures.getProofToken'] = {
-			appEnv: 'DEVELOPMENT',
-			client_id: 'client_123',
-			client_secret: 'secret',
-			code_verifier: 'verifier',
-			redirect_uri: 'https://example.com/callback',
-			code: 'auth_code',
-		};
+	it('leaves appId and appEnv optional so they come from the API key', () => {
+		const initInput: IgnisignEndpointInputs['signatureRequests.init'] = {};
+		const parsed =
+			IgnisignEndpointInputSchemas['signatureRequests.init'].parse(initInput);
+		// No DEVELOPMENT default: a PRODUCTION key must not be sent to DEVELOPMENT routes.
+		expect(parsed.appEnv).toBeUndefined();
+		expect(parsed.appId).toBeUndefined();
+	});
 
+	it('does not accept client credentials as getProofToken input', () => {
 		expect(
-			IgnisignEndpointInputSchemas['signatureRequests.init'].parse(initInput)
-				.appEnv,
-		).toBe('DEVELOPMENT');
-		expect(
-			IgnisignEndpointInputSchemas['bareSignatures.getProofToken'].parse(
-				tokenInput,
-			).grant_type,
-		).toBe('authorization_code');
+			IgnisignEndpointInputSchemas['bareSignatures.getProofToken'].safeParse({
+				client_id: 'client_123',
+				client_secret: 'secret',
+				code_verifier: 'verifier',
+				redirect_uri: 'https://example.com/callback',
+				code: 'auth_code',
+			}).success,
+		).toBe(false);
 	});
 
 	it('validates signatureRequests.createInOneCall input and output', () => {
@@ -151,9 +148,10 @@ describe('Ignisign endpoint schemas validation', () => {
 				.success,
 		).toBe(true);
 
-		// Missing appId
+		// Unknown environment
 		expect(
 			IgnisignEndpointInputSchemas['signers.create'].safeParse({
+				appEnv: 'SANDBOX',
 				firstName: 'Alice',
 			}).success,
 		).toBe(false);

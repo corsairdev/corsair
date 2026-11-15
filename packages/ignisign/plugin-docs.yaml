@@ -1,7 +1,13 @@
 displayName: Ignisign
 description: Electronic signature and document workflow integration for Ignisign eIDAS-compliant digital signatures.
 overviewNote: >-
-  Ignisign operations require an API key configured as a Bearer token.
+  Ignisign operations use an API key from the IgniSign console (API page),
+  sent as a Bearer token. Each key belongs to one application and one
+  environment (DEVELOPMENT, STAGING or PRODUCTION), and both are read from the
+  key itself (`skv2_<env>_<app>_<secret>`), so `appId` and `appEnv` inputs are
+  optional overrides. To work in another environment, connect that
+  environment's key. Publishing a signature request (`publish`,
+  `createInOneCall`) emails its signers.
   Run the Corsair database migration once before passing the connection to
   `createCorsair`; creating a SQLite file does not create Corsair's tables.
   Before creating a tenant connect link, mount a Hub delivery handler as
@@ -12,8 +18,7 @@ examples:
   read:
     path: applications.getContext
     title: Read application context
-    args:
-      appId: appId_sample
+    args: {}
   write:
     path: signatureRequests.createInOneCall
     title: Create signature request in one call
@@ -36,12 +41,9 @@ apiExamples:
       - originalName: contract.pdf
         mimeType: application/pdf
         base64: JVBERi0xLjQK...
-  signatureRequests.init:
-    appId: appId_sample
-  signatureRequests.initSignerSetup:
-    appId: appId_sample
-  signatureRequests.list:
-    appId: appId_sample
+  signatureRequests.init: {}
+  signatureRequests.initSignerSetup: {}
+  signatureRequests.list: {}
   signatureRequests.getContext:
     signatureRequestId: sig_req_sample
   signatureRequests.update:
@@ -52,35 +54,25 @@ apiExamples:
   signatureRequests.close:
     signatureRequestId: sig_req_sample
   signatureRequests.getStatus:
-    appId: appId_sample
     signatureRequestIds:
       - sig_req_sample
   signers.create:
-    appId: appId_sample
     email: signer@example.com
   signers.getDetails:
-    appId: appId_sample
     signerId: signer_sample
   signers.getSummary:
-    appId: appId_sample
     signerId: signer_sample
   signers.update:
-    appId: appId_sample
     signerId: signer_sample
     firstName: Jane
   signers.revoke:
-    appId: appId_sample
     signerId: signer_sample
   signers.regenerateAuthSecret:
-    appId: appId_sample
     signerId: signer_sample
   signers.search:
-    appId: appId_sample
     filter: sample
-  signers.list:
-    appId: appId_sample
+  signers.list: {}
   documents.initialize:
-    appId: appId_sample
     signatureRequestId: sig_req_sample
     label: Contract Document
   documents.get:
@@ -117,31 +109,22 @@ apiExamples:
     call: "{ documentId: 'doc_sample', signatureType: 'PDF_WITH_SIGNATURES' }"
   proofs.downloadLowLevelSignatureProof:
     call: "{ documentId: 'doc_sample', signatureType: 'PKCS7', signerId: 'signer_sample' }"
-  signerProfiles.list:
-    appId: appId_sample
+  signerProfiles.list: {}
   signerProfiles.get:
-    appId: appId_sample
     signerProfileId: prof_sample
   signerProfiles.getInputsNeeded:
-    appId: appId_sample
     signerProfileId: prof_sample
-  applications.getContext:
-    appId: appId_sample
+  applications.getContext: {}
   seal.signM2M:
-    appId: appId_sample
     m2mId: m2m_sample
     documentHashSignedByM2MPrivateKey: hex_signature
     document:
       documentType: PDF
       documentHash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
   logCapsules.create:
-    appId: appId_sample
     hashSha256_b64: 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
-  bareSignatures.getConfiguration:
-    appId: appId_sample
+  bareSignatures.getConfiguration: {}
   bareSignatures.getProofToken:
-    client_id: client_sample
-    client_secret: secret_sample
     code_verifier: verifier_sample
     redirect_uri: https://app.example.com/callback
     code: code_sample

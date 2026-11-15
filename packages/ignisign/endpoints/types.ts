@@ -332,22 +332,22 @@ export const IgnisignEndpointInputSchemas = {
 
 	'signatureRequests.init': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 		})
 		.strict(),
 
 	'signatureRequests.initSignerSetup': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 		})
 		.strict(),
 
 	'signatureRequests.list': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			page: z.number().int().positive().optional(),
 		})
 		.strict(),
@@ -385,8 +385,8 @@ export const IgnisignEndpointInputSchemas = {
 
 	'signatureRequests.getStatus': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signatureRequestIds: z.array(z.string()).min(1),
 		})
 		.strict(),
@@ -394,8 +394,8 @@ export const IgnisignEndpointInputSchemas = {
 	// signers
 	'signers.create': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			firstName: z.string().optional(),
 			lastName: z.string().optional(),
 			email: z.string().email().optional(),
@@ -411,24 +411,24 @@ export const IgnisignEndpointInputSchemas = {
 
 	'signers.getDetails': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signerId: z.string(),
 		})
 		.strict(),
 
 	'signers.getSummary': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signerId: z.string(),
 		})
 		.strict(),
 
 	'signers.update': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signerId: z.string(),
 			firstName: z.string().optional(),
 			lastName: z.string().optional(),
@@ -445,32 +445,32 @@ export const IgnisignEndpointInputSchemas = {
 
 	'signers.revoke': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signerId: z.string(),
 		})
 		.strict(),
 
 	'signers.regenerateAuthSecret': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signerId: z.string(),
 		})
 		.strict(),
 
 	'signers.search': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			filter: z.string(),
 		})
 		.strict(),
 
 	'signers.list': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			page: z.number().int().positive().optional(),
 		})
 		.strict(),
@@ -478,8 +478,8 @@ export const IgnisignEndpointInputSchemas = {
 	// documents
 	'documents.initialize': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signatureRequestId: z.string(),
 			externalId: z.string().optional(),
 			label: z.string().optional(),
@@ -591,23 +591,23 @@ export const IgnisignEndpointInputSchemas = {
 	// signerProfiles
 	'signerProfiles.list': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 		})
 		.strict(),
 
 	'signerProfiles.get': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signerProfileId: z.string(),
 		})
 		.strict(),
 
 	'signerProfiles.getInputsNeeded': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			signerProfileId: z.string(),
 		})
 		.strict(),
@@ -615,15 +615,15 @@ export const IgnisignEndpointInputSchemas = {
 	// applications
 	'applications.getContext': z
 		.object({
-			appId: z.string(),
+			appId: z.string().optional(),
 		})
 		.strict(),
 
 	// seal
 	'seal.signM2M': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			m2mId: z.string(),
 			title: z.string().optional(),
 			externalId: z.string().optional(),
@@ -646,8 +646,8 @@ export const IgnisignEndpointInputSchemas = {
 	// logCapsules
 	'logCapsules.create': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			hashSha256_b64: z.string(),
 		})
 		.strict(),
@@ -655,26 +655,24 @@ export const IgnisignEndpointInputSchemas = {
 	// bareSignatures
 	'bareSignatures.getConfiguration': z
 		.object({
-			appId: z.string(),
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 		})
 		.strict(),
 
 	'bareSignatures.getProofToken': z
 		.object({
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
-			client_id: z.string(),
-			client_secret: z.string(),
+			appId: z.string().optional(),
+			appEnv: AppEnvSchema.optional(),
 			code_verifier: z.string(),
 			redirect_uri: z.string(),
-			grant_type: z.string().default('authorization_code'),
 			code: z.string(),
 		})
 		.strict(),
 
 	'bareSignatures.getProofs': z
 		.object({
-			appEnv: AppEnvSchema.default('DEVELOPMENT'),
+			appEnv: AppEnvSchema.optional(),
 			proofToken: z.string(),
 		})
 		.strict(),

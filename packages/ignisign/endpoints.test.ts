@@ -650,15 +650,22 @@ describe('signerProfiles, applications, seal, logCapsules, & bareSignatures', ()
 			expires_in: 3600,
 		});
 		const token = await BareSignaturesEndpoints.getProofToken(ctx, {
-			grant_type: 'authorization_code',
-			appEnv: 'DEVELOPMENT',
-			client_id: 'cid',
-			client_secret: 'csec',
 			code_verifier: 'cver',
 			redirect_uri: 'https://example.com/cb',
 			code: 'code123',
 		});
 		expect(token.access_token).toBe('tok_1');
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			'/v4/envs/DEVELOPMENT/oauth2/proofs-token',
+			ctx.key,
+			expect.objectContaining({
+				body: expect.objectContaining({
+					client_id: 'appId_testapp123',
+					client_secret: ctx.key,
+					grant_type: 'authorization_code',
+				}),
+			}),
+		);
 
 		mockedRequest.mockResolvedValueOnce({
 			appId: 'appId_1',
@@ -670,5 +677,53 @@ describe('signerProfiles, applications, seal, logCapsules, & bareSignatures', ()
 			proofToken: 'tok_1',
 		});
 		expect(proof.signatureRequestId).toBe('sig_1');
+	});
+});
+
+describe('application scope from the API key', () => {
+	function ctxWithKey(key: string): IgnisignContext {
+		return { ...buildCtx(), key };
+	}
+
+	it('uses the app and environment encoded in the key when the input omits them', async () => {
+		mockedRequest.mockResolvedValue({ signers: [], total: 0 });
+		await SignersEndpoints.list(
+			ctxWithKey('skv2_production_abc-123_secret'),
+			{},
+		);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/v4/applications/appId_abc-123/envs/PRODUCTION/signers-paginate',
+			'skv2_production_abc-123_secret',
+			expect.anything(),
+		);
+	});
+
+	it('lets the input override the key', async () => {
+		mockedRequest.mockResolvedValue({ signers: [], total: 0 });
+		await SignersEndpoints.list(ctxWithKey('skv2_production_abc_secret'), {
+			appId: 'appId_other',
+			appEnv: 'STAGING',
+		});
+		expect(mockedRequest.mock.calls[0]?.[0]).toBe(
+			'/v4/applications/appId_other/envs/STAGING/signers-paginate',
+		);
+	});
+
+	it('resolves the application id for applications.getContext', async () => {
+		mockedRequest.mockResolvedValue({ appId: 'appId_abc' });
+		await ApplicationsEndpoints.getContext(
+			ctxWithKey('skv2_staging_abc_secret'),
+			{},
+		);
+		expect(mockedRequest.mock.calls[0]?.[0]).toBe(
+			'/v4/applications/appId_abc/context',
+		);
+	});
+
+	it('asks for appId and appEnv when the key does not carry them', async () => {
+		await expect(
+			SignersEndpoints.list(ctxWithKey('legacy-secret'), {}),
+		).rejects.toThrow('appId is required');
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });

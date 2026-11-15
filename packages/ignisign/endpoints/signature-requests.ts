@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { IgnisignEndpoint } from '..';
-import { makeIgnisignRequest } from '../client';
+import { appEnvPath, makeIgnisignRequest } from '../client';
 import type {
 	SignatureRequestPublishResponse,
 	SignatureRequestsPaginate,
@@ -50,7 +50,7 @@ export const init: IgnisignEndpoint<'signatureRequests.init'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signatureRequests.init'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signature-requests`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signature-requests`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'POST',
@@ -74,7 +74,7 @@ export const initSignerSetup: IgnisignEndpoint<
 		IgnisignEndpointInputSchemas['signatureRequests.initSignerSetup'].parse(
 			input,
 		);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signer-setup`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signer-setup`;
 	// `unknown` because response JSON from provider must be validated by the Zod output schema.
 	const rawResponse: unknown = await makeIgnisignRequest(endpoint, ctx.key, {
 		method: 'POST',
@@ -99,7 +99,7 @@ export const list: IgnisignEndpoint<'signatureRequests.list'> = async (
 ) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signatureRequests.list'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signature-requests`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signature-requests`;
 	const query: Record<string, string | number | undefined> = {};
 	if (parsedInput.page !== undefined) {
 		query.page = parsedInput.page;
@@ -226,7 +226,7 @@ export const getStatus: IgnisignEndpoint<
 > = async (ctx, input) => {
 	const parsedInput =
 		IgnisignEndpointInputSchemas['signatureRequests.getStatus'].parse(input);
-	const endpoint = `/v4/applications/${encodeURIComponent(parsedInput.appId)}/envs/${encodeURIComponent(parsedInput.appEnv)}/signature-requests/status`;
+	const endpoint = `${appEnvPath(ctx.key, parsedInput)}/signature-requests/status`;
 	const response = await makeIgnisignRequest<SignatureRequestsStatusContainer>(
 		endpoint,
 		ctx.key,
