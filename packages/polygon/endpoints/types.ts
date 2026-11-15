@@ -42,7 +42,7 @@ const listQueryFields = {
 		.max(100)
 		.optional()
 		.describe(
-			'Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it.',
+			'Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource.',
 		),
 	startingAfter: z
 		.string()

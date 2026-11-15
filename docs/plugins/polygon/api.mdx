@@ -32,7 +32,7 @@ await corsair.polygon.api.cashLocations.list({ provider: 'retail', latitude: 47.
 | `radius` | `number` | No | Search radius in miles, above 0 and at most 100. |
 | `flow` | `cash_in \| cash_out` | No | Only locations that take deposits (`cash_in`) or pay out (`cash_out`). |
 | `customerId` | `string` | No | Scope availability to one `cst_` customer. |
-| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `limit` | `number` | No | Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource. |
 | `startingAfter` | `string` | No | The previous page's `nextCursor`. |
 | `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
 
@@ -410,7 +410,7 @@ await corsair.polygon.api.customers.list({ status: 'active', limit: 20 });
 | `externalId` | `string` | No | Only the customer carrying this `externalId`. |
 | `createdAfter` | `string` | No | Only customers created after this ISO 8601 timestamp. |
 | `createdBefore` | `string` | No | Only customers created before this ISO 8601 timestamp. |
-| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `limit` | `number` | No | Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource. |
 | `cursor` | `string` | No | The previous page's `cursor`. |
 
 
@@ -616,7 +616,7 @@ await corsair.polygon.api.networks.list({ limit: 20 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `limit` | `number` | No | Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource. |
 | `startingAfter` | `string` | No | The previous page's `nextCursor`. |
 | `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
 
@@ -1186,7 +1186,7 @@ await corsair.polygon.api.transactions.list({ status: ['processing', 'completed'
 | `createdAfter` | `string` | No | Inclusive lower bound on `createdAt`. |
 | `createdBefore` | `string` | No | Inclusive upper bound on `createdAt`. |
 | `search` | `string` | No | Matches a transaction id, a customer id, or a customer email. |
-| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `limit` | `number` | No | Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource. |
 | `startingAfter` | `string` | No | The previous page's `nextCursor`. |
 | `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
 
@@ -1539,7 +1539,7 @@ await corsair.polygon.api.wallets.list({ customerId: 'cst_vfa0nxw6zvyws9g237jrxn
 | `orderBy` | `string` | No | Orders by the balance's estimated USD value. |
 | `order` | `asc \| desc` | No | Balance sort direction. Needs `orderBy`. |
 | `includeHidden` | `string[]` | No | `claimed` adds wallets currently claimed by a live instrument. |
-| `limit` | `number` | No | Page size, 1 to 100. OMS resolves the default and maximum per resource and clamps an out-of-range value rather than rejecting it. |
+| `limit` | `number` | No | Page size, an integer from 1 to 100. A value outside that range is rejected before the request is sent; when omitted, OMS applies its default page size for the resource. |
 | `startingAfter` | `string` | No | The previous page's `nextCursor`. |
 | `endingBefore` | `string` | No | The previous page's `previousCursor`, to page backwards. |
 
