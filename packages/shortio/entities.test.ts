@@ -137,4 +137,68 @@ describe('Short.io local entities', () => {
 			testDb.cleanup();
 		}
 	});
+
+	it('updates the saved archived flag after Short.io confirms', async () => {
+		const { corsair, testDb } = await setup();
+		try {
+			jest
+				.spyOn(globalThis, 'fetch')
+				.mockResolvedValueOnce(
+					json({ count: 1, links: [{ ...link, archived: false }] }),
+				)
+				.mockResolvedValueOnce(json({ success: true }))
+				.mockResolvedValueOnce(json({ success: false, error: 'not found' }))
+				.mockResolvedValueOnce(json({ success: true }));
+			const archived = async () =>
+				(await corsair.shortio.db.links.findByEntityId('lnk_1_a'))?.data
+					.archived;
+			await corsair.shortio.api.links.list({ domain_id: 7 });
+			expect(await archived()).toBe(false);
+
+			await corsair.shortio.api.links.archive({ link_id: 'lnk_1_a' });
+			expect(await archived()).toBe(true);
+
+			await corsair.shortio.api.links.unarchiveBulk({
+				link_ids: ['lnk_1_a'],
+			});
+			expect(await archived()).toBe(true);
+
+			await corsair.shortio.api.links.unarchiveBulk({
+				link_ids: ['lnk_1_a', 'lnk_never_saved'],
+			});
+			expect(await archived()).toBe(false);
+			expect(
+				await corsair.shortio.db.links.findByEntityId('lnk_never_saved'),
+			).toBeNull();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
+describe('Short.io without a database', () => {
+	afterEach(() => jest.restoreAllMocks());
+
+	it('returns Short.io results without trying local saves', async () => {
+		const corsair = createCorsair({ plugins: [shortio({ key: 'test-key' })] });
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(json({ count: 1, links: [link] }))
+			.mockResolvedValueOnce(json({ ...link, success: true, duplicate: false }))
+			.mockResolvedValueOnce(json({ success: true }))
+			.mockResolvedValueOnce(json([domain]));
+		await expect(
+			corsair.shortio.api.links.list({ domain_id: 7 }),
+		).resolves.toEqual(expect.objectContaining({ count: 1 }));
+		await expect(
+			corsair.shortio.api.links.create({
+				domain: 'short.example',
+				originalURL: 'https://example.com',
+			}),
+		).resolves.toEqual(expect.objectContaining({ idString: 'lnk_1_a' }));
+		await expect(
+			corsair.shortio.api.links.archive({ link_id: 'lnk_1_a' }),
+		).resolves.toEqual({ success: true });
+		await expect(corsair.shortio.api.domains.list({})).resolves.toHaveLength(1);
+	});
 });

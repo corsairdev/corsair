@@ -9,26 +9,68 @@ import {
 type StoredLink = ShortioEndpointOutputs['linksGet'];
 type StoredDomain = ShortioEndpointOutputs['domainsGet'];
 
+// Saved rows are a local copy. Core hands every plugin entity clients even when
+// createCorsair has no database, and those reject, so each write checks
+// ctx.database first. A failed write is logged, never thrown: Short.io has
+// already carried out the call by then.
+async function writeSaved(
+	ctx: ShortioContext,
+	what: string,
+	write: () => Promise<void>,
+) {
+	if (!ctx.database) return;
+	try {
+		await write();
+	} catch (error) {
+		console.warn(
+			`Short.io: could not update saved ${what}:`,
+			error instanceof Error ? error.message : String(error),
+		);
+	}
+}
+
 async function saveLinks(ctx: ShortioContext, links: StoredLink[]) {
-	if (!ctx.db?.links) return;
-	for (const link of links)
-		await ctx.db.links.upsertByEntityId(link.idString, link);
+	await writeSaved(ctx, 'links', async () => {
+		for (const link of links)
+			await ctx.db.links.upsertByEntityId(link.idString, link);
+	});
 }
 
 async function removeLinks(ctx: ShortioContext, linkIds: string[]) {
-	if (!ctx.db?.links) return;
-	for (const linkId of linkIds) await ctx.db.links.deleteByEntityId(linkId);
+	await writeSaved(ctx, 'links', async () => {
+		for (const linkId of linkIds) await ctx.db.links.deleteByEntityId(linkId);
+	});
+}
+
+// Archive calls return only { success }, so the saved rows get the new flag
+// directly. Links that were never saved stay unsaved.
+async function setArchived(
+	ctx: ShortioContext,
+	linkIds: string[],
+	archived: boolean,
+) {
+	await writeSaved(ctx, 'links', async () => {
+		for (const linkId of linkIds) {
+			const existing = await ctx.db.links.findByEntityId(linkId);
+			if (existing)
+				await ctx.db.links.upsertByEntityId(linkId, {
+					...existing.data,
+					archived,
+				});
+		}
+	});
 }
 
 // List items lack ipExclusions and userPlan, so a list keeps what an earlier
 // domains.get saved instead of wiping it.
 async function saveDomain(ctx: ShortioContext, domain: StoredDomain) {
-	if (!ctx.db?.domains) return;
-	const entityId = String(domain.id);
-	const existing = await ctx.db.domains.findByEntityId(entityId);
-	await ctx.db.domains.upsertByEntityId(entityId, {
-		...existing?.data,
-		...domain,
+	await writeSaved(ctx, 'domain', async () => {
+		const entityId = String(domain.id);
+		const existing = await ctx.db.domains.findByEntityId(entityId);
+		await ctx.db.domains.upsertByEntityId(entityId, {
+			...existing?.data,
+			...domain,
+		});
 	});
 }
 
@@ -113,46 +155,54 @@ export const linksArchive: ShortioEndpoints['linksArchive'] = async (
 	raw,
 ) => {
 	const body = inputs.linksArchive.parse(raw);
-	return outputs.linksArchive.parse(
+	const result = outputs.linksArchive.parse(
 		await makeShortioRequest('/links/archive', ctx.key, {
 			method: 'POST',
 			body,
 		}),
 	);
+	if (result.success) await setArchived(ctx, [body.link_id], true);
+	return result;
 };
 export const linksUnarchive: ShortioEndpoints['linksUnarchive'] = async (
 	ctx,
 	raw,
 ) => {
 	const body = inputs.linksUnarchive.parse(raw);
-	return outputs.linksUnarchive.parse(
+	const result = outputs.linksUnarchive.parse(
 		await makeShortioRequest('/links/unarchive', ctx.key, {
 			method: 'POST',
 			body,
 		}),
 	);
+	if (result.success) await setArchived(ctx, [body.link_id], false);
+	return result;
 };
 export const linksArchiveBulk: ShortioEndpoints['linksArchiveBulk'] = async (
 	ctx,
 	raw,
 ) => {
 	const body = inputs.linksArchiveBulk.parse(raw);
-	return outputs.linksArchiveBulk.parse(
+	const result = outputs.linksArchiveBulk.parse(
 		await makeShortioRequest('/links/archive_bulk', ctx.key, {
 			method: 'POST',
 			body,
 		}),
 	);
+	if (result.success) await setArchived(ctx, body.link_ids, true);
+	return result;
 };
 export const linksUnarchiveBulk: ShortioEndpoints['linksUnarchiveBulk'] =
 	async (ctx, raw) => {
 		const body = inputs.linksUnarchiveBulk.parse(raw);
-		return outputs.linksUnarchiveBulk.parse(
+		const result = outputs.linksUnarchiveBulk.parse(
 			await makeShortioRequest('/links/unarchive_bulk', ctx.key, {
 				method: 'POST',
 				body,
 			}),
 		);
+		if (result.success) await setArchived(ctx, body.link_ids, false);
+		return result;
 	};
 export const linksDeleteBulk: ShortioEndpoints['linksDeleteBulk'] = async (
 	ctx,
