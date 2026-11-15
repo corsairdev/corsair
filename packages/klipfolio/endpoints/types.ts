@@ -662,8 +662,9 @@ const SetKlipShareRightsInputSchema = z
 const DeleteKlipShareRightsInputSchema = z
 	.object({
 		id: z.string().min(1),
-		// unknown: same shape as PUT: group_id (string), can_edit (boolean)
-		groups: z.array(z.record(z.string(), z.unknown())),
+		// Group whose share right on the Klip is removed.
+		groupId: z.string().min(1),
+		client_id: z.string().optional(),
 	})
 	.passthrough();
 

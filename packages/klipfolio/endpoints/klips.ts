@@ -330,15 +330,25 @@ export const setKlipShareRights: KlipfolioEndpoints['setKlipShareRights'] =
 
 export const deleteKlipShareRights: KlipfolioEndpoints['deleteKlipShareRights'] =
 	async (ctx, input) => {
-		const { id, ...rest } = input;
+		const { id, groupId, ...rest } = input;
+		// Klipfolio takes the group from the path: a DELETE on
+		// /klips/{id}/share-rights with a groups body answers 400 "Missing
+		// group or user id in url" (live run, 11-16).
 		const response = await makeKlipfolioRequest<
 			KlipfolioEndpointOutputs['deleteKlipShareRights']
-		>(ctx, klipfolioPathParameter('/klips/{id}/share-rights', 'id', input.id), {
-			method: 'DELETE',
-			// The provider reads the groups whose share rights are revoked from
-			// the DELETE body, mirroring the PUT shape.
-			body: rest,
-		});
+		>(
+			ctx,
+			klipfolioPathParameter(
+				klipfolioPathParameter(
+					'/klips/{id}/share-rights/{group_id}',
+					'id',
+					input.id,
+				),
+				'group_id',
+				input.groupId,
+			),
+			{ method: 'DELETE', query: rest },
+		);
 		await logEventFromContext(
 			ctx,
 			'klipfolio.klips.deleteKlipShareRights',
