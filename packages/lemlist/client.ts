@@ -98,7 +98,11 @@ const SENSITIVE_ERROR_FIELDS = new Set(
 	].map((field) => field.toLowerCase().replace(/[-_]/g, '')),
 );
 
-function sanitizeErrorText(value: string, apiKey?: string): string {
+function sanitizeErrorText(
+	value: string,
+	apiKey?: string,
+	requestValues: readonly string[] = [],
+): string {
 	let sanitized = value;
 	if (apiKey) {
 		const credentials = `:${apiKey}`;
@@ -111,6 +115,9 @@ function sanitizeErrorText(value: string, apiKey?: string): string {
 			sanitized = sanitized.replaceAll(secret, '[REDACTED]');
 		}
 	}
+	for (const requestValue of requestValues) {
+		sanitized = sanitized.replaceAll(requestValue, '[REDACTED]');
+	}
 	return sanitized
 		.replace(/Basic\s+[A-Za-z0-9+/=]+/gi, 'Basic [REDACTED]')
 		.replace(
@@ -121,13 +128,32 @@ function sanitizeErrorText(value: string, apiKey?: string): string {
 		.replace(/\+?\d[\d ().-]{6,}\d/g, '[REDACTED_PHONE]');
 }
 
+function sanitizePathSegment(segment: string): string {
+	let decoded = segment;
+	try {
+		decoded = decodeURIComponent(segment);
+	} catch {
+		// Keep the original encoded segment if it is malformed.
+	}
+	if (
+		/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(decoded) ||
+		/\+?\d[\d ().-]{6,}\d/.test(decoded) ||
+		/^[A-Z]{2,6}_[A-Z0-9-]{2,}$/i.test(decoded)
+	) {
+		return '[REDACTED]';
+	}
+	return segment;
+}
+
 function sanitizeErrorUrl(value: string, apiKey?: string): string {
 	const sanitized = sanitizeErrorText(value, apiKey);
 	try {
-		const url = new URL(sanitized);
+		const isAbsoluteUrl = /^[a-z]+:\/\//i.test(sanitized);
+		const url = new URL(sanitized, LEMLIST_API_BASE);
+		url.pathname = url.pathname.split('/').map(sanitizePathSegment).join('/');
 		url.search = '';
 		url.hash = '';
-		return url.toString();
+		return isAbsoluteUrl ? url.toString() : `${url.pathname}`;
 	} catch {
 		return sanitized.split(/[?#]/, 1)[0] ?? sanitized;
 	}
@@ -138,11 +164,40 @@ function isObjectRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+// `unknown` because request values may be nested JSON; only values are collected for echo redaction.
+function collectRequestValues(
+	value: unknown,
+	values: Set<string> = new Set(),
+): Set<string> {
+	if (typeof value === 'string') {
+		if (value.length >= 3) values.add(value);
+		try {
+			const decoded = decodeURIComponent(value);
+			if (decoded.length >= 3) values.add(decoded);
+		} catch {
+			// Keep malformed input only in its original form.
+		}
+	} else if (Array.isArray(value)) {
+		for (const item of value) collectRequestValues(item, values);
+	} else if (isObjectRecord(value)) {
+		for (const item of Object.values(value)) collectRequestValues(item, values);
+	}
+	return values;
+}
+
 // `unknown` because provider error bodies are untrusted JSON and fields need runtime redaction.
-function sanitizeProviderData(value: unknown, apiKey?: string): unknown {
-	if (typeof value === 'string') return sanitizeErrorText(value, apiKey);
+function sanitizeProviderData(
+	value: unknown,
+	apiKey?: string,
+	requestValues: readonly string[] = [],
+): unknown {
+	if (typeof value === 'string') {
+		return sanitizeErrorText(value, apiKey, requestValues);
+	}
 	if (Array.isArray(value)) {
-		return value.map((item) => sanitizeProviderData(item, apiKey));
+		return value.map((item) =>
+			sanitizeProviderData(item, apiKey, requestValues),
+		);
 	}
 	if (!isObjectRecord(value)) return value;
 
@@ -151,25 +206,29 @@ function sanitizeProviderData(value: unknown, apiKey?: string): unknown {
 		const normalized = key.toLowerCase().replace(/[-_]/g, '');
 		sanitized[key] = SENSITIVE_ERROR_FIELDS.has(normalized)
 			? '[REDACTED]'
-			: sanitizeProviderData(value[key], apiKey);
+			: sanitizeProviderData(value[key], apiKey, requestValues);
 	}
 	return sanitized;
 }
 
 /** Preserve the original ApiError and its useful details while redacting customer data. */
 export function sanitizeApiError(error: ApiError, apiKey?: string): ApiError {
-	const request = sanitizeProviderData(error.request, apiKey);
-	if (isObjectRecord(request)) {
-		request.url = sanitizeErrorUrl(error.request.url, apiKey);
-	}
+	const requestValues = [
+		...collectRequestValues(error.request.body),
+		...collectRequestValues(error.request.query),
+	].sort((a, b) => b.length - a.length);
+	const request: ApiRequestOptions = {
+		method: error.request.method,
+		url: sanitizeErrorUrl(error.request.url, apiKey),
+	};
 	Object.defineProperties(error, {
 		message: {
-			value: sanitizeErrorText(error.message, apiKey),
+			value: sanitizeErrorText(error.message, apiKey, requestValues),
 			configurable: true,
 			writable: true,
 		},
 		statusText: {
-			value: sanitizeErrorText(error.statusText, apiKey),
+			value: sanitizeErrorText(error.statusText, apiKey, requestValues),
 			configurable: true,
 			writable: true,
 		},
@@ -179,7 +238,7 @@ export function sanitizeApiError(error: ApiError, apiKey?: string): ApiError {
 			writable: true,
 		},
 		body: {
-			value: sanitizeProviderData(error.body, apiKey),
+			value: sanitizeProviderData(error.body, apiKey, requestValues),
 			configurable: true,
 			writable: true,
 		},

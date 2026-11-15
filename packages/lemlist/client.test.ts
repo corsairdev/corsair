@@ -97,14 +97,9 @@ describe('client.ts', () => {
 			const err = makeApiError(400, 'Bad Request', 1000);
 			const sanitized = sanitizeApiError(err);
 			expect(sanitized).toBe(err);
-			expect(sanitized.request.body).toEqual({
-				email: '[REDACTED]',
-				secret: '[REDACTED]',
-			});
-			expect(sanitized.request.query).toEqual({ email: '[REDACTED]' });
-			expect(sanitized.request.headers).toEqual({
-				Authorization: '[REDACTED]',
-			});
+			expect(sanitized.request.body).toBeUndefined();
+			expect(sanitized.request.query).toBeUndefined();
+			expect(sanitized.request.headers).toBeUndefined();
 			expect(sanitized.request.url).toBe('/team');
 			expect(sanitized.url).toBe('https://api.lemlist.com/api/team');
 			expect(sanitized.body).toEqual({
@@ -134,6 +129,45 @@ describe('client.ts', () => {
 			expect(JSON.stringify(sanitized.body)).not.toContain(
 				'key-secret-1234567890',
 			);
+		});
+
+		it('redacts encoded customer paths and echoed custom request values', () => {
+			const request: ApiRequestOptions = {
+				method: 'POST',
+				url: '/v2/leads/john%40example.com',
+				query: { version: 'v2' },
+				body: { icebreaker: 'private draft copy' },
+			};
+			const error = new ApiError(
+				request,
+				{
+					url: 'https://api.lemlist.com/api/v2/leads/john%40example.com?version=v2',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: {
+						code: 'INVALID_LEAD',
+						detail: 'Rejected private draft copy',
+					},
+				},
+				'Invalid request: private draft copy',
+			);
+
+			const sanitized = sanitizeApiError(error);
+
+			expect(sanitized).toBe(error);
+			expect(sanitized.url).toBe(
+				'https://api.lemlist.com/api/v2/leads/[REDACTED]',
+			);
+			expect(sanitized.request).toEqual({
+				method: 'POST',
+				url: '/v2/leads/[REDACTED]',
+			});
+			expect(sanitized.body).toEqual({
+				code: 'INVALID_LEAD',
+				detail: 'Rejected [REDACTED]',
+			});
+			expect(sanitized.message).toBe('Invalid request: [REDACTED]');
 		});
 	});
 
@@ -205,10 +239,7 @@ describe('client.ts', () => {
 			expect(thrown).toBe(err);
 			expect(thrown.status).toBe(429);
 			expect(thrown.retryAfter).toBe(4000);
-			expect(thrown.request.body).toEqual({
-				email: '[REDACTED]',
-				secret: '[REDACTED]',
-			});
+			expect(thrown.request.body).toBeUndefined();
 		});
 
 		it('sanitizes transport Error messages before propagating them', async () => {
