@@ -107,16 +107,24 @@ type TeamworkV3Input_payload_NotifyType = {
 	Set: boolean;
 	Value: string;
 };
-type TeamworkV3Input_payload_NullableInt64Slice = {
-	Null: boolean;
-	Set: boolean;
-	Value: Array<number>;
-};
-type TeamworkV3Input_payload_NullableTaskPriority = {
-	Null: boolean;
-	Set: boolean;
-	Value: string;
-};
+type TeamworkV3Input_payload_NullableInt64Slice =
+	| {
+			Null: boolean;
+			Set: boolean;
+			Value: Array<number>;
+	  }
+	| Array<number>;
+type TeamworkV3Input_payload_NullableTaskPriority =
+	| {
+			Null: boolean;
+			Set: boolean;
+			Value: string;
+	  }
+	| 'none'
+	| ''
+	| 'low'
+	| 'medium'
+	| 'high';
 type TeamworkV3Input_payload_NullableTaskRepeatFrequency = {
 	Null: boolean;
 	Set: boolean;
@@ -133,10 +141,10 @@ type TeamworkV3Input_payload_NullableWorkingHourEntryWeekdays = {
 	Value: Array<string>;
 };
 type TeamworkV3Input_payload_UserGroups = {
-	companyIds: TeamworkV3Input_payload_NullableInt64Slice;
-	jobRoleIds: TeamworkV3Input_payload_NullableInt64Slice;
-	teamIds: TeamworkV3Input_payload_NullableInt64Slice;
-	userIds: TeamworkV3Input_payload_NullableInt64Slice;
+	companyIds?: TeamworkV3Input_payload_NullableInt64Slice;
+	jobRoleIds?: TeamworkV3Input_payload_NullableInt64Slice;
+	teamIds?: TeamworkV3Input_payload_NullableInt64Slice;
+	userIds?: TeamworkV3Input_payload_NullableInt64Slice;
 };
 type TeamworkV3Input_people_UsersPayload = {
 	checkTeamIds: Array<number>;
@@ -198,22 +206,22 @@ type TeamworkV3Input_tag_Tag = {
 	name?: string;
 	projectId?: number;
 };
-type TeamworkV3Input_task_CustomFields = {
-	Values: Array<TeamworkV3Input_value_CustomFieldValue>;
-};
+type TeamworkV3Input_task_CustomFields =
+	| { Values: Array<TeamworkV3Input_value_CustomFieldValue> }
+	| Array<TeamworkV3Input_value_CustomFieldValue>;
 type TeamworkV3Input_task_File = { categoryId?: number; id: number };
 type TeamworkV3Input_task_Options = {
-	appendAssignees: boolean;
-	checkInvalidusers: boolean;
-	everyoneMustDo: boolean;
+	appendAssignees?: boolean;
+	checkInvalidusers?: boolean;
+	everyoneMustDo?: boolean;
 	fireWebhook?: boolean;
-	isTemplate: boolean;
+	isTemplate?: boolean;
 	logActivity?: boolean;
 	notify: boolean;
-	parseInlineTags: boolean;
+	parseInlineTags?: boolean;
 	positionAfterTaskId?: number;
-	pushDependents: boolean;
-	pushSubtasks: boolean;
+	pushDependents?: boolean;
+	pushSubtasks?: boolean;
 	shiftProjectDates?: boolean;
 	useDefaults?: boolean;
 	useNotifyViaTWIM?: boolean;
@@ -241,16 +249,17 @@ type TeamworkV3Input_task_RepeatOptions = {
 	selectedDays: TeamworkV3Input_payload_NullableWorkingHourEntryWeekdays;
 };
 type TeamworkV3Input_task_Request = {
-	attachmentOptions: { removeOtherFiles?: boolean };
-	attachments: {
+	attachmentOptions?: { removeOtherFiles?: boolean };
+	attachments?: {
 		files?: Array<TeamworkV3Input_task_File>;
 		pendingFiles?: Array<TeamworkV3Input_task_PendingFile>;
 	};
-	predecessors: Array<TeamworkV3Input_task_Predecessor>;
-	tags: Array<TeamworkV3Input_tag_Tag>;
+	card?: { columnId?: number };
+	predecessors?: Array<TeamworkV3Input_task_Predecessor>;
+	tags?: Array<TeamworkV3Input_tag_Tag>;
 	task: TeamworkV3Input_task_Task;
 	taskOptions: TeamworkV3Input_task_Options;
-	workflows: TeamworkV3Input_task_Workflows;
+	workflows?: TeamworkV3Input_task_Workflows;
 };
 type TeamworkV3Input_task_Task = {
 	allocationId?: number;
@@ -264,16 +273,17 @@ type TeamworkV3Input_task_Task = {
 	createdAt?: string;
 	createdBy?: number;
 	crmDealIds?: Array<number>;
-	customFields: TeamworkV3Input_task_CustomFields;
+	customFields?: TeamworkV3Input_task_CustomFields;
+	description?: string;
 	descriptionContentType?: string;
-	dueAt: string;
-	dueDate: string;
+	dueAt?: string;
+	dueDate?: string;
 	estimatedMinutes?: number;
 	grantAccessTo?: TeamworkV3Input_payload_UserGroups;
 	hasDeskTickets?: boolean;
 	name?: string;
 	notify?: boolean;
-	originalDueDate: string;
+	originalDueDate?: string;
 	parentTaskId?: number;
 	priority: TeamworkV3Input_payload_NullableTaskPriority;
 	private?: boolean;
@@ -281,8 +291,8 @@ type TeamworkV3Input_task_Task = {
 	projectId?: number;
 	reminders?: Array<TeamworkV3Input_task_Reminder>;
 	repeatOptions?: TeamworkV3Input_task_RepeatOptions;
-	startAt: string;
-	startDate: string;
+	startAt?: string;
+	startDate?: string;
 	status?: string;
 	tagIds?: Array<number>;
 	taskgroupId?: number;
@@ -334,10 +344,10 @@ type TeamworkV3Input_timer_Timer = {
 	taskId: number;
 };
 type TeamworkV3Input_value_CustomFieldValue = {
-	countryCode: string;
-	currencySymbol: string;
+	countryCode?: string;
+	currencySymbol?: string;
 	customfieldId: number;
-	urlTextToDisplay: string;
+	urlTextToDisplay?: string;
 	value: TeamworkJsonValue;
 };
 type TeamworkV3Output_access_CompanyAccess = {

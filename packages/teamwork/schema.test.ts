@@ -3,6 +3,7 @@ import {
 	teamworkOutputSchemaFor,
 	teamworkOutputSchemas,
 } from './endpoints/openapi-schema';
+import type { TeamworkEndpointInputs } from './endpoints/operation-types';
 import { TEAMWORK_OPERATION_IDS } from './endpoints/operation-types';
 import { teamworkDefinitions, teamworkOperations } from './endpoints/types';
 import { TeamworkSchema } from './schema';
@@ -125,6 +126,49 @@ describe('Teamwork OpenAPI contract schemas', () => {
 				body: {
 					clientRateByRoleId: { '123': 100 },
 					undocumented: true,
+				},
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts the official V3 create-task example with plain array inputs', () => {
+		const createTaskSchema =
+			teamworkInputSchemas[
+				'v3_post_projects_api_v3_tasklists_tasklistid_tasks_json'
+			];
+		const input: TeamworkEndpointInputs['v3_post_projects_api_v3_tasklists_tasklistid_tasks_json'] =
+			{
+				path: { tasklistId: 123 },
+				query: {},
+				body: {
+					task: {
+						tasklistId: 123,
+						name: 'Create a task from the Teamwork API',
+						assignees: { userIds: [234], teamIds: [], companyIds: [] },
+						priority: 'medium',
+						startAt: '2024-04-16',
+						dueAt: '2024-04-24',
+						description: 'V3 create-task request',
+						customFields: [
+							{ customfieldId: 2794, value: 'QR5654' },
+							{
+								customfieldId: 6050,
+								value: 'https://apidocs.teamwork.com/docs/teamwork',
+								urlTextToDisplay: 'Teamwork.com API',
+							},
+						],
+					},
+					taskOptions: { notify: true },
+					card: { columnId: 42 },
+				},
+			};
+		expect(createTaskSchema?.safeParse(input).success).toBe(true);
+		expect(
+			createTaskSchema?.safeParse({
+				...input,
+				body: {
+					...input.body,
+					task: { ...input.body.task, undocumented: true },
 				},
 			}).success,
 		).toBe(false);

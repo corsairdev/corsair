@@ -1285,7 +1285,7 @@ export const teamworkOperationsNested = {
 	[Id in TeamworkOperationId]: TeamworkOperationEndpoint<Id>;
 };
 
-// `unknown` is necessary for tests to look up manifest-driven IDs dynamically; the public nested endpoint tree above retains exact per-operation inputs and outputs.
+// `unknown` is necessary for the test-only manifest lookup: a runtime string key cannot retain a literal endpoint ID. Consumers use the nested registry, which keeps exact per-operation inputs and outputs.
 export const teamworkOperationsById: Record<
 	string,
 	CorsairEndpoint<TeamworkContext, Record<string, unknown>, unknown>

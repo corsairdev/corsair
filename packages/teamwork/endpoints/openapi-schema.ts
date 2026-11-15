@@ -166,11 +166,104 @@ function parameterSchema(
 	return schemaFromOpenApi(parameterDocument, definitions, true, new Map());
 }
 
+const v3TaskRequestOperationIds = new Set([
+	'v3_post_projects_api_v3_me_personaltasks_json',
+	'v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json',
+	'v3_post_projects_api_v3_tasklists_tasklistid_tasks_json',
+	'v3_patch_projects_api_v3_tasks_taskid_json',
+	'v3_put_projects_api_v3_tasks_taskid_json',
+	'v3_post_projects_api_v3_tasks_taskid_subtasks_json',
+]);
+
+function v3TaskRequestDefinitions(
+	definitions: Record<string, TeamworkOpenApiSchema>,
+): Record<string, TeamworkOpenApiSchema> {
+	const userGroups = definitions['payload.UserGroups'];
+	const userGroupProperties = isRecord(userGroups?.properties)
+		? userGroups.properties
+		: {};
+	const customFields = definitions['task.CustomFields'];
+	const taskRequest = definitions['task.Request'];
+	const task = definitions['task.Task'];
+	const taskOptions = definitions['task.Options'];
+	const customFieldValue = definitions['value.CustomFieldValue'];
+	const nullableInt64Slice = definitions['payload.NullableInt64Slice'];
+	const nullableTaskPriority = definitions['payload.NullableTaskPriority'];
+	const arrayOfIntegers = { type: 'array', items: { type: 'integer' } };
+	return {
+		...definitions,
+		'payload.NullableInt64Slice': {
+			oneOf: [nullableInt64Slice, arrayOfIntegers],
+		},
+		'payload.NullableTaskPriority': {
+			oneOf: [
+				nullableTaskPriority,
+				{ type: 'string', enum: ['none', '', 'low', 'medium', 'high'] },
+			],
+		},
+		'payload.UserGroups': {
+			...userGroups,
+			required: [],
+			properties: Object.fromEntries(
+				Object.keys(userGroupProperties).map((name) => [
+					name,
+					{
+						oneOf: [
+							{ $ref: '#/definitions/payload.NullableInt64Slice' },
+							arrayOfIntegers,
+						],
+					},
+				]),
+			),
+		},
+		'task.CustomFields': {
+			oneOf: [
+				customFields,
+				{
+					type: 'array',
+					items: { $ref: '#/definitions/value.CustomFieldValue' },
+				},
+			],
+		},
+		'value.CustomFieldValue': {
+			...customFieldValue,
+			required: ['customfieldId', 'value'],
+		},
+		'task.Task': {
+			...task,
+			properties: {
+				...(isRecord(task?.properties) ? task.properties : {}),
+				description: { type: 'string' },
+			},
+			required: [],
+		},
+		'task.Options': {
+			...taskOptions,
+			required: ['notify'],
+		},
+		'task.Request': {
+			...taskRequest,
+			properties: {
+				...(isRecord(taskRequest?.properties) ? taskRequest.properties : {}),
+				card: {
+					type: 'object',
+					properties: { columnId: { type: 'integer' } },
+				},
+			},
+			required: ['task', 'taskOptions'],
+		},
+	};
+}
+
 // `unknown` is necessary because each generated operation schema has distinct nested request fields.
 function createInputSchema(
 	operation: TeamworkOperationDefinition,
 ): z.ZodType<Record<string, unknown>> {
-	const definitions = teamworkDefinitions[operation.version] ?? {};
+	const baseDefinitions = teamworkDefinitions[operation.version] ?? {};
+	const definitions =
+		operation.version === 'v3' && v3TaskRequestOperationIds.has(operation.id)
+			? v3TaskRequestDefinitions(baseDefinitions)
+			: baseDefinitions;
 	const pathShape: Record<string, z.ZodType> = {};
 	const queryShape: Record<string, z.ZodType> = {};
 	for (const parameter of operation.parameters) {
@@ -219,6 +312,7 @@ export const teamworkOutputSchemas = Object.fromEntries(
 
 export function teamworkOutputSchemaFor(
 	operation: TeamworkOperationDefinition,
+	// `unknown` is necessary because this shared helper accepts query maps from operations with different parameter types.
 	query: Record<string, unknown>,
 ): z.ZodType {
 	const selectedProjectFields = query['fields[projects]'];

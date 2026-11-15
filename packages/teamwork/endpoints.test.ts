@@ -275,6 +275,10 @@ describe('documented operation routes', () => {
 		expect(plugin.endpointMeta?.['v1_delete_projects_id_json']?.riskLevel).toBe(
 			'destructive',
 		);
+		expect(
+			plugin.endpointMeta?.['v1_put_projects_projectid_update_request_json']
+				?.riskLevel,
+		).toBe('destructive');
 	});
 
 	it('supports direct API-key use without stored tenant metadata when overridden', async () => {

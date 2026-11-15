@@ -651,7 +651,7 @@ apiExamples:
   v3_get_projects_api_v3_taskgroups_taskgroupid_tasks_json:
     args: {"path":{"taskgroupId":1},"query":{}}
   v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json:
-    args: {"path":{"taskgroupId":1},"query":{},"body":{"task":{"startAt":"2026-01-15T12:00:00Z","startDate":"2026-01-15","dueAt":"2026-01-15T12:00:00Z","dueDate":"2026-01-15","originalDueDate":"2026-01-15","priority":{"Value":"medium","Null":true,"Set":true},"customFields":{"Values":[{"customfieldId":1,"value":null,"countryCode":"US","currencySymbol":"$","urlTextToDisplay":"View details"}]}},"taskOptions":{"notify":true,"everyoneMustDo":true,"isTemplate":true,"parseInlineTags":true,"appendAssignees":true,"checkInvalidusers":true,"pushSubtasks":true,"pushDependents":true},"tags":[{}],"attachments":{},"attachmentOptions":{},"predecessors":[{"id":1,"type":"tasks"}],"workflows":{}}}
+    args: {"path":{"taskgroupId":1},"query":{},"body":{"task":{"tasklistId":1,"name":"Create a task from the Teamwork API","assignees":{"userIds":[2],"teamIds":[],"companyIds":[]},"priority":"medium","startAt":"2026-01-15","dueAt":"2026-01-20","description":"Create a task using the Teamwork V3 API"},"taskOptions":{"notify":true}}}
   v3_get_projects_api_v3_tasklists_json:
     args: {"path":{},"query":{}}
   v3_get_projects_api_v3_tasklists_templates_json:
@@ -665,7 +665,7 @@ apiExamples:
   v3_get_projects_api_v3_tasklists_tasklistid_tasks_json:
     args: {"path":{"tasklistId":1},"query":{}}
   v3_post_projects_api_v3_tasklists_tasklistid_tasks_json:
-    args: {"path":{"tasklistId":1},"query":{},"body":{"task":{"startAt":"2026-01-15T12:00:00Z","startDate":"2026-01-15","dueAt":"2026-01-15T12:00:00Z","dueDate":"2026-01-15","originalDueDate":"2026-01-15","priority":{"Value":"medium","Null":true,"Set":true},"customFields":{"Values":[{"customfieldId":1,"value":null,"countryCode":"US","currencySymbol":"$","urlTextToDisplay":"View details"}]}},"taskOptions":{"notify":true,"everyoneMustDo":true,"isTemplate":true,"parseInlineTags":true,"appendAssignees":true,"checkInvalidusers":true,"pushSubtasks":true,"pushDependents":true},"tags":[{}],"attachments":{},"attachmentOptions":{},"predecessors":[{"id":1,"type":"tasks"}],"workflows":{}}}
+    args: {"path":{"tasklistId":1},"query":{},"body":{"task":{"tasklistId":1,"name":"Create a task from the Teamwork API","assignees":{"userIds":[2],"teamIds":[],"companyIds":[]},"priority":"medium","startAt":"2026-01-15","dueAt":"2026-01-20","description":"Create a task using the Teamwork V3 API"},"taskOptions":{"notify":true},"card":{"columnId":1}}}
   v3_get_projects_api_v3_tasklists_tasklistid_time_total_json:
     args: {"path":{"tasklistId":1},"query":{}}
   v3_get_projects_api_v3_tasks_json:

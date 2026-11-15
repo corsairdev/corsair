@@ -2786,7 +2786,7 @@ const teamworkEndpointMeta = {
 		description: 'Delete a Project Update',
 	},
 	v1_put_projects_projectid_update_request_json: {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Requesting a Project Update from a Project Owner',
 	},
 	v1_post_projects_projectid_people_personid_json: {

@@ -42,6 +42,8 @@ Array query parameters follow the collection format in the OpenAPI contract; Swa
 
 When a V3 response supports field projection, `fields[projects]` selection also adjusts response validation: selected project fields are required and omitted fields remain optional. Project output types reflect that sparse response shape.
 
+V3 task create/update inputs accept Teamwork's official examples, including plain numeric assignee arrays, string priorities, descriptions, and custom-field arrays. Known fields are still validated and unknown fields are rejected.
+
 Teamwork's published API guide and OpenAPI documents do not specify a numeric rate quota or a documented rate-limit window. Corsair's HTTP transport handles HTTP 429 responses and honors `Retry-After`; plugin handlers do not add a second retry loop. Writes are not retried on server or network failures.
 
 ## API operation inventory
@@ -236,7 +238,7 @@ The package covers these resource tags: Boards (10), Comments (10), Companies (1
 | `v1_post_projects_projectid_update_json` | write | `POST /projects/{projectId}/update.json` | Create a Project Update | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_put_projects_updates_updateid_json` | write | `PUT /projects/updates/{updateId}.json` | Modify a Project Update | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_delete_projects_updates_updateid_json` | destructive | `DELETE /projects/updates/{updateId}.json` | Delete a Project Update | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
-| `v1_put_projects_projectid_update_request_json` | write | `PUT /projects/{projectId}/update/request.json` | Requesting a Project Update from a Project Owner | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
+| `v1_put_projects_projectid_update_request_json` | destructive | `PUT /projects/{projectId}/update/request.json` | Requesting a Project Update from a Project Owner | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_post_projects_projectid_people_personid_json` | write | `POST /projects/{projectId}/people/{personId}.json` | Add a New User to a Project | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_put_projects_projectid_people_personid_json` | destructive | `PUT /projects/{projectId}/people/{personId}.json` | Remove a User from a Project | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_get_projects_projectid_people_personid_json` | read | `GET /projects/{projectId}/people/{personId}.json` | Get a Users Permissions on a Project | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
