@@ -305,6 +305,16 @@ describe('makeIgnisignRequest', () => {
 		expect(secondMessage).toContain('SIGNER_CONFLICT');
 	});
 
+	it('refuses an endpoint longer than 2048 characters before calling core', async () => {
+		mockRequest.mockResolvedValue({});
+		const endpoint = `/v4/signers/${'{{a'.repeat(1000)}`;
+
+		await expect(makeIgnisignRequest(endpoint, 'key')).rejects.toThrow(
+			'Ignisign request path is too long',
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('rethrows 429 ApiError preserving status and retryAfter', async () => {
 		const rateLimitError = createApiError(429, 'Too many requests', 5000);
 		mockRequest.mockRejectedValue(rateLimitError);

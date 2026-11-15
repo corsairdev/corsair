@@ -75,6 +75,7 @@ export function appEnvPath(
 	return `/v4/applications/${encodeURIComponent(appId)}/envs/${encodeURIComponent(appEnv)}`;
 }
 export const IGNISIGN_TIMEOUT_MS = 30000;
+const MAX_ENDPOINT_LENGTH = 2048;
 const BINARY_MAX_RETRIES = 2;
 const BINARY_MAX_RETRY_DELAY_MS = 30_000;
 
@@ -293,6 +294,12 @@ export async function makeIgnisignRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, formData, query } = options;
+
+	// Core runs a `{name}` placeholder regex over the path; capping its length
+	// keeps that substitution fast whatever the ids contain.
+	if (endpoint.length > MAX_ENDPOINT_LENGTH) {
+		throw new IgnisignAPIError('Ignisign request path is too long');
+	}
 
 	// An explicitly empty key means missing credentials.
 	if (apiKey !== undefined && apiKey.length === 0) {
