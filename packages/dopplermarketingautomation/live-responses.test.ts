@@ -163,7 +163,8 @@ describe('Doppler errors', () => {
 		const { message } = error as Error;
 		const serialized = JSON.stringify({ ...(error as object), message });
 		expect(serialized).toContain('[email]');
-		expect(serialized).not.toMatch(/brien|customer/);
+		// No piece of either address may survive, e.g. o'[email].
+		expect(serialized).not.toMatch(/o'|brien|customer/);
 		expect(serialized).not.toMatch(/owner(%40|@)example\.com/);
 		expect(error).toMatchObject({ status: 403 });
 	});
