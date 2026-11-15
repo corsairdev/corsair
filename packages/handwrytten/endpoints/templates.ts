@@ -110,7 +110,7 @@ export const create: HandwryttenEndpoints['templates.create'] = async (
 	await logEventFromContext(
 		ctx,
 		'handwrytten.templates.create',
-		{ templateId: parsed.id ?? parsed.template?.id },
+		{ templateId: parsed.template_id ?? parsed.id ?? parsed.template?.id },
 		'completed',
 	);
 	return parsed;

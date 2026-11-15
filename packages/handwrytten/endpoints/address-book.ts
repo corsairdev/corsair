@@ -133,7 +133,8 @@ export const updateRecipient: HandwryttenEndpoints['addressBook.updateRecipient'
 				'/profile/updateRecipient',
 				ctx.key,
 				{
-					method: 'PUT',
+					// The spec says PUT, but the live API answers 404 to PUT here.
+					method: 'POST',
 					body: parsedInput,
 					baseUrl: ctx.options?.baseUrl,
 				},
@@ -292,7 +293,8 @@ export const deleteSender: HandwryttenEndpoints['addressBook.deleteSender'] =
 				ctx.key,
 				{
 					method: 'POST',
-					body: parsedInput,
+					// The live API answers 404 "Address not found" to `{ id }`.
+					body: { address_ids: [parsedInput.id] },
 					baseUrl: ctx.options?.baseUrl,
 				},
 			);

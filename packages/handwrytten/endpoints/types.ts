@@ -1,12 +1,18 @@
 import { z } from 'zod';
 
+// Response parsing is lenient on purpose: the live API sends numbers as strings
+// (prices, gift card denominations), 0/1 for booleans, and nulls for absent fields.
+// Inputs stay strict.
+const NumLike = z.union([z.number(), z.string()]);
+const BoolLike = z.union([z.boolean(), z.number()]);
+
 // Shared Models mirroring Handwrytten API OpenAPI 3.15.0 responses
 
 export const PaginationSchema = z
 	.object({
-		is_last: z.boolean().optional(),
-		next: z.number().nullable().optional(),
-		per_page: z.number().optional(),
+		is_last: BoolLike.nullable().optional(),
+		next: NumLike.nullable().optional(),
+		per_page: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -14,14 +20,14 @@ export type Pagination = z.infer<typeof PaginationSchema>;
 
 export const CardDimensionSchema = z
 	.object({
-		id: z.number().optional(),
-		closed_height: z.union([z.string(), z.number()]).optional(),
-		closed_width: z.union([z.string(), z.number()]).optional(),
-		character_width: z.number().optional(),
-		character_height: z.number().optional(),
-		orientation: z.string().optional(),
-		open_height: z.union([z.string(), z.number()]).optional(),
-		open_width: z.union([z.string(), z.number()]).optional(),
+		id: NumLike.nullable().optional(),
+		closed_height: NumLike.nullable().optional(),
+		closed_width: NumLike.nullable().optional(),
+		character_width: NumLike.nullable().optional(),
+		character_height: NumLike.nullable().optional(),
+		orientation: z.string().nullable().optional(),
+		open_height: NumLike.nullable().optional(),
+		open_width: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -29,18 +35,18 @@ export type CardDimension = z.infer<typeof CardDimensionSchema>;
 
 export const CardSchema = z
 	.object({
-		id: z.number(),
-		name: z.string().optional(),
-		title: z.string().optional(),
+		id: NumLike,
+		name: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
-		dimension_id: z.number().nullable().optional(),
+		dimension_id: NumLike.nullable().optional(),
 		cover: z.string().nullable().optional(),
 		inside_image: z.string().nullable().optional(),
-		price: z.number().optional(),
-		category_id: z.number().nullable().optional(),
-		category_name: z.string().optional(),
-		orientation: z.string().optional(),
-		card_dimension: CardDimensionSchema.optional(),
+		price: NumLike.nullable().optional(),
+		category_id: NumLike.nullable().optional(),
+		category_name: z.string().nullable().optional(),
+		orientation: z.string().nullable().optional(),
+		card_dimension: CardDimensionSchema.nullable().optional(),
 	})
 	.passthrough();
 
@@ -48,9 +54,9 @@ export type Card = z.infer<typeof CardSchema>;
 
 export const CategorySchema = z
 	.object({
-		id: z.number(),
+		id: NumLike,
 		name: z.string(),
-		slug: z.string().optional(),
+		slug: z.string().nullable().optional(),
 		meta_title: z.string().nullable().optional(),
 		meta_description: z.string().nullable().optional(),
 	})
@@ -61,12 +67,12 @@ export type Category = z.infer<typeof CategorySchema>;
 export const FontSchema = z
 	.object({
 		id: z.string(),
-		label: z.string().optional(),
-		font_name: z.string().optional(),
-		image: z.string().optional(),
-		path: z.string().optional(),
-		font_id: z.number().optional(),
-		line_spacing: z.number().optional(),
+		label: z.string().nullable().optional(),
+		font_name: z.string().nullable().optional(),
+		image: z.string().nullable().optional(),
+		path: z.string().nullable().optional(),
+		font_id: NumLike.nullable().optional(),
+		line_spacing: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -74,9 +80,9 @@ export type Font = z.infer<typeof FontSchema>;
 
 export const SignatureSchema = z
 	.object({
-		id: z.number(),
-		preview: z.string().optional(),
-		name: z.string().optional(),
+		id: NumLike,
+		preview: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -84,10 +90,10 @@ export type Signature = z.infer<typeof SignatureSchema>;
 
 export const CountrySchema = z
 	.object({
-		id: z.number().optional(),
+		id: NumLike.nullable().optional(),
 		name: z.string(),
-		short_name: z.string().optional(),
-		code: z.string().optional(),
+		short_name: z.string().nullable().optional(),
+		code: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -95,9 +101,9 @@ export type Country = z.infer<typeof CountrySchema>;
 
 export const StateSchema = z
 	.object({
-		id: z.number().optional(),
+		id: NumLike.nullable().optional(),
 		name: z.string(),
-		short_name: z.string().optional(),
+		short_name: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -105,19 +111,19 @@ export type State = z.infer<typeof StateSchema>;
 
 export const SavedAddressSchema = z
 	.object({
-		id: z.number().optional(),
-		address_id: z.number().optional(),
-		name: z.string().optional(),
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
+		id: NumLike.nullable().optional(),
+		address_id: NumLike.nullable().optional(),
+		name: z.string().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
 		business_name: z.string().nullable().optional(),
-		address1: z.string().optional(),
+		address1: z.string().nullable().optional(),
 		address2: z.string().nullable().optional(),
-		city: z.string().optional(),
-		state: z.string().optional(),
-		zip: z.union([z.string(), z.number()]).optional(),
-		country: z.string().optional(),
-		country_id: z.number().optional(),
+		city: z.string().nullable().optional(),
+		state: z.string().nullable().optional(),
+		zip: NumLike.nullable().optional(),
+		country: z.string().nullable().optional(),
+		country_id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -125,9 +131,9 @@ export type SavedAddress = z.infer<typeof SavedAddressSchema>;
 
 export const TemplateCategorySchema = z
 	.object({
-		id: z.number(),
+		id: NumLike,
 		name: z.string(),
-		price: z.number().optional(),
+		price: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -135,10 +141,10 @@ export type TemplateCategory = z.infer<typeof TemplateCategorySchema>;
 
 export const TemplateSchema = z
 	.object({
-		id: z.number(),
-		category_id: z.number().optional(),
-		name: z.string().optional(),
-		message: z.string().optional(),
+		id: NumLike,
+		category_id: NumLike.nullable().optional(),
+		name: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
 		wishes: z.string().nullable().optional(),
 	})
 	.passthrough();
@@ -147,9 +153,9 @@ export type Template = z.infer<typeof TemplateSchema>;
 
 export const DenominationSchema = z
 	.object({
-		id: z.number(),
-		nominal: z.number().optional(),
-		price: z.number().optional(),
+		id: NumLike,
+		nominal: NumLike.nullable().optional(),
+		price: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -157,10 +163,10 @@ export type Denomination = z.infer<typeof DenominationSchema>;
 
 export const GiftCardSchema = z
 	.object({
-		id: z.number(),
-		name: z.string().optional(),
-		image: z.string().optional(),
-		denominations: z.array(DenominationSchema).optional(),
+		id: NumLike,
+		name: z.string().nullable().optional(),
+		image: z.string().nullable().optional(),
+		denominations: z.array(DenominationSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -168,10 +174,10 @@ export type GiftCard = z.infer<typeof GiftCardSchema>;
 
 export const InsertSchema = z
 	.object({
-		id: z.union([z.string(), z.number()]),
-		name: z.string().optional(),
-		image: z.string().optional(),
-		price: z.number().optional(),
+		id: NumLike,
+		name: z.string().nullable().optional(),
+		image: z.string().nullable().optional(),
+		price: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -179,11 +185,11 @@ export type Insert = z.infer<typeof InsertSchema>;
 
 export const BundleSchema = z
 	.object({
-		id: z.number(),
-		name: z.string().optional(),
-		description: z.string().optional(),
-		price: z.number().optional(),
-		delivery_cost: z.number().optional(),
+		id: NumLike,
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		price: NumLike.nullable().optional(),
+		delivery_cost: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -191,9 +197,9 @@ export type Bundle = z.infer<typeof BundleSchema>;
 
 export const QRCodeSchema = z
 	.object({
-		id: z.union([z.string(), z.number()]),
-		name: z.string().optional(),
-		url: z.string().optional(),
+		id: NumLike,
+		name: z.string().nullable().optional(),
+		url: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -201,10 +207,10 @@ export type QRCode = z.infer<typeof QRCodeSchema>;
 
 export const StampOptionSchema = z
 	.object({
-		id: z.number(),
-		name: z.string().optional(),
-		description: z.string().optional(),
-		price: z.number().optional(),
+		id: NumLike,
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		price: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -212,9 +218,9 @@ export type StampOption = z.infer<typeof StampOptionSchema>;
 
 export const CustomImageSchema = z
 	.object({
-		id: z.number(),
-		src: z.string().optional(),
-		type: z.string().optional(),
+		id: NumLike,
+		src: z.string().nullable().optional(),
+		type: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -222,9 +228,9 @@ export type CustomImage = z.infer<typeof CustomImageSchema>;
 
 export const PresetImageSchema = z
 	.object({
-		id: z.number(),
-		src: z.string().optional(),
-		name: z.string().optional(),
+		id: NumLike,
+		src: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -246,10 +252,10 @@ export type CardsListInput = z.infer<typeof CardsListInputSchema>;
 
 export const CardsListResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		cards: z.array(CardSchema).optional(),
-		pagination: PaginationSchema.optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		cards: z.array(CardSchema).nullable().optional(),
+		pagination: PaginationSchema.nullable().optional(),
 	})
 	.passthrough();
 
@@ -266,9 +272,9 @@ export type CardsGetInput = z.infer<typeof CardsGetInputSchema>;
 
 export const CardsGetResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		card: CardSchema.optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		card: CardSchema.nullable().optional(),
 	})
 	.passthrough();
 
@@ -288,8 +294,8 @@ export type CardsSectionsInput = z.infer<typeof CardsSectionsInputSchema>;
 
 export const CardsSectionsResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because cards sections payload returns dynamic heterogeneous category trees.
 		cards: z.unknown().optional(),
 		discount: z.unknown().optional(),
@@ -303,9 +309,9 @@ export type CardsCategoriesInput = z.infer<typeof CardsCategoriesInputSchema>;
 
 export const CardsCategoriesResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		categories: z.array(CategorySchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		categories: z.array(CategorySchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -328,9 +334,9 @@ export type CustomCardsDimensionsInput = z.infer<
 
 export const CustomCardsDimensionsResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		dimensions: z.array(CardDimensionSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		dimensions: z.array(CardDimensionSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -340,8 +346,7 @@ export type CustomCardsDimensionsResponse = z.infer<
 
 export const CustomCardsPresetImagesInputSchema = z
 	.object({
-		dimension_id: z.number().int().optional(),
-		page: z.number().int().optional(),
+		dimension_id: z.number().int().positive('dimension_id is required'),
 	})
 	.strict();
 
@@ -351,9 +356,9 @@ export type CustomCardsPresetImagesInput = z.infer<
 
 export const CustomCardsPresetImagesResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		images: z.array(PresetImageSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		images: z.array(PresetImageSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -363,7 +368,7 @@ export type CustomCardsPresetImagesResponse = z.infer<
 
 export const CustomCardsListImagesInputSchema = z
 	.object({
-		imageType: z.string().optional(),
+		type: z.enum(['logo', 'cover']).optional(),
 	})
 	.strict();
 
@@ -373,9 +378,9 @@ export type CustomCardsListImagesInput = z.infer<
 
 export const CustomCardsListImagesResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		images: z.array(CustomImageSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		images: z.array(CustomImageSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -385,9 +390,20 @@ export type CustomCardsListImagesResponse = z.infer<
 
 export const CustomCardsUploadImageInputSchema = z
 	.object({
-		image: z.string().min(1, 'Image data or URL cannot be empty'),
-		name: z.string().optional(),
-		type: z.string().optional(),
+		file: z
+			.string()
+			.min(1, 'file is required')
+			.describe('Image file content, base64-encoded (JPG or PNG)'),
+		file_name: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('File name sent with the upload, e.g. logo.png'),
+		mime_type: z
+			.enum(['image/png', 'image/jpeg'])
+			.optional()
+			.describe('Defaults to image/png'),
+		type: z.enum(['logo', 'cover']).optional(),
 	})
 	.strict();
 
@@ -397,10 +413,11 @@ export type CustomCardsUploadImageInput = z.infer<
 
 export const CustomCardsUploadImageResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		image_id: z.number().optional(),
-		url: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		id: NumLike.nullable().optional(),
+		image_url: z.string().nullable().optional(),
+		image_id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -421,10 +438,10 @@ export type CustomCardsCheckImageInput = z.infer<
 
 export const CustomCardsCheckImageResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		quality: z.string().optional(),
-		dpi: z.number().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		warning: z.string().nullable().optional(),
+		error: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -444,8 +461,8 @@ export type CustomCardsDeleteImageInput = z.infer<
 
 export const CustomCardsDeleteImageResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 	})
 	.passthrough();
 
@@ -453,14 +470,57 @@ export type CustomCardsDeleteImageResponse = z.infer<
 	typeof CustomCardsDeleteImageResponseSchema
 >;
 
+const Align = z.enum(['left', 'center', 'right']);
+
 export const CustomCardsCreateInputSchema = z
 	.object({
+		card_id: z.number().int().optional(),
 		name: z.string().min(1, 'Card name cannot be empty'),
-		dimension_id: z.number().int().positive('Dimension ID must be positive'),
-		cover_image_id: z.number().int().optional(),
-		inside_image_id: z.number().int().optional(),
-		category_id: z.number().int().optional(),
-		orientation: z.string().optional(),
+		dimension_id: z.number().int().positive().optional(),
+		is_update: z.boolean().optional(),
+		cover_id: z.number().int().optional(),
+		preset_cover_id: z.number().int().optional(),
+		cover_size_percent: z.number().int().optional(),
+		header_type: z.enum(['text', 'logo']).optional(),
+		header_text: z.string().optional(),
+		header_font_size: z.number().int().optional(),
+		header_font_color: z.string().optional(),
+		header_font_id: z.number().int().optional(),
+		header_align: Align.optional(),
+		header_logo_id: z.number().int().optional(),
+		header_logo_size_percent: z.number().int().optional(),
+		footer_type: z.enum(['text', 'logo']).optional(),
+		footer_text: z.string().optional(),
+		footer_font_size: z.number().int().optional(),
+		footer_font_color: z.string().optional(),
+		footer_font_id: z.number().int().optional(),
+		footer_align: Align.optional(),
+		footer_logo_id: z.number().int().optional(),
+		footer_logo_size_percent: z.number().int().optional(),
+		main_type: z.enum(['text', 'logo']).optional(),
+		main_text: z.string().optional(),
+		main_font_size: z.number().int().optional(),
+		main_font_color: z.string().optional(),
+		main_font_id: z.number().int().optional(),
+		main_align: Align.optional(),
+		main_logo_id: z.number().int().optional(),
+		main_logo_size_percent: z.number().int().optional(),
+		back_type: z.enum(['text', 'logo']).optional(),
+		back_text: z.string().optional(),
+		back_font_size: z.number().int().optional(),
+		back_font_color: z.string().optional(),
+		back_font_id: z.number().int().optional(),
+		back_align: Align.optional(),
+		back_vertical_align: z.enum(['top', 'center', 'bottom']).optional(),
+		back_logo_id: z.number().int().optional(),
+		back_size_percent: z.number().int().optional(),
+		back_cover_id: z.number().int().optional(),
+		preset_back_cover_id: z.number().int().optional(),
+		qr_code_id: z.number().int().optional(),
+		qr_code_size_percent: z.number().int().optional(),
+		qr_code_align: Align.optional(),
+		qr_code_location: z.enum(['header', 'footer']).optional(),
+		qr_code_frame_id: z.number().int().optional(),
 	})
 	.strict();
 
@@ -470,10 +530,10 @@ export type CustomCardsCreateInput = z.infer<
 
 export const CustomCardsCreateResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		card_id: z.number().optional(),
-		id: z.number().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		card_id: NumLike.nullable().optional(),
+		id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -493,8 +553,8 @@ export type CustomCardsDeleteInput = z.infer<
 
 export const CustomCardsDeleteResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 	})
 	.passthrough();
 
@@ -504,27 +564,35 @@ export type CustomCardsDeleteResponse = z.infer<
 
 // ── Orders Endpoints ──────────────────────────────────────────────────────────
 
+const DeliveryConfirmation = z.union([
+	z.literal(0),
+	z.literal(1),
+	z.literal(2),
+]);
+
 export const OrdersSendSingleInputSchema = z
 	.object({
 		card_id: z.number().int().positive('Card ID is required'),
 		message: z.string().min(1, 'Message is required'),
 		wishes: z.string().optional(),
-		font_label: z.string().optional(),
+		font_label: z.string().min(1, 'font_label is required'),
 		denomination_id: z.number().int().optional(),
 		insert_id: z.number().int().optional(),
 		bundle_id: z.number().int().optional(),
 		couponCode: z.string().optional(),
 		date_send: z.string().optional(),
 		validate_address: z.boolean().optional(),
-		delivery_confirmation: z.boolean().optional(),
+		// 0 = none, 1 = delivery confirmation, 2 = CASS address validation only
+		delivery_confirmation: DeliveryConfirmation.optional(),
+		webhook_url: z.string().url().optional(),
 		stamp_option_id: z.number().int().optional(),
 		sender_first_name: z.string().optional(),
 		sender_last_name: z.string().optional(),
 		sender_business_name: z.string().optional(),
-		sender_address1: z.string().optional(),
+		sender_address1: z.string().min(1, 'sender_address1 is required'),
 		sender_address2: z.string().optional(),
-		sender_city: z.string().optional(),
-		sender_zip: z.string().optional(),
+		sender_city: z.string().min(1, 'sender_city is required'),
+		sender_zip: z.string().min(1, 'sender_zip is required'),
 		sender_state: z.string().optional(),
 		sender_country_id: z.number().int().optional(),
 		sender_country: z.string().optional(),
@@ -535,7 +603,7 @@ export const OrdersSendSingleInputSchema = z
 		recipient_address2: z.string().optional(),
 		recipient_city: z.string().min(1, 'Recipient city is required'),
 		recipient_zip: z.string().min(1, 'Recipient zip is required'),
-		recipient_state: z.string().min(1, 'Recipient state is required'),
+		recipient_state: z.string().optional(),
 		recipient_country_id: z.number().int().optional(),
 		recipient_country: z.string().optional(),
 		client_metadata: z.string().optional(),
@@ -546,10 +614,10 @@ export type OrdersSendSingleInput = z.infer<typeof OrdersSendSingleInputSchema>;
 
 export const OrdersSendSingleResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		order_id: z.union([z.number(), z.string()]).optional(),
-		mail_sent: z.boolean().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		order_id: NumLike.nullable().optional(),
+		mail_sent: BoolLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -557,19 +625,63 @@ export type OrdersSendSingleResponse = z.infer<
 	typeof OrdersSendSingleResponseSchema
 >;
 
+const BasketAddressSchema = z
+	.object({
+		to_first_name: z.string().optional(),
+		to_last_name: z.string().optional(),
+		to_business_name: z.string().optional(),
+		to_address1: z.string().min(1),
+		to_address2: z.string().optional(),
+		to_city: z.string().min(1),
+		to_state: z.string().optional(),
+		to_zip: z.string().min(1),
+		to_country: z.string().optional(),
+		return_first_name: z.string().optional(),
+		return_last_name: z.string().optional(),
+		return_business_name: z.string().optional(),
+		return_address1: z.string().optional(),
+		return_address2: z.string().optional(),
+		return_city: z.string().optional(),
+		return_state: z.string().optional(),
+		return_zip: z.string().optional(),
+		return_country: z.string().optional(),
+		message: z.string().optional(),
+		wishes: z.string().optional(),
+		signature_id: z.number().int().optional(),
+		signature2_id: z.number().int().optional(),
+		date_send: z.string().optional(),
+	})
+	.strict();
+
 export const OrdersAddToBasketInputSchema = z
 	.object({
 		card_id: z.number().int().positive('Card ID is required'),
+		message: z.string().optional(),
+		wishes: z.string().optional(),
 		return_address_id: z.number().int().optional(),
 		address_id: z.number().int().optional(),
 		address_ids: z.array(z.number().int()).optional(),
+		addresses: z
+			.array(BasketAddressSchema)
+			.optional()
+			.describe(
+				'Inline recipients (each with its own message), instead of saved address_ids',
+			),
 		font: z.string().optional(),
 		font_size: z.number().optional(),
+		auto_font_size: z.boolean().optional(),
+		signature_id: z.number().int().optional(),
+		signature2_id: z.number().int().optional(),
+		date_send: z.string().optional(),
+		couponCode: z.string().optional(),
 		denomination_id: z.number().int().optional(),
 		insert_id: z.number().int().optional(),
 		bundle_id: z.number().int().optional(),
 		quantity: z.number().int().optional(),
+		check_quantity: z.boolean().optional(),
+		delivery_confirmation: DeliveryConfirmation.optional(),
 		stamp_option_id: z.number().int().optional(),
+		client_metadata: z.string().optional(),
 	})
 	.strict();
 
@@ -579,9 +691,9 @@ export type OrdersAddToBasketInput = z.infer<
 
 export const OrdersAddToBasketResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		order_id: z.union([z.number(), z.string()]).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		order_id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -599,8 +711,8 @@ export type OrdersGetInput = z.infer<typeof OrdersGetInputSchema>;
 
 export const OrdersGetResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because order details contain extensive provider order schemas.
 		order: z.unknown().optional(),
 	})
@@ -618,8 +730,8 @@ export type OrdersCancelInput = z.infer<typeof OrdersCancelInputSchema>;
 
 export const OrdersCancelResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 	})
 	.passthrough();
 
@@ -632,9 +744,9 @@ export type BasketCountInput = z.infer<typeof BasketCountInputSchema>;
 
 export const BasketCountResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		count: z.number().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		count: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -645,8 +757,8 @@ export type BasketClearInput = z.infer<typeof BasketClearInputSchema>;
 
 export const BasketClearResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because basket clear item is an optional provider object.
 		item: z.unknown().optional(),
 	})
@@ -657,7 +769,11 @@ export type BasketClearResponse = z.infer<typeof BasketClearResponseSchema>;
 export const BasketSendInputSchema = z
 	.object({
 		couponCode: z.string().optional(),
-		notes: z.string().optional(),
+		check_quantity: z.boolean().optional(),
+		notes: z
+			.record(z.string(), z.string())
+			.optional()
+			.describe('Order notes keyed by order id'),
 	})
 	.strict();
 
@@ -665,8 +781,8 @@ export type BasketSendInput = z.infer<typeof BasketSendInputSchema>;
 
 export const BasketSendResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because items payload can be array of placed orders or summary.
 		items: z.unknown().optional(),
 	})
@@ -681,9 +797,9 @@ export type FontsListInput = z.infer<typeof FontsListInputSchema>;
 
 export const FontsListResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		fonts: z.array(FontSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		fonts: z.array(FontSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -696,9 +812,9 @@ export type SignaturesListInput = z.infer<typeof SignaturesListInputSchema>;
 
 export const SignaturesListResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		signatures: z.array(SignatureSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		signatures: z.array(SignatureSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -715,9 +831,9 @@ export type AddressBookCountriesInput = z.infer<
 
 export const AddressBookCountriesResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		countries: z.array(CountrySchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		countries: z.array(CountrySchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -727,8 +843,7 @@ export type AddressBookCountriesResponse = z.infer<
 
 export const AddressBookStatesInputSchema = z
 	.object({
-		country_code: z.string().optional(),
-		country_id: z.number().int().optional(),
+		country_id: z.number().int().positive('country_id is required'),
 	})
 	.strict();
 
@@ -738,9 +853,9 @@ export type AddressBookStatesInput = z.infer<
 
 export const AddressBookStatesResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		states: z.array(StateSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		states: z.array(StateSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -755,9 +870,9 @@ export type AddressBookListRecipientsInput = z.infer<
 
 export const AddressBookListRecipientsResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		addresses: z.array(SavedAddressSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		addresses: z.array(SavedAddressSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -788,9 +903,9 @@ export type AddressBookAddRecipientInput = z.infer<
 
 export const AddressBookAddRecipientResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		address_id: z.number().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		address_id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -821,9 +936,9 @@ export type AddressBookUpdateRecipientInput = z.infer<
 
 export const AddressBookUpdateRecipientResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		address_id: z.number().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		address_id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -843,9 +958,9 @@ export type AddressBookDeleteRecipientInput = z.infer<
 
 export const AddressBookDeleteRecipientResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		address_id: z.number().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		address_id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -860,9 +975,9 @@ export type AddressBookListSendersInput = z.infer<
 
 export const AddressBookListSendersResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		addresses: z.array(SavedAddressSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		addresses: z.array(SavedAddressSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -877,8 +992,8 @@ export type AddressBookGetSenderInput = z.infer<
 
 export const AddressBookGetSenderResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because billing_info and subscription are complex account objects.
 		billing_info: z.unknown().optional(),
 		subscription: z.unknown().optional(),
@@ -911,8 +1026,8 @@ export type AddressBookAddSenderInput = z.infer<
 
 export const AddressBookAddSenderResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because address response can return saved address object or id.
 		address: z.unknown().optional(),
 	})
@@ -938,8 +1053,8 @@ export type AddressBookUpdateSenderInput = z.infer<
 
 export const AddressBookUpdateSenderResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because updated address array is returned by provider.
 		addresses: z.unknown().optional(),
 	})
@@ -961,8 +1076,8 @@ export type AddressBookDeleteSenderInput = z.infer<
 
 export const AddressBookDeleteSenderResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 	})
 	.passthrough();
 
@@ -982,8 +1097,8 @@ export type AddressBookSetDefaultSenderInput = z.infer<
 
 export const AddressBookSetDefaultSenderResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1000,9 +1115,9 @@ export type TemplatesCategoriesInput = z.infer<
 
 export const TemplatesCategoriesResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		categories: z.array(TemplateCategorySchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		categories: z.array(TemplateCategorySchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1020,9 +1135,9 @@ export type TemplatesListInput = z.infer<typeof TemplatesListInputSchema>;
 
 export const TemplatesListResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		templates: z.array(TemplateSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		templates: z.array(TemplateSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1038,9 +1153,9 @@ export type TemplatesGetInput = z.infer<typeof TemplatesGetInputSchema>;
 
 export const TemplatesGetResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		template: TemplateSchema.optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		template: TemplateSchema.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1059,10 +1174,11 @@ export type TemplatesCreateInput = z.infer<typeof TemplatesCreateInputSchema>;
 
 export const TemplatesCreateResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		template: TemplateSchema.optional(),
-		id: z.number().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		template: TemplateSchema.nullable().optional(),
+		template_id: NumLike.nullable().optional(),
+		id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1084,9 +1200,9 @@ export type TemplatesUpdateInput = z.infer<typeof TemplatesUpdateInputSchema>;
 
 export const TemplatesUpdateResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		template: TemplateSchema.optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		template: TemplateSchema.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1104,8 +1220,8 @@ export type TemplatesDeleteInput = z.infer<typeof TemplatesDeleteInputSchema>;
 
 export const TemplatesDeleteResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1120,9 +1236,9 @@ export type GiftCardsListInput = z.infer<typeof GiftCardsListInputSchema>;
 
 export const GiftCardsListResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		gcards: z.array(GiftCardSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		gcards: z.array(GiftCardSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1140,9 +1256,9 @@ export type InsertsListInput = z.infer<typeof InsertsListInputSchema>;
 
 export const InsertsListResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		inserts: z.array(InsertSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		inserts: z.array(InsertSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1155,9 +1271,9 @@ export type BundlesListInput = z.infer<typeof BundlesListInputSchema>;
 
 export const BundlesListResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		bundles: z.array(BundleSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		bundles: z.array(BundleSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1170,9 +1286,9 @@ export type QrCodesListInput = z.infer<typeof QrCodesListInputSchema>;
 
 export const QrCodesListResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		list: z.array(QRCodeSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		list: z.array(QRCodeSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1189,9 +1305,9 @@ export type QrCodesCreateInput = z.infer<typeof QrCodesCreateInputSchema>;
 
 export const QrCodesCreateResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		id: z.union([z.string(), z.number()]).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1199,7 +1315,10 @@ export type QrCodesCreateResponse = z.infer<typeof QrCodesCreateResponseSchema>;
 
 export const QrCodesDeleteInputSchema = z
 	.object({
-		id: z.string().min(1, 'QR code ID is required'),
+		id: z.union([
+			z.number().int().positive(),
+			z.string().min(1, 'QR code ID is required'),
+		]),
 	})
 	.strict();
 
@@ -1207,8 +1326,8 @@ export type QrCodesDeleteInput = z.infer<typeof QrCodesDeleteInputSchema>;
 
 export const QrCodesDeleteResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1219,11 +1338,16 @@ export type QrCodesDashboardInput = z.infer<typeof QrCodesDashboardInputSchema>;
 
 export const QrCodesDashboardResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		// `unknown` because statistics object contains dynamic scan analytics.
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		// `unknown` for the analytics blocks: the live API returns `stats`, `chart`,
+		// `map` and `recent_scans`, while the spec documents `scans`/`statistics`.
+		stats: z.unknown().optional(),
+		chart: z.unknown().optional(),
+		map: z.unknown().optional(),
+		recent_scans: z.unknown().optional(),
 		statistics: z.unknown().optional(),
-		total_scans: z.number().optional(),
+		total_scans: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1236,8 +1360,8 @@ export type QrCodesFramesInput = z.infer<typeof QrCodesFramesInputSchema>;
 
 export const QrCodesFramesResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because frames array carries layout styling options.
 		frames: z.unknown().optional(),
 	})
@@ -1254,9 +1378,9 @@ export type ShippingStampOptionsInput = z.infer<
 
 export const ShippingStampOptionsResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		stamp_options: z.array(StampOptionSchema).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		stamp_options: z.array(StampOptionSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1268,12 +1392,28 @@ export type ShippingStampOptionsResponse = z.infer<
 
 export const ProspectingCalculateTargetsInputSchema = z
 	.object({
-		address: z.string().min(1, 'address is required'),
-		city: z.string().min(1, 'city is required'),
-		zip: z.string().min(1, 'zip is required'),
+		type: z.enum(['residential', 'business']).optional(),
+		address: z.string().optional(),
+		city: z.string().optional(),
+		zip: z.string().optional(),
 		country: z.string().optional(),
 		radius: z.number().optional(),
-		type: z.string().optional(),
+		latitude: z.string().optional(),
+		longitude: z.string().optional(),
+		// Demographic filters, passed through as the provider names them.
+		'ownRent-d': z.string().optional(),
+		'hinc-d': z.string().optional(),
+		'worth-d': z.string().optional(),
+		'Home-d': z.string().optional(),
+		'resLen-d': z.string().optional(),
+		hAge: z.string().optional(),
+		people: z.string().optional(),
+		kids: z.string().optional(),
+		marital: z.string().optional(),
+		staff: z.string().optional(),
+		sale: z.string().optional(),
+		one: z.enum(['0', '1']).optional(),
+		sic: z.string().optional(),
 	})
 	.strict();
 
@@ -1283,10 +1423,10 @@ export type ProspectingCalculateTargetsInput = z.infer<
 
 export const ProspectingCalculateTargetsResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		total_records: z.number().optional(),
-		mask: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		total_records: NumLike.nullable().optional(),
+		mask: z.union([z.boolean(), z.string()]).nullable().optional(),
 	})
 	.passthrough();
 
@@ -1294,13 +1434,38 @@ export type ProspectingCalculateTargetsResponse = z.infer<
 	typeof ProspectingCalculateTargetsResponseSchema
 >;
 
+const ShippingMethod = z.union([
+	z.literal(1),
+	z.literal(2),
+	z.literal(3),
+	z.literal(4),
+	z.literal(5),
+	z.literal(6),
+]);
+const ShippingRate = z.union([
+	z.literal(1),
+	z.literal(2),
+	z.literal(3),
+	z.literal(4),
+]);
+
 export const ProspectingPreviewInputSchema = z
 	.object({
 		card_id: z.number().int().positive('card_id is required'),
 		message: z.string().min(1, 'message is required'),
 		records: z.number().int().positive('records count is required'),
-		country: z.string().optional(),
+		country: z.string().min(1, 'country is required'),
+		return_address_id: z
+			.number()
+			.int()
+			.positive('return_address_id is required'),
 		insert_id: z.number().int().optional(),
+		must_deliver_by: z.string().optional(),
+		shipping_address_id: z.number().int().optional(),
+		// Optional in the spec, but the live API answers 400 "The shipping method id
+		// is incorrect" without it; methods other than 1 also need shipping_rate_id.
+		shipping_method_id: ShippingMethod,
+		shipping_rate_id: ShippingRate.optional(),
 	})
 	.strict();
 
@@ -1310,11 +1475,11 @@ export type ProspectingPreviewInput = z.infer<
 
 export const ProspectingPreviewResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 		// `unknown` because prices structure depends on chosen prospecting demographic options.
 		prices: z.unknown().optional(),
-		quantity: z.number().optional(),
+		quantity: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1326,14 +1491,40 @@ export const ProspectingCreateOrderInputSchema = z
 	.object({
 		card_id: z.number().int().positive('card_id is required'),
 		message: z.string().min(1, 'message is required'),
-		address: z.string().min(1, 'address is required'),
-		city: z.string().min(1, 'city is required'),
-		zip: z.string().min(1, 'zip is required'),
+		wishes: z.string().optional(),
 		records: z.number().int().positive('records count is required'),
-		country: z.string().optional(),
-		insert_id: z.number().int().optional(),
-		font: z.string().optional(),
+		return_address_id: z
+			.number()
+			.int()
+			.positive('return_address_id is required'),
+		font: z.string().min(1, 'font is required'),
 		font_size: z.number().optional(),
+		address: z.string().optional(),
+		city: z.string().optional(),
+		zip: z.string().optional(),
+		country: z.string().optional(),
+		radius: z.number().optional(),
+		latitude: z.string().optional(),
+		longitude: z.string().optional(),
+		// Demographic filters, passed through as the provider names them.
+		'ownRent-d': z.string().optional(),
+		'hinc-d': z.string().optional(),
+		'worth-d': z.string().optional(),
+		'Home-d': z.string().optional(),
+		'resLen-d': z.string().optional(),
+		hAge: z.string().optional(),
+		people: z.string().optional(),
+		kids: z.string().optional(),
+		marital: z.string().optional(),
+		insert_id: z.number().int().optional(),
+		signature_id: z.number().int().optional(),
+		signature2_id: z.number().int().optional(),
+		must_deliver_by: z.string().optional(),
+		shipping_address_id: z.number().int().optional(),
+		// Optional in the spec, but the live API answers 400 "The shipping method id
+		// is incorrect" without it; methods other than 1 also need shipping_rate_id.
+		shipping_method_id: ShippingMethod,
+		shipping_rate_id: ShippingRate.optional(),
 	})
 	.strict();
 
@@ -1343,9 +1534,9 @@ export type ProspectingCreateOrderInput = z.infer<
 
 export const ProspectingCreateOrderResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		order_id: z.union([z.number(), z.string()]).optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		order_id: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1360,13 +1551,13 @@ export type AuthGetUserInput = z.infer<typeof AuthGetUserInputSchema>;
 
 export const AuthGetUserResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		id: z.union([z.string(), z.number()]).optional(),
-		email: z.string().optional(),
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
-		credits: z.number().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		id: NumLike.nullable().optional(),
+		email: z.string().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		credits: NumLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1377,10 +1568,10 @@ export type AuthCheckAuthInput = z.infer<typeof AuthCheckAuthInputSchema>;
 
 export const AuthCheckAuthResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		login: z.string().optional(),
-		test_mode: z.boolean().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		login: z.string().nullable().optional(),
+		test_mode: BoolLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1396,9 +1587,9 @@ export type AuthSetTestModeInput = z.infer<typeof AuthSetTestModeInputSchema>;
 
 export const AuthSetTestModeResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
-		test_mode: z.boolean().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
+		test_mode: BoolLike.nullable().optional(),
 	})
 	.passthrough();
 
@@ -1411,8 +1602,8 @@ export type AuthLogoutInput = z.infer<typeof AuthLogoutInputSchema>;
 
 export const AuthLogoutResponseSchema = z
 	.object({
-		httpCode: z.number().optional(),
-		status: z.string().optional(),
+		httpCode: NumLike.nullable().optional(),
+		status: z.union([z.string(), z.number()]).nullable().optional(),
 	})
 	.passthrough();
 

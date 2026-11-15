@@ -167,11 +167,11 @@ describe('CustomCards Endpoints', () => {
 			images: [],
 		});
 
-		await CustomCards.listImages(ctx, { imageType: 'logo' });
+		await CustomCards.listImages(ctx, { type: 'logo' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/cards/listCustomUserImages',
 			'test-api-key',
-			{ method: 'GET', query: { imageType: 'logo' } },
+			{ method: 'GET', query: { type: 'logo' } },
 		);
 	});
 
@@ -179,19 +179,30 @@ describe('CustomCards Endpoints', () => {
 		mockedRequest.mockResolvedValue({
 			httpCode: 200,
 			status: 'ok',
-			image_id: 88,
+			id: 88,
+			image_url: 'https://cdn.example/logo.png',
 		});
 
+		const png = Buffer.from('fake-png-bytes').toString('base64');
 		const res = await CustomCards.uploadImage(ctx, {
-			image: 'data:base64...',
-			name: 'logo.png',
+			file: png,
+			file_name: 'logo.png',
+			type: 'logo',
 		});
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/cards/uploadCustomLogo',
-			'test-api-key',
-			{ method: 'POST', body: { image: 'data:base64...', name: 'logo.png' } },
+		const [path, key, opts] = mockedRequest.mock.calls[0]!;
+		expect(path).toBe('/cards/uploadCustomLogo');
+		expect(key).toBe('test-api-key');
+		expect(opts?.method).toBe('POST');
+		expect(opts?.body).toBeUndefined();
+		const file = opts?.formData?.file as File;
+		expect(file).toBeInstanceOf(Blob);
+		expect(file.name).toBe('logo.png');
+		expect(file.type).toBe('image/png');
+		expect(Buffer.from(await file.arrayBuffer()).toString()).toBe(
+			'fake-png-bytes',
 		);
-		expect(res.image_id).toBe(88);
+		expect(opts?.formData?.type).toBe('logo');
+		expect(res.id).toBe(88);
 	});
 
 	it('customCards.checkImage sends POST /cards/checkUploadedCustomLogo', async () => {
@@ -263,12 +274,17 @@ describe('Orders Endpoints', () => {
 			httpCode: 200,
 			status: 'ok',
 			order_id: 12345,
-			mail_sent: true,
+			mail_sent: 1,
 		});
 
 		const input = {
 			card_id: 15,
 			message: 'Greetings from test!',
+			font_label: 'Chill Charity',
+			sender_address1: '1 Sender Rd',
+			sender_city: 'Austin',
+			sender_zip: '78701',
+			delivery_confirmation: 2 as const,
 			recipient_address1: '789 Elm St',
 			recipient_city: 'Austin',
 			recipient_state: 'TX',
@@ -366,10 +382,10 @@ describe('Basket Endpoints', () => {
 			status: 'ok',
 		});
 
-		await Basket.send(ctx, { notes: 'Batch send test' });
+		await Basket.send(ctx, { notes: { '196936': 'Batch send test' } });
 		expect(mockedRequest).toHaveBeenCalledWith('/basket/send', 'test-api-key', {
 			method: 'POST',
-			body: { notes: 'Batch send test' },
+			body: { notes: { '196936': 'Batch send test' } },
 		});
 	});
 });
@@ -425,11 +441,11 @@ describe('AddressBook Endpoints', () => {
 			status: 'ok',
 			states: [{ id: 1, name: 'California' }],
 		});
-		await AddressBook.states(ctx, { country_code: 'US' });
+		await AddressBook.states(ctx, { country_id: 1 });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/countries/listStates',
 			'test-api-key',
-			{ method: 'GET', query: { country_code: 'US' } },
+			{ method: 'GET', query: { country_id: 1 } },
 		);
 
 		mockedRequest.mockResolvedValue({
@@ -470,7 +486,8 @@ describe('AddressBook Endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/profile/updateRecipient',
 			'test-api-key',
-			{ method: 'PUT', body: { address_id: 111, city: 'Salem' } },
+			// Live: PUT answers 404 on this route; only POST updates a recipient.
+			{ method: 'POST', body: { address_id: 111, city: 'Salem' } },
 		);
 
 		await AddressBook.deleteRecipient(ctx, { address_id: 111 });
@@ -518,7 +535,8 @@ describe('AddressBook Endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/profile/deleteAddress',
 			'test-api-key',
-			{ method: 'POST', body: { id: 22 } },
+			// Live: `id` answers 404 "Address not found"; `address_ids` deletes.
+			{ method: 'POST', body: { address_ids: [22] } },
 		);
 
 		await AddressBook.setDefaultSender(ctx, { id: 22 });
@@ -723,18 +741,19 @@ describe('QR Codes and Prospecting', () => {
 			status: 'ok',
 			quantity: 100,
 		});
-		await Prospecting.preview(ctx, {
+		const previewInput = {
 			card_id: 10,
 			message: 'Hello!',
 			records: 100,
-		});
+			country: 'US',
+			return_address_id: 7,
+			shipping_method_id: 1 as const,
+		};
+		await Prospecting.preview(ctx, previewInput);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/outbound/process',
 			'test-api-key',
-			{
-				method: 'POST',
-				body: { card_id: 10, message: 'Hello!', records: 100 },
-			},
+			{ method: 'POST', body: previewInput },
 		);
 
 		await Prospecting.createOrder(ctx, {
@@ -744,6 +763,10 @@ describe('QR Codes and Prospecting', () => {
 			city: 'Phoenix',
 			zip: '85001',
 			records: 100,
+			return_address_id: 7,
+			font: 'hwDavid',
+			radius: 5,
+			shipping_method_id: 1,
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/outbound/addToBasket',
@@ -757,6 +780,10 @@ describe('QR Codes and Prospecting', () => {
 					city: 'Phoenix',
 					zip: '85001',
 					records: 100,
+					return_address_id: 7,
+					font: 'hwDavid',
+					radius: 5,
+					shipping_method_id: 1,
 				},
 			},
 		);
@@ -770,8 +797,12 @@ describe('Auth Endpoints', () => {
 			status: 'ok',
 			id: 1,
 			credits: 10,
+			uid: 'session-token-value',
 		});
-		await Auth.getUser(ctx, {});
+		const user = await Auth.getUser(ctx, {});
+		// `uid` is the account's session token and must not reach the caller.
+		expect(user).not.toHaveProperty('uid');
+		expect(JSON.stringify(user)).not.toContain('session-token-value');
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/auth/getUser',
 			'test-api-key',

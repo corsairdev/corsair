@@ -52,6 +52,7 @@ import {
 	OrdersSendSingleInputSchema,
 	OrdersSendSingleResponseSchema,
 	ProspectingCalculateTargetsInputSchema,
+	ProspectingCalculateTargetsResponseSchema,
 	ProspectingCreateOrderInputSchema,
 	ProspectingPreviewInputSchema,
 	QrCodesCreateInputSchema,
@@ -517,6 +518,98 @@ describe('Handwrytten Schemas', () => {
 				test_mode: true,
 			});
 			expect(AuthLogoutInputSchema.parse({})).toEqual({});
+		});
+	});
+
+	// Trimmed real responses from the 11-15 live run (no personal data).
+	describe('live response shapes', () => {
+		it('accepts string prices on gift card denominations and bundles', () => {
+			expect(() =>
+				GiftCardsListResponseSchema.parse({
+					httpCode: 200,
+					status: 'ok',
+					gcards: [
+						{
+							id: 3,
+							name: 'Amazon',
+							image: 'https://cdn.example/gc.png',
+							sort: 1,
+							weight: '0.10',
+							denominations: [
+								{ id: 9, nominal: '25.00', price: '27.50', active: 1 },
+							],
+						},
+					],
+				}),
+			).not.toThrow();
+			expect(() =>
+				BundlesListResponseSchema.parse({
+					httpCode: 200,
+					status: 'ok',
+					bundles: [
+						{
+							id: 1,
+							name: 'Bundle',
+							description: 'x',
+							price: '12.00',
+							delivery_cost: '0.00',
+							image_url: 'https://cdn.example/b.png',
+							weight: '1.00',
+							quantity: 1,
+							sort_no: 1,
+						},
+					],
+				}),
+			).not.toThrow();
+		});
+
+		it('accepts cards with null card_dimension, dimension_id and description', () => {
+			expect(() =>
+				CardsListResponseSchema.parse({
+					httpCode: 200,
+					status: 'ok',
+					cards: [
+						{
+							id: 130684,
+							name: 'Card',
+							description: null,
+							dimension_id: null,
+							card_dimension: null,
+							inside_image: null,
+							price: 3.75,
+						},
+					],
+					pagination: { is_last: true },
+				}),
+			).not.toThrow();
+		});
+
+		it('accepts 0/1 test_mode and a numeric status', () => {
+			expect(
+				AuthCheckAuthResponseSchema.parse({
+					httpCode: 200,
+					status: 'ok',
+					has_no_password: false,
+					last: 'email',
+					login: 'x',
+					test_mode: 1,
+				}).test_mode,
+			).toBe(1);
+			expect(
+				AuthGetUserResponseSchema.parse({ httpCode: 200, status: 1, id: 7 })
+					.status,
+			).toBe(1);
+		});
+
+		it('accepts a boolean mask and string total_records from calcTargets', () => {
+			expect(
+				ProspectingCalculateTargetsResponseSchema.parse({
+					httpCode: 200,
+					status: 'ok',
+					total_records: '11244',
+					mask: false,
+				}).total_records,
+			).toBe('11244');
 		});
 	});
 });

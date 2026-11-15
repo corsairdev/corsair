@@ -107,7 +107,15 @@ export const uploadImage: HandwryttenEndpoints['customCards.uploadImage'] =
 				ctx.key,
 				{
 					method: 'POST',
-					body: parsedInput,
+					// The provider takes the image as a multipart `file` part, not JSON.
+					formData: {
+						file: new File(
+							[Buffer.from(parsedInput.file, 'base64')],
+							parsedInput.file_name ?? 'image.png',
+							{ type: parsedInput.mime_type ?? 'image/png' },
+						),
+						type: parsedInput.type,
+					},
 					baseUrl: ctx.options?.baseUrl,
 				},
 			);
@@ -118,7 +126,7 @@ export const uploadImage: HandwryttenEndpoints['customCards.uploadImage'] =
 		await logEventFromContext(
 			ctx,
 			'handwrytten.customCards.uploadImage',
-			{ imageId: parsed.image_id },
+			{ imageId: parsed.id ?? parsed.image_id },
 			'completed',
 		);
 		return parsed;
