@@ -525,6 +525,7 @@ export const BaseProviders = [
 	'streamtime',
 	'stripe',
 	'studiobyai21labs',
+	'supersaas',
 	'supabase',
 	'supadata',
 	'surf',
@@ -1138,6 +1139,7 @@ export const ProviderDisplayNames = {
 	streamtime: 'Streamtime',
 	stripe: 'Stripe',
 	studiobyai21labs: 'StudioByAI21Labs',
+	supersaas: 'SuperSaaS',
 	supabase: 'Supabase',
 	supadata: 'Supadata',
 	surf: 'Surf',
@@ -1758,6 +1760,7 @@ export type AllProviders =
 	| 'streamtime'
 	| 'stripe'
 	| 'studiobyai21labs'
+	| 'supersaas'
 	| 'supabase'
 	| 'supadata'
 	| 'surf'
