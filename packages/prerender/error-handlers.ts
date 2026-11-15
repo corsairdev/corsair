@@ -1,18 +1,25 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PrerenderAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isCredentialRejection,
+	isReplayablePath,
+	PrerenderAPIError,
+} from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PrerenderAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // Prerender has no published error taxonomy: every route probed answers a plain
-// text reason with a 400, and the cache-clear routes document a 403 for "already
-// in progress" and "queued" as states rather than failures.
+// text reason with a 400, and the cache-clear route documents a 403 for "already
+// in progress". HTTP failures arrive as core's ApiError; only a request that
+// never reached Prerender arrives as a PrerenderAPIError.
 export const errorHandlers = {
 	// `Invalid prerenderToken` on any route.
 	AUTH_ERROR: {
 		match: (error: Error) =>
-			error instanceof PrerenderAPIError && error.credentialsRejected,
+			error instanceof ApiError &&
+			isCredentialRejection(error.status, error.body),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Any other 400: a body Prerender refused as written. A 401 is not documented
@@ -24,19 +31,20 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A 403 on the cache-clear routes means the job is already queued or running.
-	// A retry right away cannot help, since only one job runs at a time.
+	// A 403 on cache clear means a job is already queued or running. A retry
+	// right away cannot help, since only one job runs at a time.
 	CONFLICT_ERROR: {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// The search route documents 50 requests a minute and answers 429 past it.
+	// The search route documents 50 requests a minute and answers 429 past it,
+	// before doing any work, so any route may wait and try again.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof PrerenderAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff_jitter' as const,
 		}),
 	},
@@ -45,26 +53,29 @@ export const errorHandlers = {
 		match: (error: Error) => error.name === 'ZodError',
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A dropped connection never reached Prerender. Every route here only changes
-	// what is cached, and a recache is idempotent, so a write is safe to replay
-	// too: rendering the same URL twice leaves the same cached copy.
+	// A dropped connection may still have reached Prerender. Only reads and the
+	// speed change are repeated: a second recache or sitemap submit spends renders
+	// again, and a second clear deletes pages cached since the first one.
 	NETWORK_ERROR: {
 		match: (error: Error) =>
 			error instanceof PrerenderAPIError && error.transport,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) =>
+			error instanceof PrerenderAPIError && error.replayable
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
-	// The same reasoning covers a 5xx: every operation is a cache refresh.
+	// The same rule covers a 5xx, which can arrive after the work was done.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PrerenderAPIError && (error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.status >= 500 &&
+			isReplayablePath(error.request.url),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
+	// A 5xx on a route that must not repeat, and anything unrecognised.
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),

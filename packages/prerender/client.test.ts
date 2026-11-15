@@ -1,8 +1,8 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
-	describePrerenderError,
 	isCredentialRejection,
+	isReplayablePath,
 	makePrerenderRequest,
 	PRERENDER_API_BASE,
 	PrerenderAPIError,
@@ -21,11 +21,11 @@ const mockRequest = jest.mocked(request);
  * An ApiError carrying Prerender's plain-text rejection. The body is a string,
  * which is what the real API sends.
  */
-function textError(status: number, body: string) {
+function textError(status: number, body: string, path = '/recache') {
 	return new ApiError(
-		{ method: 'POST', url: '/recache' },
+		{ method: 'POST', url: path },
 		{
-			url: `${PRERENDER_API_BASE}/recache`,
+			url: `${PRERENDER_API_BASE}${path}`,
 			ok: false,
 			status,
 			statusText: body,
@@ -42,9 +42,6 @@ beforeEach(() => {
 describe('Prerender error body', () => {
 	it('reads the plain text reason rather than expecting JSON', () => {
 		expect(readReason('Invalid prerenderToken')).toBe('Invalid prerenderToken');
-		expect(
-			describePrerenderError(400, 'Invalid prerenderToken', 'fallback'),
-		).toBe('Prerender 400: Invalid prerenderToken');
 	});
 
 	it('returns undefined for a body that is not text', () => {
@@ -72,8 +69,24 @@ describe('Prerender error body', () => {
 	});
 });
 
+describe('isReplayablePath', () => {
+	it('allows the reads and the speed change to repeat', () => {
+		expect(isReplayablePath('/search')).toBe(true);
+		expect(isReplayablePath('/cache-clear-status/[REDACTED]')).toBe(true);
+		expect(isReplayablePath('/change-recache-speed')).toBe(true);
+		expect(isReplayablePath(`${PRERENDER_API_BASE}/search`)).toBe(true);
+	});
+
+	it('keeps render-spending and deleting routes from repeating', () => {
+		expect(isReplayablePath('/recache')).toBe(false);
+		expect(isReplayablePath('/sitemap')).toBe(false);
+		expect(isReplayablePath('/cache-clear')).toBe(false);
+		expect(isReplayablePath(undefined)).toBe(false);
+	});
+});
+
 describe('makePrerenderRequest', () => {
-	it('adds the token to the JSON body of a POST', async () => {
+	it('sends the token in the X-Prerender-Token header and leaves the body alone', async () => {
 		mockRequest.mockResolvedValue({ message: 'ok' });
 
 		await makePrerenderRequest('test-token', {
@@ -83,18 +96,21 @@ describe('makePrerenderRequest', () => {
 		});
 
 		const [config, options] = mockRequest.mock.calls[0] ?? [];
-		expect(config).toMatchObject({ BASE: PRERENDER_API_BASE });
-		expect(options).toMatchObject({
+		expect(config).toMatchObject({
+			BASE: PRERENDER_API_BASE,
+			HEADERS: { 'X-Prerender-Token': 'test-token' },
+		});
+		expect(options).toEqual({
 			method: 'POST',
 			url: '/recache',
-			// The token rides in the body on every route that takes one.
-			body: { url: 'https://example.com/', prerenderToken: 'test-token' },
+			// Core copies these options onto an ApiError, so no token may be here.
+			body: { url: 'https://example.com/' },
 			mediaType: 'application/json',
 		});
 	});
 
-	it('sends no body on a GET, so no token is duplicated into it', async () => {
-		mockRequest.mockResolvedValue({ message: 'not queued' });
+	it('sends no body on a GET', async () => {
+		mockRequest.mockResolvedValue('not queued');
 
 		await makePrerenderRequest('test-token', {
 			method: 'GET',
@@ -117,7 +133,7 @@ describe('makePrerenderRequest', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('refuses a token carrying a newline, which would break the request', async () => {
+	it('refuses a token carrying a newline, which would break the header', async () => {
 		await expect(
 			makePrerenderRequest('token\nInjected: 1', {
 				method: 'POST',
@@ -128,8 +144,9 @@ describe('makePrerenderRequest', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('reports a rejected token as a credential failure without echoing it', async () => {
-		mockRequest.mockRejectedValue(textError(400, 'Invalid prerenderToken'));
+	it("lets core's ApiError through unchanged, with Prerender's text reason", async () => {
+		const rejection = textError(400, 'Invalid prerenderToken');
+		mockRequest.mockRejectedValue(rejection);
 
 		const error = await captureError(
 			makePrerenderRequest('secret-token', {
@@ -139,17 +156,17 @@ describe('makePrerenderRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PrerenderAPIError);
-		if (!(error instanceof PrerenderAPIError)) return;
-		expect(error.status).toBe(400);
-		expect(error.reason).toBe('Invalid prerenderToken');
-		expect(error.credentialsRejected).toBe(true);
-		expect(error.method).toBe('POST');
-		// The token rides in the body, so nothing on the error may repeat it.
+		// Core forwards an ApiError's status and body to the caller; any other
+		// error class becomes a bare "Internal error".
+		expect(error).toBe(rejection);
+		expect(error).toMatchObject({
+			status: 400,
+			body: 'Invalid prerenderToken',
+		});
 		expect(JSON.stringify(error)).not.toContain('secret-token');
 	});
 
-	it('keeps a 403 with its reason, which is a state rather than a failure', async () => {
+	it('keeps a 403 as an ApiError, which is a state rather than a failure', async () => {
 		mockRequest.mockRejectedValue(textError(403, 'Cache clear in progress'));
 
 		const error = await captureError(
@@ -160,23 +177,47 @@ describe('makePrerenderRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PrerenderAPIError);
-		if (!(error instanceof PrerenderAPIError)) return;
-		expect(error.status).toBe(403);
-		expect(error.reason).toBe('Cache clear in progress');
-		expect(error.credentialsRejected).toBe(false);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 403 });
 	});
 
-	it('flags a dropped connection as a transport failure with its method', async () => {
-		mockRequest.mockRejectedValue(new Error('fetch failed'));
-
-		const error = await captureError(
-			makePrerenderRequest('token', { method: 'POST', path: '/recache' }),
+	it('masks the token on an ApiError from the status route, which has it in the path', async () => {
+		mockRequest.mockRejectedValue(
+			textError(500, 'Upstream error', '/cache-clear-status/secret-token'),
 		);
 
-		expect(error).toBeInstanceOf(PrerenderAPIError);
-		if (!(error instanceof PrerenderAPIError)) return;
-		expect(error.transport).toBe(true);
-		expect(error.method).toBe('POST');
+		const error = await captureError(
+			makePrerenderRequest('secret-token', {
+				method: 'GET',
+				path: '/cache-clear-status/secret-token',
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			status: 500,
+			body: 'Upstream error',
+			url: `${PRERENDER_API_BASE}/cache-clear-status/[REDACTED]`,
+		});
+		expect(JSON.stringify(error)).not.toContain('secret-token');
+	});
+
+	it('flags a dropped connection as transport, replayable only on a read', async () => {
+		mockRequest.mockRejectedValue(new Error('fetch failed'));
+
+		const write = await captureError(
+			makePrerenderRequest('token', { method: 'POST', path: '/recache' }),
+		);
+		const read = await captureError(
+			makePrerenderRequest('token', { method: 'POST', path: '/search' }),
+		);
+
+		expect(write).toBeInstanceOf(PrerenderAPIError);
+		expect(write).toMatchObject({
+			transport: true,
+			method: 'POST',
+			replayable: false,
+		});
+		expect(read).toMatchObject({ transport: true, replayable: true });
 	});
 });

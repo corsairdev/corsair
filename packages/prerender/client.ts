@@ -22,45 +22,58 @@ const PRERENDER_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * Prerender does not answer a JSON error envelope. Every problem probed on every
- * route is a **plain-text** body with a 400: `Invalid prerenderToken` for a bad
- * token, and `403` for a cache clear that is already running. `ApiError.body`
- * therefore holds a string here, and the check below reads it as one.
+ * A request that never reached Prerender (DNS, reset, abort), or a token the
+ * client refused to send. HTTP failures are not wrapped: core's `ApiError`
+ * passes through so its `status`, `retryAfter` and `body` reach core and the
+ * caller unchanged. Prerender answers a **plain-text** body on every rejection
+ * (`Invalid prerenderToken` with a 400, for one), so `ApiError.body` holds a
+ * string here.
  */
 export class PrerenderAPIError extends Error {
-	readonly status?: number;
-	/** The plain-text reason Prerender sent, such as `Invalid prerenderToken`. */
-	readonly reason?: string;
-	/** Milliseconds from a Retry-After header, when one was sent. */
-	readonly retryAfter?: number;
 	/** The request method, so handlers can refuse to replay a write. */
 	readonly method?: string;
 	/** Set when the request never reached Prerender (DNS, reset, abort). */
 	readonly transport: boolean;
-	/** Set when Prerender rejected the token rather than the request. */
-	readonly credentialsRejected: boolean;
+	/** Set when repeating the request cannot change anything twice. */
+	readonly replayable: boolean;
 
 	constructor(
 		message: string,
 		options: {
 			cause?: Error;
-			status?: number;
-			reason?: string;
-			retryAfter?: number;
 			method?: string;
 			transport?: boolean;
-			credentialsRejected?: boolean;
+			replayable?: boolean;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'PrerenderAPIError';
-		this.status = options.status;
-		this.reason = options.reason;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
-		this.credentialsRejected = options.credentialsRejected ?? false;
+		this.replayable = options.replayable ?? false;
 	}
+}
+
+/**
+ * Routes a lost reply or a 5xx may repeat. Search and the clear status only
+ * read, and a speed change sets one value. A recache or a sitemap submit spends
+ * renders and a cache clear deletes pages cached since the first attempt, so a
+ * repeat is not harmless and those routes are left out.
+ */
+const REPLAYABLE_PATHS = [
+	'/search',
+	'/cache-clear-status/',
+	'/change-recache-speed',
+] as const;
+
+export function isReplayablePath(path: string | undefined): boolean {
+	if (!path) return false;
+	const pathname = path.startsWith(PRERENDER_API_BASE)
+		? path.slice(PRERENDER_API_BASE.length)
+		: path;
+	return REPLAYABLE_PATHS.some((prefix) =>
+		prefix.endsWith('/') ? pathname.startsWith(prefix) : pathname === prefix,
+	);
 }
 
 /** Unparsed bodies: a response before the caller's output schema parses it. */
@@ -94,16 +107,6 @@ export function isCredentialRejection(
 	return reason !== undefined && INVALID_TOKEN.test(reason);
 }
 
-// unknown: same rejection body as readReason.
-export function describePrerenderError(
-	status: number | undefined,
-	body: Untyped,
-	fallback: string,
-): string {
-	const reason = readReason(body) ?? fallback;
-	return status !== undefined ? `Prerender ${status}: ${reason}` : reason;
-}
-
 export type PrerenderRequest = {
 	method: 'GET' | 'POST';
 	path: string;
@@ -114,6 +117,37 @@ export type PrerenderRequest = {
 /** Encodes one path segment. */
 export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
+}
+
+/**
+ * The status route carries the token in its path, so an `ApiError` from it would
+ * repeat the token in `url` and `request.url`. This rebuilds the same error with
+ * the token masked; every other field is kept.
+ */
+function withoutToken(error: ApiError, token: string): ApiError {
+	const encoded = segment(token);
+	const mask = (value: string) =>
+		value.split(encoded).join('[REDACTED]').split(token).join('[REDACTED]');
+	if (!error.url.includes(encoded) && !error.request.url.includes(encoded)) {
+		return error;
+	}
+	return new ApiError(
+		{ ...error.request, url: mask(error.request.url) },
+		{
+			url: mask(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 // unknown: callers parse the body with the endpoint's zod output schema.
@@ -128,6 +162,10 @@ export async function makePrerenderRequest(
 		throw new PrerenderAPIError('The token must not contain newlines');
 	}
 
+	// The token travels in the `X-Prerender-Token` header, which every route
+	// accepts in place of the `prerenderToken` body field. Core keeps the request
+	// options on an `ApiError` but not the config headers, so the token never
+	// lands on an error. The status route also needs it in the path.
 	const config: OpenAPIConfig = {
 		BASE: PRERENDER_API_BASE,
 		VERSION: '1.0.0',
@@ -135,22 +173,15 @@ export async function makePrerenderRequest(
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			Accept: 'application/json',
-			'Content-Type': 'application/json',
+			'X-Prerender-Token': token,
 		},
 	};
-
-	// The token travels in the JSON body on every route that takes one, and in the
-	// path on the status route, which documents it that way.
-	const bodyWithToken =
-		method === 'POST' && body !== undefined && typeof body === 'object'
-			? { ...(body as Record<string, Untyped>), prerenderToken: token }
-			: body;
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
-		body: bodyWithToken,
-		mediaType: bodyWithToken === undefined ? undefined : 'application/json',
+		body,
+		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
 	try {
@@ -160,16 +191,7 @@ export async function makePrerenderRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new PrerenderAPIError(
-				describePrerenderError(error.status, error.body, error.statusText),
-				{
-					status: error.status,
-					reason: readReason(error.body),
-					retryAfter: error.retryAfter,
-					method,
-					credentialsRejected: isCredentialRejection(error.status, error.body),
-				},
-			);
+			throw withoutToken(error, token);
 		}
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
@@ -177,11 +199,13 @@ export async function makePrerenderRequest(
 				cause: error,
 				method,
 				transport: true,
+				replayable: isReplayablePath(path),
 			});
 		}
 		throw new PrerenderAPIError('Unknown Prerender error', {
 			method,
 			transport: true,
+			replayable: isReplayablePath(path),
 		});
 	}
 }
