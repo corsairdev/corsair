@@ -8,12 +8,12 @@ import { ApiError, request } from 'corsair/http';
 
 export const TRIGGERCMD_API_BASE = 'https://www.triggercmd.com';
 
-// error-handlers.ts owns retries. The object has to be complete: request.ts
-// replaces its defaults wholesale, so a partial one either skips the
-// rate-limit block or throws reading `headerNames`.
+// Core's request() retries a 429 three times and honours Retry-After, so the
+// 429 handler in error-handlers.ts does not retry again. The provider documents
+// no reset header, so only Retry-After is read.
 const TRIGGERCMD_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -28,80 +28,14 @@ const TRIGGERCMD_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * The token also works as a `?token=` query parameter, which the provider's own
  * CLI and docs use. This client sends it as a Bearer header instead, so it never
  * appears in a URL that an `ApiError` would capture.
+ *
+ * Errors are core's ApiError, passed through unchanged. This reads the
+ * provider's `err` text from its body.
  */
-export class TriggerCmdAPIError extends Error {
-	readonly status?: number;
-	/** The provider's own message, such as `Invalid Token!`. */
-	readonly providerMessage?: string;
-	/** Milliseconds from a Retry-After header, when one was sent. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, which decides replay safety. */
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			providerMessage?: string;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'TriggerCmdAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.providerMessage =
-			options.providerMessage ?? readProviderMessage(cause?.body);
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** True for the 401 the provider sends when no token or a wrong one arrives. */
-	get isAuthError(): boolean {
-		return (
-			this.status === 401 &&
-			/invalid token|no authorization header/i.test(this.providerMessage ?? '')
-		);
-	}
-
-	/**
-	 * True when the route itself does not exist. The provider answers a 404 with
-	 * no body, which is how this differs from an auth failure.
-	 */
-	get isUnknownRoute(): boolean {
-		return this.status === 404;
-	}
-}
-
-// unknown: the error body is `{ err }` on failure and empty on a 404.
-function readProviderMessage(body: unknown): string | undefined {
-	const record = asRecord(body);
-	const err = record?.err;
+export function triggerCmdErrorMessage(error: unknown): string | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	const err = asRecord(error.body)?.err;
 	return typeof err === 'string' && err.length > 0 ? err : undefined;
-}
-
-export function describeTriggerCmdError(
-	status: number | undefined,
-	// unknown: a proxy can answer HTML or text where JSON is expected.
-	body: unknown,
-	fallback: string,
-): { message: string; providerMessage?: string } {
-	const providerMessage = readProviderMessage(body);
-	const text =
-		providerMessage ??
-		(typeof asRecord(body)?.message === 'string'
-			? String(asRecord(body)?.message)
-			: fallback);
-	return {
-		message: status === undefined ? text : `TRIGGERcmd ${status}: ${text}`,
-		providerMessage,
-	};
 }
 
 export type TriggerCmdQuery = Record<
@@ -144,28 +78,9 @@ export async function makeTriggerCmdRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
-	try {
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: TRIGGERCMD_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof TriggerCmdAPIError) throw error;
-		if (error instanceof ApiError) {
-			const described = describeTriggerCmdError(
-				error.status,
-				error.body,
-				error.message,
-			);
-			throw new TriggerCmdAPIError(described.message, {
-				cause: error,
-				providerMessage: described.providerMessage,
-				method,
-			});
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new TriggerCmdAPIError(error.message, { cause: error, method });
-		}
-		throw new TriggerCmdAPIError('Unknown TRIGGERcmd error', { method });
-	}
+	// Core's ApiError goes through unchanged: its status, retryAfter and body
+	// are what the error handlers read.
+	return request<unknown>(config, requestOptions, {
+		rateLimitConfig: TRIGGERCMD_RATE_LIMIT_CONFIG,
+	});
 }

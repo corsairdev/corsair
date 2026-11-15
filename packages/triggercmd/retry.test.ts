@@ -8,8 +8,8 @@ import {
 } from './test-fixtures';
 
 /**
- * `requests.test.ts` calls the HTTP client, which is built with `maxRetries: 0`
- * so only `error-handlers.ts` decides what is retried.
+ * Core's request() retries a 429 three times with Retry-After;
+ * `error-handlers.ts` decides what else is retried.
  *
  * A command run is never replayed on a 5xx: it starts a process on a computer,
  * so a replay could run it twice.
@@ -98,6 +98,24 @@ describe('retries through createCorsair', () => {
 				}),
 			).rejects.toMatchObject({ status: 500 });
 			// One attempt: a replay could start the process twice.
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not replay a panel trigger on a 5xx, though it is a GET', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond({}, 503);
+
+			await expect(
+				corsair.triggercmd.api.panels.trigger({
+					panel: 'Living room',
+					button: 'Lights off',
+				}),
+			).rejects.toMatchObject({ status: 503 });
+			// One attempt: the button runs a command on a computer.
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();

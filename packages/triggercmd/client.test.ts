@@ -1,9 +1,9 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
-	describeTriggerCmdError,
 	makeTriggerCmdRequest,
 	TRIGGERCMD_API_BASE,
-	TriggerCmdAPIError,
+	triggerCmdErrorMessage,
 } from './client';
 import { invalidToken, noAuthHeader } from './test-fixtures';
 
@@ -97,12 +97,10 @@ describe('makeTriggerCmdRequest', () => {
 			path: 'api/command/list',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(TriggerCmdAPIError);
-		expect((error as TriggerCmdAPIError).status).toBe(401);
-		expect((error as TriggerCmdAPIError).providerMessage).toBe(
-			'Invalid Token!',
-		);
-		expect((error as TriggerCmdAPIError).isAuthError).toBe(true);
+		// Core's ApiError goes through unchanged (plugin rules R8).
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect(triggerCmdErrorMessage(error)).toBe('Invalid Token!');
 	});
 
 	it('treats a missing header the same way', async () => {
@@ -113,8 +111,8 @@ describe('makeTriggerCmdRequest', () => {
 			path: 'api/computer/list',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TriggerCmdAPIError).isAuthError).toBe(true);
-		expect((error as Error).message).toContain('No Authorization header');
+		expect((error as ApiError).status).toBe(401);
+		expect(triggerCmdErrorMessage(error)).toContain('No Authorization header');
 	});
 
 	it('reads a 404 as an unknown route, not an auth failure', async () => {
@@ -126,21 +124,29 @@ describe('makeTriggerCmdRequest', () => {
 			path: 'api/command/run',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TriggerCmdAPIError).status).toBe(404);
-		expect((error as TriggerCmdAPIError).isUnknownRoute).toBe(true);
-		expect((error as TriggerCmdAPIError).isAuthError).toBe(false);
+		expect((error as ApiError).status).toBe(404);
+		expect(triggerCmdErrorMessage(error)).toBeUndefined();
 	});
 
-	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
-		respond({ err: 'slow down' }, 429, { 'Retry-After': '15' });
+	it('lets core retry a 429 three times, then passes it through', async () => {
+		jest.useFakeTimers();
+		try {
+			for (let i = 0; i < 4; i += 1) {
+				respond({ err: 'slow down' }, 429, { 'Retry-After': '15' });
+			}
+			const pending = makeTriggerCmdRequest(TOKEN, {
+				method: 'GET',
+				path: 'api/computer/list',
+			}).catch((caught: unknown) => caught);
+			await jest.advanceTimersByTimeAsync(50_000);
+			const error = await pending;
 
-		const error = await makeTriggerCmdRequest(TOKEN, {
-			method: 'GET',
-			path: 'api/computer/list',
-		}).catch((caught: unknown) => caught);
-
-		expect((error as TriggerCmdAPIError).retryAfter).toBe(15000);
-		expect((error as TriggerCmdAPIError).isRateLimit).toBe(true);
+			expect(fetchMock).toHaveBeenCalledTimes(4);
+			expect((error as ApiError).status).toBe(429);
+			expect((error as ApiError).retryAfter).toBe(15000);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
 	it('records the method so a command run is not replayed', async () => {
@@ -152,7 +158,7 @@ describe('makeTriggerCmdRequest', () => {
 			body: {},
 		}).catch((caught: unknown) => caught);
 
-		expect((error as TriggerCmdAPIError).method).toBe('POST');
+		expect((error as ApiError).request.method).toBe('POST');
 	});
 
 	it('never puts the token in the message or its inspection', async () => {
@@ -170,34 +176,5 @@ describe('makeTriggerCmdRequest', () => {
 		]) {
 			expect(text).not.toContain(TOKEN);
 		}
-	});
-});
-
-describe('describeTriggerCmdError', () => {
-	it('reads the `err` field', () => {
-		expect(describeTriggerCmdError(401, invalidToken, 'x')).toEqual({
-			message: 'TRIGGERcmd 401: Invalid Token!',
-			providerMessage: 'Invalid Token!',
-		});
-	});
-
-	it('falls back for a body with no err field', () => {
-		expect(describeTriggerCmdError(500, {}, 'Server Error')).toEqual({
-			message: 'TRIGGERcmd 500: Server Error',
-			providerMessage: undefined,
-		});
-	});
-
-	it('reads a message field when there is one', () => {
-		expect(
-			describeTriggerCmdError(400, { message: 'bad request' }, 'x').message,
-		).toBe('TRIGGERcmd 400: bad request');
-	});
-
-	it('handles an empty 404 body', () => {
-		expect(describeTriggerCmdError(404, undefined, 'Not Found')).toEqual({
-			message: 'TRIGGERcmd 404: Not Found',
-			providerMessage: undefined,
-		});
 	});
 });

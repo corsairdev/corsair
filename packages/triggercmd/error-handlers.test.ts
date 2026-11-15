@@ -1,5 +1,5 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { TriggerCmdAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -14,37 +14,47 @@ function classify(error: Error): HandlerName {
 }
 
 async function strategy(error: Error) {
-	return errorHandlers[classify(error)].handler(error);
+	// Widened: these handlers ignore the error, but core passes it.
+	const handler: (error: Error) => Promise<unknown> =
+		errorHandlers[classify(error)].handler;
+	return handler(error);
 }
 
+/** Core's ApiError, built the way request() builds it. */
 function apiError(
 	status: number,
 	options: {
 		providerMessage?: string;
 		retryAfter?: number;
-		method?: string;
+		method?: 'GET' | 'POST';
+		url?: string;
 	} = {},
 ) {
-	return new TriggerCmdAPIError(`TRIGGERcmd ${status}`, { status, ...options });
+	return new ApiError(
+		{
+			method: options.method ?? 'GET',
+			url: options.url ?? 'api/computer/list',
+		},
+		{
+			url: `https://www.triggercmd.com/${options.url ?? 'api/computer/list'}`,
+			ok: false,
+			status,
+			statusText: '',
+			body:
+				options.providerMessage === undefined
+					? undefined
+					: { err: options.providerMessage },
+		},
+		`TRIGGERcmd ${status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('TRIGGERcmd error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = apiError(429);
+	it('does not replay a 429 core already retried', async () => {
+		const error = apiError(429, { retryAfter: 15000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('honours Retry-After on a 429', async () => {
-		expect(await strategy(apiError(429, { retryAfter: 15000 }))).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 15000,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry the 401 Invalid Token', async () => {
@@ -84,8 +94,15 @@ describe('TRIGGERcmd error handlers', () => {
 		expect(classify(apiError(500, { method: 'POST' }))).toBe('DEFAULT');
 	});
 
-	it('does not replay a 5xx whose method is unknown', () => {
-		expect(classify(apiError(500))).toBe('DEFAULT');
+	it('does not replay a panel trigger on a 5xx, though it is a GET', () => {
+		// panels.trigger runs the button's command, so a replay could run it twice.
+		expect(
+			classify(apiError(503, { method: 'GET', url: 'api/panel/trigger' })),
+		).toBe('DEFAULT');
+	});
+
+	it('does not replay a 5xx that is not core ApiError', () => {
+		expect(classify(new Error('500 upstream'))).toBe('DEFAULT');
 	});
 
 	it('leaves anything unrecognised to DEFAULT with no retry', async () => {

@@ -1,30 +1,36 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TriggerCmdAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { triggerCmdErrorMessage } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof TriggerCmdAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+/**
+ * The two routes that start a command on a computer. `panel/trigger` is a GET,
+ * so the method alone can't say whether a replay is safe.
+ */
+function startsCommand(error: ApiError): boolean {
+	return /(^|\/)api\/(run|panel)\/trigger(\?|$)/.test(error.request.url);
 }
 
 /**
  * TRIGGERcmd has a small error vocabulary: 401 `Invalid Token!` for a bad token,
  * 404 for a route that does not exist, and a JSON body on every list route.
- * It publishes no rate-limit contract, so only a 429 is retried.
+ * Core's request() already retried a 429 three times with Retry-After.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof TriggerCmdAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TriggerCmdAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401: no token, or a token that does not match an account.
 	AUTH_ERROR: {
 		match: (error: Error) =>
-			error instanceof TriggerCmdAPIError && error.isAuthError,
+			statusOf(error) === 401 &&
+			/invalid token|no authorization header/i.test(
+				triggerCmdErrorMessage(error) ?? '',
+			),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404: the route does not exist. A retry reaches the same 404.
@@ -33,20 +39,21 @@ export const errorHandlers = {
 			const status = statusOf(error);
 			return (
 				error.name === 'ZodError' ||
-				(error instanceof TriggerCmdAPIError && error.isUnknownRoute) ||
+				status === 404 ||
 				status === 400 ||
 				status === 422
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 5xx. Only reads are replayed: `run.trigger` starts a command on a computer,
-	// so a replay could run it twice.
+	// 5xx. Only reads are replayed: `commands.run` and `panels.trigger` start a
+	// command on a computer, so a replay could run it twice.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TriggerCmdAPIError &&
-			error.method === 'GET' &&
-			(statusOf(error) ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			!startsCommand(error) &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
