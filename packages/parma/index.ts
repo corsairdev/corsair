@@ -187,9 +187,14 @@ export function parma<const T extends ParmaPluginOptions>(
 			if (source === 'endpoint') {
 				if (options.key?.trim()) return options.key;
 				if (ctx.authType === 'oauth_2') {
+					// Parma's refresh grant takes the app's registered redirect_uri.
+					const creds = await ctx.keys.get_integration_credentials();
 					return getOAuthAccessToken(ctx, {
 						plugin: 'parma',
 						tokenUrl: PARMA_TOKEN_URL,
+						extraParams: creds.redirect_url
+							? { redirect_uri: creds.redirect_url }
+							: undefined,
 					});
 				}
 				if (ctx.authType === 'api_key') {

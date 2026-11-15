@@ -21,6 +21,7 @@ function context(
 		get_integration_credentials: jest.fn(async () => ({
 			client_id: 'client-id',
 			client_secret: 'client-secret',
+			redirect_url: 'https://app.example.test/oauth/callback',
 		})),
 		set_access_token: jest.fn(async (_value: string) => {}),
 		set_expires_at: jest.fn(async (_value: string) => {}),
@@ -95,6 +96,9 @@ test('refreshes an expired OAuth access token at Parma and stores the new one', 
 	const body = new URLSearchParams(String(init?.body));
 	expect(body.get('grant_type')).toBe('refresh_token');
 	expect(body.get('refresh_token')).toBe('refresh-token');
+	expect(body.get('redirect_uri')).toBe(
+		'https://app.example.test/oauth/callback',
+	);
 	expect(keys.set_access_token).toHaveBeenCalledWith('new-token');
 	expect(keys.set_refresh_token).toHaveBeenCalledWith('new-refresh-token');
 });
