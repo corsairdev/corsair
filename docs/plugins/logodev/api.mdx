@@ -1,0 +1,106 @@
+---
+title: "Logo.dev API reference"
+sidebarTitle: "API"
+description: "API reference for the Logo.dev plugin in Corsair: every `logodev.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Brands
+
+### search
+
+`brands.search`
+
+Search brands by name. Logo.dev charges API credits on every search.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.logodev.api.brands.search({ q: 'shopify', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Brand name to search for. |
+| `method` | `match \| typeahead` | No | match for full names, typeahead for a prefix. Default match. |
+| `limit` | `number` | No | How many brands to return, from 1 to 25. Default 10. |
+
+Official response is data plus metadata. Each result has a name and a domain. logo_url is returned without the token query.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  name: string,
+  domain: string,
+  logo_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Logos
+
+### fetch
+
+`logos.fetch`
+
+Fetch the content type of a domain logo from the Logo.dev CDN.
+
+**Risk:** `read`
+
+```ts
+await corsair.logodev.api.logos.fetch({ domain: 'shopify.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | Domain only, such as shopify.com. No scheme or path. |
+
+Domain is a hostname with no scheme or path. The call returns the public image URL, the content type, and status 200.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `status` | `200` | Yes | — |
+
+
+
+---
+

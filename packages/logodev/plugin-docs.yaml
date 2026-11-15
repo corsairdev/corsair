@@ -1,0 +1,23 @@
+displayName: Logo.dev
+description: Search brands by name and fetch a domain logo. Search uses a secret key as a Bearer token. The image CDN uses a publishable key as the token query.
+domain: logo.dev
+recommendedAuth: api_key
+overviewNote: |
+  Logo.dev issues two keys. Search calls GET /v2/search with Authorization Bearer and spends API credits. The image call uses the same connected key as the img.logo.dev token query. Returned logo URLs do not include that token.
+examples:
+  read:
+    path: brands.search
+    title: Search for a brand
+    args:
+      q: shopify
+      limit: 5
+apiNotes:
+  brands.search: |
+    Official response is data plus metadata. Each result has a name and a domain. logo_url is returned without the token query.
+  logos.fetch: |
+    Domain is a hostname with no scheme or path. The call returns the public image URL, the content type, and status 200.
+apiExamples:
+  brands.search:
+    call: "{ q: 'shopify', limit: 5 }"
+  logos.fetch:
+    call: "{ domain: 'shopify.com' }"
