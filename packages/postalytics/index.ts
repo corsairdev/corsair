@@ -351,11 +351,15 @@ const postalyticsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'get integrations',
 	},
-	'account.getMyAccount': { riskLevel: 'read', description: 'get my account' },
+	'account.getMyAccount': {
+		riskLevel: 'read',
+		description: 'Get the connected account profile (credentials are left out)',
+	},
 	'account.getAccount': { riskLevel: 'read', description: 'get account' },
 	'account.createNewAccount': {
 		riskLevel: 'write',
-		description: 'create new account',
+		description:
+			'Create a sub-account under the connected account; returns its id and API key',
 	},
 	'account.updateAccount': {
 		riskLevel: 'write',
@@ -391,8 +395,9 @@ const postalyticsEndpointMeta = {
 		description: 'create new campaign',
 	},
 	'campaigns.updateCampaignStatus': {
-		riskLevel: 'write',
-		description: 'update campaign status',
+		riskLevel: 'destructive',
+		description:
+			'Switch a triggered drip or automated file campaign between test mode and live mode. In live mode its sends print and mail real pieces billed per piece',
 	},
 	'campaigns.deleteCampaign': {
 		riskLevel: 'destructive',
@@ -422,8 +427,9 @@ const postalyticsEndpointMeta = {
 	'flows.getAllFlows': { riskLevel: 'read', description: 'get all flows' },
 	'flows.getFlow': { riskLevel: 'read', description: 'get flow' },
 	'flows.enrollContactToFlow': {
-		riskLevel: 'write',
-		description: 'enroll contact to flow',
+		riskLevel: 'destructive',
+		description:
+			'Enroll a recipient in a flow; a live flow prints and mails its pieces to them, billed per piece',
 	},
 	'flows.unenrollContactFromFlow': {
 		riskLevel: 'write',
@@ -431,7 +437,8 @@ const postalyticsEndpointMeta = {
 	},
 	'login.createLoginLink': {
 		riskLevel: 'write',
-		description: 'create login link',
+		description:
+			'Create a short-lived auto-login link for the connected account, optionally landing on a page such as dashboard',
 	},
 	'mail.sendMail': {
 		riskLevel: 'destructive',

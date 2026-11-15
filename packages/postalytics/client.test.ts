@@ -210,6 +210,15 @@ describe('Postalytics request seam', () => {
 			api_key: 'test-key',
 		});
 	});
+	it('marks every operation that can mail paper as destructive', () => {
+		const meta = postalytics().endpointMeta!;
+		for (const op of [
+			'mail.sendMail',
+			'flows.enrollContactToFlow',
+			'campaigns.updateCampaignStatus',
+		] as const)
+			expect(meta[op]?.riskLevel).toBe('destructive');
+	});
 	it('rejects unsafe string route parameters', () => {
 		const input = postalyticsEndpointSchemas['flows.getFlow'].input;
 		for (const endpointId of [
