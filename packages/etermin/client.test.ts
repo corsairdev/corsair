@@ -273,3 +273,19 @@ describe('eTermin appointment sync transport', () => {
 		expect(timeout).toHaveBeenCalledWith(20_000);
 	});
 });
+
+describe('eTermin risk levels', () => {
+	it('marks operations that can email or text customers destructive', () => {
+		// sendemail / sms / sendsms / notificationmsg make eTermin message the
+		// customer or the provider (R8: sends are destructive).
+		const byKey = new Map(eTerminOperations.map((op) => [op.key, op]));
+		for (const key of [
+			'appointmentsCreate',
+			'appointmentsUpdate',
+			'appointmentsDelete',
+			'appointmentSyncCreate',
+		] as const) {
+			expect(byKey.get(key)?.riskLevel).toBe('destructive');
+		}
+	});
+});

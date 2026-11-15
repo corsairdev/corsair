@@ -368,7 +368,7 @@ export const appointmentsCreate = {
 	action: 'create',
 	method: 'POST',
 	path: '/api/appointment',
-	riskLevel: 'write',
+	riskLevel: 'destructive',
 	description:
 		'Use this function to create a new appointment in the eTermin calendar',
 	params: [
@@ -841,7 +841,7 @@ export const appointmentsUpdate = {
 	action: 'update',
 	method: 'PUT',
 	path: '/api/appointment',
-	riskLevel: 'write',
+	riskLevel: 'destructive',
 	description:
 		'Use this function if you want to update details of an existing appointment.',
 	params: [
@@ -1326,7 +1326,7 @@ export const appointmentSyncCreate = {
 	action: 'create',
 	method: 'POST',
 	path: '/api/appointmentsync',
-	riskLevel: 'write',
+	riskLevel: 'destructive',
 	description: 'Create a new appointment',
 	params: [
 		{
