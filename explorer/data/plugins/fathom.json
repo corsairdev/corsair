@@ -1,0 +1,1303 @@
+{
+  "id": "fathom",
+  "displayName": "Fathom",
+  "description": "Privacy-focused web analytics platform for tracking visitors, sites, milestones, and custom aggregation reports.",
+  "npmPackageName": "@corsair-dev/fathom",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fathom.api.account.get",
+      "shortPath": "account.get",
+      "description": "Retrieve information about the account that owns the API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "account"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.account.getToken",
+      "shortPath": "account.getToken",
+      "description": "Retrieve metadata about the API token used to make the request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "abilities",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "last_used_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.events.create",
+      "shortPath": "events.create",
+      "description": "Create an event (deprecated: returns 410 Gone; track directly on site)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "dollar | pound | euro | yuan | peso | shekel | yen | won | hryvnia | franc | rupee | integer | none"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.events.delete",
+      "shortPath": "events.delete",
+      "description": "Delete an event by ID (deprecated: returns 410 Gone)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.events.deleteByName",
+      "shortPath": "events.deleteByName",
+      "description": "Remove an event's currency setting by name (the event and its completions stay; set it again with events.setCurrency)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.events.get",
+      "shortPath": "events.get",
+      "description": "Retrieve a single event by ID (deprecated: returns 410 Gone)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.events.list",
+      "shortPath": "events.list",
+      "description": "List all events tracked by a site with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: event, name: string, currency?: string | null, created_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.events.setCurrency",
+      "shortPath": "events.setCurrency",
+      "description": "Set or update the currency for an event by name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "dollar | pound | euro | yuan | peso | shekel | yen | won | hryvnia | franc | rupee | integer | none"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.events.update",
+      "shortPath": "events.update",
+      "description": "Update an event by ID (deprecated: returns 410 Gone)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "dollar | pound | euro | yuan | peso | shekel | yen | won | hryvnia | franc | rupee | integer | none"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.events.wipe",
+      "shortPath": "events.wipe",
+      "description": "Wipe event completion data (deprecated: returns 410 Gone)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.milestones.create",
+      "shortPath": "milestones.create",
+      "description": "Create a new milestone for a site",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "milestone_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "milestone"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "milestone_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.milestones.delete",
+      "shortPath": "milestones.delete",
+      "description": "Permanently delete a milestone from a site",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "milestone_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "milestone"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.milestones.get",
+      "shortPath": "milestones.get",
+      "description": "Retrieve a single milestone by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "milestone_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "milestone"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "milestone_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.milestones.list",
+      "shortPath": "milestones.list",
+      "description": "List all milestones for a site with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: milestone, name: string, milestone_date: string, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.milestones.update",
+      "shortPath": "milestones.update",
+      "description": "Update a milestone name or date by its ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "milestone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "milestone_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "milestone"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "milestone_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.reports.aggregation",
+      "shortPath": "reports.aggregation",
+      "description": "Generate custom aggregation reports across pageviews or events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "pageview | event"
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entity_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aggregates",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_grouping",
+            "optional": true,
+            "type": "hour | day | month | year"
+          },
+          {
+            "key": "field_grouping",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string | { property: string, operator: is | is not | is like | is not like | matching | not matching, value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, string | number | null>[]"
+      }
+    },
+    {
+      "path": "fathom.api.reports.currentVisitors",
+      "shortPath": "reports.currentVisitors",
+      "description": "Get real-time current visitor count and optional page/referrer breakdown",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "detailed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ total: number, content?: { hostname: string, pathname: string, total: number }[], referrers?: { referrer_hostname: string, referrer_pathname: string, total: number }[] } | { total: number }"
+      }
+    },
+    {
+      "path": "fathom.api.sites.create",
+      "shortPath": "sites.create",
+      "description": "Create a new site entity in Fathom Analytics",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sharing",
+            "optional": true,
+            "type": "none | private | public"
+          },
+          {
+            "key": "share_password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "multi_domain",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "multi_domain_option",
+            "optional": true,
+            "type": "combined | separate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "site"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sharing",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.sites.delete",
+      "shortPath": "sites.delete",
+      "description": "Permanently delete a site and all associated analytics data",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "site"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.sites.get",
+      "shortPath": "sites.get",
+      "description": "Retrieve details of a single site by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "site"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sharing",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.sites.list",
+      "shortPath": "sites.list",
+      "description": "List all sites owned by the account with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: site, name: string, sharing: string, created_at: string, timezone: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.sites.update",
+      "shortPath": "sites.update",
+      "description": "Update site settings such as name, sharing, or timezone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sharing",
+            "optional": true,
+            "type": "none | private | public"
+          },
+          {
+            "key": "share_password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "multi_domain",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "multi_domain_option",
+            "optional": true,
+            "type": "combined | separate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "site"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sharing",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathom.api.sites.wipe",
+      "shortPath": "sites.wipe",
+      "description": "Wipe all data from a site (deprecated: returns 410 Gone)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

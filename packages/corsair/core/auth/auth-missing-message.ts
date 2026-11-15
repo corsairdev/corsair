@@ -16,7 +16,11 @@ import { encodeOAuthState, signState } from './state';
 export function formatDefaultAuthMissingMessage(
 	pluginId: string,
 	connectUrl: string,
+	reason?: 'revoked',
 ): string {
+	if (reason === 'revoked') {
+		return `[auth-missing:${pluginId}] Access was revoked or has expired at the provider. Direct the user to reconnect their account: ${connectUrl}`;
+	}
 	return `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
 }
 
@@ -49,6 +53,7 @@ export async function resolveAuthMissingConnectMessage(input: {
 	kek?: string;
 	plugins: readonly CorsairPlugin[];
 	multiTenancy?: boolean;
+	reason?: 'revoked';
 }): Promise<ResolvedAuthMissingMessage> {
 	const hub = input.hub;
 	if (hub && input.database && input.kek) {
@@ -68,7 +73,11 @@ export async function resolveAuthMissingConnectMessage(input: {
 						connectUrl: session.connectUrl,
 						state: session.token,
 					})
-				: formatDefaultAuthMissingMessage(input.pluginId, session.connectUrl);
+				: formatDefaultAuthMissingMessage(
+						input.pluginId,
+						session.connectUrl,
+						input.reason,
+					);
 			return { message, connectUrl: session.connectUrl };
 		} catch {
 			return {
@@ -99,6 +108,7 @@ export function buildManualConnectMessage(
 		kek: string;
 	},
 	fallbackTenantId: string | undefined,
+	reason?: 'revoked',
 ): ResolvedAuthMissingMessage {
 	const state = signState(
 		encodeOAuthState(
@@ -113,7 +123,7 @@ export function buildManualConnectMessage(
 
 	const message = manualConfig.onAuthMissing
 		? manualConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
-		: formatDefaultAuthMissingMessage(pluginId, connectUrl);
+		: formatDefaultAuthMissingMessage(pluginId, connectUrl, reason);
 	return { message, connectUrl };
 }
 
@@ -153,6 +163,7 @@ export async function resolveAuthMissingEndpointMessage(input: {
 				kek: input.manual.kek,
 			},
 			input.tenantId,
+			input.error.reason,
 		);
 	}
 
@@ -174,6 +185,7 @@ export async function resolveAuthMissingEndpointMessage(input: {
 			kek: input.kek,
 			plugins: input.plugins,
 			multiTenancy: input.multiTenancy,
+			reason: input.error.reason,
 		});
 	}
 
@@ -203,6 +215,7 @@ export async function throwAuthMissingEndpointError(input: {
 		{
 			connectUrl,
 			tenantId: input.tenantId ?? 'default',
+			reason: input.error.reason,
 		},
 	);
 }

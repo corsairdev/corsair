@@ -1,0 +1,882 @@
+{
+  "id": "wachete",
+  "displayName": "Wachete",
+  "description": "Web change monitoring with Wachete - create and update monitors that watch a page or crawl a portal, read check history and diffs, list the notifications they triggered, and organise everything into folders.",
+  "npmPackageName": "@corsair-dev/wachete",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "wachete.api.data.list",
+      "shortPath": "data.list",
+      "description": "Read a monitor's check history, optionally as a diff per entry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The monitor id."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 start."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 end."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "returnDiff",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a Google-style diff per entry rather than the raw value."
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ lastCheckTimestamp?: string | null, valueChangedTimestamp?: string | null, raw?: string | null, error?: string | null, diff?: { o?: number | null, t?: string | null, operation?: number | null, text?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Delete a folder with every subfolder and monitor inside it; this cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List a folder subfolders and monitors, with the path to that folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string",
+            "description": "The folder to list. Omit to list the root."
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subfolders",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, parentId?: string | null, count?: number | null, failedCount?: number | null, pausedCount?: number | null }[] | null"
+          },
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, method?: string | null, url?: string | null, headers?: { key?: string | null, value?: string | null }[] | null, body?: string | null, xPath?: string | null, excludeXPath?: string | null, regex?: string | null, alerts?: { type?: string | number | null, value?: string | null, parameters?: { compare?: string | number | null, value?: string | null } | null }[] | null, recurrenceInSeconds?: number | null, folderId?: string | null, data?: { lastCheckTimestamp?: string | null, valueChangedTimestamp?: string | null, raw?: string | null, error?: string | null, diff?: { o?: number | null, t?: string | null, operation?: number | null, text?: string | null }[] | null } | null, notificationEndpoints?: { type?: string | number | null, value?: string | null }[] | null, proxies?: { location?: string | null }[] | null, location?: string | number | null, dynamicContent?: boolean | null, scrollPage?: boolean | null, ignoreInvalidPages?: boolean | null, collectRawHtml?: boolean | null, jobType?: string | number | null, crawlingDepth?: number | null, crawlBinaryContent?: boolean | null, urlFilter?: { include?: { filter?: string | null, type?: string | number | null }[] | null, exclude?: { filter?: string | null, type?: string | number | null }[] | null } | null, crawlPagesFromAllDomains?: boolean | null, note?: string | null }[] | null"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, parentId?: string | null, count?: number | null, failedCount?: number | null, pausedCount?: number | null }[] | null"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.folders.move",
+      "shortPath": "folders.move",
+      "description": "Move monitors and folders into another folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The destination folder. An empty string means the root."
+          },
+          {
+            "key": "taskIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "folderIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "moved",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.folders.upsert",
+      "shortPath": "folders.upsert",
+      "description": "Create a folder, or rename and move one by sending its id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Omit to create, send to rename or move that folder."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failedCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pausedCount",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.notifications.get",
+      "shortPath": "notifications.get",
+      "description": "Read one notification: the monitor name, URL, time and the HTML that was sent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alertId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "syntheticExpression",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timestampUtc",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.notifications.list",
+      "shortPath": "notifications.list",
+      "description": "List triggered notifications newest first, filtered by monitor and date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string",
+            "description": "Only this monitor. Omit for every monitor."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 start."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 end."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string",
+            "description": "The token the previous page returned."
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the notification HTML, which makes the response large."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | number | null, current?: string | null, comparand?: string | null, html?: string | null, error?: string | null, timestamp?: string | null, serverTime?: string | null, taskId?: string | null, taskName?: string | null, url?: string | null }[] | null"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back to read the next page; null on the last."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Permanently delete a monitor and its history; this cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Read one monitor with its settings, its last value and when that value changed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ key?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "xPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "excludeXPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "regex",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alerts",
+            "optional": true,
+            "type": "{ type?: string | number | null, value?: string | null, parameters?: { compare?: string | number | null, value?: string | null } | null }[] | null"
+          },
+          {
+            "key": "recurrenceInSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ lastCheckTimestamp?: string | null, valueChangedTimestamp?: string | null, raw?: string | null, error?: string | null, diff?: { o?: number | null, t?: string | null, operation?: number | null, text?: string | null }[] | null } | null"
+          },
+          {
+            "key": "notificationEndpoints",
+            "optional": true,
+            "type": "{ type?: string | number | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "proxies",
+            "optional": true,
+            "type": "{ location?: string | null }[] | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dynamicContent",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "scrollPage",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ignoreInvalidPages",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "collectRawHtml",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "crawlingDepth",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "crawlBinaryContent",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "urlFilter",
+            "optional": true,
+            "type": "{ include?: { filter?: string | null, type?: string | number | null }[] | null, exclude?: { filter?: string | null, type?: string | number | null }[] | null } | null"
+          },
+          {
+            "key": "crawlPagesFromAllDomains",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wachete.api.tasks.pages",
+      "shortPath": "tasks.pages",
+      "description": "List the pages a Portal monitor is crawling",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A Portal monitor id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, name?: string | null, url?: string | null, data?: { lastCheckTimestamp?: string | null, valueChangedTimestamp?: string | null, raw?: string | null, error?: string | null, diff?: { o?: number | null, t?: string | null, operation?: number | null, text?: string | null }[] | null } | null }[]"
+      }
+    },
+    {
+      "path": "wachete.api.tasks.search",
+      "shortPath": "tasks.search",
+      "description": "Search monitors by name, returning at most 500 and no paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "A word matched against monitor names and URLs. Whole words only: a hyphenated name is found by one of its words, not the full name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, name?: string | null, method?: string | null, url?: string | null, headers?: { key?: string | null, value?: string | null }[] | null, body?: string | null, xPath?: string | null, excludeXPath?: string | null, regex?: string | null, alerts?: { type?: string | number | null, value?: string | null, parameters?: { compare?: string | number | null, value?: string | null } | null }[] | null, recurrenceInSeconds?: number | null, folderId?: string | null, data?: { lastCheckTimestamp?: string | null, valueChangedTimestamp?: string | null, raw?: string | null, error?: string | null, diff?: { o?: number | null, t?: string | null, operation?: number | null, text?: string | null }[] | null } | null, notificationEndpoints?: { type?: string | number | null, value?: string | null }[] | null, proxies?: { location?: string | null }[] | null, location?: string | number | null, dynamicContent?: boolean | null, scrollPage?: boolean | null, ignoreInvalidPages?: boolean | null, collectRawHtml?: boolean | null, jobType?: string | number | null, crawlingDepth?: number | null, crawlBinaryContent?: boolean | null, urlFilter?: { include?: { filter?: string | null, type?: string | number | null }[] | null, exclude?: { filter?: string | null, type?: string | number | null }[] | null } | null, crawlPagesFromAllDomains?: boolean | null, note?: string | null }[]"
+      }
+    },
+    {
+      "path": "wachete.api.tasks.upsert",
+      "shortPath": "tasks.upsert",
+      "description": "Create a monitor, or update one by sending its id; sets the URL, the part of the page watched, how often to check and who to notify",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Omit to create, send to update that monitor."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xPath",
+            "optional": true,
+            "type": "string",
+            "description": "The part of the page to watch. `/` is the whole page."
+          },
+          {
+            "key": "excludeXPath",
+            "optional": true,
+            "type": "string",
+            "description": "A part of the page to ignore, such as a timestamp."
+          },
+          {
+            "key": "regex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string",
+            "description": "The HTTP method to fetch with. Defaults to GET."
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ key: string, value: string }[]",
+            "description": "Request headers, as `{ key, value }` pairs."
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string",
+            "description": "Request body, for a POST monitor."
+          },
+          {
+            "key": "alerts",
+            "optional": true,
+            "type": "{ type: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number, value?: string | null, parameters?: { compare?: Error | Changed | NotEq | Eq | Contains | NotContains | StartsWith | EndsWith | Regex | Lower | Greater | Exists | NotExists | number | null, value?: string | null } | null }[]"
+          },
+          {
+            "key": "recurrenceInSeconds",
+            "optional": false,
+            "type": "number",
+            "description": "How often to check, in seconds. 86400 is daily."
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notificationEndpoints",
+            "optional": true,
+            "type": "{ type: Email | Webhook | Sms | Slack | Teams | Telegram | Pushover | Discord | 0 | 1 | 4 | 8 | 16 | 32 | 64 | 92, value: string }[]",
+            "description": "Who to tell. An empty list uses the default email recipients; omit it to notify every endpoint on the account."
+          },
+          {
+            "key": "proxies",
+            "optional": true,
+            "type": "{ location: string }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "us | gb | number",
+            "description": "The location to check from. The docs name us and gb."
+          },
+          {
+            "key": "dynamicContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set when the watched content is rendered by JavaScript."
+          },
+          {
+            "key": "scrollPage",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignoreInvalidPages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "collectRawHtml",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "SinglePage | Portal | number",
+            "description": "SinglePage watches one page; Portal crawls a site. Defaults to SinglePage."
+          },
+          {
+            "key": "crawlingDepth",
+            "optional": true,
+            "type": "1 | 2 | 3",
+            "description": "Portal only: how deep to crawl, 1 to 3. Defaults to 2."
+          },
+          {
+            "key": "crawlBinaryContent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "urlFilter",
+            "optional": true,
+            "type": "{ include?: { filter: string, type: Contains | Regex | number }[] | null, exclude?: { filter: string, type: Contains | Regex | number }[] | null }",
+            "description": "Portal only: which crawled URLs to keep or skip."
+          },
+          {
+            "key": "crawlPagesFromAllDomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ key?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "xPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "excludeXPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "regex",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alerts",
+            "optional": true,
+            "type": "{ type?: string | number | null, value?: string | null, parameters?: { compare?: string | number | null, value?: string | null } | null }[] | null"
+          },
+          {
+            "key": "recurrenceInSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ lastCheckTimestamp?: string | null, valueChangedTimestamp?: string | null, raw?: string | null, error?: string | null, diff?: { o?: number | null, t?: string | null, operation?: number | null, text?: string | null }[] | null } | null"
+          },
+          {
+            "key": "notificationEndpoints",
+            "optional": true,
+            "type": "{ type?: string | number | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "proxies",
+            "optional": true,
+            "type": "{ location?: string | null }[] | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dynamicContent",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "scrollPage",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ignoreInvalidPages",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "collectRawHtml",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "crawlingDepth",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "crawlBinaryContent",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "urlFilter",
+            "optional": true,
+            "type": "{ include?: { filter?: string | null, type?: string | number | null }[] | null, exclude?: { filter?: string | null, type?: string | number | null }[] | null } | null"
+          },
+          {
+            "key": "crawlPagesFromAllDomains",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
