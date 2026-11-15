@@ -1,10 +1,13 @@
 import { LogoDevSchema } from './schema';
-import { LogoDevBrandEntity } from './schema/database';
+import { LogoDevBrandEntity, LogoDevImageEntity } from './schema/database';
 
 describe('Logo.dev schema', () => {
-	it('declares a semver version and the brands entity', () => {
+	it('declares a semver version and the brand and image entities', () => {
 		expect(LogoDevSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
-		expect(Object.keys(LogoDevSchema.entities)).toEqual(['brands']);
+		expect(Object.keys(LogoDevSchema.entities).sort()).toEqual([
+			'brands',
+			'images',
+		]);
 	});
 
 	it('accepts a brand row and rejects one with no domain', () => {
@@ -18,5 +21,16 @@ describe('Logo.dev schema', () => {
 		expect(LogoDevBrandEntity.safeParse({ name: 'Shopify' }).success).toBe(
 			false,
 		);
+	});
+
+	it('accepts an image row and rejects one with no content type', () => {
+		const parsed = LogoDevImageEntity.parse({
+			domain: 'shopify.com',
+			contentType: 'image/png',
+		});
+		expect(parsed.contentType).toBe('image/png');
+		expect(
+			LogoDevImageEntity.safeParse({ domain: 'shopify.com' }).success,
+		).toBe(false);
 	});
 });

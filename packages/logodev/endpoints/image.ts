@@ -2,6 +2,7 @@ import type { CorsairEndpoint } from 'corsair/core';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { fetchLogoContentType, LOGODEV_IMAGE_BASE } from '../client';
 import type { LogoDevContext } from '../context';
+import { LogoDevImageEntity } from '../schema/database';
 import type { FetchLogoInput, FetchLogoResponse } from './types';
 import { FetchLogoInputSchema, FetchLogoResponseSchema } from './types';
 
@@ -20,6 +21,22 @@ export const fetchLogo: CorsairEndpoint<
 		contentType,
 		status: 200,
 	});
+	await storeImage(ctx, parsed.domain, result.contentType);
 	await logEventFromContext(ctx, 'logodev.logos.fetch', {}, 'completed');
 	return result;
 };
+
+async function storeImage(
+	ctx: LogoDevContext,
+	domain: string,
+	contentType: string,
+): Promise<void> {
+	if (!ctx.db?.images) return;
+	const row = LogoDevImageEntity.safeParse({ domain, contentType });
+	if (!row.success) return;
+	try {
+		await ctx.db.images.upsertByEntityId(row.data.domain, row.data);
+	} catch {
+		console.warn('Failed to save Logo.dev image');
+	}
+}

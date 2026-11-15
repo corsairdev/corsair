@@ -35,10 +35,20 @@ const SEARCH_BODY = {
 	metadata: { request_id: 'request_1' },
 };
 
-function context(key: string, upsert?: jest.Mock): LogoDevContext {
+function context(
+	key: string,
+	upsert?: jest.Mock,
+	imageUpsert?: jest.Mock,
+): LogoDevContext {
 	return {
 		key,
-		db: upsert ? { brands: { upsertByEntityId: upsert } } : undefined,
+		db:
+			upsert || imageUpsert
+				? {
+						brands: { upsertByEntityId: upsert ?? jest.fn() },
+						images: { upsertByEntityId: imageUpsert ?? jest.fn() },
+					}
+				: undefined,
 	} as unknown as LogoDevContext;
 }
 
@@ -134,8 +144,9 @@ describe('logos.fetch', () => {
 	});
 
 	it('returns a token-free URL and sends the key only as the token query', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
 		mockRequest.mockResolvedValue('image/png');
-		const result = await fetchLogo(context('pk_test'), {
+		const result = await fetchLogo(context('pk_test', undefined, upsert), {
 			domain: 'shopify.com',
 		});
 		expect(result).toEqual({
@@ -144,6 +155,10 @@ describe('logos.fetch', () => {
 			status: 200,
 		});
 		expect(result.url).not.toContain('pk_test');
+		expect(upsert).toHaveBeenCalledWith('shopify.com', {
+			domain: 'shopify.com',
+			contentType: 'image/png',
+		});
 		const config = mockRequest.mock.calls[0]?.[0];
 		const options = mockRequest.mock.calls[0]?.[1];
 		expect(config?.BASE).toBe('https://img.logo.dev');
@@ -154,6 +169,25 @@ describe('logos.fetch', () => {
 			query: { token: 'pk_test' },
 			responseHeader: 'content-type',
 		});
+	});
+
+	it('returns the logo when the image row fails to save', async () => {
+		const upsert = jest.fn().mockRejectedValue(new Error('db down'));
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		mockRequest.mockResolvedValue('image/png');
+		const result = await fetchLogo(context('pk_test', undefined, upsert), {
+			domain: 'shopify.com',
+		});
+		expect(result.contentType).toBe('image/png');
+		expect(warn).toHaveBeenCalledWith('Failed to save Logo.dev image');
+		warn.mockRestore();
+	});
+
+	it('throws when the key is missing and does not call the image CDN', async () => {
+		await expect(
+			fetchLogo(context(''), { domain: 'shopify.com' }),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects a domain that contains a slash before calling the API', async () => {
