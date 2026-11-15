@@ -6,15 +6,15 @@ description: "Prerender service API for recaching pages, searching the cache, su
 
 Use **Prerender** through Corsair: one client, typed API calls.
 
-Prerender.io serves pre-rendered HTML to crawlers so a JavaScript-heavy site stays indexable, and its REST API controls that cache. Find the token under Security and Access, Prerender Token, and paste it in; it travels as the `prerenderToken` field of the JSON body, and in the path on the status route.
+Prerender.io serves pre-rendered HTML to crawlers so a JavaScript-heavy site stays indexable, and its REST API controls that cache. Find the token under Security and Access, Prerender Token, and paste it in; it travels in the `X-Prerender-Token` header, and in the path on the status route, which takes it no other way.
 
 What to know before you recache:
 
-- **Recache is the cheap refresh.** `recache` caches a URL for the first time or refreshes one already cached, which is how a longer global cache expiration stays affordable. One call takes either a single `url` or up to 1000 `urls`.
+- **Recache spends renders.** `recache` caches a URL for the first time or refreshes one already cached, and each URL counts as one render against the plan (paid plans bill renders past the included amount). Refreshing only the pages that changed is how a longer global cache expiration stays affordable. One call takes either a single `url` or up to 1000 `urls`.
 - **Mobile is a separate entry.** Add `adaptiveType: 'mobile'` to act on the mobile rendering rather than the desktop one, and the same filter on `search` to read one of the two.
-- **Search pages by 200.** `search` matches a substring with `query` or a whole URL with `exactMatch`, at 200 results per page, and takes `start` for the next page. It allows 50 requests a minute and answers 429 past that.
-- **A sitemap adds only new URLs.** `sitemap` caches what is not cached yet and leaves existing entries alone, so use `recache` to refresh them.
-- **Clearing is a job.** `cacheClear` takes a SQL-like pattern where `%` matches any run, schedules a job, and only one job runs at a time. Check it with `cacheClearStatus`, where a 403 means a job is still running rather than a failure.
+- **Search pages by 200.** `search` matches a substring with `query` or a whole URL with `exactMatch` (with neither, it lists the whole cache), at 200 results per page, and takes `start` for the next page. It allows 50 requests a minute and answers 429 past that.
+- **A sitemap adds only new URLs.** `sitemap` renders and caches what is not cached yet, one render per new URL, and leaves existing entries alone, so use `recache` to refresh them.
+- **Clearing is a job.** `cacheClear` takes a SQL-like pattern where `%` matches any run, schedules a job, and only one job runs at a time. Check it with `cacheClearStatus`, whose `inProgress` is true while a job runs.
 - **Recache speed affects your origin.** `changeSpeed` sets how many URLs the queue renders per hour, from 3600 up to 36000, or 0 to restore the automatic delay. A faster rate can overload the origin, so confirm the stack can take it first.
 
 **What you get:**
