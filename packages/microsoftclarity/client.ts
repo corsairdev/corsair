@@ -11,6 +11,8 @@ const rateLimitConfig: RateLimitConfig = {
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
+// The provider response is untrusted until the endpoint validates it against
+// InsightsGetResponseSchema, so a narrower return type would be premature.
 export async function getInsights(
 	token: string,
 	query: InsightsGetInput,
@@ -29,6 +31,7 @@ export async function getInsights(
 		TOKEN: normalized,
 		HEADERS: { Accept: 'application/json' },
 	};
+	// The HTTP boundary has not validated the response body yet.
 	return request<unknown>(
 		config,
 		{ method: 'GET', url: '/export-data/api/v1/project-live-insights', query },

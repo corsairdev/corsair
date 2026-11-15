@@ -12,8 +12,12 @@ jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
 	request: jest.fn(),
 }));
+// Jest replaces these imports with mocks above; their declared types still
+// describe the original functions rather than Jest's mock methods.
 const mockRequest = request as jest.Mock;
 const mockLog = logEventFromContext as jest.Mock;
+// Only key is read by this endpoint; logging and HTTP are mocked, so the
+// remaining context services are intentionally absent from this fixture.
 const ctx = {
 	key: 'resolved-token',
 	database: undefined,
@@ -89,7 +93,7 @@ describe('Microsoft Clarity Data Export', () => {
 	it('rejects invalid day counts before sending a request', async () => {
 		for (const numOfDays of [0, 4, 1.5]) {
 			await expect(
-				microsoftclarity().endpoints!.insights.get(ctx, { numOfDays } as never),
+				microsoftclarity().endpoints!.insights.get(ctx, { numOfDays }),
 			).rejects.toThrow();
 		}
 		expect(mockRequest).not.toHaveBeenCalled();
