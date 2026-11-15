@@ -45,6 +45,7 @@ function buildContext(): JobNimbusContext {
 			set_webhook_signature: () => Promise.resolve(),
 		},
 		db: {},
+		// `unknown` cast because test harness context supplies only mocked authentication and logging properties needed for endpoint unit tests.
 	} as unknown as JobNimbusContext;
 }
 

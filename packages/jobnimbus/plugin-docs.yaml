@@ -162,13 +162,15 @@ apiExamples:
   account.getGroups: {}
   account.getUsers: {}
   account.getUoms: {}
-  account.createWorkflow: {}
+  account.createWorkflow:
+    call: "{ name: 'Commercial Workflow', object_type: 'job' }"
   account.createWorkflowStatus:
     workflowid: wf_example
     name: Under Review
   account.createLeadSource:
     SourceName: Local Referral
-  account.createCustomField: {}
+  account.createCustomField:
+    call: "{ title: 'Insurance Claim Number', object_type: 'job', type: 'string' }"
   account.createFileType:
     TypeName: Permit
   account.createTaskType:

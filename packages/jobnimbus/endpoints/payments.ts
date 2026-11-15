@@ -24,6 +24,7 @@ export const paymentsList: JobNimbusEndpoints['paymentsList'] = async (
 				from: parsedInput.from,
 				sort: parsedInput.sort,
 				direction: parsedInput.direction,
+				actor: parsedInput.actor,
 			}),
 		},
 	);

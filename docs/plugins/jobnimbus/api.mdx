@@ -55,7 +55,7 @@ Create a custom field in JobNimbus
 **Risk:** `write`
 
 ```ts
-await corsair.jobnimbus.api.account.createCustomField({});
+await corsair.jobnimbus.api.account.createCustomField({ title: 'Insurance Claim Number', object_type: 'job', type: 'string' });
 ```
 
 **Input**
@@ -233,7 +233,7 @@ Create a workflow in JobNimbus
 **Risk:** `write`
 
 ```ts
-await corsair.jobnimbus.api.account.createWorkflow({});
+await corsair.jobnimbus.api.account.createWorkflow({ name: 'Commercial Workflow', object_type: 'job' });
 ```
 
 **Input**
@@ -3568,3 +3568,4 @@ await corsair.jobnimbus.api.workOrders.update({ id: 'jnid_example', internal_not
 
 
 ---
+

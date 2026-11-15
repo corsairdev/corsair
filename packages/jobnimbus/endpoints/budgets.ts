@@ -22,6 +22,7 @@ export const budgetsList: JobNimbusEndpoints['budgetsList'] = async (
 				from: parsedInput.from,
 				sort: parsedInput.sort,
 				direction: parsedInput.direction,
+				actor: parsedInput.actor,
 			}),
 		},
 	);

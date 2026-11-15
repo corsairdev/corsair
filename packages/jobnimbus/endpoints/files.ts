@@ -241,6 +241,7 @@ export const filesList: JobNimbusEndpoints['filesList'] = async (
 				from: parsedInput.from,
 				sort: parsedInput.sort,
 				direction: parsedInput.direction,
+				actor: parsedInput.actor,
 			}),
 		},
 	);

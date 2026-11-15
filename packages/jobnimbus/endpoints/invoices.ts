@@ -134,6 +134,7 @@ export const invoicesList: JobNimbusEndpoints['invoicesList'] = async (
 				from: parsedInput.from,
 				sort: parsedInput.sort,
 				direction: parsedInput.direction,
+				actor: parsedInput.actor,
 			}),
 		},
 	);

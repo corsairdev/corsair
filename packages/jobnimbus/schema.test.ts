@@ -180,8 +180,7 @@ describe('JobNimbus schema and endpoint registry', () => {
 			expect(() =>
 				JobNimbusEndpointInputSchemas.accountCreateWorkflow.parse({
 					name: 'Invalid',
-					// @ts-expect-error Testing invalid enum
-					object_type: 'invalid',
+					object_type: 'invalid' as unknown as 'job',
 				}),
 			).toThrow();
 		});

@@ -140,6 +140,7 @@ export const workOrdersList: JobNimbusEndpoints['workOrdersList'] = async (
 				from: parsedInput.from,
 				sort: parsedInput.sort,
 				direction: parsedInput.direction,
+				actor: parsedInput.actor,
 			}),
 		},
 	);
