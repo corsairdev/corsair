@@ -786,7 +786,7 @@ describe('GoSquared endpoints test suite', () => {
 		it('rejects invalid input before making network request', async () => {
 			// `unknown` because catch variable from rejected promise is untyped.
 			const err = await Account.createSite(mockCtx, {
-				domain_name: '',
+				url: '',
 			}).catch((e: unknown) => e);
 
 			expect(err).toBeDefined();

@@ -92,10 +92,9 @@ export const deletePerson: GosquaredEndpoints['people.deletePerson'] = async (
 		siteToken,
 	});
 
-	const parsedResponse =
-		GosquaredEndpointOutputSchemas['people.deletePerson'].parse(
-			response ?? {},
-		);
+	const parsedResponse = GosquaredEndpointOutputSchemas[
+		'people.deletePerson'
+	].parse(response ?? {});
 
 	await logEventFromContext(
 		ctx,

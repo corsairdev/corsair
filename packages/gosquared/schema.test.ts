@@ -20,7 +20,7 @@ describe('Gosquared schema tests', () => {
 		const schemaKeys = Object.keys(gosquaredEndpointSchemas).sort();
 		const metaKeys = Object.keys(gosquaredEndpointMeta).sort();
 		expect(schemaKeys).toEqual(metaKeys);
-		expect(schemaKeys.length).toBe(47);
+		expect(schemaKeys.length).toBe(48);
 	});
 
 	it('ensures plugin instance contains all nested endpoint groups', () => {

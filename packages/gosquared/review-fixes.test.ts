@@ -1,10 +1,14 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { makeGosquaredRequest, resolveSiteToken, sanitizeError } from './client';
+import {
+	makeGosquaredRequest,
+	resolveSiteToken,
+	sanitizeError,
+} from './client';
 import { Account, Now, People, Tracking } from './endpoints';
 import { GosquaredEndpointInputSchemas } from './endpoints/types';
 import type { GosquaredContext, GosquaredKeyBuilderContext } from './index';
-import { gosquared, gosquaredEndpointMeta } from './index';
+import { gosquared, gosquaredAuthConfig, gosquaredEndpointMeta } from './index';
 
 jest.mock('./client', () => {
 	const actual = jest.requireActual('./client');
@@ -60,6 +64,12 @@ function keyBuilderCtx(
 	} as unknown as GosquaredKeyBuilderContext;
 }
 
+function keyBuilder() {
+	const kb = gosquared().keyBuilder;
+	if (!kb) throw new Error('keyBuilder missing');
+	return kb;
+}
+
 beforeEach(() => {
 	mockMakeRequest.mockReset();
 	mockMakeRequest.mockResolvedValue({});
@@ -67,40 +77,37 @@ beforeEach(() => {
 
 describe('site token is a stored per-account field', () => {
 	it('keyBuilder throws AuthMissingError when the connection has no site token', async () => {
-		const plugin = gosquared();
 		await expect(
-			plugin.keyBuilder(keyBuilderCtx('stored-key', null), 'endpoint'),
+			keyBuilder()(keyBuilderCtx('stored-key', null), 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 		await expect(
-			plugin.keyBuilder(keyBuilderCtx('stored-key', '  '), 'endpoint'),
+			keyBuilder()(keyBuilderCtx('stored-key', '  '), 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('keyBuilder throws AuthMissingError when the API key is missing', async () => {
-		const plugin = gosquared();
 		await expect(
-			plugin.keyBuilder(keyBuilderCtx(null, 'GSN-1'), 'endpoint'),
+			keyBuilder()(keyBuilderCtx(null, 'GSN-1'), 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('keyBuilder returns the stored key when both fields are present', async () => {
-		const plugin = gosquared();
 		await expect(
-			plugin.keyBuilder(keyBuilderCtx('stored-key', 'GSN-1'), 'endpoint'),
+			keyBuilder()(keyBuilderCtx('stored-key', 'GSN-1'), 'endpoint'),
 		).resolves.toBe('stored-key');
 	});
 
 	it('declares site_token as an account field', () => {
-		expect(gosquared().authConfig.api_key.account).toEqual(['site_token']);
+		expect(gosquaredAuthConfig.api_key.account).toEqual(['site_token']);
 	});
 
 	it('resolveSiteToken prefers the call input, then the option, then the stored value', async () => {
 		await expect(
 			resolveSiteToken(buildCtx({ siteToken: 'GSN-OPT' }), 'GSN-INPUT'),
 		).resolves.toBe('GSN-INPUT');
-		await expect(resolveSiteToken(buildCtx({ siteToken: 'GSN-OPT' }))).resolves.toBe(
-			'GSN-OPT',
-		);
+		await expect(
+			resolveSiteToken(buildCtx({ siteToken: 'GSN-OPT' })),
+		).resolves.toBe('GSN-OPT');
 		await expect(resolveSiteToken(buildCtx())).resolves.toBe('GSN-STORED-SITE');
 		await expect(resolveSiteToken(buildCtx({}, null))).rejects.toBeInstanceOf(
 			AuthMissingError,
@@ -119,6 +126,7 @@ describe('site token is a stored per-account field', () => {
 
 describe('documented request fields', () => {
 	it('account.createSite sends the site address as url', async () => {
+		mockMakeRequest.mockResolvedValue({ site_token: 'GSN-NEW' });
 		await Account.createSite(buildCtx(), {
 			url: 'https://example.com',
 			timezone: 'Europe/London',
@@ -149,7 +157,12 @@ describe('documented request fields', () => {
 	it('tracking.identify accepts the documented nulls', async () => {
 		await Tracking.identify(buildCtx(), {
 			person_id: 'email:corsair-tests@inkboxmail.com',
-			properties: { name: null, phone: null, first_name: null, last_name: null },
+			properties: {
+				name: null,
+				phone: null,
+				first_name: null,
+				last_name: null,
+			},
 		});
 		expect(mockMakeRequest).toHaveBeenCalledWith(
 			'/tracking/v1/properties',
@@ -184,7 +197,10 @@ describe('documented request fields', () => {
 		expect(query).not.toHaveProperty('order');
 
 		mockMakeRequest.mockClear();
-		await People.getPeople(buildCtx(), { sort: 'created_at:desc', order: 'asc' });
+		await People.getPeople(buildCtx(), {
+			sort: 'created_at:desc',
+			order: 'asc',
+		});
 		query = mockMakeRequest.mock.calls[0]?.[2]?.query;
 		expect(query?.sort).toBe('created_at:asc');
 	});

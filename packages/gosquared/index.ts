@@ -556,7 +556,8 @@ export type BaseGosquaredPlugin<T extends GosquaredPluginOptions> =
 		typeof gosquaredEndpointsNested,
 		Record<string, never>,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof gosquaredAuthConfig
 	>;
 
 export type InternalGosquaredPlugin =
