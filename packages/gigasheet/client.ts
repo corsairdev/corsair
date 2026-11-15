@@ -120,9 +120,9 @@ export async function makeGigasheetRequest<T>(
 			// to preserve the original error instance, stack, status, and retryAfter per R8.
 			(error as { body: unknown }).body = redactSensitiveData(error.body);
 			if (error.request) {
-				(error.request as { body?: unknown }).body = body
-					? redactSensitiveData(body)
-					: undefined;
+				// Drop the request body: appended rows and uploaded file contents
+				// carry customer data that must not travel with errors or logs.
+				(error.request as { body?: unknown }).body = undefined;
 			}
 			throw error;
 		}

@@ -177,13 +177,37 @@ describe('makeGigasheetRequest', () => {
 			token: '[REDACTED]',
 			message: 'Rate limit exceeded',
 		});
-		expect(apiErr.request?.body).toEqual({
-			apiKey: '[REDACTED]',
-		});
+		expect(apiErr.request?.body).toBeUndefined();
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiErr)).toBe(true);
 		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
+	});
+
+	it('keeps appended row data out of the error request body', async () => {
+		const failed = createApiError(400, 'Bad Request', {
+			body: { Success: false, Message: 'column mismatch' },
+			requestBody: {
+				records: [{ email: 'person@example.com', name: 'Jane' }],
+			},
+		});
+		mockRequest.mockRejectedValue(failed);
+
+		// `unknown` because caught error has no static type until checked.
+		const error = await makeGigasheetRequest(
+			'/dataset/h1/append/by-name',
+			'test-key',
+			{
+				method: 'POST',
+				body: { records: [{ email: 'person@example.com', name: 'Jane' }] },
+			},
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).request?.body).toBeUndefined();
+		expect(JSON.stringify((error as ApiError).request)).not.toContain(
+			'person@example.com',
+		);
 	});
 
 	it('wraps unknown non-Error rejection values into GigasheetAPIError', async () => {
