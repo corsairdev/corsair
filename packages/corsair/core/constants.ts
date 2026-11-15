@@ -577,6 +577,7 @@ export const BaseProviders = [
 	'twilio',
 	'twitter',
 	'twitterapiio',
+	'twocaptcha',
 	'twochat',
 	'typeform',
 	'typesafe',
@@ -1204,6 +1205,7 @@ export const ProviderDisplayNames = {
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
+	twocaptcha: '2Captcha',
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	typesafe: 'TypeSafe',
@@ -1838,6 +1840,7 @@ export type AllProviders =
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'twocaptcha'
 	| 'twochat'
 	| 'typeform'
 	| 'typesafe'

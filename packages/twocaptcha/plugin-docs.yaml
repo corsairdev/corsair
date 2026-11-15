@@ -1,0 +1,42 @@
+displayName: 2Captcha
+description: 'Create captcha-solving tasks, read their results, check the account balance, and report tasks as correct or incorrect.'
+domain: 2captcha.com
+recommendedAuth: api_key
+overviewNote: |
+  Copy your API key from the 2Captcha dashboard at https://2captcha.com/setting. It is 32 characters, and the API answers `ERROR_WRONG_USER_KEY` when it is not.
+
+  Things to know:
+
+  - **Every answer is an envelope.** 2Captcha returns HTTP 200 for almost everything and puts the outcome in `status`: `1` is success and `0` is failure, with the reason in `request` and a message in `error_text`. The plugin throws `TwoCaptchaAPIError` on a failure, so a resolved promise means the task or read succeeded.
+  - **Creating a task costs money.** `tasks.create` is billable from the call, so it is never replayed, and a failure there is reported rather than retried.
+  - **Not ready is not an error.** While a task is being solved, `tasks.result` answers `status: 0` with `request: "CAPCHA_NOT_READY"`. The plugin returns that state instead of throwing, so poll until `status` is `1`.
+  - **Report a rejected token.** `account.reportIncorrect` refunds the task and asks the workers again. `account.reportCorrect` improves the account rating. Both take the task id.
+  - **Two codes are worth retrying.** `ERROR_NO_SLOT_AVAILABLE` and `ERROR_TOO_MANY_REQUESTS` mean the queue is full; the plugin retries them with backoff. Every other code is permanent.
+  - **Captcha kinds.** `tasks.create` takes a `type` such as `RecaptchaV2TaskProxyless` and the per-kind fields inside `task`. The key field name differs by kind: `websiteKey`, `sitekey` or `websitePublicKey`.
+  - **No callbacks in this plugin.** 2Captcha can POST a result to a URL you give it, but this plugin does not receive that delivery; poll `tasks.result` instead.
+examples:
+  read:
+    path: account.balance
+    title: Read the account balance
+  write:
+    path: tasks.create
+    title: Create a captcha task for a page
+    args:
+      task:
+        websiteURL: https://example.com/login
+        websiteKey: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+apiExamples:
+  tasks.create:
+    call: "{ type: 'RecaptchaV2TaskProxyless', task: { websiteURL: 'https://example.com/login', websiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' } }"
+  tasks.result:
+    call: "{ task_id: '734920165' }"
+  account.balance: {}
+  account.reportCorrect:
+    call: "{ task_id: '734920165' }"
+  account.reportIncorrect:
+    call: "{ task_id: '734920165' }"
+apiNotes:
+  tasks.create: 'Billable from this call. `task` takes the per-kind fields; the key is `websiteKey`, `sitekey` or `websitePublicKey` depending on the kind.'
+  tasks.result: 'A still-solving task answers `status: 0` with `CAPCHA_NOT_READY`, which is returned as a state rather than thrown. Poll until `status` is 1.'
+  account.balance: '`request` holds the amount as a number.'
+  account.reportIncorrect: 'Refunds the task and asks the workers again. Use it when the site rejects a token.'
