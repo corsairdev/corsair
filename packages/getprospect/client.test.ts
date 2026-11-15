@@ -104,7 +104,7 @@ describe('GetProspect HTTP client', () => {
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
 	});
 
-	it('keeps the provider message with echoed input redacted', async () => {
+	it('never forwards the provider validation text (Jane Doe is not a valid name)', async () => {
 		fetchSpy.mockResolvedValue(
 			new Response(
 				JSON.stringify({
@@ -113,109 +113,12 @@ describe('GetProspect HTTP client', () => {
 					errors: [
 						{
 							name: 'VALIDATION_ERROR',
-							message:
-								'enrich_mail is not a field of this request - did you mean enrich_email? Got "Jane Doe" at jane@acme.test from https://www.linkedin.com/in/jane-doe',
-							payload: { code: 'unknown_field' },
-						},
-					],
-				}),
-				{ status: 400, headers: { 'content-type': 'application/json' } },
-			),
-		);
-		// unknown because the rejection may be any transport/provider value; the predicate narrows it.
-		const caught = await makeGetProspectRequest(
-			'/v2/people/enrich',
-			'unit-key',
-			{
-				method: 'POST',
-				body: { enrich_mail: true },
-			},
-		).catch((error: unknown) => error);
-		if (!(caught instanceof ApiError))
-			throw new Error('Expected sanitized ApiError');
-		expect(caught.status).toBe(400);
-		expect(caught.message).toContain('did you mean enrich_email?');
-		for (const leaked of ['Jane Doe', 'jane@acme.test', 'linkedin.com']) {
-			expect(caught.message).not.toContain(leaked);
-			expect(JSON.stringify(caught.body)).not.toContain(leaked);
-		}
-	});
-
-	it('keeps only field-level validation text and redacts phone numbers and coordinates', async () => {
-		fetchSpy.mockResolvedValueOnce(
-			new Response(
-				JSON.stringify({
-					success: false,
-					data: null,
-					errors: [
-						{
-							name: 'VALIDATION_ERROR',
-							message:
-								'phone must be E.164, got +1 415 555 0123 near 37.7749, -122.4194',
-							payload: { code: 'invalid_format' },
-						},
-					],
-				}),
-				{ status: 400, headers: { 'content-type': 'application/json' } },
-			),
-		);
-		fetchSpy.mockResolvedValueOnce(
-			new Response(
-				JSON.stringify({
-					success: false,
-					data: null,
-					errors: [
-						{
-							name: 'NOT_FOUND',
-							message: 'No person named Jane Doe at Acme',
-						},
-					],
-				}),
-				{ status: 404, headers: { 'content-type': 'application/json' } },
-			),
-		);
-		// unknown because the rejection may be any transport/provider value; the predicate narrows it.
-		const validation = await makeGetProspectRequest(
-			'/v2/people/enrich',
-			'unit-key',
-			{ method: 'POST', body: {} },
-		).catch((error: unknown) => error);
-		// unknown because the rejection may be any transport/provider value; the predicate narrows it.
-		const notFound = await makeGetProspectRequest(
-			'/v2/people/p_1',
-			'unit-key',
-			{
-				method: 'GET',
-			},
-		).catch((error: unknown) => error);
-		if (!(validation instanceof ApiError) || !(notFound instanceof ApiError))
-			throw new Error('Expected sanitized ApiError');
-		expect(validation.message).toContain('phone must be E.164');
-		for (const leaked of ['415', '555 0123', '37.7749', '122.4194']) {
-			expect(validation.message).not.toContain(leaked);
-			expect(JSON.stringify(validation.body)).not.toContain(leaked);
-		}
-		expect(notFound.status).toBe(404);
-		expect(notFound.message).toBe(
-			'GetProspect request failed (HTTP 404): NOT_FOUND',
-		);
-		expect(JSON.stringify(notFound.body)).not.toContain('Jane Doe');
-	});
-
-	it('drops unquoted values after a colon or "received" in validation text', async () => {
-		fetchSpy.mockResolvedValue(
-			new Response(
-				JSON.stringify({
-					success: false,
-					data: null,
-					errors: [
-						{
-							name: 'VALIDATION_ERROR',
-							message: 'Invalid name: Jane Doe',
+							message: 'Jane Doe is not a valid name',
 						},
 						{
 							name: 'VALIDATION_ERROR',
-							message: 'company must be a domain, received Acme Robotics',
+							message: 'Jane Doe is not a valid name',
+							payload: { code: 'invalid_value', field: 'data.first_name' },
 						},
 					],
 				}),
@@ -230,11 +133,105 @@ describe('GetProspect HTTP client', () => {
 		).catch((error: unknown) => error);
 		if (!(caught instanceof ApiError))
 			throw new Error('Expected sanitized ApiError');
-		expect(caught.message).toContain('Invalid name');
-		expect(JSON.stringify(caught.body)).toContain('company must be a domain');
-		for (const leaked of ['Jane Doe', 'Acme Robotics']) {
+		expect(caught.message).toBe(
+			'GetProspect request failed (HTTP 400): VALIDATION_ERROR: the request failed validation',
+		);
+		expect(caught.body).toEqual({
+			success: false,
+			data: null,
+			errors: [
+				{ name: 'VALIDATION_ERROR', message: 'the request failed validation' },
+				{
+					name: 'VALIDATION_ERROR',
+					message: 'data.first_name has an invalid value',
+					payload: { code: 'invalid_value' },
+				},
+			],
+		});
+		for (const leaked of ['Jane', 'Doe']) {
 			expect(caught.message).not.toContain(leaked);
 			expect(JSON.stringify(caught.body)).not.toContain(leaked);
+		}
+	});
+
+	it('writes validation text from the error code and allowlisted field names only', async () => {
+		const validationError = (payload: Record<string, unknown>) =>
+			new Response(
+				JSON.stringify({
+					success: false,
+					data: null,
+					errors: [
+						{
+							name: 'VALIDATION_ERROR',
+							message:
+								'Got "Jane Doe" at jane@acme.test, +1 415 555 0123, from https://www.linkedin.com/in/jane-doe',
+							payload,
+						},
+					],
+				}),
+				{ status: 400, headers: { 'content-type': 'application/json' } },
+			);
+		fetchSpy
+			.mockResolvedValueOnce(
+				validationError({
+					code: 'unknown_field',
+					field: 'enrich_mail',
+					did_you_mean: 'enrich_email',
+				}),
+			)
+			.mockResolvedValueOnce(
+				validationError({
+					code: 'wrong_type',
+					field: 'data.email',
+					received_type: 'number',
+				}),
+			)
+			.mockResolvedValueOnce(
+				validationError({
+					code: 'missing_field',
+					field: 'Jane Doe',
+					received_type: 'Jane Doe',
+				}),
+			)
+			.mockResolvedValueOnce(
+				validationError({
+					code: 'invalid_format',
+					field: 'data.jane_doe_415',
+					received_value: '+1 415 555 0123',
+				}),
+			);
+		const messages: string[] = [];
+		const bodies: string[] = [];
+		for (let i = 0; i < 4; i += 1) {
+			// unknown because the rejection may be any transport/provider value; the predicate narrows it.
+			const caught = await makeGetProspectRequest(
+				'/v2/people/enrich',
+				'unit-key',
+				{ method: 'POST', body: {} },
+			).catch((error: unknown) => error);
+			if (!(caught instanceof ApiError))
+				throw new Error('Expected sanitized ApiError');
+			messages.push(caught.message);
+			bodies.push(JSON.stringify(caught.body));
+		}
+		const prefix = 'GetProspect request failed (HTTP 400): VALIDATION_ERROR';
+		expect(messages).toEqual([
+			`${prefix} (unknown_field): the request has a field the API does not accept (did you mean enrich_email?)`,
+			`${prefix} (wrong_type): data.email has the wrong type (got number)`,
+			`${prefix} (missing_field): a field is required`,
+			`${prefix} (invalid_format): a field has an invalid format`,
+		]);
+		for (const leaked of [
+			'Jane',
+			'jane',
+			'415',
+			'acme.test',
+			'linkedin.com',
+			'unit-key',
+		]) {
+			for (const text of [...messages, ...bodies]) {
+				expect(text).not.toContain(leaked);
+			}
 		}
 	});
 

@@ -7,6 +7,7 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import { z } from 'zod';
+import { GetProspectOperationInputSchemas } from './endpoints/types';
 import { SchemaErrorCode, SchemaErrorName } from './schema/api';
 
 export const GETPROSPECT_API_BASE = 'https://api.getprospect.com';
@@ -54,41 +55,132 @@ type SafeProviderErrorBody = {
 	}>;
 };
 
-const EMAIL_PATTERN = /[^\s@"'<>()]+@[^\s@"'<>()]+\.[^\s@"'<>()]+/g;
-const URL_PATTERN = /\b(?:https?:\/\/|www\.)\S+/gi;
-const QUOTED_PATTERN = /"[^"]*"|“[^”]*”/g;
-const LONG_TOKEN_PATTERN = /[A-Za-z0-9_-]{32,}/g;
-// Phone numbers, coordinates and other long numbers: 6+ characters of digits and separators.
-const NUMBER_RUN_PATTERN = /\+?\d[\d\s().-]{4,}\d/g;
-// "Invalid name: Jane Doe", "got +1 415 ...", "received Acme": the rest of the clause echoes input.
-const ECHOED_VALUE_PATTERN = /(:|\b(?:got|received)\b)[^,;?!\n]*/gi;
+// Field names the provider may cite in a validation error: every key of the
+// plugin's own input schemas, collected once from the Zod definitions. A field
+// path is shown only when each of its segments is one of these keys.
+let knownFieldNames: ReadonlySet<string> | undefined;
+
+// `unknown` because Zod definitions are walked structurally across schema kinds.
+function collectFieldNames(
+	schema: unknown,
+	names: Set<string>,
+	seen: Set<unknown>,
+) {
+	if (typeof schema !== 'object' || schema === null || seen.has(schema)) return;
+	seen.add(schema);
+	// `unknown` because each Zod schema kind keeps different members in its definition.
+	const def: unknown = (schema as { _zod?: { def?: unknown } })._zod?.def;
+	if (typeof def !== 'object' || def === null) return;
+	const members = def as Record<string, unknown>;
+	const shape = members.shape;
+	if (typeof shape === 'object' && shape !== null) {
+		for (const [key, child] of Object.entries(shape)) {
+			names.add(key);
+			collectFieldNames(child, names, seen);
+		}
+	}
+	for (const key of [
+		'innerType',
+		'element',
+		'valueType',
+		'left',
+		'right',
+		'in',
+		'out',
+	]) {
+		collectFieldNames(members[key], names, seen);
+	}
+	if (Array.isArray(members.options)) {
+		for (const option of members.options)
+			collectFieldNames(option, names, seen);
+	}
+}
+
+function fieldNames(): ReadonlySet<string> {
+	if (!knownFieldNames) {
+		const names = new Set<string>();
+		for (const schema of Object.values(GetProspectOperationInputSchemas)) {
+			collectFieldNames(schema, names, new Set());
+		}
+		knownFieldNames = names;
+	}
+	return knownFieldNames;
+}
+
+/** The field path when every segment is a known input key or an index. */
+export function allowlistedField(field: unknown): string | undefined {
+	if (typeof field !== 'string' || field.length === 0 || field.length > 200) {
+		return undefined;
+	}
+	const segments = field.split(/[.[\]]/).filter((segment) => segment !== '');
+	if (segments.length === 0) return undefined;
+	const names = fieldNames();
+	return segments.every(
+		(segment) => /^\d+$/.test(segment) || names.has(segment),
+	)
+		? field
+		: undefined;
+}
+
+const JSON_TYPE_NAMES = new Set([
+	'string',
+	'number',
+	'integer',
+	'boolean',
+	'array',
+	'object',
+	'null',
+]);
 
 /**
- * Validation messages explain what to fix ("enrich_mail is not a field of this
- * request - did you mean enrich_email?"), so they are kept, minus anything that
- * may echo the request: the key, email addresses, URLs, quoted input values,
- * the rest of a clause after a colon, "got" or "received", and long numbers
- * (phones, coordinates). Other error kinds may describe a person or
- * company in free text, so only their name and code are exposed.
+ * A validation message written by the plugin from the error's code and an
+ * allowlisted field name. The provider's own message is never forwarded: it
+ * can repeat the person or company that was sent ("Jane Doe is not a valid
+ * name"), and no pattern can tell a name from the rest of the sentence.
  */
-function redactProviderMessage(message: string, apiKey: string): string {
-	const withoutKey = apiKey
-		? message.split(apiKey).join('[redacted]')
-		: message;
-	return withoutKey
-		.replace(EMAIL_PATTERN, '[email]')
-		.replace(URL_PATTERN, '[url]')
-		.replace(QUOTED_PATTERN, '"[value]"')
-		.replace(ECHOED_VALUE_PATTERN, '$1 [value]')
-		.replace(LONG_TOKEN_PATTERN, '[redacted]')
-		.replace(NUMBER_RUN_PATTERN, '[number]')
-		.slice(0, 300);
+export function validationMessage(
+	// Payload members are untrusted provider JSON narrowed one by one here.
+	payload: Record<string, unknown> | undefined,
+): string {
+	const field = allowlistedField(payload?.field);
+	const subject = field ?? 'a field';
+	const code = SchemaErrorCode.safeParse(payload?.code);
+	switch (code.success ? code.data : undefined) {
+		case 'unknown_field': {
+			const suggestion = allowlistedField(payload?.did_you_mean);
+			const problem = field
+				? `${field} is not a field of this request`
+				: 'the request has a field the API does not accept';
+			return suggestion ? `${problem} (did you mean ${suggestion}?)` : problem;
+		}
+		case 'conflicting_fields':
+			return `${subject} conflicts with another field in this request`;
+		case 'missing_field':
+			return `${subject} is required`;
+		case 'wrong_type': {
+			const type = payload?.received_type;
+			return `${subject} has the wrong type${
+				typeof type === 'string' && JSON_TYPE_NAMES.has(type)
+					? ` (got ${type})`
+					: ''
+			}`;
+		}
+		case 'value_not_allowed':
+			return `${subject} has a value that is not allowed`;
+		case 'out_of_range':
+			return `${subject} is out of range`;
+		case 'invalid_format':
+			return `${subject} has an invalid format`;
+		case 'invalid_value':
+			return `${subject} has an invalid value`;
+		default:
+			return field ? `${field} is not valid` : 'the request failed validation';
+	}
 }
 
 // `unknown` because ApiError bodies contain untrusted provider JSON that must be whitelisted before exposure.
 function safeProviderErrorBody(
 	body: unknown,
-	apiKey: string,
 ): SafeProviderErrorBody | undefined {
 	const parsed = ProviderErrorEnvelopeSchema.safeParse(body);
 	if (!parsed.success || !parsed.data.errors) return undefined;
@@ -96,11 +188,8 @@ function safeProviderErrorBody(
 		const safeError: NonNullable<SafeProviderErrorBody['errors']>[number] = {};
 		const name = SchemaErrorName.safeParse(providerError.name);
 		if (name.success) safeError.name = name.data;
-		if (
-			safeError.name === 'VALIDATION_ERROR' &&
-			typeof providerError.message === 'string'
-		) {
-			safeError.message = redactProviderMessage(providerError.message, apiKey);
+		if (safeError.name === 'VALIDATION_ERROR') {
+			safeError.message = validationMessage(providerError.payload);
 		}
 		const providerPayload = providerError.payload;
 		if (providerPayload) {
@@ -144,16 +233,17 @@ function safeProviderErrorBody(
 function safeApiError(
 	error: ApiError,
 	method: NonNullable<GetProspectRequestOptions['method']>,
-	apiKey: string,
 ): ApiError {
-	const body = safeProviderErrorBody(error.body, apiKey);
+	const body = safeProviderErrorBody(error.body);
 	const firstError = body?.errors?.[0];
 	const errorCode = firstError?.payload?.code;
 	const errorKind =
 		firstError?.name && errorCode
 			? `${firstError.name} (${errorCode})`
 			: firstError?.name;
-	const providerMessage = firstError?.message ?? errorKind;
+	const providerMessage = firstError?.message
+		? `${errorKind}: ${firstError.message}`
+		: errorKind;
 	const safeRequest: ApiRequestOptions = {
 		method,
 		url: '/v2/[redacted]',
@@ -220,7 +310,7 @@ export async function makeGetProspectRequest<T>(
 	} catch (error: unknown) {
 		// `unknown` because JavaScript can throw any value; narrow to ApiError before reading provider fields.
 		// Core ApiError retains body and request details, which may contain prospect PII.
-		if (error instanceof ApiError) throw safeApiError(error, method, apiKey);
+		if (error instanceof ApiError) throw safeApiError(error, method);
 		// Network errors may include full URLs or transport details; expose only a safe summary.
 		throw new Error('GetProspect request failed');
 	}
