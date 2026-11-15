@@ -20,7 +20,7 @@ apiExamples:
     args: {}
   account.createSite:
     args:
-      domain_name: example.com
+      url: https://example.com
       name: Example Site
   account.getSite:
     args:
@@ -100,6 +100,9 @@ apiExamples:
   people.getPerson:
     args:
       person_id: person_123
+  people.deletePerson:
+    args:
+      person_id: person_123
   people.getPersonFeed:
     args:
       person_id: person_123
@@ -131,6 +134,7 @@ apiExamples:
         id: tx_123
   tracking.trackPageview:
     args:
+      visitor_id: visitor_123
       page:
         url: https://example.com
   chat.getChats:
