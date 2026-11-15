@@ -2494,4 +2494,5 @@ export function forcemanager<const T extends ForceManagerPluginOptions>(
 	} satisfies InternalForceManagerPlugin;
 }
 
+export { packForceManagerCredentials };
 export type { ForceManagerEndpointInputs, ForceManagerEndpointOutputs };
