@@ -68,6 +68,8 @@ function tokenErrorCode(body: string): string | undefined {
  * A refusal (wrong id or secret, an app that is not installed on the shop, a
  * shop outside the app's organization) raises `AuthMissingError`, so Corsair
  * offers a connect link instead of retrying a request that cannot succeed.
+ * A 429 is not a refusal: it is retried once after `Retry-After` (at most
+ * 10 s) and then reported as a `ShopifyTokenError` with status 429.
  * No error message carries the secret, the id or a token.
  */
 export async function requestShopifyClientCredentialsToken(input: {
@@ -76,71 +78,44 @@ export async function requestShopifyClientCredentialsToken(input: {
 	clientSecret: string;
 	/** Injected by tests; defaults to the wall clock. */
 	now?: () => number;
-	/** Defaults to TOKEN_REQUEST_TIMEOUT_MS. */
+	/** Per attempt. Defaults to TOKEN_REQUEST_TIMEOUT_MS. */
 	timeoutMs?: number;
+	/** Cap on the wait before retrying a 429. Defaults to 10 s. */
+	maxRetryWaitMs?: number;
 }): Promise<ShopifyMintedToken> {
 	const host = normaliseShopDomain(input.shopDomain);
 	const nowSeconds = () =>
 		Math.floor((input.now ? input.now() : Date.now()) / 1000);
 
 	const timeoutMs = input.timeoutMs ?? TOKEN_REQUEST_TIMEOUT_MS;
-	const controller = new AbortController();
-	let timer: ReturnType<typeof setTimeout> | undefined;
-	const timedOut = new Promise<never>((_, reject) => {
-		timer = setTimeout(() => {
-			controller.abort();
-			reject(
-				new ShopifyTokenError(
-					`Shopify did not answer the token request for ${host} within ${timeoutMs} ms`,
-				),
-			);
-		}, timeoutMs);
-	});
-
-	let response: Response;
-	let text: string;
-	try {
-		// The race covers the body as well as the headers: a response that
-		// stalls mid-body would otherwise leave the mint pending forever.
-		[response, text] = await Promise.race([
-			(async () => {
-				let res: Response;
-				try {
-					res = await fetch(`https://${host}/admin/oauth/access_token`, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-							Accept: 'application/json',
-						},
-						body: new URLSearchParams({
-							grant_type: 'client_credentials',
-							client_id: input.clientId,
-							client_secret: input.clientSecret,
-						}).toString(),
-						signal: controller.signal,
-					});
-				} catch {
-					// The transport error is dropped on purpose: it is not needed
-					// to act on the failure, and nothing from the request should
-					// leak through it.
-					throw new ShopifyTokenError(
-						`Could not reach ${host} to get a Shopify access token`,
-					);
-				}
-				return [res, await res.text()] as const;
-			})(),
-			timedOut,
-		]);
-	} finally {
-		clearTimeout(timer);
+	let attempt = await postTokenRequest(host, input, timeoutMs);
+	if (attempt.status === 429) {
+		// Throttled is not refused: the credentials may be fine. Wait what
+		// Shopify asks (bounded), try once more, then report the throttle.
+		await new Promise((resolve) =>
+			setTimeout(
+				resolve,
+				retryWaitMs(attempt.retryAfter, input.maxRetryWaitMs),
+			),
+		);
+		attempt = await postTokenRequest(host, input, timeoutMs);
 	}
-	if (!response.ok) {
+	const { status, text } = attempt;
+	if (status < 200 || status >= 300) {
 		const code = tokenErrorCode(text);
-		const message = `Shopify refused the client credentials token request for ${host} (HTTP ${response.status}${code ? `, ${code}` : ''}). Check the app's client ID and secret, and that the app is installed on this store.`;
-		if (response.status >= 400 && response.status < 500) {
+		const detail = `HTTP ${status}${code ? `, ${code}` : ''}`;
+		if (status === 429) {
+			throw new ShopifyTokenError(
+				`Shopify is rate limiting token requests for ${host} (${detail}); try again shortly`,
+				status,
+				retryWaitMs(attempt.retryAfter, Number.POSITIVE_INFINITY),
+			);
+		}
+		const message = `Shopify refused the client credentials token request for ${host} (${detail}). Check the app's client ID and secret, and that the app is installed on this store.`;
+		if (status >= 400 && status < 500) {
 			throw new AuthMissingError('shopify', 'api_key', message);
 		}
-		throw new ShopifyTokenError(message, response.status);
+		throw new ShopifyTokenError(message, status);
 	}
 
 	let accessToken: unknown;
@@ -153,29 +128,120 @@ export async function requestShopifyClientCredentialsToken(input: {
 	} catch {
 		throw new ShopifyTokenError(
 			`Shopify answered the token request for ${host} with a body that is not JSON`,
-			response.status,
+			status,
 		);
 	}
 	if (typeof accessToken !== 'string' || accessToken.length === 0) {
 		throw new ShopifyTokenError(
 			`Shopify answered the token request for ${host} without an access token`,
-			response.status,
+			status,
+		);
+	}
+	// Shopify documents `expires_in` as always present and always 86399. If it
+	// is ever left out, the documented lifetime is used (a 401 still renews
+	// early); a value that is there but not a positive number is refused, so a
+	// dead token is never cached as fresh.
+	if (
+		expiresIn !== undefined &&
+		(typeof expiresIn !== 'number' ||
+			!Number.isFinite(expiresIn) ||
+			expiresIn <= 0)
+	) {
+		throw new ShopifyTokenError(
+			`Shopify answered the token request for ${host} with an invalid expires_in`,
+			status,
 		);
 	}
 	const lifetime =
-		typeof expiresIn === 'number' && expiresIn > 0
-			? expiresIn
-			: DEFAULT_EXPIRES_IN_SECONDS;
+		typeof expiresIn === 'number' ? expiresIn : DEFAULT_EXPIRES_IN_SECONDS;
 	return { accessToken, expiresAt: nowSeconds() + lifetime };
+}
+
+/** Longest wait before the one retry of a throttled token request. */
+const MAX_RETRY_WAIT_MS = 10_000;
+const DEFAULT_RETRY_WAIT_MS = 2_000;
+
+/** `Retry-After` in seconds, as milliseconds, capped. */
+function retryWaitMs(
+	retryAfter: string | null,
+	capMs: number = MAX_RETRY_WAIT_MS,
+): number {
+	const seconds = Number(retryAfter);
+	const ms =
+		retryAfter !== null && Number.isFinite(seconds) && seconds >= 0
+			? seconds * 1000
+			: DEFAULT_RETRY_WAIT_MS;
+	return Math.min(ms, capMs);
+}
+
+/**
+ * One token request, with a deadline over the headers and the body together:
+ * a response that stalls mid-body would otherwise leave the mint, and every
+ * call waiting on it, pending forever.
+ */
+async function postTokenRequest(
+	host: string,
+	input: { clientId: string; clientSecret: string },
+	timeoutMs: number,
+): Promise<{ status: number; text: string; retryAfter: string | null }> {
+	const controller = new AbortController();
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	const timedOut = new Promise<never>((_, reject) => {
+		timer = setTimeout(() => {
+			controller.abort();
+			reject(
+				new ShopifyTokenError(
+					`Shopify did not answer the token request for ${host} within ${timeoutMs} ms`,
+				),
+			);
+		}, timeoutMs);
+	});
+	const send = async () => {
+		let res: Response;
+		try {
+			res = await fetch(`https://${host}/admin/oauth/access_token`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json',
+				},
+				body: new URLSearchParams({
+					grant_type: 'client_credentials',
+					client_id: input.clientId,
+					client_secret: input.clientSecret,
+				}).toString(),
+				signal: controller.signal,
+			});
+		} catch {
+			// The transport error is dropped on purpose: it is not needed to act
+			// on the failure, and nothing from the request should leak through it.
+			throw new ShopifyTokenError(
+				`Could not reach ${host} to get a Shopify access token`,
+			);
+		}
+		return {
+			status: res.status,
+			text: await res.text(),
+			retryAfter: res.headers.get('retry-after'),
+		};
+	};
+	try {
+		return await Promise.race([send(), timedOut]);
+	} finally {
+		clearTimeout(timer);
+	}
 }
 
 /** A token request that failed for a reason other than refused credentials. */
 export class ShopifyTokenError extends Error {
 	public readonly status?: number;
-	constructor(message: string, status?: number) {
+	/** Milliseconds Shopify asked to wait, for a throttled request. */
+	public readonly retryAfter?: number;
+	constructor(message: string, status?: number, retryAfter?: number) {
 		super(message);
 		this.name = 'ShopifyTokenError';
 		this.status = status;
+		this.retryAfter = retryAfter;
 	}
 }
 

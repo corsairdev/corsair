@@ -636,3 +636,80 @@ describe('a stalled token request times out', () => {
 		expect(token).toBe('minted-after-timeout');
 	});
 });
+
+describe('token request responses that are not a refusal', () => {
+	const input = {
+		shopDomain: SHOP,
+		clientId: CLIENT_ID,
+		clientSecret: CLIENT_SECRET,
+		maxRetryWaitMs: 0,
+	};
+
+	function respondThrottled() {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ errors: 'Too many requests' }), {
+				status: 429,
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '0' },
+			}),
+		);
+	}
+
+	it('retries a throttled token request once and uses the token', async () => {
+		respondThrottled();
+		respondToken('minted-after-429');
+
+		const token = await requestShopifyClientCredentialsToken(input);
+
+		expect(token.accessToken).toBe('minted-after-429');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('reports a second 429 as throttling, not as missing credentials', async () => {
+		respondThrottled();
+		respondThrottled();
+
+		const error = await requestShopifyClientCredentialsToken(input).catch(
+			// unknown: a rejection reason has no static type.
+			(caught: unknown) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ShopifyTokenError);
+		expect((error as Error).name).not.toBe('AuthMissingError');
+		expect(error).toMatchObject({ status: 429 });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it.each([0, -5, '86399', Number.NaN])(
+		'refuses expires_in %p instead of caching the token as fresh',
+		async (expiresIn) => {
+			respond({ access_token: 'dead-token', expires_in: expiresIn });
+
+			await expect(requestShopifyClientCredentialsToken(input)).rejects.toThrow(
+				/invalid expires_in/,
+			);
+		},
+	);
+
+	it('uses the documented 24-hour lifetime when expires_in is left out', async () => {
+		respond({ access_token: 'no-expiry-token' });
+
+		const token = await requestShopifyClientCredentialsToken(input);
+
+		expect(token.expiresAt).toBe(NOW_S + 86399);
+	});
+
+	it('does not store a token whose expires_in is invalid', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			await withClientCredentials(corsair);
+			respond({ access_token: 'dead-token', expires_in: 0 });
+
+			await expect(corsair.shopify.api.shop.get({})).rejects.toThrow(
+				/invalid expires_in/,
+			);
+			expect(await corsair.shopify.keys.get_api_key()).toBeNull();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
