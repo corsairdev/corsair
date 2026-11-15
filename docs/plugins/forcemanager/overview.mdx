@@ -6,7 +6,7 @@ description: "Manage Sage Sales Management v4 CRM records, sales resources, acti
 
 Use **ForceManager** through Corsair: one client, typed API calls.
 
-ForceManager issues a public and a private API key in ForceAdmin. Store the private key as the account's API key and the public key in its `public_key` field (`pnpm corsair setup --plugin=forcemanager api_key=<private key> public_key=<public key>`, or the two fields on Hub's connect page). The plugin logs in with the pair, sends the session token in X-Session-Key and logs in again when the token expires. Set environment to sandbox to target the documented sandbox host. Calendar create and update (sendNotification emails invitations), user create and update (billable adds a paid seat) and the generic bulk create and update routes are destructive. The plugin does not manage webhooks or perform the binary upload step returned by document and picture upload-initiation routes.
+ForceManager issues a public and a private API key in ForceAdmin. Store the private key as the account's API key and the public key in its `public_key` field (`pnpm corsair setup --plugin=forcemanager api_key=<private key> public_key=<public key>`, or the two fields on Hub's connect page). The plugin logs in with the pair, sends the session token in X-Session-Key and logs in again when the token expires. Set environment to sandbox to target the documented sandbox host. Calendar create and update (sendNotification emails invitations), user create and update (an active user can take a paid seat) and the generic bulk create and update routes are destructive. The plugin does not manage webhooks or perform the binary upload step returned by document and picture upload-initiation routes.
 
 **What you get:**
 

@@ -28716,7 +28716,7 @@ await corsair.forcemanager.api.usersEntity.createUser({
 | `headers` | `object` | No | — |
 | `body` | `object` | Yes | — |
 
-Creates a user who can sign in. With billable true ForceManager charges a fee for the seat.
+Creates a user who can sign in. An active user can take a paid seat; the response's billable field says whether ForceManager bills for it.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -29362,7 +29362,7 @@ await corsair.forcemanager.api.usersEntity.updateUser({
 | `headers` | `object` | No | — |
 | `body` | `object` | Yes | — |
 
-Setting billable true makes ForceManager charge a fee for the seat; isActive true lets the user sign in.
+Changes extId and isActive only. isActive true lets the user sign in and can take a paid seat; the response's billable field says whether ForceManager bills for it.
 
 <AccordionGroup>
 <Accordion title="path full type">

@@ -1111,9 +1111,10 @@ apiNotes:
     it unset or false unless the contacts should be invited.
   eventsTasks.updateCalendar: With sendNotification true, ForceManager emails an invitation to the event's contacts. Leave
     it unset or false unless the contacts should be invited.
-  usersEntity.createUser: Creates a user who can sign in. With billable true ForceManager charges a fee for the seat.
-  usersEntity.updateUser: Setting billable true makes ForceManager charge a fee for the seat; isActive true lets the user
-    sign in.
+  usersEntity.createUser: Creates a user who can sign in. An active user can take a paid seat; the response's billable
+    field says whether ForceManager bills for it.
+  usersEntity.updateUser: Changes extId and isActive only. isActive true lets the user sign in and can take a paid seat;
+    the response's billable field says whether ForceManager bills for it.
   bulks.bulkCreateResources: Creates up to 200 records of the named resource in one call. For users or calendar events
     the same charges and invitation emails apply as for the single-record calls.
   bulks.bulkUpdateResources: Updates up to 200 records of the named resource in one call. For users or calendar events
@@ -1131,5 +1132,5 @@ overviewNote: 'ForceManager issues a public and a private API key in ForceAdmin.
   api_key=<private key> public_key=<public key>`, or the two fields on Hub''s connect page). The plugin logs in with the
   pair, sends the session token in X-Session-Key and logs in again when the token expires. Set environment to sandbox
   to target the documented sandbox host. Calendar create and update (sendNotification emails invitations), user create
-  and update (billable adds a paid seat) and the generic bulk create and update routes are destructive. The plugin does
+  and update (an active user can take a paid seat) and the generic bulk create and update routes are destructive. The plugin does
   not manage webhooks or perform the binary upload step returned by document and picture upload-initiation routes.'
