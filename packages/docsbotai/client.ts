@@ -51,10 +51,17 @@ export async function makeDocsbotaiRequest<T>(
 		// Core's ApiError goes through as the same instance (R8: its status and
 		// retryAfter drive the error handlers). Only the request body and query
 		// are dropped first: they carry chat questions, lead details and URLs.
-		if (error instanceof ApiError && error.request) {
-			Object.defineProperty(error, 'request', {
-				value: { ...error.request, body: undefined, query: undefined },
-			});
+		// Core keeps the full response URL and only redacts key-like query
+		// parameters, so the URL's query string goes as well.
+		if (error instanceof ApiError) {
+			if (error.request) {
+				Object.defineProperty(error, 'request', {
+					value: { ...error.request, body: undefined, query: undefined },
+				});
+			}
+			if (typeof error.url === 'string' && error.url.includes('?')) {
+				Object.defineProperty(error, 'url', { value: error.url.split('?')[0] });
+			}
 		}
 		throw error;
 	}

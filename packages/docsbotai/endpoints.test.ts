@@ -577,7 +577,7 @@ describe('DocsBot API boundary', () => {
 				body: { name: 'Bot for alice@example.com' },
 			},
 			{
-				url: 'https://docsbot.ai/api/teams/team/bots',
+				url: 'https://docsbot.ai/api/teams/team/bots?q=alice%40example.com',
 				ok: false,
 				status: 429,
 				statusText: 'Too Many Requests',
@@ -598,6 +598,10 @@ describe('DocsBot API boundary', () => {
 			body: { error: 'rate limited' },
 		});
 		expect(JSON.stringify(caught)).not.toContain('alice@example.com');
+		expect(JSON.stringify(caught)).not.toContain('alice%40example.com');
+		expect((caught as ApiError).url).toBe(
+			'https://docsbot.ai/api/teams/team/bots',
+		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(caught as Error)).toBe(true);
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(mockRequest.mock.calls[0]?.[2].rateLimitConfig.maxRetries).toBe(3);
