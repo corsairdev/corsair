@@ -63,6 +63,7 @@ describe('livesession against the shared HTTP boundary', () => {
 		expect((error as Error).message).toBe(
 			'LiveSession API token contains whitespace or control characters',
 		);
+		// `unknown` because Error.cause can hold any thrown value; it is only stringified here.
 		const seen = `${(error as Error).message} ${(error as Error).stack} ${String((error as Error & { cause?: unknown }).cause)}`;
 		expect(seen).not.toContain('secret-part');
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -78,5 +79,14 @@ describe('livesession against the shared HTTP boundary', () => {
 		} finally {
 			await testDb.cleanup();
 		}
+	});
+
+	it('throws an auth-missing error when there is neither a token nor a key store', async () => {
+		// No database, so core gives the keyBuilder no key store (ctx.keys is unset).
+		const corsair = createCorsair({ plugins: [livesession()] });
+		await expect(
+			corsair.livesession.api.sessions.list({}),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

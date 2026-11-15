@@ -236,6 +236,8 @@ export function livesession<const T extends LiveSessionPluginOptions>(
 		keyBuilder: async (ctx: LiveSessionKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint') {
+				// Without a database core gives no key store; that is a missing credential too.
+				if (!ctx.keys) throw new AuthMissingError('livesession', 'api_key');
 				try {
 					const key = await ctx.keys.get_api_key();
 					if (key) return key;
