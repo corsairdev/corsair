@@ -128,3 +128,39 @@ describe('Doppler risk levels', () => {
 		}
 	});
 });
+
+describe('Doppler errors', () => {
+	// Spied per test: the block above restores fetch in its afterAll.
+	let fetchMock: jest.SpiedFunction<typeof fetch>;
+	beforeEach(() => {
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+	});
+	afterEach(() => fetchMock.mockRestore());
+
+	it('keeps subscriber emails out of the thrown error', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					title: 'Forbidden, not enough privileges',
+					status: 403,
+					_links: [
+						{
+							href: '/accounts/owner%40example.com/subscribers/customer%40example.com',
+						},
+					],
+				}),
+				{ status: 403, statusText: 'Forbidden' },
+			),
+		);
+		const error = await endpoints.subscribers
+			.archive(context, {
+				accountName: 'owner@example.com',
+				email: 'customer@example.com',
+			})
+			.catch((caught: unknown) => caught); // unknown: rejection value, inspected below
+		const serialized = JSON.stringify(error, Object.getOwnPropertyNames(error));
+		expect(serialized).not.toMatch(/customer(%40|@)example\.com/);
+		expect(serialized).not.toMatch(/owner(%40|@)example\.com/);
+		expect(error).toMatchObject({ status: 403 });
+	});
+});

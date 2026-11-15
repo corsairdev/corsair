@@ -16,6 +16,19 @@ export type DopplerRequestOptions = {
 	responseType?: 'json' | 'text' | 'bytes' | 'void';
 };
 
+const EMAIL = /[^\s/"'?&=<>]+(?:@|%40)[^\s/"'?&=<>]+/gi;
+/** Masks email addresses, raw or percent-encoded, in strings, arrays and objects. */
+// unknown: provider error bodies have no fixed shape; only strings are changed.
+function redactEmails<T>(value: T): T {
+	if (typeof value === 'string') return value.replace(EMAIL, '[email]') as T;
+	if (Array.isArray(value)) return value.map(redactEmails) as T;
+	if (value && typeof value === 'object')
+		return Object.fromEntries(
+			Object.entries(value).map(([k, v]) => [k, redactEmails(v)]),
+		) as T;
+	return value;
+}
+
 /** Performs exactly one request. In particular, writes are never replayed. */
 export async function makeDopplerMarketingAutomationRequest<T>(
 	path: string,
@@ -66,14 +79,17 @@ export async function makeDopplerMarketingAutomationRequest<T>(
 			: Number.isFinite(retryDate)
 				? Math.max(0, retryDate - Date.now())
 				: undefined;
+		// Subscriber emails sit in the path (and the account name is an email
+		// too); core only redacts query keys, so they are masked here before the
+		// error leaves the plugin (R8).
 		throw new ApiError(
-			{ method: options.method, url: path },
+			{ method: options.method, url: redactEmails(path) },
 			{
-				url: url.toString(),
+				url: redactEmails(url.toString()),
 				ok: false,
 				status: response.status,
 				statusText: response.statusText,
-				body: payload,
+				body: redactEmails(payload),
 			},
 			response.statusText || 'Doppler API error',
 			delay === undefined ? undefined : { retryAfter: delay },
