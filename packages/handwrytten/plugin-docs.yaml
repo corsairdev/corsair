@@ -11,6 +11,10 @@ examples:
     args:
       card_id: 101
       message: 'Thank you for your partnership and support!'
+      font_label: Chill Charity
+      sender_address1: '1 Market St'
+      sender_city: Austin
+      sender_zip: '78701'
       recipient_first_name: Jane
       recipient_last_name: Doe
       recipient_address1: '123 Main St'
