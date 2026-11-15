@@ -379,7 +379,7 @@ describe('ServiceM8 public request seam', () => {
 				}),
 			)
 			.mockResolvedValueOnce(
-				new Response(JSON.stringify({ status: 'unknown' }), { status: 200 }),
+				new Response(JSON.stringify(['not a job']), { status: 200 }),
 			);
 		await expect(api.notes.delete({ uuid })).rejects.toBeInstanceOf(
 			ServiceM8Error,

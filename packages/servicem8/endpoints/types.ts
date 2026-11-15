@@ -2,9 +2,13 @@ import { z } from 'zod';
 
 // ServiceM8 allows account-defined customfield_* properties on resource objects.
 // Keep those provider-defined values while validating documented fields.
-const text = z.string().nullish();
-const number = z.number().nullish();
-const flag = z.union([z.literal(0), z.literal(1)]).nullish();
+// Response fields are parsed leniently: the live API sends documented strings
+// as numbers (amounts, prices), documented numbers as numeric strings, and
+// 0/1 flags as numbers, booleans or "0"/"1" strings, varying by resource.
+// Inputs below keep the strict documented types.
+const text = z.union([z.string(), z.number()]).nullish();
+const number = z.union([z.number(), z.string()]).nullish();
+const flag = z.union([z.number(), z.string(), z.boolean()]).nullish();
 const common = { uuid: text, active: flag, edit_date: text };
 
 export const JobSchema = z
@@ -14,7 +18,8 @@ export const JobSchema = z
 		date: text,
 		company_uuid: text,
 		billing_address: text,
-		status: z.enum(['Quote', 'Work Order', 'Unsuccessful', 'Completed']),
+		// Open: ServiceM8 may add job statuses; inputs keep the documented enum.
+		status: z.string(),
 		lng: number,
 		lat: number,
 		payment_date: text,
@@ -95,11 +100,11 @@ export const AssetSchema = z
 			.array(
 				z
 					.object({
-						uuid: z.string(),
-						fieldType: z.string(),
-						fieldName: z.string(),
-						fieldValue: z.string(),
-						sortOrder: z.number(),
+						uuid: text,
+						fieldType: text,
+						fieldName: text,
+						fieldValue: text,
+						sortOrder: number,
 					})
 					.loose(),
 			)
@@ -126,10 +131,10 @@ export const FormSchema = z
 			.array(
 				z
 					.object({
-						name: z.string(),
-						fieldType: z.literal('Text'),
-						value: z.string(),
-						sortOrder: z.number().int(),
+						name: text,
+						fieldType: text,
+						value: text,
+						sortOrder: number,
 					})
 					.loose(),
 			)
