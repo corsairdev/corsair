@@ -4412,6 +4412,14 @@
                 ]
               },
               {
+                "group": "Tapfiliate",
+                "pages": [
+                  "plugins/tapfiliate/overview",
+                  "plugins/tapfiliate/api",
+                  "plugins/tapfiliate/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
