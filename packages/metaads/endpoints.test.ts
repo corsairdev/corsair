@@ -274,6 +274,7 @@ const cases: Case[] = [
 			lifetime_budget: 1000,
 			end_time: '2026-12-01T00:00:00Z',
 		},
+		redactBodyOnError: true,
 		call: async () => {
 			await AdSets.create(ctx, {
 				accountId: '123',
@@ -883,6 +884,38 @@ describe('Meta Ads operations', () => {
 			);
 		},
 	);
+
+	it('does not expose a credential-bearing paging URL in parsed list results', async () => {
+		const next =
+			'https://graph.facebook.com/v27.0/act_123/campaigns?after=cursor&access_token=secret';
+		mockedRequest.mockResolvedValue({
+			data: [{ id: 'campaign-1' }],
+			paging: { cursors: { after: 'cursor-2' }, next },
+		});
+
+		const result = await Campaigns.list(ctx, { accountId: '123' });
+
+		expect(result.paging).toEqual({
+			cursors: { after: 'cursor-2' },
+			hasNextPage: true,
+		});
+		expect(JSON.stringify(result)).not.toContain(next);
+		expect(JSON.stringify(result)).not.toContain('secret');
+	});
+
+	it('reports no next page when Graph omits paging.next', async () => {
+		mockedRequest.mockResolvedValue({
+			data: [{ id: 'campaign-1' }],
+			paging: { cursors: { after: 'cursor-2' } },
+		});
+
+		const result = await Campaigns.list(ctx, { accountId: '123' });
+
+		expect(result.paging).toEqual({
+			cursors: { after: 'cursor-2' },
+			hasNextPage: false,
+		});
+	});
 
 	it('accepts a caller-owned idempotency key only for supported create operations', async () => {
 		mockedRequest.mockResolvedValue(createResponse);

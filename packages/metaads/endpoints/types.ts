@@ -26,15 +26,16 @@ export const MetaAdsObjectSchema = z
 	})
 	.passthrough();
 
+const MetaAdsPagingSchema = z.object({
+	cursors: z
+		.object({ before: z.string().optional(), after: z.string().optional() })
+		.optional(),
+	hasNextPage: z.boolean(),
+});
+
 export const MetaAdsListSchema = z.object({
 	data: z.array(MetaAdsObjectSchema),
-	paging: z
-		.object({
-			cursors: z
-				.object({ before: z.string().optional(), after: z.string().optional() })
-				.optional(),
-		})
-		.optional(),
+	paging: MetaAdsPagingSchema.optional(),
 });
 
 export const MetaAdsMutationSchema = z
@@ -895,6 +896,8 @@ export type MetaAdsEndpointOutputs = {
 	creativesList: z.infer<typeof MetaAdsListSchema>;
 	creativesGet: z.infer<typeof MetaAdsObjectSchema>;
 	creativesCreate: z.infer<typeof MetaAdsMutationSchema>;
+	creativesUpdate: z.infer<typeof MetaAdsDeleteSchema>;
+	creativesDelete: z.infer<typeof MetaAdsDeleteSchema>;
 	audiencesList: z.infer<typeof MetaAdsListSchema>;
 	audiencesGet: z.infer<typeof MetaAdsObjectSchema>;
 	audiencesCreate: z.infer<typeof MetaAdsMutationSchema>;
@@ -1001,3 +1004,14 @@ export const MetaAdsEndpointOutputSchemas = {
 	insightsListEnabledFeatures: InsightsEnabledFeaturesListSchema,
 	insightsEnableFeature: InsightsFeatureEnableSchema,
 } as const;
+
+type Assert<T extends true> = T;
+type SameKeys<Left, Right> = [
+	Exclude<keyof Left, keyof Right>,
+	Exclude<keyof Right, keyof Left>,
+] extends [never, never]
+	? true
+	: false;
+type MetaAdsOutputSchemaKeysMatch = Assert<
+	SameKeys<MetaAdsEndpointOutputs, typeof MetaAdsEndpointOutputSchemas>
+>;

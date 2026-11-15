@@ -100,7 +100,8 @@ Meta requires access_token as a request parameter. Use a user or system-user acc
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -161,7 +162,8 @@ Lists the documented app-scoped ad-account users and tasks. This edge does not c
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -356,7 +358,8 @@ await corsair.metaads.api.ads.list({ accountId: '1234567890' });
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -539,7 +542,7 @@ await corsair.metaads.api.adSets.list({ accountId: '1234567890' });
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
-Pass returned paging.cursors.after to continue; the adapter does not follow Meta's paging.next URL.
+Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials.
 
 
 
@@ -572,7 +575,8 @@ Pass returned paging.cursors.after to continue; the adapter does not follow Meta
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -640,7 +644,7 @@ await corsair.metaads.api.audiences.create({ accountId: '1234567890', name: 'Sam
 | `description` | `string` | No | — |
 | `subtype` | `CUSTOM` | No | Defaults to "CUSTOM". |
 
-Creates an empty CUSTOM audience. Members can be added or removed with usersAdd/usersRemove using SHA-256 email or phone hashes only, up to 10000 hashes per request; adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results.
+Creates the documented blank CUSTOM audience; Meta's v27 blank-audience example omits customer_file_source and does not mark it required. That optional enum (USER_PROVIDED_ONLY, PARTNER_PROVIDED_ONLY, BOTH_USER_AND_PARTNER_PROVIDED) is not exposed here; customer hashes are uploaded later through usersAdd/usersRemove, using SHA-256 email or phone hashes only, up to 10000 hashes per request. Adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results.
 
 
 
@@ -776,7 +780,8 @@ await corsair.metaads.api.audiences.list({ accountId: '1234567890' });
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -843,7 +848,8 @@ Reads documented upload session status fields; it does not upload audience membe
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -1110,7 +1116,7 @@ await corsair.metaads.api.campaigns.list({ accountId: '1234567890' });
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
-Pass returned paging.cursors.after to continue; the adapter does not follow Meta's paging.next URL.
+Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials.
 
 
 
@@ -1143,7 +1149,8 @@ Pass returned paging.cursors.after to continue; the adapter does not follow Meta
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -1365,7 +1372,8 @@ await corsair.metaads.api.creatives.list({ accountId: '1234567890' });
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -1508,7 +1516,8 @@ await corsair.metaads.api.images.list({ accountId: '1234567890', name: 'campaign
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -1821,7 +1830,8 @@ Fetch cursor-paginated results only after the report job completes.
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -1954,7 +1964,8 @@ Synchronous metrics with allow-listed fields, breakdowns, filters, attribution w
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -2012,7 +2023,8 @@ Lists enabled features; a missing feature is equivalent to disabled.
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>
@@ -2069,7 +2081,8 @@ Lists documented account Insights features, including breakdown features.
   cursors?: {
     before?: string,
     after?: string
-  }
+  },
+  hasNextPage: boolean
 }
 ```
 </Accordion>

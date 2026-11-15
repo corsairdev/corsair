@@ -146,6 +146,54 @@ describe('Meta Ads Graph API client', () => {
 		expect(result.message).not.toContain(submittedHash);
 	});
 
+	it('removes nested ad-set targeting from propagated core request errors', async () => {
+		const targeting = {
+			geo_locations: {
+				custom_locations: [{ latitude: 37.7749, longitude: -122.4194 }],
+			},
+		};
+		const providerError = new ApiError(
+			{
+				method: 'POST',
+				url: '/v27.0/act_1/adsets',
+				body: { targeting },
+				formData: { targeting },
+			},
+			{
+				url: 'https://graph.facebook.com/v27.0/act_1/adsets',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: { code: 80004, message: 'Rate limited' } },
+			},
+			'Rate limited',
+			{ retryAfter: 5000, rateLimitRemaining: 0, rateLimitLimit: 100 },
+		);
+		mockedRequest.mockRejectedValue(providerError);
+
+		// `unknown` because a rejected request has no static error type until narrowed as ApiError.
+		const result = await makeMetaAdsRequest(
+			'/act_1/adsets',
+			'safe-test-token',
+			{
+				method: 'POST',
+				body: { targeting },
+				redactBodyOnError: true,
+			},
+		).catch((caught: unknown) => caught);
+
+		expect(result).toBeInstanceOf(ApiError);
+		if (!(result instanceof ApiError))
+			throw new Error('Expected sanitized core ApiError');
+		expect(result).not.toBe(providerError);
+		expect(result.request.body).toBeUndefined();
+		expect(result.request.formData).toBeUndefined();
+		expect(result.status).toBe(429);
+		expect(result.retryAfter).toBe(5000);
+		expect(result.rateLimitRemaining).toBe(0);
+		expect(result.rateLimitLimit).toBe(100);
+	});
+
 	it('real transport extracts Retry-After without retrying a Meta throttle', async () => {
 		const actualHttp =
 			jest.requireActual<typeof import('corsair/http')>('corsair/http');

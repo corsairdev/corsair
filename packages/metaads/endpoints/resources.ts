@@ -48,7 +48,7 @@ function operation<Input, ParsedInput, Output>(config: {
 				sensitiveValues: shape.sensitiveValues,
 			},
 		);
-		const parsed = config.output.parse(response);
+		const parsed = config.output.parse(normalizePaging(response));
 		await logEventFromContext(
 			ctx,
 			`metaads.${config.name}`,
@@ -74,6 +74,25 @@ const pageParams = (input: {
 	after: input.after,
 	before: input.before,
 });
+
+// `unknown` because Graph response values are untrusted until the output schema validates them.
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+// Remove Meta's credential-bearing paging URL while preserving only safe cursor metadata.
+function normalizePaging(response: unknown): unknown {
+	if (!isRecord(response) || !isRecord(response.paging)) return response;
+	const paging = response.paging;
+	return {
+		...response,
+		paging: {
+			...(isRecord(paging.cursors) ? { cursors: paging.cursors } : {}),
+			hasNextPage: typeof paging.next === 'string',
+		},
+	};
+}
+
 // `unknown` is needed for documented nested JSON such as targeting and creative references.
 const form = (value: Record<string, unknown>): RequestShape => ({
 	body: value,
@@ -244,8 +263,8 @@ export const adSetsCreate = operation({
 	path: (input) => `${accountPath(input.accountId)}/adsets`,
 	input: MetaAdsEndpointInputSchemas.adSetsCreate,
 	output: MetaAdsMutationSchema,
-	request: (input) =>
-		keyedForm(
+	request: (input) => ({
+		...keyedForm(
 			{
 				campaign_id: input.campaignId,
 				name: input.name,
@@ -260,6 +279,8 @@ export const adSetsCreate = operation({
 			},
 			input.idempotencyKey,
 		),
+		redactBodyOnError: true,
+	}),
 });
 export const adSetsUpdate = operation({
 	name: 'adSets.update',

@@ -151,13 +151,31 @@ describe('Meta Ads schemas and registry', () => {
 		expect(
 			MetaAdsListSchema.parse({
 				data: [{ id: '123', name: 'Campaign' }],
-				paging: { cursors: { after: 'cursor' } },
+				paging: { cursors: { after: 'cursor' }, hasNextPage: true },
 			}),
-		).toMatchObject({ data: [{ id: '123' }] });
+		).toEqual({
+			data: [{ id: '123', name: 'Campaign' }],
+			paging: { cursors: { after: 'cursor' }, hasNextPage: true },
+		});
+		expect(
+			MetaAdsListSchema.parse({
+				data: [{ id: '123' }],
+				paging: { hasNextPage: false },
+			}),
+		).toEqual({ data: [{ id: '123' }], paging: { hasNextPage: false } });
 		expect(
 			MetaAdsListSchema.safeParse({ data: [{ name: 'missing ID' }] }).success,
 		).toBe(false);
 		expect(MetaAdsListSchema.safeParse({ data: {} }).success).toBe(false);
+	});
+
+	it('keeps creative mutation output schemas aligned with the public operation types', () => {
+		expect(
+			MetaAdsEndpointOutputSchemas.creativesUpdate.parse({ success: true }),
+		).toEqual({ success: true });
+		expect(
+			MetaAdsEndpointOutputSchemas.creativesDelete.parse({ success: true }),
+		).toEqual({ success: true });
 	});
 
 	it('requires a documented identifier or success flag for create responses', () => {
