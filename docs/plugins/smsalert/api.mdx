@@ -51,6 +51,7 @@ await corsair.smsalert.api.account.balance({});
 
 
 ---
+
 ### changePassword
 
 `account.changePassword`
@@ -88,9 +89,9 @@ await corsair.smsalert.api.account.changePassword({ pwd: 'old-password', newpwd:
 
 `account.forgotPassword`
 
-Request a password reset
+Request a password reset (SMS Alert emails the account owner)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.smsalert.api.account.forgotPassword({ username_email: 'user@example.com' });
@@ -168,9 +169,9 @@ await corsair.smsalert.api.account.profile({});
 
 `account.register`
 
-Register an SMS Alert account
+Register an SMS Alert account (SMS Alert texts an OTP to the mobile number)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.smsalert.api.account.register({
@@ -554,7 +555,7 @@ await corsair.smsalert.api.groups.list({});
 
 Send SMS to contact groups
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.smsalert.api.groups.send({ id: '123', sender: 'TESTIN', text: 'Hello' });
@@ -640,7 +641,7 @@ await corsair.smsalert.api.groups.update({ id: '123', name: 'Customers' });
 
 Send or schedule an SMS, optionally requesting delivery callbacks
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.smsalert.api.messages.send({ sender: 'TESTIN', mobileno: '919876543210', text: 'Hello' });
@@ -695,7 +696,7 @@ await corsair.smsalert.api.messages.send({ sender: 'TESTIN', mobileno: '91987654
 
 Generate and send an OTP
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.smsalert.api.otp.generate({ mobileno: '919876543210', template: 'Your OTP is [otp]' });
@@ -1200,3 +1201,4 @@ await corsair.smsalert.api.templates.update({ id: '123', name: 'Welcome', text: 
 
 
 ---
+
