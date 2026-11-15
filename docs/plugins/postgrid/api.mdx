@@ -1,0 +1,1942 @@
+---
+title: "PostGrid API reference"
+sidebarTitle: "API"
+description: "API reference for the PostGrid plugin in Corsair: every `postgrid.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact. PostGrid corrects and verifies the address, so the stored one may differ from the one sent
+
+**Risk:** `write`
+
+```ts
+await corsair.postgrid.api.contacts.create({ addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US', firstName: 'Kevin', lastName: 'Villena' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addressLine1` | `string` | Yes | First line of the address. |
+| `addressLine2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `provinceOrState` | `string` | No | — |
+| `postalOrZip` | `string` | No | — |
+| `countryCode` | `string` | No | ISO 3166-1 alpha-2, such as `US`. |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `description` | `string` | No | — |
+| `skipVerification` | `boolean` | No | Skip address correction and verification. |
+| `forceVerifiedStatus` | `boolean` | No | Override the address verification status. |
+| `secret` | `boolean` | No | Hide the details apart from the final print. |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | Always `contact`. |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `addressLine1` | `string \| null` | No | — |
+| `addressLine2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `provinceOrState` | `string \| null` | No | — |
+| `postalOrZip` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phoneNumber` | `string \| null` | No | — |
+| `addressStatus` | `string \| null` | No | `verified`, `corrected` or `failed`. |
+| `skipVerification` | `boolean \| null` | No | — |
+| `forceVerifiedStatus` | `boolean \| null` | No | — |
+| `secret` | `boolean \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact. Orders already created from it keep their own copy of the address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postgrid.api.contacts.delete({ id: 'contact_nA8mdzveShFEmFraaChaDn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `contact_` id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact with its address verification status
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.contacts.get({ id: 'contact_nA8mdzveShFEmFraaChaDn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `contact_` id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | Always `contact`. |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `addressLine1` | `string \| null` | No | — |
+| `addressLine2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `provinceOrState` | `string \| null` | No | — |
+| `postalOrZip` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phoneNumber` | `string \| null` | No | — |
+| `addressStatus` | `string \| null` | No | `verified`, `corrected` or `failed`. |
+| `skipVerification` | `boolean \| null` | No | — |
+| `forceVerifiedStatus` | `boolean \| null` | No | — |
+| `secret` | `boolean \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts, optionally with a plain or structured search, paged by `skip` and `limit`
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.contacts.list({ limit: 10, skip: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | How many documents to skip. Increment it by `limit` to page. |
+| `limit` | `number` | No | How many documents to return. |
+| `search` | `string` | No | A plain string, or a JSON object of structured queries such as &#123;"metadata.campaignID": "ABC"&#125;. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | Always `list`. |
+| `limit` | `number \| null` | No | — |
+| `skip` | `number \| null` | No | — |
+| `totalCount` | `number` | Yes | Total documents including the skipped ones; page while skip &lt; totalCount. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Letters
+
+### cancel
+
+`letters.cancel`
+
+Cancel a letter while it is still `ready`. After that it is already printing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postgrid.api.letters.cancel({ id: 'letter_cS61RTPrSvBKVyT7kenpjn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `letter_` id. A letter can be cancelled while `ready`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`. |
+| `imbStatus` | `string \| null` | No | USPS intelligent-mail stage, only on live US mail. |
+| `imbDate` | `string \| null` | No | — |
+| `imbZIPCode` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sendDate` | `string \| null` | No | — |
+| `to` | `object \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `mergeVariables` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `url` | `string \| null` | No | A signed link to preview this order. |
+| `pageCount` | `number \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `template` | `string \| object \| null` | No | — |
+| `uploadedPDF` | `string \| null` | No | — |
+| `addressPlacement` | `string \| null` | No | — |
+| `color` | `boolean \| null` | No | — |
+| `doubleSided` | `boolean \| null` | No | — |
+| `envelope` | `string \| null` | No | — |
+| `mailingClass` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="template full type">
+
+```ts
+string | {
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  html?: string | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`letters.create`
+
+Print and mail a letter, which costs postage and cannot be recalled once it leaves `ready`. Pass `idempotencyKey` so a retry prints one letter, not two
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postgrid.api.letters.create({ to: { firstName: 'Kevin', addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { companyName: 'Corsair', addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, html: '<b>Hello</b>', color: true, doubleSided: true, size: 'us_letter', mailingClass: 'usps_first_class' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `string \| object` | Yes | The recipient: a contact id or the address fields. |
+| `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
+| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
+| `description` | `string` | No | — |
+| `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
+| `mergeVariables` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `from` | `string \| object` | No | The sender: a contact id or the address fields. |
+| `html` | `string` | No | The letter body. Supply this or a template. |
+| `template` | `string` | No | A `template_` id to render instead of raw html. |
+| `size` | `us_letter \| a4` | No | — |
+| `color` | `boolean` | No | Print in colour. |
+| `doubleSided` | `boolean` | No | — |
+| `addressPlacement` | `top_first_page \| insert_blank_page` | No | — |
+| `envelope` | `string` | No | A custom envelope id, or `standard` for the default envelope. Express postage is `mailingClass: express`. |
+| `perforatedPage` | `1` | No | The page to perforate, for a tear-off return slip. PostGrid accepts only 1, the first page. |
+| `returnEnvelope` | `string` | No | A `return_envelope_` id to include. |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+string | {
+  id?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  addressLine1?: string,
+  addressLine2?: string,
+  city?: string,
+  provinceOrState?: string,
+  postalOrZip?: string,
+  countryCode?: string,
+  email?: string,
+  phoneNumber?: string,
+  jobTitle?: string,
+  skipVerification?: boolean,
+  forceVerifiedStatus?: boolean,
+  secret?: boolean,
+  metadata?: Record<string, JsonValue>
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+string | {
+  id?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  addressLine1?: string,
+  addressLine2?: string,
+  city?: string,
+  provinceOrState?: string,
+  postalOrZip?: string,
+  countryCode?: string,
+  email?: string,
+  phoneNumber?: string,
+  jobTitle?: string,
+  skipVerification?: boolean,
+  forceVerifiedStatus?: boolean,
+  secret?: boolean,
+  metadata?: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`. |
+| `imbStatus` | `string \| null` | No | USPS intelligent-mail stage, only on live US mail. |
+| `imbDate` | `string \| null` | No | — |
+| `imbZIPCode` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sendDate` | `string \| null` | No | — |
+| `to` | `object \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `mergeVariables` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `url` | `string \| null` | No | A signed link to preview this order. |
+| `pageCount` | `number \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `template` | `string \| object \| null` | No | — |
+| `uploadedPDF` | `string \| null` | No | — |
+| `addressPlacement` | `string \| null` | No | — |
+| `color` | `boolean \| null` | No | — |
+| `doubleSided` | `boolean \| null` | No | — |
+| `envelope` | `string \| null` | No | — |
+| `mailingClass` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="template full type">
+
+```ts
+string | {
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  html?: string | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`letters.get`
+
+Read one letter, optionally with its template expanded inline
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.letters.get({ id: 'letter_oNrxnVvpyKwbcHtJinF5cm', expand: ['template'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `letter_` id. |
+| `expand` | `template[]` | No | Read the nested template inline. Not supported on a list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`. |
+| `imbStatus` | `string \| null` | No | USPS intelligent-mail stage, only on live US mail. |
+| `imbDate` | `string \| null` | No | — |
+| `imbZIPCode` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sendDate` | `string \| null` | No | — |
+| `to` | `object \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `mergeVariables` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `url` | `string \| null` | No | A signed link to preview this order. |
+| `pageCount` | `number \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `template` | `string \| object \| null` | No | — |
+| `uploadedPDF` | `string \| null` | No | — |
+| `addressPlacement` | `string \| null` | No | — |
+| `color` | `boolean \| null` | No | — |
+| `doubleSided` | `boolean \| null` | No | — |
+| `envelope` | `string \| null` | No | — |
+| `mailingClass` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="template full type">
+
+```ts
+string | {
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  html?: string | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`letters.list`
+
+List letters with their status, paged by `skip` and `limit`
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.letters.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | How many documents to skip. Increment it by `limit` to page. |
+| `limit` | `number` | No | How many documents to return. |
+| `search` | `string` | No | A plain string, or a JSON object of structured queries such as &#123;"metadata.campaignID": "ABC"&#125;. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | Always `list`. |
+| `limit` | `number \| null` | No | — |
+| `skip` | `number \| null` | No | — |
+| `totalCount` | `number` | Yes | Total documents including the skipped ones; page while skip &lt; totalCount. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  status?: string | null,
+  imbStatus?: string | null,
+  imbDate?: string | null,
+  imbZIPCode?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  sendDate?: string | null,
+  to?: {
+    id?: string | null,
+    object?: string | null,
+    live?: boolean | null,
+    description?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    jobTitle?: string | null,
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    city?: string | null,
+    provinceOrState?: string | null,
+    postalOrZip?: string | null,
+    countryCode?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    addressStatus?: string | null,
+    skipVerification?: boolean | null,
+    forceVerifiedStatus?: boolean | null,
+    secret?: boolean | null,
+    metadata?: Record<string, JsonValue> | null
+  } | null,
+  from?: {
+    id?: string | null,
+    object?: string | null,
+    live?: boolean | null,
+    description?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    jobTitle?: string | null,
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    city?: string | null,
+    provinceOrState?: string | null,
+    postalOrZip?: string | null,
+    countryCode?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    addressStatus?: string | null,
+    skipVerification?: boolean | null,
+    forceVerifiedStatus?: boolean | null,
+    secret?: boolean | null,
+    metadata?: Record<string, JsonValue> | null
+  } | null,
+  mergeVariables?: Record<string, JsonValue> | null,
+  metadata?: Record<string, JsonValue> | null,
+  url?: string | null,
+  pageCount?: number | null,
+  html?: string | null,
+  template?: string | {
+    id?: string | null,
+    object?: string | null,
+    live?: boolean | null,
+    description?: string | null,
+    html?: string | null,
+    metadata?: Record<string, JsonValue> | null
+  } | null,
+  uploadedPDF?: string | null,
+  addressPlacement?: string | null,
+  color?: boolean | null,
+  doubleSided?: boolean | null,
+  envelope?: string | null,
+  mailingClass?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Postcards
+
+### cancel
+
+`postcards.cancel`
+
+Cancel a postcard while it is still `ready`
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postgrid.api.postcards.cancel({ id: 'postcard_55yTG9Hjt7mg9UtkRDRNNz' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `postcard_` id. Cancellable while `ready`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`. |
+| `imbStatus` | `string \| null` | No | USPS intelligent-mail stage, only on live US mail. |
+| `imbDate` | `string \| null` | No | — |
+| `imbZIPCode` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sendDate` | `string \| null` | No | — |
+| `to` | `object \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `mergeVariables` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `url` | `string \| null` | No | A signed link to preview this order. |
+| `pageCount` | `number \| null` | No | — |
+| `size` | `string \| null` | No | — |
+| `frontHTML` | `string \| null` | No | — |
+| `backHTML` | `string \| null` | No | — |
+| `frontTemplate` | `string \| null` | No | — |
+| `backTemplate` | `string \| null` | No | — |
+| `mailingClass` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`postcards.create`
+
+Print and mail a postcard with a front and a back face, which costs postage and cannot be recalled once printing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postgrid.api.postcards.create({ to: { firstName: 'Kevin', addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { companyName: 'Corsair', addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '6x4', frontHTML: '<b>Front</b>', backHTML: '<b>Back</b>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `string \| object` | Yes | The recipient: a contact id or the address fields. |
+| `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
+| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
+| `description` | `string` | No | — |
+| `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
+| `mergeVariables` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `from` | `string \| object` | No | The sender: a contact id or the address fields. |
+| `size` | `6x4 \| 9x6 \| 11x6` | Yes | Which postcard stock to print. |
+| `frontHTML` | `string` | No | The front face. Supply this or `frontTemplate`. |
+| `backHTML` | `string` | No | The back face. Supply this or `backTemplate`. |
+| `frontTemplate` | `string` | No | — |
+| `backTemplate` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+string | {
+  id?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  addressLine1?: string,
+  addressLine2?: string,
+  city?: string,
+  provinceOrState?: string,
+  postalOrZip?: string,
+  countryCode?: string,
+  email?: string,
+  phoneNumber?: string,
+  jobTitle?: string,
+  skipVerification?: boolean,
+  forceVerifiedStatus?: boolean,
+  secret?: boolean,
+  metadata?: Record<string, JsonValue>
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+string | {
+  id?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  addressLine1?: string,
+  addressLine2?: string,
+  city?: string,
+  provinceOrState?: string,
+  postalOrZip?: string,
+  countryCode?: string,
+  email?: string,
+  phoneNumber?: string,
+  jobTitle?: string,
+  skipVerification?: boolean,
+  forceVerifiedStatus?: boolean,
+  secret?: boolean,
+  metadata?: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`. |
+| `imbStatus` | `string \| null` | No | USPS intelligent-mail stage, only on live US mail. |
+| `imbDate` | `string \| null` | No | — |
+| `imbZIPCode` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sendDate` | `string \| null` | No | — |
+| `to` | `object \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `mergeVariables` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `url` | `string \| null` | No | A signed link to preview this order. |
+| `pageCount` | `number \| null` | No | — |
+| `size` | `string \| null` | No | — |
+| `frontHTML` | `string \| null` | No | — |
+| `backHTML` | `string \| null` | No | — |
+| `frontTemplate` | `string \| null` | No | — |
+| `backTemplate` | `string \| null` | No | — |
+| `mailingClass` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`postcards.get`
+
+Read one postcard, optionally with its template expanded
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.postcards.get({ id: 'postcard_mWZGkpb16fcdGKnZUk2WQv' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `postcard_` id. |
+| `expand` | `template[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`. |
+| `imbStatus` | `string \| null` | No | USPS intelligent-mail stage, only on live US mail. |
+| `imbDate` | `string \| null` | No | — |
+| `imbZIPCode` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sendDate` | `string \| null` | No | — |
+| `to` | `object \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `mergeVariables` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `url` | `string \| null` | No | A signed link to preview this order. |
+| `pageCount` | `number \| null` | No | — |
+| `size` | `string \| null` | No | — |
+| `frontHTML` | `string \| null` | No | — |
+| `backHTML` | `string \| null` | No | — |
+| `frontTemplate` | `string \| null` | No | — |
+| `backTemplate` | `string \| null` | No | — |
+| `mailingClass` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`postcards.list`
+
+List postcards with their status, paged by `skip` and `limit`
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.postcards.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | How many documents to skip. Increment it by `limit` to page. |
+| `limit` | `number` | No | How many documents to return. |
+| `search` | `string` | No | A plain string, or a JSON object of structured queries such as &#123;"metadata.campaignID": "ABC"&#125;. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | Always `list`. |
+| `limit` | `number \| null` | No | — |
+| `skip` | `number \| null` | No | — |
+| `totalCount` | `number` | Yes | Total documents including the skipped ones; page while skip &lt; totalCount. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  status?: string | null,
+  imbStatus?: string | null,
+  imbDate?: string | null,
+  imbZIPCode?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  sendDate?: string | null,
+  to?: {
+    id?: string | null,
+    object?: string | null,
+    live?: boolean | null,
+    description?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    jobTitle?: string | null,
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    city?: string | null,
+    provinceOrState?: string | null,
+    postalOrZip?: string | null,
+    countryCode?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    addressStatus?: string | null,
+    skipVerification?: boolean | null,
+    forceVerifiedStatus?: boolean | null,
+    secret?: boolean | null,
+    metadata?: Record<string, JsonValue> | null
+  } | null,
+  from?: {
+    id?: string | null,
+    object?: string | null,
+    live?: boolean | null,
+    description?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    jobTitle?: string | null,
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    city?: string | null,
+    provinceOrState?: string | null,
+    postalOrZip?: string | null,
+    countryCode?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    addressStatus?: string | null,
+    skipVerification?: boolean | null,
+    forceVerifiedStatus?: boolean | null,
+    secret?: boolean | null,
+    metadata?: Record<string, JsonValue> | null
+  } | null,
+  mergeVariables?: Record<string, JsonValue> | null,
+  metadata?: Record<string, JsonValue> | null,
+  url?: string | null,
+  pageCount?: number | null,
+  size?: string | null,
+  frontHTML?: string | null,
+  backHTML?: string | null,
+  frontTemplate?: string | null,
+  backTemplate?: string | null,
+  mailingClass?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Self Mailers
+
+### create
+
+`selfMailers.create`
+
+Print and mail a folded self mailer with inside and outside panels, which costs postage and cannot be recalled once printing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postgrid.api.selfMailers.create({ to: { firstName: 'Kevin', addressLine1: '145 Mulberry St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10013', countryCode: 'US' }, from: { companyName: 'Corsair', addressLine1: '1 Main St', city: 'New York', provinceOrState: 'NY', postalOrZip: '10001', countryCode: 'US' }, size: '8.5x11_bifold', insideHTML: '<b>Inside</b>', outsideHTML: '<b>Outside</b>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `string \| object` | Yes | The recipient: a contact id or the address fields. |
+| `sendDate` | `string` | No | When to send it. Omit to send as soon as possible. |
+| `mailingClass` | `first_class \| standard_class \| express \| certified \| certified_return_receipt \| registered \| usps_first_class \| usps_standard_class \| usps_eddm \| usps_express_2_day \| usps_express_3_day \| usps_first_class_certified \| usps_first_class_certified_return_receipt \| usps_first_class_registered \| usps_express_3_day_signature_confirmation \| usps_express_3_day_certified \| usps_express_3_day_certified_return_receipt \| usps_express_3_day_adult_signature_confirmation \| ca_post_lettermail \| ca_post_personalized \| ca_post_neighbourhood_mail \| ca_post_registered \| ca_post_expedited_with_signature \| ca_post_expedited \| ca_post_xpresspost_with_signature \| ca_post_xpresspost \| royal_mail_first_class \| royal_mail_standard_class \| royal_mail_second_class \| au_post_regular \| au_post_second_class \| ups_express_overnight \| ups_express_2_day \| ups_express_3_day \| ups_express_3_day_signature_confirmation \| ups_express_3_day_adult_signature_confirmation` | No | The carrier and service level. Defaults to first class or the fastest non-express postage in the destination country. |
+| `description` | `string` | No | — |
+| `idempotencyKey` | `string` | No | Reuse the same value to retry this order within 24 hours without creating a second one. |
+| `mergeVariables` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+| `from` | `string \| object` | No | The sender: a contact id or the address fields. |
+| `size` | `8.5x11_bifold \| 8.5x11_trifold \| 9.5x16_trifold` | Yes | Which fold to print and finish. |
+| `insideHTML` | `string` | No | The inside panel. Supply this or `insideTemplate`. |
+| `outsideHTML` | `string` | No | The outside panel. Supply this or `outsideTemplate`. |
+| `insideTemplate` | `string` | No | — |
+| `outsideTemplate` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+string | {
+  id?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  addressLine1?: string,
+  addressLine2?: string,
+  city?: string,
+  provinceOrState?: string,
+  postalOrZip?: string,
+  countryCode?: string,
+  email?: string,
+  phoneNumber?: string,
+  jobTitle?: string,
+  skipVerification?: boolean,
+  forceVerifiedStatus?: boolean,
+  secret?: boolean,
+  metadata?: Record<string, JsonValue>
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+string | {
+  id?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  addressLine1?: string,
+  addressLine2?: string,
+  city?: string,
+  provinceOrState?: string,
+  postalOrZip?: string,
+  countryCode?: string,
+  email?: string,
+  phoneNumber?: string,
+  jobTitle?: string,
+  skipVerification?: boolean,
+  forceVerifiedStatus?: boolean,
+  secret?: boolean,
+  metadata?: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`. |
+| `imbStatus` | `string \| null` | No | USPS intelligent-mail stage, only on live US mail. |
+| `imbDate` | `string \| null` | No | — |
+| `imbZIPCode` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sendDate` | `string \| null` | No | — |
+| `to` | `object \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `mergeVariables` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `url` | `string \| null` | No | A signed link to preview this order. |
+| `pageCount` | `number \| null` | No | — |
+| `size` | `string \| null` | No | — |
+| `insideHTML` | `string \| null` | No | — |
+| `outsideHTML` | `string \| null` | No | — |
+| `insideTemplate` | `string \| null` | No | — |
+| `outsideTemplate` | `string \| null` | No | — |
+| `mailingClass` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`selfMailers.get`
+
+Read one self mailer, optionally with its template expanded
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.selfMailers.get({ id: 'self_mailer_wx97UGTC7H3UaSfhunWLjt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `self_mailer_` id. |
+| `expand` | `template[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `ready`, `printing`, `processed_for_delivery`, `completed` or `cancelled`. |
+| `imbStatus` | `string \| null` | No | USPS intelligent-mail stage, only on live US mail. |
+| `imbDate` | `string \| null` | No | — |
+| `imbZIPCode` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sendDate` | `string \| null` | No | — |
+| `to` | `object \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `mergeVariables` | `Record<string, JsonValue> \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `url` | `string \| null` | No | A signed link to preview this order. |
+| `pageCount` | `number \| null` | No | — |
+| `size` | `string \| null` | No | — |
+| `insideHTML` | `string \| null` | No | — |
+| `outsideHTML` | `string \| null` | No | — |
+| `insideTemplate` | `string \| null` | No | — |
+| `outsideTemplate` | `string \| null` | No | — |
+| `mailingClass` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  provinceOrState?: string | null,
+  postalOrZip?: string | null,
+  countryCode?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  addressStatus?: string | null,
+  skipVerification?: boolean | null,
+  forceVerifiedStatus?: boolean | null,
+  secret?: boolean | null,
+  metadata?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`selfMailers.list`
+
+List self mailers with their status, paged by `skip` and `limit`
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.selfMailers.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | How many documents to skip. Increment it by `limit` to page. |
+| `limit` | `number` | No | How many documents to return. |
+| `search` | `string` | No | A plain string, or a JSON object of structured queries such as &#123;"metadata.campaignID": "ABC"&#125;. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | Always `list`. |
+| `limit` | `number \| null` | No | — |
+| `skip` | `number \| null` | No | — |
+| `totalCount` | `number` | Yes | Total documents including the skipped ones; page while skip &lt; totalCount. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  status?: string | null,
+  imbStatus?: string | null,
+  imbDate?: string | null,
+  imbZIPCode?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  sendDate?: string | null,
+  to?: {
+    id?: string | null,
+    object?: string | null,
+    live?: boolean | null,
+    description?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    jobTitle?: string | null,
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    city?: string | null,
+    provinceOrState?: string | null,
+    postalOrZip?: string | null,
+    countryCode?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    addressStatus?: string | null,
+    skipVerification?: boolean | null,
+    forceVerifiedStatus?: boolean | null,
+    secret?: boolean | null,
+    metadata?: Record<string, JsonValue> | null
+  } | null,
+  from?: {
+    id?: string | null,
+    object?: string | null,
+    live?: boolean | null,
+    description?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    companyName?: string | null,
+    jobTitle?: string | null,
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    city?: string | null,
+    provinceOrState?: string | null,
+    postalOrZip?: string | null,
+    countryCode?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    addressStatus?: string | null,
+    skipVerification?: boolean | null,
+    forceVerifiedStatus?: boolean | null,
+    secret?: boolean | null,
+    metadata?: Record<string, JsonValue> | null
+  } | null,
+  mergeVariables?: Record<string, JsonValue> | null,
+  metadata?: Record<string, JsonValue> | null,
+  url?: string | null,
+  pageCount?: number | null,
+  size?: string | null,
+  insideHTML?: string | null,
+  outsideHTML?: string | null,
+  insideTemplate?: string | null,
+  outsideTemplate?: string | null,
+  mailingClass?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a template whose `{{variableName}}` marks are filled from merge variables
+
+**Risk:** `write`
+
+```ts
+await corsair.postgrid.api.templates.create({ description: 'Welcome', html: '<b>Hello</b> {{to.firstName}}!' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | The template body. `{{variableName}}` marks a merge variable. |
+| `description` | `string` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a template. Orders already created from it are unaffected
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postgrid.api.templates.delete({ id: 'template_c6HSqnsD1h2zoeHJ6Z9EEA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `template_` id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template and its HTML
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.templates.get({ id: 'template_c6HSqnsD1h2zoeHJ6Z9EEA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `template_` id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List print templates, paged by `skip` and `limit`
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.templates.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | How many documents to skip. Increment it by `limit` to page. |
+| `limit` | `number` | No | How many documents to return. |
+| `search` | `string` | No | A plain string, or a JSON object of structured queries such as &#123;"metadata.campaignID": "ABC"&#125;. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | Always `list`. |
+| `limit` | `number \| null` | No | — |
+| `skip` | `number \| null` | No | — |
+| `totalCount` | `number` | Yes | Total documents including the skipped ones; page while skip &lt; totalCount. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: string | null,
+  live?: boolean | null,
+  description?: string | null,
+  html?: string | null,
+  metadata?: Record<string, JsonValue> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Change a template's HTML, description or metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.postgrid.api.templates.update({ id: 'template_c6HSqnsD1h2zoeHJ6Z9EEA', description: 'Welcome v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `template_` id. |
+| `html` | `string` | No | — |
+| `description` | `string` | No | — |
+| `metadata` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Trackers
+
+### get
+
+`trackers.get`
+
+Read one tracker: the PURL and QR-code destination an order references, with its visit counts
+
+**Risk:** `read`
+
+```ts
+await corsair.postgrid.api.trackers.get({ id: 'tracker_oNrxnVvpyKwbcHtJinF5cm' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The `tracker_` id. A tracker is the PURL and QR-code destination used in an order, not the order itself. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The resource id, such as `contact_…` or `letter_…`. |
+| `object` | `string \| null` | No | Always `tracker`. |
+| `description` | `string \| null` | No | — |
+| `live` | `boolean \| null` | No | — |
+| `redirectURLTemplate` | `string \| null` | No | The base template for the URLs this tracker generates. |
+| `urlExpireAfterDays` | `number \| null` | No | How long a generated URL stays valid: 30, 60, 90, 180 or 365 days. |
+| `visitCount` | `number \| null` | No | The total number of interactions this tracker recorded. |
+| `uniqueVisitCount` | `number \| null` | No | The number of distinct interactions this tracker recorded. |
+| `metadata` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
