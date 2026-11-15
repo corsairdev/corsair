@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-15T16:34:48.731Z",
+  "generatedAt": "2026-11-15T17:35:41.262Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -1152,7 +1152,7 @@
     "sourcegraph": "curated",
     "spoki": "twenty-icons",
     "spotify": "url-override",
-    "stackai": "twenty-icons",
+    "stackai": "url-override",
     "stackexchange": "twenty-icons",
     "starton": "url-override",
     "strava": "curated",
