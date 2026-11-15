@@ -3,14 +3,22 @@ import { z } from 'zod';
 // unknown: PDF-API.io returns open-ended template records whose nested
 // fields (meta, variables) the provider does not fully document; the
 // documented fields are validated and the rest stays extensible.
+// The live API sends id and team_id as integers although the docs show
+// strings, so both are accepted.
+const PdfApiIdSchema = z.union([z.string(), z.number()]);
+
 const PdfApiTemplateSchema = z.object({
-	id: z.string(),
+	id: PdfApiIdSchema,
 	name: z.string(),
-	team_name: z.string().optional(),
-	team_id: z.string().optional(),
-	type: z.string().optional(),
-	created_at: z.string().optional(),
+	team_name: z.string().nullish(),
+	team_id: PdfApiIdSchema.nullish(),
+	type: z.string().nullish(),
+	created_at: z.string().nullish(),
 });
+
+// Template ids as a caller passes them: the string from the app or the
+// integer the API returns.
+const PdfApiTemplateIdInputSchema = z.union([z.string().min(1), z.number()]);
 
 // unknown: template variables are provider-defined ({ name, type } entries
 // plus array-path entries like invoice_items[].description).
@@ -19,8 +27,11 @@ const PdfApiVariablesSchema = z.array(z.record(z.string(), z.unknown()));
 // The list and get responses both carry meta and variables; get adds
 // team_name and team_id.
 const PdfApiTemplateDetailSchema = PdfApiTemplateSchema.extend({
-	// unknown: free-form template metadata (e.g. description), not documented field by field.
-	meta: z.record(z.string(), z.unknown()).optional(),
+	// unknown: free-form template metadata (e.g. description), not documented
+	// field by field. An empty meta arrives as [] (PHP empty array).
+	meta: z
+		.union([z.record(z.string(), z.unknown()), z.array(z.unknown())])
+		.nullish(),
 	variables: PdfApiVariablesSchema.optional(),
 });
 
@@ -36,11 +47,11 @@ const PdfApiRenderJsonOutputSchema = z.object({
 const ListTemplatesInputSchema = z.object({});
 
 const GetTemplateInputSchema = z.object({
-	template: z.string().min(1),
+	template: PdfApiTemplateIdInputSchema,
 });
 
 const RenderTemplateInputSchema = z.object({
-	templateId: z.string().min(1),
+	templateId: PdfApiTemplateIdInputSchema,
 	// unknown: template placeholder values are caller-defined key/value pairs
 	// whose keys match the template's declared variables; dynamic tables pass
 	// arrays of row objects.
@@ -54,7 +65,7 @@ const MergeTemplatesInputSchema = z.object({
 	templates: z
 		.array(
 			z.object({
-				id: z.string(),
+				id: PdfApiTemplateIdInputSchema,
 				// unknown: per-template placeholder values are caller-defined.
 				data: z.record(z.string(), z.unknown()),
 			}),

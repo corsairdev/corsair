@@ -106,6 +106,40 @@ describe('PdfApi endpoint request seams', () => {
 		expect(parsedRender.data).toBe('base64-pdf');
 	});
 
+	it('parses the live get-template shape: integer ids and an empty meta array', () => {
+		// Trimmed from a live GET /api/templates/{id} response (values replaced).
+		const parsed = PdfApiEndpointOutputSchemas.retrieveTemplate.parse({
+			id: 123456789012345,
+			name: 'New Template',
+			team_id: 4242,
+			type: 'editor',
+			created_at: '2026-11-15T08:00:00.000000Z',
+			meta: [],
+			variables: [{ name: 'first_name', type: 'string' }],
+			team_name: "Test's Team",
+		});
+		expect(parsed.id).toBe(123456789012345);
+		expect(parsed.meta).toEqual([]);
+	});
+
+	it('accepts the integer template id the API returns as input', async () => {
+		request.mockResolvedValue({ status: 200, data: 'base64-pdf' });
+		await mergeTemplates(ctx, {
+			templates: [{ id: 123456789012345, data: {} }],
+		} as never);
+		expect(request).toHaveBeenLastCalledWith(ctx, '/templates/merge', {
+			method: 'POST',
+			accept: 'application/json',
+			body: { templates: [{ id: '123456789012345', data: {} }] },
+		});
+		await retrieveTemplate(ctx, { template: 123456789012345 } as never);
+		expect(request).toHaveBeenLastCalledWith(
+			ctx,
+			'/templates/123456789012345',
+			{ method: 'GET' },
+		);
+	});
+
 	it('redacts template data from the render event log payload', async () => {
 		const logMock = jest.requireMock('corsair/core')
 			.logEventFromContext as jest.Mock;

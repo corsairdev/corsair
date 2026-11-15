@@ -28,7 +28,11 @@ export const retrieveTemplate: PdfApiEndpoints['retrieveTemplate'] = async (
 		PdfApiEndpointOutputs['retrieveTemplate']
 	>(
 		ctx,
-		pdfApiPathParameter('/templates/{template}', 'template', input.template),
+		pdfApiPathParameter(
+			'/templates/{template}',
+			'template',
+			String(input.template),
+		),
 		{ method: 'GET' },
 	);
 	await logEventFromContext(
@@ -52,7 +56,7 @@ export const renderTemplate: PdfApiEndpoints['renderTemplate'] = async (
 		pdfApiPathParameter(
 			'/templates/{templateId}/pdf',
 			'templateId',
-			templateId,
+			String(templateId),
 		),
 		{
 			method: 'POST',
@@ -67,7 +71,7 @@ export const renderTemplate: PdfApiEndpoints['renderTemplate'] = async (
 		'pdfapi.templates.renderTemplate',
 		// R8: document placeholder values are customer data and stay out of
 		// event history; only the template id and output mode are logged.
-		{ templateId, output: input.output ?? 'pdf' },
+		{ templateId: String(templateId), output: input.output ?? 'pdf' },
 		'completed',
 	);
 	return response;
@@ -82,7 +86,10 @@ export const mergeTemplates: PdfApiEndpoints['mergeTemplates'] = async (
 	>(ctx, '/templates/merge', {
 		method: 'POST',
 		accept: 'application/json',
-		body: input,
+		body: {
+			...input,
+			templates: input.templates.map((t) => ({ ...t, id: String(t.id) })),
+		},
 	});
 	await logEventFromContext(
 		ctx,
@@ -90,7 +97,7 @@ export const mergeTemplates: PdfApiEndpoints['mergeTemplates'] = async (
 		// R8: per-template document values stay out of event history; only
 		// the template ids and output mode are logged.
 		{
-			templateIds: input.templates.map((t) => t.id),
+			templateIds: input.templates.map((t) => String(t.id)),
 			output: input.output ?? 'pdf',
 		},
 		'completed',
