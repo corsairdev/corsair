@@ -1,22 +1,45 @@
 displayName: Meta Ads
-description: Read ad accounts, manage campaigns and delivery objects, work with custom-audience metadata, and retrieve paginated Ads Insights through Meta Marketing API v27.0.
+description: Read ad accounts and their app-scoped users, manage campaigns and delivery objects, inspect custom-audience metadata and upload sessions, and query synchronous or asynchronous Ads Insights through Meta Marketing API v27.0.
 overviewNote: "Supply an OAuth access token with ads_read for reporting or ads_management for management; the token must also have access to the target ad account."
 apiNotes:
   accounts.list: "Meta requires access_token as a request parameter. Use a user or system-user access token stored in Corsair's encrypted credential store."
+  accounts.usersList: "Lists the documented app-scoped ad-account users and tasks. This edge does not create, update, or remove permissions."
+  images.upload: "Accepts base64 bytes or copies an image by source account and hash. The adapter removes upload form data from propagated core errors."
+  images.delete: "Only images not currently used by an ad creative can be deleted from the account library."
   campaigns.list: "Pass returned paging.cursors.after to continue; the adapter does not follow Meta's paging.next URL."
   campaigns.create: "Campaign creation requires special_ad_categories. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units."
   campaigns.update: "Budget and spend-cap edits are consequential writes and aren't automatically retried."
   adSets.list: "Pass returned paging.cursors.after to continue; the adapter does not follow Meta's paging.next URL."
-  adSets.create: "This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED."
-  ads.create: "New ads enter review and can deliver after approval. This consequential write is destructive and isn't automatically retried."
-  creatives.create: "Only an existing Page post can be used here; complex creative specs and media uploads are excluded."
-  audiences.create: "Creates an empty custom audience only. Customer-list uploads, membership changes and sharing are excluded."
+  adSets.create: "This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values."
+  ads.create: "Use an existing creative ID or an inline creative with object_story_spec. New ads enter review and can deliver after approval; this consequential write isn't automatically retried."
+  creatives.create: "Use either an existing Page post ID or object_story_spec with page_id and exactly one documented content type: link_data, photo_data, video_data, text_data, or template_data. Political issue/election creatives need the documented authorizationCategory."
+  audiences.create: "Creates an empty custom audience only. Member uploads/removals are not exposed because core errors retain form data and the API may echo invalid-entry samples."
   audiences.delete: "Deletion is permanent and ads using the audience stop; they cannot be restarted."
-  insights.list: "Synchronous metrics only. Async reports, breakdowns, filters and custom metric fields are excluded."
+  audiences.sessionsList: "Reads documented upload session status fields; it does not upload audience members."
+  audiences.usersAdd: "Only EMAIL_SHA256 and PHONE_SHA256 single-key records are accepted, up to 10000 per batch. Use a unique ad-account session ID and sequential batch numbers; input payloads are omitted from propagated error metadata and invalid-entry samples are stripped from results."
+  audiences.usersRemove: "Removes up to 10000 EMAIL_SHA256 or PHONE_SHA256 hashes. Input payloads are omitted from propagated error metadata."
+  insights.list: "Synchronous metrics with allow-listed fields, breakdowns, filters, attribution windows, sorting, summary, and time increments. Meta may reject unsupported field/breakdown combinations."
+  insights.createAsync: "Starts a non-idempotent Insights report job. Poll insights.getAsyncReport until completion, then call insights.getAsyncResults; report IDs expire after 30 days."
+  insights.getAsyncReport: "Poll async_status and async_percent_completion. Failed jobs include documented error details on v25 and later."
+  insights.getAsyncResults: "Fetch cursor-paginated results only after the report job completes."
+  insights.listFeatures: "Lists documented account Insights features, including breakdown features."
+  insights.listEnabledFeatures: "Lists enabled features; a missing feature is equivalent to disabled."
+  insights.enableFeature: "This is a one-way enable operation; Meta documents no API to disable a feature. New breakdown data can take about 24 hours to become available."
 apiExamples:
   accounts.list: {}
   accounts.get:
     accountId: "1234567890"
+  accounts.usersList:
+    accountId: "1234567890"
+  images.list:
+    accountId: "1234567890"
+    name: "campaign image"
+  images.upload:
+    accountId: "1234567890"
+    bytes: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/jN8AAAAASUVORK5CYII="
+  images.delete:
+    accountId: "1234567890"
+    hash: "0123456789abcdef0123456789abcdef"
   campaigns.list:
     accountId: "1234567890"
   campaigns.get:
@@ -81,6 +104,37 @@ apiExamples:
     name: "Updated audience"
   audiences.delete:
     audienceId: "120000000000005"
+  audiences.sessionsList:
+    audienceId: "120000000000005"
+  audiences.usersAdd:
+    audienceId: "120000000000005"
+    hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"]
+    sessionId: 123456789
+    batchSequence: 1
+    lastBatch: true
+    estimatedTotal: 1
+  audiences.usersRemove:
+    audienceId: "120000000000005"
+    hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"]
   insights.list:
     accountId: "1234567890"
     fields: [impressions, spend]
+    breakdowns: [age, gender]
+    filtering:
+      - field: "campaign.id"
+        operator: IN
+        value: ["120000000000001"]
+  insights.createAsync:
+    accountId: "1234567890"
+    fields: [impressions, spend]
+  insights.getAsyncReport:
+    reportRunId: "123456789012345"
+    fields: [id, async_status, async_percent_completion]
+  insights.getAsyncResults:
+    reportRunId: "123456789012345"
+  insights.listFeatures:
+    accountId: "1234567890"
+  insights.listEnabledFeatures:
+    accountId: "1234567890"
+  insights.enableFeature:
+    accountId: "1234567890"

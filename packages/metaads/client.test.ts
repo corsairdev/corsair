@@ -59,6 +59,21 @@ describe('Meta Ads Graph API client', () => {
 		});
 	});
 
+	it('sends a URL-encoded DELETE payload using the documented content type', async () => {
+		mockedRequest.mockResolvedValue({ success: true });
+		await makeMetaAdsRequest('/audience-1/users', 'safe-test-token', {
+			method: 'DELETE',
+			encodedBody: 'payload=%7B%22schema%22%3A%22EMAIL_SHA256%22%7D',
+			redactBodyOnError: true,
+		});
+
+		expect(mockedRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'DELETE',
+			body: 'payload=%7B%22schema%22%3A%22EMAIL_SHA256%22%7D',
+			mediaType: 'application/x-www-form-urlencoded',
+		});
+	});
+
 	it('fails fast for a missing or empty OAuth token', async () => {
 		await expect(
 			makeMetaAdsRequest('/me/adaccounts', undefined),
@@ -88,6 +103,47 @@ describe('Meta Ads Graph API client', () => {
 		).rejects.toBe(rateLimit);
 		expect(rateLimit.status).toBe(429);
 		expect(rateLimit.retryAfter).toBe(4000);
+	});
+
+	it('removes audience member data from propagated core request errors', async () => {
+		const submittedHash = 'a'.repeat(64);
+		const providerError = new ApiError(
+			{
+				method: 'POST',
+				url: '/v27.0/audience-1/users',
+				formData: { payload: submittedHash },
+			},
+			{
+				url: 'https://graph.facebook.com/v27.0/audience-1/users',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: { code: 80003, message: `Rejected ${submittedHash}` } },
+			},
+			'Rate limited',
+			{ retryAfter: 5000 },
+		);
+		mockedRequest.mockRejectedValue(providerError);
+		// `unknown` because a rejected request has no static error type until narrowed as ApiError.
+		const result = await makeMetaAdsRequest(
+			'/audience-1/users',
+			'safe-test-token',
+			{
+				method: 'POST',
+				redactBodyOnError: true,
+				sensitiveValues: [submittedHash],
+			},
+		).catch((caught: unknown) => caught);
+
+		expect(result).toBeInstanceOf(ApiError);
+		if (!(result instanceof ApiError))
+			throw new Error('Expected sanitized core ApiError');
+		expect(result).not.toBe(providerError);
+		expect(result.request.formData).toBeUndefined();
+		expect(result.status).toBe(429);
+		expect(result.retryAfter).toBe(5000);
+		expect(JSON.stringify(result.body)).not.toContain(submittedHash);
+		expect(result.message).not.toContain(submittedHash);
 	});
 
 	it('real transport extracts Retry-After without retrying a Meta throttle', async () => {

@@ -5,6 +5,7 @@ export {
 	Audiences,
 	Campaigns,
 	Creatives,
+	Images,
 	Insights,
 } from './resources';
 export * from './types';

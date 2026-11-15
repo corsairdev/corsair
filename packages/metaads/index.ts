@@ -20,6 +20,7 @@ import {
 	Audiences,
 	Campaigns,
 	Creatives,
+	Images,
 	Insights,
 } from './endpoints';
 import type {
@@ -61,7 +62,12 @@ export type MetaAdsEndpoints = {
 };
 
 const metaAdsEndpointsNested = {
-	accounts: { list: Accounts.list, get: Accounts.get },
+	accounts: {
+		list: Accounts.list,
+		get: Accounts.get,
+		usersList: Accounts.usersList,
+	},
+	images: { list: Images.list, upload: Images.upload, delete: Images.delete },
 	campaigns: {
 		list: Campaigns.list,
 		get: Campaigns.get,
@@ -96,8 +102,19 @@ const metaAdsEndpointsNested = {
 		create: Audiences.create,
 		update: Audiences.update,
 		delete: Audiences.delete,
+		sessionsList: Audiences.sessionsList,
+		usersAdd: Audiences.usersAdd,
+		usersRemove: Audiences.usersRemove,
 	},
-	insights: { list: Insights.list },
+	insights: {
+		list: Insights.list,
+		createAsync: Insights.createAsync,
+		getAsyncReport: Insights.getAsyncReport,
+		getAsyncResults: Insights.getAsyncResults,
+		listFeatures: Insights.listFeatures,
+		listEnabledFeatures: Insights.listEnabledFeatures,
+		enableFeature: Insights.enableFeature,
+	},
 } as const;
 
 export const metaAdsEndpointSchemas = {
@@ -108,6 +125,22 @@ export const metaAdsEndpointSchemas = {
 	'accounts.get': {
 		input: MetaAdsEndpointInputSchemas.accountsGet,
 		output: MetaAdsEndpointOutputSchemas.accountsGet,
+	},
+	'accounts.usersList': {
+		input: MetaAdsEndpointInputSchemas.accountsUsersList,
+		output: MetaAdsEndpointOutputSchemas.accountsUsersList,
+	},
+	'images.list': {
+		input: MetaAdsEndpointInputSchemas.imagesList,
+		output: MetaAdsEndpointOutputSchemas.imagesList,
+	},
+	'images.upload': {
+		input: MetaAdsEndpointInputSchemas.imagesUpload,
+		output: MetaAdsEndpointOutputSchemas.imagesUpload,
+	},
+	'images.delete': {
+		input: MetaAdsEndpointInputSchemas.imagesDelete,
+		output: MetaAdsEndpointOutputSchemas.imagesDelete,
 	},
 	'campaigns.list': {
 		input: MetaAdsEndpointInputSchemas.campaignsList,
@@ -209,9 +242,45 @@ export const metaAdsEndpointSchemas = {
 		input: MetaAdsEndpointInputSchemas.audiencesDelete,
 		output: MetaAdsEndpointOutputSchemas.audiencesDelete,
 	},
+	'audiences.sessionsList': {
+		input: MetaAdsEndpointInputSchemas.audiencesSessionsList,
+		output: MetaAdsEndpointOutputSchemas.audiencesSessionsList,
+	},
+	'audiences.usersAdd': {
+		input: MetaAdsEndpointInputSchemas.audiencesUsersAdd,
+		output: MetaAdsEndpointOutputSchemas.audiencesUsersAdd,
+	},
+	'audiences.usersRemove': {
+		input: MetaAdsEndpointInputSchemas.audiencesUsersRemove,
+		output: MetaAdsEndpointOutputSchemas.audiencesUsersRemove,
+	},
 	'insights.list': {
 		input: MetaAdsEndpointInputSchemas.insightsList,
 		output: MetaAdsEndpointOutputSchemas.insightsList,
+	},
+	'insights.createAsync': {
+		input: MetaAdsEndpointInputSchemas.insightsCreateAsync,
+		output: MetaAdsEndpointOutputSchemas.insightsCreateAsync,
+	},
+	'insights.getAsyncReport': {
+		input: MetaAdsEndpointInputSchemas.insightsGetAsyncReport,
+		output: MetaAdsEndpointOutputSchemas.insightsGetAsyncReport,
+	},
+	'insights.getAsyncResults': {
+		input: MetaAdsEndpointInputSchemas.insightsGetAsyncResults,
+		output: MetaAdsEndpointOutputSchemas.insightsGetAsyncResults,
+	},
+	'insights.listFeatures': {
+		input: MetaAdsEndpointInputSchemas.insightsListFeatures,
+		output: MetaAdsEndpointOutputSchemas.insightsListFeatures,
+	},
+	'insights.listEnabledFeatures': {
+		input: MetaAdsEndpointInputSchemas.insightsListEnabledFeatures,
+		output: MetaAdsEndpointOutputSchemas.insightsListEnabledFeatures,
+	},
+	'insights.enableFeature': {
+		input: MetaAdsEndpointInputSchemas.insightsEnableFeature,
+		output: MetaAdsEndpointOutputSchemas.insightsEnableFeature,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof metaAdsEndpointsNested
@@ -226,6 +295,23 @@ const metaAdsEndpointMeta = {
 	'accounts.get': {
 		riskLevel: 'read',
 		description: 'Retrieve an ad account by ID',
+	},
+	'accounts.usersList': {
+		riskLevel: 'read',
+		description: 'List app-scoped users and task grants on an ad account',
+	},
+	'images.list': {
+		riskLevel: 'read',
+		description: 'List images stored in an ad account library',
+	},
+	'images.upload': {
+		riskLevel: 'destructive',
+		description:
+			'Upload a base64 image or copy an image into an ad account library',
+	},
+	'images.delete': {
+		riskLevel: 'destructive',
+		description: 'Dissociate an unused image from an ad account library',
 	},
 	'campaigns.list': {
 		riskLevel: 'read',
@@ -315,9 +401,49 @@ const metaAdsEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Permanently delete a custom audience',
 	},
+	'audiences.sessionsList': {
+		riskLevel: 'read',
+		description: 'List upload sessions for a custom audience',
+	},
+	'audiences.usersAdd': {
+		riskLevel: 'destructive',
+		description:
+			'Upload a batch of SHA-256 customer hashes to a custom audience',
+	},
+	'audiences.usersRemove': {
+		riskLevel: 'destructive',
+		description:
+			'Remove a batch of SHA-256 customer hashes from a custom audience',
+	},
 	'insights.list': {
 		riskLevel: 'read',
-		description: 'Read paginated reporting metrics for an ad account',
+		description:
+			'Read paginated, filtered and broken-down ad reporting metrics',
+	},
+	'insights.createAsync': {
+		riskLevel: 'write',
+		description: 'Start a non-idempotent asynchronous Ads Insights report job',
+	},
+	'insights.getAsyncReport': {
+		riskLevel: 'read',
+		description:
+			'Read the status and completion details of an Insights report job',
+	},
+	'insights.getAsyncResults': {
+		riskLevel: 'read',
+		description: 'Read paginated results for a completed Insights report job',
+	},
+	'insights.listFeatures': {
+		riskLevel: 'read',
+		description: 'List breakdown features available to an ad account',
+	},
+	'insights.listEnabledFeatures': {
+		riskLevel: 'read',
+		description: 'List breakdown features enabled for an ad account',
+	},
+	'insights.enableFeature': {
+		riskLevel: 'destructive',
+		description: 'Permanently enable an Insights feature for an ad account',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof metaAdsEndpointsNested>;
 

@@ -7,6 +7,7 @@ import {
 	Audiences,
 	Campaigns,
 	Creatives,
+	Images,
 	Insights,
 } from './endpoints';
 import type { MetaAdsContext } from './index';
@@ -57,6 +58,9 @@ type Case = {
 	method: 'GET' | 'POST' | 'DELETE';
 	query?: Record<string, string | number | undefined>;
 	body?: Record<string, unknown>;
+	encodedBody?: string;
+	redactBodyOnError?: boolean;
+	sensitiveValues?: string[];
 	call: () => Promise<void>;
 };
 
@@ -89,6 +93,81 @@ const cases: Case[] = [
 		query: { fields: 'id,name' },
 		call: async () => {
 			await Accounts.get(ctx, { accountId: 'act_123', fields: 'id,name' });
+		},
+	},
+	{
+		name: 'accounts.usersList',
+		path: '/act_123/users',
+		method: 'GET',
+		query: { limit: 5, after: 'user-cursor' },
+		call: async () => {
+			await Accounts.usersList(ctx, {
+				accountId: '123',
+				limit: 5,
+				after: 'user-cursor',
+			});
+		},
+	},
+	{
+		name: 'images.list',
+		path: '/act_123/adimages',
+		method: 'GET',
+		query: {
+			name: 'spring',
+			hashes: 'hash-1,hash-2',
+			minheight: 120,
+			minwidth: 240,
+			limit: 5,
+			after: 'image-cursor',
+		},
+		call: async () => {
+			await Images.list(ctx, {
+				accountId: '123',
+				name: 'spring',
+				hashes: ['hash-1', 'hash-2'],
+				minHeight: 120,
+				minWidth: 240,
+				limit: 5,
+				after: 'image-cursor',
+			});
+		},
+	},
+	{
+		name: 'images.upload',
+		path: '/act_123/adimages',
+		method: 'POST',
+		body: { bytes: 'aGVsbG8=' },
+		redactBodyOnError: true,
+		sensitiveValues: ['aGVsbG8='],
+		call: async () => {
+			await Images.upload(ctx, { accountId: '123', bytes: 'aGVsbG8=' });
+		},
+	},
+	{
+		name: 'images.upload',
+		path: '/act_123/adimages',
+		method: 'POST',
+		body: { copy_from: { source_account_id: '456', hash: 'image-hash' } },
+		redactBodyOnError: true,
+		sensitiveValues: [],
+		call: async () => {
+			await Images.upload(ctx, {
+				accountId: '123',
+				copyFrom: { sourceAccountId: '456', hash: 'image-hash' },
+			});
+		},
+	},
+	{
+		name: 'images.delete',
+		path: '/act_123/adimages',
+		method: 'DELETE',
+		query: { hash: 'image-hash', image_id: 'image-1' },
+		call: async () => {
+			await Images.delete(ctx, {
+				accountId: '123',
+				hash: 'image-hash',
+				imageId: 'image-1',
+			});
 		},
 	},
 	{
@@ -279,6 +358,42 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'ads.create',
+		path: '/act_123/ads',
+		method: 'POST',
+		body: {
+			name: 'Inline ad',
+			adset_id: 'adset-1',
+			creative: {
+				creative: {
+					name: 'Inline creative',
+					authorization_category: 'POLITICAL_WITH_DIGITALLY_CREATED_MEDIA',
+					object_story_spec: {
+						page_id: 'page-1',
+						link_data: { link: 'https://shop.test/landing', message: 'Hello' },
+					},
+				},
+			},
+			status: 'PAUSED',
+		},
+		call: async () => {
+			await Ads.create(ctx, {
+				accountId: '123',
+				adSetId: 'adset-1',
+				name: 'Inline ad',
+				creativeSpec: {
+					name: 'Inline creative',
+					authorizationCategory: 'POLITICAL_WITH_DIGITALLY_CREATED_MEDIA',
+					objectStorySpec: {
+						page_id: 'page-1',
+						link_data: { link: 'https://shop.test/landing', message: 'Hello' },
+					},
+				},
+				status: 'PAUSED',
+			});
+		},
+	},
+	{
 		name: 'ads.update',
 		path: '/ad-1',
 		method: 'POST',
@@ -332,6 +447,30 @@ const cases: Case[] = [
 				accountId: '123',
 				name: 'Test creative',
 				objectStoryId: 'page_post',
+			});
+		},
+	},
+	{
+		name: 'creatives.create',
+		path: '/act_123/adcreatives',
+		method: 'POST',
+		body: {
+			name: 'Link creative',
+			authorization_category: 'POLITICAL',
+			object_story_spec: {
+				page_id: 'page-1',
+				link_data: { link: 'https://shop.test/landing', message: 'Hello' },
+			},
+		},
+		call: async () => {
+			await Creatives.create(ctx, {
+				accountId: '123',
+				name: 'Link creative',
+				authorizationCategory: 'POLITICAL',
+				objectStorySpec: {
+					page_id: 'page-1',
+					link_data: { link: 'https://shop.test/landing', message: 'Hello' },
+				},
 			});
 		},
 	},
@@ -412,6 +551,69 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'audiences.sessionsList',
+		path: '/audience-1/sessions',
+		method: 'GET',
+		query: {
+			session_id: 123,
+			limit: 10,
+			after: 'session-cursor',
+		},
+		call: async () => {
+			await Audiences.sessionsList(ctx, {
+				audienceId: 'audience-1',
+				sessionId: 123,
+				limit: 10,
+				after: 'session-cursor',
+			});
+		},
+	},
+	{
+		name: 'audiences.usersAdd',
+		path: '/audience-1/users',
+		method: 'POST',
+		body: {
+			session: {
+				session_id: 123,
+				batch_seq: 1,
+				last_batch_flag: true,
+				estimated_num_total: 1,
+			},
+			payload: {
+				schema: 'EMAIL_SHA256',
+				data: [['a'.repeat(64)]],
+			},
+		},
+		redactBodyOnError: true,
+		sensitiveValues: ['a'.repeat(64)],
+		call: async () => {
+			await Audiences.usersAdd(ctx, {
+				audienceId: 'audience-1',
+				schema: 'EMAIL_SHA256',
+				hashes: ['a'.repeat(64)],
+				sessionId: 123,
+				batchSequence: 1,
+				lastBatch: true,
+				estimatedTotal: 1,
+			});
+		},
+	},
+	{
+		name: 'audiences.usersRemove',
+		path: '/audience-1/users',
+		method: 'DELETE',
+		encodedBody: `payload=${encodeURIComponent(JSON.stringify({ schema: 'PHONE_SHA256', data: ['b'.repeat(64)] }))}`,
+		redactBodyOnError: true,
+		sensitiveValues: ['b'.repeat(64)],
+		call: async () => {
+			await Audiences.usersRemove(ctx, {
+				audienceId: 'audience-1',
+				schema: 'PHONE_SHA256',
+				hashes: ['b'.repeat(64)],
+			});
+		},
+	},
+	{
 		name: 'insights.list',
 		path: '/act_123/insights',
 		method: 'GET',
@@ -419,6 +621,11 @@ const cases: Case[] = [
 			fields: 'impressions,spend',
 			date_preset: 'last_7d',
 			level: 'account',
+			breakdowns: 'age,gender',
+			filtering: '[{"field":"campaign.id","operator":"IN","value":["1","2"]}]',
+			action_attribution_windows: '1d_click,7d_click',
+			time_increment: 7,
+			sort: 'spend_descending',
 			limit: 10,
 			after: 'cursor',
 		},
@@ -428,8 +635,91 @@ const cases: Case[] = [
 				fields: ['impressions', 'spend'],
 				datePreset: 'last_7d',
 				level: 'account',
+				breakdowns: ['age', 'gender'],
+				filtering: [
+					{
+						field: 'campaign.id',
+						operator: 'IN',
+						value: ['1', '2'],
+					},
+				],
+				actionAttributionWindows: ['1d_click', '7d_click'],
+				timeIncrement: 7,
+				sort: ['spend_descending'],
 				limit: 10,
 				after: 'cursor',
+			});
+		},
+	},
+	{
+		name: 'insights.createAsync',
+		path: '/act_123/insights',
+		method: 'POST',
+		body: {
+			fields: 'impressions,spend',
+			level: 'campaign',
+			time_range: '{"since":"2026-10-01","until":"2026-10-07"}',
+		},
+		call: async () => {
+			await Insights.createAsync(ctx, {
+				accountId: '123',
+				fields: ['impressions', 'spend'],
+				level: 'campaign',
+				since: '2026-10-01',
+				until: '2026-10-07',
+			});
+		},
+	},
+	{
+		name: 'insights.getAsyncReport',
+		path: '/report-1',
+		method: 'GET',
+		query: { fields: 'id,async_status,async_percent_completion' },
+		call: async () => {
+			await Insights.getAsyncReport(ctx, {
+				reportRunId: 'report-1',
+				fields: ['id', 'async_status', 'async_percent_completion'],
+			});
+		},
+	},
+	{
+		name: 'insights.getAsyncResults',
+		path: '/report-1/insights',
+		method: 'GET',
+		query: { limit: 10, after: 'report-cursor' },
+		call: async () => {
+			await Insights.getAsyncResults(ctx, {
+				reportRunId: 'report-1',
+				limit: 10,
+				after: 'report-cursor',
+			});
+		},
+	},
+	{
+		name: 'insights.listFeatures',
+		path: '/act_123/insights/feature-settings/list-features',
+		method: 'GET',
+		call: async () => {
+			await Insights.listFeatures(ctx, { accountId: '123' });
+		},
+	},
+	{
+		name: 'insights.listEnabledFeatures',
+		path: '/act_123/insights/feature-settings',
+		method: 'GET',
+		call: async () => {
+			await Insights.listEnabledFeatures(ctx, { accountId: '123' });
+		},
+	},
+	{
+		name: 'insights.enableFeature',
+		path: '/act_123/insights/feature-settings',
+		method: 'POST',
+		body: { feature_name: 'impression_device' },
+		call: async () => {
+			await Insights.enableFeature(ctx, {
+				accountId: '123',
+				featureName: 'impression_device',
 			});
 		},
 	},
@@ -460,18 +750,104 @@ describe('Meta Ads operations', () => {
 				'ads.create',
 				'creatives.create',
 				'audiences.create',
+				'insights.createAsync',
 			].includes(testCase.name);
-			mockedRequest.mockResolvedValue(
-				testCase.method === 'DELETE' || testCase.name.endsWith('.update')
-					? successResponse
-					: isCreate
-						? createResponse
-						: isList
-							? testCase.name === 'insights.list'
-								? { data: [{ impressions: '10', spend: '1.00' }] }
-								: listResponse
-							: objectResponse,
-			);
+			const response =
+				testCase.name === 'images.list'
+					? {
+							data: [
+								{
+									hash: 'image-hash',
+									name: 'image.jpg',
+									width: 640,
+									height: 480,
+								},
+							],
+							paging: { cursors: { after: 'image-cursor' } },
+							summary: { total_count: 1 },
+						}
+					: testCase.name === 'images.upload'
+						? {
+								images: {
+									'image-hash': {
+										hash: 'image-hash',
+										width: 640,
+										height: 480,
+									},
+								},
+							}
+						: testCase.name === 'audiences.usersAdd' ||
+								testCase.name === 'audiences.usersRemove'
+							? {
+									audience_id: 'audience-1',
+									session_id: 123,
+									num_received: 1,
+									num_invalid_entries: 0,
+									invalid_entry_samples: ['sensitive-sample'],
+								}
+							: testCase.name === 'insights.createAsync'
+								? { report_run_id: 'report-1' }
+								: testCase.name === 'insights.getAsyncReport'
+									? {
+											id: 'report-1',
+											async_status: 'Job Running',
+											async_percent_completion: 50,
+										}
+									: testCase.name === 'insights.listFeatures'
+										? {
+												data: [
+													{
+														feature_name: 'impression_device',
+														feature_type: 'breakdown',
+													},
+												],
+											}
+										: testCase.name === 'insights.listEnabledFeatures'
+											? {
+													data: [
+														{
+															feature_name: 'impression_device',
+															status: 'enabled',
+														},
+													],
+												}
+											: testCase.name === 'insights.enableFeature'
+												? { id: 'act_123' }
+												: testCase.name === 'audiences.sessionsList'
+													? {
+															data: [
+																{
+																	session_id: '123',
+																	stage: 'COMPLETED',
+																	num_received: '2',
+																},
+															],
+														}
+													: testCase.name === 'accounts.usersList'
+														? {
+																data: [
+																	{
+																		id: 'user-1',
+																		name: 'Test User',
+																		tasks: ['ANALYZE'],
+																	},
+																],
+															}
+														: testCase.method === 'DELETE' ||
+																testCase.name.endsWith('.update')
+															? successResponse
+															: isCreate
+																? createResponse
+																: isList
+																	? testCase.name.startsWith('insights.')
+																		? {
+																				data: [
+																					{ impressions: '10', spend: '1.00' },
+																				],
+																			}
+																		: listResponse
+																	: objectResponse;
+			mockedRequest.mockResolvedValue(response);
 
 			await testCase.call();
 
@@ -482,6 +858,11 @@ describe('Meta Ads operations', () => {
 				method: testCase.method,
 				...(testCase.query ? { query: testCase.query } : {}),
 				...(testCase.body ? { body: testCase.body } : {}),
+				...(testCase.encodedBody ? { encodedBody: testCase.encodedBody } : {}),
+				...(testCase.redactBodyOnError ? { redactBodyOnError: true } : {}),
+				...(testCase.sensitiveValues
+					? { sensitiveValues: testCase.sensitiveValues }
+					: {}),
 			});
 			expect(mockedLog).toHaveBeenCalledTimes(1);
 			expect(JSON.stringify(mockedLog.mock.calls[0]?.[2])).not.toContain(
