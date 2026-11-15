@@ -22,7 +22,12 @@ function keyBuilderContext(
 		authType: 'api_key',
 		tenantId: 'default',
 		options: {},
-		keys,
+		// No Dev Dashboard app unless a test sets one: the static-token path.
+		keys: {
+			get_client_id: async () => null,
+			get_client_secret: async () => null,
+			...keys,
+		},
 	};
 }
 

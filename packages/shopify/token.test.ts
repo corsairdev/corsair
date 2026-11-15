@@ -279,7 +279,9 @@ describe('caching and renewal before expiry', () => {
 								expires_in: 86399,
 							}),
 						)
-					: new Response(JSON.stringify({ data: { shop } })),
+					: new Response(JSON.stringify({ data: { shop } }), {
+							headers: { 'Content-Type': 'application/json' },
+						}),
 			);
 
 			await Promise.all([
