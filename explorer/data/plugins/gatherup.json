@@ -1,0 +1,1263 @@
+{
+  "id": "gatherup",
+  "displayName": "GatherUp",
+  "description": "Customer feedback and reviews with GatherUp - manage the businesses on an account, add customers and send them feedback requests, and read the feedback and ratings they leave.",
+  "npmPackageName": "@corsair-dev/gatherup",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gatherup.api.businesses.create",
+      "shortPath": "businesses.create",
+      "description": "Create a business. The body uses `businessName` and `businessType`, not the `name` and `organisationType` a read returns",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "businessType",
+            "optional": false,
+            "type": "string",
+            "description": "A Google business type, such as `Insurance Agency`; see `businesses.types`."
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "A country code or full name."
+          },
+          {
+            "key": "streetAddress",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string",
+            "description": "A state code or full name."
+          },
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "websiteUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organisationType",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to `company`."
+          },
+          {
+            "key": "legalBusinessName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicBusinessName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.businesses.deactivate",
+      "shortPath": "businesses.deactivate",
+      "description": "Suspend a business so no feedback requests go out. Nothing is deleted, and `businesses.reactivate` reverses it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.businesses.delete",
+      "shortPath": "businesses.delete",
+      "description": "Delete a business with its customers and feedback; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.businesses.get",
+      "shortPath": "businesses.get",
+      "description": "One business with its address, short feedback URL, package and ratings received",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "streetAddress",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organisationType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailLogo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailImage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "feedbackBanner",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "added",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "websiteURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "package",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shortFeedbackUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "communicationMethod",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nps",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ratingsReceived",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "customersNotSent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "legalBusinessName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.businesses.list",
+      "shortPath": "businesses.list",
+      "description": "Businesses on the account, paged; `next_page` gives the next page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page."
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, sent as `limit`. GatherUp defaults to 100."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total pages."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in this page."
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ businessId: number | string, businessDeleted?: number | null, businessName?: string | null, businessPhone?: string | null, businessCity?: string | null, businessState?: string | null, businessZip?: string | null, businessCountry?: string | null, businessStreetAddress?: string | null, businessOrganisationType?: string | null, customField?: string | null, businessPackage?: string | null, extraField?: string | null }[]"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next page while more remain; null on the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.businesses.reactivate",
+      "shortPath": "businesses.reactivate",
+      "description": "Bring a deactivated business back into service",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.businesses.search",
+      "shortPath": "businesses.search",
+      "description": "Find a business ID by its `customField` or `extraField` value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "by",
+            "optional": false,
+            "type": "customField | extraField",
+            "description": "Which of the business’s own IDs to match."
+          },
+          {
+            "key": "search",
+            "optional": false,
+            "type": "string",
+            "description": "The `customField` or `extraField` value to look up."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.businesses.types",
+      "shortPath": "businesses.types",
+      "description": "The Google business types a business can be created with",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Filter the types by name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.businesses.update",
+      "shortPath": "businesses.update",
+      "description": "Update a business, including its name, type, address and thresholds",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessType",
+            "optional": false,
+            "type": "string",
+            "description": "A Google business type, such as `Insurance Agency`; see `businesses.types`."
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "A country code or full name."
+          },
+          {
+            "key": "streetAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "A state code or full name."
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "websiteUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organisationType",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to `company`."
+          },
+          {
+            "key": "legalBusinessName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicBusinessName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed. Destructive because it can message the customer: a feedback request goes out when `sendFeedbackRequest` is true, and a business in automatic mode sends one on its own schedule",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          },
+          {
+            "key": "customerFirstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customerLastName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Required on the basic plan."
+          },
+          {
+            "key": "customerPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerJobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerCustomId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerTags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags, each at most 50 characters."
+          },
+          {
+            "key": "sendFeedbackRequest",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send a feedback request to the customer as soon as they are created. Defaults to false; a business in automatic mode still sends on its own schedule."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "feedbackRequestErrorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` when the requested feedback request went out."
+          },
+          {
+            "key": "feedbackRequestErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer and their feedback record",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The customer ID, as a string or a number."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "One customer with their status, rating and review",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The customer ID, as a string or a number."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "businessId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The caller’s own reference for the job."
+          },
+          {
+            "key": "customId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "review",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusInfo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "Customers of a business, paged, with their rating, review and request status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total pages."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in this page."
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number | null, businessId?: string | number | null, firstName?: string | null, lastName?: string | null, phone?: string | null, email?: string | null, jobId?: string | null, customId?: string | null, parentId?: string | null, rating?: string | null, review?: string | null, statusInfo?: string | null, subscription?: number | null, unsubscribed?: string | null, createdAt?: string | null }[]"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.customers.requestFeedback",
+      "shortPath": "customers.requestFeedback",
+      "description": "Send a feedback request to a customer, which is a message to a real person",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The customer ID, as a string or a number."
+          },
+          {
+            "key": "ratingRevision",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask the customer to revise an earlier rating instead of sending a new request. Defaults to false; GatherUp’s own default is a revision."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update a customer. This route spells the phone `customerPhoneNumber`, where create spells it `customerPhone`",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The customer ID, as a string or a number."
+          },
+          {
+            "key": "customerFirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerLastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerPhoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerJobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerCustomId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerTags",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "businessId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The caller’s own reference for the job."
+          },
+          {
+            "key": "customId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "review",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusInfo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gatherup.api.feedbacks.list",
+      "shortPath": "feedbacks.list",
+      "description": "Feedback a business received, with its rating, NPS answer and text, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessId",
+            "optional": false,
+            "type": "number",
+            "description": "The business ID, from `businesses.list`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Earliest review date, `YYYY-MM-DD`."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Latest review date, `YYYY-MM-DD`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total pages."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Rows in this page."
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ rating?: number | null, recommend?: number | null, feedbackId?: string | number | null, businessId?: string | number | null, dateOfReview?: string | null, showReview?: string | null, authorEmail?: string | null, authorName?: string | null, body?: string | null, jobId?: string | null, customId?: string | null, tags?: string | null, negativeDetails?: string | null }[]"
+          },
+          {
+            "key": "errorCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "`0` on success. Any other value is a failure, whatever the status."
+          },
+          {
+            "key": "errorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

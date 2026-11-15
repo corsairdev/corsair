@@ -1,0 +1,2166 @@
+{
+  "id": "cloudlayer",
+  "displayName": "Cloudlayer",
+  "description": "Generate PDFs and images from HTML, URLs, and templates, and manage Cloudlayer jobs, assets, and storage.",
+  "npmPackageName": "@corsair-dev/cloudlayer",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cloudlayer.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read account usage, plan limits, storage use and (on usage plans) the credit balance. Docs: https://cloudlayer.io/docs/account/",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscription",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subType",
+            "optional": false,
+            "type": "limit | usage | string"
+          },
+          {
+            "key": "subActive",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "calls",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "callsLimit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "credit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bytesTotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "bytesLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "computeTimeTotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "computeTimeLimit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "storageUsed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "storageLimit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalJobs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "successJobs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errorJobs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.assets.get",
+      "shortPath": "assets.get",
+      "description": "Get one generated asset including its pre-authenticated download URL. Docs: https://cloudlayer.io/docs/assets/",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.assets.list",
+      "shortPath": "assets.list",
+      "description": "List the most recent generated assets with cursor pagination. Docs: https://cloudlayer.io/docs/assets/",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startAfterId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, jobId?: string, ext: string, type: string, size: number, url: string, timestamp: number }[]"
+      }
+    },
+    {
+      "path": "cloudlayer.api.html.toImage",
+      "shortPath": "html.toImage",
+      "description": "Render base64 HTML to a PNG, JPG, WebP or SVG image; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-image/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "imageType",
+            "optional": true,
+            "type": "png | jpg | jpeg | webp | svg"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "transparent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trim",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, status: pending | success | error | string, type?: string, assetUrl?: string, previewUrl?: string, error?: string, processTime?: number, size?: number, timestamp?: number } | { kind: binary, contentType: string, base64: string }"
+      }
+    },
+    {
+      "path": "cloudlayer.api.html.toImageV1",
+      "shortPath": "html.toImageV1",
+      "description": "Render base64 HTML to an image using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/html-to-image/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "imageType",
+            "optional": true,
+            "type": "png | jpg | jpeg | webp | svg"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "transparent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trim",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.html.toPdf",
+      "shortPath": "html.toPdf",
+      "description": "Render base64 HTML to a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-pdf/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "pageRanges",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6"
+          },
+          {
+            "key": "margin",
+            "optional": true,
+            "type": "{ top?: string, bottom?: string, left?: string, right?: string }"
+          },
+          {
+            "key": "printBackground",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "headerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "footerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "generatePreview",
+            "optional": true,
+            "type": "{ width?: number, height?: number, type?: png | jpg | webp, quality?: number, maintainAspectRatio?: boolean }"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, status: pending | success | error | string, type?: string, assetUrl?: string, previewUrl?: string, error?: string, processTime?: number, size?: number, timestamp?: number } | { kind: binary, contentType: string, base64: string }"
+      }
+    },
+    {
+      "path": "cloudlayer.api.html.toPdfV1",
+      "shortPath": "html.toPdfV1",
+      "description": "Render base64 HTML to a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/html-to-pdf/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "pageRanges",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6"
+          },
+          {
+            "key": "margin",
+            "optional": true,
+            "type": "{ top?: string, bottom?: string, left?: string, right?: string }"
+          },
+          {
+            "key": "printBackground",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "headerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "footerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "generatePreview",
+            "optional": true,
+            "type": "{ width?: number, height?: number, type?: png | jpg | webp, quality?: number, maintainAspectRatio?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Get one job to poll an async generation, including status, size and cost. Docs: https://cloudlayer.io/docs/jobs/",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apiKeyUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | success | error | string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "processTime",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "apiCreditCost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List recent jobs using the documented v1 jobs endpoint with optional cursor parameters. Docs: https://cloudlayer.io/docs/jobs/",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startAfterId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, uid?: string, apiKeyUsed?: string, type: string, status: pending | success | error | string, params?: Record<string, JsonValue>, size: number, processTime: number, apiCreditCost: number, workerName?: string, timestamp: number }[]"
+      }
+    },
+    {
+      "path": "cloudlayer.api.jobs.listV2",
+      "shortPath": "jobs.listV2",
+      "description": "List recent jobs using the v2 jobs endpoint with optional cursor parameters. Docs: https://cloudlayer.io/docs/jobs/",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startAfterId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, uid?: string, apiKeyUsed?: string, type: string, status: pending | success | error | string, params?: Record<string, JsonValue>, size: number, processTime: number, apiCreditCost: number, workerName?: string, timestamp: number }[]"
+      }
+    },
+    {
+      "path": "cloudlayer.api.storage.create",
+      "shortPath": "storage.create",
+      "description": "Create an S3-compatible storage configuration for direct file delivery. Docs: https://cloudlayer.io/docs/storage/",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bucket",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accessKeyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secretAccessKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.storage.get",
+      "shortPath": "storage.get",
+      "description": "Read one storage configuration by ID with secrets masked. Docs: https://cloudlayer.io/docs/storage/",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bucket",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accessKeyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secretAccessKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.storage.getCurrent",
+      "shortPath": "storage.getCurrent",
+      "description": "Read the current storage configuration with secrets masked. Docs: https://cloudlayer.io/docs/storage/",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, title: string, bucket: string, region: string, accessKeyId: string, secretAccessKey: string, endpoint?: string | null } | { id?: string, title: string, bucket: string, region: string, accessKeyId: string, secretAccessKey: string, endpoint?: string | null }[]"
+      }
+    },
+    {
+      "path": "cloudlayer.api.storage.remove",
+      "shortPath": "storage.remove",
+      "description": "Delete a storage configuration and revert to cloudlayer.io cloud storage. Docs: https://cloudlayer.io/docs/storage/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.template.toImage",
+      "shortPath": "template.toImage",
+      "description": "Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-image/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "{ templateId?: string, template?: string, data?: Record<string, JsonValue>, autoScroll?: boolean, delay?: number, filename?: string, height?: string, width?: string, inline?: boolean, landscape?: boolean, preferCSSPageSize?: boolean, projectId?: string, scale?: number, timeout?: number, timeZone?: string, viewPort?: { width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }, waitForSelector?: { selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2, imageType?: png | jpg | jpeg | webp | svg, quality?: number, transparent?: boolean, trim?: boolean, async?: boolean, storage?: boolean } | { template: custom, data: Record<string, JsonValue> }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, status: pending | success | error | string, type?: string, assetUrl?: string, previewUrl?: string, error?: string, processTime?: number, size?: number, timestamp?: number } | { kind: binary, contentType: string, base64: string }"
+      }
+    },
+    {
+      "path": "cloudlayer.api.template.toImageV1",
+      "shortPath": "template.toImageV1",
+      "description": "Render a gallery or base64 Nunjucks template to an image using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/template-to-image/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "imageType",
+            "optional": true,
+            "type": "png | jpg | jpeg | webp | svg"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "transparent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trim",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.template.toPdf",
+      "shortPath": "template.toPdf",
+      "description": "Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-pdf/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "{ templateId?: string, template?: string, data?: Record<string, JsonValue>, autoScroll?: boolean, delay?: number, filename?: string, height?: string, width?: string, inline?: boolean, landscape?: boolean, preferCSSPageSize?: boolean, projectId?: string, scale?: number, timeout?: number, timeZone?: string, viewPort?: { width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }, waitForSelector?: { selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }, waitUntil?: load | domcontentloaded | networkidle0 | networkidle2, pageRanges?: string, format?: letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6, margin?: { top?: string, bottom?: string, left?: string, right?: string }, printBackground?: boolean, headerTemplate?: { selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }, footerTemplate?: { selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }, generatePreview?: { width?: number, height?: number, type?: png | jpg | webp, quality?: number, maintainAspectRatio?: boolean }, async?: boolean, storage?: boolean } | { template: custom, data: Record<string, JsonValue> }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, status: pending | success | error | string, type?: string, assetUrl?: string, previewUrl?: string, error?: string, processTime?: number, size?: number, timestamp?: number } | { kind: binary, contentType: string, base64: string }"
+      }
+    },
+    {
+      "path": "cloudlayer.api.template.toPdfV1",
+      "shortPath": "template.toPdfV1",
+      "description": "Render a gallery or base64 Nunjucks template to a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/template-to-pdf/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "pageRanges",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6"
+          },
+          {
+            "key": "margin",
+            "optional": true,
+            "type": "{ top?: string, bottom?: string, left?: string, right?: string }"
+          },
+          {
+            "key": "printBackground",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "headerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "footerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "generatePreview",
+            "optional": true,
+            "type": "{ width?: number, height?: number, type?: png | jpg | webp, quality?: number, maintainAspectRatio?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.url.toImage",
+      "shortPath": "url.toImage",
+      "description": "Screenshot a live web page with full viewport, cookie and auth control; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-image/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "{ username: string, password: string }"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "{ name: string, value: string, domain?: string, path?: string, expires?: number, httpOnly?: boolean, secure?: boolean, sameSite?: Strict | Lax | None }[]"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "imageType",
+            "optional": true,
+            "type": "png | jpg | jpeg | webp | svg"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "transparent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trim",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, status: pending | success | error | string, type?: string, assetUrl?: string, previewUrl?: string, error?: string, processTime?: number, size?: number, timestamp?: number } | { kind: binary, contentType: string, base64: string }"
+      }
+    },
+    {
+      "path": "cloudlayer.api.url.toImageQuick",
+      "shortPath": "url.toImageQuick",
+      "description": "GET convenience route that creates a JSON job for one URL image with only url and timeout. Docs: https://cloudlayer.io/docs/url-to-image/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | success | error | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assetUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previewUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.url.toImageQuickV1",
+      "shortPath": "url.toImageQuickV1",
+      "description": "GET v1 shortcut that screenshots one URL and returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-image/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.url.toImageV1",
+      "shortPath": "url.toImageV1",
+      "description": "Screenshot a URL using the v1 POST route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-image/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "{ username: string, password: string }"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "{ name: string, value: string, domain?: string, path?: string, expires?: number, httpOnly?: boolean, secure?: boolean, sameSite?: Strict | Lax | None }[]"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "imageType",
+            "optional": true,
+            "type": "png | jpg | jpeg | webp | svg"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "transparent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trim",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.url.toPdf",
+      "shortPath": "url.toPdf",
+      "description": "Capture a live web page (or a batch of URLs) as a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-pdf/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "{ username: string, password: string }"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "{ name: string, value: string, domain?: string, path?: string, expires?: number, httpOnly?: boolean, secure?: boolean, sameSite?: Strict | Lax | None }[]"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "{ urls: string[] }"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "pageRanges",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6"
+          },
+          {
+            "key": "margin",
+            "optional": true,
+            "type": "{ top?: string, bottom?: string, left?: string, right?: string }"
+          },
+          {
+            "key": "printBackground",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "headerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "footerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "generatePreview",
+            "optional": true,
+            "type": "{ width?: number, height?: number, type?: png | jpg | webp, quality?: number, maintainAspectRatio?: boolean }"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, status: pending | success | error | string, type?: string, assetUrl?: string, previewUrl?: string, error?: string, processTime?: number, size?: number, timestamp?: number } | { kind: binary, contentType: string, base64: string }"
+      }
+    },
+    {
+      "path": "cloudlayer.api.url.toPdfQuick",
+      "shortPath": "url.toPdfQuick",
+      "description": "GET convenience route that captures a single URL as a PDF with only url and timeout. Docs: https://cloudlayer.io/docs/url-to-pdf/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | success | error | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assetUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previewUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.url.toPdfQuickV1",
+      "shortPath": "url.toPdfQuickV1",
+      "description": "GET v1 shortcut that captures one URL as a PDF and returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudlayer.api.url.toPdfV1",
+      "shortPath": "url.toPdfV1",
+      "description": "Capture a URL (or batch) as a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "{ username: string, password: string }"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "{ name: string, value: string, domain?: string, path?: string, expires?: number, httpOnly?: boolean, secure?: boolean, sameSite?: Strict | Lax | None }[]"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "{ urls: string[] }"
+          },
+          {
+            "key": "autoScroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "landscape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preferCSSPageSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewPort",
+            "optional": true,
+            "type": "{ width?: number, height?: number, deviceScaleFactor?: number, isMobile?: boolean, hasTouch?: boolean, isLandscape?: boolean }"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, options?: { visible?: boolean, hidden?: boolean, timeout?: number } }"
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle0 | networkidle2"
+          },
+          {
+            "key": "pageRanges",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "letter | legal | tabloid | ledger | a0 | a1 | a2 | a3 | a4 | a5 | a6"
+          },
+          {
+            "key": "margin",
+            "optional": true,
+            "type": "{ top?: string, bottom?: string, left?: string, right?: string }"
+          },
+          {
+            "key": "printBackground",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "headerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "footerTemplate",
+            "optional": true,
+            "type": "{ selector: string, method?: template | extract, margin?: { top?: string, bottom?: string, left?: string, right?: string }, style?: string, imageStyle?: string }"
+          },
+          {
+            "key": "generatePreview",
+            "optional": true,
+            "type": "{ width?: number, height?: number, type?: png | jpg | webp, quality?: number, maintainAspectRatio?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

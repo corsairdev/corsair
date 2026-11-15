@@ -1357,6 +1357,14 @@
                 ]
               },
               {
+                "group": "CloudConvert",
+                "pages": [
+                  "plugins/cloudconvert/overview",
+                  "plugins/cloudconvert/api",
+                  "plugins/cloudconvert/database"
+                ]
+              },
+              {
                 "group": "Cloudflare",
                 "pages": [
                   "plugins/cloudflare/overview",
@@ -1374,12 +1382,28 @@
                 ]
               },
               {
+                "group": "Cloudflare Browser Run",
+                "pages": [
+                  "plugins/cloudflarebrowserrendering/overview",
+                  "plugins/cloudflarebrowserrendering/api",
+                  "plugins/cloudflarebrowserrendering/database"
+                ]
+              },
+              {
                 "group": "Cloudinary",
                 "pages": [
                   "plugins/cloudinary/overview",
                   "plugins/cloudinary/api",
                   "plugins/cloudinary/database",
                   "plugins/cloudinary/webhooks"
+                ]
+              },
+              {
+                "group": "Cloudlayer",
+                "pages": [
+                  "plugins/cloudlayer/overview",
+                  "plugins/cloudlayer/api",
+                  "plugins/cloudlayer/database"
                 ]
               },
               {
@@ -1473,6 +1497,14 @@
                 ]
               },
               {
+                "group": "CompanyEnrich",
+                "pages": [
+                  "plugins/companyenrich/overview",
+                  "plugins/companyenrich/api",
+                  "plugins/companyenrich/database"
+                ]
+              },
+              {
                 "group": "Composio",
                 "pages": [
                   "plugins/composio/overview",
@@ -1526,6 +1558,14 @@
                   "plugins/contextsevenmcp/overview",
                   "plugins/contextsevenmcp/api",
                   "plugins/contextsevenmcp/database"
+                ]
+              },
+              {
+                "group": "Conversion Tools",
+                "pages": [
+                  "plugins/conversiontools/overview",
+                  "plugins/conversiontools/api",
+                  "plugins/conversiontools/database"
                 ]
               },
               {
@@ -1611,6 +1651,14 @@
                 ]
               },
               {
+                "group": "CustomJS",
+                "pages": [
+                  "plugins/customjs/overview",
+                  "plugins/customjs/api",
+                  "plugins/customjs/database"
+                ]
+              },
+              {
                 "group": "Cutt.ly",
                 "pages": [
                   "plugins/cuttly/overview",
@@ -1691,6 +1739,14 @@
                 ]
               },
               {
+                "group": "DeployHQ",
+                "pages": [
+                  "plugins/deployhq/overview",
+                  "plugins/deployhq/api",
+                  "plugins/deployhq/database"
+                ]
+              },
+              {
                 "group": "DeskTime",
                 "pages": [
                   "plugins/desktime/overview",
@@ -1707,11 +1763,27 @@
                 ]
               },
               {
+                "group": "Dialpad",
+                "pages": [
+                  "plugins/dialpad/overview",
+                  "plugins/dialpad/api",
+                  "plugins/dialpad/database"
+                ]
+              },
+              {
                 "group": "Diffbot",
                 "pages": [
                   "plugins/diffbot/overview",
                   "plugins/diffbot/api",
                   "plugins/diffbot/database"
+                ]
+              },
+              {
+                "group": "DigiCert",
+                "pages": [
+                  "plugins/digicert/overview",
+                  "plugins/digicert/api",
+                  "plugins/digicert/database"
                 ]
               },
               {
@@ -1762,6 +1834,14 @@
                   "plugins/docsumo/overview",
                   "plugins/docsumo/api",
                   "plugins/docsumo/database"
+                ]
+              },
+              {
+                "group": "Documenso",
+                "pages": [
+                  "plugins/documenso/overview",
+                  "plugins/documenso/api",
+                  "plugins/documenso/database"
                 ]
               },
               {
@@ -1856,12 +1936,28 @@
                 ]
               },
               {
+                "group": "E2B",
+                "pages": [
+                  "plugins/e2b/overview",
+                  "plugins/e2b/api",
+                  "plugins/e2b/database"
+                ]
+              },
+              {
                 "group": "ElevenLabs",
                 "pages": [
                   "plugins/elevenlabs/overview",
                   "plugins/elevenlabs/api",
                   "plugins/elevenlabs/database",
                   "plugins/elevenlabs/webhooks"
+                ]
+              },
+              {
+                "group": "Elorus",
+                "pages": [
+                  "plugins/elorus/overview",
+                  "plugins/elorus/api",
+                  "plugins/elorus/database"
                 ]
               },
               {
@@ -1878,6 +1974,22 @@
                   "plugins/emelia/overview",
                   "plugins/emelia/api",
                   "plugins/emelia/database"
+                ]
+              },
+              {
+                "group": "Encodian",
+                "pages": [
+                  "plugins/encodian/overview",
+                  "plugins/encodian/api",
+                  "plugins/encodian/database"
+                ]
+              },
+              {
+                "group": "Endorsal",
+                "pages": [
+                  "plugins/endorsal/overview",
+                  "plugins/endorsal/api",
+                  "plugins/endorsal/database"
                 ]
               },
               {
@@ -1927,6 +2039,14 @@
                   "plugins/eventbrite/api",
                   "plugins/eventbrite/database",
                   "plugins/eventbrite/webhooks"
+                ]
+              },
+              {
+                "group": "Eventee",
+                "pages": [
+                  "plugins/eventee/overview",
+                  "plugins/eventee/api",
+                  "plugins/eventee/database"
                 ]
               },
               {
@@ -2006,6 +2126,30 @@
                 ]
               },
               {
+                "group": "Fathom",
+                "pages": [
+                  "plugins/fathom/overview",
+                  "plugins/fathom/api",
+                  "plugins/fathom/database"
+                ]
+              },
+              {
+                "group": "Felt",
+                "pages": [
+                  "plugins/felt/overview",
+                  "plugins/felt/api",
+                  "plugins/felt/database"
+                ]
+              },
+              {
+                "group": "Fibery",
+                "pages": [
+                  "plugins/fibery/overview",
+                  "plugins/fibery/api",
+                  "plugins/fibery/database"
+                ]
+              },
+              {
                 "group": "Fidel",
                 "pages": [
                   "plugins/fidel/overview",
@@ -2053,6 +2197,22 @@
                   "plugins/finerworks/overview",
                   "plugins/finerworks/api",
                   "plugins/finerworks/database"
+                ]
+              },
+              {
+                "group": "Finmei",
+                "pages": [
+                  "plugins/finmei/overview",
+                  "plugins/finmei/api",
+                  "plugins/finmei/database"
+                ]
+              },
+              {
+                "group": "Fireberry",
+                "pages": [
+                  "plugins/fireberry/overview",
+                  "plugins/fireberry/api",
+                  "plugins/fireberry/database"
                 ]
               },
               {
@@ -2108,6 +2268,14 @@
                 ]
               },
               {
+                "group": "Folk",
+                "pages": [
+                  "plugins/folk/overview",
+                  "plugins/folk/api",
+                  "plugins/folk/database"
+                ]
+              },
+              {
                 "group": "Follow Up Boss",
                 "pages": [
                   "plugins/followupboss/overview",
@@ -2116,11 +2284,27 @@
                 ]
               },
               {
+                "group": "Fomo",
+                "pages": [
+                  "plugins/fomo/overview",
+                  "plugins/fomo/api",
+                  "plugins/fomo/database"
+                ]
+              },
+              {
                 "group": "Formbricks",
                 "pages": [
                   "plugins/formbricks/overview",
                   "plugins/formbricks/api",
                   "plugins/formbricks/database"
+                ]
+              },
+              {
+                "group": "Formdesk",
+                "pages": [
+                  "plugins/formdesk/overview",
+                  "plugins/formdesk/api",
+                  "plugins/formdesk/database"
                 ]
               },
               {
@@ -2140,11 +2324,67 @@
                 ]
               },
               {
+                "group": "GageList",
+                "pages": [
+                  "plugins/gagelist/overview",
+                  "plugins/gagelist/api",
+                  "plugins/gagelist/database"
+                ]
+              },
+              {
+                "group": "Gamma",
+                "pages": [
+                  "plugins/gamma/overview",
+                  "plugins/gamma/api",
+                  "plugins/gamma/database"
+                ]
+              },
+              {
+                "group": "GatherUp",
+                "pages": [
+                  "plugins/gatherup/overview",
+                  "plugins/gatherup/api",
+                  "plugins/gatherup/database"
+                ]
+              },
+              {
                 "group": "Gemini",
                 "pages": [
                   "plugins/gemini/overview",
                   "plugins/gemini/api",
                   "plugins/gemini/database"
+                ]
+              },
+              {
+                "group": "Gender API",
+                "pages": [
+                  "plugins/genderapi/overview",
+                  "plugins/genderapi/api",
+                  "plugins/genderapi/database"
+                ]
+              },
+              {
+                "group": "Genderize",
+                "pages": [
+                  "plugins/genderize/overview",
+                  "plugins/genderize/api",
+                  "plugins/genderize/database"
+                ]
+              },
+              {
+                "group": "GenderAPI.io",
+                "pages": [
+                  "plugins/genderapiio/overview",
+                  "plugins/genderapiio/api",
+                  "plugins/genderapiio/database"
+                ]
+              },
+              {
+                "group": "Geoapify",
+                "pages": [
+                  "plugins/geoapify/overview",
+                  "plugins/geoapify/api",
+                  "plugins/geoapify/database"
                 ]
               },
               {
@@ -2564,11 +2804,35 @@
                 ]
               },
               {
+                "group": "Kadoa",
+                "pages": [
+                  "plugins/kadoa/overview",
+                  "plugins/kadoa/api",
+                  "plugins/kadoa/database"
+                ]
+              },
+              {
                 "group": "Kaggle",
                 "pages": [
                   "plugins/kaggle/overview",
                   "plugins/kaggle/api",
                   "plugins/kaggle/database"
+                ]
+              },
+              {
+                "group": "Kanbanize",
+                "pages": [
+                  "plugins/kanbanize/overview",
+                  "plugins/kanbanize/api",
+                  "plugins/kanbanize/database"
+                ]
+              },
+              {
+                "group": "Keen",
+                "pages": [
+                  "plugins/keen/overview",
+                  "plugins/keen/api",
+                  "plugins/keen/database"
                 ]
               },
               {
@@ -2580,11 +2844,35 @@
                 ]
               },
               {
+                "group": "Keyword",
+                "pages": [
+                  "plugins/keyword/overview",
+                  "plugins/keyword/api",
+                  "plugins/keyword/database"
+                ]
+              },
+              {
                 "group": "Kibana",
                 "pages": [
                   "plugins/kibana/overview",
                   "plugins/kibana/api",
                   "plugins/kibana/database"
+                ]
+              },
+              {
+                "group": "Kickbox",
+                "pages": [
+                  "plugins/kickbox/overview",
+                  "plugins/kickbox/api",
+                  "plugins/kickbox/database"
+                ]
+              },
+              {
+                "group": "Kit",
+                "pages": [
+                  "plugins/kit/overview",
+                  "plugins/kit/api",
+                  "plugins/kit/database"
                 ]
               },
               {
@@ -2617,6 +2905,31 @@
                   "plugins/knack/overview",
                   "plugins/knack/api",
                   "plugins/knack/database"
+                ]
+              },
+              {
+                "group": "Ko-fi",
+                "pages": [
+                  "plugins/kofi/overview",
+                  "plugins/kofi/api",
+                  "plugins/kofi/database",
+                  "plugins/kofi/webhooks"
+                ]
+              },
+              {
+                "group": "Kontent.ai",
+                "pages": [
+                  "plugins/kontentai/overview",
+                  "plugins/kontentai/api",
+                  "plugins/kontentai/database"
+                ]
+              },
+              {
+                "group": "Kraken.io",
+                "pages": [
+                  "plugins/krakenio/overview",
+                  "plugins/krakenio/api",
+                  "plugins/krakenio/database"
                 ]
               },
               {
