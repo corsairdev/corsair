@@ -1,61 +1,43 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
-export class FreeAgentAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'FreeAgentAPIError';
-	}
-}
-
-// TODO: Update with your API base URL
-const FREEAGENT_API_BASE = 'https://api.example.com';
+export const FREEAGENT_API_BASE = 'https://api.freeagent.com';
+export const FREEAGENT_SANDBOX_API_BASE = 'https://api.sandbox.freeagent.com';
 
 export async function makeFreeAgentRequest<T>(
 	endpoint: string,
-	apiKey: string,
+	accessToken: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+		// A shared transport accepts different schema-validated resource envelopes as JSON records.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		sandbox?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
-
+	if (accessToken.length === 0) {
+		throw new AuthMissingError('freeagent', 'oauth_2');
+	}
+	const { method = 'GET', body, query, sandbox = false } = options;
 	const config: OpenAPIConfig = {
-		BASE: FREEAGENT_API_BASE,
-		VERSION: '1.0.0',
+		BASE: sandbox ? FREEAGENT_SANDBOX_API_BASE : FREEAGENT_API_BASE,
+		VERSION: '2',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
+			Authorization: `Bearer ${accessToken}`,
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
+			'User-Agent': 'Corsair FreeAgent integration',
 		},
 	};
-
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		body: method === 'POST' || method === 'PUT' ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
-
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new FreeAgentAPIError(error.message);
-		}
-		throw new FreeAgentAPIError('Unknown error');
-	}
+	return request<T>(config, requestOptions);
 }

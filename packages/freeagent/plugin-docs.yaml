@@ -1,4 +1,32 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "FreeAgent"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: FreeAgent
+description: Manage FreeAgent company contacts, projects, and sales invoices through its OAuth 2.0 REST API.
+domain: freeagent.com
+recommendedAuth: oauth_2
+examples:
+  read:
+    path: contacts.list
+    title: List contacts
+  write:
+    path: contacts.create
+    title: Create a contact
+    args:
+      contact:
+        organisation_name: Example Ltd
+apiNotes:
+  invoices.create: >-
+    FreeAgent creates new invoices in Draft status. Use an explicit status-transition
+    operation to mark an invoice sent; this plugin currently exposes markSent.
+  invoices.sendEmail: >-
+    Sending an invoice email is a separate action from marking the invoice sent.
+    This implementation accepts the documented template flag or message fields;
+    attachment payloads (maximum 5 MB each) are not exposed.
+  contacts.list: >-
+    FreeAgent paginates collections with a default of 25 records and a maximum
+    per_page of 100. Link and X-Total-Count response headers are not returned by
+    the JSON endpoint result.
+overviewNote: >-
+  Connect with a FreeAgent OAuth 2.0 access token. This plugin exposes selected
+  company-account operations only. The API docs also describe many other company
+  resources that are not currently implemented; see the package README for the
+  coverage boundary and exclusions. The separate Accountancy Practice API
+  requires practice-enabled OAuth and X-Subdomain client scoping and is excluded.
