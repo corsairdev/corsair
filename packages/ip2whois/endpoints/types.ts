@@ -1,0 +1,67 @@
+import { z } from 'zod';
+
+export const DomainLookupInputSchema = z.object({
+	domain: z.string().min(1).describe('Domain name, without a scheme or www.'),
+});
+
+export const DomainLookupResponseSchema = z
+	.object({
+		domain: z.string(),
+		domain_id: z.string().optional(),
+		status: z.string().optional(),
+		create_date: z.string().optional(),
+		update_date: z.string().optional(),
+		expire_date: z.string().optional(),
+		domain_age: z.number().optional(),
+		whois_server: z.string().optional(),
+		nameservers: z.array(z.string()).optional(),
+	})
+	.passthrough();
+
+export const HostedLookupInputSchema = z.object({
+	ip: z.string().min(1).describe('IPv4 or IPv6 address.'),
+	page: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Page number, starting at 1.'),
+});
+
+export const HostedLookupResponseSchema = z
+	.object({
+		ip: z.string(),
+		total_domains: z.number(),
+		page: z.number(),
+		per_page: z.number(),
+		total_pages: z.number(),
+		domains: z.array(z.object({ domain: z.string().optional() }).passthrough()),
+	})
+	.passthrough();
+
+export type DomainLookupInput = z.infer<typeof DomainLookupInputSchema>;
+export type DomainLookupResponse = z.infer<typeof DomainLookupResponseSchema>;
+export type HostedLookupInput = z.infer<typeof HostedLookupInputSchema>;
+export type HostedLookupResponse = z.infer<typeof HostedLookupResponseSchema>;
+
+export const Ip2whoisEndpointInputSchemas = {
+	domainLookup: DomainLookupInputSchema,
+	hostedLookup: HostedLookupInputSchema,
+} as const;
+
+export const Ip2whoisEndpointOutputSchemas = {
+	domainLookup: DomainLookupResponseSchema,
+	hostedLookup: HostedLookupResponseSchema,
+} as const;
+
+export type Ip2whoisEndpointInputs = {
+	[K in keyof typeof Ip2whoisEndpointInputSchemas]: z.infer<
+		(typeof Ip2whoisEndpointInputSchemas)[K]
+	>;
+};
+
+export type Ip2whoisEndpointOutputs = {
+	[K in keyof typeof Ip2whoisEndpointOutputSchemas]: z.infer<
+		(typeof Ip2whoisEndpointOutputSchemas)[K]
+	>;
+};

@@ -1,0 +1,23 @@
+displayName: IP2WHOIS
+description: Look up WHOIS registration for a domain, and list the domains hosted on an IP address.
+domain: ip2whois.com
+recommendedAuth: api_key
+overviewNote: |
+  Each lookup spends credits. The client always sends format=json. An empty key comes back as HTTP 401 with error code 10001.
+examples:
+  write:
+    path: domain.lookup
+    title: Look up WHOIS for a domain
+    args:
+      domain: example.com
+apiNotes:
+  domain.lookup: |
+    Pass the registrable domain, without a scheme or www. The call spends credits.
+  hosted.lookup: |
+    Pass an IPv4 or IPv6 address. Page starts at 1 when you set it. The call spends credits.
+apiExamples:
+  domain.lookup:
+    domain: example.com
+  hosted.lookup:
+    ip: "8.8.8.8"
+    page: 1
