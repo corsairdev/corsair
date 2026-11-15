@@ -3,7 +3,6 @@ import type {
 	BindEndpoints,
 	CorsairErrorHandler,
 	CorsairPlugin,
-	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -11,6 +10,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import type { SymplaContext } from './context';
 import { Events } from './endpoints';
 import {
 	ListEventsInputSchema,
@@ -19,6 +19,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { SymplaSchema } from './schema';
 
+export type { SymplaContext };
+
 export type SymplaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
@@ -26,11 +28,6 @@ export type SymplaPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof symplaEndpointsNested>;
 };
-
-export type SymplaContext = CorsairPluginContext<
-	typeof SymplaSchema,
-	SymplaPluginOptions
->;
 
 export type SymplaKeyBuilderContext = KeyBuilderContext<SymplaPluginOptions>;
 

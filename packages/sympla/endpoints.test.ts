@@ -27,8 +27,11 @@ const SAMPLE = {
 	pagination: { page: 1, page_size: 20, total: 1 },
 };
 
-function context(key: string): SymplaContext {
-	return { key } as SymplaContext;
+function context(key: string, upsert?: jest.Mock): SymplaContext {
+	return {
+		key,
+		db: upsert ? { events: { upsertByEntityId: upsert } } : undefined,
+	} as unknown as SymplaContext;
 }
 
 describe('events.list', () => {
@@ -82,5 +85,43 @@ describe('events.list', () => {
 		);
 		mockRequest.mockRejectedValue(error);
 		await expect(listEvents(context('test-key'), {})).rejects.toBe(error);
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects a bad page before calling the API', async () => {
+		await expect(
+			listEvents(context('test-key'), { page: 0 }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that has no data array', async () => {
+		mockRequest.mockResolvedValue({ pagination: {} });
+		await expect(listEvents(context('test-key'), {})).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('stores each event that has an id', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({
+			data: [{ id: 1, name: 'Show' }, { name: 'Missing id' }],
+			pagination: { page: 1 },
+		});
+		const result = await listEvents(context('test-key', upsert), {});
+		expect(result.data).toHaveLength(2);
+		expect(upsert).toHaveBeenCalledTimes(1);
+		expect(upsert).toHaveBeenCalledWith('1', { id: '1', name: 'Show' });
+	});
+
+	it('returns the list when the database write fails', async () => {
+		const upsert = jest.fn().mockRejectedValue(new Error('disk full'));
+		mockRequest.mockResolvedValue(SAMPLE);
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		await expect(listEvents(context('test-key', upsert), {})).resolves.toEqual(
+			SAMPLE,
+		);
+		warn.mockRestore();
 	});
 });

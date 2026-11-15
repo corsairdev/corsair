@@ -1,11 +1,36 @@
 ---
 title: "Sympla database"
 sidebarTitle: "Database"
-description: "The Sympla plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally."
+description: "Sympla local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
-No local `.search()` operations are available for Sympla. To read its data, call the [API operations](/plugins/sympla/api), which return what Sympla has at that moment.
+The Sympla plugin syncs data locally. Use `corsair.sympla.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
+
+## Events
+
+Path: `sympla.db.events.search`
+
+```ts
+const rows = await corsair.sympla.db.events.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

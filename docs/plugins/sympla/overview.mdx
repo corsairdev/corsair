@@ -4,13 +4,14 @@ sidebarTitle: "Overview"
 description: "List events for a Sympla organizer. The key is sent in the s_token header."
 ---
 
-Use **Sympla** through Corsair: one client, typed API calls.
+Use **Sympla** through Corsair: one client, typed API calls, local DB sync.
 
 An empty token comes back as HTTP 401 with code 100. The client does not send a bearer token.
 
 **What you get:**
 
 - 1 typed API operations
+- 1 synced entity (`events`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -111,11 +112,20 @@ _No write-style endpoint inferred; pick any operation from the [API](/plugins/sy
 
 See the full list on the [API](/plugins/sympla/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.sympla.db.<entity>.search()` and `.list()`: `events`.
+
+See [Database](/plugins/sympla/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/sympla/api">
     Every `sympla.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/sympla/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.
