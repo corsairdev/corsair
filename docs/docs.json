@@ -1667,6 +1667,14 @@
                 ]
               },
               {
+                "group": "D2L Brightspace",
+                "pages": [
+                  "plugins/d2lbrightspace/overview",
+                  "plugins/d2lbrightspace/api",
+                  "plugins/d2lbrightspace/database"
+                ]
+              },
+              {
                 "group": "DaData",
                 "pages": [
                   "plugins/dadataru/overview",
