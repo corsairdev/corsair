@@ -4719,6 +4719,14 @@
                 ]
               },
               {
+                "group": "Truvera",
+                "pages": [
+                  "plugins/truvera/overview",
+                  "plugins/truvera/api",
+                  "plugins/truvera/database"
+                ]
+              },
+              {
                 "group": "Trustpilot",
                 "pages": [
                   "plugins/trustpilot/overview",

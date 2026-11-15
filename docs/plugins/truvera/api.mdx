@@ -1,0 +1,1252 @@
+---
+title: "Truvera API reference"
+sidebarTitle: "API"
+description: "API reference for the Truvera plugin in Corsair: every `truvera.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Credentials
+
+### delete
+
+`credentials.delete`
+
+Delete a credential metadata record; this does not revoke the credential
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.truvera.api.credentials.delete({ credential_id: 'https://creds.truvera.io/1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential_id` | `string` | Yes | — |
+| `password` | `string` | No | Deprecated: only for retrieving a persisted credential body |
+
+Deletes the metadata record only. The credential itself stays valid, so use `credentials.revoke` first.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`credentials.get`
+
+Read one credential metadata, and its contents when it was persisted
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.credentials.get({ credential_id: 'https://creds.truvera.io/1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential_id` | `string` | Yes | The credential URI, as the issue or list route returned it |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `issuerKey` | `string \| null` | No | — |
+| `issuerName` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `revocationRegistry` | `string \| null` | No | — |
+| `revoked` | `boolean \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `expiryDate` | `string \| null` | No | — |
+| `expirationDate` | `string \| null` | No | — |
+| `issuanceDate` | `string \| null` | No | — |
+| `byteSize` | `number \| null` | No | — |
+| `persist` | `boolean \| null` | No | — |
+| `index` | `string \| null` | No | — |
+| `subjectRef` | `string \| null` | No | — |
+| `subjectId` | `string \| null` | No | — |
+| `whitelabel` | `number \| null` | No | — |
+| `algorithm` | `string \| null` | No | — |
+| `credential` | `object \| null` | No | — |
+| `warning` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="credential full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### issue
+
+`credentials.issue`
+
+Issue and sign a verifiable credential, optionally distributing it to a holder, persisting it, or making it revocable
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.credentials.issue({ credential: { issuer: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', type: ['BasicCredential'], subject: { id: 'did:key:z6Mkq...', name: 'A. Holder' } }, revocable: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential` | `object` | Yes | The credential to sign |
+| `persist` | `boolean` | No | Store an encrypted copy; requires `password` |
+| `password` | `string` | No | Encrypts a persisted credential; never stored by the plugin |
+| `recipient_did` | `string` | No | The holder's DID for DID distribution |
+| `recipient_email` | `string` | No | The holder's email for email distribution |
+| `algorithm` | `string` | No | Signing algorithm; dockbbs enables zero-knowledge proofs |
+| `distribute` | `boolean` | No | — |
+| `format` | `jsonld \| jwt \| sdjwt` | No | Default jsonld |
+| `revocable` | `boolean` | No | Provision a revocation registry automatically |
+
+The issuer must be a DID the account controls. `persist` needs `password`, and `distribute` needs a recipient; both are checked before the request.
+
+<AccordionGroup>
+<Accordion title="credential full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string,
+  schema?: string,
+  context?: string | (string | {
+  })[],
+  type?: string[],
+  subject?: Record<string, string | number | boolean | null | {
+  }> | Record<string, string | number | boolean | null | {
+  }>[],
+  issuer: string,
+  issuanceDate?: string,
+  expirationDate?: string,
+  status?: string | {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| object[] \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `type` | `string[] \| null` | No | — |
+| `credentialSubject` | `object \| object[] \| null` | No | — |
+| `issuer` | `string \| object \| null` | No | — |
+| `issuanceDate` | `string \| null` | No | — |
+| `expirationDate` | `string \| null` | No | — |
+| `credentialStatus` | `string \| object \| null` | No | — |
+| `proof` | `object \| object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="@context full type">
+
+```ts
+string | (string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="credentialSubject full type">
+
+```ts
+{
+} | {
+}[] | null
+```
+</Accordion>
+
+<Accordion title="issuer full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+
+<Accordion title="credentialStatus full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+
+<Accordion title="proof full type">
+
+```ts
+{
+} | {
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`credentials.list`
+
+List the credential metadata on the account, with offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.credentials.list({ limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Default 0 |
+| `limit` | `number` | No | Default 64, max 100 |
+| `filter` | `string` | No | Filter by id, subject, issuer or date |
+| `subject_id` | `string` | No | Filter by holder DID |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  issuerKey?: string | null,
+  issuerName?: string | null,
+  type?: string | null,
+  revocationRegistry?: string | null,
+  revoked?: boolean | null,
+  createdAt?: string | null,
+  expiryDate?: string | null,
+  expirationDate?: string | null,
+  issuanceDate?: string | null,
+  byteSize?: number | null,
+  persist?: boolean | null,
+  index?: string | null,
+  subjectRef?: string | null,
+  subjectId?: string | null,
+  whitelabel?: number | null,
+  algorithm?: string | null,
+  credential?: {
+  } | null,
+  warning?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### revoke
+
+`credentials.revoke`
+
+Revoke a credential, which makes every verification of it fail
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.credentials.revoke({ credential_id: 'https://creds.truvera.io/1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential_id` | `string` | Yes | The credential URI, as the issue or list route returned it |
+
+Makes every verification of the credential fail. This can be undone with `credentials.unrevoke`.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### unrevoke
+
+`credentials.unrevoke`
+
+Unrevoke a credential, which restores it as valid
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.credentials.unrevoke({ credential_id: 'https://creds.truvera.io/1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential_id` | `string` | Yes | The credential URI, as the issue or list route returned it |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Dids
+
+### create
+
+`dids.create`
+
+Create a DID with its keys, optionally with a DIDComm service endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.dids.create({ type: 'cheqd', key_type: 'ed25519' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | DID method, such as cheqd, key, or dock |
+| `key_type` | `string` | No | Signing key type, such as ed25519 or secp256k1 |
+| `controller` | `string` | No | Controller DID, when it is not the DID itself |
+| `didcomm_service_url` | `string` | No | DIDComm endpoint to add to the document |
+| `include_didcomm_service` | `boolean` | No | — |
+
+A DID with a DIDComm service endpoint needs `didcomm_service_url`. Deleting a DID leaves credentials signed with it unverifiable against that DID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string \| null` | No | — |
+| `controller` | `string \| null` | No | — |
+| `didDocument` | `object \| null` | No | — |
+| `keyId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="didDocument full type">
+
+```ts
+{
+  id?: string | null,
+  controller?: string | string[] | null,
+  alsoKnownAs?: (string | {
+  })[] | null,
+  verificationMethod?: (string | {
+  })[] | null,
+  authentication?: (string | {
+  })[] | null,
+  assertionMethod?: (string | {
+  })[] | null,
+  keyAgreement?: (string | {
+  })[] | null,
+  capabilityInvocation?: (string | {
+  })[] | null,
+  capabilityDelegation?: (string | {
+  })[] | null,
+  service?: (string | {
+  })[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`dids.delete`
+
+Delete a DID and its keys; credentials signed with it can no longer be verified against it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.truvera.api.dids.delete({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string` | Yes | A fully qualified DID, such as did:cheqd:mainnet:abc |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`dids.get`
+
+Resolve one DID and read its document
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.dids.get({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string` | Yes | A fully qualified DID, such as did:cheqd:mainnet:abc |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `didDocument` | `object \| null` | No | — |
+| `didDocumentMetadata` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="didDocument full type">
+
+```ts
+{
+  id?: string | null,
+  controller?: string | string[] | null,
+  alsoKnownAs?: (string | {
+  })[] | null,
+  verificationMethod?: (string | {
+  })[] | null,
+  authentication?: (string | {
+  })[] | null,
+  assertionMethod?: (string | {
+  })[] | null,
+  keyAgreement?: (string | {
+  })[] | null,
+  capabilityInvocation?: (string | {
+  })[] | null,
+  capabilityDelegation?: (string | {
+  })[] | null,
+  service?: (string | {
+  })[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="didDocumentMetadata full type">
+
+```ts
+{
+  did?: string | null,
+  controller?: string | null,
+  created?: string | null,
+  updated?: string | null,
+  deactivated?: boolean | null,
+  versionId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMetadata
+
+`dids.getMetadata`
+
+Read one DID resolution metadata: controller, versions and deactivation
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.dids.getMetadata({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string` | Yes | A fully qualified DID, such as did:cheqd:mainnet:abc |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string \| null` | No | — |
+| `controller` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `updated` | `string \| null` | No | — |
+| `deactivated` | `boolean \| null` | No | — |
+| `versionId` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`dids.list`
+
+List the DIDs the account controls
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.dids.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(string | {
+  id?: string | null,
+  controller?: string | string[] | null,
+  alsoKnownAs?: (string | {
+  })[] | null,
+  verificationMethod?: (string | {
+  })[] | null,
+  authentication?: (string | {
+  })[] | null,
+  assertionMethod?: (string | {
+  })[] | null,
+  keyAgreement?: (string | {
+  })[] | null,
+  capabilityInvocation?: (string | {
+  })[] | null,
+  capabilityDelegation?: (string | {
+  })[] | null,
+  service?: (string | {
+  })[] | null
+})[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Jobs
+
+### get
+
+`jobs.get`
+
+Read an async job that issuance or a registry write returned instead of a finished resource
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.jobs.get({ job_id: 'job-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | queued, running, succeeded, or failed |
+| `result` | `object \| null` | No | — |
+| `error` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profiles
+
+### create
+
+`profiles.create`
+
+Create a profile for a DID the account controls
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.profiles.create({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string` | Yes | A fully qualified DID, such as did:cheqd:mainnet:abc |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`profiles.delete`
+
+Delete a profile; the DID itself remains
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.truvera.api.profiles.delete({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string` | Yes | A fully qualified DID, such as did:cheqd:mainnet:abc |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`profiles.get`
+
+Read one profile by its DID
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.profiles.get({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string` | Yes | A fully qualified DID, such as did:cheqd:mainnet:abc |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`profiles.list`
+
+List the issuer profiles on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.profiles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  did?: string | null,
+  name?: string | null,
+  description?: string | null,
+  logo?: string | null,
+  website?: string | null,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`profiles.update`
+
+Change a profile's name, description, logo or contact details
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.profiles.update({ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Truvera Issuer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string` | Yes | A fully qualified DID, such as did:cheqd:mainnet:abc |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `website` | `string` | No | A URL for the profile |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+
+
+
+---
+
+## Registries
+
+### create
+
+`registries.create`
+
+Create a revocation registry
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.registries.create({ type: 'dock', add_only: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | Registry type, such as dock or cheqd |
+| `add_only` | `boolean` | No | Once true, entries can never be removed |
+| `policy` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+(string | {
+})[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `addOnly` | `boolean \| null` | No | — |
+| `policy` | `object[] \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`registries.delete`
+
+Delete a revocation registry, which removes every credential status it held
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.truvera.api.registries.delete({ registry_id: 'e6d3...59d1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registry_id` | `string` | Yes | — |
+
+Removes the status of every credential in the registry, so revocations recorded there are lost.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`registries.get`
+
+Read one revocation registry
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.registries.get({ registry_id: 'e6d3...59d1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registry_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `addOnly` | `boolean \| null` | No | — |
+| `policy` | `object[] \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`registries.list`
+
+List the revocation registries on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.registries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  addOnly?: boolean | null,
+  policy?: (string | {
+  })[] | null,
+  type?: string | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### revocationStatus
+
+`registries.revocationStatus`
+
+Read whether one credential in a registry is revoked
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.registries.revocationStatus({ registry_id: 'e6d3...59d1', revocation_id: '1004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registry_id` | `string` | Yes | — |
+| `revocation_id` | `string` | Yes | The credential index within the registry |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | Revoked, unrevoked, or suspended |
+| `type` | `string \| null` | No | — |
+| `revoked` | `boolean \| null` | No | — |
+
+
+
+---
+
+### revoke
+
+`registries.revoke`
+
+Revoke or unrevoke several credentials in one registry in one call
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.registries.revoke({ registry_id: 'e6d3...59d1', credential_ids: ['1004'], action: 'revoke' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registry_id` | `string` | Yes | — |
+| `credential_ids` | `string[]` | Yes | Credentials to revoke or unrevoke in this registry |
+| `action` | `revoke \| unrevoke` | Yes | Which direction to apply |
+
+Applies one action to several credentials in one call. `credential_ids` are the registry indices.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Schemas
+
+### create
+
+`schemas.create`
+
+Create a JSON credential schema that a credential type and subject follow
+
+**Risk:** `write`
+
+```ts
+await corsair.truvera.api.schemas.create({ name: 'Basic Credential', type: 'object', properties: { name: { type: 'string' } }, required: ['name'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | JSON Schema type, usually object |
+| `properties` | `Record<string, JsonValue>` | Yes | JSON Schema properties that a credential may set |
+| `required` | `string[]` | No | — |
+| `additional_properties` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `$schema` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `properties` | `Record<string, JsonValue> \| null` | No | — |
+| `required` | `string[] \| null` | No | — |
+| `additionalProperties` | `boolean \| null` | No | — |
+| `$metadata` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="$metadata full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`schemas.delete`
+
+Delete a schema; credentials already issued against it stay valid
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.truvera.api.schemas.delete({ schema_id: 'https://acme.com/schemas/basic-credential.json' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schema_id` | `string` | Yes | The schema URI or id |
+
+Credentials already issued against the schema stay valid; only the schema entry is removed.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`schemas.get`
+
+Read one schema by its id
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.schemas.get({ schema_id: 'https://acme.com/schemas/basic-credential.json' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schema_id` | `string` | Yes | The schema URI or id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `$schema` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `properties` | `Record<string, JsonValue> \| null` | No | — |
+| `required` | `string[] \| null` | No | — |
+| `additionalProperties` | `boolean \| null` | No | — |
+| `$metadata` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="$metadata full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`schemas.list`
+
+List the credential schemas on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.schemas.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  $schema?: string | null,
+  name?: string | null,
+  description?: string | null,
+  type?: string | null,
+  properties?: Record<string, JsonValue> | null,
+  required?: string[] | null,
+  additionalProperties?: boolean | null,
+  $metadata?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Verify
+
+### verify
+
+`verify.verify`
+
+Verify a credential or presentation and read the reasons when it fails
+
+**Risk:** `read`
+
+```ts
+await corsair.truvera.api.verify.verify({ credential: { '@context': ['https://www.w3.org/2018/credentials/v1'], type: ['VerifiableCredential'], issuer: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', issuanceDate: '2026-05-02T00:00:00Z', credentialSubject: { id: 'did:key:z6Mkq...' }, proof: {} } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential` | `Record<string, JsonValue>` | Yes | A verifiable credential or presentation, as JSON |
+
+A failed verification answers 200 with `verified: false` and the reasons in `errors`; it is not an error.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verified` | `boolean \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
