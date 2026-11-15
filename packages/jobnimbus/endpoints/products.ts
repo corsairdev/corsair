@@ -10,8 +10,7 @@ export const productsCreate: JobNimbusEndpoints['productsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.productsCreate.parse(input);
+	const parsedInput = JobNimbusEndpointInputSchemas.productsCreate.parse(input);
 
 	const response = await makeJobNimbusRequest<unknown>(
 		'/v2/products',
@@ -39,8 +38,7 @@ export const productsUpdate: JobNimbusEndpoints['productsUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.productsUpdate.parse(input);
+	const parsedInput = JobNimbusEndpointInputSchemas.productsUpdate.parse(input);
 	const { jnid, ...body } = parsedInput;
 
 	const response = await makeJobNimbusRequest<unknown>(
@@ -69,8 +67,7 @@ export const productsDelete: JobNimbusEndpoints['productsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.productsDelete.parse(input);
+	const parsedInput = JobNimbusEndpointInputSchemas.productsDelete.parse(input);
 
 	const response = await makeJobNimbusRequest<unknown>(
 		`/v2/products/${encodeURIComponent(parsedInput.jnid)}`,

@@ -12,20 +12,16 @@ export const budgetsList: JobNimbusEndpoints['budgetsList'] = async (
 ) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.budgetsList.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/budgets',
-		ctx.key,
-		{
-			method: 'GET',
-			query: compactQuery({
-				size: parsedInput.size,
-				from: parsedInput.from,
-				sort: parsedInput.sort,
-				direction: parsedInput.direction,
-				actor: parsedInput.actor,
-			}),
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/budgets', ctx.key, {
+		method: 'GET',
+		query: compactQuery({
+			size: parsedInput.size,
+			from: parsedInput.from,
+			sort: parsedInput.sort,
+			direction: parsedInput.direction,
+			actor: parsedInput.actor,
+		}),
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.budgetsList.parse(response);

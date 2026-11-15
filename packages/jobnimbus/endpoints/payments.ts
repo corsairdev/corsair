@@ -14,20 +14,16 @@ export const paymentsList: JobNimbusEndpoints['paymentsList'] = async (
 ) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.paymentsList.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/payments',
-		ctx.key,
-		{
-			method: 'GET',
-			query: compactQuery({
-				size: parsedInput.size,
-				from: parsedInput.from,
-				sort: parsedInput.sort,
-				direction: parsedInput.direction,
-				actor: parsedInput.actor,
-			}),
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/payments', ctx.key, {
+		method: 'GET',
+		query: compactQuery({
+			size: parsedInput.size,
+			from: parsedInput.from,
+			sort: parsedInput.sort,
+			direction: parsedInput.direction,
+			actor: parsedInput.actor,
+		}),
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.paymentsList.parse(response);
@@ -46,8 +42,7 @@ export const paymentsCreate: JobNimbusEndpoints['paymentsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.paymentsCreate.parse(input);
+	const parsedInput = JobNimbusEndpointInputSchemas.paymentsCreate.parse(input);
 
 	const response = await makeJobNimbusRequest<unknown>(
 		'/v2/payments',

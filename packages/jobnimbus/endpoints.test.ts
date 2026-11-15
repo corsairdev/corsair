@@ -45,7 +45,7 @@ function buildContext(): JobNimbusContext {
 			set_webhook_signature: () => Promise.resolve(),
 		},
 		db: {},
-		// `unknown` cast because test harness context supplies only mocked authentication and logging properties needed for endpoint unit tests.
+		// `unknown` cast because CorsairPluginContext includes framework-owned runtime state and methods unrelated to these endpoint unit tests; the mocks below provide the context fields exercised here without bootstrapping Corsair.
 	} as unknown as JobNimbusContext;
 }
 
@@ -82,15 +82,19 @@ describe('JobNimbus Endpoints', () => {
 			});
 
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/contacts', 'test-api-token', {
-				method: 'POST',
-				body: {
-					first_name: 'David',
-					last_name: 'Jackson',
-					record_type_name: 'Customer',
-					status_name: 'Lead',
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/contacts',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: {
+						first_name: 'David',
+						last_name: 'Jackson',
+						record_type_name: 'Customer',
+						status_name: 'Lead',
+					},
 				},
-			});
+			);
 			expectLogged('contacts.create', { count: 1 });
 		});
 
@@ -98,12 +102,19 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 'c1', first_name: 'Updated' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Contacts.update(ctx, { jnid: 'c1', first_name: 'Updated' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/contacts/c1', 'test-api-token', {
-				method: 'PUT',
-				body: { first_name: 'Updated' },
+			const result = await Contacts.update(ctx, {
+				jnid: 'c1',
+				first_name: 'Updated',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/contacts/c1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { first_name: 'Updated' },
+				},
+			);
 			expectLogged('contacts.update', { count: 1 });
 		});
 
@@ -113,10 +124,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Contacts.delete(ctx, { jnid: 'c1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/contacts/c1', 'test-api-token', {
-				method: 'PUT',
-				body: { is_active: false },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/contacts/c1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { is_active: false },
+				},
+			);
 			expectLogged('contacts.delete', { count: 1 });
 		});
 
@@ -126,9 +141,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Contacts.get(ctx, { jnid: 'c1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/contacts/c1', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/contacts/c1',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('contacts.get', { count: 1 });
 		});
 
@@ -136,12 +155,20 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'c1', first_name: 'David' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Contacts.list(ctx, { size: 50, from: 0 });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/contacts', 'test-api-token', {
-				method: 'GET',
-				query: { size: 50, from: 0 },
+			const result = await Contacts.list(ctx, {
+				size: 50,
+				from: 0,
+				actor: 'sam@company.com',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/contacts',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { size: 50, from: 0, actor: 'sam@company.com' },
+				},
+			);
 			expectLogged('contacts.list', { count: 1 });
 		});
 
@@ -166,7 +193,11 @@ describe('JobNimbus Endpoints', () => {
 			expect(result).toEqual(raw);
 			expect(mockedRequest).toHaveBeenCalledWith('/jobs', 'test-api-token', {
 				method: 'POST',
-				body: { name: 'Roof Repair', record_type_name: 'Job', status_name: 'Lead' },
+				body: {
+					name: 'Roof Repair',
+					record_type_name: 'Job',
+					status_name: 'Lead',
+				},
 			});
 			expectLogged('jobs.create', { count: 1 });
 		});
@@ -175,7 +206,10 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 'j1', name: 'Updated Roof' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Jobs.update(ctx, { jnid: 'j1', name: 'Updated Roof' });
+			const result = await Jobs.update(ctx, {
+				jnid: 'j1',
+				name: 'Updated Roof',
+			});
 			expect(result).toEqual(raw);
 			expect(mockedRequest).toHaveBeenCalledWith('/jobs/j1', 'test-api-token', {
 				method: 'PUT',
@@ -213,11 +247,14 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'j1', name: 'Roof' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Jobs.list(ctx, { size: 10 });
+			const result = await Jobs.list(ctx, {
+				size: 10,
+				actor: 'sam@company.com',
+			});
 			expect(result).toEqual(raw);
 			expect(mockedRequest).toHaveBeenCalledWith('/jobs', 'test-api-token', {
 				method: 'GET',
-				query: { size: 10 },
+				query: { size: 10, actor: 'sam@company.com' },
 			});
 			expectLogged('jobs.list', { count: 1 });
 		});
@@ -245,12 +282,19 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 't1', is_completed: true };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Tasks.update(ctx, { jnid: 't1', is_completed: true });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/tasks/t1', 'test-api-token', {
-				method: 'PUT',
-				body: { is_completed: true },
+			const result = await Tasks.update(ctx, {
+				jnid: 't1',
+				is_completed: true,
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/tasks/t1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { is_completed: true },
+				},
+			);
 			expectLogged('tasks.update', { count: 1 });
 		});
 
@@ -260,10 +304,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Tasks.delete(ctx, { jnid: 't1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/tasks/t1', 'test-api-token', {
-				method: 'PUT',
-				body: { is_active: false },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/tasks/t1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { is_active: false },
+				},
+			);
 			expectLogged('tasks.delete', { count: 1 });
 		});
 
@@ -273,9 +321,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Tasks.get(ctx, { jnid: 't1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/tasks/t1', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/tasks/t1',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('tasks.get', { count: 1 });
 		});
 
@@ -283,11 +335,11 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 't1', title: 'Inspection' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Tasks.list(ctx, {});
+			const result = await Tasks.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
 			expect(mockedRequest).toHaveBeenCalledWith('/tasks', 'test-api-token', {
 				method: 'GET',
-				query: {},
+				query: { actor: 'sam@company.com' },
 			});
 			expectLogged('tasks.list', { count: 1 });
 		});
@@ -300,10 +352,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Activities.create(ctx, { note: 'Note 1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/activities', 'test-api-token', {
-				method: 'POST',
-				body: { note: 'Note 1' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/activities',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { note: 'Note 1' },
+				},
+			);
 			expectLogged('activities.create', { count: 1 });
 		});
 
@@ -313,9 +369,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Activities.get(ctx, { jnid: 'a1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/activities/a1', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/activities/a1',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('activities.get', { count: 1 });
 		});
 
@@ -323,12 +383,16 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'a1', note: 'Note 1' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Activities.list(ctx, {});
+			const result = await Activities.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/activities', 'test-api-token', {
-				method: 'GET',
-				query: {},
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/activities',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { actor: 'sam@company.com' },
+				},
+			);
 			expectLogged('activities.list', { count: 1 });
 		});
 	});
@@ -358,10 +422,14 @@ describe('JobNimbus Endpoints', () => {
 				url: 'https://example.com/pic.jpg',
 			});
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/files/fromUrl', 'test-api-token', {
-				method: 'POST',
-				body: { url: 'https://example.com/pic.jpg' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/files/fromUrl',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { url: 'https://example.com/pic.jpg' },
+				},
+			);
 			expectLogged('files.create_from_url', { count: 1 });
 		});
 
@@ -408,7 +476,9 @@ describe('JobNimbus Endpoints', () => {
 		});
 
 		it('files.requestMultipartUpload sends POST multi-urls', async () => {
-			const raw = { data: { presignedUrls: ['https://s3/p1'], jnid: 'f1', uploadId: 'u1' } };
+			const raw = {
+				data: { presignedUrls: ['https://s3/p1'], jnid: 'f1', uploadId: 'u1' },
+			};
 			mockedRequest.mockResolvedValue(raw);
 
 			const result = await Files.requestMultipartUpload(ctx, {
@@ -481,11 +551,11 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, files: [{ jnid: 'f1', filename: 'file.txt' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Files.list(ctx, {});
+			const result = await Files.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
 			expect(mockedRequest).toHaveBeenCalledWith('/files', 'test-api-token', {
 				method: 'GET',
-				query: {},
+				query: { actor: 'sam@company.com' },
 			});
 			expectLogged('files.list', { count: 1 });
 		});
@@ -515,10 +585,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Products.create(ctx, { name: 'Nails' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/products', 'test-api-token', {
-				method: 'POST',
-				body: { name: 'Nails' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/products',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { name: 'Nails' },
+				},
+			);
 			expectLogged('products.create', { count: 1 });
 		});
 
@@ -526,12 +600,19 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 'p1', name: 'Nails 2' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Products.update(ctx, { jnid: 'p1', name: 'Nails 2' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/products/p1', 'test-api-token', {
-				method: 'PUT',
-				body: { name: 'Nails 2' },
+			const result = await Products.update(ctx, {
+				jnid: 'p1',
+				name: 'Nails 2',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/products/p1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { name: 'Nails 2' },
+				},
+			);
 			expectLogged('products.update', { count: 1 });
 		});
 
@@ -541,10 +622,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Products.delete(ctx, { jnid: 'p1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/products/p1', 'test-api-token', {
-				method: 'PUT',
-				body: { is_active: false },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/products/p1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { is_active: false },
+				},
+			);
 			expectLogged('products.delete', { count: 1 });
 		});
 
@@ -554,9 +639,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Products.get(ctx, { jnid: 'p1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/products/p1', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/products/p1',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('products.get', { count: 1 });
 		});
 
@@ -564,12 +653,16 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'p1', name: 'Nails' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Products.list(ctx, {});
+			const result = await Products.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/products', 'test-api-token', {
-				method: 'GET',
-				query: {},
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/products',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { actor: 'sam@company.com' },
+				},
+			);
 			expectLogged('products.list', { count: 1 });
 		});
 	});
@@ -579,12 +672,18 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 'mo1', customer_note: 'Deliver now' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await MaterialOrders.create(ctx, { customer_note: 'Deliver now' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/materialorders', 'test-api-token', {
-				method: 'POST',
-				body: { customer_note: 'Deliver now' },
+			const result = await MaterialOrders.create(ctx, {
+				customer_note: 'Deliver now',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/materialorders',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { customer_note: 'Deliver now' },
+				},
+			);
 			expectLogged('material_orders.create', { count: 1 });
 		});
 
@@ -592,12 +691,19 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 'mo1', customer_note: 'Updated note' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await MaterialOrders.update(ctx, { jnid: 'mo1', customer_note: 'Updated note' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/materialorders/mo1', 'test-api-token', {
-				method: 'PUT',
-				body: { customer_note: 'Updated note' },
+			const result = await MaterialOrders.update(ctx, {
+				jnid: 'mo1',
+				customer_note: 'Updated note',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/materialorders/mo1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { customer_note: 'Updated note' },
+				},
+			);
 			expectLogged('material_orders.update', { count: 1 });
 		});
 
@@ -607,10 +713,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await MaterialOrders.delete(ctx, { jnid: 'mo1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/materialorders/mo1', 'test-api-token', {
-				method: 'PUT',
-				body: { is_active: false },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/materialorders/mo1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { is_active: false },
+				},
+			);
 			expectLogged('material_orders.delete', { count: 1 });
 		});
 
@@ -620,22 +730,35 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await MaterialOrders.get(ctx, { jnid: 'mo1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/materialorders/mo1', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/materialorders/mo1',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('material_orders.get', { count: 1 });
 		});
 
 		it('materialOrders.list sends GET /v2/materialorders', async () => {
-			const raw = { count: 1, results: [{ jnid: 'mo1', customer_note: 'Note' }] };
+			const raw = {
+				count: 1,
+				results: [{ jnid: 'mo1', customer_note: 'Note' }],
+			};
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await MaterialOrders.list(ctx, {});
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/materialorders', 'test-api-token', {
-				method: 'GET',
-				query: {},
+			const result = await MaterialOrders.list(ctx, {
+				actor: 'sam@company.com',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/materialorders',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { actor: 'sam@company.com' },
+				},
+			);
 			expectLogged('material_orders.list', { count: 1 });
 		});
 	});
@@ -647,10 +770,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await WorkOrders.create(ctx, { customer: 'c1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/workorders', 'test-api-token', {
-				method: 'POST',
-				body: { customer: 'c1' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/workorders',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { customer: 'c1' },
+				},
+			);
 			expectLogged('work_orders.create', { count: 1 });
 		});
 
@@ -658,12 +785,19 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 'wo1', customer: 'c1' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await WorkOrders.update(ctx, { id: 'wo1', customer: 'c1' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/workorders/wo1', 'test-api-token', {
-				method: 'PUT',
-				body: { customer: 'c1' },
+			const result = await WorkOrders.update(ctx, {
+				id: 'wo1',
+				customer: 'c1',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/workorders/wo1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { customer: 'c1' },
+				},
+			);
 			expectLogged('work_orders.update', { count: 1 });
 		});
 
@@ -673,10 +807,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await WorkOrders.delete(ctx, { id: 'wo1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/workorders/wo1', 'test-api-token', {
-				method: 'PUT',
-				body: { is_active: false },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/workorders/wo1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { is_active: false },
+				},
+			);
 			expectLogged('work_orders.delete', { count: 1 });
 		});
 
@@ -686,9 +824,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await WorkOrders.get(ctx, { jnid: 'wo1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/workorders/wo1', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/workorders/wo1',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('work_orders.get', { count: 1 });
 		});
 
@@ -696,12 +838,16 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'wo1', customer: 'c1' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await WorkOrders.list(ctx, {});
+			const result = await WorkOrders.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/workorders', 'test-api-token', {
-				method: 'GET',
-				query: {},
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/workorders',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { actor: 'sam@company.com' },
+				},
+			);
 			expectLogged('work_orders.list', { count: 1 });
 		});
 	});
@@ -713,10 +859,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Estimates.create(ctx, { number: 'EST-101' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/estimates', 'test-api-token', {
-				method: 'POST',
-				body: { number: 'EST-101' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/estimates',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { number: 'EST-101' },
+				},
+			);
 			expectLogged('estimates.create', { count: 1 });
 		});
 
@@ -724,12 +874,19 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 'e1', number: 'EST-102' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Estimates.update(ctx, { jnid: 'e1', number: 'EST-102' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/estimates/e1', 'test-api-token', {
-				method: 'PUT',
-				body: { number: 'EST-102' },
+			const result = await Estimates.update(ctx, {
+				jnid: 'e1',
+				number: 'EST-102',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/estimates/e1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { number: 'EST-102' },
+				},
+			);
 			expectLogged('estimates.update', { count: 1 });
 		});
 
@@ -739,10 +896,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Estimates.delete(ctx, { jnid: 'e1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/estimates/e1', 'test-api-token', {
-				method: 'PUT',
-				body: { is_active: false },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/estimates/e1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { is_active: false },
+				},
+			);
 			expectLogged('estimates.delete', { count: 1 });
 		});
 
@@ -752,9 +913,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Estimates.get(ctx, { jnid: 'e1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/estimates/e1', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/estimates/e1',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('estimates.get', { count: 1 });
 		});
 
@@ -762,12 +927,16 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'e1', number: 'EST-101' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Estimates.list(ctx, {});
+			const result = await Estimates.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/estimates', 'test-api-token', {
-				method: 'GET',
-				query: {},
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/estimates',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { actor: 'sam@company.com' },
+				},
+			);
 			expectLogged('estimates.list', { count: 1 });
 		});
 	});
@@ -779,10 +948,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Invoices.create(ctx, { number: 'INV-101' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/invoices', 'test-api-token', {
-				method: 'POST',
-				body: { number: 'INV-101' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/invoices',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { number: 'INV-101' },
+				},
+			);
 			expectLogged('invoices.create', { count: 1 });
 		});
 
@@ -790,12 +963,19 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { jnid: 'inv1', number: 'INV-102' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Invoices.update(ctx, { jnid: 'inv1', number: 'INV-102' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/invoices/inv1', 'test-api-token', {
-				method: 'PUT',
-				body: { number: 'INV-102' },
+			const result = await Invoices.update(ctx, {
+				jnid: 'inv1',
+				number: 'INV-102',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/invoices/inv1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { number: 'INV-102' },
+				},
+			);
 			expectLogged('invoices.update', { count: 1 });
 		});
 
@@ -805,10 +985,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Invoices.delete(ctx, { jnid: 'inv1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/invoices/inv1', 'test-api-token', {
-				method: 'PUT',
-				body: { is_active: false },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/invoices/inv1',
+				'test-api-token',
+				{
+					method: 'PUT',
+					body: { is_active: false },
+				},
+			);
 			expectLogged('invoices.delete', { count: 1 });
 		});
 
@@ -818,9 +1002,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Invoices.get(ctx, { jnid: 'inv1' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/invoices/inv1', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/invoices/inv1',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('invoices.get', { count: 1 });
 		});
 
@@ -828,12 +1016,16 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'inv1', number: 'INV-101' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Invoices.list(ctx, {});
+			const result = await Invoices.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/v2/invoices', 'test-api-token', {
-				method: 'GET',
-				query: {},
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/v2/invoices',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { actor: 'sam@company.com' },
+				},
+			);
 			expectLogged('invoices.list', { count: 1 });
 		});
 	});
@@ -843,12 +1035,16 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'pay1', total: 100 }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Payments.list(ctx, {});
+			const result = await Payments.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/payments', 'test-api-token', {
-				method: 'GET',
-				query: {},
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/payments',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { actor: 'sam@company.com' },
+				},
+			);
 			expectLogged('payments.list', { count: 1 });
 		});
 
@@ -879,11 +1075,11 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { count: 1, results: [{ jnid: 'b1' }] };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Budgets.list(ctx, {});
+			const result = await Budgets.list(ctx, { actor: 'sam@company.com' });
 			expect(result).toEqual(raw);
 			expect(mockedRequest).toHaveBeenCalledWith('/budgets', 'test-api-token', {
 				method: 'GET',
-				query: {},
+				query: { actor: 'sam@company.com' },
 			});
 			expectLogged('budgets.list', { count: 1 });
 		});
@@ -896,10 +1092,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Account.getSettings(ctx, {});
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/settings', 'test-api-token', {
-				method: 'GET',
-				query: {},
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/settings',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: {},
+				},
+			);
 			expectLogged('account.get_settings', { count: 1 });
 		});
 
@@ -909,10 +1109,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Account.getGroups(ctx, {});
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/settings', 'test-api-token', {
-				method: 'GET',
-				query: { field: 'groups' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/settings',
+				'test-api-token',
+				{
+					method: 'GET',
+					query: { field: 'groups' },
+				},
+			);
 			expectLogged('account.get_groups', { count: 1 });
 		});
 
@@ -922,9 +1126,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Account.getUsers(ctx, {});
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/users', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/users',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('account.get_users', { count: 1 });
 		});
 
@@ -934,9 +1142,13 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Account.getUoms(ctx, {});
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/utility/uoms', 'test-api-token', {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/utility/uoms',
+				'test-api-token',
+				{
+					method: 'GET',
+				},
+			);
 			expectLogged('account.get_uoms', { count: 2 });
 		});
 
@@ -949,10 +1161,14 @@ describe('JobNimbus Endpoints', () => {
 				object_type: 'job',
 			});
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/workflow', 'test-api-token', {
-				method: 'POST',
-				body: { name: 'Commercial', object_type: 'job' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/workflow',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { name: 'Commercial', object_type: 'job' },
+				},
+			);
 			expectLogged('account.create_workflow', { count: 1 });
 		});
 
@@ -965,10 +1181,14 @@ describe('JobNimbus Endpoints', () => {
 				name: 'In Progress',
 			});
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/workflow/wf1/status', 'test-api-token', {
-				method: 'POST',
-				body: { name: 'In Progress' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/workflow/wf1/status',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { name: 'In Progress' },
+				},
+			);
 			expectLogged('account.create_workflow_status', { count: 1 });
 		});
 
@@ -976,12 +1196,18 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { JobSourceId: 1, SourceName: 'Google' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Account.createLeadSource(ctx, { SourceName: 'Google' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/leadsource', 'test-api-token', {
-				method: 'POST',
-				body: { SourceName: 'Google' },
+			const result = await Account.createLeadSource(ctx, {
+				SourceName: 'Google',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/leadsource',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { SourceName: 'Google' },
+				},
+			);
 			expectLogged('account.create_lead_source', { count: 1 });
 		});
 
@@ -995,10 +1221,14 @@ describe('JobNimbus Endpoints', () => {
 				type: 'string',
 			});
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/customfield', 'test-api-token', {
-				method: 'POST',
-				body: { title: 'Claim Number', object_type: 'job', type: 'string' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/customfield',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { title: 'Claim Number', object_type: 'job', type: 'string' },
+				},
+			);
 			expectLogged('account.create_custom_field', { count: 1 });
 		});
 
@@ -1006,12 +1236,18 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { FileTypeId: 1, TypeName: 'Document' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Account.createFileType(ctx, { TypeName: 'Document' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/filetype', 'test-api-token', {
-				method: 'POST',
-				body: { TypeName: 'Document' },
+			const result = await Account.createFileType(ctx, {
+				TypeName: 'Document',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/filetype',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { TypeName: 'Document' },
+				},
+			);
 			expectLogged('account.create_file_type', { count: 1 });
 		});
 
@@ -1021,10 +1257,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Account.createTaskType(ctx, { TypeName: 'Meeting' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/tasktype', 'test-api-token', {
-				method: 'POST',
-				body: { TypeName: 'Meeting' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/tasktype',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { TypeName: 'Meeting' },
+				},
+			);
 			expectLogged('account.create_task_type', { count: 1 });
 		});
 
@@ -1032,12 +1272,18 @@ describe('JobNimbus Endpoints', () => {
 			const raw = { ActivityTypeId: 1, TypeName: 'Call' };
 			mockedRequest.mockResolvedValue(raw);
 
-			const result = await Account.createActivityType(ctx, { TypeName: 'Call' });
-			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/activitytype', 'test-api-token', {
-				method: 'POST',
-				body: { TypeName: 'Call' },
+			const result = await Account.createActivityType(ctx, {
+				TypeName: 'Call',
 			});
+			expect(result).toEqual(raw);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/activitytype',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { TypeName: 'Call' },
+				},
+			);
 			expectLogged('account.create_activity_type', { count: 1 });
 		});
 
@@ -1047,10 +1293,14 @@ describe('JobNimbus Endpoints', () => {
 
 			const result = await Account.createLocation(ctx, { name: 'HQ' });
 			expect(result).toEqual(raw);
-			expect(mockedRequest).toHaveBeenCalledWith('/account/location', 'test-api-token', {
-				method: 'POST',
-				body: { name: 'HQ' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/account/location',
+				'test-api-token',
+				{
+					method: 'POST',
+					body: { name: 'HQ' },
+				},
+			);
 			expectLogged('account.create_location', { count: 1 });
 		});
 	});

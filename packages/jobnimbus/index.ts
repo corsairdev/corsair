@@ -649,7 +649,8 @@ export const jobNimbusEndpointMeta = {
 	},
 	'files.requestSinglePartUpload': {
 		riskLevel: 'write',
-		description: 'Request a presigned URL for single part file upload in JobNimbus',
+		description:
+			'Request a presigned URL for single part file upload in JobNimbus',
 	},
 	'files.completeSinglePartUpload': {
 		riskLevel: 'write',
@@ -657,7 +658,8 @@ export const jobNimbusEndpointMeta = {
 	},
 	'files.requestMultipartUpload': {
 		riskLevel: 'write',
-		description: 'Request presigned URLs for multipart file upload in JobNimbus',
+		description:
+			'Request presigned URLs for multipart file upload in JobNimbus',
 	},
 	'files.completeMultipartUpload': {
 		riskLevel: 'write',
@@ -851,7 +853,9 @@ export const jobNimbusEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create a company location in JobNimbus',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof jobNimbusEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof jobNimbusEndpointsNested
+>;
 
 export const jobNimbusAuthConfig = {
 	api_key: {},
@@ -874,7 +878,8 @@ export type ExternalJobNimbusPlugin<T extends JobNimbusPluginOptions> =
 	BaseJobNimbusPlugin<T>;
 
 export function jobnimbus<const T extends JobNimbusPluginOptions>(
-	incomingOptions: JobNimbusPluginOptions & T = {} as JobNimbusPluginOptions & T,
+	incomingOptions: JobNimbusPluginOptions & T = {} as JobNimbusPluginOptions &
+		T,
 ): ExternalJobNimbusPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -914,7 +919,4 @@ export function jobnimbus<const T extends JobNimbusPluginOptions>(
 	} satisfies InternalJobNimbusPlugin;
 }
 
-export type {
-	JobNimbusEndpointInputs,
-	JobNimbusEndpointOutputs,
-};
+export type { JobNimbusEndpointInputs, JobNimbusEndpointOutputs };

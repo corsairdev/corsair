@@ -23,8 +23,7 @@ export const estimatesCreate: JobNimbusEndpoints['estimatesCreate'] = async (
 	);
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
-	const parsed =
-		JobNimbusEndpointOutputSchemas.estimatesCreate.parse(response);
+	const parsed = JobNimbusEndpointOutputSchemas.estimatesCreate.parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -54,8 +53,7 @@ export const estimatesUpdate: JobNimbusEndpoints['estimatesUpdate'] = async (
 	);
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
-	const parsed =
-		JobNimbusEndpointOutputSchemas.estimatesUpdate.parse(response);
+	const parsed = JobNimbusEndpointOutputSchemas.estimatesUpdate.parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -84,8 +82,7 @@ export const estimatesDelete: JobNimbusEndpoints['estimatesDelete'] = async (
 	);
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
-	const parsed =
-		JobNimbusEndpointOutputSchemas.estimatesDelete.parse(response);
+	const parsed = JobNimbusEndpointOutputSchemas.estimatesDelete.parse(response);
 
 	await logEventFromContext(
 		ctx,

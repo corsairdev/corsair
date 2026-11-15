@@ -75,7 +75,9 @@ describe('JobNimbus error handlers', () => {
 
 	it('routes 400 to BAD_REQUEST_ERROR without retrying', async () => {
 		expect(route(apiError(400, 'Bad Request'))).toBe('BAD_REQUEST_ERROR');
-		expect(route(new Error('invalid request payload'))).toBe('BAD_REQUEST_ERROR');
+		expect(route(new Error('invalid request payload'))).toBe(
+			'BAD_REQUEST_ERROR',
+		);
 		await expect(errorHandlers.BAD_REQUEST_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
@@ -119,14 +121,22 @@ describe('JobNimbus error handlers', () => {
 		});
 
 		const handlers = instance.errorHandlers;
+		if (handlers === undefined) {
+			throw new Error('Expected the plugin to expose its error handlers.');
+		}
 		const handlerKeys = Object.keys(handlers);
+		const rateLimitHandler = handlers.RATE_LIMIT_ERROR;
+		const defaultHandler = handlers.DEFAULT;
+		if (rateLimitHandler === undefined || defaultHandler === undefined) {
+			throw new Error('Expected rate-limit and default error handlers.');
+		}
 
 		// Caller-supplied custom handler is at the beginning
 		expect(handlerKeys[0]).toBe('CUSTOM_ERROR');
 		// DEFAULT is at the end
 		expect(handlerKeys[handlerKeys.length - 1]).toBe('DEFAULT');
 		// Overridden RATE_LIMIT_ERROR is the caller's
-		expect(handlers.RATE_LIMIT_ERROR.handler).toBe(customRateLimitHandler);
-		expect(handlers.DEFAULT.handler).toBe(customDefaultHandler);
+		expect(rateLimitHandler.handler).toBe(customRateLimitHandler);
+		expect(defaultHandler.handler).toBe(customDefaultHandler);
 	});
 });

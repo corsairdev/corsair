@@ -13,14 +13,10 @@ export const activitiesCreate: JobNimbusEndpoints['activitiesCreate'] = async (
 	const parsedInput =
 		JobNimbusEndpointInputSchemas.activitiesCreate.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/activities',
-		ctx.key,
-		{
-			method: 'POST',
-			body: parsedInput,
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/activities', ctx.key, {
+		method: 'POST',
+		body: parsedInput,
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed =
@@ -67,23 +63,18 @@ export const activitiesList: JobNimbusEndpoints['activitiesList'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.activitiesList.parse(input);
+	const parsedInput = JobNimbusEndpointInputSchemas.activitiesList.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/activities',
-		ctx.key,
-		{
-			method: 'GET',
-			query: compactQuery({
-				size: parsedInput.size,
-				from: parsedInput.from,
-				sort: parsedInput.sort,
-				direction: parsedInput.direction,
-				actor: parsedInput.actor,
-			}),
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/activities', ctx.key, {
+		method: 'GET',
+		query: compactQuery({
+			size: parsedInput.size,
+			from: parsedInput.from,
+			sort: parsedInput.sort,
+			direction: parsedInput.direction,
+			actor: parsedInput.actor,
+		}),
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.activitiesList.parse(response);

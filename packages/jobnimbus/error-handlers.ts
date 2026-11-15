@@ -59,7 +59,9 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status >= 500) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('internal server error') || msg.includes('server error');
+			return (
+				msg.includes('internal server error') || msg.includes('server error')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

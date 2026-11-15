@@ -11,12 +11,12 @@ const describeLive = KEY.length > 0 ? describe : describe.skip;
 
 describeLive('JobNimbus live API (env-gated)', () => {
 	it('GET /account/settings returns the account configuration', async () => {
+		// `unknown` because live provider JSON is untrusted until the output schema validates it.
 		const response = await makeJobNimbusRequest<unknown>(
 			'/account/settings',
 			KEY,
 			{ method: 'GET' },
 		);
-		// `unknown` because response is untrusted live data; Zod schema narrows it.
 		const parsed = AccountSettingsResponseSchema.parse(response);
 
 		expect(parsed).toBeDefined();

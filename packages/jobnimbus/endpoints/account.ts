@@ -306,9 +306,7 @@ export const accountCreateActivityType: JobNimbusEndpoints['accountCreateActivit
 
 		// `unknown` because response is untrusted data; the Zod schema narrows it.
 		const parsed =
-			JobNimbusEndpointOutputSchemas.accountCreateActivityType.parse(
-				response,
-			);
+			JobNimbusEndpointOutputSchemas.accountCreateActivityType.parse(response);
 
 		await logEventFromContext(
 			ctx,

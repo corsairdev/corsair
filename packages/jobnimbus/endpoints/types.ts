@@ -96,7 +96,7 @@ export const ContactsGetInputSchema = z
 
 export const ContactsListInputSchema = ListQuerySchema;
 
-// `unknown` in record because JobNimbus allows arbitrary custom fields defined by customers.
+// `unknown` values because JobNimbus custom fields are tenant-defined and the API docs specify no fixed value schema to validate more narrowly.
 export const ContactResponseSchema = z
 	.object({
 		jnid: z.string().optional(),
@@ -459,9 +459,9 @@ export const FileAbortResponseSchema = z
 export const ProductUomItemSchema = z
 	.object({
 		uom: z.string().optional(),
-		// `unknown` in record because JobNimbus allows arbitrary material cost breakdown metadata.
+		// `unknown` values because material breakdown keys and values are provider-defined and the API docs do not specify a stable schema.
 		material: z.record(z.string(), z.unknown()).optional(),
-		// `unknown` in record because JobNimbus labor configuration can include custom rate fields.
+		// `unknown` values because labor configuration may contain tenant-defined rate fields with no documented stable schema.
 		labor: z.record(z.string(), z.unknown()).optional(),
 	})
 	// passthrough for unit of measurement structure.
@@ -471,7 +471,7 @@ export const ProductInputSchema = z
 	.object({
 		name: z.string().optional(),
 		description: z.string().optional(),
-		// `unknown` array elements because supplier link shapes are provider-polymorphic in JobNimbus catalog products.
+		// `unknown` array elements because supplier link records vary by catalog configuration and have no documented stable shape.
 		suppliers: z.array(z.unknown()).optional(),
 		location_id: z.number().optional(),
 		is_active: z.boolean().optional(),
@@ -617,7 +617,7 @@ export const WorkOrderInputSchema = z
 		internal_note: z.string().optional(),
 		is_active: z.boolean().optional(),
 		related: z.array(RelatedReferenceSchema).optional(),
-		// `unknown` in array because work order line items contain dynamic product/material references.
+		// `unknown` items because the API docs do not define a stable line-item schema across products and materials.
 		items: z.array(z.unknown()).optional(),
 	})
 	.strict();
@@ -674,7 +674,7 @@ export const EstimateInputSchema = z
 		internal_note: z.string().optional(),
 		is_active: z.boolean().optional(),
 		related: z.array(RelatedReferenceSchema).optional(),
-		// `unknown` in array because work order line items contain dynamic product/material references.
+		// `unknown` items because the API docs do not define a stable line-item schema across products and materials.
 		items: z.array(z.unknown()).optional(),
 	})
 	.strict();
@@ -734,7 +734,7 @@ export const InvoiceInputSchema = z
 		internal_note: z.string().optional(),
 		is_active: z.boolean().optional(),
 		related: z.array(RelatedReferenceSchema).optional(),
-		// `unknown` in array because work order line items contain dynamic product/material references.
+		// `unknown` items because the API docs do not define a stable line-item schema across products and materials.
 		items: z.array(z.unknown()).optional(),
 	})
 	.strict();
@@ -802,7 +802,7 @@ export const PaymentsCreateInputSchema = z
 		reference: z.string().optional(),
 		is_active: z.boolean().optional(),
 		invoices: z.array(PaymentInvoiceItemSchema).optional(),
-		// `unknown` in array because payment estimate associations accept variable reference formats.
+		// `unknown` estimate references because the API docs allow provider-specific association forms without a stable item schema.
 		estimates: z.array(z.unknown()).optional(),
 		primary: PrimaryReferenceSchema.optional(),
 		owners: z.array(OwnerReferenceSchema).optional(),
@@ -958,15 +958,15 @@ export const AccountCreateLocationInputSchema = z
 
 export const AccountSettingsResponseSchema = z
 	.object({
-		// `unknown` array elements because account settings contain heterogeneous workflow objects configured per tenant.
+		// `unknown` workflow objects because each tenant configures distinct properties and the API docs do not specify a stable schema.
 		workflows: z.array(z.unknown()).optional(),
-		// `unknown` array elements because file types contain variable metadata definitions.
+		// `unknown` file types because their metadata definitions vary by tenant and are not documented as a stable shape.
 		fileTypes: z.array(z.unknown()).optional(),
-		// `unknown` array elements because task type definitions contain tenant-specific custom fields.
+		// `unknown` task types because custom fields are tenant-defined and the API docs provide no stable schema.
 		taskTypes: z.array(z.unknown()).optional(),
-		// `unknown` array elements because activity types contain tenant-specific custom definitions.
+		// `unknown` activity types because custom definitions vary by tenant and the API docs provide no stable schema.
 		activityTypes: z.array(z.unknown()).optional(),
-		// `unknown` array elements because lead sources contain variable tenant configuration objects.
+		// `unknown` sources because each tenant configures its own properties and the API docs provide no stable schema.
 		sources: z.array(z.unknown()).optional(),
 	})
 	// passthrough for account settings dictionary.

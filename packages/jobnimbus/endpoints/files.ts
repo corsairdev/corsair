@@ -15,14 +15,10 @@ export const filesCreate: JobNimbusEndpoints['filesCreate'] = async (
 ) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.filesCreate.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/files',
-		ctx.key,
-		{
-			method: 'POST',
-			body: parsedInput,
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/files', ctx.key, {
+		method: 'POST',
+		body: parsedInput,
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.filesCreate.parse(response);
@@ -82,7 +78,9 @@ export const filesRequestSinglePartUpload: JobNimbusEndpoints['filesRequestSingl
 
 		// `unknown` because response is untrusted data; the Zod schema narrows it.
 		const parsed =
-			JobNimbusEndpointOutputSchemas.filesRequestSinglePartUpload.parse(response);
+			JobNimbusEndpointOutputSchemas.filesRequestSinglePartUpload.parse(
+				response,
+			);
 
 		await logEventFromContext(
 			ctx,
@@ -231,20 +229,16 @@ export const filesList: JobNimbusEndpoints['filesList'] = async (
 ) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.filesList.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/files',
-		ctx.key,
-		{
-			method: 'GET',
-			query: compactQuery({
-				size: parsedInput.size,
-				from: parsedInput.from,
-				sort: parsedInput.sort,
-				direction: parsedInput.direction,
-				actor: parsedInput.actor,
-			}),
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/files', ctx.key, {
+		method: 'GET',
+		query: compactQuery({
+			size: parsedInput.size,
+			from: parsedInput.from,
+			sort: parsedInput.sort,
+			direction: parsedInput.direction,
+			actor: parsedInput.actor,
+		}),
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.filesList.parse(response);
@@ -259,10 +253,7 @@ export const filesList: JobNimbusEndpoints['filesList'] = async (
 	return parsed;
 };
 
-export const filesGet: JobNimbusEndpoints['filesGet'] = async (
-	ctx,
-	input,
-) => {
+export const filesGet: JobNimbusEndpoints['filesGet'] = async (ctx, input) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.filesGet.parse(input);
 
 	const response = await makeJobNimbusRequest<unknown>(

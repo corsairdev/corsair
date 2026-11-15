@@ -91,34 +91,32 @@ export const materialOrdersDelete: JobNimbusEndpoints['materialOrdersDelete'] =
 		return parsed;
 	};
 
-export const materialOrdersGet: JobNimbusEndpoints['materialOrdersGet'] = async (
-	ctx,
-	input,
-) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.materialOrdersGet.parse(input);
+export const materialOrdersGet: JobNimbusEndpoints['materialOrdersGet'] =
+	async (ctx, input) => {
+		const parsedInput =
+			JobNimbusEndpointInputSchemas.materialOrdersGet.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		`/v2/materialorders/${encodeURIComponent(parsedInput.jnid)}`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+		const response = await makeJobNimbusRequest<unknown>(
+			`/v2/materialorders/${encodeURIComponent(parsedInput.jnid)}`,
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
 
-	// `unknown` because response is untrusted data; the Zod schema narrows it.
-	const parsed =
-		JobNimbusEndpointOutputSchemas.materialOrdersGet.parse(response);
+		// `unknown` because response is untrusted data; the Zod schema narrows it.
+		const parsed =
+			JobNimbusEndpointOutputSchemas.materialOrdersGet.parse(response);
 
-	await logEventFromContext(
-		ctx,
-		'jobnimbus.material_orders.get',
-		{ count: 1 },
-		'completed',
-	);
+		await logEventFromContext(
+			ctx,
+			'jobnimbus.material_orders.get',
+			{ count: 1 },
+			'completed',
+		);
 
-	return parsed;
-};
+		return parsed;
+	};
 
 export const materialOrdersList: JobNimbusEndpoints['materialOrdersList'] =
 	async (ctx, input) => {

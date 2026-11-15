@@ -12,14 +12,10 @@ export const jobsCreate: JobNimbusEndpoints['jobsCreate'] = async (
 ) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.jobsCreate.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/jobs',
-		ctx.key,
-		{
-			method: 'POST',
-			body: parsedInput,
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/jobs', ctx.key, {
+		method: 'POST',
+		body: parsedInput,
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.jobsCreate.parse(response);
@@ -91,10 +87,7 @@ export const jobsDelete: JobNimbusEndpoints['jobsDelete'] = async (
 	return parsed;
 };
 
-export const jobsGet: JobNimbusEndpoints['jobsGet'] = async (
-	ctx,
-	input,
-) => {
+export const jobsGet: JobNimbusEndpoints['jobsGet'] = async (ctx, input) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.jobsGet.parse(input);
 
 	const response = await makeJobNimbusRequest<unknown>(
@@ -118,26 +111,19 @@ export const jobsGet: JobNimbusEndpoints['jobsGet'] = async (
 	return parsed;
 };
 
-export const jobsList: JobNimbusEndpoints['jobsList'] = async (
-	ctx,
-	input,
-) => {
+export const jobsList: JobNimbusEndpoints['jobsList'] = async (ctx, input) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.jobsList.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/jobs',
-		ctx.key,
-		{
-			method: 'GET',
-			query: compactQuery({
-				size: parsedInput.size,
-				from: parsedInput.from,
-				sort: parsedInput.sort,
-				direction: parsedInput.direction,
-				actor: parsedInput.actor,
-			}),
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/jobs', ctx.key, {
+		method: 'GET',
+		query: compactQuery({
+			size: parsedInput.size,
+			from: parsedInput.from,
+			sort: parsedInput.sort,
+			direction: parsedInput.direction,
+			actor: parsedInput.actor,
+		}),
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.jobsList.parse(response);

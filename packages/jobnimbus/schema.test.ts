@@ -2,10 +2,7 @@ import {
 	JobNimbusEndpointInputSchemas,
 	JobNimbusEndpointOutputSchemas,
 } from './endpoints/types';
-import {
-	jobNimbusEndpointMeta,
-	jobNimbusEndpointSchemas,
-} from './index';
+import { jobNimbusEndpointMeta, jobNimbusEndpointSchemas } from './index';
 import { JobNimbusSchema } from './schema';
 
 describe('JobNimbus schema and endpoint registry', () => {
@@ -32,7 +29,9 @@ describe('JobNimbus schema and endpoint registry', () => {
 				record_type_name: 'Customer',
 				status_name: 'Lead',
 			};
-			expect(JobNimbusEndpointInputSchemas.contactsCreate.parse(valid)).toEqual(valid);
+			expect(JobNimbusEndpointInputSchemas.contactsCreate.parse(valid)).toEqual(
+				valid,
+			);
 
 			// Strict rejects undocumented callback fields
 			expect(() =>
@@ -45,29 +44,50 @@ describe('JobNimbus schema and endpoint registry', () => {
 
 		it('validates ContactsUpdateInputSchema', () => {
 			const valid = { jnid: 'c1', first_name: 'Jane' };
-			expect(JobNimbusEndpointInputSchemas.contactsUpdate.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.contactsUpdate.parse({})).toThrow();
+			expect(JobNimbusEndpointInputSchemas.contactsUpdate.parse(valid)).toEqual(
+				valid,
+			);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.contactsUpdate.parse({}),
+			).toThrow();
 		});
 
 		it('validates ContactsDeleteInputSchema', () => {
 			const valid = { jnid: 'c1' };
-			expect(JobNimbusEndpointInputSchemas.contactsDelete.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.contactsDelete.parse({})).toThrow();
+			expect(JobNimbusEndpointInputSchemas.contactsDelete.parse(valid)).toEqual(
+				valid,
+			);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.contactsDelete.parse({}),
+			).toThrow();
 		});
 
 		it('validates ContactsGetInputSchema', () => {
 			const valid = { jnid: 'c1' };
-			expect(JobNimbusEndpointInputSchemas.contactsGet.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.contactsGet.parse({})).toThrow();
+			expect(JobNimbusEndpointInputSchemas.contactsGet.parse(valid)).toEqual(
+				valid,
+			);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.contactsGet.parse({}),
+			).toThrow();
 		});
 
 		it('validates ContactsListInputSchema with bounds', () => {
-			expect(JobNimbusEndpointInputSchemas.contactsList.parse({ size: 100, from: 0 })).toEqual({
+			expect(
+				JobNimbusEndpointInputSchemas.contactsList.parse({
+					size: 100,
+					from: 0,
+				}),
+			).toEqual({
 				size: 100,
 				from: 0,
 			});
-			expect(() => JobNimbusEndpointInputSchemas.contactsList.parse({ size: 2000 })).toThrow();
-			expect(() => JobNimbusEndpointInputSchemas.contactsList.parse({ from: -1 })).toThrow();
+			expect(() =>
+				JobNimbusEndpointInputSchemas.contactsList.parse({ size: 2000 }),
+			).toThrow();
+			expect(() =>
+				JobNimbusEndpointInputSchemas.contactsList.parse({ from: -1 }),
+			).toThrow();
 		});
 
 		it('validates JobsCreateInputSchema', () => {
@@ -76,8 +96,12 @@ describe('JobNimbus schema and endpoint registry', () => {
 				record_type_name: 'Job',
 				status_name: 'Lead',
 			};
-			expect(JobNimbusEndpointInputSchemas.jobsCreate.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.jobsCreate.parse({})).toThrow();
+			expect(JobNimbusEndpointInputSchemas.jobsCreate.parse(valid)).toEqual(
+				valid,
+			);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.jobsCreate.parse({}),
+			).toThrow();
 		});
 
 		it('validates TasksCreateInputSchema', () => {
@@ -85,32 +109,52 @@ describe('JobNimbus schema and endpoint registry', () => {
 				title: 'Follow up',
 				date_start: 1700000000,
 			};
-			expect(JobNimbusEndpointInputSchemas.tasksCreate.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.tasksCreate.parse({})).toThrow();
+			expect(JobNimbusEndpointInputSchemas.tasksCreate.parse(valid)).toEqual(
+				valid,
+			);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.tasksCreate.parse({}),
+			).toThrow();
 		});
 
 		it('validates ActivitiesCreateInputSchema', () => {
 			const valid = { note: 'Called customer' };
-			expect(JobNimbusEndpointInputSchemas.activitiesCreate.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.activitiesCreate.parse({})).toThrow();
+			expect(
+				JobNimbusEndpointInputSchemas.activitiesCreate.parse(valid),
+			).toEqual(valid);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.activitiesCreate.parse({}),
+			).toThrow();
 		});
 
 		it('validates FilesCreateInputSchema', () => {
 			const valid = { data: 'aGVsbG8=', filename: 'test.txt' };
-			expect(JobNimbusEndpointInputSchemas.filesCreate.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.filesCreate.parse({})).toThrow();
+			expect(JobNimbusEndpointInputSchemas.filesCreate.parse(valid)).toEqual(
+				valid,
+			);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.filesCreate.parse({}),
+			).toThrow();
 		});
 
 		it('validates FilesCreateFromUrlInputSchema', () => {
 			const valid = { url: 'https://example.com/photo.png' };
-			expect(JobNimbusEndpointInputSchemas.filesCreateFromUrl.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.filesCreateFromUrl.parse({})).toThrow();
+			expect(
+				JobNimbusEndpointInputSchemas.filesCreateFromUrl.parse(valid),
+			).toEqual(valid);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.filesCreateFromUrl.parse({}),
+			).toThrow();
 		});
 
 		it('validates FilesRequestSinglePartUploadInputSchema', () => {
 			const valid = { filename: 'test.pdf', type: 1, related: ['c1'] };
-			expect(JobNimbusEndpointInputSchemas.filesRequestSinglePartUpload.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.filesRequestSinglePartUpload.parse({})).toThrow();
+			expect(
+				JobNimbusEndpointInputSchemas.filesRequestSinglePartUpload.parse(valid),
+			).toEqual(valid);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.filesRequestSinglePartUpload.parse({}),
+			).toThrow();
 		});
 
 		it('validates FilesRequestMultipartUploadInputSchema', () => {
@@ -122,8 +166,14 @@ describe('JobNimbus schema and endpoint registry', () => {
 				type: 1,
 				filename: 'big.mp4',
 			};
-			expect(JobNimbusEndpointInputSchemas.filesRequestMultipartUpload.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.filesRequestMultipartUpload.parse({ partCount: 0 })).toThrow();
+			expect(
+				JobNimbusEndpointInputSchemas.filesRequestMultipartUpload.parse(valid),
+			).toEqual(valid);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.filesRequestMultipartUpload.parse({
+					partCount: 0,
+				}),
+			).toThrow();
 		});
 
 		it('validates FilesCompleteMultipartUploadInputSchema', () => {
@@ -132,55 +182,81 @@ describe('JobNimbus schema and endpoint registry', () => {
 				uploadId: 'u1',
 				parts: [{ partNumber: 1, etag: 'e1' }],
 			};
-			expect(JobNimbusEndpointInputSchemas.filesCompleteMultipartUpload.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.filesCompleteMultipartUpload.parse({})).toThrow();
+			expect(
+				JobNimbusEndpointInputSchemas.filesCompleteMultipartUpload.parse(valid),
+			).toEqual(valid);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.filesCompleteMultipartUpload.parse({}),
+			).toThrow();
 		});
 
 		it('validates FilesAbortMultipartUploadInputSchema', () => {
 			const valid = { key: 'k1', uploadId: 'u1' };
-			expect(JobNimbusEndpointInputSchemas.filesAbortMultipartUpload.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.filesAbortMultipartUpload.parse({})).toThrow();
+			expect(
+				JobNimbusEndpointInputSchemas.filesAbortMultipartUpload.parse(valid),
+			).toEqual(valid);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.filesAbortMultipartUpload.parse({}),
+			).toThrow();
 		});
 
 		it('validates ProductsCreateInputSchema', () => {
 			const valid = { name: 'Shingles' };
-			expect(JobNimbusEndpointInputSchemas.productsCreate.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.productsCreate.parse({})).toThrow();
+			expect(JobNimbusEndpointInputSchemas.productsCreate.parse(valid)).toEqual(
+				valid,
+			);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.productsCreate.parse({}),
+			).toThrow();
 		});
 
 		it('validates MaterialOrdersCreateInputSchema', () => {
 			const valid = { customer_note: 'Deliver to back door' };
-			expect(JobNimbusEndpointInputSchemas.materialOrdersCreate.parse(valid)).toEqual(valid);
+			expect(
+				JobNimbusEndpointInputSchemas.materialOrdersCreate.parse(valid),
+			).toEqual(valid);
 		});
 
 		it('validates WorkOrdersCreateInputSchema', () => {
 			const valid = { customer: 'c1', internal_note: 'Urgent' };
-			expect(JobNimbusEndpointInputSchemas.workOrdersCreate.parse(valid)).toEqual(valid);
+			expect(
+				JobNimbusEndpointInputSchemas.workOrdersCreate.parse(valid),
+			).toEqual(valid);
 		});
 
 		it('validates EstimatesCreateInputSchema', () => {
 			const valid = { number: 'EST-101', status: 1 };
-			expect(JobNimbusEndpointInputSchemas.estimatesCreate.parse(valid)).toEqual(valid);
+			expect(
+				JobNimbusEndpointInputSchemas.estimatesCreate.parse(valid),
+			).toEqual(valid);
 		});
 
 		it('validates InvoicesCreateInputSchema', () => {
 			const valid = { number: 'INV-101', date_due: 1700000000 };
-			expect(JobNimbusEndpointInputSchemas.invoicesCreate.parse(valid)).toEqual(valid);
+			expect(JobNimbusEndpointInputSchemas.invoicesCreate.parse(valid)).toEqual(
+				valid,
+			);
 		});
 
 		it('validates PaymentsCreateInputSchema', () => {
 			const valid = { customer: 'c1', date_payment: 1700000000, total: 500 };
-			expect(JobNimbusEndpointInputSchemas.paymentsCreate.parse(valid)).toEqual(valid);
-			expect(() => JobNimbusEndpointInputSchemas.paymentsCreate.parse({})).toThrow();
+			expect(JobNimbusEndpointInputSchemas.paymentsCreate.parse(valid)).toEqual(
+				valid,
+			);
+			expect(() =>
+				JobNimbusEndpointInputSchemas.paymentsCreate.parse({}),
+			).toThrow();
 		});
 
 		it('validates AccountCreateWorkflowInputSchema with enum', () => {
 			const valid = { name: 'Commercial', object_type: 'job' as const };
-			expect(JobNimbusEndpointInputSchemas.accountCreateWorkflow.parse(valid)).toEqual(valid);
+			expect(
+				JobNimbusEndpointInputSchemas.accountCreateWorkflow.parse(valid),
+			).toEqual(valid);
 			expect(() =>
 				JobNimbusEndpointInputSchemas.accountCreateWorkflow.parse({
 					name: 'Invalid',
-					object_type: 'invalid' as unknown as 'job',
+					object_type: 'invalid',
 				}),
 			).toThrow();
 		});
@@ -191,7 +267,9 @@ describe('JobNimbus schema and endpoint registry', () => {
 				object_type: 'job' as const,
 				type: 'string' as const,
 			};
-			expect(JobNimbusEndpointInputSchemas.accountCreateCustomField.parse(valid)).toEqual(valid);
+			expect(
+				JobNimbusEndpointInputSchemas.accountCreateCustomField.parse(valid),
+			).toEqual(valid);
 			expect(() =>
 				JobNimbusEndpointInputSchemas.accountCreateCustomField.parse({
 					title: 'Bad',
@@ -233,7 +311,8 @@ describe('JobNimbus schema and endpoint registry', () => {
 					jnid: 'f1',
 				},
 			};
-			const parsed = JobNimbusEndpointOutputSchemas.filesRequestSinglePartUpload.parse(raw);
+			const parsed =
+				JobNimbusEndpointOutputSchemas.filesRequestSinglePartUpload.parse(raw);
 			expect(parsed.data?.jnid).toBe('f1');
 		});
 
@@ -253,7 +332,8 @@ describe('JobNimbus schema and endpoint registry', () => {
 				workflows: [{ name: 'Customer' }],
 				fileTypes: [{ TypeName: 'Document' }],
 			};
-			const parsed = JobNimbusEndpointOutputSchemas.accountGetSettings.parse(raw);
+			const parsed =
+				JobNimbusEndpointOutputSchemas.accountGetSettings.parse(raw);
 			expect(parsed.workflows).toBeDefined();
 		});
 	});

@@ -10,17 +10,12 @@ export const contactsCreate: JobNimbusEndpoints['contactsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.contactsCreate.parse(input);
+	const parsedInput = JobNimbusEndpointInputSchemas.contactsCreate.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/contacts',
-		ctx.key,
-		{
-			method: 'POST',
-			body: parsedInput,
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/contacts', ctx.key, {
+		method: 'POST',
+		body: parsedInput,
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.contactsCreate.parse(response);
@@ -39,8 +34,7 @@ export const contactsUpdate: JobNimbusEndpoints['contactsUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.contactsUpdate.parse(input);
+	const parsedInput = JobNimbusEndpointInputSchemas.contactsUpdate.parse(input);
 	const { jnid, ...body } = parsedInput;
 
 	const response = await makeJobNimbusRequest<unknown>(
@@ -69,8 +63,7 @@ export const contactsDelete: JobNimbusEndpoints['contactsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput =
-		JobNimbusEndpointInputSchemas.contactsDelete.parse(input);
+	const parsedInput = JobNimbusEndpointInputSchemas.contactsDelete.parse(input);
 
 	const response = await makeJobNimbusRequest<unknown>(
 		`/contacts/${encodeURIComponent(parsedInput.jnid)}`,
@@ -127,20 +120,16 @@ export const contactsList: JobNimbusEndpoints['contactsList'] = async (
 ) => {
 	const parsedInput = JobNimbusEndpointInputSchemas.contactsList.parse(input);
 
-	const response = await makeJobNimbusRequest<unknown>(
-		'/contacts',
-		ctx.key,
-		{
-			method: 'GET',
-			query: compactQuery({
-				size: parsedInput.size,
-				from: parsedInput.from,
-				sort: parsedInput.sort,
-				direction: parsedInput.direction,
-				actor: parsedInput.actor,
-			}),
-		},
-	);
+	const response = await makeJobNimbusRequest<unknown>('/contacts', ctx.key, {
+		method: 'GET',
+		query: compactQuery({
+			size: parsedInput.size,
+			from: parsedInput.from,
+			sort: parsedInput.sort,
+			direction: parsedInput.direction,
+			actor: parsedInput.actor,
+		}),
+	});
 
 	// `unknown` because response is untrusted data; the Zod schema narrows it.
 	const parsed = JobNimbusEndpointOutputSchemas.contactsList.parse(response);

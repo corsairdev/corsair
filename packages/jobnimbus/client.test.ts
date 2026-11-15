@@ -1,9 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
+	compactQuery,
 	JOBNIMBUS_API_BASE,
 	JOBNIMBUS_NO_TRANSPORT_RETRIES,
-	compactQuery,
 	makeJobNimbusRequest,
 	redactCredentialFields,
 } from './client';
@@ -45,6 +45,12 @@ describe('JobNimbus HTTP client', () => {
 		});
 
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
+		const headers = mockedRequest.mock.calls[0]?.[0]?.HEADERS;
+		if (headers === undefined || typeof headers === 'function') {
+			throw new Error(
+				'Expected static request headers for API-key authentication.',
+			);
+		}
 		expect(mockedRequest.mock.calls[0]?.[0]).toMatchObject({
 			BASE: JOBNIMBUS_API_BASE,
 			VERSION: '1.0.0',
@@ -69,20 +75,30 @@ describe('JobNimbus HTTP client', () => {
 			method: 'GET',
 		});
 
-		expect(mockedRequest.mock.calls[0]?.[0]?.HEADERS?.Authorization).toBe(
-			'Bearer already-has-prefix',
-		);
+		const headers = mockedRequest.mock.calls[0]?.[0]?.HEADERS;
+		if (headers === undefined || typeof headers === 'function') {
+			throw new Error(
+				'Expected static request headers for API-key authentication.',
+			);
+		}
+		expect(headers.Authorization).toBe('Bearer already-has-prefix');
 	});
 
 	it('supports custom baseUrl and full URLs', async () => {
 		mockedRequest.mockResolvedValue({});
 
-		await makeJobNimbusRequest('https://api.jobnimbus.com/files/v1/uploads/url', 'test-key', {
-			method: 'POST',
-			body: { filename: 'a.txt' },
-		});
+		await makeJobNimbusRequest(
+			'https://api.jobnimbus.com/files/v1/uploads/url',
+			'test-key',
+			{
+				method: 'POST',
+				body: { filename: 'a.txt' },
+			},
+		);
 
-		expect(mockedRequest.mock.calls[0]?.[0]?.BASE).toBe('https://api.jobnimbus.com');
+		expect(mockedRequest.mock.calls[0]?.[0]?.BASE).toBe(
+			'https://api.jobnimbus.com',
+		);
 		expect(mockedRequest.mock.calls[0]?.[1]?.url).toBe('/files/v1/uploads/url');
 	});
 
@@ -183,9 +199,10 @@ describe('JobNimbus HTTP client', () => {
 		);
 
 		// `unknown` because a rejection value has no static type; the assertion narrows it.
-		const error: unknown = await makeJobNimbusRequest('/contacts', 'test-key').catch(
-			(caught: unknown) => caught,
-		);
+		const error: unknown = await makeJobNimbusRequest(
+			'/contacts',
+			'test-key',
+		).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
 		if (!(error instanceof ApiError)) {
