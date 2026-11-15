@@ -360,7 +360,6 @@ export const operations = {
 				organizationId: id,
 				pubkey: id,
 				ephemeral: optionalBoolean,
-				gwname: optionalString,
 				network: optionalString,
 				region: optionalString,
 				clientMutationId,
