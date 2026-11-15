@@ -259,7 +259,7 @@ describe('geokeo.geocode.forward', () => {
 
 	it('rejects xml, which would not parse into these schemas', async () => {
 		const error = await failure(
-			invoke(forwardGeocode, { q: 'x', format: 'yaml' }),
+			invoke(forwardGeocode, { q: 'x', format: 'xml' }),
 		);
 
 		expect(error.name).toBe('ZodError');
