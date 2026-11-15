@@ -3697,6 +3697,14 @@
                 ]
               },
               {
+                "group": "Postiz",
+                "pages": [
+                  "plugins/postiz/overview",
+                  "plugins/postiz/api",
+                  "plugins/postiz/database"
+                ]
+              },
+              {
                 "group": "Postman",
                 "pages": [
                   "plugins/postman/overview",

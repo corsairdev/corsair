@@ -441,6 +441,7 @@ export const BaseProviders = [
 	'polygonio',
 	'postalytics',
 	'postgrid',
+	'postiz',
 	'postmark',
 	'prerender',
 	'prismic',
@@ -1059,6 +1060,7 @@ export const ProviderDisplayNames = {
 	polygonio: 'Polygon.io',
 	postalytics: 'Postalytics',
 	postgrid: 'PostGrid',
+	postiz: 'Postiz',
 	postmark: 'Postmark',
 	prerender: 'Prerender',
 	prismic: 'Prismic',
@@ -1684,6 +1686,7 @@ export type AllProviders =
 	| 'polygonio'
 	| 'postalytics'
 	| 'postgrid'
+	| 'postiz'
 	| 'postmark'
 	| 'prerender'
 	| 'prismic'
