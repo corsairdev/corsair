@@ -252,6 +252,7 @@ export const BaseProviders = [
 	'followupboss',
 	'formbricks',
 	'foursquare',
+	'freeagent',
 	'fundable',
 	'gemini',
 	'giphy',
@@ -738,6 +739,7 @@ export const ProviderDisplayNames = {
 	followupboss: 'Follow Up Boss',
 	formbricks: 'Formbricks',
 	foursquare: 'Foursquare',
+	freeagent: 'FreeAgent',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
 	giphy: 'Giphy',
@@ -1231,6 +1233,7 @@ export type AllProviders =
 	| 'followupboss'
 	| 'formbricks'
 	| 'foursquare'
+	| 'freeagent'
 	| 'fundable'
 	| 'gemini'
 	| 'giphy'
