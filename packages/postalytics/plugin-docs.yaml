@@ -47,7 +47,7 @@ apiExamples:
   flows.unenrollContactFromFlow:
     args: {"dataId": 42, "endPoint": "segment"}
   login.createLoginLink:
-    args: {"body": {"api_key": "fixture-api-key"}}
+    args: {"body": {"url": "dashboard"}}
   mail.sendMail:
     args: {"endPoint": "segment", "body": {"address_city": "New York", "address_state": "NY", "address_street": "36 Pipers Row", "address_zip": "10001", "first_name": "Thomas", "last_name": "Anderson"}}
   suppressionLists.getSuppressionLists:

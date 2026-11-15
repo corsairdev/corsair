@@ -177,6 +177,39 @@ describe('Postalytics request seam', () => {
 			first_name: 'Thomas',
 		});
 	});
+	it('keeps account credentials out of results and login-link input', async () => {
+		mockFetch.mockImplementation(
+			async () =>
+				new Response(
+					JSON.stringify([
+						{ account_id: 42, api_key: 'provider-key', password: 'secret' },
+					]),
+					{ status: 200 },
+				),
+		);
+		const endpoints = postalytics().endpoints!;
+		expect(await endpoints.account.getMyAccount(ctx, {})).toEqual([
+			{ account_id: 42 },
+		]);
+		expect(await endpoints.account.getAccount(ctx, { id: 42 })).toEqual([
+			{ account_id: 42 },
+		]);
+		mockFetch.mockImplementation(
+			async () =>
+				new Response(JSON.stringify({ LoginLink: 'https://example' }), {
+					status: 200,
+				}),
+		);
+		const input = postalyticsEndpointSchemas[
+			'login.createLoginLink'
+		].input.parse({ body: { url: 'dashboard', api_key: 'from-tool-input' } });
+		await endpoints.login.createLoginLink(ctx, input);
+		const [, init] = mockFetch.mock.calls[2] as [string, RequestInit];
+		expect(JSON.parse(String(init.body))).toEqual({
+			url: 'dashboard',
+			api_key: 'test-key',
+		});
+	});
 	it('rejects unsafe string route parameters', () => {
 		const input = postalyticsEndpointSchemas['flows.getFlow'].input;
 		for (const endpointId of [

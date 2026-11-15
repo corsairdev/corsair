@@ -48,6 +48,8 @@ export const getIntegrationsOutputSchema = z.array(
 );
 
 export const getMyAccountInputSchema = z.object({});
+// api_key and password are left out: the read would hand the connection's own
+// credentials to the caller. operations.ts strips them from the response.
 export const getMyAccountOutputSchema = z.array(
 	z
 		.object({
@@ -56,13 +58,11 @@ export const getMyAccountOutputSchema = z.array(
 			address_state: z.string().nullable().optional(),
 			address_street: z.string().nullable().optional(),
 			address_zip: z.string().nullable().optional(),
-			api_key: z.string().nullable().optional(),
 			company: z.string().nullable().optional(),
 			created_date: z.string().optional(),
 			email_address: z.string().nullable().optional(),
 			first_name: z.string().nullable().optional(),
 			last_name: z.string().nullable().optional(),
-			password: z.string().nullable().optional(),
 			phone: z.string().nullable().optional(),
 			username: z.string().nullable().optional(),
 		})
@@ -78,13 +78,11 @@ export const getAccountOutputSchema = z.array(
 			address_state: z.string().nullable().optional(),
 			address_street: z.string().nullable().optional(),
 			address_zip: z.string().nullable().optional(),
-			api_key: z.string().nullable().optional(),
 			company: z.string().nullable().optional(),
 			created_date: z.string().optional(),
 			email_address: z.string().nullable().optional(),
 			first_name: z.string().nullable().optional(),
 			last_name: z.string().nullable().optional(),
-			password: z.string().nullable().optional(),
 			phone: z.string().nullable().optional(),
 			username: z.string().nullable().optional(),
 		})
@@ -682,10 +680,11 @@ export const unenrollContactFromFlowOutputSchema = z
 	.object({ unenrolled_date: z.string().optional() })
 	.passthrough();
 
+// The provider wants the account's API key in the body. It comes from the
+// stored credentials (ctx.key) in operations.ts, never from tool input.
 export const createLoginLinkInputSchema = z.object({
 	body: z
 		.object({
-			api_key: z.string(),
 			domain: z.string().nullable().optional(),
 			id: z.string().nullable().optional(),
 			url: z.string().nullable().optional(),

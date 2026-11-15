@@ -5,6 +5,13 @@ import {
 	PostalyticsEndpointOutputSchemas as outputs,
 } from './types';
 
+// Account reads return the account's api_key and password. Neither belongs in
+// a tool result, so both are dropped before the response leaves the plugin.
+function withoutCredentials<T extends Record<string, unknown>>(row: T): T {
+	const { api_key: _apiKey, password: _password, ...rest } = row;
+	return rest as T;
+}
+
 export const getIntegrations: PostalyticsEndpoints['getIntegrations'] = async (
 	ctx,
 	input,
@@ -27,7 +34,7 @@ export const getMyAccount: PostalyticsEndpoints['getMyAccount'] = async (
 		method: 'GET',
 		sandbox: ctx.options.sandbox,
 	});
-	return outputs.getMyAccount.parse(response);
+	return outputs.getMyAccount.parse(response).map(withoutCredentials);
 };
 
 export const getAccount: PostalyticsEndpoints['getAccount'] = async (
@@ -40,7 +47,7 @@ export const getAccount: PostalyticsEndpoints['getAccount'] = async (
 		ctx.key,
 		{ method: 'GET', sandbox: ctx.options.sandbox },
 	);
-	return outputs.getAccount.parse(response);
+	return outputs.getAccount.parse(response).map(withoutCredentials);
 };
 
 export const createNewAccount: PostalyticsEndpoints['createNewAccount'] =
@@ -319,7 +326,7 @@ export const createLoginLink: PostalyticsEndpoints['createLoginLink'] = async (
 	const response = await makePostalyticsRequest(`/api/v1/loginlink`, ctx.key, {
 		method: 'POST',
 		sandbox: ctx.options.sandbox,
-		body: args.body,
+		body: { ...args.body, api_key: ctx.key },
 	});
 	return outputs.createLoginLink.parse(response);
 };

@@ -37,6 +37,22 @@
         "phone": "888-574-7346",
         "username": "choi"
       }
+    ],
+    "expected": [
+      {
+        "account_id": 10142067,
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_zip": "10001",
+        "company": "Metacortex",
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "email_address": "tanderson@metacortex.net",
+        "first_name": "Thomas",
+        "last_name": "Anderson",
+        "phone": "888-574-7346",
+        "username": "choi"
+      }
     ]
   },
   {
@@ -61,6 +77,22 @@
         "first_name": "Thomas",
         "last_name": "Anderson",
         "password": "",
+        "phone": "888-574-7346",
+        "username": "choi"
+      }
+    ],
+    "expected": [
+      {
+        "account_id": 10142067,
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_zip": "10001",
+        "company": "Metacortex",
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "email_address": "tanderson@metacortex.net",
+        "first_name": "Thomas",
+        "last_name": "Anderson",
         "phone": "888-574-7346",
         "username": "choi"
       }
@@ -578,12 +610,16 @@
     "path": "/api/v1/loginlink",
     "input": {
       "body": {
-        "api_key": "fixture-api-key"
+        "url": "dashboard"
       }
     },
     "output": {
       "CreatedDate": "https://www.metacortex.net/al.aspx?m=oKRD1iQHmXUEQkxihVS9DTvIRKAPM6ZoqrdY+lgRg1F",
       "LoginLink": ""
+    },
+    "sentBody": {
+      "url": "dashboard",
+      "api_key": "fixture-key"
     }
   },
   {

@@ -317,14 +317,19 @@ describe('all documented Postalytics operations', () => {
 				throw new Error(`Missing endpoint ${key}`);
 			// The runtime membership check narrows the JSON fixture key to the typed registry.
 			const operation = operations[key as keyof typeof operations];
-			expect(await operation(fixture.input)).toEqual(fixture.output);
+			// Account reads drop credentials, so their fixtures carry the trimmed result.
+			expect(await operation(fixture.input)).toEqual(
+				'expected' in fixture ? fixture.expected : fixture.output,
+			);
 			const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 			expect(url).toBe(`https://api.postalytics.com${fixture.path}`);
 			expect(init.method).toBe(fixture.method);
 			expect(new Headers(init.headers).get('Authorization')).toBe(
 				`Basic ${Buffer.from('fixture-key:').toString('base64')}`,
 			);
-			if ('body' in fixture.input)
+			if ('sentBody' in fixture)
+				expect(JSON.parse(String(init.body))).toEqual(fixture.sentBody);
+			else if ('body' in fixture.input)
 				expect(JSON.parse(String(init.body))).toEqual(fixture.input.body);
 			else expect(init.body).toBeUndefined();
 		});
