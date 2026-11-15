@@ -3439,6 +3439,14 @@
                 ]
               },
               {
+                "group": "Polygon.io",
+                "pages": [
+                  "plugins/polygonio/overview",
+                  "plugins/polygonio/api",
+                  "plugins/polygonio/database"
+                ]
+              },
+              {
                 "group": "Postmark",
                 "pages": [
                   "plugins/postmark/overview",

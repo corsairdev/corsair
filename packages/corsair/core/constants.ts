@@ -412,6 +412,7 @@ export const BaseProviders = [
 	'placid',
 	'plain',
 	'ploid',
+	'polygonio',
 	'postmark',
 	'prismic',
 	'posthog',
@@ -992,6 +993,7 @@ export const ProviderDisplayNames = {
 	placid: 'Placid',
 	plain: 'Plain',
 	ploid: 'Ploid',
+	polygonio: 'Polygon.io',
 	postmark: 'Postmark',
 	prismic: 'Prismic',
 	posthog: 'PostHog',
@@ -1579,6 +1581,7 @@ export type AllProviders =
 	| 'placid'
 	| 'plain'
 	| 'ploid'
+	| 'polygonio'
 	| 'postmark'
 	| 'prismic'
 	| 'posthog'
