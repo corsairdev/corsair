@@ -581,7 +581,7 @@ export const handwryttenEndpointMeta = {
 		description: 'List saved recipient mailing addresses from the address book',
 	},
 	'addressBook.addRecipient': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Add a new recipient address to the user address book',
 	},
 	'addressBook.updateRecipient': {
@@ -602,7 +602,7 @@ export const handwryttenEndpointMeta = {
 		description: 'Get default sender return address and account billing info',
 	},
 	'addressBook.addSender': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Add a new sender return address to the account',
 	},
 	'addressBook.updateSender': {
@@ -614,7 +614,7 @@ export const handwryttenEndpointMeta = {
 		description: 'Delete a sender return address from the account',
 	},
 	'addressBook.setDefaultSender': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Set an address as the default sender return address',
 	},
 
@@ -631,7 +631,7 @@ export const handwryttenEndpointMeta = {
 		description: 'Get a specific message template by ID',
 	},
 	'templates.create': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description: 'Create a new saved message template in the user account',
 	},
 	'templates.update': {

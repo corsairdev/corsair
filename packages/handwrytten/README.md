@@ -46,19 +46,19 @@ API keys can be created and managed on the [Integrations](https://app.handwrytte
 | `addressBook.countries` | `read` | List supported destination countries and country codes |
 | `addressBook.states` | `read` | List states and provinces for a given country |
 | `addressBook.listRecipients` | `read` | List saved recipient mailing addresses |
-| `addressBook.addRecipient` | `destructive` | Add a new recipient address to the user address book |
+| `addressBook.addRecipient` | `write` | Add a new recipient address to the user address book |
 | `addressBook.updateRecipient` | `destructive` | Update an existing recipient address in the user address book |
 | `addressBook.deleteRecipient` | `destructive` | Delete a recipient address from the user address book |
 | `addressBook.listSenders` | `read` | List saved return/sender addresses from the account |
 | `addressBook.getSender` | `read` | Get default sender return address and account billing info |
-| `addressBook.addSender` | `destructive` | Add a new sender return address to the account |
+| `addressBook.addSender` | `write` | Add a new sender return address to the account |
 | `addressBook.updateSender` | `destructive` | Update the sender return address on the account |
 | `addressBook.deleteSender` | `destructive` | Delete a sender return address from the account |
-| `addressBook.setDefaultSender` | `destructive` | Set an address as the default sender return address |
+| `addressBook.setDefaultSender` | `write` | Set an address as the default sender return address |
 | `templates.categories` | `read` | List template categories available for card messages |
 | `templates.list` | `read` | List saved message templates with optional category filter |
 | `templates.get` | `read` | Get a specific message template by ID |
-| `templates.create` | `destructive` | Create a new saved message template in the user account |
+| `templates.create` | `write` | Create a new saved message template in the user account |
 | `templates.update` | `destructive` | Update an existing message template in the user account |
 | `templates.delete` | `destructive` | Delete a message template from the user account |
 | `giftCards.list` | `read` | List physical merchant gift cards and denominations |
