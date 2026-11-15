@@ -3431,6 +3431,14 @@
                 ]
               },
               {
+                "group": "Postmark",
+                "pages": [
+                  "plugins/postmark/overview",
+                  "plugins/postmark/api",
+                  "plugins/postmark/database"
+                ]
+              },
+              {
                 "group": "Prismic",
                 "pages": [
                   "plugins/prismic/overview",
