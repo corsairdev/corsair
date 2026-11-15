@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JungleScoutEndpoints } from '..';
 import { makeJungleScoutRequest } from '../client';
-import type { ShareOfVoiceResponse } from './types';
 import {
 	JungleScoutEndpointInputSchemas,
 	JungleScoutEndpointOutputSchemas,
@@ -19,7 +18,7 @@ export const get: JungleScoutEndpoints['shareOfVoice.get'] = async (
 		keyword: parsedInput.keyword,
 	};
 
-	const response = await makeJungleScoutRequest<ShareOfVoiceResponse>(
+	const response = await makeJungleScoutRequest(
 		'/api/share_of_voice',
 		ctx.key,
 		{

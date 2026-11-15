@@ -5,6 +5,7 @@ import {
 	JUNGLESCOUT_RATE_LIMIT_CONFIG,
 	JungleScoutAPIError,
 	makeJungleScoutRequest,
+	parseJungleScoutResponse,
 } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -222,6 +223,53 @@ describe('makeJungleScoutRequest', () => {
 				expect(err.status).toBe(429);
 				expect(err.retryAfter).toBe(4000);
 			}
+		} finally {
+			fetchMock.mockRestore();
+		}
+	});
+
+	it('decodes successful vendor JSON responses returned as text by core transport', async () => {
+		const actualHttp =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http');
+		const payload = {
+			data: {
+				id: 'us/coffee',
+				type: 'share_of_voice',
+				attributes: { estimated_30_day_search_volume: 25 },
+			},
+		};
+		const fetchMock = jest.spyOn(global, 'fetch');
+		const vendorTypes = [
+			'application/vnd.junglescout.v1+json',
+			'application/vnd.api+json',
+		];
+
+		try {
+			for (const contentType of vendorTypes) {
+				fetchMock.mockResolvedValueOnce(
+					new Response(JSON.stringify(payload), {
+						status: 200,
+						headers: { 'content-type': contentType },
+					}),
+				);
+				const rawResponse = await actualHttp.request(
+					{
+						BASE: JUNGLESCOUT_API_BASE,
+						VERSION: '1.0.0',
+						WITH_CREDENTIALS: false,
+						CREDENTIALS: 'omit',
+						HEADERS: {
+							Accept: 'application/vnd.junglescout.v1+json',
+							'Content-Type': 'application/vnd.api+json',
+						},
+					},
+					{ method: 'GET', url: '/api/share_of_voice' },
+				);
+
+				expect(rawResponse).toBe(JSON.stringify(payload));
+				expect(parseJungleScoutResponse(rawResponse)).toEqual(payload);
+			}
+			expect(fetchMock).toHaveBeenCalledTimes(vendorTypes.length);
 		} finally {
 			fetchMock.mockRestore();
 		}

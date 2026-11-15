@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JungleScoutEndpoints } from '..';
 import { makeJungleScoutRequest } from '../client';
-import type { SalesEstimatesQueryResponse } from './types';
 import {
 	JungleScoutEndpointInputSchemas,
 	JungleScoutEndpointOutputSchemas,
@@ -21,7 +20,7 @@ export const query: JungleScoutEndpoints['salesEstimates.query'] = async (
 		end_date: parsedInput.end_date,
 	};
 
-	const response = await makeJungleScoutRequest<SalesEstimatesQueryResponse>(
+	const response = await makeJungleScoutRequest(
 		'/api/sales_estimates_query',
 		ctx.key,
 		{

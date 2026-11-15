@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JungleScoutEndpoints } from '..';
 import { makeJungleScoutRequest } from '../client';
-import type { ProductDatabaseQueryResponse } from './types';
 import {
 	JungleScoutEndpointInputSchemas,
 	JungleScoutEndpointOutputSchemas,
@@ -58,7 +57,7 @@ export const query: JungleScoutEndpoints['productDatabase.query'] = async (
 		Object.entries(attributes).filter(([, v]) => v !== undefined),
 	);
 
-	const response = await makeJungleScoutRequest<ProductDatabaseQueryResponse>(
+	const response = await makeJungleScoutRequest(
 		'/api/product_database_query',
 		ctx.key,
 		{

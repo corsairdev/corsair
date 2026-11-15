@@ -1,11 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { JungleScoutEndpoints } from '..';
 import { makeJungleScoutRequest } from '../client';
-import type {
-	HistoricalSearchVolumeResponse,
-	KeywordsByAsinResponse,
-	KeywordsByKeywordResponse,
-} from './types';
 import {
 	JungleScoutEndpointInputSchemas,
 	JungleScoutEndpointOutputSchemas,
@@ -47,7 +42,7 @@ export const byAsin: JungleScoutEndpoints['keywords.byAsin'] = async (
 		Object.entries(attributes).filter(([, v]) => v !== undefined),
 	);
 
-	const response = await makeJungleScoutRequest<KeywordsByAsinResponse>(
+	const response = await makeJungleScoutRequest(
 		'/api/keywords/keywords_by_asin_query',
 		ctx.key,
 		{
@@ -115,7 +110,7 @@ export const byKeyword: JungleScoutEndpoints['keywords.byKeyword'] = async (
 		Object.entries(attributes).filter(([, v]) => v !== undefined),
 	);
 
-	const response = await makeJungleScoutRequest<KeywordsByKeywordResponse>(
+	const response = await makeJungleScoutRequest(
 		'/api/keywords/keywords_by_keyword_query',
 		ctx.key,
 		{
@@ -160,16 +155,15 @@ export const historicalSearchVolume: JungleScoutEndpoints['keywords.historicalSe
 			end_date: parsedInput.end_date,
 		};
 
-		const response =
-			await makeJungleScoutRequest<HistoricalSearchVolumeResponse>(
-				'/api/keywords/historical_search_volume',
-				ctx.key,
-				{
-					method: 'GET',
-					query,
-					apiType: ctx.options?.apiType,
-				},
-			);
+		const response = await makeJungleScoutRequest(
+			'/api/keywords/historical_search_volume',
+			ctx.key,
+			{
+				method: 'GET',
+				query,
+				apiType: ctx.options?.apiType,
+			},
+		);
 
 		const parsed =
 			JungleScoutEndpointOutputSchemas['keywords.historicalSearchVolume'].parse(

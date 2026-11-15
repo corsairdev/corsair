@@ -43,11 +43,19 @@ export type JungleScoutRequestOptions = {
 	apiType?: 'junglescout' | 'cobalt';
 };
 
-export async function makeJungleScoutRequest<T>(
+export function parseJungleScoutResponse(response: unknown): unknown {
+	if (typeof response !== 'string') return response;
+
+	// `unknown` because the shared transport returns vendor JSON MIME bodies as text; endpoint Zod schemas validate it.
+	const parsedBody: unknown = JSON.parse(response);
+	return parsedBody;
+}
+
+export async function makeJungleScoutRequest(
 	endpoint: string,
 	apiKey?: string,
 	options: JungleScoutRequestOptions = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', body, query, apiType = 'junglescout' } = options;
 
 	// The official API requires its combined `KEY_NAME:API_KEY` authorization value.
@@ -79,9 +87,10 @@ export async function makeJungleScoutRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions, {
+		const response = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: JUNGLESCOUT_RATE_LIMIT_CONFIG,
 		});
+		return parseJungleScoutResponse(response);
 	} catch (error: unknown) {
 		// Provider/network errors can contain request data; retain only safe HTTP metadata.
 		// Drop inputs and provider payloads because errors can echo searched terms or ASINs.

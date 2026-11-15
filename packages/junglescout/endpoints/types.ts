@@ -157,7 +157,7 @@ export const KeywordsByAsinItemAttributesSchema = z
 		ppc_bid_broad: z.number().nullable().optional(),
 		ppc_bid_exact: z.number().nullable().optional(),
 		ease_of_ranking_score: z.number().int().optional(),
-		relevancy_score: z.number().nullable().optional(),
+		relevancy_score: z.number().int().nullable().optional(),
 		organic_product_count: z.number().int().nullable().optional(),
 		sponsored_product_count: z.number().int().nullable().optional(),
 		organic_rank: z.number().int().nullable().optional(),
@@ -167,10 +167,8 @@ export const KeywordsByAsinItemAttributesSchema = z
 		sponsored_ranking_asins_count: z.number().int().nullable().optional(),
 		avg_competitor_organic_rank: z.number().nullable().optional(),
 		avg_competitor_sponsored_rank: z.number().nullable().optional(),
-		relative_organic_position: z.number().nullable().optional(),
-		relative_sponsored_position: z.number().nullable().optional(),
-		variation_lowest_organic_rank: z.number().nullable().optional(),
-		variation_lowest_sponsored_rank: z.number().nullable().optional(),
+		relative_organic_position: z.number().int().nullable().optional(),
+		relative_sponsored_position: z.number().int().nullable().optional(),
 		competitor_organic_rank: z
 			.array(CompetitorOrganicRankSchema)
 			.nullable()
@@ -242,7 +240,7 @@ export const KeywordsByKeywordItemAttributesSchema = z
 		sp_brand_ad_bid: z.number().nullable().optional(),
 		ppc_bid_broad: z.number().nullable().optional(),
 		ppc_bid_exact: z.number().nullable().optional(),
-		relevancy_score: z.number().nullable().optional(),
+		relevancy_score: z.number().int().nullable().optional(),
 		organic_product_count: z.number().int().nullable().optional(),
 		sponsored_product_count: z.number().int().nullable().optional(),
 	})
@@ -524,17 +522,17 @@ export type ShareOfVoiceInput = z.infer<typeof ShareOfVoiceInputSchema>;
 export const ShareOfVoiceBrandSchema = z
 	.object({
 		brand: z.string(),
-		combined_products: z.number(),
+		combined_products: z.number().int(),
 		combined_weighted_sov: z.number(),
 		combined_basic_sov: z.number(),
 		combined_average_position: z.number(),
 		combined_average_price: z.number().optional(),
-		organic_products: z.number(),
+		organic_products: z.number().int(),
 		organic_weighted_sov: z.number(),
 		organic_basic_sov: z.number(),
 		organic_average_position: z.number(),
 		organic_average_price: z.number().nullable().optional(),
-		sponsored_products: z.number(),
+		sponsored_products: z.number().int(),
 		sponsored_weighted_sov: z.number(),
 		sponsored_basic_sov: z.number(),
 		sponsored_average_position: z.number(),
@@ -547,17 +545,17 @@ export const ShareOfVoiceTopAsinSchema = z
 		asin: z.string(),
 		name: z.string().nullable().optional(),
 		brand: z.string().nullable().optional(),
-		clicks: z.number(),
-		conversions: z.number(),
+		clicks: z.number().int(),
+		conversions: z.number().int(),
 		conversion_rate: z.number().nullable().optional(),
 	})
 	.passthrough();
 
 export const ShareOfVoiceAttributesSchema = z
 	.object({
-		estimated_30_day_search_volume: z.number(),
+		estimated_30_day_search_volume: z.number().int(),
 		exact_suggested_bid_median: z.number(),
-		product_count: z.number(),
+		product_count: z.number().int(),
 		updated_at: z.string(),
 		top_asins_model_start_date: z.string().nullable().optional(),
 		top_asins_model_end_date: z.string().nullable().optional(),
@@ -568,7 +566,7 @@ export const ShareOfVoiceAttributesSchema = z
 
 export const ShareOfVoiceDataSchema = z
 	.object({
-		id: z.string(),
+		id: z.string().optional(),
 		type: z.string(),
 		attributes: ShareOfVoiceAttributesSchema,
 	})

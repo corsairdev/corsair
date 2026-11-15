@@ -87,8 +87,6 @@ Query up to 10 ASINs per request. Returns exact and broad search volume, PPC bid
     avg_competitor_sponsored_rank?: number | null,
     relative_organic_position?: number | null,
     relative_sponsored_position?: number | null,
-    variation_lowest_organic_rank?: number | null,
-    variation_lowest_sponsored_rank?: number | null,
     competitor_organic_rank?: {
       asin: string,
       organic_rank: number
@@ -517,7 +515,7 @@ Returns organic, sponsored, and combined brand market share and top 3 ASIN click
 
 ```ts
 {
-  id: string,
+  id?: string,
   type: string,
   attributes: {
     estimated_30_day_search_volume: number,

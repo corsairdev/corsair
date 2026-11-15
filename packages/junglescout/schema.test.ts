@@ -96,6 +96,22 @@ describe('JungleScout endpoint schemas', () => {
 					],
 				}).success,
 			).toBe(false);
+
+			expect(
+				KeywordsByAsinResponseSchema.safeParse({
+					data: [
+						{
+							id: 'us/batteries',
+							type: 'keyword_by_asin_result',
+							attributes: {
+								country: 'us',
+								name: 'batteries',
+								monthly_search_volume_exact: 1.5,
+							},
+						},
+					],
+				}).success,
+			).toBe(false);
 		});
 	});
 
@@ -378,6 +394,18 @@ describe('JungleScout endpoint schemas', () => {
 			expect(ShareOfVoiceResponseSchema.safeParse(validOutput).success).toBe(
 				true,
 			);
+
+			expect(
+				ShareOfVoiceResponseSchema.safeParse({
+					data: {
+						...validOutput.data,
+						attributes: {
+							...validOutput.data.attributes,
+							estimated_30_day_search_volume: 1.5,
+						},
+					},
+				}).success,
+			).toBe(false);
 		});
 	});
 });

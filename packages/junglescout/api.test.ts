@@ -4,14 +4,6 @@
 //   JUNGLESCOUT_API_KEY=KEY_NAME:API_KEY pnpm test:live
 //
 import { makeJungleScoutRequest } from './client';
-import type {
-	HistoricalSearchVolumeResponse,
-	KeywordsByAsinResponse,
-	KeywordsByKeywordResponse,
-	ProductDatabaseQueryResponse,
-	SalesEstimatesQueryResponse,
-	ShareOfVoiceResponse,
-} from './endpoints/types';
 import {
 	HistoricalSearchVolumeResponseSchema,
 	KeywordsByAsinResponseSchema,
@@ -32,7 +24,7 @@ if (!LIVE_KEY) {
 
 describeLive('junglescout live API smoke tests (env-gated)', () => {
 	it('POST /api/keywords/keywords_by_asin_query returns keyword metrics for ASIN', async () => {
-		const res = await makeJungleScoutRequest<KeywordsByAsinResponse>(
+		const res = await makeJungleScoutRequest(
 			'/api/keywords/keywords_by_asin_query',
 			LIVE_KEY,
 			{
@@ -54,7 +46,7 @@ describeLive('junglescout live API smoke tests (env-gated)', () => {
 	});
 
 	it('POST /api/keywords/keywords_by_keyword_query returns keyword search suggestions', async () => {
-		const res = await makeJungleScoutRequest<KeywordsByKeywordResponse>(
+		const res = await makeJungleScoutRequest(
 			'/api/keywords/keywords_by_keyword_query',
 			LIVE_KEY,
 			{
@@ -76,7 +68,7 @@ describeLive('junglescout live API smoke tests (env-gated)', () => {
 	});
 
 	it('GET /api/keywords/historical_search_volume returns search volume time series', async () => {
-		const res = await makeJungleScoutRequest<HistoricalSearchVolumeResponse>(
+		const res = await makeJungleScoutRequest(
 			'/api/keywords/historical_search_volume',
 			LIVE_KEY,
 			{
@@ -95,7 +87,7 @@ describeLive('junglescout live API smoke tests (env-gated)', () => {
 	});
 
 	it('POST /api/product_database_query searches products', async () => {
-		const res = await makeJungleScoutRequest<ProductDatabaseQueryResponse>(
+		const res = await makeJungleScoutRequest(
 			'/api/product_database_query',
 			LIVE_KEY,
 			{
@@ -117,7 +109,7 @@ describeLive('junglescout live API smoke tests (env-gated)', () => {
 	});
 
 	it('GET /api/sales_estimates_query returns sales history', async () => {
-		const res = await makeJungleScoutRequest<SalesEstimatesQueryResponse>(
+		const res = await makeJungleScoutRequest(
 			'/api/sales_estimates_query',
 			LIVE_KEY,
 			{
@@ -136,17 +128,13 @@ describeLive('junglescout live API smoke tests (env-gated)', () => {
 	});
 
 	it('GET /api/share_of_voice returns brand market share', async () => {
-		const res = await makeJungleScoutRequest<ShareOfVoiceResponse>(
-			'/api/share_of_voice',
-			LIVE_KEY,
-			{
-				method: 'GET',
-				query: {
-					marketplace: 'us',
-					keyword: 'golf balls',
-				},
+		const res = await makeJungleScoutRequest('/api/share_of_voice', LIVE_KEY, {
+			method: 'GET',
+			query: {
+				marketplace: 'us',
+				keyword: 'golf balls',
 			},
-		);
+		});
 
 		const parsed = ShareOfVoiceResponseSchema.parse(res);
 		expect(parsed.data.id).toBeDefined();
