@@ -32,13 +32,13 @@ pnpm add @corsair-dev/ignisign
 | `proofs.downloadSignatureByType` | `ignisign.api.proofs.downloadSignatureByType` | `read` | Download signature proof bundle by proof type (e.g. signed PDF or legal kit) |
 | `seal.signM2M` | `ignisign.api.seal.signM2M` | `destructive` | Seal a document with an M2M signer (each seal is billed in production) |
 | `signatureRequests.close` | `ignisign.api.signatureRequests.close` | `destructive` | Close a signature request; signers can no longer sign it (cannot be undone) |
-| `signatureRequests.createInOneCall` | `ignisign.api.signatureRequests.createInOneCall` | `destructive` | Create and publish a signature request in a single call; emails the signers |
+| `signatureRequests.createInOneCall` | `ignisign.api.signatureRequests.createInOneCall` | `destructive` | Create and publish a signature request in a single call; emails signers whose profile uses BySide mode |
 | `signatureRequests.getContext` | `ignisign.api.signatureRequests.getContext` | `read` | Get full context and details for a signature request |
 | `signatureRequests.getStatus` | `ignisign.api.signatureRequests.getStatus` | `read` | Get current status for multiple signature requests |
 | `signatureRequests.init` | `ignisign.api.signatureRequests.init` | `write` | Initialize a new empty signature request draft |
 | `signatureRequests.initSignerSetup` | `ignisign.api.signatureRequests.initSignerSetup` | `write` | Initialize a signer setup session |
 | `signatureRequests.list` | `ignisign.api.signatureRequests.list` | `read` | List signature requests for an application and environment |
-| `signatureRequests.publish` | `ignisign.api.signatureRequests.publish` | `destructive` | Publish and launch a signature request; emails the signers to start signing |
+| `signatureRequests.publish` | `ignisign.api.signatureRequests.publish` | `destructive` | Publish and launch a signature request; emails signers whose profile uses BySide mode (Embedded signers sign in your app) |
 | `signatureRequests.update` | `ignisign.api.signatureRequests.update` | `write` | Update signature request settings, signers, and documents |
 | `signatures.get` | `ignisign.api.signatures.get` | `read` | Get details of a specific signature on a document |
 | `signatures.getImages` | `ignisign.api.signatures.getImages` | `read` | Get visual signature images associated with document signers |

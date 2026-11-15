@@ -488,7 +488,7 @@ await corsair.ignisign.api.documents.provideJsonContent({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `string` | Yes | — |
-| `jsonContent` | `Record<string, any>` | Yes | — |
+| `jsonContent` | `string \| number \| boolean \| null \| any[] \| Record<string, any>` | Yes | — |
 
 
 
@@ -839,7 +839,7 @@ await corsair.ignisign.api.seal.signM2M({
   mimeType?: string,
   contentB64?: string,
   xmlContent?: string,
-  jsonContent?: Record<string, any>
+  jsonContent?: string | number | boolean | null | any[] | Record<string, any>
 }
 ```
 </Accordion>
@@ -897,7 +897,7 @@ await corsair.ignisign.api.signatureRequests.close({ signatureRequestId: 'sig_re
 
 `signatureRequests.createInOneCall`
 
-Create and publish a signature request in a single call; emails the signers
+Create and publish a signature request in a single call; emails signers whose profile uses BySide mode
 
 **Risk:** `destructive`
 
@@ -1319,7 +1319,7 @@ await corsair.ignisign.api.signatureRequests.list({});
 
 `signatureRequests.publish`
 
-Publish and launch a signature request; emails the signers to start signing
+Publish and launch a signature request; emails signers whose profile uses BySide mode (Embedded signers sign in your app)
 
 **Risk:** `destructive`
 
@@ -1395,6 +1395,7 @@ await corsair.ignisign.api.signatureRequests.update({ signatureRequestId: 'sig_r
 | `documentIds` | `string[]` | No | — |
 | `signerIds` | `string[]` | No | — |
 | `externalId` | `string` | No | — |
+| `defaultSignatureMethod` | `SIMPLE_STD \| ADVANCED_SMS \| ADVANCED_STD \| QUALIFIED_STD` | No | — |
 
 
 
@@ -1673,6 +1674,19 @@ await corsair.ignisign.api.signerProfiles.get({ signerProfileId: 'prof_sample' }
 | `version` | `number \| null` | No | — |
 | `isRecurrent` | `boolean \| null` | No | — |
 | `integrationMode` | `string \| null` | No | — |
+| `signatureAuthMethodsConfiguration` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="signatureAuthMethodsConfiguration full type">
+
+```ts
+Record<string, {
+  idProofings?: string[] | null,
+  authMethods?: string[] | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1748,7 +1762,11 @@ await corsair.ignisign.api.signerProfiles.list({});
   status?: string | null,
   version?: number | null,
   isRecurrent?: boolean | null,
-  integrationMode?: string | null
+  integrationMode?: string | null,
+  signatureAuthMethodsConfiguration?: Record<string, {
+    idProofings?: string[] | null,
+    authMethods?: string[] | null
+  }> | null
 }[]
 ```
 </Accordion>

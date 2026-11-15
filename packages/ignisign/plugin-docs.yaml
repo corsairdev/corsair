@@ -7,7 +7,8 @@ overviewNote: >-
   key itself (`skv2_<env>_<app>_<secret>`), so `appId` and `appEnv` inputs are
   optional overrides. To work in another environment, connect that
   environment's key. Publishing a signature request (`publish`,
-  `createInOneCall`) emails its signers.
+  `createInOneCall`) emails signers whose signer profile uses BySide mode;
+  with Embedded mode your application shows the signing interface instead.
   Run the Corsair database migration once before passing the connection to
   `createCorsair`; creating a SQLite file does not create Corsair's tables.
   Before creating a tenant connect link, mount a Hub delivery handler as

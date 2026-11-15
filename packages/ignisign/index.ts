@@ -242,7 +242,7 @@ export const ignisignEndpointMeta = {
 	'signatureRequests.createInOneCall': {
 		riskLevel: 'destructive',
 		description:
-			'Create and publish a signature request in a single call; emails the signers',
+			'Create and publish a signature request in a single call; emails signers whose profile uses BySide mode',
 	},
 	'signatureRequests.init': {
 		riskLevel: 'write',
@@ -267,7 +267,7 @@ export const ignisignEndpointMeta = {
 	'signatureRequests.publish': {
 		riskLevel: 'destructive',
 		description:
-			'Publish and launch a signature request; emails the signers to start signing',
+			'Publish and launch a signature request; emails signers whose profile uses BySide mode (Embedded signers sign in your app)',
 	},
 	'signatureRequests.close': {
 		riskLevel: 'destructive',
