@@ -1,6 +1,6 @@
 # @corsair-dev/productboard
 
-Productboard Public REST API v2 integration for Corsair. The plugin covers notes, workspace-configured entities and their relationships, entity field values, member activity, members, teams, Jira integration reads, and PBFM document references.
+Productboard Public REST API v2 integration for Corsair. The plugin covers notes, workspace-configured entities and their relationships, entity field values, member activity, members, teams, Jira integration reads, and Plugin Integrations.
 
 ## Install and authenticate
 
@@ -8,9 +8,9 @@ Productboard Public REST API v2 integration for Corsair. The plugin covers notes
 pnpm add @corsair-dev/productboard
 ```
 
-Use a Productboard personal access token as the Corsair `api_key`; requests send it as `Authorization: Bearer <token>`, and include `Accept: application/json`. Personal access tokens are created under **Settings → Integrations → Public APIs → Access Token** and are available on Pro plans and above. Productboard also accepts OAuth access tokens in the same bearer header, so an already-issued OAuth access token can be supplied as the stored bearer credential. This plugin does not issue or refresh OAuth tokens. Its Authentication guide, detailed OAuth guide, and v2 per-route OpenAPI security sections currently publish differing OAuth URL/scope spellings; use a personal access token for the supported default setup and verify scopes with Productboard before enabling OAuth.
+Use a Productboard personal access token as the Corsair `api_key`; requests send it as `Authorization: Bearer <token>`, and include `Accept: application/json`. Personal access tokens are created under **Settings → Integrations → Public APIs → Access Token** and are available on Pro plans and above. This plugin supports API-token authentication only. OAuth login, token issuance, and refresh are unavailable: Productboard's detailed OAuth guide and v2 per-route OpenAPI security sections disagree on authorization/token URLs and scopes, so this integration does not claim an OAuth flow or compatibility for OAuth access tokens.
 
-Productboard also documents OAuth server-to-server JWT and OAuth for MCP clients (DCR/PKCE). Those specialized credential-issuance flows are not implemented by this plugin.
+Productboard also documents OAuth server-to-server JWT and OAuth for MCP clients (DCR/PKCE); neither specialized flow is implemented by this plugin.
 
 ## Operation matrix
 
@@ -62,8 +62,6 @@ All routes use `https://api.productboard.com/v2`. For operations with query para
 | `jiraIntegrations.get` | `GET /jira-integrations/{id}` | [Get Jira integration](https://developer.productboard.com/reference/getjiraintegration) |
 | `jiraIntegrations.connections` | `GET /jira-integrations/{integrationId}/connections` | [List Jira connections](https://developer.productboard.com/reference/listjiraintegrationconnections) |
 | `jiraIntegrations.connection` | `GET /jira-integrations/{integrationId}/connections/{entityId}` | [Get Jira connection](https://developer.productboard.com/reference/getjiraintegrationconnection) |
-| `documents.get` | `GET /documents/{documentId}` | [Entity/document reference](https://developer.productboard.com/reference/listentities) |
-| `documents.replaceContent` | `PUT /documents/{documentId}/content` | [Entity/document reference](https://developer.productboard.com/reference/listentities) |
 | `pluginIntegrations.list` | `GET /plugin-integrations` | [List plugin integrations](https://developer.productboard.com/reference/listpluginintegrations) |
 | `pluginIntegrations.create` | `POST /plugin-integrations` | [Create plugin integration](https://developer.productboard.com/reference/createpluginintegration) |
 | `pluginIntegrations.get` | `GET /plugin-integrations/{integrationId}` | [Get plugin integration](https://developer.productboard.com/reference/getpluginintegration) |
@@ -75,7 +73,7 @@ All routes use `https://api.productboard.com/v2`. For operations with query para
 | `pluginIntegrations.connections.update` | `PUT /plugin-integrations/{integrationId}/connections/{entityId}` | [Update plugin integration connection state](https://developer.productboard.com/reference/updatepluginintegrationconnectionstate) |
 | `pluginIntegrations.connections.delete` | `DELETE /plugin-integrations/{integrationId}/connections/{entityId}` | [Delete plugin integration connection](https://developer.productboard.com/reference/deletepluginintegrationconnection) |
 
-The two Documents API routes are referenced by the entity response schema (`DocumentReferenceFieldValue`) for document-backed rich-text fields. The document identifier is opaque; the API may return 404 for rich-text fields or entity types not yet served by Documents.
+**Documents API is intentionally not exposed yet.** The entity OpenAPI's [`DocumentReferenceFieldValue`](https://developer.productboard.com/reference/listentities) and the [October 8 changelog](https://developer.productboard.com/changelog/2026-10-08.md) identify opaque document IDs, `GET /v2/documents/{documentId}`, `PUT /v2/documents/{documentId}/content`, PBFM content, and possible 404s for unsupported fields/types. The available first-party references do not provide standalone Documents operation contracts with complete authentication/access requirements, request schema, and response schema. Do not rely on these routes through this plugin until Productboard publishes or confirms those contracts.
 
 ## Pagination, limits, and caveats
 

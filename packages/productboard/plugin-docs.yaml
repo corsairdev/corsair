@@ -1,12 +1,12 @@
 displayName: Productboard
-description: Read and manage Productboard notes, entities, relationships, field options, teams, members, Jira connections, and PBFM documents through Public REST API v2.
+description: Read and manage Productboard notes, entities, relationships, field options, teams, members, Jira connections, and Plugin Integrations through Public REST API v2.
 recommendedAuth: api_key
 overviewNote: |
-  Configure a Productboard personal access token in Corsair. Productboard requires `Authorization: Bearer <token>` and `Accept: application/json`; personal access tokens are available on Pro plans and above. An OAuth access token can also be supplied as the bearer credential, but this plugin does not issue or refresh OAuth tokens. Productboard's current OAuth guide, Authentication guide, and v2 per-route OpenAPI security sections publish different OAuth URL/scope spellings; use a personal access token for the supported default setup and verify scopes with Productboard before using OAuth.
+  Configure a Productboard personal access token in Corsair. Productboard requires `Authorization: Bearer <token>` and `Accept: application/json`; personal access tokens are available on Pro plans and above. This plugin supports API-token authentication only. OAuth login, token issuance, and refresh are unavailable because Productboard's detailed OAuth guide and v2 per-route OpenAPI security sections disagree on authorization/token URLs and scopes; OAuth access-token compatibility is not claimed.
 
   Productboard uses opaque cursor pagination (`pageCursor`) with `links.next`; its documented default rate limit is 50 requests per second per token. On 429 responses the shared transport preserves `Retry-After` and the plugin avoids duplicate retries.
 
-  Entity and note field names and values are workspace-configurable. The plugin strictly validates operation-level inputs and accepts JSON for provider-native request envelopes, query structures, and dynamic field maps. PII may be redacted by Productboard without `members:pii:read`. The customer-score operation is beta. Webhook subscriptions and inbound webhook/action callback handlers are not included; plugin-integration control-plane REST operations are available.
+  Entity and note field names and values are workspace-configurable. The plugin strictly validates operation-level inputs and accepts JSON for provider-native request envelopes, query structures, and dynamic field maps. PII may be redacted by Productboard without `members:pii:read`. The customer-score operation is beta. Webhook subscriptions and inbound webhook/action callback handlers are not included; plugin-integration control-plane REST operations are available. Documents operations are intentionally excluded: first-party entity references establish opaque document IDs, route paths and PBFM semantics, but not complete standalone auth, request, and response contracts.
 examples:
   read:
     path: teams.list
@@ -29,8 +29,6 @@ references:
     url: https://developer.productboard.com/
   - title: Authentication methods
     url: https://developer.productboard.com/reference/authentication
-  - title: OAuth 2.0 authorization-code flow
-    url: https://developer.productboard.com/reference/oauth-authorization-code
   - title: Cursor pagination
     url: https://developer.productboard.com/reference/pagination
   - title: Rate limits
@@ -80,8 +78,6 @@ apiExamples:
   jiraIntegrations.get: { args: { id: 00000000-0000-4000-8000-000000000009 } }
   jiraIntegrations.connections: { args: { integrationId: 00000000-0000-4000-8000-000000000009 } }
   jiraIntegrations.connection: { args: { integrationId: 00000000-0000-4000-8000-000000000009, entityId: 00000000-0000-4000-8000-000000000004 } }
-  documents.get: { args: { documentId: synthetic-document-id } }
-  documents.replaceContent: { args: { documentId: synthetic-document-id, body: { data: { content: Synthetic PBFM content } } } }
   pluginIntegrations.list: {}
   pluginIntegrations.create:
     args:

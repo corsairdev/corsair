@@ -57,7 +57,6 @@ function inputFor(
 		if (field === 'integrationId')
 			input = { ...input, integrationId: 'integration-id' };
 		if (field === 'entityId') input = { ...input, entityId: 'entity-id' };
-		if (field === 'documentId') input = { ...input, documentId: 'document-id' };
 		if (field === 'id') input = { ...input, id: 'resource-id' };
 	}
 	if (operation.query)
@@ -95,8 +94,6 @@ function inputFor(
 			data = { fields: { name: 'Synthetic Team', handle: 'syntheticteam' } };
 		if (operation.name === 'teams.update')
 			data = { fields: { name: 'Updated Synthetic Team' } };
-		if (operation.name === 'documents.replaceContent')
-			data = { content: 'Synthetic PBFM content' };
 		if (operation.name === 'pluginIntegrations.create')
 			data = {
 				fields: {

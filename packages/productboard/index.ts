@@ -13,7 +13,6 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import {
 	Analytics,
-	Documents,
 	Entities,
 	JiraIntegrations,
 	Members,
@@ -62,7 +61,6 @@ const productboardEndpointsNested = {
 	members: Members,
 	teams: Teams,
 	jiraIntegrations: JiraIntegrations,
-	documents: Documents,
 	pluginIntegrations: PluginIntegrations,
 } as const;
 
@@ -331,18 +329,6 @@ export const productboardEndpointSchemas = {
 		),
 		output: ProductboardOutputSchema,
 	},
-	'documents.get': {
-		input: productboardOperationInputSchema(
-			ProductboardOperations['documents.get'],
-		),
-		output: ProductboardOutputSchema,
-	},
-	'documents.replaceContent': {
-		input: productboardOperationInputSchema(
-			ProductboardOperations['documents.replaceContent'],
-		),
-		output: ProductboardOutputSchema,
-	},
 	'pluginIntegrations.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.list'],
@@ -573,15 +559,6 @@ const productboardEndpointMeta = {
 	'jiraIntegrations.connection': {
 		riskLevel: 'read',
 		description: 'Get one feature-to-Jira issue connection.',
-	},
-	'documents.get': {
-		riskLevel: 'read',
-		description: 'Read a PBFM document referenced by an entity field.',
-	},
-	'documents.replaceContent': {
-		riskLevel: 'write',
-		description:
-			'Replace the content of a PBFM document referenced by an entity field.',
 	},
 	'pluginIntegrations.list': {
 		riskLevel: 'read',

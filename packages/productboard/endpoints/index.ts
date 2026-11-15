@@ -78,11 +78,6 @@ export const JiraIntegrations = {
 	connection: endpoint('jiraIntegrations.connection'),
 } as const;
 
-export const Documents = {
-	get: endpoint('documents.get'),
-	replaceContent: endpoint('documents.replaceContent'),
-} as const;
-
 export const PluginIntegrations = {
 	list: endpoint('pluginIntegrations.list'),
 	create: endpoint('pluginIntegrations.create'),

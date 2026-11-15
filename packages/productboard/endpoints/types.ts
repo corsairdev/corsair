@@ -45,7 +45,6 @@ export const ProductboardOperationInputSchema = z
 		valueId: z.string().min(1).optional(),
 		integrationId: z.string().min(1).optional(),
 		entityId: z.string().min(1).optional(),
-		documentId: z.string().min(1).optional(),
 		query: ProductboardJsonObjectSchema.optional(),
 		body: ProductboardRequestBodySchema.optional(),
 	})

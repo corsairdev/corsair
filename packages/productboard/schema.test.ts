@@ -97,6 +97,6 @@ describe('Productboard plugin schema', () => {
 				operation.method,
 			);
 		}
-		expect(Object.keys(ProductboardOperations)).toHaveLength(56);
+		expect(Object.keys(ProductboardOperations)).toHaveLength(54);
 	});
 });

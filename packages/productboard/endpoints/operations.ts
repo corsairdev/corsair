@@ -18,8 +18,7 @@ type PathField =
 	| 'fieldId'
 	| 'valueId'
 	| 'integrationId'
-	| 'entityId'
-	| 'documentId';
+	| 'entityId';
 
 export type ProductboardOperation = {
 	name: string;
@@ -501,26 +500,6 @@ const operationDefinitions = {
 		pathFields: ['integrationId', 'entityId'],
 		riskLevel: 'read',
 		description: 'Get one feature-to-Jira issue connection.',
-	},
-	'documents.get': {
-		name: 'documents.get',
-		method: 'GET',
-		path: '/documents/{documentId}',
-		doc: `${READ_API}listentities`,
-		pathFields: ['documentId'],
-		riskLevel: 'read',
-		description: 'Read a PBFM document referenced by an entity field.',
-	},
-	'documents.replaceContent': {
-		name: 'documents.replaceContent',
-		method: 'PUT',
-		path: '/documents/{documentId}/content',
-		doc: `${READ_API}listentities`,
-		pathFields: ['documentId'],
-		body: true,
-		riskLevel: 'write',
-		description:
-			'Replace the content of a PBFM document referenced by an entity field.',
 	},
 	'pluginIntegrations.list': {
 		name: 'pluginIntegrations.list',
