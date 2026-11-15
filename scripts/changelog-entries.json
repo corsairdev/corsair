@@ -5259,5 +5259,11 @@
         "title": "Report connection status after a call only when it changes"
       }
     ]
+  },
+  {
+    "date": "2026-11-15",
+    "package": "cloud",
+    "version": "0.1.190",
+    "changes": []
   }
 ]
