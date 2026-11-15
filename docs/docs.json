@@ -2471,6 +2471,14 @@
                 ]
               },
               {
+                "group": "Gleap",
+                "pages": [
+                  "plugins/gleap/overview",
+                  "plugins/gleap/api",
+                  "plugins/gleap/database"
+                ]
+              },
+              {
                 "group": "Gmail",
                 "pages": [
                   "plugins/gmail/overview",
