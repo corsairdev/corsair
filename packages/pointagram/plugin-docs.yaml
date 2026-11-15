@@ -1,0 +1,91 @@
+displayName: Pointagram
+description: Gamification platform for scoring teams and players, running competitions and leaderboards, and running a reward store.
+domain: pointagram.com
+recommendedAuth: api_key
+overviewNote: |
+  Pointagram authenticates every call with two headers, and the plugin sends both for you: `Api-Key` is the integration key, and `Api-User` is the Pointagram login (email address) the key belongs to. Add a Custom Integration under Settings, Integrations, click Create Credentials, then Show Key; the key is a password, so keep it out of code. Both values are read from the account, never from plugin options; `test.credentials` confirms the pair without touching tenant data.
+
+  Things to know before you score anything:
+
+  - **Adding points.** `scoreSeries.addPoints` is how work done elsewhere becomes points. Supply one player identifier (`player_id`, `player_name`, `player_email` or `player_external_id`), one target (`scoreseries_id` or `scoreseries_name`, not both) and an amount (`points` or a `pointtype_name` the series defines). The plugin rejects a call that breaks any of those rules before it is sent.
+  - **Retry safety.** Pass `source_score_id` when the caller may retry, such as an order id: Pointagram treats a second call with the same value as a revision, revoking the earlier transaction instead of scoring twice.
+  - **Tags.** Score tags are sent as the JSON string inside the body that Pointagram parses, so pass `tags: [{ name: 'North' }]` and the plugin encodes it.
+  - **Paging.** `players.list` and `scoreSeries.history` return `pagination.next_offset`; pass it back as `offset`. The page size defaults to 50 and stops at 1000.
+  - **Reward store.** Every store route needs a `profileid`; a purchase also spends the player's currency, so it is marked destructive. Revoking an order is final because the docs do not say the currency comes back.
+  - **A rejected key looks like a missing page.** Pointagram answers a wrong key with HTTP 404 and `Invalid Credentials`, not a 401. The plugin tells the two apart, so a bad key is reported as an auth failure.
+  - **Webhooks.** The plugin does not receive webhooks, because Pointagram sends none.
+references:
+  - title: Pointagram Custom API 2.0
+    url: https://www.pointagram.com/custom-api-2-0-gamification/
+  - title: OpenAPI specification
+    url: https://www.pointagram.com/wp-content/uploads/2025/02/openapi.yaml
+examples:
+  read:
+    path: competitions.list
+    title: List your competitions
+    args: {}
+  write:
+    path: scoreSeries.addPoints
+    title: Score a deal for a player
+    args:
+      player_email: harry@pointagram.com
+      scoreseries_name: Points
+      points: 120
+      comment: Closed the Northwind deal
+apiExamples:
+  test.credentials:
+    call: '{}'
+  players.list:
+    call: "{ limit: 25, offset: '527947' }"
+  players.get:
+    call: '{ id: 989 }'
+  players.create:
+    call: "{ player_name: 'Axl Rose', player_email: 'axl@pointagram.com', player_external_id: '121212', offline: '0' }"
+  players.update:
+    call: "{ id: 989, player_name: 'Axl Rose', player_email: 'axl@pointagram.com' }"
+  players.delete:
+    call: '{ id: 989 }'
+  teams.list:
+    call: '{}'
+  teams.get:
+    call: '{ id: 3 }'
+  teams.create:
+    call: "{ team_name: 'The Bulls', icon: 'Bulls.png', filter_ignore: '0' }"
+  teams.update:
+    call: "{ id: 3, team_name: 'The Sharks', icon: 'Sharks.png' }"
+  teams.addPlayer:
+    call: '{ id: 3, player_id: 989 }'
+  teams.listPlayers:
+    call: '{ id: 3 }'
+  teams.removePlayer:
+    call: '{ id: 3, player_id: 989 }'
+  scoreSeries.list:
+    call: '{}'
+  scoreSeries.get:
+    call: '{ id: 180 }'
+  scoreSeries.addPoints:
+    call: "{ player_email: 'harry@pointagram.com', scoreseries_id: 180, points: 120, tags: [{ name: 'North' }], source_score_id: 'order-991' }"
+  scoreSeries.pointTypes:
+    call: '{ id: 180 }'
+  scoreSeries.history:
+    call: "{ id: 180, time_from: '2026-01-01 00:00:00', limit: 50 }"
+  competitions.list:
+    call: '{}'
+  competitions.get:
+    call: '{ id: 3545 }'
+  competitions.players:
+    call: '{ id: 3545 }'
+  rewardStore.settings:
+    call: "{ profileid: '1234' }"
+  rewardStore.items:
+    call: "{ profileid: '1234', storeid: '7' }"
+  rewardStore.item:
+    call: "{ id: 23, profileid: '1234' }"
+  rewardStore.purchases:
+    call: "{ profileid: '1234', viewmember: 'all' }"
+  rewardStore.purchase:
+    call: "{ profileid: '1234', quantity: 2, itemid: 23 }"
+  rewardStore.updatePurchase:
+    call: "{ id: 27, profileid: '1234', deliverystatus: 'PROCESSED' }"
+  rewardStore.revokePurchase:
+    call: "{ id: 27, profileid: '1234' }"

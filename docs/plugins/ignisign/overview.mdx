@@ -1,0 +1,134 @@
+---
+title: "Ignisign plugin"
+sidebarTitle: "Overview"
+description: "Electronic signature and document workflow integration for Ignisign eIDAS-compliant digital signatures."
+---
+
+Use **Ignisign** through Corsair: one client, typed API calls.
+
+Ignisign operations use an API key from the IgniSign console (API page), sent as a Bearer token. Each key belongs to one application and one environment (DEVELOPMENT, STAGING or PRODUCTION), and both are read from the key itself (`skv2_<env>_<app>_<secret>`), so `appId` and `appEnv` inputs are optional overrides. To work in another environment, connect that environment's key. Publishing a signature request (`publish`, `createInOneCall`) emails signers whose signer profile uses BySide mode; with Embedded mode your application shows the signing interface instead. Run the Corsair database migration once before passing the connection to `createCorsair`; creating a SQLite file does not create Corsair's tables. Before creating a tenant connect link, mount a Hub delivery handler as described in [Connect / OAuth](/management/connect). A call for a tenant with no stored key fails with `AuthMissingError`, which carries a connect link when Hub is configured.
+
+**What you get:**
+
+- 42 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ignisign better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/ignisign better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ignisign better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/ignisign better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ignisign } from '@corsair-dev/ignisign';
+
+export const corsair = createCorsair({
+	plugins: [
+		ignisign(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Ignisign API key before the first call: `pnpm corsair setup --plugin=ignisign --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+ignisign()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ignisign',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read application context**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ignisign.api.applications.getContext({});
+```
+
+
+**Create signature request in one call**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ignisign.api.signatureRequests.createInOneCall({
+	title: 'Employment Agreement',
+	signatureMethod: 'SIMPLE_STD',
+	signers: [{ email: 'signer@example.com' }],
+	documents: [{ originalName: 'contract.pdf', mimeType: 'application/pdf', base64: 'JVBERi0xLjQK...' }],
+});
+```
+
+
+See the full list on the [API](/plugins/ignisign/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ignisign/api">
+    Every `ignisign.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

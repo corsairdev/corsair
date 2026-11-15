@@ -1,0 +1,3297 @@
+---
+title: "Trustpilot API reference"
+sidebarTitle: "API"
+description: "API reference for the Trustpilot plugin in Corsair: every `trustpilot.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Business Units
+
+### allReviews
+
+`businessUnits.allReviews`
+
+Page through public business unit reviews without private contact data
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.allReviews({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+| `nextPageToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | null,
+  stars?: number | null,
+  title?: string | null,
+  text?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  experiencedAt?: string | null,
+  isVerified?: boolean,
+  numberOfLikes?: number,
+  consumer?: {
+    id?: string | null,
+    displayName?: string | null,
+    displayLocation?: string | null,
+    numberOfReviews?: number | null,
+    links?: {
+      href: string | null,
+      method: string | null,
+      rel: string | null
+    }[]
+  },
+  companyReply?: {
+    text: string | null,
+    createdAt: string | null,
+    updatedAt?: string | null
+  } | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### customerGuarantee
+
+`businessUnits.customerGuarantee`
+
+Get customer guarantee content for a business unit
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.customerGuarantee({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[]` | No | — |
+| `header` | `string` | Yes | — |
+| `teaser` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `display` | `boolean` | Yes | — |
+| `image` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="image full type">
+
+```ts
+{
+  image184x0: {
+    url: string,
+    width: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### find
+
+`businessUnits.find`
+
+Find a public business unit by domain name
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.find({ name: 'shop.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `websiteUrl` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `numberOfReviews` | `object \| null` | No | — |
+| `score` | `object \| null` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="numberOfReviews full type">
+
+```ts
+{
+  total: number,
+  usedForTrustScoreCalculation?: number,
+  oneStar?: number,
+  twoStars?: number,
+  threeStars?: number,
+  fourStars?: number,
+  fiveStars?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="score full type">
+
+```ts
+{
+  trustScore?: number | null,
+  stars?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`businessUnits.get`
+
+Get a business unit public profile and TrustScore
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.get({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `websiteUrl` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `numberOfReviews` | `object \| null` | No | — |
+| `score` | `object \| null` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="numberOfReviews full type">
+
+```ts
+{
+  total: number,
+  usedForTrustScoreCalculation?: number,
+  oneStar?: number,
+  twoStars?: number,
+  threeStars?: number,
+  fourStars?: number,
+  fiveStars?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="score full type">
+
+```ts
+{
+  trustScore?: number | null,
+  stars?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### headerImage
+
+`businessUnits.headerImage`
+
+Get a business unit profile-header image URL
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.headerImage({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `headerUrl` | `string \| null` | Yes | — |
+
+
+
+---
+
+### listCategories
+
+`businessUnits.listCategories`
+
+List the categories associated with a business unit
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.listCategories({ businessUnitId: '507f191e810c19729de860ea', country: 'GB' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `country` | `string` | No | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+| `predictedTopCategory` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  categoryId: string,
+  displayName: string,
+  name: string,
+  isPrimary?: boolean,
+  source?: string,
+  relevance?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="predictedTopCategory full type">
+
+```ts
+{
+  categoryId: string,
+  displayName: string,
+  name: string,
+  isPrimary?: boolean,
+  source?: string,
+  relevance?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### logo
+
+`businessUnits.logo`
+
+Get a business unit or location logo URL
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.logo({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `locationId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[]` | No | — |
+| `logoUrl` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### privateReviews
+
+`businessUnits.privateReviews`
+
+List private business unit reviews and customer details
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.privateReviews({ businessUnitId: '507f191e810c19729de860ea', page: 1, perPage: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `stars` | `number[]` | No | — |
+| `language` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `internalLocationId` | `string` | No | — |
+| `externalLocationIds` | `string` | No | — |
+| `noLocation` | `boolean` | No | — |
+| `perPage` | `number` | No | — |
+| `orderBy` | `(createdat.asc \| createdat.desc \| stars.asc \| stars.desc)[]` | No | — |
+| `tagGroup` | `string` | No | — |
+| `tagValue` | `string` | No | — |
+| `ignoreTagValueCase` | `boolean` | No | — |
+| `responded` | `boolean` | No | — |
+| `referenceId` | `string` | No | — |
+| `referralEmail` | `string` | No | — |
+| `reported` | `boolean` | No | — |
+| `startDateTime` | `string` | No | — |
+| `endDateTime` | `string` | No | — |
+| `source` | `string` | No | — |
+| `username` | `string` | No | — |
+| `findReviewer` | `contacted \| notContacted` | No | — |
+
+Private reviews can include consumer email addresses, reference IDs, and Find Reviewer responses. Treat returned personal data as sensitive; the plugin omits it from logs and sanitized HTTP errors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | null,
+  stars?: number | null,
+  title?: string | null,
+  text?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  experiencedAt?: string | null,
+  isVerified?: boolean,
+  numberOfLikes?: number,
+  consumer?: {
+    id?: string | null,
+    displayName?: string | null,
+    displayLocation?: string | null,
+    numberOfReviews?: number | null,
+    links?: {
+      href: string | null,
+      method: string | null,
+      rel: string | null
+    }[]
+  },
+  companyReply?: {
+    text: string | null,
+    createdAt: string | null,
+    updatedAt?: string | null
+  } | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[],
+  referenceId?: string | null,
+  referralEmail?: string | null,
+  reportData?: {
+    source?: string | null,
+    publicComment?: string | null,
+    createdAt?: string | null,
+    reasons?: string[],
+    reason?: string | null,
+    reviewVisibility?: string | null
+  },
+  findReviewer?: {
+    isEligible?: boolean,
+    requests?: {
+      id?: string | null,
+      created?: string | null,
+      status?: string | null,
+      businessUserMessage?: string | null,
+      consumerResponse?: {
+        submittedAt?: string | null,
+        name?: string | null,
+        email?: string | null,
+        address?: string | null,
+        phoneNumber?: string | null,
+        referenceId?: string | null,
+        message?: string | null
+      }
+    }[]
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profileInfo
+
+`businessUnits.profileInfo`
+
+Get a business unit company profile and contact details
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.profileInfo({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[]` | No | — |
+| `isSubscriber` | `boolean` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `isClaimed` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profilePromotion
+
+`businessUnits.profilePromotion`
+
+Get a business unit profile promotion and key brand messages
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.profilePromotion({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[]` | No | — |
+| `title` | `string` | Yes | — |
+| `contactInfoTitle` | `string` | Yes | — |
+| `description` | `object` | Yes | — |
+| `sellingPoints` | `object[]` | Yes | — |
+| `image` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+  header: string,
+  text: string
+}
+```
+</Accordion>
+
+<Accordion title="sellingPoints full type">
+
+```ts
+{
+  header: string,
+  text: string
+}[]
+```
+</Accordion>
+
+<Accordion title="image full type">
+
+```ts
+{
+  url: string,
+  width: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### promotionBoxImage
+
+`businessUnits.promotionBoxImage`
+
+Get a business unit promotion-box image URL
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.promotionBoxImage({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `promotionBoxUrl` | `string \| null` | Yes | — |
+
+
+
+---
+
+### publicAll
+
+`businessUnits.publicAll`
+
+List public business units with cursor pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.publicAll({ perPage: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string[]` | No | — |
+| `perPage` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnits` | `object[]` | Yes | — |
+| `cursor` | `string \| null` | Yes | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessUnits full type">
+
+```ts
+{
+  id: string,
+  displayName: string,
+  name: {
+    identifying: string,
+    referring: string[]
+  },
+  country?: string | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publicPromotionBox
+
+`businessUnits.publicPromotionBox`
+
+Get public promotion-box content for a business unit
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.publicPromotionBox({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `header` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `textColor` | `string` | Yes | — |
+| `backgroundColor` | `string` | Yes | — |
+| `buttonText` | `string` | Yes | — |
+| `buttonColor` | `string` | Yes | — |
+| `buttonTextColor` | `string` | Yes | — |
+| `buttonLink` | `string` | Yes | — |
+| `imageUrl` | `string` | Yes | — |
+| `isPublished` | `boolean` | Yes | — |
+
+
+
+---
+
+### reviews
+
+`businessUnits.reviews`
+
+List public reviews for a business unit with filters
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.reviews({ businessUnitId: '507f191e810c19729de860ea', page: 1, perPage: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `stars` | `number[]` | No | — |
+| `language` | `string[]` | No | — |
+| `internalLocationId` | `string` | No | — |
+| `orderBy` | `(createdat.asc \| createdat.desc \| stars.asc \| stars.desc)[]` | No | — |
+| `tagGroup` | `string` | No | — |
+| `tagValue` | `string` | No | — |
+| `responded` | `boolean` | No | — |
+| `includeReportedReviews` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+| `nextPageToken` | `string \| null` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | null,
+  stars?: number | null,
+  title?: string | null,
+  text?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  experiencedAt?: string | null,
+  isVerified?: boolean,
+  numberOfLikes?: number,
+  consumer?: {
+    id?: string | null,
+    displayName?: string | null,
+    displayLocation?: string | null,
+    numberOfReviews?: number | null,
+    links?: {
+      href: string | null,
+      method: string | null,
+      rel: string | null
+    }[]
+  },
+  companyReply?: {
+    text: string | null,
+    createdAt: string | null,
+    updatedAt?: string | null
+  } | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`businessUnits.search`
+
+Search public business units by name or domain
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.search({
+	query: 'shops',
+	country: 'GB',
+	page: 1,
+	perpage: 10,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `country` | `string` | No | — |
+| `page` | `number` | No | — |
+| `perpage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnits` | `object[]` | Yes | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessUnits full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  websiteUrl?: string | null,
+  country?: string | null,
+  status?: string | null,
+  numberOfReviews?: {
+    total: number,
+    usedForTrustScoreCalculation?: number,
+    oneStar?: number,
+    twoStars?: number,
+    threeStars?: number,
+    fourStars?: number,
+    fiveStars?: number
+  } | null,
+  score?: {
+    trustScore?: number | null,
+    stars?: number | null
+  } | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webLinks
+
+`businessUnits.webLinks`
+
+Get localized public profile and invitation links for a business unit
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.businessUnits.webLinks({ businessUnitId: '507f191e810c19729de860ea', locale: 'en-GB' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `locale` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[]` | No | — |
+| `locale` | `string \| null` | Yes | — |
+| `profileUrl` | `string \| null` | Yes | — |
+| `evaluateUrl` | `string \| null` | Yes | — |
+| `evaluateEmbedUrl` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Consumer Profiles
+
+### bulk
+
+`consumerProfiles.bulk`
+
+Get multiple consumer profiles in one request
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.consumerProfiles.bulk({
+	consumerIds: ['507f191e810c19729de860ea'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `consumerIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `consumers` | `object` | Yes | — |
+| `notFoundConsumerIds` | `(string \| null)[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="consumers full type">
+
+```ts
+Record<string, {
+  id?: string | null,
+  city?: string | null,
+  about?: string | null,
+  displayName?: string | null,
+  locale?: string | null,
+  gender?: string | null,
+  country?: string | null,
+  createdAt?: string | null,
+  hasImage?: boolean,
+  birthYear?: number | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createDisplayName
+
+`consumerProfiles.createDisplayName`
+
+Create a valid consumer display name from input text
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.consumerProfiles.createDisplayName({ displayName: 'Example Reviewer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `displayName` | `string` | Yes | — |
+
+
+
+**Output:** `string \| null`
+
+
+---
+
+### get
+
+`consumerProfiles.get`
+
+Get a consumer profile by consumer ID
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.consumerProfiles.get({ consumerId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `consumerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `about` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `hasImage` | `boolean` | No | — |
+| `birthYear` | `number \| null` | No | — |
+
+
+
+---
+
+### getWithReviews
+
+`consumerProfiles.getWithReviews`
+
+Get a consumer profile and review count
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.consumerProfiles.getWithReviews({ consumerId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `consumerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `about` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `hasImage` | `boolean` | No | — |
+| `birthYear` | `number \| null` | No | — |
+| `numberOfReviews` | `number` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateDisplayName
+
+`consumerProfiles.validateDisplayName`
+
+Validate a consumer display name
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.consumerProfiles.validateDisplayName({ displayName: 'Example Reviewer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `displayName` | `string` | Yes | — |
+
+
+
+**Output:** `string \| null`
+
+
+---
+
+### webLinks
+
+`consumerProfiles.webLinks`
+
+Get localized links to a consumer profile
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.consumerProfiles.webLinks({ consumerId: '507f191e810c19729de860ea', locale: 'en-GB' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `consumerId` | `string` | Yes | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locale` | `string \| null` | No | — |
+| `profileUrl` | `string \| null` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Consumers
+
+### reviews
+
+`consumers.reviews`
+
+List reviews written by a Trustpilot consumer
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.consumers.reviews({ consumerId: '507f191e810c19729de860ea', page: 1, perPage: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `consumerId` | `string` | Yes | — |
+| `stars` | `number[]` | No | — |
+| `language` | `string[]` | No | — |
+| `internalLocationId` | `string` | No | — |
+| `businessUnitId` | `string` | No | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `orderBy` | `(createdat.asc \| createdat.desc \| stars.asc \| stars.desc)[]` | No | — |
+| `includeReportedReviews` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+| `nextPageToken` | `string \| null` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | null,
+  stars?: number | null,
+  title?: string | null,
+  text?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  experiencedAt?: string | null,
+  isVerified?: boolean,
+  numberOfLikes?: number,
+  consumer?: {
+    id?: string | null,
+    displayName?: string | null,
+    displayLocation?: string | null,
+    numberOfReviews?: number | null,
+    links?: {
+      href: string | null,
+      method: string | null,
+      rel: string | null
+    }[]
+  },
+  companyReply?: {
+    text: string | null,
+    createdAt: string | null,
+    updatedAt?: string | null
+  } | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Data Solutions
+
+### businessUnitDetails
+
+`dataSolutions.businessUnitDetails`
+
+Get Data Solutions business details and review statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.dataSolutions.businessUnitDetails({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `object` | Yes | — |
+| `score` | `object` | No | — |
+| `numberOfReviews` | `number \| object` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  display?: string,
+  identifying?: string,
+  referring?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="score full type">
+
+```ts
+{
+  stars?: number,
+  trustScore?: number
+}
+```
+</Accordion>
+
+<Accordion title="numberOfReviews full type">
+
+```ts
+number | {
+  total: number,
+  usedForTrustScoreCalculation?: number,
+  oneStar?: number,
+  twoStars?: number,
+  threeStars?: number,
+  fourStars?: number,
+  fiveStars?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### categories
+
+`dataSolutions.categories`
+
+List Data Solutions business categories
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.dataSolutions.categories({ countryCode: 'GB' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryCode` | `string` | No | — |
+| `parentId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalNumberOfCategories` | `number` | Yes | — |
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  categoryId: string,
+  parentId?: string | null,
+  childrenCategories?: string[],
+  numberOfBusinessUnits?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findBusinessUnits
+
+`dataSolutions.findBusinessUnits`
+
+Find Data Solutions business units by domain or category
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.dataSolutions.findBusinessUnits({ domain: 'shop.example', perPage: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `category` | `string` | No | — |
+| `countryCode` | `string` | No | — |
+| `perPage` | `number` | No | — |
+| `nextToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnits` | `object[]` | Yes | — |
+| `nextToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessUnits full type">
+
+```ts
+{
+  id: string,
+  name: {
+    display?: string,
+    identifying?: string
+  },
+  address?: {
+    countryCode?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### latestReviews
+
+`dataSolutions.latestReviews`
+
+Get up to five recent Data Solutions service reviews
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.dataSolutions.latestReviews({ businessUnitId: '507f191e810c19729de860ea', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | null,
+  stars?: number | null,
+  title?: string | null,
+  text?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  experiencedAt?: string | null,
+  isVerified?: boolean,
+  numberOfLikes?: number,
+  consumer?: {
+    id?: string | null,
+    displayName?: string | null,
+    displayLocation?: string | null,
+    numberOfReviews?: number | null,
+    links?: {
+      href: string | null,
+      method: string | null,
+      rel: string | null
+    }[]
+  },
+  companyReply?: {
+    text: string | null,
+    createdAt: string | null,
+    updatedAt?: string | null
+  } | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchBusinessUnits
+
+`dataSolutions.searchBusinessUnits`
+
+Search Data Solutions business units by name or domain
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.dataSolutions.searchBusinessUnits({ query: 'shop.example', perPage: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `countryCode` | `string` | No | — |
+| `perPage` | `number` | No | — |
+| `nextToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnits` | `object[]` | Yes | — |
+| `nextToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessUnits full type">
+
+```ts
+{
+  id: string,
+  name: {
+    display?: string,
+    identifying?: string,
+    referring?: string[]
+  },
+  address?: {
+    countryCode?: string
+  },
+  score?: {
+    trustScore?: number,
+    stars?: number
+  },
+  numberOfReviews?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### serviceReviews
+
+`dataSolutions.serviceReviews`
+
+Page through Data Solutions service reviews
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.dataSolutions.serviceReviews({ businessUnitId: '507f191e810c19729de860ea', startDate: '2025-01-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `nextToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+| `nextToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | null,
+  stars?: number | null,
+  title?: string | null,
+  text?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  experiencedAt?: string | null,
+  isVerified?: boolean,
+  numberOfLikes?: number,
+  consumer?: {
+    id?: string | null,
+    displayName?: string | null,
+    displayLocation?: string | null,
+    numberOfReviews?: number | null,
+    links?: {
+      href: string | null,
+      method: string | null,
+      rel: string | null
+    }[]
+  },
+  companyReply?: {
+    text: string | null,
+    createdAt: string | null,
+    updatedAt?: string | null
+  } | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invitations
+
+### link
+
+`invitations.link`
+
+Create a service review invitation link and consume invitation allowance
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.trustpilot.api.invitations.link({
+	businessUnitId: '507f191e810c19729de860ea',
+	email: 'reviewer@example.com',
+	name: 'Example Reviewer',
+	locale: 'en-US',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `locationId` | `string` | No | — |
+| `referenceId` | `string` | No | — |
+| `email` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `locale` | `string` | Yes | — |
+| `tags` | `string[]` | No | — |
+| `redirectUri` | `string` | No | — |
+
+Invitation links require consumer email/name fields. The plugin does not log the request or echo those values in errors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### templates
+
+`invitations.templates`
+
+List invitation templates available to a business unit
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.invitations.templates({ businessUnitId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  isDefaultTemplate: boolean,
+  locale: string,
+  language: string,
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Reviews
+
+### attributeSummaries
+
+`productReviews.attributeSummaries`
+
+Get aggregated product attribute ratings for SKUs
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.attributeSummaries({
+	businessUnitId: '507f191e810c19729de860ea',
+	skus: ['SKU-123'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `skus` | `string[]` | Yes | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summaries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summaries full type">
+
+```ts
+{
+  sku: string | null,
+  attributes: {
+    id: string,
+    name: string,
+    type: string,
+    options?: (string | null)[],
+    totalOccurrences: number,
+    occurrences: {
+      one: number,
+      two: number,
+      three: number,
+      four: number,
+      five: number
+    },
+    average: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### batchSummaries
+
+`productReviews.batchSummaries`
+
+Get public product review summaries for several SKUs
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.batchSummaries({
+	businessUnitId: '507f191e810c19729de860ea',
+	skus: ['SKU-123'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `skus` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summaries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summaries full type">
+
+```ts
+{
+  sku?: string | null,
+  starsAverage?: number | null,
+  numberOfReviews?: {
+    total: number,
+    usedForTrustScoreCalculation?: number,
+    oneStar?: number,
+    twoStars?: number,
+    threeStars?: number,
+    fourStars?: number,
+    fiveStars?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createComment
+
+`productReviews.createComment`
+
+Publish a business comment on a product review conversation (public, seen by the reviewer)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.trustpilot.api.productReviews.createComment({ conversationId: '507f191e810c19729de860ea', content: 'Thank you', integrationId: 'corsair' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `integrationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commentId` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `content` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createConversation
+
+`productReviews.createConversation`
+
+Create a conversation for a product review
+
+**Risk:** `write`
+
+```ts
+await corsair.trustpilot.api.productReviews.createConversation({ reviewId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | — |
+
+
+
+---
+
+### getComment
+
+`productReviews.getComment`
+
+Get one comment from a product review conversation
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.getComment({ conversationId: '507f191e810c19729de860ea', commentId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | — |
+| `commentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commentId` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `content` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getConversation
+
+`productReviews.getConversation`
+
+Get a private product review conversation and comments
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.getConversation({ conversationId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `businessUnitId` | `string` | Yes | — |
+| `consumerId` | `string` | Yes | — |
+| `source` | `string` | Yes | — |
+| `sourceId` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  commentId: string,
+  createdAt: string,
+  author: {
+    id: string,
+    type: string
+  },
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importedReviews
+
+`productReviews.importedReviews`
+
+List imported product reviews for one or more SKUs
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.importedReviews({
+	businessUnitId: '507f191e810c19729de860ea',
+	sku: ['SKU-123'],
+	page: 1,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `sku` | `string[]` | Yes | — |
+| `stars` | `number[]` | No | — |
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productReviews` | `object[]` | Yes | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="productReviews full type">
+
+```ts
+{
+  createdAt: string | null,
+  stars: number,
+  content: string | null,
+  consumer: {
+    name: string | null
+  },
+  source: {
+    name: string | null
+  },
+  language: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importedSummary
+
+`productReviews.importedSummary`
+
+Get rating counts for imported product reviews
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.importedSummary({
+	businessUnitId: '507f191e810c19729de860ea',
+	sku: ['SKU-123'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `sku` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numberOfReviews` | `object` | Yes | — |
+| `starsAverage` | `number` | Yes | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="numberOfReviews full type">
+
+```ts
+{
+  total: number,
+  usedForTrustScoreCalculation?: number,
+  oneStar?: number,
+  twoStars?: number,
+  threeStars?: number,
+  fourStars?: number,
+  fiveStars?: number
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invitationLink
+
+`productReviews.invitationLink`
+
+Create a product review invitation link and consume invitation allowance
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.trustpilot.api.productReviews.invitationLink({
+	businessUnitId: '507f191e810c19729de860ea',
+	consumer: { email: 'reviewer@example.com', name: 'Example Reviewer' },
+	products: [{ productUrl: 'https://shop.example/item', name: 'Item' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `consumer` | `object` | Yes | — |
+| `referenceId` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `redirectUri` | `string` | No | — |
+| `products` | `object[]` | No | — |
+| `productIds` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="consumer full type">
+
+```ts
+{
+  email: string,
+  name: string
+}
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+{
+  productUrl: string,
+  imageUrl?: string,
+  name: string,
+  sku?: string,
+  gtin?: string,
+  mpn?: string,
+  brand?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewLinkId` | `string` | Yes | — |
+| `reviewUrl` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`productReviews.list`
+
+List public product reviews by SKU or product URL
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.list({
+	businessUnitId: '507f191e810c19729de860ea',
+	sku: ['SKU-123'],
+	page: 1,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `productUrl` | `string[]` | No | — |
+| `sku` | `string[]` | No | — |
+| `customerProductId` | `string` | No | — |
+| `language` | `string` | No | — |
+| `stars` | `number[]` | No | — |
+| `locale` | `string` | No | — |
+| `attributeIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productReviews` | `object[]` | Yes | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="productReviews full type">
+
+```ts
+{
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  stars?: number | null,
+  content?: string | null,
+  language?: string | null,
+  consumer?: {
+    id?: string | null,
+    displayName?: string | null,
+    displayLocation?: string | null,
+    numberOfReviews?: number | null,
+    links?: {
+      href: string | null,
+      method: string | null,
+      rel: string | null
+    }[]
+  },
+  attributeRatings?: {
+    attributeId: string,
+    attributeName: string,
+    rating: number
+  }[],
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### privateGet
+
+`productReviews.privateGet`
+
+Get one private product review and customer details
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.privateGet({ reviewId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewId` | `string` | Yes | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `stars` | `number \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `consumer` | `object` | No | — |
+| `attributeRatings` | `object[]` | No | — |
+| `links` | `object[]` | No | — |
+| `businessUnitId` | `string \| null` | No | — |
+| `product` | `object` | No | — |
+| `referenceId` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `redirectUri` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `hasModerationHistory` | `boolean` | No | — |
+| `conversationId` | `string \| null` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="consumer full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="attributeRatings full type">
+
+```ts
+{
+  attributeId: string,
+  attributeName: string,
+  rating: number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="product full type">
+
+```ts
+{
+  id?: string | null,
+  productUrl?: string | null,
+  productImages?: {
+    type: string,
+    url: string
+  }[],
+  name?: string | null,
+  sku?: string | null,
+  gtin?: string | null,
+  mpn?: string | null,
+  brand?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### privateList
+
+`productReviews.privateList`
+
+List private product reviews including customer details
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.privateList({ businessUnitId: '507f191e810c19729de860ea', page: 1, perPage: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `sku` | `string[]` | No | — |
+| `customerProductId` | `string` | No | — |
+| `language` | `string` | No | — |
+| `state` | `string[]` | No | — |
+| `locale` | `string` | No | — |
+
+Private product reviews include consumer email and reference ID fields. Treat returned personal data as sensitive; the plugin omits it from logs and sanitized HTTP errors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productReviews` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="productReviews full type">
+
+```ts
+{
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  stars?: number | null,
+  content?: string | null,
+  language?: string | null,
+  consumer?: {
+    id?: string | null,
+    email?: string | null,
+    name?: string | null
+  },
+  attributeRatings?: {
+    attributeId: string,
+    attributeName: string,
+    rating: number
+  }[],
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[],
+  businessUnitId?: string | null,
+  product?: {
+    id?: string | null,
+    productUrl?: string | null,
+    productImages?: {
+      type: string,
+      url: string
+    }[],
+    name?: string | null,
+    sku?: string | null,
+    gtin?: string | null,
+    mpn?: string | null,
+    brand?: string | null
+  },
+  referenceId?: string | null,
+  locale?: string | null,
+  redirectUri?: string | null,
+  state?: string | null,
+  hasModerationHistory?: boolean,
+  conversationId?: string | null,
+  total?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publicConversation
+
+`productReviews.publicConversation`
+
+Get a public product review conversation and comments
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.publicConversation({ conversationId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `businessUnitId` | `string` | Yes | — |
+| `consumerId` | `string` | Yes | — |
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  commentId: string,
+  createdAt: string,
+  author: {
+    id: string,
+    type: string
+  },
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summaries
+
+`productReviews.summaries`
+
+List private product review summaries for a business unit
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.summaries({ businessUnitId: '507f191e810c19729de860ea', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summaries` | `object[]` | Yes | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="summaries full type">
+
+```ts
+{
+  sku?: string | null,
+  starsAverage?: number | null,
+  numberOfReviews?: {
+    total: number,
+    usedForTrustScoreCalculation?: number,
+    oneStar?: number,
+    twoStars?: number,
+    threeStars?: number,
+    fourStars?: number,
+    fiveStars?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summary
+
+`productReviews.summary`
+
+Get product review rating counts and average stars
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.productReviews.summary({
+	businessUnitId: '507f191e810c19729de860ea',
+	sku: ['SKU-123'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessUnitId` | `string` | Yes | — |
+| `sku` | `string[]` | No | — |
+| `customerProductId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sku` | `string \| null` | No | — |
+| `starsAverage` | `number \| null` | No | — |
+| `numberOfReviews` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="numberOfReviews full type">
+
+```ts
+{
+  total: number,
+  usedForTrustScoreCalculation?: number,
+  oneStar?: number,
+  twoStars?: number,
+  threeStars?: number,
+  fourStars?: number,
+  fiveStars?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateComment
+
+`productReviews.updateComment`
+
+Replace the text of a published business comment on a product review conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.trustpilot.api.productReviews.updateComment({
+	conversationId: '507f191e810c19729de860ea',
+	commentId: '507f191e810c19729de860ea',
+	content: 'Updated reply',
+	integrationId: 'corsair',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | — |
+| `commentId` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `integrationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commentId` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `content` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reviews
+
+### get
+
+`reviews.get`
+
+Get the public details of a service review
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.reviews.get({ reviewId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `stars` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `experiencedAt` | `string \| null` | No | — |
+| `isVerified` | `boolean` | No | — |
+| `numberOfLikes` | `number` | No | — |
+| `consumer` | `object` | No | — |
+| `companyReply` | `object \| null` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="consumer full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  displayLocation?: string | null,
+  numberOfReviews?: number | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="companyReply full type">
+
+```ts
+{
+  text: string | null,
+  createdAt: string | null,
+  updatedAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPrivate
+
+`reviews.getPrivate`
+
+Get private review information including customer data
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.reviews.getPrivate({ reviewId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `stars` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `experiencedAt` | `string \| null` | No | — |
+| `isVerified` | `boolean` | No | — |
+| `numberOfLikes` | `number` | No | — |
+| `consumer` | `object` | No | — |
+| `companyReply` | `object \| null` | No | — |
+| `links` | `object[]` | No | — |
+| `referenceId` | `string \| null` | No | — |
+| `referralEmail` | `string \| null` | No | — |
+| `reportData` | `object` | No | — |
+| `findReviewer` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="consumer full type">
+
+```ts
+{
+  id?: string | null,
+  displayName?: string | null,
+  displayLocation?: string | null,
+  numberOfReviews?: number | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="companyReply full type">
+
+```ts
+{
+  text: string | null,
+  createdAt: string | null,
+  updatedAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="reportData full type">
+
+```ts
+{
+  source?: string | null,
+  publicComment?: string | null,
+  createdAt?: string | null,
+  reasons?: string[],
+  reason?: string | null,
+  reviewVisibility?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="findReviewer full type">
+
+```ts
+{
+  isEligible?: boolean,
+  requests?: {
+    id?: string | null,
+    created?: string | null,
+    status?: string | null,
+    businessUserMessage?: string | null,
+    consumerResponse?: {
+      submittedAt?: string | null,
+      name?: string | null,
+      email?: string | null,
+      address?: string | null,
+      phoneNumber?: string | null,
+      referenceId?: string | null,
+      message?: string | null
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTags
+
+`reviews.getTags`
+
+Get tags assigned to a service review
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.reviews.getTags({ reviewId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  group: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### latest
+
+`reviews.latest`
+
+Get the latest service reviews for selected languages
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.reviews.latest({
+	count: 5,
+	language: ['en'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `language` | `string[]` | Yes | — |
+| `filterUsersWithoutImages` | `boolean` | No | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id?: string | null,
+  stars?: number | null,
+  title?: string | null,
+  text?: string | null,
+  language?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  experiencedAt?: string | null,
+  isVerified?: boolean,
+  numberOfLikes?: number,
+  consumer?: {
+    id?: string | null,
+    displayName?: string | null,
+    displayLocation?: string | null,
+    numberOfReviews?: number | null,
+    links?: {
+      href: string | null,
+      method: string | null,
+      rel: string | null
+    }[]
+  },
+  companyReply?: {
+    text: string | null,
+    createdAt: string | null,
+    updatedAt?: string | null
+  } | null,
+  links?: {
+    href: string | null,
+    method: string | null,
+    rel: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### likes
+
+`reviews.likes`
+
+List consumers who liked a service review
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.reviews.likes({ reviewId: '507f191e810c19729de860ea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `likes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="likes full type">
+
+```ts
+{
+  consumer: {
+    id: string | null,
+    displayName: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webLinks
+
+`reviews.webLinks`
+
+Get localized links to a public service review
+
+**Risk:** `read`
+
+```ts
+await corsair.trustpilot.api.reviews.webLinks({ reviewId: '507f191e810c19729de860ea', locale: 'en-GB' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviewId` | `string` | Yes | — |
+| `locale` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locale` | `string \| null` | Yes | — |
+| `reviewUrl` | `string \| null` | Yes | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href: string | null,
+  method: string | null,
+  rel: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
