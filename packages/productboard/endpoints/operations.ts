@@ -44,15 +44,18 @@ type ProductboardRequiredPathInput<Operation extends ProductboardOperation> =
 
 export type ProductboardOperationCallerInput<
 	Operation extends ProductboardOperation,
-> = Operation extends unknown
-	? ProductboardRequiredPathInput<Operation> &
-			(Operation['query'] extends true
-				? { query?: ProductboardJsonObject }
-				: {}) &
-			(Operation['body'] extends true
-				? { body: NonNullable<ProductboardOperationInput['body']> }
-				: {})
-	: never;
+> =
+	// Distribute over operation unions so each variant receives only its own
+	// required path/body fields instead of merging every variant's inputs.
+	Operation extends unknown
+		? ProductboardRequiredPathInput<Operation> &
+				(Operation['query'] extends true
+					? { query?: ProductboardJsonObject }
+					: {}) &
+				(Operation['body'] extends true
+					? { body: NonNullable<ProductboardOperationInput['body']> }
+					: {})
+		: never;
 
 export function productboardOperationInputSchema(
 	operation: ProductboardOperation,

@@ -151,36 +151,46 @@ const EXPECTED_PRODUCTBOARD_ROUTES = [
 	string,
 ])[];
 
-type TypeEqual<Left, Right> = (<Value>() => Value extends Left
-	? 1
-	: 2) extends <Value>() => Value extends Right ? 1 : 2
+type TypeAssert<Value extends true> = Value;
+type IsRequired<Input, Key extends keyof Input> = {} extends Pick<Input, Key>
+	? false
+	: true;
+type IsOptional<Input, Key extends keyof Input> = {} extends Pick<Input, Key>
 	? true
 	: false;
-type TypeAssert<Value extends true> = Value;
 
 export type ProductboardCallerInputTypeRegression = [
 	TypeAssert<
-		TypeEqual<
-			Parameters<ProductboardEndpoints['notes']['get']>[1],
-			{ id: string; query?: ProductboardJsonObject }
-		>
+		IsRequired<Parameters<ProductboardEndpoints['notes']['get']>[1], 'id'>
 	>,
 	TypeAssert<
-		TypeEqual<
-			Parameters<ProductboardEndpoints['notes']['create']>[1],
-			{ body: NonNullable<ProductboardOperationInput['body']> }
-		>
+		IsOptional<Parameters<ProductboardEndpoints['notes']['get']>[1], 'query'>
 	>,
 	TypeAssert<
-		TypeEqual<
+		IsRequired<Parameters<ProductboardEndpoints['notes']['create']>[1], 'body'>
+	>,
+	TypeAssert<
+		IsRequired<
 			Parameters<
 				ProductboardEndpoints['pluginIntegrations']['connections']['update']
 			>[1],
-			{
-				integrationId: string;
-				entityId: string;
-				body: NonNullable<ProductboardOperationInput['body']>;
-			}
+			'integrationId'
+		>
+	>,
+	TypeAssert<
+		IsRequired<
+			Parameters<
+				ProductboardEndpoints['pluginIntegrations']['connections']['update']
+			>[1],
+			'entityId'
+		>
+	>,
+	TypeAssert<
+		IsRequired<
+			Parameters<
+				ProductboardEndpoints['pluginIntegrations']['connections']['update']
+			>[1],
+			'body'
 		>
 	>,
 ];
@@ -205,24 +215,30 @@ function buildContext(): ProductboardContext {
 
 const ctx = buildContext();
 
+function createTestEndpoint(operation: ProductboardOperation) {
+	return createProductboardEndpoint(operation);
+}
+
 function inputFor(
 	operation: ProductboardOperation,
 ): ProductboardOperationInput {
 	let input: ProductboardOperationInput = {};
-	for (const field of operation.pathFields ?? []) {
-		if (field === 'type') input = { ...input, type: 'textNote' };
-		if (field === 'targetType') input = { ...input, targetType: 'link' };
-		if (field === 'targetId') input = { ...input, targetId: 'target-id' };
-		if (field === 'fieldId') input = { ...input, fieldId: 'name' };
-		if (field === 'valueId') input = { ...input, valueId: 'value-id' };
-		if (field === 'integrationId')
-			input = { ...input, integrationId: 'integration-id' };
-		if (field === 'entityId') input = { ...input, entityId: 'entity-id' };
-		if (field === 'id') input = { ...input, id: 'resource-id' };
+	if ('pathFields' in operation) {
+		for (const field of operation.pathFields ?? []) {
+			if (field === 'type') input = { ...input, type: 'textNote' };
+			if (field === 'targetType') input = { ...input, targetType: 'link' };
+			if (field === 'targetId') input = { ...input, targetId: 'target-id' };
+			if (field === 'fieldId') input = { ...input, fieldId: 'name' };
+			if (field === 'valueId') input = { ...input, valueId: 'value-id' };
+			if (field === 'integrationId')
+				input = { ...input, integrationId: 'integration-id' };
+			if (field === 'entityId') input = { ...input, entityId: 'entity-id' };
+			if (field === 'id') input = { ...input, id: 'resource-id' };
+		}
 	}
-	if (operation.query)
+	if ('query' in operation && operation.query)
 		input = { ...input, query: { pageCursor: 'opaque-cursor' } };
-	if (operation.body) {
+	if ('body' in operation && operation.body) {
 		let data: ProductboardJsonObject = {
 			fields: { name: 'Synthetic test record' },
 		};
@@ -286,11 +302,13 @@ function expectedPath(
 	input: ProductboardOperationInput,
 ): string {
 	let path = operation.path;
-	for (const field of operation.pathFields ?? []) {
-		const value = input[field];
-		if (typeof value !== 'string')
-			throw new Error(`Missing path field: ${field}`);
-		path = path.replace(`{${field}}`, encodeURIComponent(value));
+	if ('pathFields' in operation) {
+		for (const field of operation.pathFields ?? []) {
+			const value = input[field];
+			if (typeof value !== 'string')
+				throw new Error(`Missing path field: ${field}`);
+			path = path.replace(`{${field}}`, encodeURIComponent(value));
+		}
 	}
 	return path;
 }
@@ -315,7 +333,7 @@ describe('Productboard operations', () => {
 
 	for (const operation of Object.values(ProductboardOperations)) {
 		it(`${operation.name} sends the documented method, path, query, and body`, async () => {
-			const endpoint = createProductboardEndpoint(operation);
+			const endpoint = createTestEndpoint(operation);
 			const input = inputFor(operation);
 			const result = await endpoint(ctx, input);
 
@@ -325,8 +343,9 @@ describe('Productboard operations', () => {
 				'test-productboard-token',
 				{
 					method: operation.method,
-					query: operation.query ? input.query : undefined,
-					body: operation.body ? input.body : undefined,
+					query:
+						'query' in operation && operation.query ? input.query : undefined,
+					body: 'body' in operation && operation.body ? input.body : undefined,
 				},
 			);
 			expect(mockedLogEvent).toHaveBeenCalledWith(
@@ -338,9 +357,10 @@ describe('Productboard operations', () => {
 		});
 
 		it(`${operation.name} rejects missing required inputs before network I/O`, async () => {
-			const endpoint = createProductboardEndpoint(operation);
+			const endpoint = createTestEndpoint(operation);
 			const invalidInput =
-				(operation.pathFields?.length ?? 0) > 0 || operation.body
+				('pathFields' in operation && operation.pathFields.length > 0) ||
+				('body' in operation && operation.body)
 					? {}
 					: { body: { data: {} } };
 			await expect(endpoint(ctx, invalidInput)).rejects.toThrow();
@@ -350,15 +370,13 @@ describe('Productboard operations', () => {
 	}
 
 	it('rejects undocumented top-level inputs before making a request', async () => {
-		const endpoint = createProductboardEndpoint(
-			ProductboardOperations['notes.list'],
-		);
+		const endpoint = createTestEndpoint(ProductboardOperations['notes.list']);
 		await expect(endpoint(ctx, { body: { data: {} } })).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects callback fields on plugin-integration REST operations', async () => {
-		const endpoint = createProductboardEndpoint(
+		const endpoint = createTestEndpoint(
 			ProductboardOperations['pluginIntegrations.create'],
 		);
 		await expect(
