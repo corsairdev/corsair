@@ -6,7 +6,18 @@ const publicKey = process.env.FORCEMANAGER_PUBLIC_KEY;
 const privateKey = process.env.FORCEMANAGER_PRIVATE_KEY;
 const environment =
 	process.env.FORCEMANAGER_ENVIRONMENT === 'sandbox' ? 'sandbox' : 'production';
-const liveTest = publicKey && privateKey ? test : test.skip;
+const missing = [
+	['FORCEMANAGER_PUBLIC_KEY', publicKey],
+	['FORCEMANAGER_PRIVATE_KEY', privateKey],
+]
+	.filter(([, value]) => !value)
+	.map(([name]) => name);
+if (missing.length > 0) {
+	console.warn(
+		`Skipping the ForceManager live test: set ${missing.join(' and ')}.`,
+	);
+}
+const liveTest = missing.length === 0 ? test : test.skip;
 
 describe('ForceManager live read-only smoke test', () => {
 	liveTest('logs in with the key pair and lists time zones', async () => {
