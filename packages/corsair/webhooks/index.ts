@@ -157,12 +157,14 @@ function buildGoogleChannelBody(
  * URL names none on a multi-tenant instance: the plugin's tenant matcher reads
  * the provider's account id from the delivery, and the stored webhook link maps
  * it to a tenant (the lookup the tunnel does with Hub's routing). `failed`
- * means the lookup itself errored, which must not be read as "no link".
+ * means the lookup itself errored, which must not be read as "no link". With
+ * an explicit `tenantId` the lookup is scoped to it, to find the account.
  */
 async function resolveTenantForPlugin(
 	corsair: CorsairInstance,
 	pluginId: string,
 	request: RawWebhookRequest,
+	tenantId?: string,
 ): Promise<{ tenantId?: string; accountId?: string; failed?: true }> {
 	const internal = tryGetCorsairInternal(corsair);
 	if (!internal?.multiTenancy || !internal.database) return {};
@@ -176,6 +178,7 @@ async function resolveTenantForPlugin(
 			pluginId,
 			linkType: tenantMatch.linkType,
 			externalId: tenantMatch.externalId,
+			tenantId,
 		});
 		return account
 			? { tenantId: account.tenant_id, accountId: account.id }
@@ -303,6 +306,17 @@ export async function processWebhook(
 						.executeTakeFirst()
 				: undefined;
 			if (row?.tenant_id !== explicitTenantId) boundAccountId = undefined;
+		}
+		if (explicitTenantId && !boundAccountId && corsair.withTenant) {
+			// Best effort: on a lookup error or no match the client stays unbound.
+			boundAccountId = (
+				await resolveTenantForPlugin(
+					corsair,
+					pluginId,
+					rawRequest,
+					explicitTenantId,
+				)
+			).accountId;
 		}
 		if (!explicitTenantId && corsair.withTenant) {
 			const resolved = await resolveTenantForPlugin(

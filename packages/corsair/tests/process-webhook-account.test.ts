@@ -242,6 +242,38 @@ describe('webhooks run as the account the delivery matched', () => {
 		}
 	});
 
+	it('a direct webhook for an explicit tenant binds the linked account', async () => {
+		await addAccount('acct-a', 't1', 'TA');
+		await addAccount('acct-b', 't1', 'TB');
+		const result = await processWebhook(
+			corsair,
+			headers,
+			{ team_id: 'TB' },
+			{ tenantId: 't1' },
+		);
+		expect(result.response?.success).toBe(true);
+		expect(await entityAccounts()).toEqual(['acct-b']);
+	});
+
+	it('a failing link lookup still serves a single-account explicit tenant', async () => {
+		await addAccount('acct-a', 't1');
+		const spy = jest
+			.spyOn(tenantLinks, 'resolveAccountFromWebhookLink')
+			.mockRejectedValue(new Error('db down'));
+		try {
+			const result = await processWebhook(
+				corsair,
+				headers,
+				{ team_id: 'TA' },
+				{ tenantId: 't1' },
+			);
+			expect(result.response?.success).toBe(true);
+			expect(await entityAccounts()).toEqual(['acct-a']);
+		} finally {
+			spy.mockRestore();
+		}
+	});
+
 	it('single account, no link: unchanged', async () => {
 		await addAccount('acct-a', 't1');
 		const result = await processWebhook(
