@@ -296,6 +296,28 @@ describe('Memberstack public request seam', () => {
 			expect(Object.fromEntries(sent.url.searchParams)).toEqual(test.query);
 		expect(result).toEqual(test.response);
 	});
+	it.each([
+		['addPlan', '/members/mem_1/add-plan'],
+		['removePlan', '/members/mem_1/remove-plan'],
+	] as const)('accepts the text/plain OK that %s returns', async (op, path) => {
+		// Real response from a test-mode app (11-15): 200, text/plain, body "OK".
+		fetchMock.mockResolvedValueOnce(
+			new Response('OK', {
+				status: 200,
+				headers: { 'content-type': 'text/plain; charset=utf-8' },
+			}),
+		);
+		await expect(
+			api.members[op](context, { id: 'mem_1', planId: 'pln_1' }),
+		).resolves.toBeUndefined();
+		expect(request().url.pathname).toBe(path);
+	});
+	it('still rejects an unexpected body on a plan change', async () => {
+		respond({ data: { id: 'mem_1' } });
+		await expect(
+			api.members.addPlan(context, { id: 'mem_1', planId: 'pln_1' }),
+		).rejects.toThrow();
+	});
 	it('sends no body for a basic member delete', async () => {
 		respond({ data: { id: 'mem_1' } });
 		await api.members.delete(context, { id: 'mem_1' });

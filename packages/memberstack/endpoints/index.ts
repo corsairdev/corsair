@@ -13,8 +13,10 @@ async function call<Input extends z.ZodType, Output extends z.ZodType>(
 ): Promise<z.output<Output>> {
 	const input = operation.input.parse(rawInput);
 	const raw = await memberstackRequest(ctx.key, requestOptions(input));
+	// add-plan and remove-plan answer 200 with a text/plain "OK" body (live
+	// run 11-15), or nothing; any other body still fails the void schema.
 	const response = operation.output.parse(
-		operation.empty && raw === '' ? undefined : raw,
+		operation.empty && (raw === '' || raw === 'OK') ? undefined : raw,
 	);
 	await logEventFromContext(
 		ctx,
