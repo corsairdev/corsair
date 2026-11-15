@@ -34,6 +34,7 @@ const domain = {
 	exportEnabled: false,
 };
 
+// unknown: each mocked Short.io reply is a different JSON shape.
 function json(body: unknown) {
 	return new Response(JSON.stringify(body), {
 		status: 200,
@@ -209,6 +210,7 @@ describe('Short.io saved-row writes run in order per row', () => {
 
 	// A fake entity client whose first read takes a snapshot, then waits until
 	// released: an unordered second write would land first and be overwritten.
+	// unknown: the fake store holds saved link rows of any shape, like core's.
 	function racingStore(initial: Record<string, unknown> | null) {
 		let row = initial;
 		let readStarted!: () => void;
@@ -231,6 +233,7 @@ describe('Short.io saved-row writes run in order per row', () => {
 				return snapshot ? { data: snapshot } : null;
 			}),
 			upsertByEntityId: jest.fn(
+				// unknown: the row written is whatever the endpoint saves.
 				async (_id: string, data: Record<string, unknown>) => {
 					row = data;
 				},
