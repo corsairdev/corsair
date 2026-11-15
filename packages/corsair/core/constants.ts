@@ -416,6 +416,7 @@ export const BaseProviders = [
 	'pagerduty',
 	'parallel',
 	'parseur',
+	'pdfapi',
 	'pdfco',
 	'pdfmonkey',
 	'pdl',
@@ -1017,6 +1018,7 @@ export const ProviderDisplayNames = {
 	pagerduty: 'PagerDuty',
 	parallel: 'Parallel',
 	parseur: 'Parseur',
+	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
 	pdfmonkey: 'PDFMonkey',
 	pdl: 'People Data Labs',
@@ -1625,6 +1627,7 @@ export type AllProviders =
 	| 'pagerduty'
 	| 'parallel'
 	| 'parseur'
+	| 'pdfapi'
 	| 'pdfco'
 	| 'pdfmonkey'
 	| 'pdl'
