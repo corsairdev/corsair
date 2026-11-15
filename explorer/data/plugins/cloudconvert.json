@@ -1,0 +1,693 @@
+{
+  "id": "cloudconvert",
+  "displayName": "CloudConvert",
+  "description": "Create, wait for, inspect, list and delete CloudConvert jobs and tasks; cancel or retry tasks; create GCS/S3 export jobs; discover operations and formats; and view account credits with API-key authentication. Job-level webhook fields are not exposed. See https://cloudconvert.com/docs/api-reference/jobs and https://cloudconvert.com/docs/api-reference/tasks.",
+  "npmPackageName": "@corsair-dev/cloudconvert",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "export_gcs_project_id",
+        "export_gcs_client_email",
+        "export_gcs_private_key",
+        "export_s3_access_key_id",
+        "export_s3_secret_access_key",
+        "export_s3_session_token"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "cloudconvert.api.formats.listSupported",
+      "shortPath": "formats.listSupported",
+      "description": "List supported conversion formats, engines, options and engine versions through CloudConvert GET /operations. Docs: https://cloudconvert.com/docs/api-reference/operations#list-operations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ operation: string, input_format?: string | null, output_format?: string | null, engine: string, credits: number, options?: { name: string, type?: string | boolean | integer | float | enum | dictionary | string, default?: JsonValue, description?: string, possible_values?: JsonValue[], label?: string, group?: string, advanced?: boolean, depends_on?: Record<string, JsonValue>[], min?: number, max?: number, step?: number, unit?: string, marks?: { value: JsonValue, label: string }[], suggestions?: string[], values?: { value: string, label?: string | null, description?: string | null }[] }[] | null, engine_versions?: { version: string, default?: boolean, latest?: boolean, deprecated?: boolean, experimental?: boolean }[] | null, deprecated?: boolean, experimental?: boolean, meta?: Record<string, JsonValue> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.jobs.create",
+      "shortPath": "jobs.create",
+      "description": "Create an asynchronous job from a task graph. CloudConvert limits job task names to alphanumeric characters, hyphens and underscores, with at most 2000 tasks. Docs: https://cloudconvert.com/docs/api-reference/jobs#create-job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "Record<string, { operation: string, input?: string | string[], ignore_error?: boolean } & Record<string, JsonValue>>"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }[] | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.jobs.createAndWait",
+      "shortPath": "jobs.createAndWait",
+      "description": "Create a job and wait for completion on CloudConvert’s synchronous API. Prefer jobs.create for long-running work because clients and network stacks may time out. redirect=true is rejected because it returns raw file bytes unsupported by this JSON endpoint. Docs: https://cloudconvert.com/docs/api-reference/jobs#create-job-and-wait",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "Record<string, { operation: string, input?: string | string[], ignore_error?: boolean } & Record<string, JsonValue>>"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "false",
+            "description": "Only false or omitted is supported. true redirects to raw file content, which this JSON endpoint cannot represent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }[] | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Get job status and its tasks. redirect=true is rejected because it returns raw file bytes unsupported by this JSON endpoint. Docs: https://cloudconvert.com/docs/api-reference/jobs#show-job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "false",
+            "description": "Only false or omitted is supported. true redirects to raw file content, which this JSON endpoint cannot represent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }[] | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List jobs with documented status, tag and access-token filters and page-based pagination. Docs: https://cloudconvert.com/docs/api-reference/jobs#list-jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "processing | finished | error"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accessToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "tasks[]"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }[] | null, links?: { self?: string | null } | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page: number, from?: number | null, path: string, per_page: number, to?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.jobs.remove",
+      "shortPath": "jobs.remove",
+      "description": "Delete a job, including all of its tasks and data. Docs: https://cloudconvert.com/docs/api-reference/jobs#delete-job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "cloudconvert.api.jobs.wait",
+      "shortPath": "jobs.wait",
+      "description": "Wait for job completion on CloudConvert’s synchronous API. Prefer jobs.get for long-running work because clients and network stacks may time out. redirect=true is rejected because it returns raw file bytes unsupported by this JSON endpoint. Docs: https://cloudconvert.com/docs/api-reference/jobs#wait-for-job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "false",
+            "description": "Only false or omitted is supported. true redirects to raw file content, which this JSON endpoint cannot represent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }[] | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.operations.list",
+      "shortPath": "operations.list",
+      "description": "List available CloudConvert operations, formats, engines and options. Docs: https://cloudconvert.com/docs/api-reference/operations#list-operations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inputFormat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engineVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alternatives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(options | engine_versions | options.details)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ operation: string, input_format?: string | null, output_format?: string | null, engine: string, credits: number, options?: { name: string, type?: string | boolean | integer | float | enum | dictionary | string, default?: JsonValue, description?: string, possible_values?: JsonValue[], label?: string, group?: string, advanced?: boolean, depends_on?: Record<string, JsonValue>[], min?: number, max?: number, step?: number, unit?: string, marks?: { value: JsonValue, label: string }[], suggestions?: string[], values?: { value: string, label?: string | null, description?: string | null }[] }[] | null, engine_versions?: { version: string, default?: boolean, latest?: boolean, deprecated?: boolean, experimental?: boolean }[] | null, deprecated?: boolean, experimental?: boolean, meta?: Record<string, JsonValue> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.tasks.cancel",
+      "shortPath": "tasks.cancel",
+      "description": "Cancel a task that is waiting or processing. Docs: https://cloudconvert.com/docs/api-reference/tasks#cancel-task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.tasks.createExportGoogleCloudStorage",
+      "shortPath": "tasks.createExportGoogleCloudStorage",
+      "description": "Create a Google Cloud Storage export task in a new job; CloudConvert task creation is part of POST /jobs. Docs: https://cloudconvert.com/docs/import-export/export-files#google-cloud-storage and https://cloudconvert.com/docs/api-reference/jobs#create-job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exportTaskName",
+            "optional": false,
+            "type": "string",
+            "description": "Name to assign to the export task."
+          },
+          {
+            "key": "sourceTasks",
+            "optional": false,
+            "type": "Record<string, { operation: string, input?: string | string[], ignore_error?: boolean } & Record<string, JsonValue>>",
+            "description": "Other tasks to include in the same job, such as import and conversion tasks."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "The name or names of source tasks whose files this export task will export."
+          },
+          {
+            "key": "bucket",
+            "optional": false,
+            "type": "string",
+            "description": "Google Cloud Storage bucket name."
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string",
+            "description": "Destination filename in the bucket."
+          },
+          {
+            "key": "filePrefix",
+            "optional": true,
+            "type": "string",
+            "description": "Destination filename prefix; use instead of file."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }[] | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.tasks.createExportS3",
+      "shortPath": "tasks.createExportS3",
+      "description": "Create an S3 export task in a new job; CloudConvert task creation is part of POST /jobs. Docs: https://cloudconvert.com/docs/import-export/export-files#s3 and https://cloudconvert.com/docs/api-reference/jobs#create-job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exportTaskName",
+            "optional": false,
+            "type": "string",
+            "description": "Name to assign to the export task."
+          },
+          {
+            "key": "sourceTasks",
+            "optional": false,
+            "type": "Record<string, { operation: string, input?: string | string[], ignore_error?: boolean } & Record<string, JsonValue>>",
+            "description": "Other tasks to include in the same job, such as import and conversion tasks."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "The name or names of source tasks whose files this export task will export."
+          },
+          {
+            "key": "bucket",
+            "optional": false,
+            "type": "string",
+            "description": "Amazon S3 bucket name."
+          },
+          {
+            "key": "region",
+            "optional": false,
+            "type": "string",
+            "description": "Amazon S3 region or compatible endpoint region."
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string",
+            "description": "Custom S3-compatible API endpoint."
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string",
+            "description": "Destination object key."
+          },
+          {
+            "key": "keyPrefix",
+            "optional": true,
+            "type": "string",
+            "description": "Destination object-key prefix; use instead of key."
+          },
+          {
+            "key": "acl",
+            "optional": true,
+            "type": "private | public-read | public-read-write | authenticated-read | bucket-owner-read | bucket-owner-full-control"
+          },
+          {
+            "key": "cacheControl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentDisposition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "serverSideEncryption",
+            "optional": true,
+            "type": "AES256 | aws:kms"
+          },
+          {
+            "key": "tagging",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }[] | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get task status and optionally include retries, dependencies, payload and parent job. Docs: https://cloudconvert.com/docs/api-reference/tasks#show-task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(retries | depends_on_tasks | payload | job)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List and filter CloudConvert tasks with page-based pagination. Docs: https://cloudconvert.com/docs/api-reference/tasks#list-tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "waiting | processing | finished | error"
+          },
+          {
+            "key": "operation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "(retries | depends_on_tasks)[]"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page: number, from?: number | null, path: string, per_page: number, to?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.tasks.remove",
+      "shortPath": "tasks.remove",
+      "description": "Delete a task, including its data. Docs: https://cloudconvert.com/docs/api-reference/tasks#delete-task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "cloudconvert.api.tasks.retry",
+      "shortPath": "tasks.retry",
+      "description": "Create a new task using the payload of an existing task. Docs: https://cloudconvert.com/docs/api-reference/tasks#retry-task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.tasks.wait",
+      "shortPath": "tasks.wait",
+      "description": "Wait for task completion on CloudConvert’s synchronous API. Prefer tasks.get for long-running work because clients and network stacks may time out. Docs: https://cloudconvert.com/docs/api-reference/tasks#wait-for-task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, message?: string | null, code?: string | null, waiting_reason?: string | null, credits?: number | null, created_at: string, started_at?: string | null, ended_at?: string | null, engine?: string | null, engine_version?: string | null, retry_of_task_id?: string | null, retries?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | null, depends_on_tasks?: { id: string, job_id?: string | null, name?: string | null, operation: string, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, retry_of_task_id?: string | null, links?: { self?: string | null } | null }[] | Record<string, string> | null, payload?: Record<string, JsonValue> | null, job?: { id: string, tag?: string | null, status: waiting | processing | finished | error | string, created_at: string, started_at?: string | null, ended_at?: string | null, links?: { self?: string | null } | null } | null, result?: { files?: { filename: string, url?: string | null }[] | null } | null, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudconvert.api.users.show",
+      "shortPath": "users.show",
+      "description": "Read the authenticated CloudConvert user and remaining credits. Docs: https://cloudconvert.com/docs/api-reference/users#show-user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, username: string | null, email: string, credits: number, created_at: string, links?: { self?: string | null } | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

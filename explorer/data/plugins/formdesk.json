@@ -1,0 +1,2150 @@
+{
+  "id": "formdesk",
+  "displayName": "Formdesk",
+  "description": "Connect to Formdesk REST v1 to manage forms, submissions, users, visitors, and uploaded files with validated requests and responses.",
+  "npmPackageName": "@corsair-dev/formdesk",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 39,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "formdesk.api.connect.apiKey",
+      "shortPath": "connect.apiKey",
+      "description": "Resolve the tenant host using the stored API key (Connect is free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apikey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.connect.credentials",
+      "shortPath": "connect.credentials",
+      "description": "Resolve the tenant host and API key from Formdesk credentials (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apikey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.files.content",
+      "shortPath": "files.content",
+      "description": "Download file content (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.files.get",
+      "shortPath": "files.get",
+      "description": "Retrieve file metadata (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ self?: { href: string }, content?: { href: string } }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id_formresult",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orgfilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filesize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contenttype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.files.list",
+      "shortPath": "files.list",
+      "description": "List account and result files (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, _links?: { self?: { href: string }, content?: { href: string } }, id: number, id_formresult?: number, name?: string, filename?: string, orgfilename?: string, filesize?: number, contenttype?: string, public?: boolean, version?: number }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.files.remove",
+      "shortPath": "files.remove",
+      "description": "Permanently remove a file (1 API credit per call)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "formdesk.api.forms.filters",
+      "shortPath": "forms.filters",
+      "description": "List saved filter names (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number, name: string }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.forms.items",
+      "shortPath": "forms.items",
+      "description": "List input items on a form (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number, id_itemtype?: number, itemtype: string, identifier: string, label?: string, datatype?: string, options?: JsonValue[] | null, defaultvalue?: JsonValue, position?: number }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List forms (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number, name: string, title?: string, user_id?: number }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.forms.park",
+      "shortPath": "forms.park",
+      "description": "Create a prefill parking ticket (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "expires",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "reuse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preventchange",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.results.add",
+      "shortPath": "results.add",
+      "description": "Add up to 10 form results (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue> | Record<string, JsonValue>[]"
+          },
+          {
+            "key": "process_messages",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ _fd_id: number, _fd_status?: string, _fd_syncstatus?: string }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, code?: string, description?: string, reason?: string, data?: JsonValue }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, _links?: { self?: { href: string }, content?: { href: string } }, id: number, id_formresult?: number, name?: string, filename?: string, orgfilename?: string, filesize?: number, contenttype?: string, public?: boolean, version?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.results.allFiles",
+      "shortPath": "results.allFiles",
+      "description": "List files attached to a form’s results (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, _links?: { self?: { href: string }, content?: { href: string } }, id: number, id_formresult?: number, name?: string, filename?: string, orgfilename?: string, filesize?: number, contenttype?: string, public?: boolean, version?: number }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.results.deleteAllFiles",
+      "shortPath": "results.deleteAllFiles",
+      "description": "Delete all files attached to a form’s results (1 API credit per call)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "formdesk.api.results.deleteFiles",
+      "shortPath": "results.deleteFiles",
+      "description": "Delete files attached to a result (1 API credit per call)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "formdesk.api.results.export",
+      "shortPath": "results.export",
+      "description": "Export form results; credits equal completed forms downloaded",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "excel | excel-plain | excel2007 | xml | text | csv | csv-comma"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ view?: string, search?: string, id_from?: number, id_to?: number, created_from?: string, created_to?: string, status?: string, changed_from?: string, changed_to?: string, completed?: boolean, completed_from?: string, completed_to?: string, id_visitor?: number, name?: string, email?: string, confirmed?: boolean, verified?: boolean, verified_from?: string, verified_to?: string, sync_status?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, name: string, contenttype: string, content: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.results.files",
+      "shortPath": "results.files",
+      "description": "List files attached to a result (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, _links?: { self?: { href: string }, content?: { href: string } }, id: number, id_formresult?: number, name?: string, filename?: string, orgfilename?: string, filesize?: number, contenttype?: string, public?: boolean, version?: number }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.results.get",
+      "shortPath": "results.get",
+      "description": "Retrieve a form result (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ _fd_id: number, _fd_status?: string, _fd_syncstatus?: string }"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, _links?: { self?: { href: string }, content?: { href: string } }, id: number, id_formresult?: number, name?: string, filename?: string, orgfilename?: string, filesize?: number, contenttype?: string, public?: boolean, version?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.results.increment",
+      "shortPath": "results.increment",
+      "description": "Atomically increment a numeric field (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.results.list",
+      "shortPath": "results.list",
+      "description": "List form result IDs (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ view?: string, search?: string, id_from?: number, id_to?: number, created_from?: string, created_to?: string, status?: string, changed_from?: string, changed_to?: string, completed?: boolean, completed_from?: string, completed_to?: string, id_visitor?: number, name?: string, email?: string, confirmed?: boolean, verified?: boolean, verified_from?: string, verified_to?: string, sync_status?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number, status?: string, sync_status?: string }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.results.markProcessed",
+      "shortPath": "results.markProcessed",
+      "description": "Mark a result processed for synchronization (no credit charge)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "formdesk.api.results.pdf",
+      "shortPath": "results.pdf",
+      "description": "Generate a completed-form PDF (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ hideunanswered?: boolean, showhidden?: boolean, ignoredependencies?: boolean, noworkflow?: boolean, papersize?: A3 | A4 | A5 | Letter | Executive | Auto | string, orientation?: 1 | 2, scaletype?: 0 | 1 | 2, scaling?: number, marginLeft?: number, marginRight?: number, marginTop?: number, marginBottom?: number, editprotect?: boolean, copyprotect?: boolean, userpassword?: string, ownerpassword?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.results.remove",
+      "shortPath": "results.remove",
+      "description": "Remove a form result; deleted entries may remain retrievable for 30 days (1 API credit per call)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "formdesk.api.results.update",
+      "shortPath": "results.update",
+      "description": "Update a form result (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "process_messages",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ _fd_id: number, _fd_status?: string, _fd_syncstatus?: string }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, code?: string, description?: string, reason?: string, data?: JsonValue }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, _links?: { self?: { href: string }, content?: { href: string } }, id: number, id_formresult?: number, name?: string, filename?: string, orgfilename?: string, filesize?: number, contenttype?: string, public?: boolean, version?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.results.workflows",
+      "shortPath": "results.workflows",
+      "description": "List result workflows (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number, id_message?: number, description?: string, datetime?: string, code?: string, signing_status?: string, payment?: boolean }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.users.add",
+      "shortPath": "users.add",
+      "description": "Create a Formdesk user (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ type?: internal | external | API, active?: boolean, firstname?: string, name?: string, email?: string, username?: string, password?: string, cellphone_country?: string, cellphone?: string, newsletter?: boolean, notwofactor?: boolean, allow_createform?: boolean, allow_editprofile?: boolean, allow_managelabels?: boolean, template?: number, external_userid?: string, external_provider?: string, external_force?: boolean, apikey?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_createform",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_editprofile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_managelabels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "newsletter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "apikey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notwofactor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastlogin",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.users.get",
+      "shortPath": "users.get",
+      "description": "Retrieve a user by ID (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_createform",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_editprofile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_managelabels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "newsletter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "apikey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notwofactor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastlogin",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.users.getExternal",
+      "shortPath": "users.getExternal",
+      "description": "Retrieve an external user by provider ID (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "externalUserId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_createform",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_editprofile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_managelabels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "newsletter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "apikey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notwofactor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastlogin",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.users.list",
+      "shortPath": "users.list",
+      "description": "List Formdesk users (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number, active?: boolean, type?: string, firstname?: string, name?: string, email?: string, username?: string, cellphone_country?: string, cellphone?: string, allow_createform?: boolean, allow_editprofile?: boolean, allow_managelabels?: boolean, newsletter?: boolean, template?: number, apikey?: string, notwofactor?: boolean, external_userid?: string, external_force?: boolean, external_provider?: string, lastlogin?: string | null }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.users.remove",
+      "shortPath": "users.remove",
+      "description": "Permanently remove a Formdesk user (1 API credit per call)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "formdesk.api.users.signOn",
+      "shortPath": "users.signOn",
+      "description": "Create a user single sign-on link (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credentials",
+            "optional": false,
+            "type": "{ id?: number | string, email?: string, username?: string, password?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a Formdesk user (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ type?: internal | external | API, active?: boolean, firstname?: string, name?: string, email?: string, username?: string, password?: string, cellphone_country?: string, cellphone?: string, newsletter?: boolean, notwofactor?: boolean, allow_createform?: boolean, allow_editprofile?: boolean, allow_managelabels?: boolean, template?: number, external_userid?: string, external_provider?: string, external_force?: boolean, apikey?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_createform",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_editprofile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_managelabels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "newsletter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "apikey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notwofactor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastlogin",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.visitors.add",
+      "shortPath": "visitors.add",
+      "description": "Create a form visitor (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visitor",
+            "optional": false,
+            "type": "{ type?: internal | external, active?: boolean, name?: string, email?: string, username?: string, password?: string, password_from_visitor?: boolean, cellphone_country?: string, cellphone?: string, external_userid?: string, external_provider?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.visitors.get",
+      "shortPath": "visitors.get",
+      "description": "Retrieve a visitor by ID (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.visitors.getExternal",
+      "shortPath": "visitors.getExternal",
+      "description": "Retrieve an external visitor by provider ID (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "externalUserId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.visitors.list",
+      "shortPath": "visitors.list",
+      "description": "List form visitors (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number, type?: string, external_userid?: string, external_provider?: string, active?: boolean, name?: string, email?: string, cellphone_country?: string, cellphone?: string, username?: string, password?: string | null }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.visitors.remove",
+      "shortPath": "visitors.remove",
+      "description": "Permanently remove a form visitor (1 API credit per call)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "formdesk.api.visitors.results",
+      "shortPath": "visitors.results",
+      "description": "List a visitor’s form result IDs (1 API credit per call)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number, name: string, title?: string, results: { meta?: { resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }, id: number }[] }[]"
+      }
+    },
+    {
+      "path": "formdesk.api.visitors.signOn",
+      "shortPath": "visitors.signOn",
+      "description": "Create a visitor single sign-on link (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credentials",
+            "optional": false,
+            "type": "{ id?: number | string, email?: string, username?: string, password?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formdesk.api.visitors.update",
+      "shortPath": "visitors.update",
+      "description": "Update a form visitor (1 API credit per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visitorId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "visitor",
+            "optional": false,
+            "type": "{ type?: internal | external, active?: boolean, name?: string, email?: string, username?: string, password?: string, password_from_visitor?: boolean, cellphone_country?: string, cellphone?: string, external_userid?: string, external_provider?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, created?: string | null, lastModified?: string | null, location?: string }"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_userid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellphone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
