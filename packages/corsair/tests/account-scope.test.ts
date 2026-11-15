@@ -168,4 +168,26 @@ describe('withTenant account scope', () => {
 		expect(await t.demo.api.token()).toBe('tok-a');
 		expect(await corsair.withTenant('t1').demo.api.token()).toBe('tok-a');
 	});
+
+	describe('without a kek', () => {
+		let noKek: any;
+		beforeEach(async () => {
+			noKek = createCorsair({
+				plugins: [demo],
+				database: env.db,
+				multiTenancy: true,
+			} as any);
+			await addAccount('a', 'a@x.com', 'tok-a');
+		});
+
+		it('naming an account throws', async () => {
+			await expect(
+				noKek.withTenant('t1', { accounts: { demo: 'a' } }).demo.api.note(),
+			).rejects.toThrow('Selecting an account requires a kek');
+		});
+
+		it('unbound with one account uses the default row', async () => {
+			await expect(noKek.withTenant('t1').demo.api.note()).resolves.toBe(true);
+		});
+	});
 });
