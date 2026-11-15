@@ -301,6 +301,8 @@ function maybeStartTunnel(
 export type { EventLoggingContext } from '../plugins/utils/events';
 // Event logging utilities for plugins
 export { logEvent, logEventFromContext } from '../plugins/utils/events';
+export type { Account } from './account-lookup';
+export { AccountSelectionError } from './account-lookup';
 export type {
 	AccountFieldNames,
 	AccountKeyManagerFor,

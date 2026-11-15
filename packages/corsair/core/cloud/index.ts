@@ -133,7 +133,15 @@ function buildCloudSurface<Plugins extends readonly CorsairPlugin[]>(
 
 	if (opts.multiTenancy) {
 		return {
-			withTenant: (tenantId: string, _options?: unknown) => {
+			withTenant: (
+				tenantId: string,
+				options?: { accounts?: Record<string, string> },
+			) => {
+				if (options?.accounts && Object.keys(options.accounts).length > 0) {
+					throw new Error(
+						'withTenant accounts is not supported in cloud mode yet',
+					);
+				}
 				if (!tenantId) {
 					throw new Error(
 						'corsair.withTenant(tenantId): tenantId must be a non-empty string',

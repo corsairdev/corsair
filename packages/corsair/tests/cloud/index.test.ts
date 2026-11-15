@@ -173,6 +173,22 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		).resolves.toBeDefined();
 	});
 
+	it('withTenant refuses an accounts binding in cloud mode', () => {
+		const corsair = createCorsair({
+			plugins: [slack()],
+			multiTenancy: true,
+			hub: {
+				projectApiKey: 'ck_cloud_x',
+				baseUrl: 'https://vm/p/api/corsair',
+			},
+		});
+
+		expect(() =>
+			corsair.withTenant('acme', { accounts: { slack: 'a' } }),
+		).toThrow(/not supported in cloud mode/);
+		expect(() => corsair.withTenant('acme', { accounts: {} })).not.toThrow();
+	});
+
 	it('multi-tenant connectionStatus.get() throws without a tenantId', () => {
 		const corsair = createCorsair({
 			plugins: [slack()],

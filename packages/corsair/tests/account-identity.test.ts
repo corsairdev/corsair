@@ -445,3 +445,12 @@ describe('account key manager scope', () => {
 		});
 	});
 });
+
+describe('public entry exports', () => {
+	it('exposes AccountSelectionError for instanceof checks', async () => {
+		const entry = await import('../core');
+		const own = await import('../core/account-lookup');
+		const err = new own.AccountSelectionError('account_required', 'x');
+		expect(err instanceof entry.AccountSelectionError).toBe(true);
+	});
+});
