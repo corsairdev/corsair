@@ -7,28 +7,27 @@ import { TombaOperationError } from '../error-handlers';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
-/** The slice of the account key manager the client needs. */
-export type TombaCredentialContext = {
-	keys: {
-		get_api_key: () => Promise<string | null | undefined>;
-		get_api_secret: () => Promise<string | null | undefined>;
-	};
-	options?: { apiSecret?: string };
-};
-
 /**
- * Resolves both credentials. Tomba needs the API key and the API secret on
- * every request, and core passes only one `key` string into the endpoint, so the
- * secret is read from the account here.
+ * The key builder packs both credentials into `ctx.key` as JSON, because core
+ * hands the endpoint one key string and Tomba needs the API key and the API
+ * secret on every request.
  */
-export async function resolveCredentials(
-	ctx: TombaCredentialContext,
-	apiKey: string,
-): Promise<TombaCredentials> {
-	const apiSecret = ctx.options?.apiSecret ?? (await ctx.keys.get_api_secret());
-	if (!apiSecret) {
+export function resolveCredentials(key: string): TombaCredentials {
+	let parsed: unknown; // unknown: the packed key is checked field by field.
+	try {
+		parsed = JSON.parse(key);
+	} catch {
+		parsed = undefined;
+	}
+	const record =
+		parsed && typeof parsed === 'object'
+			? (parsed as Record<string, unknown>)
+			: undefined;
+	const apiKey = record?.apiKey;
+	const apiSecret = record?.apiSecret;
+	if (typeof apiKey !== 'string' || typeof apiSecret !== 'string') {
 		throw new TombaOperationError(
-			'The API secret is missing from the account. Add it alongside the API key.',
+			'The Tomba credentials are incomplete. Connect the account with both the API key and the API secret.',
 		);
 	}
 	return { apiKey, apiSecret };
@@ -52,7 +51,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const credentials = await resolveCredentials(ctx, ctx.key);
+	const credentials = resolveCredentials(ctx.key);
 	const raw = await makeTombaRequest(credentials, toRequest(parsed));
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,

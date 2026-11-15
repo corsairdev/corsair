@@ -101,18 +101,21 @@ describe('tomba plugin definition', () => {
 });
 
 describe('tomba key builder', () => {
-	it('prefers the inline key', async () => {
-		const plugin = tomba({ key: 'inline-key' });
+	const packed = (apiKey: string, apiSecret: string) =>
+		JSON.stringify({ apiKey, apiSecret });
+
+	it('prefers the inline key and secret', async () => {
+		const plugin = tomba({ key: 'inline-key', apiSecret: 'inline-secret' });
 		await expect(
 			buildKey(plugin, keyContext('stored-key', 'secret')),
-		).resolves.toBe('inline-key');
+		).resolves.toBe(packed('inline-key', 'inline-secret'));
 	});
 
-	it('falls back to the stored key', async () => {
+	it('falls back to the stored key and secret', async () => {
 		const plugin = tomba();
 		await expect(
 			buildKey(plugin, keyContext('stored-key', 'secret')),
-		).resolves.toBe('stored-key');
+		).resolves.toBe(packed('stored-key', 'secret'));
 	});
 
 	it('throws AuthMissingError when the key is missing', async () => {
@@ -122,10 +125,10 @@ describe('tomba key builder', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
-	it('resolves the key even when the secret is missing, so the endpoint reports it', async () => {
+	it('throws AuthMissingError when the secret is missing, so Corsair offers a connect link', async () => {
 		const plugin = tomba();
 		await expect(
 			buildKey(plugin, keyContext('stored-key', null)),
-		).resolves.toBe('stored-key');
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

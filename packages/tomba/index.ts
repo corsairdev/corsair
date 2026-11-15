@@ -36,8 +36,8 @@ export type TombaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	/**
-	 * The API secret. Tomba needs both this and the API key on every request,
-	 * and only one of them reaches the endpoint as `ctx.key`.
+	 * The API secret. Tomba needs both this and the API key on every request;
+	 * the key builder packs the two into `ctx.key`.
 	 */
 	apiSecret?: string;
 	hooks?: InternalTombaPlugin['hooks'];
@@ -367,22 +367,23 @@ export function tomba<const T extends TombaPluginOptions>(
 		endpointSchemas: tombaEndpointSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
+		// Core hands an endpoint one key string, so both credentials travel in
+		// it as JSON. A missing secret throws AuthMissingError here, which is
+		// what makes Corsair offer a connect link.
 		keyBuilder: async (ctx: TombaKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint' || ctx.authType !== 'api_key') {
+				throw new AuthMissingError('tomba', ctx.authType ?? 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+			const apiKey = options.key ?? (await ctx.keys.get_api_key());
+			const apiSecret = options.apiSecret ?? (await ctx.keys.get_api_secret());
+			if (!apiKey || !apiSecret) {
+				throw new AuthMissingError('tomba', 'api_key');
 			}
-
-			throw new AuthMissingError('tomba', ctx.authType ?? 'api_key');
+			return JSON.stringify({ apiKey, apiSecret });
 		},
 	} satisfies InternalTombaPlugin;
 }
 
-export { TombaAPIError } from './client';
 export type {
 	AccountOutput,
 	CompanyOutput,

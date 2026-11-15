@@ -33,7 +33,8 @@ export const API_SECRET = 'tb-test-secret';
 export function invoke(endpoint: AnyEndpoint, input: unknown) {
 	return endpoint(
 		{
-			key: API_KEY,
+			// The key builder packs both credentials into ctx.key.
+			key: JSON.stringify({ apiKey: API_KEY, apiSecret: API_SECRET }),
 			authType: 'api_key',
 			options: {},
 			tenantId: 'default',
