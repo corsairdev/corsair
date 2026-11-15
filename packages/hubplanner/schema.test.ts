@@ -105,6 +105,25 @@ describe('Projects schemas', () => {
 		expect(
 			HubPlannerEndpointInputSchemas['projects.update'].parse(withCustomFields),
 		).toEqual(withCustomFields);
+		// PATCH /project takes any project property, so the settings create accepts must survive parsing.
+		const withSettings = {
+			projects: [
+				{
+					_id: 'p1',
+					timeEntryEnabled: true,
+					timeEntryLocked: true,
+					timeEntryApproval: false,
+					timeEntryNoteRequired: true,
+					useStatusColor: true,
+					useProjectDuration: true,
+					start: '2026-12-01',
+					end: '2026-12-31',
+				},
+			],
+		};
+		expect(
+			HubPlannerEndpointInputSchemas['projects.update'].parse(withSettings),
+		).toEqual(withSettings);
 		// Live PATCH /project answers { _id, status } per record.
 		expect(
 			HubPlannerEndpointOutputSchemas['projects.update'].parse([
@@ -353,6 +372,24 @@ describe('Bookings schemas', () => {
 		expect(
 			HubPlannerEndpointInputSchemas['bookings.update'].parse(updateInput),
 		).toEqual(updateInput);
+
+		// A booking request is a booking created with type WAITING_FOR_APPROVAL.
+		const requestInput = { ...createInput, type: 'WAITING_FOR_APPROVAL' };
+		expect(
+			HubPlannerEndpointInputSchemas['bookings.create'].parse(requestInput),
+		).toEqual(requestInput);
+
+		// PUT replaces the whole booking, so the stored fields must be sendable.
+		const fullUpdate = {
+			...updateInput,
+			type: 'SCHEDULED',
+			metadata: 'ext-123',
+			categoryTemplateId: 'c1',
+			customFields: [{ templateId: 't1', value: 'x' }],
+		};
+		expect(
+			HubPlannerEndpointInputSchemas['bookings.update'].parse(fullUpdate),
+		).toEqual(fullUpdate);
 
 		const patchInput = {
 			bookingId: 'b1',

@@ -146,6 +146,14 @@ export const ProjectsUpdateInputSchema = z.object({
 				status: z.string().optional(),
 				backgroundColor: z.string().optional(),
 				metadata: z.string().optional(),
+				timeEntryEnabled: z.boolean().optional(),
+				timeEntryLocked: z.boolean().optional(),
+				timeEntryApproval: z.boolean().optional(),
+				timeEntryNoteRequired: z.boolean().optional(),
+				useStatusColor: z.boolean().optional(),
+				useProjectDuration: z.boolean().optional(),
+				start: z.string().optional(),
+				end: z.string().optional(),
 				// `unknown` because custom field values depend on each account's own templates
 				customFields: z.array(z.record(z.string(), z.unknown())).optional(),
 			}),
@@ -504,6 +512,8 @@ export const BookingsCreateInputSchema = z.object({
 	interval: z.string().optional(),
 	repeatEndsAfterTimes: z.number().optional(),
 	repeatEndsOnDate: z.string().optional(),
+	// 'WAITING_FOR_APPROVAL' creates a booking request (needs the requesting & approval extension).
+	type: z.string().optional(),
 });
 export type BookingsCreateInput = z.infer<typeof BookingsCreateInputSchema>;
 export const BookingsCreateResponseSchema = BookingSchema;
@@ -523,6 +533,12 @@ export const BookingsUpdateInputSchema = z.object({
 	note: z.string().optional(),
 	allDay: z.boolean().optional(),
 	allowOverschedule: z.boolean().optional(),
+	// PUT replaces the whole booking: send the stored values of these to keep them.
+	type: z.string().optional(),
+	metadata: z.string().optional(),
+	categoryTemplateId: z.string().optional(),
+	// `unknown` because custom field values depend on each account's own templates
+	customFields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 export type BookingsUpdateInput = z.infer<typeof BookingsUpdateInputSchema>;
 export const BookingsUpdateResponseSchema = BookingSchema;

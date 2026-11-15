@@ -371,10 +371,11 @@ describe('Resources Endpoints', () => {
 
 	it('resources.update updates resources', async () => {
 		const updates = [{ _id: 'r1', firstName: 'Jonathan', lastName: 'Doe' }];
-		mockedRequest.mockResolvedValueOnce(updates);
+		// Live PATCH /resource answers { _id, status } per record, not the submitted objects.
+		mockedRequest.mockResolvedValueOnce([{ _id: 'r1', status: 'Updated' }]);
 
 		const result = await Resources.update(ctx, { resources: updates });
-		expect(result).toEqual(updates);
+		expect(result).toEqual([{ _id: 'r1', status: 'Updated' }]);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/resource',
 			'test-hubplanner-key',

@@ -8,7 +8,8 @@ overviewNote: |
 apiNotes:
   projects.create: "Project `name` is required. Optional properties like `budgetHours` and `budgetCashAmount` configure budget limits."
   projects.update: "Bulk update accepts an array of project objects, each requiring `_id` and the attributes to be modified."
-  bookings.create: "Requires `resource`, `project`, `start`, and `end` dates (YYYY-MM-DD). Use `allowOverschedule: true` to bypass schedule warning thresholds."
+  bookings.create: "Requires `resource`, `project`, `start`, and `end` dates (YYYY-MM-DD). Use `allowOverschedule: true` to bypass schedule warning thresholds. `type: 'WAITING_FOR_APPROVAL'` creates a booking request (requesting & approval extension)."
+  bookings.update: "PUT replaces the booking: send every stored field you want to keep (type, metadata, categoryTemplateId, customFields), or use bookings.patch for a partial change."
   bookings.patch: "Used for partial updates or for approving/rejecting booking requests with `type: 'APPROVED'` or `'REJECTED'`."
   timeEntries.create: "Requires `resource`, `project`, `date` (YYYY-MM-DD), and `minutes`."
   categories.create: "Requires `groupId`, `name` and `type`. `type: 'NON_OPTIONAL'` sets the category as the group's default; use `'CUSTOM'` otherwise."
@@ -160,6 +161,7 @@ apiExamples:
   categories.update:
     categoryId: "5f057949f338cd432a794a12"
     name: "Design Sprint"
+    gridColor: "#4A90E2"
   categories.search:
     query:
       name: "Design"

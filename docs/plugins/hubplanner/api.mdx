@@ -46,8 +46,9 @@ await corsair.hubplanner.api.bookings.create({
 | `interval` | `string` | No | — |
 | `repeatEndsAfterTimes` | `number` | No | — |
 | `repeatEndsOnDate` | `string` | No | — |
+| `type` | `string` | No | — |
 
-Requires `resource`, `project`, `start`, and `end` dates (YYYY-MM-DD). Use `allowOverschedule: true` to bypass schedule warning thresholds.
+Requires `resource`, `project`, `start`, and `end` dates (YYYY-MM-DD). Use `allowOverschedule: true` to bypass schedule warning thresholds. `type: 'WAITING_FOR_APPROVAL'` creates a booking request (requesting & approval extension).
 
 
 
@@ -401,6 +402,12 @@ await corsair.hubplanner.api.bookings.update({
 | `note` | `string` | No | — |
 | `allDay` | `boolean` | No | — |
 | `allowOverschedule` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `categoryTemplateId` | `string` | No | — |
+| `customFields` | `Record<string, any>[]` | No | — |
+
+PUT replaces the booking: send every stored field you want to keep (type, metadata, categoryTemplateId, customFields), or use bookings.patch for a partial change.
 
 
 
@@ -803,7 +810,7 @@ Update an existing booking category
 **Risk:** `write`
 
 ```ts
-await corsair.hubplanner.api.categories.update({ categoryId: '5f057949f338cd432a794a12', name: 'Design Sprint' });
+await corsair.hubplanner.api.categories.update({ categoryId: '5f057949f338cd432a794a12', name: 'Design Sprint', gridColor: '#4A90E2' });
 ```
 
 **Input**
@@ -2471,6 +2478,14 @@ Bulk update accepts an array of project objects, each requiring `_id` and the at
   status?: string,
   backgroundColor?: string,
   metadata?: string,
+  timeEntryEnabled?: boolean,
+  timeEntryLocked?: boolean,
+  timeEntryApproval?: boolean,
+  timeEntryNoteRequired?: boolean,
+  useStatusColor?: boolean,
+  useProjectDuration?: boolean,
+  start?: string,
+  end?: string,
   customFields?: Record<string, any>[]
 }[]
 ```
