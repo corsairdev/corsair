@@ -20,11 +20,33 @@ const RelativeDateStringSchema = z.enum([
 // 11-15: date_from=2020-01-01&date_to=2020-01-02 returned today's session), so
 // the time part is required.
 const ISO_8601_PATTERN =
-	/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:?\d{2})?$/;
+	/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(?:Z|[+-](\d{2}):?(\d{2}))?$/;
+
+// Impossible values (Feb 30, hour 24, offset +99:99) are ignored by LiveSession
+// the same way, with no 400 (live run 11-15), so the ranges are checked here.
+function isIsoDateTime(value: string): boolean {
+	const m = ISO_8601_PATTERN.exec(value);
+	if (!m) return false;
+	const [year, month, day, hour, minute, second, offH, offM] = m
+		.slice(1)
+		.map((part) => (part === undefined ? 0 : Number(part)));
+	const daysInMonth = new Date(Date.UTC(year!, month!, 0)).getUTCDate();
+	return (
+		month! >= 1 &&
+		month! <= 12 &&
+		day! >= 1 &&
+		day! <= daysInMonth &&
+		hour! <= 23 &&
+		minute! <= 59 &&
+		second! <= 59 &&
+		offH! <= 14 &&
+		offM! <= 59
+	);
+}
 
 const DateFilterSchema = z.union([
 	RelativeDateStringSchema,
-	z.string().refine((value) => ISO_8601_PATTERN.test(value), {
+	z.string().refine(isIsoDateTime, {
 		message:
 			'must be an ISO 8601 datetime (e.g. 2026-01-31T00:00:00Z) or a documented relative date',
 	}),

@@ -454,6 +454,23 @@ describe('LiveSession input boundaries', () => {
 		expect(list!.safeParse({ date_from: 'last week' }).success).toBe(false);
 		// LiveSession ignores a date without a time (live run 11-15).
 		expect(list!.safeParse({ date_from: '2026-01-01' }).success).toBe(false);
+		// LiveSession also ignores impossible values instead of answering 400 (live run 11-15).
+		for (const bad of [
+			'2026-02-30T10:00:00Z',
+			'2026-13-01T10:00:00Z',
+			'2026-01-01T24:00:00Z',
+			'2026-01-01T10:60:00Z',
+			'2026-01-01T10:00:61Z',
+			'2026-01-01T10:00:00+99:99',
+		]) {
+			expect(list!.safeParse({ date_from: bad }).success).toBe(false);
+		}
+		expect(
+			list!.safeParse({ date_from: '2024-02-29T23:59:59.5+05:30' }).success,
+		).toBe(true);
+		expect(list!.safeParse({ date_to: '2026-11-15T08:00-0800' }).success).toBe(
+			true,
+		);
 	});
 
 	it('requires the provider-specific destination on alert creation', () => {
