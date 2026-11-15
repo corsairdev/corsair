@@ -4,6 +4,7 @@ import {
 	IGNISIGN_API_BASE,
 	makeIgnisignBinaryRequest,
 	makeIgnisignRequest,
+	safeErrorBody,
 	sanitizeData,
 } from './client';
 
@@ -189,41 +190,63 @@ describe('makeIgnisignRequest', () => {
 		expect(serialized).not.toContain('33612345678');
 	});
 
-	it('keeps only the status and error code for codes without a diagnostic', async () => {
-		const rawBody = {
-			errorCode: 'SIGNER_MISING_CLAIMS',
-			message: 'Signer Jane Doe +33612345678 is missing claims',
-		};
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'POST', url: '/v4/signers' },
-				{
-					url: `${IGNISIGN_API_BASE}/v4/signers`,
-					ok: false,
-					status: 400,
-					statusText: 'Bad Request',
-					body: rawBody,
-				},
-				`Generic Error: status: 400; body: ${JSON.stringify(rawBody)}`,
-			),
-		);
+	it('drops error codes that are not known IgniSign codes, even when shaped like one', async () => {
+		// CodeRabbit's example: customer data that matches the code shape, sent as
+		// errorCode and as a gateway `code`, plus an unlisted real-looking code.
+		const bodies = [
+			{ errorCode: 'JANE_DOE_33612345678', message: 'Jane Doe' },
+			{ code: 'JANE_DOE_33612345678' },
+			{
+				errorCode: 'SIGNER_MISING_CLAIMS',
+				message: 'Signer Jane Doe +33612345678 is missing claims',
+			},
+		];
+		for (const rawBody of bodies) {
+			mockRequest.mockRejectedValueOnce(
+				new ApiError(
+					{ method: 'POST', url: '/v4/signers' },
+					{
+						url: `${IGNISIGN_API_BASE}/v4/signers`,
+						ok: false,
+						status: 400,
+						statusText: 'Bad Request',
+						body: rawBody,
+					},
+					`Generic Error: status: 400; body: ${JSON.stringify(rawBody)}`,
+				),
+			);
+		}
 
-		// `unknown` because rejection value has no static type; assertions narrow it.
-		const error: unknown = await makeIgnisignRequest('/v4/signers', 'key', {
-			method: 'POST',
-		}).catch((caught: unknown) => caught);
+		for (const _rawBody of bodies) {
+			// `unknown` because rejection value has no static type; assertions narrow it.
+			const error: unknown = await makeIgnisignRequest('/v4/signers', 'key', {
+				method: 'POST',
+			}).catch((caught: unknown) => caught);
 
-		const typedError = error as ApiError;
-		expect(typedError.message).toBe(
-			'Ignisign request failed with status 400 (SIGNER_MISING_CLAIMS)',
-		);
-		expect(typedError.body).toEqual({
+			const typedError = error as ApiError;
+			expect(typedError.status).toBe(400);
+			expect(typedError.message).toBe(
+				'Ignisign request failed with status 400',
+			);
+			expect(typedError.body).toEqual({ status: 400 });
+			const serialized = `${typedError.message} ${JSON.stringify(typedError.body)}`;
+			expect(serialized).not.toContain('JANE');
+			expect(serialized).not.toContain('33612345678');
+		}
+	});
+
+	it('keeps a known code sent as a gateway `code`', () => {
+		expect(safeErrorBody({ code: 'APP_NOT_FOUND' }, 404)).toEqual({
+			status: 404,
+			errorCode: 'APP_NOT_FOUND',
+			diagnostic: 'No application with this appId for the connected API key.',
+		});
+		expect(safeErrorBody({ errorCode: 'constructor' }, 400)).toEqual({
 			status: 400,
-			errorCode: 'SIGNER_MISING_CLAIMS',
 		});
 	});
 
-	it('drops error codes that are not shaped like an IgniSign code, and string bodies', async () => {
+	it('drops free-text codes and string bodies', async () => {
 		const badCode = new ApiError(
 			{ method: 'POST', url: '/v4/signers' },
 			{

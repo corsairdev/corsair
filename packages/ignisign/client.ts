@@ -134,10 +134,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 // IgniSign errors are `{ errorCode, message?, context? }` (@ignisign/public
 // `IgnisignError`). `message` and `context` are free text that can repeat a
 // signer's name, phone number or document, so neither reaches the thrown
-// error. What stays: the HTTP status, the error code when it has the shape of
-// an IgniSign code (upper-case letters, digits and underscores), and for the
-// codes below a diagnostic written here.
-const ERROR_CODE_PATTERN = /^[A-Z][A-Z0-9_]{1,127}$/;
+// error. What stays: the HTTP status and, when the error code is one of the
+// IgniSign codes listed below, that code and a diagnostic written here. Any
+// other code is dropped, because a value shaped like a code
+// (`JANE_DOE_33612345678`) can still carry customer data.
 
 export const IGNISIGN_ERROR_DIAGNOSTICS: Readonly<Record<string, string>> = {
 	BAD_REQUEST: 'The request is malformed.',
@@ -192,9 +192,9 @@ export type IgnisignErrorBody = {
 };
 
 /**
- * The thrown error's body: the status, the IgniSign error code (or a gateway's
- * `code`) when it is shaped like one, and the fixed diagnostic for known codes.
- * The provider's message, context and any other text are dropped.
+ * The thrown error's body: the status and, for a known IgniSign error code
+ * (from `errorCode` or a gateway's `code`), the code and its fixed diagnostic.
+ * Unknown codes, the provider's message, context and any other text are dropped.
  */
 // `unknown` because error bodies returned from the provider are untrusted JSON.
 export function safeErrorBody(
@@ -205,17 +205,12 @@ export function safeErrorBody(
 	if (!isRecord(rawBody)) return result;
 	const code = [rawBody.errorCode, rawBody.code].find(
 		(value): value is string =>
-			typeof value === 'string' && ERROR_CODE_PATTERN.test(value),
+			typeof value === 'string' &&
+			Object.prototype.hasOwnProperty.call(IGNISIGN_ERROR_DIAGNOSTICS, value),
 	);
 	if (!code) return result;
 	result.errorCode = code;
-	const diagnostic = Object.prototype.hasOwnProperty.call(
-		IGNISIGN_ERROR_DIAGNOSTICS,
-		code,
-	)
-		? IGNISIGN_ERROR_DIAGNOSTICS[code]
-		: undefined;
-	if (diagnostic) result.diagnostic = diagnostic;
+	result.diagnostic = IGNISIGN_ERROR_DIAGNOSTICS[code];
 	return result;
 }
 
