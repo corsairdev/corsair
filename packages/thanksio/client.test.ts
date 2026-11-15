@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
-import { request } from 'corsair/http';
-import { makeThanksIoRequest, ThanksIoAPIError } from './client';
+import { ApiError, request } from 'corsair/http';
+import { makeThanksIoRequest } from './client';
+import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -46,7 +47,7 @@ it('rejects missing credentials before making a request', async () => {
 	expect(mockedRequest).not.toHaveBeenCalled();
 });
 
-it('wraps transport errors without retrying writes', async () => {
+it('lets transport errors through unchanged without retrying writes', async () => {
 	const failure = new Error('upstream unavailable');
 	mockedRequest.mockRejectedValue(failure);
 	await expect(
@@ -55,13 +56,26 @@ it('wraps transport errors without retrying writes', async () => {
 			path: '/send/postcard',
 			body: {},
 		}),
-	).rejects.toMatchObject({
-		name: 'ThanksIoAPIError',
-		method: 'POST',
-		cause: failure,
-	});
+	).rejects.toBe(failure);
 	expect(mockedRequest).toHaveBeenCalledTimes(1);
-	expect(new ThanksIoAPIError('failure', failure, 'POST')).toBeInstanceOf(
-		Error,
+});
+
+it("passes core's ApiError through unchanged so status and body survive", async () => {
+	const failure = new ApiError(
+		{ method: 'POST', url: '/recipients' },
+		{
+			url: 'https://api.thanks.io/api/v2/recipients',
+			ok: false,
+			status: 422,
+			statusText: 'Unprocessable Content',
+			body: { message: 'The address field is required.' },
+		},
+		'Unprocessable Content',
 	);
+	mockedRequest.mockRejectedValue(failure);
+	await expect(
+		makeThanksIoRequest('secret', { method: 'POST', path: '/recipients' }),
+	).rejects.toBe(failure);
+	expect(errorHandlers.VALIDATION_ERROR.match(failure)).toBe(true);
+	expect(errorHandlers.RATE_LIMIT_ERROR.match(failure)).toBe(false);
 });

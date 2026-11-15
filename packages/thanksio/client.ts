@@ -7,6 +7,7 @@ import type {
 import { ApiError, request } from 'corsair/http';
 
 export const THANKSIO_API_BASE = 'https://api.thanks.io/api/v2';
+const IMAGE_TIMEOUT_MS = 20_000;
 
 const rateLimitConfig: RateLimitConfig = {
 	enabled: true,
@@ -16,62 +17,54 @@ const rateLimitConfig: RateLimitConfig = {
 	headerNames: { retryAfter: 'retry-after' },
 };
 
-export class ThanksIoAPIError extends Error {
-	status?: number;
-	// Error bodies can be arbitrary JSON or text, so no narrower shape is reliable.
-	body?: unknown;
-	retryAfter?: number;
-	readonly method: string;
-
-	constructor(message: string, cause: Error, method: string) {
-		super(message, { cause });
-		this.name = 'ThanksIoAPIError';
-		this.method = method;
-		if (cause instanceof ApiError) {
-			this.status = cause.status;
-			this.body = cause.body;
-			this.retryAfter = cause.retryAfter;
-		}
-	}
-}
-
 // Corsair's JSON transport converts non-JSON responses to text; PNGs need a binary-safe path.
+// The PNG comes back base64-encoded so it survives JSON transports (MCP, the HTTP call route).
 export async function makeThanksIoImageRequest(
 	key: string,
 	query: Record<string, string | number | undefined>,
-): Promise<Blob> {
+): Promise<{ contentType: string; base64: string }> {
 	if (!key?.trim()) throw new AuthMissingError('thanksio', 'api_key');
 	const url = new URL(`${THANKSIO_API_BASE}/build/image-template`);
 	for (const [name, value] of Object.entries(query))
 		if (value !== undefined) url.searchParams.set(name, String(value));
-	let response: Response;
-	try {
-		response = await fetch(url, {
-			method: 'GET',
-			headers: { Authorization: `Bearer ${key}` },
-		});
-	} catch (error) {
-		const cause = error instanceof Error ? error : new Error(String(error));
-		throw new ThanksIoAPIError(cause.message, cause, 'GET');
-	}
+	// Core's request deadline does not cover this direct fetch; the signal also
+	// bounds the body read below.
+	const response = await fetch(url, {
+		method: 'GET',
+		headers: { Authorization: `Bearer ${key}` },
+		signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS),
+	});
 	if (!response.ok) {
 		const contentType = response.headers.get('content-type') ?? '';
 		const body = contentType.toLowerCase().includes('json')
 			? await response.json().catch(() => undefined)
 			: await response.text().catch(() => undefined);
-		const failure = new ThanksIoAPIError(
-			`Thanks.io returned ${response.status}`,
-			new Error(response.statusText),
-			'GET',
-		);
-		failure.status = response.status;
-		failure.body = body;
 		const retryAfter = response.headers.get('retry-after');
-		if (retryAfter && /^\d+$/.test(retryAfter))
-			failure.retryAfter = Number(retryAfter) * 1000;
-		throw failure;
+		// Same error type as core's request(), so the 429 handler and core's
+		// management route read status, body and retryAfter the usual way.
+		throw new ApiError(
+			{ method: 'GET', url: '/build/image-template', query },
+			{
+				url: url.toString(),
+				ok: false,
+				status: response.status,
+				statusText: response.statusText,
+				body,
+			},
+			`Thanks.io returned ${response.status}`,
+			{
+				retryAfter:
+					retryAfter && /^\d+$/.test(retryAfter)
+						? Number(retryAfter) * 1000
+						: undefined,
+			},
+		);
 	}
-	return response.blob();
+	const bytes = Buffer.from(await response.arrayBuffer());
+	return {
+		contentType: response.headers.get('content-type') ?? 'image/png',
+		base64: bytes.toString('base64'),
+	};
 }
 
 export type ThanksIoRequest = {
@@ -104,15 +97,8 @@ export async function makeThanksIoRequest(
 		body: spec.body,
 		mediaType: spec.body === undefined ? undefined : 'application/json',
 	};
-	try {
-		// The shared HTTP client cannot know the endpoint-specific response schema;
-		// keep its result unknown until the caller validates it.
-		return await request<unknown>(config, options, { rateLimitConfig });
-	} catch (error) {
-		throw new ThanksIoAPIError(
-			error instanceof Error ? error.message : 'Unknown Thanks.io error',
-			error instanceof Error ? error : new Error(String(error)),
-			spec.method,
-		);
-	}
+	// The shared HTTP client cannot know the endpoint-specific response schema;
+	// keep its result unknown until the caller validates it. Core's ApiError
+	// passes through unchanged (plugin rules R8).
+	return request<unknown>(config, options, { rateLimitConfig });
 }

@@ -1,7 +1,7 @@
 import { request } from 'corsair/http';
 import { thanksIoEndpointsNested } from './endpoints';
 import type { ThanksIoContext } from './index';
-import { thanksIoEndpointSchemas } from './index';
+import { thanksIoEndpointMeta, thanksIoEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -999,8 +999,11 @@ it('returns PNG bytes from the image builder with the documented query and beare
 			header: 'Hello & welcome',
 			size: '6x9',
 		});
-		expect(result.type).toBe('image/png');
-		expect(new Uint8Array(await result.arrayBuffer())).toEqual(bytes);
+		expect(result).toEqual({
+			contentType: 'image/png',
+			base64: Buffer.from(bytes).toString('base64'),
+		});
+		expect(JSON.parse(JSON.stringify(result))).toEqual(result);
 		const [url, options] = fetchMock.mock.calls[0]!;
 		expect(String(url)).toBe(
 			'https://api.thanks.io/api/v2/build/image-template?id=8&header=Hello+%26+welcome&size=6x9',
@@ -1008,6 +1011,7 @@ it('returns PNG bytes from the image builder with the documented query and beare
 		expect(options).toEqual({
 			method: 'GET',
 			headers: { Authorization: 'Bearer test-token' },
+			signal: expect.any(AbortSignal),
 		});
 	} finally {
 		fetchMock.mockRestore();
@@ -1025,7 +1029,7 @@ it('returns image-builder rate-limit details without retrying', async () => {
 		await expect(
 			thanksIoEndpointsNested.imageBuilder.create(ctx, { id: 8 }),
 		).rejects.toMatchObject({
-			name: 'ThanksIoAPIError',
+			name: 'ApiError',
 			status: 429,
 			retryAfter: 3000,
 			body: { message: 'slow down' },
@@ -1034,4 +1038,42 @@ it('returns image-builder rate-limit details without retrying', async () => {
 	} finally {
 		fetchMock.mockRestore();
 	}
+});
+
+it('parses the documented sub-account response with a null return_postal_code', async () => {
+	const documented = {
+		user_id: 2,
+		title: 'API Update',
+		return_name: 'Your Business',
+		return_address: '123 Main Street',
+		return_address2: 'Apartment 1',
+		return_city: 'Fake City',
+		return_state: 'NY',
+		return_postal_code: null,
+		updated_at: '2025-09-09 18:26:51',
+		created_at: '2025-09-09 18:26:51',
+		id: 50,
+	};
+	mockRequest.mockResolvedValueOnce(documented);
+	await expect(
+		thanksIoEndpointsNested.subAccounts.create(ctx, {
+			body: { title: 'API Update' },
+		}),
+	).resolves.toEqual(documented);
+});
+
+it('marks every operation that mails or charges as destructive (R8)', () => {
+	for (const op of [
+		'send.postcard',
+		'send.magnacard',
+		'send.windowedLetter',
+		'send.windowlessLetter',
+		'send.notecard',
+		'send.giftcard',
+		'mailingLists.buyRadiusSearch',
+		'orders.replay',
+		'recipients.create',
+		'recipients.createMultiple',
+	] as const)
+		expect(thanksIoEndpointMeta[op].riskLevel).toBe('destructive');
 });

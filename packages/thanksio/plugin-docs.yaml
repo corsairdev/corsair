@@ -15,7 +15,7 @@ overviewNote: |
 
   Send operations can create paid mailings. Use `preview: true` to request previews or the corresponding `estimate` endpoint to price a mailing before submitting. Email-to-address and radius lookup may incur additional charges.
 
-  `imageBuilder.create` returns a PNG as a `Blob`; it does not place an order.
+  `imageBuilder.create` returns the PNG as `{ contentType, base64 }`; it does not place an order.
 examples:
   read:
     path: creatives.get

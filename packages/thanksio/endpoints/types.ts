@@ -205,9 +205,16 @@ const subAccountBody = z.object({
 	return_state: z.string().optional(),
 	return_postal_code: z.string().optional(),
 });
-const subAccountSchema = subAccountBody
-	.partial()
-	.extend({
+// The documented create/update response returns null return_* fields.
+const subAccountSchema = z
+	.object({
+		title: z.string().optional(),
+		return_name: nullableString,
+		return_address: nullableString,
+		return_address2: nullableString,
+		return_city: nullableString,
+		return_state: nullableString,
+		return_postal_code: nullableString,
 		id: z.number().int().optional(),
 		user_id: z.number().int().optional(),
 	})
@@ -843,7 +850,7 @@ export const ThanksIoEndpointOutputSchemas = {
 	estimateWindowlessLetter: estimateResponse,
 	estimateNotecard: estimateResponse,
 	estimateGiftcard: estimateResponse,
-	imageBuilderCreate: z.instanceof(Blob),
+	imageBuilderCreate: z.object({ contentType: z.string(), base64: z.string() }),
 } as const;
 
 export type ThanksIoEndpointInputs = {
