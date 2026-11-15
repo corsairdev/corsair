@@ -90,7 +90,8 @@ export const anonymize: ProabonoEndpoints['customersAnonymize'] = (
 		({ ReferenceCustomer }) => ({
 			method: 'POST',
 			path: '/v1/Customer/Anonymization',
-			body: { ReferenceCustomer },
+			// The reference is a documented query parameter on this route.
+			query: { ReferenceCustomer },
 		}),
 		// The reference is the caller's own customer string and can hold personal
 		// data, so it stays out of the event: an anonymization that logged it would
@@ -98,7 +99,10 @@ export const anonymize: ProabonoEndpoints['customersAnonymize'] = (
 		{ log: () => ({}) },
 	);
 
-/** Invalidating stops the customer's subscriptions and links. */
+/**
+ * Invalidating replaces the customer's reference, so it can be reused, and
+ * revokes their links. Subscriptions, invoices and payment methods stay.
+ */
 export const invalidate: ProabonoEndpoints['customersInvalidate'] = (
 	ctx,
 	input,
@@ -114,11 +118,11 @@ export const invalidate: ProabonoEndpoints['customersInvalidate'] = (
 		({ ReferenceCustomer }) => ({
 			method: 'POST',
 			path: '/v1/Customer/Invalidation',
-			body: { ReferenceCustomer },
+			// The reference is a documented query parameter on this route.
+			query: { ReferenceCustomer },
 		}),
 		// The reference is the caller's own customer string and can hold personal
-		// data, so it stays out of the event: an anonymization that logged it would
-		// keep a copy of what it just erased.
+		// data, so it stays out of the event.
 		{ log: () => ({}) },
 	);
 
@@ -135,10 +139,10 @@ export const suspend: ProabonoEndpoints['customersSuspend'] = (ctx, input) =>
 		({ ReferenceCustomer }) => ({
 			method: 'POST',
 			path: '/v1/Customer/Suspension',
-			body: { ReferenceCustomer },
+			// The reference is a documented query parameter on this route.
+			query: { ReferenceCustomer },
 		}),
 		// The reference is the caller's own customer string and can hold personal
-		// data, so it stays out of the event: an anonymization that logged it would
-		// keep a copy of what it just erased.
+		// data, so it stays out of the event.
 		{ log: () => ({}) },
 	);

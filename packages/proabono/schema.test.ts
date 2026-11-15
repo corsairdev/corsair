@@ -84,13 +84,15 @@ describe('customer schemas', () => {
 		).toBe(false);
 	});
 
-	it('rejects a country code shorter than two characters', () => {
-		expect(
-			CustomersCreateInputSchema.safeParse({
-				ReferenceCustomer: 'cust-42',
-				Country: 'U',
-			}).success,
-		).toBe(false);
+	it('drops fields the create route does not document', () => {
+		// ProAbono answers an undocumented property with 422
+		// Error.Property.UnexpectedProperty, so it never reaches the body.
+		const parsed = CustomersCreateInputSchema.parse({
+			ReferenceCustomer: 'cust-42',
+			Country: 'FR',
+			Company: 'Acme',
+		});
+		expect(parsed).toEqual({ ReferenceCustomer: 'cust-42' });
 	});
 
 	it('requires at least one change on update', () => {
@@ -168,6 +170,7 @@ describe('usage schemas', () => {
 				ReferenceCustomer: 'cust-42',
 				ReferenceFeature: 'feat-users',
 				Increment: -5,
+				DateStamp: '2025-03-29T19:33:50.65Z',
 			}).success,
 		).toBe(true);
 	});
@@ -178,6 +181,7 @@ describe('usage schemas', () => {
 				ReferenceCustomer: 'cust-42',
 				ReferenceFeature: 'feat-users',
 				Increment: 1.5,
+				DateStamp: '2025-03-29T19:33:50.65Z',
 			}).success,
 		).toBe(false);
 	});
@@ -188,15 +192,55 @@ describe('usage schemas', () => {
 		);
 	});
 
-	it('accepts a usage row with an increment or a quantity', () => {
+	it('accepts a usage row with an increment, a current quantity or an on/off', () => {
+		const DateStamp = '2025-03-29T19:33:50.65Z';
+		expect(
+			UsagesUpdateInputSchema.safeParse({
+				usages: [
+					{
+						ReferenceCustomer: 'a',
+						ReferenceFeature: 'b',
+						Increment: 1,
+						DateStamp,
+					},
+					{
+						ReferenceCustomer: 'a',
+						ReferenceFeature: 'c',
+						QuantityCurrent: 10,
+						DateStamp,
+					},
+					{
+						ReferenceCustomer: 'a',
+						ReferenceFeature: 'd',
+						IsEnabled: true,
+						DateStamp,
+					},
+				],
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects a usage row without the DateStamp ProAbono requires', () => {
 		expect(
 			UsagesUpdateInputSchema.safeParse({
 				usages: [
 					{ ReferenceCustomer: 'a', ReferenceFeature: 'b', Increment: 1 },
-					{ ReferenceCustomer: 'a', ReferenceFeature: 'c', Quantity: 10 },
 				],
 			}).success,
-		).toBe(true);
+		).toBe(false);
+	});
+
+	it('rejects more than the 50 rows ProAbono allows per call', () => {
+		const row = {
+			ReferenceCustomer: 'a',
+			ReferenceFeature: 'b',
+			Increment: 1,
+			DateStamp: '2025-03-29T19:33:50.65Z',
+		};
+		expect(
+			UsagesUpdateInputSchema.safeParse({ usages: Array(51).fill(row) })
+				.success,
+		).toBe(false);
 	});
 });
 
@@ -205,7 +249,7 @@ describe('balance line schemas', () => {
 		expect(
 			BalanceLinesCreateInputSchema.safeParse({
 				ReferenceCustomer: 'cust-42',
-				Title: 'Goodwill credit',
+				Label: 'Goodwill credit',
 				Amount: -500,
 			}).success,
 		).toBe(true);
@@ -215,7 +259,7 @@ describe('balance line schemas', () => {
 		expect(
 			BalanceLinesCreateInputSchema.safeParse({
 				ReferenceCustomer: 'cust-42',
-				Title: 'Setup',
+				Label: 'Setup',
 				Amount: 12.5,
 			}).success,
 		).toBe(false);

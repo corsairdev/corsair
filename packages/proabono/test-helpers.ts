@@ -14,7 +14,14 @@ export async function captureError<T>(promise: Promise<T>): Promise<Untyped> {
 
 /** A context with the two keys and the account number every endpoint reads. */
 export function buildContext(
-	overrides: { apiKey?: string; agentKey?: string; account?: string } = {},
+	overrides: {
+		apiKey?: string;
+		agentKey?: string;
+		/** The `account` plugin option; `null` leaves it unset. */
+		account?: string | null;
+		/** The stored `account` field. */
+		storedAccount?: string | null;
+	} = {},
 ): ProabonoContext {
 	const apiKey = overrides.apiKey ?? 'api-key';
 	const agentKey = overrides.agentKey ?? 'agent-key';
@@ -22,10 +29,11 @@ export function buildContext(
 		endpoints: {},
 		$getAccountId: () => Promise.resolve('test-account'),
 		key: apiKey,
-		// Only the account number is a plugin option. The two credentials are read
+		// The account number may be a plugin option. The two credentials are read
 		// from `ctx.key` and the account's `agent_key`, never from here, so leaving
 		// them out is what a real context looks like.
-		options: { account: overrides.account ?? '42' },
+		options:
+			overrides.account === null ? {} : { account: overrides.account ?? '42' },
 		authType: 'api_key',
 		keys: {
 			get_dek: () => Promise.resolve('dek'),
@@ -34,6 +42,8 @@ export function buildContext(
 			set_api_key: () => Promise.resolve(),
 			get_agent_key: () => Promise.resolve(agentKey),
 			set_agent_key: () => Promise.resolve(),
+			get_account: () => Promise.resolve(overrides.storedAccount ?? null),
+			set_account: () => Promise.resolve(),
 			get_webhook_signature: () => Promise.resolve(null),
 			set_webhook_signature: () => Promise.resolve(),
 		},

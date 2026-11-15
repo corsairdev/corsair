@@ -77,8 +77,9 @@ export const list: ProabonoEndpoints['subscriptionsList'] = (ctx, input) =>
 		input,
 		({
 			ReferenceCustomer,
-			ReferenceOffer,
+			ReferenceCustomerBuyer,
 			ReferenceSegment,
+			IgnoreFeatures,
 			Page,
 			SizePage,
 		}) => ({
@@ -86,8 +87,9 @@ export const list: ProabonoEndpoints['subscriptionsList'] = (ctx, input) =>
 			path: '/v1/Subscriptions',
 			query: {
 				ReferenceCustomer,
-				ReferenceOffer,
+				ReferenceCustomerBuyer,
 				ReferenceSegment,
+				IgnoreFeatures,
 				Page,
 				SizePage,
 			},
@@ -111,6 +113,9 @@ function lifecycle(
 			event: `subscriptions.${action.toLowerCase()}`,
 			input: Inputs.subscriptionsStart,
 			output: Outputs.subscriptionsStart,
+			// The docs promise only "HTTP 200" here, so an empty body after a
+			// change that already happened must not fail the parse.
+			emptyValue: () => ({}),
 		},
 		input,
 		({ IdSubscription }) => ({
@@ -149,12 +154,14 @@ export const upgrade: ProabonoEndpoints['subscriptionsUpgrade'] = (
 			event: 'subscriptions.upgrade',
 			input: Inputs.subscriptionsUpgrade,
 			output: Outputs.subscriptionsUpgrade,
+			emptyValue: () => ({}),
 		},
 		input,
 		({ IdSubscription, ReferenceOffer }) => ({
 			method: 'POST',
 			path: `/v1/Subscription/${IdSubscription}/Upgrade`,
-			body: { ReferenceOffer },
+			// The target offer is a documented query parameter on this route.
+			query: { ReferenceOffer },
 		}),
 		{
 			log: (parsed, result) => ({
@@ -174,6 +181,7 @@ export const updateTerm: ProabonoEndpoints['subscriptionsUpdateTerm'] = (
 			event: 'subscriptions.updateTerm',
 			input: Inputs.subscriptionsUpdateTerm,
 			output: Outputs.subscriptionsUpdateTerm,
+			emptyValue: () => ({}),
 		},
 		input,
 		({ IdSubscription, DateTerm }) => ({

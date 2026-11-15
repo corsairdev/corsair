@@ -95,15 +95,15 @@ describe('response parsing', () => {
 	it('parses an invoice with its totals and links', async () => {
 		mockedRequest.mockResolvedValue({
 			Id: 499734,
-			Number: 'INV-42',
+			FullNumber: 'S-3.00000004',
 			AmountTotal: 11880,
-			State: 'Paid',
+			Status: 'Paid',
 			Links: [{ rel: 'self', href: '/v1/Invoice/499734' }],
 		});
 
 		const result = await Billing.getInvoice(ctx, { IdInvoice: 499734 });
 
-		expect(result.Number).toBe('INV-42');
+		expect(result.FullNumber).toBe('S-3.00000004');
 		expect(result.Links?.[0]?.rel).toBe('self');
 	});
 
@@ -154,6 +154,7 @@ describe('input validation before the request', () => {
 				ReferenceCustomer: 'cust-42',
 				ReferenceFeature: 'feat-users',
 				Increment: 1.5,
+				DateStamp: '2025-03-29T19:33:50.65Z',
 			}),
 		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
@@ -167,6 +168,7 @@ describe('input validation before the request', () => {
 				ReferenceCustomer: 'cust-42',
 				ReferenceFeature: 'feat-users',
 				Increment: -3,
+				DateStamp: '2025-03-29T19:33:50.65Z',
 			}),
 		).resolves.toBeDefined();
 	});

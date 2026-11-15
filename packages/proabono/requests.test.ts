@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { Billing, Customers, Offers, Subscriptions } from './endpoints';
 import { buildContext } from './test-helpers';
@@ -40,6 +40,19 @@ const subscription = {
 	Status: 'Active',
 	StateSubscription: 'ActiveRunning',
 };
+
+/** A list answer as ProAbono sends it: the documented paginated envelope. */
+function page<T>(items: T[], extra: Record<string, number> = {}) {
+	return {
+		Page: 1,
+		SizePage: 10,
+		Count: items.length,
+		TotalItems: items.length,
+		DateGenerated: '2025-05-10T18:33:16.28Z',
+		Items: items,
+		...extra,
+	};
+}
 
 beforeEach(() => {
 	mockedRequest.mockReset();
@@ -87,17 +100,25 @@ describe('customers endpoints', () => {
 		});
 	});
 
-	it('customers.list wraps the bare array the route answers with', async () => {
-		mockedRequest.mockResolvedValue([customer]);
+	it('customers.list reads the rows and counters from the paginated envelope', async () => {
+		mockedRequest.mockResolvedValue(
+			page([customer], { Page: 2, SizePage: 1, TotalItems: 3 }),
+		);
 
-		const result = await Customers.list(ctx, { Page: 1, SizePage: 20 });
+		const result = await Customers.list(ctx, { Page: 2, SizePage: 1 });
 
 		expect(sentRequest()).toEqual({
 			method: 'GET',
 			path: '/v1/Customers',
-			query: { ReferenceSegment: undefined, Page: 1, SizePage: 20 },
+			query: { ReferenceSegment: undefined, Page: 2, SizePage: 1 },
 		});
-		expect(result.customers).toHaveLength(1);
+		expect(result.customers).toEqual([customer]);
+		expect(result).toMatchObject({
+			Page: 2,
+			SizePage: 1,
+			Count: 1,
+			TotalItems: 3,
+		});
 	});
 
 	it('customers.list rejects a malformed body instead of reporting an empty list', async () => {
@@ -127,10 +148,11 @@ describe('customers endpoints', () => {
 
 		await Customers.anonymize(ctx, { ReferenceCustomer: 'cust-42' });
 
+		// The reference is a query parameter on this route, not a body field.
 		expect(sentRequest()).toEqual({
 			method: 'POST',
 			path: '/v1/Customer/Anonymization',
-			body: { ReferenceCustomer: 'cust-42' },
+			query: { ReferenceCustomer: 'cust-42' },
 		});
 	});
 
@@ -151,7 +173,11 @@ describe('customers endpoints', () => {
 
 		await Customers.invalidate(ctx, { ReferenceCustomer: 'cust-42' });
 
-		expect(sentRequest()?.path).toBe('/v1/Customer/Invalidation');
+		expect(sentRequest()).toEqual({
+			method: 'POST',
+			path: '/v1/Customer/Invalidation',
+			query: { ReferenceCustomer: 'cust-42' },
+		});
 	});
 
 	it('customers.suspend posts to the suspension path', async () => {
@@ -159,18 +185,26 @@ describe('customers endpoints', () => {
 
 		await Customers.suspend(ctx, { ReferenceCustomer: 'cust-42' });
 
-		expect(sentRequest()?.path).toBe('/v1/Customer/Suspension');
+		expect(sentRequest()).toEqual({
+			method: 'POST',
+			path: '/v1/Customer/Suspension',
+			query: { ReferenceCustomer: 'cust-42' },
+		});
 	});
 });
 
 describe('offers and features endpoints', () => {
 	it('offers.list sends the documented filters', async () => {
-		mockedRequest.mockResolvedValue([{ Id: 1274, ReferenceOffer: 'premium' }]);
+		mockedRequest.mockResolvedValue(
+			page([{ Id: 1274, ReferenceOffer: 'premium' }]),
+		);
 
 		const result = await Offers.list(ctx, {
 			ReferenceCustomer: 'cust-42',
 			IgnoreFeatures: true,
 			Language: 'en',
+			Page: 2,
+			SizePage: 20,
 		});
 
 		expect(sentRequest()).toMatchObject({
@@ -181,6 +215,8 @@ describe('offers and features endpoints', () => {
 			ReferenceCustomer: 'cust-42',
 			IgnoreFeatures: true,
 			Language: 'en',
+			Page: 2,
+			SizePage: 20,
 		});
 		expect(result.offers).toHaveLength(1);
 	});
@@ -201,14 +237,15 @@ describe('offers and features endpoints', () => {
 		});
 	});
 
-	it('features.list wraps the bare array', async () => {
-		mockedRequest.mockResolvedValue([
-			{ Id: 48, ReferenceFeature: 'feat-users' },
-		]);
+	it('features.list reads the envelope and pages', async () => {
+		mockedRequest.mockResolvedValue(
+			page([{ Id: 48, ReferenceFeature: 'feat-users' }]),
+		);
 
-		const result = await Offers.features(ctx, {});
+		const result = await Offers.features(ctx, { Page: 2 });
 
 		expect(sentRequest()?.path).toBe('/v1/Features');
+		expect(sentRequest()?.query).toMatchObject({ Page: 2 });
 		expect(result.features).toHaveLength(1);
 	});
 
@@ -264,14 +301,27 @@ describe('subscriptions endpoints', () => {
 		});
 	});
 
-	it('subscriptions.list wraps the bare array', async () => {
-		mockedRequest.mockResolvedValue([subscription]);
+	it('subscriptions.list sends only documented filters and reads the envelope', async () => {
+		mockedRequest.mockResolvedValue(page([subscription]));
 
 		const result = await Subscriptions.list(ctx, {
 			ReferenceCustomer: 'cust-42',
+			ReferenceCustomerBuyer: 'buyer-1',
+			IgnoreFeatures: true,
 		});
 
-		expect(sentRequest()?.path).toBe('/v1/Subscriptions');
+		expect(sentRequest()).toEqual({
+			method: 'GET',
+			path: '/v1/Subscriptions',
+			query: {
+				ReferenceCustomer: 'cust-42',
+				ReferenceCustomerBuyer: 'buyer-1',
+				ReferenceSegment: undefined,
+				IgnoreFeatures: true,
+				Page: undefined,
+				SizePage: undefined,
+			},
+		});
 		expect(result.subscriptions).toHaveLength(1);
 	});
 
@@ -310,11 +360,28 @@ describe('subscriptions endpoints', () => {
 			ReferenceOffer: 'ultimate',
 		});
 
+		// The target offer is a query parameter on this route.
 		expect(sentRequest()).toEqual({
 			method: 'POST',
 			path: '/v1/Subscription/44082/Upgrade',
-			body: { ReferenceOffer: 'ultimate' },
+			query: { ReferenceOffer: 'ultimate' },
 		});
+	});
+
+	it('a lifecycle change that answers an empty 200 still succeeds', async () => {
+		// The docs promise only "HTTP 200" on start, suspend, terminate and
+		// upgrade; the change has happened, so the call must not throw.
+		mockedRequest.mockResolvedValue(undefined);
+
+		await expect(
+			Subscriptions.terminate(ctx, { IdSubscription: 44082 }),
+		).resolves.toEqual({});
+		await expect(
+			Subscriptions.upgrade(ctx, {
+				IdSubscription: 44082,
+				ReferenceOffer: 'ultimate',
+			}),
+		).resolves.toEqual({});
 	});
 
 	it('subscriptions.updateTerm posts the new end date', async () => {
@@ -334,105 +401,209 @@ describe('subscriptions endpoints', () => {
 });
 
 describe('billing endpoints', () => {
-	it('usages.list sends the documented filters', async () => {
-		mockedRequest.mockResolvedValue([{ Id: 1, Quantity: 2 }]);
+	const usage = {
+		IdFeature: 48,
+		IdCustomer: 133700,
+		IdSubscription: 10738,
+		ReferenceFeature: 'feat-users',
+		ReferenceCustomer: 'cust-42',
+		TypeFeature: 'Limitation',
+		QuantityIncluded: 3,
+		QuantityCurrent: 4,
+	};
+
+	it('usages.list sends the documented filters and reads the envelope', async () => {
+		mockedRequest.mockResolvedValue(page([usage]));
 
 		const result = await Billing.listUsages(ctx, {
+			ReferenceCustomer: 'cust-42',
+			IdSubscription: 10738,
+			Page: 2,
+		});
+
+		expect(sentRequest()).toEqual({
+			method: 'GET',
+			path: '/v1/Usages',
+			query: {
+				ReferenceCustomer: 'cust-42',
+				ReferenceFeature: undefined,
+				IdSubscription: 10738,
+				Page: 2,
+				SizePage: undefined,
+			},
+		});
+		expect(result.usages[0]?.QuantityCurrent).toBe(4);
+	});
+
+	it('usages.get reads a customer and feature usage from the query string', async () => {
+		mockedRequest.mockResolvedValue(usage);
+
+		const result = await Billing.getUsage(ctx, {
 			ReferenceCustomer: 'cust-42',
 			ReferenceFeature: 'feat-users',
 		});
 
-		expect(sentRequest()?.path).toBe('/v1/Usages');
-		expect(result.usages).toHaveLength(1);
+		// A usage has no id: GET /v1/Usage takes the two references.
+		expect(sentRequest()).toEqual({
+			method: 'GET',
+			path: '/v1/Usage',
+			query: {
+				ReferenceCustomer: 'cust-42',
+				ReferenceFeature: 'feat-users',
+				IdSubscription: undefined,
+			},
+		});
+		expect(result.QuantityIncluded).toBe(3);
 	});
 
-	it('usages.get reads one usage', async () => {
-		mockedRequest.mockResolvedValue({ Id: 1, Quantity: 2 });
-
-		await Billing.getUsage(ctx, { IdUsage: 1 });
-
-		expect(sentRequest()).toEqual({ method: 'GET', path: '/v1/Usage/1' });
-	});
-
-	it('usages.increment posts the increment, which may be negative', async () => {
-		mockedRequest.mockResolvedValue({ Id: 1, Quantity: 1 });
+	it('usages.increment posts the increment and DateStamp, with EnsureBillable in the query', async () => {
+		mockedRequest.mockResolvedValue(usage);
 
 		await Billing.incrementUsage(ctx, {
 			ReferenceCustomer: 'cust-42',
 			ReferenceFeature: 'feat-users',
 			Increment: -1,
+			DateStamp: '2025-03-29T19:33:50.65Z',
+			EnsureBillable: false,
 		});
 
 		expect(sentRequest()).toEqual({
 			method: 'POST',
 			path: '/v1/Usage',
+			query: { EnsureBillable: false },
 			body: {
 				ReferenceCustomer: 'cust-42',
 				ReferenceFeature: 'feat-users',
 				Increment: -1,
-				Date: undefined,
+				DateStamp: '2025-03-29T19:33:50.65Z',
 			},
 		});
 	});
 
-	it('usages.update posts a bare array of rows', async () => {
-		mockedRequest.mockResolvedValue([{ Id: 1 }]);
-
-		const result = await Billing.updateUsages(ctx, {
-			usages: [
-				{
-					ReferenceCustomer: 'cust-42',
-					ReferenceFeature: 'feat-users',
-					Increment: 1,
-				},
-			],
-		});
-
-		const request = sentRequest();
-		expect(request?.path).toBe('/v1/Usages');
-		expect(Array.isArray(request?.body)).toBe(true);
-		expect(result.usages).toHaveLength(1);
+	it('usages.increment refuses a call without the required DateStamp', async () => {
+		await expect(
+			Billing.incrementUsage(ctx, {
+				ReferenceCustomer: 'cust-42',
+				ReferenceFeature: 'feat-users',
+				Increment: 1,
+			} as Parameters<typeof Billing.incrementUsage>[1]),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('balanceLines.create posts the amount in cents', async () => {
-		mockedRequest.mockResolvedValue({ Id: 9, Amount: 59900 });
+	it('usages.update posts every row with the documented keys', async () => {
+		mockedRequest.mockResolvedValue([usage, usage]);
 
-		await Billing.createBalanceLine(ctx, {
+		const rows = [
+			{
+				ReferenceCustomer: 'cust-42',
+				ReferenceFeature: 'feat-users',
+				QuantityCurrent: 17,
+				DateStamp: '2025-03-29T19:35:51.65Z',
+			},
+			{
+				ReferenceCustomer: 'cust-42',
+				ReferenceFeature: 'feat-module-b',
+				IsEnabled: true,
+				DateStamp: '2025-03-29T18:33:50.67Z',
+			},
+		];
+		const result = await Billing.updateUsages(ctx, { usages: rows });
+
+		expect(sentRequest()).toEqual({
+			method: 'POST',
+			path: '/v1/Usages',
+			body: rows,
+		});
+		expect(result.usages).toHaveLength(2);
+	});
+
+	it('usages.update refuses a row that sets two kinds of change', async () => {
+		await expect(
+			Billing.updateUsages(ctx, {
+				usages: [
+					{
+						ReferenceCustomer: 'cust-42',
+						ReferenceFeature: 'feat-users',
+						Increment: 1,
+						QuantityCurrent: 3,
+						DateStamp: '2025-03-29T19:35:51.65Z',
+					},
+				],
+			}),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('balanceLines.create posts the documented Label, with EnsureBillable in the query', async () => {
+		mockedRequest.mockResolvedValue({
 			ReferenceCustomer: 'cust-42',
-			Title: 'One-off setup',
+			LabelLocalized: 'One-off setup',
+			AmountSubtotal: 59900,
+		});
+
+		const result = await Billing.createBalanceLine(ctx, {
+			ReferenceCustomer: 'cust-42',
+			Label: 'One-off setup',
 			Amount: 59900,
+			Quantity: 1,
 		});
 
 		expect(sentRequest()).toEqual({
 			method: 'POST',
 			path: '/v1/BalanceLine',
+			query: { EnsureBillable: undefined },
 			body: {
 				ReferenceCustomer: 'cust-42',
-				Title: 'One-off setup',
+				Label: 'One-off setup',
 				Amount: 59900,
+				Quantity: 1,
 			},
 		});
+		expect(result.AmountSubtotal).toBe(59900);
 	});
 
-	it('balanceLines.list wraps the bare array', async () => {
-		mockedRequest.mockResolvedValue([{ Id: 9 }]);
+	it('balanceLines.list reads the envelope and its totals', async () => {
+		mockedRequest.mockResolvedValue({
+			...page([{ LabelLocalized: 'Flat fee', AmountTotal: 47880 }]),
+			Computations: { AmountSubtotal: 39900, AmountTotal: 47880 },
+		});
 
-		const result = await Billing.listBalanceLines(ctx, { IsBilled: false });
+		const result = await Billing.listBalanceLines(ctx, {
+			ReferenceCustomer: 'cust-42',
+			IdSubscription: 417428,
+		});
 
 		expect(sentRequest()?.path).toBe('/v1/BalanceLines');
+		expect(sentRequest()?.query).toMatchObject({
+			ReferenceCustomer: 'cust-42',
+			IdSubscription: 417428,
+		});
 		expect(result.balanceLines).toHaveLength(1);
+		expect(result.Computations?.AmountTotal).toBe(47880);
 	});
 
-	it('invoices.list wraps the bare array', async () => {
-		mockedRequest.mockResolvedValue([{ Id: 499734 }]);
+	it('invoices.list sends the documented filters and reads the envelope', async () => {
+		mockedRequest.mockResolvedValue(
+			page([{ Id: 499734, FullNumber: 'S-3.00000004', Status: 'Due' }]),
+		);
 
 		const result = await Billing.listInvoices(ctx, {
 			ReferenceCustomer: 'cust-42',
-			State: 'Paid',
+			IdSubscription: 10738,
 		});
 
-		expect(sentRequest()?.path).toBe('/v1/Invoices');
-		expect(result.invoices).toHaveLength(1);
+		expect(sentRequest()).toEqual({
+			method: 'GET',
+			path: '/v1/Invoices',
+			query: {
+				ReferenceCustomer: 'cust-42',
+				IdSubscription: 10738,
+				Page: undefined,
+				SizePage: undefined,
+			},
+		});
+		expect(result.invoices[0]?.FullNumber).toBe('S-3.00000004');
 	});
 
 	it('invoices.get reads one invoice by path', async () => {
@@ -444,6 +615,27 @@ describe('billing endpoints', () => {
 			method: 'GET',
 			path: '/v1/Invoice/499734',
 		});
+	});
+});
+
+describe('the stored account number', () => {
+	it('reaches the request when no plugin option sets it', async () => {
+		mockedRequest.mockResolvedValue(page([]));
+
+		await Offers.list(buildContext({ account: null, storedAccount: '42' }), {});
+
+		expect(mockedRequest.mock.calls[0]?.[0]).toEqual({
+			account: '42',
+			agentKey: 'agent-key',
+			apiKey: 'api-key',
+		});
+	});
+
+	it('asks for the connection when neither is set', async () => {
+		await expect(
+			Offers.list(buildContext({ account: null }), {}),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });
 

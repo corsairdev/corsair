@@ -76,6 +76,21 @@ export const LinkSchema = z
 
 export type ProabonoLink = z.infer<typeof LinkSchema>;
 
+/**
+ * The page counters ProAbono sends beside `Items` on every paginated list.
+ * `TotalItems` is the size of the whole collection, so a caller can tell
+ * whether another page exists.
+ */
+const pageFields = {
+	Page: z.number().nullish().describe('The page this answer holds, from 1.'),
+	SizePage: z.number().nullish().describe('Rows per page.'),
+	Count: z.number().nullish().describe('Rows on this page.'),
+	TotalItems: z
+		.number()
+		.nullish()
+		.describe('Rows in the whole collection, across pages.'),
+};
+
 const linksField = z
 	.array(LinkSchema)
 	.nullish()
@@ -102,6 +117,12 @@ export const CustomerSchema = z
 			.nullish()
 			.describe('False until the customer has valid payment information.'),
 		IsActive: z.boolean().nullish(),
+		Status: z
+			.string()
+			.nullish()
+			.describe('The customer status, such as `Enabled`.'),
+		ReferenceAffiliation: z.string().nullish(),
+		DateAffiliation: z.string().nullish(),
 		DateCreated: z.string().nullish(),
 		Metadata: ProabonoJsonValueSchema.nullish(),
 		Links: linksField,
@@ -110,16 +131,23 @@ export const CustomerSchema = z
 
 export type ProabonoCustomer = z.infer<typeof CustomerSchema>;
 
+// The create body takes only the documented fields: ProAbono rejects an
+// undocumented property with `Error.Property.UnexpectedProperty`. The billing
+// address (company, country) has its own route.
 export const CustomersCreateInputSchema = z.object({
 	ReferenceCustomer: ReferenceSchema,
-	Name: z.string().min(1).optional(),
-	FirstName: z.string().min(1).optional(),
-	LastName: z.string().min(1).optional(),
+	Name: z.string().min(1).optional().describe('Full name of the customer.'),
 	Email: z.string().min(1).optional(),
-	Company: z.string().min(1).optional(),
-	Country: z.string().min(2).optional().describe('ISO 3166-1 alpha-2.'),
 	Language: z.string().min(2).optional(),
 	ReferenceSegment: ReferenceSchema.optional(),
+	ReferenceOffer: ReferenceSchema.optional().describe(
+		'An offer the customer wants; the answer then carries a subscribe link.',
+	),
+	ReferenceAffiliation: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('The affiliate who brought the customer.'),
 	Metadata: MetadataSchema,
 });
 
@@ -139,9 +167,10 @@ const CustomersListInputSchema = z.object({
 
 export type CustomersListInput = z.infer<typeof CustomersListInputSchema>;
 
-/** A list answers a bare array. */
+/** A list answers a paginated envelope; its rows land under `customers`. */
 export const CustomersListOutputSchema = z.object({
 	customers: z.array(CustomerSchema),
+	...pageFields,
 });
 
 export type CustomersListOutput = z.infer<typeof CustomersListOutputSchema>;
@@ -150,12 +179,9 @@ export const CustomersUpdateInputSchema = z
 	.object({
 		ReferenceCustomer: ReferenceSchema,
 		Name: z.string().min(1).optional(),
-		FirstName: z.string().min(1).optional(),
-		LastName: z.string().min(1).optional(),
 		Email: z.string().min(1).optional(),
-		Company: z.string().min(1).optional(),
-		Country: z.string().min(2).optional(),
 		Language: z.string().min(2).optional(),
+		ReferenceAffiliation: z.string().min(1).optional(),
 		Metadata: MetadataSchema,
 	})
 	.superRefine((value, ctx) => {
@@ -232,12 +258,15 @@ const OffersListInputSchema = z.object({
 		.optional()
 		.describe('False returns the pricing as plain text.'),
 	Links: z.boolean().optional().describe('False leaves the links out.'),
+	Page: z.number().int().positive().optional().describe('1-based page number.'),
+	SizePage: z.number().int().min(1).optional().describe('Rows per page.'),
 });
 
 export type OffersListInput = z.infer<typeof OffersListInputSchema>;
 
 const OffersListOutputSchema = z.object({
 	offers: z.array(OfferSchema),
+	...pageFields,
 });
 
 export type OffersListOutput = z.infer<typeof OffersListOutputSchema>;
@@ -285,12 +314,16 @@ const FeaturesListInputSchema = z.object({
 	ReferenceSegment: ReferenceSchema.optional(),
 	ReferenceCustomer: ReferenceSchema.optional(),
 	Language: z.string().min(2).optional(),
+	IsVisible: z.boolean().optional(),
+	Page: z.number().int().positive().optional().describe('1-based page number.'),
+	SizePage: z.number().int().min(1).optional().describe('Rows per page.'),
 });
 
 export type FeaturesListInput = z.infer<typeof FeaturesListInputSchema>;
 
 const FeaturesListOutputSchema = z.object({
 	features: z.array(FeatureSchema),
+	...pageFields,
 });
 
 export type FeaturesListOutput = z.infer<typeof FeaturesListOutputSchema>;
@@ -392,10 +425,16 @@ const SubscriptionIdInputSchema = z.object({
 
 export type SubscriptionIdInput = z.infer<typeof SubscriptionIdInputSchema>;
 
+// Only the documented filters: an unknown one would be ignored and the caller
+// would read every subscription as the filtered set.
 const SubscriptionsListInputSchema = z.object({
 	ReferenceCustomer: ReferenceSchema.optional(),
-	ReferenceOffer: ReferenceSchema.optional(),
+	ReferenceCustomerBuyer: ReferenceSchema.optional(),
 	ReferenceSegment: ReferenceSchema.optional(),
+	IgnoreFeatures: z
+		.boolean()
+		.optional()
+		.describe('Leave the feature list out of the answer.'),
 	Page: z.number().int().positive().optional(),
 	SizePage: z.number().int().min(1).optional(),
 });
@@ -406,6 +445,7 @@ export type SubscriptionsListInput = z.infer<
 
 const SubscriptionsListOutputSchema = z.object({
 	subscriptions: z.array(SubscriptionSchema),
+	...pageFields,
 });
 
 export type SubscriptionsListOutput = z.infer<
@@ -435,18 +475,35 @@ export type SubscriptionUpgradeInput = z.infer<
 
 // ── usages ────────────────────────────────────────────────────────────────
 
+/**
+ * A usage is the compiled state of one feature for one customer: on/off for an
+ * `OnOff` feature, quantities for `Limitation` and `Consumption`. It has no id
+ * of its own; a customer and a feature reference identify it.
+ */
 export const UsageSchema = z
 	.object({
-		Id: IdSchema.nullish(),
-		IdSubscription: IdSchema.nullish(),
-		IdCustomer: IdSchema.nullish(),
-		ReferenceCustomer: z.string().nullish(),
-		ReferenceFeature: z.string().nullish(),
+		IdSegment: IdSchema.nullish(),
 		IdFeature: IdSchema.nullish(),
-		Date: z.string().nullish(),
-		DateStart: z.string().nullish(),
-		DateEnd: z.string().nullish(),
-		Quantity: z.number().nullish(),
+		IdCustomer: IdSchema.nullish(),
+		IdSubscription: IdSchema.nullish().describe(
+			'Absent when several subscriptions match the usage.',
+		),
+		ReferenceSegment: z.string().nullish(),
+		ReferenceFeature: z.string().nullish(),
+		ReferenceCustomer: z.string().nullish(),
+		TypeFeature: z
+			.string()
+			.nullish()
+			.describe('`OnOff`, `Limitation` or `Consumption`.'),
+		IsIncluded: z.boolean().nullish().describe('OnOff features only.'),
+		IsEnabled: z.boolean().nullish().describe('OnOff features only.'),
+		QuantityIncluded: z
+			.number()
+			.nullish()
+			.describe('Included quantity; absent means unlimited.'),
+		QuantityCurrent: z.number().nullish().describe('Quantity used so far.'),
+		DatePeriodStart: z.string().nullish(),
+		DatePeriodEnd: z.string().nullish(),
 	})
 	.loose();
 
@@ -456,23 +513,35 @@ const UsagesListInputSchema = z.object({
 	ReferenceCustomer: ReferenceSchema.optional(),
 	ReferenceFeature: ReferenceSchema.optional(),
 	IdSubscription: IdSchema.optional(),
-	DateStart: z.string().min(1).optional(),
-	DateEnd: z.string().min(1).optional(),
+	Page: z.number().int().positive().optional().describe('1-based page number.'),
+	SizePage: z.number().int().min(1).optional().describe('Rows per page.'),
 });
 
 export type UsagesListInput = z.infer<typeof UsagesListInputSchema>;
 
 const UsagesListOutputSchema = z.object({
 	usages: z.array(UsageSchema),
+	...pageFields,
 });
 
 export type UsagesListOutput = z.infer<typeof UsagesListOutputSchema>;
 
 const UsagesGetInputSchema = z.object({
-	IdUsage: IdSchema,
+	ReferenceCustomer: ReferenceSchema,
+	ReferenceFeature: ReferenceSchema,
+	IdSubscription: IdSchema.optional().describe(
+		'Read the usage of this subscription when the customer has several.',
+	),
 });
 
 export type UsagesGetInput = z.infer<typeof UsagesGetInputSchema>;
+
+const DateStampSchema = z
+	.string()
+	.min(1)
+	.describe(
+		'When the change happened, as an ISO 8601 timestamp. ProAbono records two changes with the same timestamp once, so it doubles as an idempotency key.',
+	);
 
 /**
  * Usage update by increment takes one row at a time; the increment can be
@@ -481,32 +550,61 @@ export type UsagesGetInput = z.infer<typeof UsagesGetInputSchema>;
 export const UsageIncrementInputSchema = z.object({
 	ReferenceCustomer: ReferenceSchema,
 	ReferenceFeature: ReferenceSchema,
+	IdSubscription: IdSchema.optional(),
 	Increment: z
 		.number()
 		.int()
 		.describe('How much to add. A negative value subtracts.'),
-	Date: z
-		.string()
-		.min(1)
+	DateStamp: DateStampSchema,
+	EnsureBillable: z
+		.boolean()
 		.optional()
-		.describe('When the usage happened. Defaults to now.'),
+		.describe(
+			'True by default on ProAbono: a customer without valid payment information answers 403. False skips that check.',
+		),
 });
 
 export type UsageIncrementInput = z.infer<typeof UsageIncrementInputSchema>;
 
-/** One row of a multi-usage update. */
-export const UsageUpdateRowSchema = z.object({
-	ReferenceCustomer: ReferenceSchema,
-	ReferenceFeature: ReferenceSchema,
-	Increment: z.number().int().optional(),
-	Quantity: z.number().int().optional(),
-	Date: z.string().min(1).optional(),
-});
+/**
+ * One row of a multi-usage update: exactly one of `Increment` (Limitation or
+ * Consumption), `QuantityCurrent` (Limitation) or `IsEnabled` (OnOff).
+ */
+export const UsageUpdateRowSchema = z
+	.object({
+		ReferenceCustomer: ReferenceSchema,
+		ReferenceFeature: ReferenceSchema,
+		IdSubscription: IdSchema.optional(),
+		Increment: z.number().int().optional(),
+		QuantityCurrent: z
+			.number()
+			.int()
+			.optional()
+			.describe('The new current quantity, for a Limitation feature.'),
+		IsEnabled: z.boolean().optional().describe('For an OnOff feature.'),
+		DateStamp: DateStampSchema,
+	})
+	.superRefine((row, ctx) => {
+		const set = [row.Increment, row.QuantityCurrent, row.IsEnabled].filter(
+			(value) => value !== undefined,
+		);
+		if (set.length !== 1) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Set exactly one of Increment, QuantityCurrent or IsEnabled.',
+				path: ['Increment'],
+			});
+		}
+	});
 
 export type ProabonoUsageUpdateRow = z.infer<typeof UsageUpdateRowSchema>;
 
 export const UsagesUpdateInputSchema = z.object({
-	usages: z.array(UsageUpdateRowSchema).min(1),
+	usages: z
+		.array(UsageUpdateRowSchema)
+		.min(1)
+		.max(50)
+		.describe('ProAbono asks for at most 50 rows per call.'),
 });
 
 export type UsagesUpdateInput = z.infer<typeof UsagesUpdateInputSchema>;
@@ -521,16 +619,24 @@ export type UsagesUpdateOutput = z.infer<typeof UsagesUpdateOutputSchema>;
 
 export const BalanceLineSchema = z
 	.object({
-		Id: IdSchema.nullish(),
-		IdCustomer: IdSchema.nullish(),
-		ReferenceCustomer: z.string().nullish(),
 		IdSegment: IdSchema.nullish(),
-		Title: z.string().nullish(),
-		Description: z.string().nullish(),
-		Amount: z.number().nullish().describe('In cents.'),
-		Date: z.string().nullish(),
-		TypeBalanceLine: z.string().nullish(),
-		IsBilled: z.boolean().nullish(),
+		IdCustomer: IdSchema.nullish(),
+		IdSubscription: IdSchema.nullish(),
+		ReferenceSegment: z.string().nullish(),
+		ReferenceCustomer: z.string().nullish(),
+		LabelLocalized: z.string().nullish(),
+		PricingLocalized: z.string().nullish().describe('HTML.'),
+		Currency: z.string().nullish(),
+		AmountSubtotal: z.number().nullish().describe('In cents, before taxes.'),
+		AmountTotal: z.number().nullish().describe('In cents, with taxes.'),
+		DateMove: z
+			.string()
+			.nullish()
+			.describe('When the line is billed, for a line outside a period.'),
+		QuantityReported: z.number().nullish(),
+		QuantityBilled: z.number().nullish(),
+		DatePeriodStart: z.string().nullish(),
+		DatePeriodTerm: z.string().nullish(),
 	})
 	.loose();
 
@@ -538,10 +644,27 @@ export type ProabonoBalanceLine = z.infer<typeof BalanceLineSchema>;
 
 export const BalanceLinesCreateInputSchema = z.object({
 	ReferenceCustomer: ReferenceSchema,
-	Title: z.string().min(1),
-	Amount: z.number().int().describe('In cents. A negative value is a credit.'),
-	Description: z.string().min(1).optional(),
-	Date: z.string().min(1).optional(),
+	IdSubscription: IdSchema.optional(),
+	Label: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('The line label, shown on the invoice.'),
+	Amount: z
+		.number()
+		.int()
+		.describe('In cents, before taxes. A negative value is a credit.'),
+	Quantity: z
+		.number()
+		.int()
+		.optional()
+		.describe('Shown on the invoice only; it does not change the amount.'),
+	EnsureBillable: z
+		.boolean()
+		.optional()
+		.describe(
+			'True by default on ProAbono: a customer without valid payment information answers 403. False adds the line anyway.',
+		),
 });
 
 export type BalanceLinesCreateInput = z.infer<
@@ -550,15 +673,31 @@ export type BalanceLinesCreateInput = z.infer<
 
 const BalanceLinesListInputSchema = z.object({
 	ReferenceCustomer: ReferenceSchema.optional(),
-	IsBilled: z.boolean().optional(),
+	ReferenceSegment: ReferenceSchema.optional(),
+	ReferenceFeature: ReferenceSchema.optional(),
+	IdSubscription: IdSchema.optional(),
 	Page: z.number().int().positive().optional(),
-	SizePage: z.number().int().min(1).optional(),
+	SizePage: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Rows per page. 0 returns only the totals in `Computations`.'),
 });
 
 export type BalanceLinesListInput = z.infer<typeof BalanceLinesListInputSchema>;
 
 const BalanceLinesListOutputSchema = z.object({
 	balanceLines: z.array(BalanceLineSchema),
+	...pageFields,
+	Computations: z
+		.object({
+			AmountSubtotal: z.number().nullish(),
+			AmountTotal: z.number().nullish(),
+		})
+		.loose()
+		.nullish()
+		.describe('Totals in cents over every matching line.'),
 });
 
 export type BalanceLinesListOutput = z.infer<
@@ -568,16 +707,24 @@ export type BalanceLinesListOutput = z.infer<
 export const InvoiceSchema = z
 	.object({
 		Id: IdSchema.nullish(),
+		IdSegment: IdSchema.nullish(),
 		IdCustomer: IdSchema.nullish(),
+		ReferenceSegment: z.string().nullish(),
 		ReferenceCustomer: z.string().nullish(),
-		IdSubscription: IdSchema.nullish(),
-		Number: z.string().nullish(),
+		FullNumber: z.string().nullish().describe('Such as `S-3.00000004`.'),
+		Status: z.string().nullish().describe('Such as `Due` or `Paid`.'),
+		StateInvoice: z
+			.string()
+			.nullish()
+			.describe('The detailed state, such as `DuePending`.'),
+		DateIssue: z.string().nullish(),
+		DatePayment: z.string().nullish(),
+		DatePaymentLimit: z.string().nullish(),
+		TypePayment: z.string().nullish(),
 		AmountSubtotal: z.number().nullish().describe('In cents.'),
 		AmountTotal: z.number().nullish().describe('In cents, with taxes.'),
 		Currency: z.string().nullish(),
-		Date: z.string().nullish(),
-		DateDue: z.string().nullish(),
-		State: z.string().nullish().describe('The invoice state, such as `Paid`.'),
+		DateUpdate: z.string().nullish(),
 		Links: linksField,
 	})
 	.loose();
@@ -586,9 +733,7 @@ export type ProabonoInvoice = z.infer<typeof InvoiceSchema>;
 
 const InvoicesListInputSchema = z.object({
 	ReferenceCustomer: ReferenceSchema.optional(),
-	State: z.string().min(1).optional(),
-	DateStart: z.string().min(1).optional(),
-	DateEnd: z.string().min(1).optional(),
+	IdSubscription: IdSchema.optional(),
 	Page: z.number().int().positive().optional(),
 	SizePage: z.number().int().min(1).optional(),
 });
@@ -597,6 +742,7 @@ export type InvoicesListInput = z.infer<typeof InvoicesListInputSchema>;
 
 const InvoicesListOutputSchema = z.object({
 	invoices: z.array(InvoiceSchema),
+	...pageFields,
 });
 
 export type InvoicesListOutput = z.infer<typeof InvoicesListOutputSchema>;

@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { ProabonoContext } from '..';
 import type { ProabonoCredentials, ProabonoRequest } from '../client';
@@ -15,19 +15,20 @@ type Untyped = unknown; // unknown: see the note above.
  * password, so both are required, and neither is optional on any route.
  *
  * The API key is `ctx.key`, which the binder resolved after hooks and the
- * per-tenant lookup, so a saved key reaches the request. The agent key is the
- * account's second field, read through its accessor. Neither comes from
- * `ctx.options`, which R8 forbids for a credential.
+ * per-tenant lookup, so a saved key reaches the request. The agent key and the
+ * account number are the account's other fields, read through their accessors;
+ * a non-secret `account` plugin option overrides the stored one.
  */
 export async function credentialsOf(
 	ctx: ProabonoContext,
 ): Promise<ProabonoCredentials> {
-	const account = ctx.options?.account?.trim() ?? '';
+	const stored = ctx.keys?.get_account
+		? ((await ctx.keys.get_account()) ?? '')
+		: '';
+	const account = (ctx.options?.account ?? stored).trim();
 	if (!account) {
 		// The account number forms the host, so no call can be made without it.
-		throw new Error(
-			'Set `account` in the plugin options to the number in your API endpoint, such as `42` for api-42.proabono.com.',
-		);
+		throw new AuthMissingError('proabono', 'api_key');
 	}
 	const apiKey = ctx.key?.trim() ?? '';
 	const agentKey = ctx.keys?.get_agent_key
@@ -89,14 +90,33 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 }
 
 /**
- * Wraps an array a route answers bare under the key its output schema expects.
+ * Puts a list answer under the key its output schema expects.
  *
- * A response that is not an array is passed through unchanged rather than
- * replaced with `[]`: an empty list would read as "the account has no records",
- * while the output schema rejecting the shape tells the caller the response was
+ * ProAbono answers a list as a paginated envelope,
+ * `{ Page, SizePage, Count, TotalItems, Items }`, so the rows come from `Items`
+ * and the page counters ride along. `POST /v1/Usages` answers a bare array,
+ * which is wrapped as is.
+ *
+ * A response that is neither is passed through unchanged rather than replaced
+ * with `[]`: an empty list would read as "the account has no records", while
+ * the output schema rejecting the shape tells the caller the response was
  * malformed. An absent body is already handled by `emptyValue`.
  */
-// unknown: the route's bare body before the output schema parses it.
+// unknown: the route's body before the output schema parses it.
 export function asList(key: string): (raw: Untyped) => Untyped {
-	return (raw) => (Array.isArray(raw) ? { [key]: raw } : raw);
+	return (raw) => {
+		if (Array.isArray(raw)) return { [key]: raw };
+		// `sizePage=0` on balance lines answers totals only, with no `Items`.
+		if (
+			raw !== null &&
+			typeof raw === 'object' &&
+			('Items' in raw || 'TotalItems' in raw)
+		) {
+			const { Items, Page, SizePage, Count, TotalItems, Computations } =
+				raw as Record<string, Untyped>;
+			// `Computations` carries the totals on a balance-line list.
+			return { [key]: Items, Page, SizePage, Count, TotalItems, Computations };
+		}
+		return raw;
+	};
 }

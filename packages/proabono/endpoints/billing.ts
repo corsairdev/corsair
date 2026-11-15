@@ -19,8 +19,8 @@ export const listUsages: ProabonoEndpoints['usagesList'] = (ctx, input) =>
 			ReferenceCustomer,
 			ReferenceFeature,
 			IdSubscription,
-			DateStart,
-			DateEnd,
+			Page,
+			SizePage,
 		}) => ({
 			method: 'GET',
 			path: '/v1/Usages',
@@ -28,8 +28,8 @@ export const listUsages: ProabonoEndpoints['usagesList'] = (ctx, input) =>
 				ReferenceCustomer,
 				ReferenceFeature,
 				IdSubscription,
-				DateStart,
-				DateEnd,
+				Page,
+				SizePage,
 			},
 		}),
 		{
@@ -48,8 +48,15 @@ export const getUsage: ProabonoEndpoints['usagesGet'] = (ctx, input) =>
 			emptyValue: () => ({}),
 		},
 		input,
-		({ IdUsage }) => ({ method: 'GET', path: `/v1/Usage/${IdUsage}` }),
-		{ log: (_, result) => ({ usageId: result.Id ?? undefined }) },
+		// A usage has no id: the customer and the feature identify it.
+		({ ReferenceCustomer, ReferenceFeature, IdSubscription }) => ({
+			method: 'GET',
+			path: '/v1/Usage',
+			query: { ReferenceCustomer, ReferenceFeature, IdSubscription },
+		}),
+		{
+			log: (parsed) => ({ feature: parsed.ReferenceFeature }),
+		},
 	);
 
 export const incrementUsage: ProabonoEndpoints['usagesIncrement'] = (
@@ -64,8 +71,19 @@ export const incrementUsage: ProabonoEndpoints['usagesIncrement'] = (
 			output: Outputs.usagesIncrement,
 		},
 		input,
-		(body) => ({ method: 'POST', path: '/v1/Usage', body }),
-		{ log: (_, result) => ({ usageId: result.Id ?? undefined }) },
+		({ EnsureBillable, ...body }) => ({
+			method: 'POST',
+			path: '/v1/Usage',
+			// EnsureBillable is a query parameter; the rest is the usage row.
+			query: { EnsureBillable },
+			body,
+		}),
+		{
+			log: (parsed, result) => ({
+				feature: parsed.ReferenceFeature,
+				quantity: result.QuantityCurrent ?? undefined,
+			}),
+		},
 	);
 
 export const updateUsages: ProabonoEndpoints['usagesUpdate'] = (ctx, input) =>
@@ -96,8 +114,18 @@ export const createBalanceLine: ProabonoEndpoints['balanceLinesCreate'] = (
 			output: Outputs.balanceLinesCreate,
 		},
 		input,
-		(body) => ({ method: 'POST', path: '/v1/BalanceLine', body }),
-		{ log: (_, result) => ({ balanceLineId: result.Id ?? undefined }) },
+		({ EnsureBillable, ...body }) => ({
+			method: 'POST',
+			path: '/v1/BalanceLine',
+			// EnsureBillable is a query parameter; the rest is the line.
+			query: { EnsureBillable },
+			body,
+		}),
+		{
+			log: (_, result) => ({
+				amountSubtotal: result.AmountSubtotal ?? undefined,
+			}),
+		},
 	);
 
 export const listBalanceLines: ProabonoEndpoints['balanceLinesList'] = (
@@ -113,10 +141,24 @@ export const listBalanceLines: ProabonoEndpoints['balanceLinesList'] = (
 			emptyValue: () => ({ balanceLines: [] }),
 		},
 		input,
-		({ ReferenceCustomer, IsBilled, Page, SizePage }) => ({
+		({
+			ReferenceCustomer,
+			ReferenceSegment,
+			ReferenceFeature,
+			IdSubscription,
+			Page,
+			SizePage,
+		}) => ({
 			method: 'GET',
 			path: '/v1/BalanceLines',
-			query: { ReferenceCustomer, IsBilled, Page, SizePage },
+			query: {
+				ReferenceCustomer,
+				ReferenceSegment,
+				ReferenceFeature,
+				IdSubscription,
+				Page,
+				SizePage,
+			},
 		}),
 		{
 			shape: asList('balanceLines'),
@@ -134,10 +176,10 @@ export const listInvoices: ProabonoEndpoints['invoicesList'] = (ctx, input) =>
 			emptyValue: () => ({ invoices: [] }),
 		},
 		input,
-		({ ReferenceCustomer, State, DateStart, DateEnd, Page, SizePage }) => ({
+		({ ReferenceCustomer, IdSubscription, Page, SizePage }) => ({
 			method: 'GET',
 			path: '/v1/Invoices',
-			query: { ReferenceCustomer, State, DateStart, DateEnd, Page, SizePage },
+			query: { ReferenceCustomer, IdSubscription, Page, SizePage },
 		}),
 		{
 			shape: asList('invoices'),

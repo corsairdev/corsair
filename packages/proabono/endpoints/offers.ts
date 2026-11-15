@@ -23,6 +23,8 @@ export const list: ProabonoEndpoints['offersList'] = (ctx, input) =>
 			Language,
 			Html,
 			Links,
+			Page,
+			SizePage,
 		}) => ({
 			method: 'GET',
 			path: '/v1/Offers',
@@ -34,6 +36,8 @@ export const list: ProabonoEndpoints['offersList'] = (ctx, input) =>
 				Language,
 				Html,
 				Links,
+				Page,
+				SizePage,
 			},
 		}),
 		{
@@ -90,10 +94,24 @@ export const features: ProabonoEndpoints['featuresList'] = (ctx, input) =>
 			emptyValue: () => ({ features: [] }),
 		},
 		input,
-		({ ReferenceSegment, ReferenceCustomer, Language }) => ({
+		({
+			ReferenceSegment,
+			ReferenceCustomer,
+			Language,
+			IsVisible,
+			Page,
+			SizePage,
+		}) => ({
 			method: 'GET',
 			path: '/v1/Features',
-			query: { ReferenceSegment, ReferenceCustomer, Language },
+			query: {
+				ReferenceSegment,
+				ReferenceCustomer,
+				Language,
+				IsVisible,
+				Page,
+				SizePage,
+			},
 		}),
 		{
 			shape: asList('features'),
