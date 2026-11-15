@@ -6,17 +6,6 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export class DocsbotaiAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly status?: number,
-		public readonly retryAfter?: number,
-	) {
-		super(message);
-		this.name = 'DocsbotaiAPIError';
-	}
-}
-
 // Core retries a 429 (the provider refused the request before running it,
 // so replaying a write is safe) and honours Retry-After.
 const rateLimitConfig: RateLimitConfig = {
@@ -59,21 +48,13 @@ export async function makeDocsbotaiRequest<T>(
 	try {
 		return await request<T>(config, requestOptions, { rateLimitConfig });
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// Error payloads come from the provider and must be narrowed before use.
-			const body: unknown = error.body;
-			// Arbitrary provider error fields have no documented shared value type.
-			const record =
-				body && typeof body === 'object'
-					? (body as Record<string, unknown>)
-					: undefined;
-			const message =
-				typeof record?.message === 'string'
-					? record.message
-					: typeof record?.error === 'string'
-						? record.error
-						: error.message;
-			throw new DocsbotaiAPIError(message, error.status, error.retryAfter);
+		// Core's ApiError goes through as the same instance (R8: its status and
+		// retryAfter drive the error handlers). Only the request body and query
+		// are dropped first: they carry chat questions, lead details and URLs.
+		if (error instanceof ApiError && error.request) {
+			Object.defineProperty(error, 'request', {
+				value: { ...error.request, body: undefined, query: undefined },
+			});
 		}
 		throw error;
 	}

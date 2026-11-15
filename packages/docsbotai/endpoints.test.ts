@@ -2,8 +2,8 @@ import { lookup } from 'node:dns/promises';
 import { request as httpsRequest } from 'node:https';
 import { PassThrough } from 'node:stream';
 import { ApiError, request } from 'corsair/http';
-import type { DocsbotaiAPIError } from './client';
 import { DocsbotaiEndpointOutputSchemas } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type { DocsbotaiContext } from './index';
 import { docsbotai, docsbotaiEndpointSchemas } from './index';
 
@@ -569,29 +569,36 @@ describe('DocsBot API boundary', () => {
 		});
 	});
 
-	it('leaves 429 retries to core and surfaces the provider message', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'POST', url: '/teams/team/bots' },
-				{
-					url: 'https://docsbot.ai/api/teams/team/bots',
-					ok: false,
-					status: 429,
-					statusText: 'Too Many Requests',
-					body: { error: 'rate limited' },
-				},
-				'Too Many Requests',
-				{ retryAfter: 10 },
-			),
+	it("leaves 429 retries to core and rethrows core's ApiError unchanged", async () => {
+		const coreError = new ApiError(
+			{
+				method: 'POST',
+				url: '/teams/team/bots',
+				body: { name: 'Bot for alice@example.com' },
+			},
+			{
+				url: 'https://docsbot.ai/api/teams/team/bots',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: 'rate limited' },
+			},
+			'Too Many Requests',
+			{ retryAfter: 10 },
 		);
-		await expect(
-			endpoints.bots.create(ctx, { teamId: 'team', name: 'Bot' }),
-		).rejects.toMatchObject({
-			name: 'DocsbotaiAPIError',
-			message: 'rate limited',
+		mockRequest.mockRejectedValue(coreError);
+		// unknown because a rejection has no static type until inspected
+		const caught: unknown = await endpoints.bots
+			.create(ctx, { teamId: 'team', name: 'Bot' })
+			.catch((error: unknown) => error);
+		expect(caught).toBe(coreError);
+		expect(caught).toMatchObject({
 			status: 429,
 			retryAfter: 10,
-		} satisfies Partial<DocsbotaiAPIError>);
+			body: { error: 'rate limited' },
+		});
+		expect(JSON.stringify(caught)).not.toContain('alice@example.com');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(caught as Error)).toBe(true);
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(mockRequest.mock.calls[0]?.[2].rateLimitConfig.maxRetries).toBe(3);
 	});

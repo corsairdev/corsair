@@ -23,7 +23,7 @@ pnpm add @corsair-dev/docsbotai
 | `conversations.captureLead` | `docsbotai.api.conversations.captureLead` | `write` | Capture a lead |
 | `conversations.delete` | `docsbotai.api.conversations.delete` | `destructive` | Delete a conversation |
 | `conversations.list` | `docsbotai.api.conversations.list` | `read` | List conversations |
-| `conversations.ticket` | `docsbotai.api.conversations.ticket` | `write` | Generate a support ticket |
+| `conversations.ticket` | `docsbotai.api.conversations.ticket` | `destructive` | Generate a support ticket from a conversation with the AI model |
 | `leads.delete` | `docsbotai.api.leads.delete` | `destructive` | Delete a lead |
 | `leads.list` | `docsbotai.api.leads.list` | `read` | List leads |
 | `questions.delete` | `docsbotai.api.questions.delete` | `destructive` | Delete a question |
@@ -31,12 +31,12 @@ pnpm add @corsair-dev/docsbotai
 | `questions.rate` | `docsbotai.api.questions.rate` | `write` | Rate an answer |
 | `research.list` | `docsbotai.api.research.list` | `read` | List research jobs |
 | `search.search` | `docsbotai.api.search.search` | `read` | Search bot content |
-| `sources.create` | `docsbotai.api.sources.create` | `write` | Create a source |
+| `sources.create` | `docsbotai.api.sources.create` | `destructive` | Create a source and start indexing it (uses page quota; OCR bills AI credits per page) |
 | `sources.delete` | `docsbotai.api.sources.delete` | `destructive` | Delete a source |
 | `sources.get` | `docsbotai.api.sources.get` | `read` | Get a source |
 | `sources.getUploadUrl` | `docsbotai.api.sources.getUploadUrl` | `read` | Get a presigned source upload URL |
 | `sources.list` | `docsbotai.api.sources.list` | `read` | List sources |
-| `sources.retry` | `docsbotai.api.sources.retry` | `write` | Retry a failed source |
+| `sources.retry` | `docsbotai.api.sources.retry` | `destructive` | Re-index a failed source (uses page quota; OCR bills AI credits per page) |
 | `sources.uploadFile` | `docsbotai.api.sources.uploadFile` | `write` | Upload bytes to a presigned source URL |
 | `teams.get` | `docsbotai.api.teams.get` | `read` | Get a team |
 | `teams.list` | `docsbotai.api.teams.list` | `read` | List teams |
