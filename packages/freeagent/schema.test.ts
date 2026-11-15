@@ -37,7 +37,17 @@ describe('FreeAgent schemas', () => {
 		).toBe(false);
 		expect(
 			FreeAgentEndpointOutputSchemas.invoicesGet.safeParse({
-				invoice: { status: 'Open' },
+				invoice: {
+					status: 'Open',
+					invoice_items: [
+						{
+							url: 'https://api.freeagent.com/v2/invoice_items/1',
+							price: '125.50',
+							quantity: '2.0',
+							sales_tax_rate: '20.0',
+						},
+					],
+				},
 			}).success,
 		).toBe(true);
 		expect(
@@ -171,6 +181,34 @@ describe('FreeAgent schemas', () => {
 				invoice: {
 					contact: 'https://api.freeagent.com/v2/contacts/1',
 					dated_on: '2025-01-15',
+				},
+			}).success,
+		).toBe(false);
+		expect(
+			FreeAgentEndpointInputSchemas.invoicesCreate.safeParse({
+				invoice: {
+					contact: 'https://api.freeagent.com/v2/contacts/1',
+					dated_on: '2025-01-15',
+					payment_terms_in_days: 30,
+					invoice_items: [
+						{ description: 'Consulting services', price: 125.5, quantity: 2 },
+					],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			FreeAgentEndpointInputSchemas.invoicesCreate.safeParse({
+				invoice: {
+					contact: 'https://api.freeagent.com/v2/contacts/1',
+					dated_on: '2025-01-15',
+					payment_terms_in_days: 30,
+					invoice_items: [
+						{
+							url: 'https://api.freeagent.com/v2/invoice_items/1',
+							description: 'Consulting services',
+							price: '125.50',
+						},
+					],
 				},
 			}).success,
 		).toBe(false);

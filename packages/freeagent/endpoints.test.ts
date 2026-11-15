@@ -32,7 +32,21 @@ const pagination = {
 const encodedId = 'record%2Fwith%20space%3F';
 const contact = { organisation_name: 'Example Ltd' };
 const project = { name: 'Example Project' };
-const invoice = { status: 'Draft', reference: 'FA-001' };
+const invoice = {
+	status: 'Draft',
+	reference: 'FA-001',
+	invoice_items: [
+		{
+			url: 'https://api.freeagent.com/v2/invoice_items/1',
+			position: 1,
+			description: 'Consulting services',
+			item_type: 'Hours',
+			price: '125.50',
+			quantity: '2.0',
+			sales_tax_rate: '20.0',
+		},
+	],
+};
 const trackingGroup = {
 	url: 'https://api.freeagent.com/v2/tracking_groups/1',
 	name: 'Region',
@@ -288,8 +302,8 @@ const wireCases: readonly WireCase[] = [
 		pathAndQuery:
 			'/v2/invoices?page=2&per_page=25&contact=https%3A%2F%2Fapi.freeagent.com%2Fv2%2Fcontacts%2F1',
 		body: undefined,
-		response: { invoices: [] },
-		expected: { invoices: [], pagination },
+		response: { invoices: [invoice] },
+		expected: { invoices: [invoice], pagination },
 	},
 	{
 		name: 'invoices.get',
@@ -553,7 +567,7 @@ const wireCases: readonly WireCase[] = [
 ];
 
 const endpoints = {
-	test: async (_args: unknown) => undefined,
+	test: async () => undefined,
 } satisfies BoundEndpointTree;
 
 const emptyKey = async () => null;

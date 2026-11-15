@@ -208,6 +208,26 @@ const InvoiceItemInputSchema = z
 	})
 	.strict();
 
+const InvoiceItemResponseSchema = z
+	.object({
+		url: z.string().url().optional(),
+		position: z.union([z.string(), z.number()]).optional(),
+		item_type: z.string().optional(),
+		description: z.string().optional(),
+		price: z.union([z.string(), z.number()]).optional(),
+		quantity: z.union([z.string(), z.number()]).optional(),
+		sales_tax_rate: z.union([z.string(), z.number()]).optional(),
+		second_sales_tax_rate: z.union([z.string(), z.number()]).optional(),
+		sales_tax_status: z.string().optional(),
+		second_sales_tax_status: z.string().optional(),
+		suffers_cis_deduction: z.boolean().optional(),
+		stock_item: z.string().url().optional(),
+		category: z.string().url().optional(),
+		project: z.string().url().optional(),
+	})
+	// Invoice item responses include provider-generated fields and can grow over time.
+	.passthrough();
+
 const InvoiceFieldsSchema = z
 	.object({
 		contact: z.string().url().optional(),
@@ -255,18 +275,21 @@ const InvoiceCreateSchema = InvoiceFieldsSchema.extend({
 	payment_terms_in_days: z.number().int(),
 });
 
-const InvoiceSchema = InvoiceFieldsSchema.extend({
-	url: z.string().url().optional(),
-	status: z.string().optional(),
-	long_status: z.string().optional(),
-	net_value: z.string().optional(),
-	total_value: z.string().optional(),
-	paid_value: z.string().optional(),
-	due_value: z.string().optional(),
-	paid_on: z.string().optional(),
-	created_at: z.string().optional(),
-	updated_at: z.string().optional(),
-}).passthrough();
+const InvoiceSchema = InvoiceFieldsSchema.omit({ invoice_items: true })
+	.extend({
+		invoice_items: z.array(InvoiceItemResponseSchema).optional(),
+		url: z.string().url().optional(),
+		status: z.string().optional(),
+		long_status: z.string().optional(),
+		net_value: z.string().optional(),
+		total_value: z.string().optional(),
+		paid_value: z.string().optional(),
+		due_value: z.string().optional(),
+		paid_on: z.string().optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+	})
+	.passthrough();
 
 const InvoiceEmailAttachmentSchema = z
 	.object({
