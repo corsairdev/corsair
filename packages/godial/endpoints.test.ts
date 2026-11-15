@@ -1,5 +1,4 @@
 import { Contacts, Lists } from './endpoints';
-import { GoDialEndpointInputSchemas } from './endpoints/types';
 import type { GoDialContext } from './index';
 
 const mockLoggedEvents: Array<{
@@ -101,18 +100,17 @@ describe('GoDial endpoints', () => {
 
 	it('rejects unknown input properties before network I/O', async () => {
 		const fetchSpy = jest.spyOn(globalThis, 'fetch');
-		const invalidListInput = { unsupported: true };
-		const invalidContactInput = {
-			listId: 'list-1',
-			webhookUrl: 'https://example.test',
-		};
 
-		expect(() =>
-			GoDialEndpointInputSchemas.listsList.parse(invalidListInput),
-		).toThrow();
-		expect(() =>
-			GoDialEndpointInputSchemas.contactsAdd.parse(invalidContactInput),
-		).toThrow();
+		await expect(
+			Lists.list(ctx, { unsupported: true } as never),
+		).rejects.toThrow();
+		await expect(
+			Contacts.add(ctx, {
+				listId: 'list-1',
+				phone: '+15555550123',
+				webhookUrl: 'https://example.test',
+			} as never),
+		).rejects.toThrow();
 		expect(fetchSpy).not.toHaveBeenCalled();
 	});
 });
