@@ -1,0 +1,146 @@
+---
+title: "Postmark plugin"
+sidebarTitle: "Overview"
+description: "Transactional email API for sending single and batch messages, managing templates and streams, and reading delivery statistics."
+---
+
+Use **Postmark** through Corsair: one client, typed API calls.
+
+Postmark sends transactional email. Create a server token under the API Tokens tab of a server and paste it in; it travels in the `X-Postmark-Server-Token` header. The account token covers a different set of account-level routes, which this plugin does not wrap, so one server token is all it needs.
+
+What to know before you send:
+
+- **A send cannot be recalled.** `email.send` and `email.sendBatch` deliver real mail. A server in Sandbox mode accepts sends without delivering them, but that is a server setting rather than a request flag.
+- **A 200 batch is not a success.** `email.sendBatch` answers HTTP 200 with one result per message, and each carries its own `ErrorCode`. `0` means sent, and anything else means that message failed while the others may have gone out.
+- **The sender must be verified.** `From` needs a confirmed Sender Signature or a verified domain, or the send is rejected with code 300.
+- **A body is required.** Supply `TextBody`, `HtmlBody`, or both; the plugin rejects a message with neither before it is sent.
+- **Attachments are base64.** Give each one a `Name`, a `Content` and a `ContentType`, and set `ContentID` to reference it as `cid:` from the HTML.
+- **Paging is by offset.** List routes take `Count` and `Offset` (100 and 0 when left out) and return `TotalCount`; page while the offset is below it. Note that the bounces route spells its parameters in lowercase, which this plugin maps for you.
+- **Stats are limited.** The overview accepts a window no older than a year, and the stats API needs the plan that includes it.
+- **Retries.** A 429 is retried three times by Corsair's request layer, which waits for a `Retry-After` when Postmark sends one. A 5xx or a dropped connection is retried only on reads; a send is never replayed.
+- **Webhooks.** Postmark posts delivery, bounce and inbound events to a URL you register, but this plugin does not handle inbound deliveries.
+
+**What you get:**
+
+- 19 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/postmark better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/postmark better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/postmark better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/postmark better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { postmark } from '@corsair-dev/postmark';
+
+export const corsair = createCorsair({
+	plugins: [
+		postmark(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Postmark API key before the first call: `pnpm corsair setup --plugin=postmark --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+postmark()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'postmark',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read this server's settings**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.postmark.api.server.get({});
+```
+
+
+**Create a welcome template**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.postmark.api.templates.create({
+	Name: 'Welcome Email',
+	Alias: 'onboarding-v1',
+	Subject: 'Hello, from {{company.name}}',
+	HtmlBody: '<html><body>Hello {{name}}</body></html>',
+});
+```
+
+
+See the full list on the [API](/plugins/postmark/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/postmark/api">
+    Every `postmark.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

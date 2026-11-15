@@ -1,0 +1,1042 @@
+{
+  "id": "googletasks",
+  "displayName": "Google Tasks",
+  "description": "Manage Google task lists and tasks with scoped OAuth access, pagination, task ordering, and schema-validated REST operations.",
+  "npmPackageName": "@corsair-dev/googletasks",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googletasks.api.taskLists.delete",
+      "shortPath": "taskLists.delete",
+      "description": "Delete a task list; assigned tasks and their source tasks may also be deleted. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "googletasks.api.taskLists.get",
+      "shortPath": "taskLists.get",
+      "description": "Get one task list. OAuth scope: https://www.googleapis.com/auth/tasks.readonly or https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.taskLists.insert",
+      "shortPath": "taskLists.insert",
+      "description": "Create a task list. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskList",
+            "optional": false,
+            "type": "{ title?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.taskLists.list",
+      "shortPath": "taskLists.list",
+      "description": "List a page of task lists. OAuth scope: https://www.googleapis.com/auth/tasks.readonly or https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, title?: string, updated?: string, selfLink?: string, kind?: string, etag?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.taskLists.patch",
+      "shortPath": "taskLists.patch",
+      "description": "Partially update a task list. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskList",
+            "optional": false,
+            "type": "{ title?: string, etag?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.taskLists.update",
+      "shortPath": "taskLists.update",
+      "description": "Replace a task list. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskList",
+            "optional": false,
+            "type": "{ title?: string, etag?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.tasks.clear",
+      "shortPath": "tasks.clear",
+      "description": "Hide all completed tasks in a task list. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "googletasks.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task; assigned tasks may also delete their source task. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "googletasks.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get one task. OAuth scope: https://www.googleapis.com/auth/tasks.readonly or https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "needsAction | completed | string"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ type?: string, link?: string, description?: string }[]"
+          },
+          {
+            "key": "assignmentInfo",
+            "optional": true,
+            "type": "{ surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string, linkToTask?: string, driveResourceInfo?: { driveFileId?: string, resourceKey?: string }, spaceInfo?: { space?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.tasks.insert",
+      "shortPath": "tasks.insert",
+      "description": "Create a task, optionally under a parent or after a sibling. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ title?: string, notes?: string, due?: string, completed?: string, status?: needsAction | completed, deleted?: boolean, etag?: string }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "needsAction | completed | string"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ type?: string, link?: string, description?: string }[]"
+          },
+          {
+            "key": "assignmentInfo",
+            "optional": true,
+            "type": "{ surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string, linkToTask?: string, driveResourceInfo?: { driveFileId?: string, resourceKey?: string }, spaceInfo?: { space?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List a page of tasks with the documented filters. OAuth scope: https://www.googleapis.com/auth/tasks.readonly or https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "completedMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completedMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showAssigned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showCompleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "updatedMin",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, title?: string, updated?: string, selfLink?: string, webViewLink?: string, kind?: string, etag?: string, status?: needsAction | completed | string, due?: string, completed?: string, parent?: string, position?: string, notes?: string, hidden?: boolean, deleted?: boolean, links?: { type?: string, link?: string, description?: string }[], assignmentInfo?: { surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string, linkToTask?: string, driveResourceInfo?: { driveFileId?: string, resourceKey?: string }, spaceInfo?: { space?: string } } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.tasks.move",
+      "shortPath": "tasks.move",
+      "description": "Move a task within or between task lists or change its parent. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "destinationTasklist",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "needsAction | completed | string"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ type?: string, link?: string, description?: string }[]"
+          },
+          {
+            "key": "assignmentInfo",
+            "optional": true,
+            "type": "{ surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string, linkToTask?: string, driveResourceInfo?: { driveFileId?: string, resourceKey?: string }, spaceInfo?: { space?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.tasks.patch",
+      "shortPath": "tasks.patch",
+      "description": "Partially update a task. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ title?: string, notes?: string, due?: string | null, completed?: string, status?: needsAction | completed, deleted?: false, etag?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "needsAction | completed | string"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ type?: string, link?: string, description?: string }[]"
+          },
+          {
+            "key": "assignmentInfo",
+            "optional": true,
+            "type": "{ surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string, linkToTask?: string, driveResourceInfo?: { driveFileId?: string, resourceKey?: string }, spaceInfo?: { space?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googletasks.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Replace a task. OAuth scope: https://www.googleapis.com/auth/tasks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ title?: string, notes?: string, due?: string, completed?: string, status?: needsAction | completed, deleted?: false, etag?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "needsAction | completed | string"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ type?: string, link?: string, description?: string }[]"
+          },
+          {
+            "key": "assignmentInfo",
+            "optional": true,
+            "type": "{ surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string, linkToTask?: string, driveResourceInfo?: { driveFileId?: string, resourceKey?: string }, spaceInfo?: { space?: string } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
