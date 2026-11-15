@@ -1,0 +1,153 @@
+---
+title: "SimpleKPI plugin"
+sidebarTitle: "Overview"
+description: "KPIs from SimpleKPI - create and manage KPIs, categories and units, write actuals and targets as entries one at a time or in bulk, read aggregated reports, and look up users, frequencies, icons and breakdowns."
+---
+
+Use **SimpleKPI** through Corsair: one client, typed API calls.
+
+Create an API key in SimpleKPI under Settings, then API Access. It starts with `skpi_`, is shown only once, and is sent as `Authorization: Bearer skpi_...`. Pass it as the plugin's `key` option or store it on the account.
+
+Each key carries scopes, and a scope decides which operations work. `kpis:read` and `kpis:write` cover KPIs, categories, units, frequencies and icons; `entries:read` and `entries:write` cover entries and reports; `breakdownitems:read` and `breakdownitems:write` cover breakdowns; `users:read` covers users. Write does not imply read, so a key that can push entries still cannot list them back.
+
+Things to know before you write:
+
+- **PUT replaces the whole object.** Anything left out is reset to its default rather than kept, so a rename has to send the rest of the KPI back too. `kpis.update` documents the full body for that reason.
+- **A KPI needs real icon and unit ids.** The contract does not mark `icon_id` and `unit_id` mandatory, but the API validates whatever arrives, and a missing one becomes 0, which fails with a 400. Read the ids from `kpiIcons.list` and `kpiUnits.list` first.
+- **Enums are case sensitive.** `aggregate_function` is `SUM` or `AVG`, `value_direction` is `U`, `D` or `N`, and a `frequency_id` is `D`, `W`, `M`, `Q` or `Y`. Lower case is rejected.
+- **Entries are upserts.** `kpi_id`, `source_id` and `entry_date` identify an entry, so sending the same trio again updates it rather than duplicating. `201` means a new entry and `200` an updated one.
+- **A write can store nothing.** A valid entry whose actual, target and notes are all empty answers `200` with `{ stored: false }` instead of an entry. The output models both shapes, and the stored flag says which one arrived.
+- **The set flags choose what is written.** `setActual: false` leaves a stored actual untouched while a target is written, which is the only way to change a target without clearing the value. `addToActual: true` adds instead of replacing, which is how you feed in events as they happen.
+- **A batch answers 200 even when every row failed.** `rows_rejected` is the only signal. A batch that stored nothing throws, so a caller cannot mistake it for success.
+- **Dates have to suit the frequency.** A weekly KPI rejects a mid-week `entry_date`, and the API reports that as a rejected row rather than a failed request.
+- **Paging.** Lists are plain arrays with no total count. `page` counts from 1 and `rows` defaults to 500, so page until a response comes back short.
+- **The live API sends a trace id.** Errors are RFC 7807 problem details with `application/problem+json`; a 400 caused by the request carries an `errors` map from field name to messages, which the plugin surfaces as `fieldErrors`.
+
+**What you get:**
+
+- 38 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/simplekpi better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/simplekpi better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/simplekpi better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/simplekpi better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { simplekpi } from '@corsair-dev/simplekpi';
+
+export const corsair = createCorsair({
+	plugins: [
+		simplekpi(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the SimpleKPI API key before the first call: `pnpm corsair setup --plugin=simplekpi --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+simplekpi()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'simplekpi',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read actuals and targets for one KPI**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.simplekpi.api.reports.allDataEntries({
+	kpiIDs: [1234],
+	dateFrom: '2026-08-01',
+	dateTo: '2026-08-31',
+});
+```
+
+
+**Record a weekly actual**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.simplekpi.api.kpiEntries.create({
+	kpi_id: 1234,
+	entry_date: '2026-08-03',
+	actual: 42,
+	setActual: true,
+});
+```
+
+
+See the full list on the [API](/plugins/simplekpi/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/simplekpi/api">
+    Every `simplekpi.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
