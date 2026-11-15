@@ -12,6 +12,11 @@ const liveEnabled =
 	Boolean(apiKey) &&
 	Boolean(apiSecret);
 
+if (!liveEnabled) {
+	console.warn(
+		'Skipping ERPNext live tests: set LIVE_TEST=1, ERPNEXT_BASE_URL, ERPNEXT_API_KEY and ERPNEXT_API_SECRET',
+	);
+}
 const describeLive = liveEnabled ? describe : describe.skip;
 
 // One read-only smoke test: it proves authentication, transport, and
