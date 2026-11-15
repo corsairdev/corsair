@@ -1,0 +1,19 @@
+displayName: Echtpost
+description: List saved Echtpost postcard templates. The API key is sent in the X-Api-Key header.
+domain: echtpost.de
+recommendedAuth: api_key
+overviewNote: |
+  GET /v2/templates with an empty X-Api-Key returned HTTP 401, title Authentication required. The detail says to send X-Api-Key or Authorization Bearer. This plugin sends X-Api-Key. Query keys are not accepted. Card creation is not a catalog operation and is not implemented. Template text is stored and is not written to the event.
+examples:
+  read:
+    path: templates.list
+    title: List templates
+    args:
+      page: 1
+      per_page: 50
+apiNotes:
+  templates.list: |
+    GET /templates. The body is a JSON array. A row is stored only when id is a number. source is stored as a string so a new enum value does not fail the parse.
+apiExamples:
+  templates.list:
+    call: "{ page: 1, per_page: 50 }"

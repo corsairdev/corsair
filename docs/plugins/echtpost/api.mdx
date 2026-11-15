@@ -1,0 +1,71 @@
+---
+title: "Echtpost API reference"
+sidebarTitle: "API"
+description: "API reference for the Echtpost plugin in Corsair: every `echtpost.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Templates
+
+### list
+
+`templates.list`
+
+List saved Echtpost postcard templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.templates.list({ page: 1, per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+GET /templates. The body is a JSON array. A row is stored only when id is a number. source is stored as a string so a new enum value does not fail the parse.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id: string,
+  motive_id?: number,
+  content?: string,
+  content_ps?: string,
+  content_vertical?: string,
+  font?: {
+    family?: string,
+    size?: number,
+    color?: string,
+    line_height?: number
+  },
+  qr_code_url?: string,
+  preview_url?: string,
+  source?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
