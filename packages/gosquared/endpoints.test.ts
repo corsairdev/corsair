@@ -130,12 +130,17 @@ describe('GoSquared endpoints test suite', () => {
 		});
 
 		it('account.getSharedUsers calls GET /account/v1/sharedUsers', async () => {
-			mockMakeRequest.mockResolvedValue([
-				{ email: 'member@test.com', role: 'admin' },
-			]);
+			// Shape from the live API (11-15).
+			const live = {
+				list: [
+					{ id: 1, email: 'member@test.com', state: 'owner', role: 'admin' },
+				],
+				cardinality: 1,
+			};
+			mockMakeRequest.mockResolvedValue(live);
 
 			const res = await Account.getSharedUsers(mockCtx, {});
-			expect(res).toEqual([{ email: 'member@test.com', role: 'admin' }]);
+			expect(res).toEqual(live);
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/account/v1/sharedUsers',
 				'test-api-key',
@@ -148,10 +153,16 @@ describe('GoSquared endpoints test suite', () => {
 		});
 
 		it('account.getBlocked calls GET /account/v1/blocked with presenter', async () => {
-			mockMakeRequest.mockResolvedValue(['1.2.3.4']);
+			// Shape from the live API (11-15).
+			const live = {
+				visitors: { list: [], cardinality: 0 },
+				ips: { list: ['1.2.3.4'], cardinality: 1 },
+				bots: true,
+			};
+			mockMakeRequest.mockResolvedValue(live);
 
 			const res = await Account.getBlocked(mockCtx, { presenter: 'plain' });
-			expect(res).toEqual(['1.2.3.4']);
+			expect(res).toEqual(live);
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/account/v1/blocked',
 				'test-api-key',
@@ -188,10 +199,10 @@ describe('GoSquared endpoints test suite', () => {
 		});
 
 		it('now.getConcurrents calls GET /now/v3/concurrents', async () => {
-			mockMakeRequest.mockResolvedValue({ concurrents: 7 });
+			mockMakeRequest.mockResolvedValue({ visitors: 7, active: 2 });
 
 			const res = await Now.getConcurrents(mockCtx, {});
-			expect(res).toEqual({ concurrents: 7 });
+			expect(res).toEqual({ visitors: 7, active: 2 });
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/now/v3/concurrents',
 				'test-api-key',

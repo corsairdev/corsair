@@ -62,7 +62,7 @@ export const getConcurrents: GosquaredEndpoints['now.getConcurrents'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.now.getConcurrents',
-		{ concurrents: parsedResponse.concurrents },
+		{ visitors: parsedResponse.visitors },
 		'completed',
 	);
 

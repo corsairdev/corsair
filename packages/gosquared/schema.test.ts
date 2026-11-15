@@ -117,12 +117,19 @@ describe('Gosquared schema tests', () => {
 			expect(
 				GosquaredEndpointInputSchemas['account.getSharedUsers'].parse({}),
 			).toEqual({});
-			const output = [
-				{ email: 'user@example.com', role: 'admin', status: 'active' },
-			];
+			const output = {
+				list: [
+					{ id: 1, email: 'user@example.com', state: 'active', role: 'member' },
+				],
+				cardinality: 1,
+			};
 			expect(
 				GosquaredEndpointOutputSchemas['account.getSharedUsers'].parse(output),
 			).toEqual(output);
+			// The bare array the schema used to expect is not what the API sends.
+			expect(() =>
+				GosquaredEndpointOutputSchemas['account.getSharedUsers'].parse([]),
+			).toThrow();
 		});
 
 		it('validates account.getBlocked input and output schemas', () => {
@@ -131,10 +138,23 @@ describe('Gosquared schema tests', () => {
 					presenter: 'plain',
 				}),
 			).toEqual({ presenter: 'plain' });
-			const plainOutput = ['1.2.3.4'];
+			const plainOutput = {
+				visitors: { list: ['visitor-1'], cardinality: 1 },
+				ips: { list: [], cardinality: 0 },
+				bots: false,
+			};
 			expect(
 				GosquaredEndpointOutputSchemas['account.getBlocked'].parse(plainOutput),
 			).toEqual(plainOutput);
+			// presenter=indexedTags returns visitors as a visitorID:tag object.
+			const indexed = {
+				visitors: { 'visitor-1': 'bot' },
+				ips: { list: [], cardinality: 0 },
+				bots: false,
+			};
+			expect(
+				GosquaredEndpointOutputSchemas['account.getBlocked'].parse(indexed),
+			).toEqual(indexed);
 		});
 	});
 
@@ -160,7 +180,13 @@ describe('Gosquared schema tests', () => {
 			expect(
 				GosquaredEndpointInputSchemas['now.getConcurrents'].parse({}),
 			).toEqual({});
-			const output = { concurrents: 15, online: 15 };
+			const output = {
+				visitors: 15,
+				active: 3,
+				pages: 2,
+				returning: 1,
+				tagged: 0,
+			};
 			expect(
 				GosquaredEndpointOutputSchemas['now.getConcurrents'].parse(output),
 			).toEqual(output);

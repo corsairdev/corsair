@@ -8,6 +8,9 @@ export const SiteSchema = z
 		site_token: z.string(),
 		name: z.string().nullable().optional(),
 		domain_name: z.string().optional(),
+		domain: z.string().optional(),
+		url: z.string().optional(),
+		id: z.union([z.number(), z.string()]).optional(),
 		timezone: z.string().optional(),
 		created: z.string().optional(),
 		user_id: z.union([z.number(), z.string()]).optional(),
@@ -67,16 +70,23 @@ export const GetSharedUsersInputSchema = z
 	})
 	.strict();
 
-export const GetSharedUsersOutputSchema = z.array(
-	z
-		.object({
-			email: z.string().optional(),
-			role: z.string().optional(),
-			status: z.string().optional(),
-			id: z.union([z.string(), z.number()]).optional(),
-		})
-		.passthrough(),
-);
+// Live API (11-15): `{ list: [{ id, email, state, role }], cardinality }`.
+export const GetSharedUsersOutputSchema = z
+	.object({
+		list: z.array(
+			z
+				.object({
+					id: z.union([z.string(), z.number()]).optional(),
+					email: z.string().optional(),
+					// owner, active or pending
+					state: z.string().optional(),
+					role: z.string().optional(),
+				})
+				.passthrough(),
+		),
+		cardinality: z.number().optional(),
+	})
+	.passthrough();
 
 export const GetBlockedInputSchema = z
 	.object({
@@ -85,11 +95,25 @@ export const GetBlockedInputSchema = z
 	})
 	.strict();
 
-export const GetBlockedOutputSchema = z.union([
-	z.array(z.string()),
-	z.array(z.object({ id: z.string(), tag: z.string().optional() })),
-	z.record(z.string(), z.string()),
-]);
+// `unknown` because blocked entries are visitor ids (plain) or { id, tag } objects (tags).
+const BlockedListSchema = z
+	.object({
+		list: z.array(z.unknown()),
+		cardinality: z.number().optional(),
+	})
+	.passthrough();
+
+// Live API (11-15): `{ visitors, ips, bots }`; with presenter=indexedTags,
+// `visitors` is a visitorID:tag object instead of a list.
+export const GetBlockedOutputSchema = z
+	.object({
+		visitors: z
+			.union([BlockedListSchema, z.record(z.string(), z.string())])
+			.optional(),
+		ips: BlockedListSchema.optional(),
+		bots: z.boolean().optional(),
+	})
+	.passthrough();
 
 // --- Now Schemas ---
 
@@ -120,8 +144,11 @@ export const NowConcurrentsInputSchema = z
 
 export const NowConcurrentsOutputSchema = z
 	.object({
-		concurrents: z.number().optional(),
-		online: z.number().optional(),
+		visitors: z.number().optional(),
+		active: z.number().optional(),
+		pages: z.number().optional(),
+		returning: z.number().optional(),
+		tagged: z.number().optional(),
 	})
 	.passthrough();
 

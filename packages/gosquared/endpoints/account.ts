@@ -113,7 +113,7 @@ export const getSharedUsers: GosquaredEndpoints['account.getSharedUsers'] =
 		await logEventFromContext(
 			ctx,
 			'gosquared.account.getSharedUsers',
-			{ count: parsedResponse.length },
+			{ count: parsedResponse.list.length },
 			'completed',
 		);
 
