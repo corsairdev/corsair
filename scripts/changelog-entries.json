@@ -5562,5 +5562,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/imgix",
+    "dir": "packages/imgix",
+    "name": "Imgix",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/stackexchange",
+    "dir": "packages/stackexchange",
+    "name": "Stack Exchange",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
