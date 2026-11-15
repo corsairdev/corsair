@@ -124,4 +124,32 @@ describe('HoneyHive error payloads', () => {
 		expect(JSON.stringify(out.request)).not.toContain('alice@example.com');
 		expect(JSON.stringify(out.request)).not.toContain('private');
 	});
+
+	it('drops customer query values from a propagated ApiError', () => {
+		const filters = JSON.stringify([
+			{ field: 'user_properties.email', value: 'alice@example.com' },
+		]);
+		const error = new ApiError(
+			{
+				method: 'GET',
+				url: '/v1/runs/run-1/metrics',
+				query: { filters },
+			},
+			{
+				url: `https://api.dp1.us.honeyhive.ai/v1/runs/run-1/metrics?filters=${encodeURIComponent(filters)}`,
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { message: 'slow down' },
+			},
+			'Too Many Requests',
+		);
+		const out = redactApiErrorInPlace(error, 'hh_classic');
+		expect(out).toBe(error);
+		expect(out).toBeInstanceOf(ApiError);
+		expect(out.status).toBe(429);
+		expect(out.url).toBe('https://api.dp1.us.honeyhive.ai/v1/runs/run-1/metrics');
+		expect(JSON.stringify(out.request)).not.toContain('alice');
+		expect(out.url).not.toContain('alice');
+	});
 });

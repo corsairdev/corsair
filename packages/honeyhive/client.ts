@@ -84,6 +84,19 @@ export function redactApiErrorInPlace(
 		const mutableRequest = error.request as unknown as { body: unknown };
 		mutableRequest.body = undefined;
 	}
+	if (error.request?.query !== undefined && error.request?.query !== null) {
+		// Query values carry customer data too (event and metric filters with
+		// emails or user properties), so the copy kept on the error is dropped.
+		// `unknown` because error.request.query is read-only on the class declaration and mutated here.
+		const mutableRequest = error.request as unknown as { query: unknown };
+		mutableRequest.query = undefined;
+	}
+	const queryStart = error.url?.indexOf('?') ?? -1;
+	if (queryStart !== -1) {
+		// `unknown` because error.url is read-only on the class declaration and mutated here.
+		const mutableError = error as unknown as { url: string };
+		mutableError.url = error.url.slice(0, queryStart);
+	}
 	if (apiKey && apiKey.length > 0 && error.message.includes(apiKey)) {
 		// `unknown` because error.message is read-only on the class declaration and mutated here.
 		const mutableError = error as unknown as { message: string };
