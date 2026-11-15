@@ -72,6 +72,24 @@ describe('Gigasheet Schema & Types', () => {
 		expect(nestedKeys.length).toBe(18);
 	});
 
+	it('marks only deletes destructive; uploads, appends and exports are writes (R8)', () => {
+		const meta = gigasheet().endpointMeta ?? {};
+		const levels = Object.fromEntries(
+			Object.entries(meta).map(([key, value]) => [key, value.riskLevel]),
+		);
+		expect(levels['datasets.delete']).toBe('destructive');
+		expect(levels['rows.deleteRows']).toBe('destructive');
+		for (const op of [
+			'upload.fromUrl',
+			'upload.direct',
+			'rows.appendByName',
+			'rows.insertBlankRow',
+			'exports.create',
+		]) {
+			expect(levels[op]).toBe('write');
+		}
+	});
+
 	// --------------------------------------------------------------------------
 	// User Schemas
 	// --------------------------------------------------------------------------
