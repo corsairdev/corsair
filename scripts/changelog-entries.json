@@ -5715,5 +5715,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/erpnext",
+    "dir": "packages/erpnext",
+    "name": "ERPNext",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/pdfapi",
+    "dir": "packages/pdfapi",
+    "name": "PDF-API.io",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
