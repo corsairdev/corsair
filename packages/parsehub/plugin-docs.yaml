@@ -1,0 +1,20 @@
+displayName: ParseHub
+description: List the scraping projects on a ParseHub account. The key is the api_key query parameter.
+domain: parsehub.com
+recommendedAuth: api_key
+overviewNote: |
+  An empty key comes back as HTTP 401. Offset starts at 0. Limit is 1 to 20.
+examples:
+  read:
+    path: projects.list
+    title: List ParseHub projects
+    args:
+      offset: 0
+      limit: 20
+apiNotes:
+  projects.list: |
+    Omit offset, limit, or include_options to take the service default. include_options is sent as 1 or 0.
+apiExamples:
+  projects.list:
+    offset: 0
+    limit: 20

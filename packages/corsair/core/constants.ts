@@ -424,6 +424,7 @@ export const BaseProviders = [
 	'outlook',
 	'pagerduty',
 	'parallel',
+	'parsehub',
 	'parseur',
 	'pdfapi',
 	'pdfco',
@@ -1037,6 +1038,7 @@ export const ProviderDisplayNames = {
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
 	parallel: 'Parallel',
+	parsehub: 'ParseHub',
 	parseur: 'Parseur',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
@@ -1657,6 +1659,7 @@ export type AllProviders =
 	| 'outlook'
 	| 'pagerduty'
 	| 'parallel'
+	| 'parsehub'
 	| 'parseur'
 	| 'pdfapi'
 	| 'pdfco'
