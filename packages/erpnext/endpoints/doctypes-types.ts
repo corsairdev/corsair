@@ -1,0 +1,84 @@
+import { z } from 'zod';
+
+// ── Schemas for the `doctypes` family ─────────────────────────────────────────
+// Wire mappings verified against the frappe@develop sources: the /api/resource
+// DocType list route and frappe/handler.py (/api/method answers wrap their
+// result in a `message` key, except frappe.desk.form.load.getdoctype, which
+// returns nothing and answers with top-level `docs`). DocType metadata is
+// provider-defined — the framework ships its own DocTypes and every deployment
+// adds custom fields, permissions, and naming rules on top — so payload shapes
+// validate as open records and only the wire envelope (data / message / docs)
+// is checked. Input objects are .strict() so typos fail at the boundary, and
+// query names stay provider-verbatim (limit_page_length, with_parent), exactly
+// as the Frappe sources declare them.
+
+// unknown: a DocType resource row or metadata blob is a provider-defined
+// record — field definitions, permissions, and naming rules differ per
+// DocType and per deployment — so the payload stays a string-keyed bag of
+// JSON values.
+const ErpnextDoctypeRecordSchema = z.record(z.string(), z.unknown());
+
+// GET /api/resource/DocType — `filters` stays a JSON string exactly as Frappe
+// documents it: the provider parses it server-side. `limit_start` and
+// `limit_page_length` are the provider-verbatim pagination keys.
+const DoctypesListInputSchema = z
+	.object({
+		filters: z
+			.string()
+			.optional()
+			.describe(
+				'JSON string filter expression in Frappe list format, for example [["module","=","Core"]], passed verbatim',
+			),
+		limit_start: z.number().int().min(0).optional(),
+		limit_page_length: z.number().int().min(0).optional(),
+	})
+	.strict();
+
+// GET /api/method/frappe.desk.form.load.getdoctype — doctype names the schema
+// to load and with_parent additionally loads parent and child DocTypes. The
+// provider reads the query string with Python truthiness (load.py:
+// `if with_parent and ...`), so the shared factory sends a true as "1" and
+// omits a false — any "false" string would be truthy server-side and load
+// the parents the caller asked to leave out.
+const DoctypesGetMetaInputSchema = z
+	.object({
+		doctype: z.string().min(1),
+		with_parent: z.boolean().optional(),
+	})
+	.strict();
+
+// ── Output envelopes ──────────────────────────────────────────────────────────
+
+// /api/resource list answers nest the rows under `data`.
+const DoctypesListOutputSchema = z
+	.object({
+		data: z.array(ErpnextDoctypeRecordSchema),
+	})
+	.loose();
+
+// frappe/desk/form/load.py getdoctype returns nothing: it extends
+// frappe.response.docs with the meta bundle (the DocType, then each child
+// table DocType) and sets user_settings (and parent_dt when with_parent
+// resolved a parent), so the answer is { docs, user_settings } with no
+// `message` key.
+const DoctypesGetMetaOutputSchema = z
+	.object({
+		docs: z.array(ErpnextDoctypeRecordSchema),
+		// unknown: user_settings is the caller's saved list/report view
+		// settings, a JSON string or object Frappe stores per user.
+		user_settings: z.unknown().optional(),
+		parent_dt: z.string().optional(),
+	})
+	.loose();
+
+// ── Registry ──────────────────────────────────────────────────────────────────
+
+export const DoctypesInputSchemas = {
+	'doctypes.list': DoctypesListInputSchema,
+	'doctypes.getMeta': DoctypesGetMetaInputSchema,
+} as const;
+
+export const DoctypesOutputSchemas = {
+	'doctypes.list': DoctypesListOutputSchema,
+	'doctypes.getMeta': DoctypesGetMetaOutputSchema,
+} as const;
