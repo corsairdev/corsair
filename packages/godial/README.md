@@ -55,8 +55,10 @@ const result = await corsair.godial.api.contacts.add({
 ## Limits and incomplete inventory
 
 GoDial's reference shows an empty example for every response and documents no
-pagination or rate limits. Responses are validated as JSON but stay
-structurally opaque; the plugin does not invent a list/contact shape. A 429 is
+pagination or rate limits. The response schemas come from live responses: a
+list or contact must have an id, other fields pass through as GoDial sends
+them, and the IndiaMart block keeps only `enabled` (it also carries that
+integration's API key). A 429 is
 retried by Corsair's transport (three times, honouring `Retry-After`); server
 errors are not retried because a contact write may already have landed.
 GoDial answers a missing or revoked token with HTTP 500, which the client

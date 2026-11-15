@@ -19,6 +19,6 @@ apiExamples:
   contacts.add:
     call: "{ listId: 'list-123', name: 'Ada Lovelace', phone: '+15555550123' }"
 apiNotes:
-  lists.list: "GoDial's reference (godial.stoplight.io) documents the route but shows only an empty example response, so the result is returned as the provider's JSON without a fixed shape."
+  lists.list: "GoDial's reference (godial.stoplight.io) shows only an empty example response, so the result schema comes from live responses: an array of lists, each with an id. Other fields pass through as GoDial sends them, except the IndiaMart block, which keeps only `enabled` because it also carries that integration's API key. A response that isn't an array of objects with ids fails validation."
   contacts.add: "phone and listId are required. With assignmentMode 'roundrobin' or an accountsId the contact is assigned to an agent and joins that agent's calling queue. The reference shows only an empty example response."
 overviewNote: "Create an External API access token in the GoDial dashboard. The provider requires it as the access_token query parameter for every request."
