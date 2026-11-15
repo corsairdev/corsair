@@ -24,7 +24,7 @@ pnpm add @corsair-dev/servicem8
 | `jobPayments.delete` | `servicem8.api.jobPayments.delete` | `destructive` | Delete a job payment |
 | `jobPayments.retrieve` | `servicem8.api.jobPayments.retrieve` | `read` | Retrieve a job payment |
 | `jobPayments.update` | `servicem8.api.jobPayments.update` | `write` | Update a job payment |
-| `jobs.create` | `servicem8.api.jobs.create` | `write` | Create a job |
+| `jobs.create` | `servicem8.api.jobs.create` | `destructive` | Create a job (may incur ServiceM8 account charges) |
 | `jobs.list` | `servicem8.api.jobs.list` | `read` | List jobs |
 | `jobs.retrieve` | `servicem8.api.jobs.retrieve` | `read` | Retrieve a job |
 | `locations.list` | `servicem8.api.locations.list` | `read` | List locations |
@@ -47,13 +47,14 @@ Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory
 
 Private apps use an API key. Public apps use an OAuth access token, with
 `authType: 'oauth_2'`; custom-field deletion requires OAuth. The default OAuth
-configuration excludes the form and job-payment scopes; obtain an appropriately
-scoped token separately for those operations.
+configuration requests the scopes every operation needs, forms and job payments
+included.
 
 For list pagination, pass `cursor: '-1'` initially, then pass the returned
 `nextCursor` until it is absent. Create operations return the response as
-`result` and the `x-record-uuid` header as `recordUuid`. Write requests are not
-automatically retried; job creation may incur ServiceM8 charges.
+`result` and the `x-record-uuid` header as `recordUuid`. A per-minute 429 is
+retried up to 3 times; other errors are not. Job creation may incur ServiceM8
+charges, so `jobs.create` is `destructive`.
 
 ## Webhooks
 

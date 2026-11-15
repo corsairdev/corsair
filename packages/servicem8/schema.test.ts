@@ -6,6 +6,7 @@ import {
 	NoteCreateInput,
 	safeUuid,
 } from './endpoints/types';
+import { servicem8 } from './index';
 import { ServiceM8Schema } from './schema';
 
 describe('ServiceM8 schemas', () => {
@@ -40,5 +41,22 @@ describe('ServiceM8 schemas', () => {
 			company_uuid: null,
 			customfield_color: 'blue',
 		});
+	});
+});
+
+describe('ServiceM8 plugin config', () => {
+	it('requests the OAuth scopes the form and payment operations need', () => {
+		expect(servicem8().oauthConfig?.scopes).toEqual(
+			expect.arrayContaining([
+				'read_forms',
+				'read_job_payments',
+				'manage_job_payments',
+			]),
+		);
+	});
+	it('marks job creation destructive because it can incur charges', () => {
+		expect(servicem8().endpointMeta?.['jobs.create']?.riskLevel).toBe(
+			'destructive',
+		);
 	});
 });

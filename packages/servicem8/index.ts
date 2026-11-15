@@ -81,7 +81,11 @@ export type ServiceM8EndpointOutputs = {
 const serviceM8EndpointMeta = {
 	'jobs.list': { riskLevel: 'read', description: 'List jobs' },
 	'jobs.retrieve': { riskLevel: 'read', description: 'Retrieve a job' },
-	'jobs.create': { riskLevel: 'write', description: 'Create a job' },
+	// ServiceM8 bills by job volume ("creating jobs may incur account charges").
+	'jobs.create': {
+		riskLevel: 'destructive',
+		description: 'Create a job (may incur ServiceM8 account charges)',
+	},
 	'clients.list': { riskLevel: 'read', description: 'List clients' },
 	'clients.retrieve': { riskLevel: 'read', description: 'Retrieve a client' },
 	'assets.list': { riskLevel: 'read', description: 'List assets' },
@@ -182,8 +186,8 @@ export function servicem8(
 			authUrl: 'https://go.servicem8.com/oauth/authorize',
 			tokenUrl: 'https://go.servicem8.com/oauth/access_token',
 			requiresRegisteredRedirect: true,
-			// Forms and payments require additional scopes; do not request them
-			// for every authorization by default.
+			// One scope per exposed operation group, so every operation works on a
+			// default connection (forms and payments included).
 			scopes: [
 				'read_jobs',
 				'create_jobs',
@@ -198,6 +202,9 @@ export function servicem8(
 				'read_tasks',
 				'read_schedule',
 				'read_staff',
+				'read_forms',
+				'read_job_payments',
+				'manage_job_payments',
 			],
 		},
 		hooks: options.hooks,
