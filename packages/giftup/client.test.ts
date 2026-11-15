@@ -187,17 +187,44 @@ describe('Gift Up! client', () => {
 		expect(error.request?.headers?.Authorization).toBe('[redacted]');
 		expect(error.message).toBe('Unprocessable: [redacted] invalid');
 		expect(error.stack).toBe('Error: [redacted] at function test()');
-		const reqBody = error.request?.body;
-		if (typeof reqBody === 'object' && reqBody !== null) {
-			expect(Reflect.get(reqBody, 'apiKey')).toBe('[redacted]');
-			expect(Reflect.get(reqBody, 'token')).toBe('[redacted]');
-			expect(Reflect.get(reqBody, 'name')).toBe('John Doe');
-		}
+		// The whole request body is dropped: it can carry purchaser/recipient personal data
+		expect(error.request?.body).toBe('[redacted]');
 
 		const resBody = error.body;
 		if (typeof resBody === 'object' && resBody !== null) {
 			expect(Reflect.get(resBody, 'message')).toBe('Invalid key: [redacted]');
 		}
+	});
+
+	it('strips the API key from a non-ApiError message', async () => {
+		mockRequest.mockRejectedValue(
+			new Error('fetch failed for Bearer secret-token-value'),
+		);
+		const err = await makeGiftUpRequest('/ping', 'secret-token-value', {
+			method: 'GET',
+		}).catch((caught: unknown) => caught);
+		expect(err).toBeInstanceOf(GiftUpAPIError);
+		expect(err instanceof Error ? err.message : '').toBe(
+			'fetch failed for Bearer [redacted]',
+		);
+	});
+
+	it('drops purchaser data from a failed order request body', async () => {
+		const failed = makeApiError(400, 'Bad Request', {
+			requestBody: {
+				purchaserEmail: 'buyer@example.com',
+				purchaserName: 'Buyer Bob',
+				recipientDetails: { message: 'Happy birthday' },
+			},
+		});
+		mockRequest.mockRejectedValue(failed);
+		const err = await makeGiftUpRequest('/orders', 'secret-token-value', {
+			method: 'POST',
+			body: {},
+		}).catch((caught: unknown) => caught);
+		expect(err).toBe(failed);
+		expect(JSON.stringify(failed.request)).not.toContain('buyer@example.com');
+		expect(JSON.stringify(failed.request)).not.toContain('Happy birthday');
 	});
 
 	it('wraps generic non-ApiError in GiftUpAPIError', async () => {

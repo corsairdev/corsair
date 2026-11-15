@@ -14,14 +14,18 @@ export class GiftUpAPIError extends Error {
 
 export const GIFTUP_API_BASE = 'https://api.giftup.app';
 
-export type GiftUpQuery = Record<string, string | number | boolean | undefined>;
+export type GiftUpQuery = Record<
+	string,
+	string | number | boolean | string[] | undefined
+>;
 
 /** Compact query params by dropping undefined values */
 export function compactQuery(
 	query?: GiftUpQuery,
-): Record<string, string | number | boolean> | undefined {
+): Record<string, string | number | boolean | string[]> | undefined {
 	if (!query) return undefined;
-	const out: Record<string, string | number | boolean> = {};
+	// Arrays are sent as repeated keys (events=A&events=B) by core's query builder
+	const out: Record<string, string | number | boolean | string[]> = {};
 	for (const [key, value] of Object.entries(query)) {
 		if (value !== undefined) {
 			out[key] = value;
@@ -95,12 +99,10 @@ export function redactApiErrorInPlace(
 				}
 			}
 		}
+		// The request body can hold purchaser and recipient names, emails and messages,
+		// so it is dropped from the error instead of being filtered by key name
 		if (error.request.body !== undefined) {
-			Reflect.set(
-				error.request,
-				'body',
-				sanitizeValue(error.request.body, secrets),
-			);
+			Reflect.set(error.request, 'body', REDACTED);
 		}
 	}
 	if (error.body !== undefined) {
@@ -198,7 +200,11 @@ export async function makeGiftUpRequest<T>(
 			throw error;
 		}
 		if (error instanceof Error) {
-			throw new GiftUpAPIError(error.message);
+			let message = error.message;
+			for (const secret of secretsToRedact) {
+				message = message.split(secret).join(REDACTED);
+			}
+			throw new GiftUpAPIError(message);
 		}
 		throw new GiftUpAPIError('Unknown error');
 	}
