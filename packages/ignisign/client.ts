@@ -131,122 +131,101 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-// IgniSign errors are `{ errorCode, message?, context? }` (ignisign-public-models
-// `IgnisignError`). `context` is free-form and can echo the signer or document
-// that was sent, so only these scalar fields stay in the thrown error. The rest
-// covers gateway errors that don't use IgniSign's shape.
-const ERROR_BODY_FIELDS = [
-	'errorCode',
-	'code',
-	'statusCode',
-	'message',
-	'error',
-	'detail',
-] as const;
+// IgniSign errors are `{ errorCode, message?, context? }` (@ignisign/public
+// `IgnisignError`). `message` and `context` are free text that can repeat a
+// signer's name, phone number or document, so neither reaches the thrown
+// error. What stays: the HTTP status, the error code when it has the shape of
+// an IgniSign code (upper-case letters, digits and underscores), and for the
+// codes below a diagnostic written here.
+const ERROR_CODE_PATTERN = /^[A-Z][A-Z0-9_]{1,127}$/;
+
+export const IGNISIGN_ERROR_DIAGNOSTICS: Readonly<Record<string, string>> = {
+	BAD_REQUEST: 'The request is malformed.',
+	BODY_VALIDATION_FAILED:
+		'The request body failed validation; check the input against the operation schema.',
+	PARAMS_VALIDATION_FAILED:
+		'A path parameter (an id, appId or appEnv) failed validation.',
+	QUERY_VALIDATION_FAILED: 'A query parameter failed validation.',
+	FIELD_IN_INPUT_REQUIRED: 'A required input field is missing.',
+	EMAIL_INVALID: 'An email address in the input is not valid.',
+	UNAUTHORIZED_ERROR: 'The API key is not allowed to do this.',
+	INVALID_TOKEN:
+		'The connected API key is invalid or revoked; reconnect IgniSign.',
+	API_KEY_NOT_FOUND:
+		'The connected API key is invalid or revoked; reconnect IgniSign.',
+	APP_NOT_FOUND: 'No application with this appId for the connected API key.',
+	APP_NOT_ACTIVATED: 'The application is not activated.',
+	APP_BLOCKED: 'The application is blocked.',
+	APP_ENV_CONFIG_NOT_FOUND:
+		'The application has no configuration for this environment.',
+	ORGANIZATION_FEATURE_FORBIDDEN:
+		"The organization's plan does not include this feature.",
+	SIGNER_NOT_FOUND: 'No signer with this id in the application environment.',
+	SIGNER_PROFILE_NOT_FOUND:
+		'No signer profile with this id in the application environment.',
+	DOCUMENT_NOT_FOUND:
+		'No document with this id in the application environment.',
+	SIGNATURE_REQUEST_NOT_FOUND:
+		'No signature request with this id in the application environment.',
+	SIGNATURE_PROFILE_NOT_FOUND:
+		'No signature profile with this id in the application environment.',
+	WEBHOOK_NOT_FOUND: 'No webhook with this id in the application environment.',
+	SIGNATURE_REQUEST_BAD_STATUS:
+		'The signature request is not in a status that allows this action.',
+	SIGNER_CREATION__INPUT_FIELD_MISSING:
+		'A signer field the signer profile requires is missing.',
+	SIGNER_CREATION__INPUT_FIELD_VALUE_MISSING:
+		'A signer field the signer profile requires has no value.',
+	SIGNER_CREATION__INPUT_FIELD_VALUE_INVALID:
+		'A signer field value is not valid for the signer profile.',
+	SIGNER_CREATION__SIGNER_ALREADY_EXISTS:
+		'This signer already exists in the application environment.',
+	FILE_TOO_LARGE: 'The uploaded file is too large.',
+	INTERNAL_ERROR: 'IgniSign had an internal error.',
+	UNKNOWN_ERROR: 'IgniSign returned an unknown error.',
+};
+
+export type IgnisignErrorBody = {
+	status: number;
+	errorCode?: string;
+	diagnostic?: string;
+};
 
 /**
- * The string values the caller sent (body, query and multipart fields, nested
- * ones included). IgniSign's error message can repeat a signer's name or phone
- * number from the request, so these are masked in the thrown error. Short
- * numbers are skipped: masking `1` would mangle every number in the message.
- */
-export function requestValues(
-	// `unknown` because request bodies are endpoint-specific JSON walked here.
-	...sources: unknown[]
-): string[] {
-	const values = new Set<string>();
-	// `unknown` because nested request members are walked before narrowing.
-	const walk = (value: unknown) => {
-		if (typeof value === 'string') {
-			if (value.length === 0 || (value.length < 3 && /^\d+$/.test(value))) {
-				return;
-			}
-			values.add(value);
-		} else if (Array.isArray(value)) {
-			for (const item of value) walk(item);
-		} else if (isRecord(value)) {
-			for (const item of Object.values(value)) walk(item);
-		}
-	};
-	for (const source of sources) walk(source);
-	return [...values].sort((a, b) => b.length - a.length);
-}
-
-/**
- * Replaces one sent value in `text`. A value under three characters is matched
- * only where no letter or digit touches it, so `EN` is masked without turning
- * `ENTITY` into `[REDACTED]TITY`.
- */
-function maskValue(text: string, value: string): string {
-	if (value.length >= 3) return text.split(value).join('[REDACTED]');
-	const escaped = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	return text.replace(
-		new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, 'gu'),
-		'[REDACTED]',
-	);
-}
-
-/** Emails and the caller's own values masked out of one error string. */
-function maskErrorText(text: string, sent: readonly string[]): string {
-	return sent.reduce(
-		maskValue,
-		text.replace(EMAIL_PATTERN, '[REDACTED_EMAIL]'),
-	);
-}
-
-/**
- * The error body with only the allowlisted scalar fields, emails and the
- * caller's own values (`sent`) masked.
+ * The thrown error's body: the status, the IgniSign error code (or a gateway's
+ * `code`) when it is shaped like one, and the fixed diagnostic for known codes.
+ * The provider's message, context and any other text are dropped.
  */
 // `unknown` because error bodies returned from the provider are untrusted JSON.
 export function safeErrorBody(
 	rawBody: unknown,
-	sent: readonly string[] = [],
-): unknown {
-	if (typeof rawBody === 'string') return maskErrorText(rawBody, sent);
-	if (!isRecord(rawBody)) return undefined;
-	const result: Record<string, string | number | boolean> = {};
-	for (const field of ERROR_BODY_FIELDS) {
-		const value = rawBody[field];
-		if (typeof value === 'string') {
-			result[field] = maskErrorText(value, sent);
-		} else if (typeof value === 'number' || typeof value === 'boolean') {
-			result[field] = value;
-		}
-	}
+	status: number,
+): IgnisignErrorBody {
+	const result: IgnisignErrorBody = { status };
+	if (!isRecord(rawBody)) return result;
+	const code = [rawBody.errorCode, rawBody.code].find(
+		(value): value is string =>
+			typeof value === 'string' && ERROR_CODE_PATTERN.test(value),
+	);
+	if (!code) return result;
+	result.errorCode = code;
+	const diagnostic = Object.prototype.hasOwnProperty.call(
+		IGNISIGN_ERROR_DIAGNOSTICS,
+		code,
+	)
+		? IGNISIGN_ERROR_DIAGNOSTICS[code]
+		: undefined;
+	if (diagnostic) result.diagnostic = diagnostic;
 	return result;
 }
 
-/**
- * Core builds ApiError.message from the raw body (`message`, `error`, `detail`,
- * or the whole body as JSON), so the message is rebuilt from the redacted body.
- */
-function buildErrorMessage(
-	// `unknown` because the redacted body keeps the provider's untrusted shape.
-	sanitizedBody: unknown,
-	status: number,
-	statusText: string,
-): string {
-	if (isRecord(sanitizedBody)) {
-		for (const field of ['message', 'error', 'detail']) {
-			const value = sanitizedBody[field];
-			if (typeof value === 'string' && value.length > 0) {
-				return value;
-			}
-		}
-	}
-	if (typeof sanitizedBody === 'string' && sanitizedBody.length > 0) {
-		return `Ignisign request failed with status ${status}: ${sanitizedBody}`;
-	}
-	let bodyText = '';
-	try {
-		bodyText = sanitizedBody === undefined ? '' : JSON.stringify(sanitizedBody);
-	} catch {
-		bodyText = '';
-	}
-	return `Ignisign request failed with status ${status} ${statusText}${
-		bodyText ? `: ${bodyText}` : ''
-	}`;
+/** The thrown message, written only from the status, code and diagnostic. */
+export function buildErrorMessage(body: IgnisignErrorBody): string {
+	const base = `Ignisign request failed with status ${body.status}`;
+	if (!body.errorCode) return base;
+	return body.diagnostic
+		? `${base} (${body.errorCode}): ${body.diagnostic}`
+		: `${base} (${body.errorCode})`;
 }
 
 function parseRetryAfterMs(headerValue: string | null): number | undefined {
@@ -344,15 +323,8 @@ export async function makeIgnisignRequest<T>(
 		if (error instanceof ApiError) {
 			// `unknown` because error.body has no static type from corsair/http.
 			const rawBody: unknown = error.body;
-			const sanitizedBody = safeErrorBody(
-				rawBody,
-				requestValues(body, query, formData),
-			);
-			const errorMessage = buildErrorMessage(
-				sanitizedBody,
-				error.status,
-				error.statusText,
-			);
+			const sanitizedBody = safeErrorBody(rawBody, error.status);
+			const errorMessage = buildErrorMessage(sanitizedBody);
 			throw new ApiError(
 				{ method, url: endpoint },
 				{
