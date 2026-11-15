@@ -349,6 +349,7 @@ export const BaseProviders = [
 	'kling',
 	'knack',
 	'kofi',
+	'kommo',
 	'kontentai',
 	'krakenio',
 	'leexi',
@@ -931,6 +932,7 @@ export const ProviderDisplayNames = {
 	kling: 'Kling',
 	knack: 'Knack',
 	kofi: 'Ko-fi',
+	kommo: 'Kommo',
 	kontentai: 'Kontent.ai',
 	krakenio: 'Kraken.io',
 	leexi: 'Leexi',
@@ -1520,6 +1522,7 @@ export type AllProviders =
 	| 'kling'
 	| 'knack'
 	| 'kofi'
+	| 'kommo'
 	| 'kontentai'
 	| 'krakenio'
 	| 'leexi'

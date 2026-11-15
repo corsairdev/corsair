@@ -2925,6 +2925,14 @@
                 ]
               },
               {
+                "group": "Kommo",
+                "pages": [
+                  "plugins/kommo/overview",
+                  "plugins/kommo/api",
+                  "plugins/kommo/database"
+                ]
+              },
+              {
                 "group": "Kontent.ai",
                 "pages": [
                   "plugins/kontentai/overview",
