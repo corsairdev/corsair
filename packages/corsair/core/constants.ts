@@ -217,6 +217,7 @@ export const BaseProviders = [
 	'dnsfilter',
 	'dockerhub',
 	'docmosis',
+	'docsbotai',
 	'docsumo',
 	'documenso',
 	'docupost',
@@ -241,6 +242,7 @@ export const BaseProviders = [
 	'enigma',
 	'epicgames',
 	'esignatures',
+	'erpnext',
 	'esputnik',
 	'eventbrite',
 	'eventee',
@@ -261,6 +263,7 @@ export const BaseProviders = [
 	'filevine',
 	'filloutforms',
 	'finage',
+	'findymail',
 	'finerworks',
 	'finmei',
 	'fireberry',
@@ -285,10 +288,16 @@ export const BaseProviders = [
 	'genderapiio',
 	'genderize',
 	'geoapify',
+	'geocodio',
+	'geokeo',
+	'getprospect',
+	'gigasheet',
 	'giphy',
 	'github',
 	'gitlab',
+	'givebutter',
 	'gladia',
+	'gleap',
 	'gmail',
 	'gmicloud',
 	'gong',
@@ -296,6 +305,7 @@ export const BaseProviders = [
 	'googleanalytics',
 	'googlebigquery',
 	'googlecalendar',
+	'googleclassroom',
 	'googlecloudvision',
 	'googledocs',
 	'googledrive',
@@ -303,12 +313,17 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'googleslides',
+	'googletasks',
+	'gorgias',
+	'gosquared',
 	'grafana',
 	'griptape',
+	'grist',
 	'groqcloud',
 	'gumroad',
 	'habitica',
 	'hackernews',
+	'handwrytten',
 	'happyscribe',
 	'harvest',
 	'hashnode',
@@ -316,16 +331,21 @@ export const BaseProviders = [
 	'heygen',
 	'heyy',
 	'higgsfield',
+	'honeyhive',
 	'hookdeck',
 	'htmltoimage',
+	'hubplanner',
 	'hubspot',
 	'huggingface',
 	'humanitix',
 	'hunterio',
+	'hyperbrowser',
+	'ignisign',
 	'imagekit',
 	'imagior',
 	'imejisio',
 	'imgbb',
+	'imgix',
 	'inboxkit',
 	'insightoai',
 	'instagram',
@@ -347,6 +367,7 @@ export const BaseProviders = [
 	'kling',
 	'knack',
 	'kofi',
+	'kommo',
 	'kontentai',
 	'krakenio',
 	'leexi',
@@ -357,6 +378,7 @@ export const BaseProviders = [
 	'linguapop',
 	'linkedin',
 	'litescrape',
+	'livesession',
 	'loyverse',
 	'magichour',
 	'mailboxlayer',
@@ -364,21 +386,28 @@ export const BaseProviders = [
 	'mailchimp',
 	'mailsso',
 	'mailtrap',
+	'make',
 	'mapbox',
 	'marketstack',
 	'melo',
 	'mem0',
+	'memberstack',
 	'memberspot',
 	'merriamwebsterdict',
+	'minerstat',
 	'minimax',
 	'miro',
 	'missive',
 	'mixmax',
 	'monday',
+	'mondaymcp',
+	'moonclerk',
+	'motion',
 	'mrscraper',
 	'nanonets',
 	'neon',
 	'netsuite',
+	'neverbounce',
 	'nextdns',
 	'northflank',
 	'notion',
@@ -399,7 +428,9 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'parallel',
 	'parseur',
+	'pdfapi',
 	'pdfco',
 	'pdfmonkey',
 	'pdl',
@@ -409,10 +440,21 @@ export const BaseProviders = [
 	'placid',
 	'plain',
 	'ploid',
+	'pointagram',
+	'polygon',
+	'polygonio',
+	'postalytics',
+	'postgrid',
+	'postiz',
+	'postmark',
+	'prerender',
+	'prismic',
+	'proabono',
 	'posthog',
 	'postman',
 	'prisma',
 	'pushbullet',
+	'pushover',
 	'qdrant',
 	'quaderno',
 	'radar',
@@ -422,7 +464,6 @@ export const BaseProviders = [
 	'razorpay',
 	'realphonevalidation',
 	'reamaze',
-	'route4me',
 	'recallai',
 	'recruitee',
 	'redcircle',
@@ -455,6 +496,7 @@ export const BaseProviders = [
 	'rollbar',
 	'rootly',
 	'rosette',
+	'route4me',
 	'rudderstacktransform',
 	'runpod',
 	'salesflare',
@@ -470,12 +512,17 @@ export const BaseProviders = [
 	'search1api',
 	'securitytrails',
 	'semanticscholar',
+	'sendbird',
 	'sendgrid',
 	'sentry',
 	'serpapi',
+	'servicem8',
 	'servicenow',
+	'sevdesk',
 	'sharepoint',
 	'shippo',
+	'shortcut',
+	'shortio',
 	'slack',
 	'slackbot',
 	'snapchat',
@@ -484,6 +531,7 @@ export const BaseProviders = [
 	'spoki',
 	'spotify',
 	'stackai',
+	'stackexchange',
 	'starton',
 	'strava',
 	'streamtime',
@@ -493,6 +541,7 @@ export const BaseProviders = [
 	'supadata',
 	'surf',
 	'suzanne',
+	'svix',
 	'synthflowai',
 	'taggun',
 	'tally',
@@ -501,6 +550,7 @@ export const BaseProviders = [
 	'teamcamp',
 	'teams',
 	'telegram',
+	'textit',
 	'textrazor',
 	'ticketmaster',
 	'ticktick',
@@ -519,6 +569,7 @@ export const BaseProviders = [
 	'tpscheck',
 	'trello',
 	'tripadvisor',
+	'trustpilot',
 	'turbotpipes',
 	'turso',
 	'twentyonerisk',
@@ -528,13 +579,13 @@ export const BaseProviders = [
 	'twochat',
 	'typeform',
 	'typesafe',
+	'u301',
 	'unione',
 	'unipile',
 	'unisender',
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
-	'u301',
 	'uptimerobot',
 	'userflow',
 	'userlist',
@@ -792,6 +843,7 @@ export const ProviderDisplayNames = {
 	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
+	docsbotai: 'DocsBot AI',
 	docsumo: 'Docsumo',
 	documenso: 'Documenso',
 	docupost: 'Docupost',
@@ -816,6 +868,7 @@ export const ProviderDisplayNames = {
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
+	erpnext: 'ERPNext',
 	esputnik: 'eSputnik',
 	eventbrite: 'Eventbrite',
 	eventee: 'Eventee',
@@ -836,6 +889,7 @@ export const ProviderDisplayNames = {
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
 	finage: 'Finage',
+	findymail: 'Findymail',
 	finerworks: 'FinerWorks',
 	finmei: 'Finmei',
 	fireberry: 'Fireberry',
@@ -860,10 +914,16 @@ export const ProviderDisplayNames = {
 	genderapiio: 'GenderAPI.io',
 	genderize: 'Genderize',
 	geoapify: 'Geoapify',
+	geocodio: 'Geocodio',
+	geokeo: 'Geokeo',
+	getprospect: 'GetProspect',
+	gigasheet: 'Gigasheet',
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
+	givebutter: 'Givebutter',
 	gladia: 'Gladia',
+	gleap: 'Gleap',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
 	gong: 'Gong',
@@ -871,6 +931,7 @@ export const ProviderDisplayNames = {
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googleclassroom: 'Google Classroom',
 	googlecloudvision: 'Google Cloud Vision',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
@@ -878,12 +939,17 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	googleslides: 'Google Slides',
+	googletasks: 'Google Tasks',
+	gorgias: 'Gorgias',
+	gosquared: 'GoSquared',
 	grafana: 'Grafana',
 	griptape: 'Griptape',
+	grist: 'Grist',
 	groqcloud: 'GroqCloud',
 	gumroad: 'Gumroad',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
+	handwrytten: 'Handwrytten',
 	happyscribe: 'Happy Scribe',
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
@@ -891,16 +957,21 @@ export const ProviderDisplayNames = {
 	heygen: 'HeyGen',
 	heyy: 'Heyy',
 	higgsfield: 'Higgsfield',
+	honeyhive: 'HoneyHive',
 	hookdeck: 'Hookdeck',
 	htmltoimage: 'HtmlToImage',
+	hubplanner: 'Hub Planner',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
 	humanitix: 'Humanitix',
 	hunterio: 'Hunter.io',
+	hyperbrowser: 'Hyperbrowser',
+	ignisign: 'Ignisign',
 	imagekit: 'ImageKit',
 	imagior: 'Imagior',
 	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
+	imgix: 'Imgix',
 	inboxkit: 'InboxKit',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
@@ -922,6 +993,7 @@ export const ProviderDisplayNames = {
 	kling: 'Kling',
 	knack: 'Knack',
 	kofi: 'Ko-fi',
+	kommo: 'Kommo',
 	kontentai: 'Kontent.ai',
 	krakenio: 'Kraken.io',
 	leexi: 'Leexi',
@@ -932,6 +1004,7 @@ export const ProviderDisplayNames = {
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
+	livesession: 'LiveSession',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
 	mailboxlayer: 'MailboxLayer',
@@ -939,21 +1012,28 @@ export const ProviderDisplayNames = {
 	mailchimp: 'Mailchimp',
 	mailsso: 'Mails.so',
 	mailtrap: 'Mailtrap',
+	make: 'Make',
 	mapbox: 'Mapbox',
 	marketstack: 'Marketstack',
 	melo: 'Melo',
 	mem0: 'Mem0',
+	memberstack: 'Memberstack',
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
+	minerstat: 'Minerstat',
 	minimax: 'MiniMax',
 	miro: 'Miro',
 	missive: 'Missive',
 	mixmax: 'Mixmax',
 	monday: 'Monday',
+	mondaymcp: 'Monday MCP',
+	moonclerk: 'MoonClerk',
+	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
+	neverbounce: 'NeverBounce',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
@@ -974,7 +1054,9 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	parallel: 'Parallel',
 	parseur: 'Parseur',
+	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
 	pdfmonkey: 'PDFMonkey',
 	pdl: 'People Data Labs',
@@ -984,17 +1066,27 @@ export const ProviderDisplayNames = {
 	placid: 'Placid',
 	plain: 'Plain',
 	ploid: 'Ploid',
+	pointagram: 'Pointagram',
+	polygon: 'Polygon OMS',
+	polygonio: 'Polygon.io',
+	postalytics: 'Postalytics',
+	postgrid: 'PostGrid',
+	postiz: 'Postiz',
+	postmark: 'Postmark',
+	prerender: 'Prerender',
+	prismic: 'Prismic',
+	proabono: 'ProAbono',
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
+	pushover: 'Pushover',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
 	radar: 'Radar',
 	ragic: 'Ragic',
 	raisely: 'Raisely',
 	ramp: 'Ramp',
-	route4me: 'Route4Me',
 	razorpay: 'Razorpay',
 	realphonevalidation: 'RealPhoneValidation',
 	reamaze: 'Re:amaze',
@@ -1030,6 +1122,7 @@ export const ProviderDisplayNames = {
 	rollbar: 'Rollbar',
 	rootly: 'Rootly',
 	rosette: 'Rosette',
+	route4me: 'Route4Me',
 	rudderstacktransform: 'RudderStack Transformations',
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
@@ -1045,12 +1138,17 @@ export const ProviderDisplayNames = {
 	search1api: 'Search1API',
 	securitytrails: 'SecurityTrails',
 	semanticscholar: 'Semantic Scholar',
+	sendbird: 'Sendbird',
 	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
+	servicem8: 'ServiceM8',
 	servicenow: 'ServiceNow',
+	sevdesk: 'Sevdesk',
 	sharepoint: 'SharePoint',
 	shippo: 'Shippo',
+	shortcut: 'Shortcut',
+	shortio: 'Short.io',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
@@ -1059,6 +1157,7 @@ export const ProviderDisplayNames = {
 	spoki: 'Spoki',
 	spotify: 'Spotify',
 	stackai: 'StackAI',
+	stackexchange: 'Stack Exchange',
 	starton: 'Starton',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
@@ -1068,6 +1167,7 @@ export const ProviderDisplayNames = {
 	supadata: 'Supadata',
 	surf: 'Surf',
 	suzanne: 'Suzanne',
+	svix: 'Svix',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
 	tally: 'Tally',
@@ -1076,6 +1176,7 @@ export const ProviderDisplayNames = {
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
 	telegram: 'Telegram',
+	textit: 'TextIt',
 	textrazor: 'TextRazor',
 	ticketmaster: 'Ticketmaster',
 	ticktick: 'TickTick',
@@ -1094,6 +1195,7 @@ export const ProviderDisplayNames = {
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
+	trustpilot: 'Trustpilot',
 	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
@@ -1103,13 +1205,13 @@ export const ProviderDisplayNames = {
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	typesafe: 'TypeSafe',
+	u301: 'U301',
 	unione: 'Unione',
 	unipile: 'Unipile',
 	unisender: 'Unisender',
 	uniswapapi: 'Uniswap',
 	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
-	u301: 'U301',
 	uptimerobot: 'UptimeRobot',
 	userflow: 'Userflow',
 	userlist: 'Userlist',
@@ -1374,6 +1476,7 @@ export type AllProviders =
 	| 'dnsfilter'
 	| 'dockerhub'
 	| 'docmosis'
+	| 'docsbotai'
 	| 'docsumo'
 	| 'documenso'
 	| 'docupost'
@@ -1398,6 +1501,7 @@ export type AllProviders =
 	| 'enigma'
 	| 'epicgames'
 	| 'esignatures'
+	| 'erpnext'
 	| 'esputnik'
 	| 'eventbrite'
 	| 'eventee'
@@ -1418,6 +1522,7 @@ export type AllProviders =
 	| 'filevine'
 	| 'filloutforms'
 	| 'finage'
+	| 'findymail'
 	| 'finerworks'
 	| 'finmei'
 	| 'fireberry'
@@ -1442,10 +1547,16 @@ export type AllProviders =
 	| 'genderapiio'
 	| 'genderize'
 	| 'geoapify'
+	| 'geocodio'
+	| 'geokeo'
+	| 'getprospect'
+	| 'gigasheet'
 	| 'giphy'
 	| 'github'
 	| 'gitlab'
+	| 'givebutter'
 	| 'gladia'
+	| 'gleap'
 	| 'gmail'
 	| 'gmicloud'
 	| 'gong'
@@ -1453,6 +1564,7 @@ export type AllProviders =
 	| 'googleanalytics'
 	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googleclassroom'
 	| 'googlecloudvision'
 	| 'googledocs'
 	| 'googledrive'
@@ -1460,12 +1572,17 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'googleslides'
+	| 'googletasks'
+	| 'gorgias'
+	| 'gosquared'
 	| 'grafana'
 	| 'griptape'
+	| 'grist'
 	| 'groqcloud'
 	| 'gumroad'
 	| 'habitica'
 	| 'hackernews'
+	| 'handwrytten'
 	| 'happyscribe'
 	| 'harvest'
 	| 'hashnode'
@@ -1473,16 +1590,21 @@ export type AllProviders =
 	| 'heygen'
 	| 'heyy'
 	| 'higgsfield'
+	| 'honeyhive'
 	| 'hookdeck'
 	| 'htmltoimage'
+	| 'hubplanner'
 	| 'hubspot'
 	| 'huggingface'
 	| 'humanitix'
 	| 'hunterio'
+	| 'hyperbrowser'
+	| 'ignisign'
 	| 'imagekit'
 	| 'imagior'
 	| 'imejisio'
 	| 'imgbb'
+	| 'imgix'
 	| 'inboxkit'
 	| 'insightoai'
 	| 'instagram'
@@ -1504,6 +1626,7 @@ export type AllProviders =
 	| 'kling'
 	| 'knack'
 	| 'kofi'
+	| 'kommo'
 	| 'kontentai'
 	| 'krakenio'
 	| 'leexi'
@@ -1514,6 +1637,7 @@ export type AllProviders =
 	| 'linguapop'
 	| 'linkedin'
 	| 'litescrape'
+	| 'livesession'
 	| 'loyverse'
 	| 'magichour'
 	| 'mailboxlayer'
@@ -1521,21 +1645,28 @@ export type AllProviders =
 	| 'mailchimp'
 	| 'mailsso'
 	| 'mailtrap'
+	| 'make'
 	| 'mapbox'
 	| 'marketstack'
 	| 'melo'
 	| 'mem0'
+	| 'memberstack'
 	| 'memberspot'
 	| 'merriamwebsterdict'
+	| 'minerstat'
 	| 'minimax'
 	| 'miro'
 	| 'missive'
 	| 'mixmax'
 	| 'monday'
+	| 'mondaymcp'
+	| 'moonclerk'
+	| 'motion'
 	| 'mrscraper'
 	| 'nanonets'
 	| 'neon'
 	| 'netsuite'
+	| 'neverbounce'
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'
@@ -1556,7 +1687,9 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'parallel'
 	| 'parseur'
+	| 'pdfapi'
 	| 'pdfco'
 	| 'pdfmonkey'
 	| 'pdl'
@@ -1566,10 +1699,21 @@ export type AllProviders =
 	| 'placid'
 	| 'plain'
 	| 'ploid'
+	| 'pointagram'
+	| 'polygon'
+	| 'polygonio'
+	| 'postalytics'
+	| 'postgrid'
+	| 'postiz'
+	| 'postmark'
+	| 'prerender'
+	| 'prismic'
+	| 'proabono'
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
 	| 'pushbullet'
+	| 'pushover'
 	| 'qdrant'
 	| 'quaderno'
 	| 'radar'
@@ -1579,7 +1723,6 @@ export type AllProviders =
 	| 'razorpay'
 	| 'realphonevalidation'
 	| 'reamaze'
-	| 'route4me'
 	| 'recallai'
 	| 'recruitee'
 	| 'redcircle'
@@ -1612,6 +1755,7 @@ export type AllProviders =
 	| 'rollbar'
 	| 'rootly'
 	| 'rosette'
+	| 'route4me'
 	| 'rudderstacktransform'
 	| 'runpod'
 	| 'salesflare'
@@ -1627,12 +1771,17 @@ export type AllProviders =
 	| 'search1api'
 	| 'securitytrails'
 	| 'semanticscholar'
+	| 'sendbird'
 	| 'sendgrid'
 	| 'sentry'
 	| 'serpapi'
+	| 'servicem8'
 	| 'servicenow'
+	| 'sevdesk'
 	| 'sharepoint'
 	| 'shippo'
+	| 'shortcut'
+	| 'shortio'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
@@ -1641,6 +1790,7 @@ export type AllProviders =
 	| 'spoki'
 	| 'spotify'
 	| 'stackai'
+	| 'stackexchange'
 	| 'starton'
 	| 'strava'
 	| 'streamtime'
@@ -1650,6 +1800,7 @@ export type AllProviders =
 	| 'supadata'
 	| 'surf'
 	| 'suzanne'
+	| 'svix'
 	| 'synthflowai'
 	| 'taggun'
 	| 'tally'
@@ -1658,6 +1809,7 @@ export type AllProviders =
 	| 'teamcamp'
 	| 'teams'
 	| 'telegram'
+	| 'textit'
 	| 'textrazor'
 	| 'ticketmaster'
 	| 'ticktick'
@@ -1676,6 +1828,7 @@ export type AllProviders =
 	| 'tpscheck'
 	| 'trello'
 	| 'tripadvisor'
+	| 'trustpilot'
 	| 'turbotpipes'
 	| 'turso'
 	| 'twentyonerisk'
@@ -1685,13 +1838,13 @@ export type AllProviders =
 	| 'twochat'
 	| 'typeform'
 	| 'typesafe'
+	| 'u301'
 	| 'unione'
 	| 'unipile'
 	| 'unisender'
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'
-	| 'u301'
 	| 'uptimerobot'
 	| 'userflow'
 	| 'userlist'
