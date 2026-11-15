@@ -1,0 +1,268 @@
+---
+title: "TRIGGERcmd API reference"
+sidebarTitle: "API"
+description: "API reference for the TRIGGERcmd plugin in Corsair: every `triggercmd.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Commands
+
+### history
+
+`commands.history`
+
+Read the run history of one command, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.triggercmd.api.commands.history({ command_id: 101 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `command_id` | `string \| number` | Yes | The command whose runs to read, from `commands.list` |
+
+Returns the newest runs first. Take `command_id` from `commands.list`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id?: string | number | null,
+  status?: string | null,
+  createdAt?: string | null,
+  command?: {
+    id?: string | number | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`commands.list`
+
+List the commands configured on every computer, with the computer each belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.triggercmd.api.commands.list({ computer_id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `computer_id` | `string \| number` | No | Only commands on this computer, from `computers.list` |
+
+This route is a POST. Pass `computer_id` to narrow to one computer.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  name?: string | null,
+  allowParams?: boolean | null,
+  icon?: string | null,
+  voice?: string | null,
+  ground?: string | null,
+  command?: string | null,
+  computer?: {
+    id?: string | number | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`commands.run`
+
+Run a configured command on one of the account's computers, with optional parameters
+
+**Risk:** `write`
+
+```ts
+await corsair.triggercmd.api.commands.run({ computer: 'laptop', trigger: 'notepad', params: 'MyNote' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `computer` | `string` | Yes | The computer's name, as `computers.list` reports it |
+| `trigger` | `string` | Yes | The command name, which is its trigger |
+| `params` | `string` | No | Only takes effect when the command has Allow Params on |
+
+The response acknowledges dispatch, not completion. Omit `params` rather than passing an empty string.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+## Computers
+
+### list
+
+`computers.list`
+
+List the computers the agent has registered
+
+**Risk:** `read`
+
+```ts
+await corsair.triggercmd.api.computers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  connected?: boolean | null,
+  platform?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Panels
+
+### list
+
+`panels.list`
+
+List the dashboard panel buttons and the parameters each carries
+
+**Risk:** `read`
+
+```ts
+await corsair.triggercmd.api.panels.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  params?: string | null,
+  panel?: {
+    id?: string | number | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trigger
+
+`panels.trigger`
+
+Press a panel button, which runs the command it is configured for
+
+**Risk:** `write`
+
+```ts
+await corsair.triggercmd.api.panels.trigger({ panel: 'Living room', button: 'Lights off' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `panel` | `string` | Yes | The panel name |
+| `button` | `string` | Yes | The button name within that panel |
+| `params` | `string` | No | Only for a button that takes them |
+
+Runs the command the button is configured for, with the button parameters.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+

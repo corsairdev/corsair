@@ -4701,6 +4701,14 @@
                 ]
               },
               {
+                "group": "TRIGGERcmd",
+                "pages": [
+                  "plugins/triggercmd/overview",
+                  "plugins/triggercmd/api",
+                  "plugins/triggercmd/database"
+                ]
+              },
+              {
                 "group": "Trello",
                 "pages": [
                   "plugins/trello/overview",

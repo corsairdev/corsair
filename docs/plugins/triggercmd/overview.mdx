@@ -1,0 +1,138 @@
+---
+title: "TRIGGERcmd plugin"
+sidebarTitle: "Overview"
+description: "List registered computers and their commands, run a command remotely, read run history, and press panel buttons."
+---
+
+Use **TRIGGERcmd** through Corsair: one client, typed API calls.
+
+Copy the token from the Instructions page at https://www.triggercmd.com/user/computer/create, which is also where a computer is registered. The plugin sends it as a Bearer token.
+
+Things to know:
+
+- **Commands live on your computers.** The cloud only stores their names and settings, so `commands.list` reports what each agent synced. Adding or editing a command happens in the agent's `commands.json`, not through this API.
+- **A trigger is not a completion.** `commands.run` acknowledges that the request was dispatched. Use `commands.history` to see whether it actually ran.
+- **Parameters need Allow Params.** A command runs without parameters unless the agent's Allow Params flag is on, and an empty `params` string is rejected here because it would pass an empty argument rather than omitting it.
+- **Panel buttons belong to the dashboard.** Each button is configured with the command and parameters it runs, so `panels.trigger` takes only the panel and button names.
+- **A 404 means the route is wrong.** A real route with a bad token answers 401 with `Invalid Token!`, so a 404 is a path error rather than an auth one.
+- **No webhooks.** The provider posts no events for command completion, so poll `commands.history`.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/triggercmd better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/triggercmd better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/triggercmd better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/triggercmd better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { triggercmd } from '@corsair-dev/triggercmd';
+
+export const corsair = createCorsair({
+	plugins: [
+		triggercmd(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the TRIGGERcmd API key before the first call: `pnpm corsair setup --plugin=triggercmd --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+triggercmd()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'triggercmd',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List your registered computers**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.triggercmd.api.computers.list({});
+```
+
+
+**Run notepad on the laptop, with a parameter**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.triggercmd.api.commands.run({ computer: 'laptop', trigger: 'notepad', params: 'MyNote' });
+```
+
+
+See the full list on the [API](/plugins/triggercmd/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/triggercmd/api">
+    Every `triggercmd.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
