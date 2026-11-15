@@ -1,0 +1,78 @@
+displayName: Simplesat
+description: Customer feedback from Simplesat - manage customers and team members, list surveys and questions, search and read responses and answers, correct an answer, and send a survey by email.
+domain: simplesat.io
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at app.simplesat.io under Settings, then API keys. Give it the scopes the operations you call need, and pass it as the plugin's `key` option or store it on the account; the plugin sends it as the `X-Simplesat-Token` header.
+
+  Things to know before you write:
+
+  - **A bad key is a 403, not a 401.** Simplesat answers `403 Invalid Token.` for a missing or unrecognised token on every route, so a 403 here is an auth problem rather than a permission one. The plugin treats both as auth failures.
+  - **Customer writes are upserts.** `customers.create` and `teamMembers.create` match an existing record on `external_id` or `email` rather than always inserting, so send one of them. The schema rejects a customer with neither, because Simplesat then has nothing to match against.
+  - **A bulk write is queued.** `customers.bulk` answers a `request_id` and a message, not the stored records, and the work happens afterwards.
+  - **Surveys are identified by token.** `surveys.email` takes the `survey_token` from `surveys.list`, not the numeric survey id.
+  - **Sending a survey notifies a real person.** `surveys.email` schedules an email, so it is a write.
+  - **Search and paging.** `answers.search` and `responses.search` are POSTs because they take a filter list and date range, but their pages come back as `next` links that are followed with a GET. Every list answers `{ next, previous, count, results }`, and `next` is a path you pass back unchanged.
+  - **A `next` link is checked before it is used.** Simplesat returns a full URL, and the plugin keeps only same-host paths, so the token never travels to another host.
+  - **A response create can update.** `responses.create` creates a response or updates the one that already matches it, and `created` backdates it, which is how a survey answered elsewhere is imported.
+examples:
+  read:
+    path: responses.search
+    title: Search responses for one customer
+    args:
+      created_start_date: '2024-01-01T00:00:00Z'
+      filters:
+        - key: customer.email
+          values:
+            - tester@simplesat.io
+          comparison: is
+  write:
+    path: customers.create
+    title: Upsert a customer by external id
+    args:
+      external_id: '12345'
+      email: tester@simplesat.io
+      name: Tester McTestFace
+apiExamples:
+  customers.list:
+    call: "{ page_size: 50, subscribed: true }"
+  customers.get:
+    call: "{ customer_id: '1' }"
+  customers.create:
+    call: "{ external_id: '12345', email: 'tester@simplesat.io', name: 'Tester McTestFace' }"
+  customers.update:
+    call: "{ customer_id: '1', name: 'Renamed', company: 'Simplesat' }"
+  customers.bulk:
+    call: "{ customers: [{ external_id: '1', email: 'a@example.com' }, { external_id: '2', email: 'b@example.com' }] }"
+  teamMembers.get:
+    call: "{ team_member_id: '1' }"
+  teamMembers.create:
+    call: "{ external_id: '1', email: 'tester@simplesat.io', name: 'Tester McTestFace' }"
+  surveys.list:
+    call: "{ name: 'CSAT' }"
+  surveys.email:
+    call: "{ survey_token: 'z_3OxYijnEkfZSt6hLKxCRxBlu4CPQ9feLUAW4Eaen4', customer: { email: 'tester@simplesat.io' } }"
+  questions.list:
+    call: "{ survey_id: 1 }"
+  answers.search:
+    call: "{ start_date: '2024-01-01T00:00:00Z', filters: [{ key: 'sentiment', values: ['positive'], comparison: 'is' }] }"
+  answers.get:
+    call: "{ answer_id: '1' }"
+  answers.update:
+    call: "{ answer_id: '1', sentiment: 'positive' }"
+  responses.search:
+    call: "{ created_start_date: '2024-01-01T00:00:00Z', filters: [{ key: 'customer.email', values: ['tester@simplesat.io'], comparison: 'is' }] }"
+  responses.create:
+    call: "{ survey_id: 1, answers: [{ question_id: 1, choice: '3', comment: 'Very slow!' }], customer: { email: 'tester@simplesat.io' } }"
+  responses.get:
+    call: "{ response_id: '1' }"
+  responses.update:
+    call: "{ response_id: '1', survey_id: 1, answers: [{ question_id: 1, sentiment: 'negative' }] }"
+apiNotes:
+  customers.create: 'An upsert: Simplesat matches on external_id or email rather than always inserting, so send one of them. The schema rejects a customer with neither.'
+  customers.bulk: 'Queued rather than applied: the answer carries a request_id and a message, not the stored records.'
+  surveys.email: 'Takes the survey_token from surveys.list, not the numeric survey id, and schedules a real email to the customer.'
+  answers.search: 'A POST because it takes a filter list and date range, but its next links are followed with a GET.'
+  responses.create: 'Creates a response or updates the one that already matches it. `created` backdates it, which is how a survey answered elsewhere is imported.'
+  customers.list: 'Pass the path from a previous page as next. Every list answers { next, previous, count, results }, and next is a same-host path the plugin checks before use.'
+  questions.list: 'Filter by survey_id, or by metric such as csat, to see the questions behind a survey.'
