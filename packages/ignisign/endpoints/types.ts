@@ -268,6 +268,14 @@ export const ApplicationContextSchema = z.object({
 	status: z.string().optional(),
 	appType: z.string().optional(),
 	ignisignApiVersion: z.string().optional(),
+	// `unknown` because IgniSign's application settings objects are large, versioned
+	// configuration trees; they are passed through as returned.
+	envSettings: z.record(z.string(), z.unknown()).optional(),
+	config: z.record(z.string(), z.unknown()).optional(),
+	settings: z.record(z.string(), z.unknown()).optional(),
+	// `unknown` because profile entries follow IgniSign's signer/signature profile models.
+	signerProfiles: z.array(z.unknown()).optional(),
+	signatureProfiles: z.array(z.unknown()).optional(),
 });
 export type ApplicationContext = z.infer<typeof ApplicationContextSchema>;
 
@@ -364,6 +372,7 @@ export const IgnisignEndpointInputSchemas = {
 			title: z.string().optional(),
 			description: z.string().optional(),
 			expirationDate: z.string().optional(),
+			expirationDateIsActivated: z.boolean().optional(),
 			language: z.string().optional(),
 			documentIds: z.array(z.string()).optional(),
 			signerIds: z.array(z.string()).optional(),

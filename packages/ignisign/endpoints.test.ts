@@ -620,6 +620,34 @@ describe('signerProfiles, applications, seal, logCapsules, & bareSignatures', ()
 		expect(result).toEqual(mockResponse);
 	});
 
+	it('applications.getContext: keeps settings and profile fields', async () => {
+		const mockResponse = {
+			appId: 'appId_1',
+			appName: 'My App',
+			envSettings: { DEVELOPMENT: { webhooks: [] } },
+			signerProfiles: [{ _id: 'prof_1' }],
+			signatureProfiles: [],
+			config: { maxSigners: 10 },
+			settings: { defaultLanguage: 'EN' },
+		};
+		mockedRequest.mockResolvedValue(mockResponse);
+		const result = await ApplicationsEndpoints.getContext(ctx, {});
+		expect(result).toEqual(mockResponse);
+	});
+
+	it('signatureRequests.update: passes expirationDateIsActivated through', async () => {
+		mockedRequest.mockResolvedValue({ _id: 'sr_1' });
+		await SignatureRequestsEndpoints.update(ctx, {
+			signatureRequestId: 'sr_1',
+			expirationDate: '2026-12-31T00:00:00.000Z',
+			expirationDateIsActivated: true,
+		});
+		expect(mockedRequest.mock.calls[0]?.[2]?.body).toEqual({
+			expirationDate: '2026-12-31T00:00:00.000Z',
+			expirationDateIsActivated: true,
+		});
+	});
+
 	it('applications.getContext: gets application context', async () => {
 		const mockResponse = { appId: 'appId_1', appName: 'My App' };
 		mockedRequest.mockResolvedValue(mockResponse);
