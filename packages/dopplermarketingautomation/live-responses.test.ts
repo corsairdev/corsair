@@ -155,7 +155,7 @@ describe('Doppler errors', () => {
 		const error = await endpoints.subscribers
 			.archive(context, {
 				accountName: 'owner@example.com',
-				email: 'customer@example.com',
+				email: "o'brien@example.com",
 			})
 			.catch((caught: unknown) => caught); // unknown: rejection value, inspected below
 		// Own fields plus message, serialized without a key filter so nested
@@ -163,7 +163,7 @@ describe('Doppler errors', () => {
 		const { message } = error as Error;
 		const serialized = JSON.stringify({ ...(error as object), message });
 		expect(serialized).toContain('[email]');
-		expect(serialized).not.toMatch(/customer(%40|@)example\.com/);
+		expect(serialized).not.toMatch(/brien|customer/);
 		expect(serialized).not.toMatch(/owner(%40|@)example\.com/);
 		expect(error).toMatchObject({ status: 403 });
 	});

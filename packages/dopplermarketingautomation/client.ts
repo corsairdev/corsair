@@ -16,7 +16,8 @@ export type DopplerRequestOptions = {
 	responseType?: 'json' | 'text' | 'bytes' | 'void';
 };
 
-const EMAIL = /[^\s/"'?&=<>]+(?:@|%40)[^\s/"'?&=<>]+/gi;
+// Apostrophes are allowed: o'brien@example.com is a valid address.
+const EMAIL = /[^\s/"?&=<>]+(?:@|%40)[^\s/"?&=<>]+/gi;
 /** Masks email addresses, raw or percent-encoded, in strings, arrays and objects. */
 // unknown: provider error bodies have no fixed shape; only strings are changed.
 function redactEmails<T>(value: T): T {
