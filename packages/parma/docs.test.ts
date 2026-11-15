@@ -29,13 +29,11 @@ test.each(['overview.mdx', 'api.mdx'])(
 	},
 );
 
-test('OAuth setup uses an application-managed access token, not a Hub client credential flow', () => {
+test('OAuth setup uses Hub client credentials, which the plugin refreshes from', () => {
 	const text = readFileSync(resolve(docsRoot, 'overview.mdx'), 'utf8');
 	const oauth = text.match(/<Tab title="OAuth 2\.0">([\s\S]*?)<\/Tab>/)?.[1];
 	expect(oauth).toBeDefined();
 	expect(oauth).toContain("authType: 'oauth_2'");
-	expect(oauth).toContain('PARMA_ACCESS_TOKEN');
-	expect(oauth).toContain('set_access_token');
-	expect(oauth).toMatch(/refresh/i);
-	expect(oauth).not.toMatch(/enter the \*\*client ID\*\*/);
+	expect(oauth).toMatch(/\*\*client ID\*\*/);
+	expect(oauth).not.toMatch(/does not implement the authorization flow/);
 });

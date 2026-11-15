@@ -10,7 +10,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { ParmaOperations as ops } from './endpoints';
 import {
 	ParmaEndpointInputSchemas as inputs,
@@ -141,6 +141,9 @@ export const parmaAuthConfig = {
 	oauth_2: { account: ['tenant_external_id'] },
 } as const satisfies PluginAuthConfig;
 const defaultAuthType = 'api_key' as const;
+const PARMA_AUTH_URL = 'https://app.parma.ai/oauth/authorize';
+// Parma access tokens last 7200 s; the same URL serves the refresh grant.
+const PARMA_TOKEN_URL = 'https://app.parma.ai/oauth/token';
 export type BaseParmaPlugin<T extends ParmaPluginOptions> = CorsairPlugin<
 	'parma',
 	typeof ParmaSchema,
@@ -165,6 +168,14 @@ export function parma<const T extends ParmaPluginOptions>(
 		authConfig: parmaAuthConfig,
 		schema: ParmaSchema,
 		options,
+		oauthConfig: {
+			providerName: 'Parma',
+			authUrl: PARMA_AUTH_URL,
+			tokenUrl: PARMA_TOKEN_URL,
+			scopes: ['full'],
+			// Parma registers each app's redirect URI by email (partner@parma.ai).
+			requiresRegisteredRedirect: true,
+		},
 		hooks: options.hooks,
 		endpoints: parmaEndpointsNested,
 		webhooks,
@@ -176,8 +187,10 @@ export function parma<const T extends ParmaPluginOptions>(
 			if (source === 'endpoint') {
 				if (options.key?.trim()) return options.key;
 				if (ctx.authType === 'oauth_2') {
-					const key = await ctx.keys.get_access_token();
-					if (key?.trim()) return key;
+					return getOAuthAccessToken(ctx, {
+						plugin: 'parma',
+						tokenUrl: PARMA_TOKEN_URL,
+					});
 				}
 				if (ctx.authType === 'api_key') {
 					const key = await ctx.keys.get_api_key();

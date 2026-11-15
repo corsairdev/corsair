@@ -39,15 +39,12 @@ pnpm add @corsair-dev/parma
 
 Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory to pick one.
 
-Both modes send a Bearer token. Set `key` to a Parma API token or OAuth access
-token, or use Corsair's credential store. OAuth authorization and token refresh
-must be handled by the application; the plugin does not refresh tokens itself,
-including when credentials are stored through Corsair Hub.
-To use stored OAuth credentials, configure `parma({ authType: 'oauth_2' })`
-and call `tenant.parma.keys.set_access_token(accessToken)` after initializing
-that tenant's key storage. Replace the stored token when your application
-refreshes it. Parma's Hub OAuth connect flow is not configured by this plugin;
-client ID and secret alone do not connect an account.
+Both modes send a Bearer token. Set `key` to a Parma API token, or use
+Corsair's credential store. For OAuth, Parma issues `client_id` and
+`client_secret` by email (partner@parma.ai) and registers your redirect URI;
+enter them in Hub or the credential store. Access tokens last two hours and the
+plugin refreshes them at `https://app.parma.ai/oauth/token` with the stored
+refresh token.
 Parma documents API tokens at https://app.parma.ai/api and the OAuth flow in its
 [API reference](https://developers.parma.ai/api-docs/index.html).
 
