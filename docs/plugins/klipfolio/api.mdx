@@ -1,0 +1,6662 @@
+---
+title: "Klipfolio API reference"
+sidebarTitle: "API"
+description: "API reference for the Klipfolio plugin in Corsair: every `klipfolio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clients
+
+### createClient
+
+`clients.createClient`
+
+Create Client on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.clients.createClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `setup \| trial \| active \| disabled` | No | — |
+| `seats` | `number` | No | — |
+| `custom_theme` | `boolean` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createClientSettings
+
+`clients.createClientSettings`
+
+Set Client Settings on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.clients.createClientSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `dpn.env.date.language.tag` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteClient
+
+`clients.deleteClient`
+
+Delete Client on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.clients.deleteClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteClientProperties
+
+`clients.deleteClientProperties`
+
+Delete Client Property on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.clients.deleteClientProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteClientShareRight
+
+`clients.deleteClientShareRight`
+
+Revoke Group Access to Client on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.clients.deleteClientShareRight({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enableDirectBillingClient
+
+`clients.enableDirectBillingClient`
+
+Switch a client to direct billing on Klipfolio (cannot be undone)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.clients.enableDirectBillingClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extendTrialClient
+
+`clients.extendTrialClient`
+
+Extend Trial on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.clients.extendTrialClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `days` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listClients
+
+`clients.listClients`
+
+List Clients on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.clients.listClients({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `status` | `setup \| trial \| active \| disabled` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  clients: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveClient
+
+`clients.retrieveClient`
+
+Get Client on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.clients.retrieveClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `full` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveClientFeatures
+
+`clients.retrieveClientFeatures`
+
+Get Client Features on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.clients.retrieveClientFeatures({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveClientProperties
+
+`clients.retrieveClientProperties`
+
+Get Client Properties on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.clients.retrieveClientProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveClientResources
+
+`clients.retrieveClientResources`
+
+Get Client Resources on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.clients.retrieveClientResources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `full` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveClientSettings
+
+`clients.retrieveClientSettings`
+
+Get Client Settings on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.clients.retrieveClientSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveClientShareRights
+
+`clients.retrieveClientShareRights`
+
+Get Client Share Rights on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.clients.retrieveClientShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setClientShareRights
+
+`clients.setClientShareRights`
+
+Update Client Share Rights on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.clients.setClientShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `groups` | `any[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateClient
+
+`clients.updateClient`
+
+Update Client on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.clients.updateClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `status` | `setup \| trial \| active \| disabled` | No | — |
+| `seats` | `number` | No | — |
+| `custom_theme` | `boolean` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateClientFeatures
+
+`clients.updateClientFeatures`
+
+Update Client Features on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.clients.updateClientFeatures({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `features` | `any[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateClientProperties
+
+`clients.updateClientProperties`
+
+Update Client Properties on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.clients.updateClientProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateClientResources
+
+`clients.updateClientResources`
+
+Update Client Resources on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.clients.updateClientResources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resources` | `any[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Datasources
+
+### createDatasource
+
+`datasources.createDatasource`
+
+Create Data Source on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.createDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `format` | `string` | No | — |
+| `connector` | `string` | No | — |
+| `refresh_interval` | `number` | No | — |
+| `properties` | `Record<string, any>` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createDatasourceInstances
+
+`datasources.createDatasourceInstances`
+
+Create Data Source Instance on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.createDatasourceInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | No | — |
+| `datasource_id` | `string` | Yes | — |
+| `properties` | `Record<string, any>` | No | — |
+| `no_refresh` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteDatasource
+
+`datasources.deleteDatasource`
+
+Delete Data Source on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.datasources.deleteDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteDatasourceInstances
+
+`datasources.deleteDatasourceInstances`
+
+Delete Data Source Instance on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.datasources.deleteDatasourceInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteDatasourceInstancesProperties
+
+`datasources.deleteDatasourceInstancesProperties`
+
+Delete Data Source Instance Property on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.datasources.deleteDatasourceInstancesProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteDatasourceProperties
+
+`datasources.deleteDatasourceProperties`
+
+Delete a Data Source Property on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.datasources.deleteDatasourceProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteDatasourceShareRight
+
+`datasources.deleteDatasourceShareRight`
+
+Delete Data Source Share Right on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.datasources.deleteDatasourceShareRight({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteInstancesDatasource
+
+`datasources.deleteInstancesDatasource`
+
+Delete Instances on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.datasources.deleteInstancesDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `last_access` | `string` | No | — |
+| `keep_latest_instance` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disableDatasource
+
+`datasources.disableDatasource`
+
+Disable a Data Source on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.disableDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enableDatasource
+
+`datasources.enableDatasource`
+
+Enable a Data Source on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.enableDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importDatasource
+
+`datasources.importDatasource`
+
+Import a Data Source on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.importDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDatasourceInstances
+
+`datasources.listDatasourceInstances`
+
+List Data Source Instances on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.datasources.listDatasourceInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `datasource_id` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  instances: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDatasources
+
+`datasources.listDatasources`
+
+List Data Sources on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.datasources.listDatasources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  datasources: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refreshDatasource
+
+`datasources.refreshDatasource`
+
+Refresh Multiple Data Sources on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.refreshDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | No | — |
+| `datasources` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refreshDatasourceInstances
+
+`datasources.refreshDatasourceInstances`
+
+Refresh a Data Source Instance on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.refreshDatasourceInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveDatasource
+
+`datasources.retrieveDatasource`
+
+Get Data Source on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.datasources.retrieveDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveDatasourceInstances
+
+`datasources.retrieveDatasourceInstances`
+
+Get Data Source Instance on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.datasources.retrieveDatasourceInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveDatasourceInstancesData
+
+`datasources.retrieveDatasourceInstancesData`
+
+Get Data Source Instance Data on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.datasources.retrieveDatasourceInstancesData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### retrieveDatasourceInstancesProperties
+
+`datasources.retrieveDatasourceInstancesProperties`
+
+Get Data Source Instance Properties on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.datasources.retrieveDatasourceInstancesProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveDatasourceProperties
+
+`datasources.retrieveDatasourceProperties`
+
+Get Data Source Properties on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.datasources.retrieveDatasourceProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveDatasourceShareRights
+
+`datasources.retrieveDatasourceShareRights`
+
+Get Data Source Share Rights on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.datasources.retrieveDatasourceShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setDatasourceShareRights
+
+`datasources.setDatasourceShareRights`
+
+Update Data Source Share Rights on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.setDatasourceShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `users` | `any[]` | No | — |
+| `groups` | `any[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDatasource
+
+`datasources.updateDatasource`
+
+Update Data Source on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.updateDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `refresh_interval` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDatasourceInstancesData
+
+`datasources.updateDatasourceInstancesData`
+
+Replace a data source instance's data on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.datasources.updateDatasourceInstancesData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `rawContent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDatasourceInstancesProperties
+
+`datasources.updateDatasourceInstancesProperties`
+
+Create or Update Data Source Instance Properties on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.updateDatasourceInstancesProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `properties` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDatasourceProperties
+
+`datasources.updateDatasourceProperties`
+
+Create or Update Data Source Properties on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.datasources.updateDatasourceProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `properties` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### addGroupDefaultTabs
+
+`groups.addGroupDefaultTabs`
+
+Add Dashboard to Group on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.groups.addGroupDefaultTabs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `tab_id` | `string` | No | — |
+| `can_edit` | `boolean` | No | — |
+| `visibility` | `library \| dashboard \| permanent` | No | — |
+| `index` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createGroup
+
+`groups.createGroup`
+
+Create Group on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.groups.createGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteGroup
+
+`groups.deleteGroup`
+
+Delete Group on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.groups.deleteGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteGroupDefaultTab
+
+`groups.deleteGroupDefaultTab`
+
+Delete Group Default Tab on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.groups.deleteGroupDefaultTab({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `id2` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteGroupUser
+
+`groups.deleteGroupUser`
+
+Delete User from Group on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.groups.deleteGroupUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `id2` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGroups
+
+`groups.listGroups`
+
+List Groups on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.groups.listGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  groups: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveGroup
+
+`groups.retrieveGroup`
+
+Get Group on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.groups.retrieveGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `full` | `boolean` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveGroupDefaultTab
+
+`groups.retrieveGroupDefaultTab`
+
+Get Group Default Tab on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.groups.retrieveGroupDefaultTab({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `id2` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveGroupDefaultTabs
+
+`groups.retrieveGroupDefaultTabs`
+
+List Group Default Tabs on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.groups.retrieveGroupDefaultTabs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tabs: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveGroupUsers
+
+`groups.retrieveGroupUsers`
+
+List Users in Group on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.groups.retrieveGroupUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  users: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateGroup
+
+`groups.updateGroup`
+
+Update Group on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.groups.updateGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateGroupDefaultTab
+
+`groups.updateGroupDefaultTab`
+
+Update Group Default Tab on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.groups.updateGroupDefaultTab({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `id2` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `can_edit` | `boolean` | No | — |
+| `visibility` | `library \| dashboard \| permanent` | No | — |
+| `index` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateGroupUser
+
+`groups.updateGroupUser`
+
+Add User to Group on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.groups.updateGroupUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `userid` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Klips
+
+### createKlip
+
+`klips.createKlip`
+
+Create Klip on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.klips.createKlip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `schema` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createKlipAnnotations
+
+`klips.createKlipAnnotations`
+
+Create annotation on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.klips.createKlipAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteKlip
+
+`klips.deleteKlip`
+
+Delete Klip on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.klips.deleteKlip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteKlipAnnotation
+
+`klips.deleteKlipAnnotation`
+
+Delete annotation on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.klips.deleteKlipAnnotation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `annotationId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteKlipShareRights
+
+`klips.deleteKlipShareRights`
+
+Delete Klip share rights on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.klips.deleteKlipShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importKlip
+
+`klips.importKlip`
+
+Import Klip to client account on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.klips.importKlip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listKlips
+
+`klips.listKlips`
+
+List Klips on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.klips.listKlips({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `datasource_id` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  klips: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveKlip
+
+`klips.retrieveKlip`
+
+Get Klip on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.klips.retrieveKlip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `full` | `boolean` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveKlipAnnotation
+
+`klips.retrieveKlipAnnotation`
+
+Get one annotation on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.klips.retrieveKlipAnnotation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `annotationId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveKlipAnnotations
+
+`klips.retrieveKlipAnnotations`
+
+List annotations on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.klips.retrieveKlipAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveKlipClientInstances
+
+`klips.retrieveKlipClientInstances`
+
+Get Klip Client Instances on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.klips.retrieveKlipClientInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveKlipSchema
+
+`klips.retrieveKlipSchema`
+
+Get Klip schema on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.klips.retrieveKlipSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveKlipShareRights
+
+`klips.retrieveKlipShareRights`
+
+Get Klip share rights on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.klips.retrieveKlipShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setKlipShareRights
+
+`klips.setKlipShareRights`
+
+Update Klip share rights on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.klips.setKlipShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `groups` | `Record<string, any>[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFromParentKlip
+
+`klips.updateFromParentKlip`
+
+Update client instance from parent (update_from_parent) on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.klips.updateFromParentKlip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateKlip
+
+`klips.updateKlip`
+
+Update Klip on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.klips.updateKlip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `klip_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateKlipAnnotation
+
+`klips.updateKlipAnnotation`
+
+Update annotation on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.klips.updateKlipAnnotation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `annotationId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateKlipSchema
+
+`klips.updateKlipSchema`
+
+Update Klip schema on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.klips.updateKlipSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `wire_id` | `string` | Yes | — |
+| `workspace` | `object` | Yes | — |
+| `components` | `Record<string, any>[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  datasources: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Misc
+
+### createDashboardPublishedLinks
+
+`misc.createDashboardPublishedLinks`
+
+Create published link on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.misc.createDashboardPublishedLinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboardId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `password` | `string` | No | — |
+| `isPublic` | `boolean` | No | — |
+| `theme` | `light \| dark` | No | — |
+| `logo` | `string` | No | — |
+| `social` | `boolean` | No | — |
+| `wantsAdvertising` | `boolean` | No | — |
+| `useIpRanges` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteDashboardPublishedLinks
+
+`misc.deleteDashboardPublishedLinks`
+
+Delete published link on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.misc.deleteDashboardPublishedLinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publishedLinkId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDashboardPublishedLinks
+
+`misc.listDashboardPublishedLinks`
+
+Get published link(s) on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.misc.listDashboardPublishedLinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `dashboard_id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  published_links: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveProfile
+
+`misc.retrieveProfile`
+
+Get profile on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.misc.retrieveProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `full` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDashboardPublishedLinks
+
+`misc.updateDashboardPublishedLinks`
+
+Update published link on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.misc.updateDashboardPublishedLinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publishedLinkId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `password` | `string` | No | — |
+| `isPublic` | `boolean` | No | — |
+| `theme` | `light \| dark` | No | — |
+| `logo` | `string` | No | — |
+| `social` | `boolean` | No | — |
+| `wantsAdvertising` | `boolean` | No | — |
+| `useIpRanges` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Roles
+
+### createRole
+
+`roles.createRole`
+
+Create role on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.roles.createRole({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `permissions` | `any[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteRole
+
+`roles.deleteRole`
+
+Delete role on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.roles.deleteRole({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteRolePermissions
+
+`roles.deleteRolePermissions`
+
+Remove role permission on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.roles.deleteRolePermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteRoleUser
+
+`roles.deleteRoleUser`
+
+Delete user from role on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.roles.deleteRoleUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `userid` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRoles
+
+`roles.listRoles`
+
+List roles on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.roles.listRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  roles: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveRole
+
+`roles.retrieveRole`
+
+Get role on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.roles.retrieveRole({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `full` | `boolean` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveRolePermissions
+
+`roles.retrieveRolePermissions`
+
+Get role permissions on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.roles.retrieveRolePermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveRoleUsers
+
+`roles.retrieveRoleUsers`
+
+List users for role on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.roles.retrieveRoleUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRole
+
+`roles.updateRole`
+
+Update role on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.roles.updateRole({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `permissions` | `any[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRolePermissions
+
+`roles.updateRolePermissions`
+
+Update role permissions on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.roles.updateRolePermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `permissions` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRoleUser
+
+`roles.updateRoleUser`
+
+Add user to role on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.roles.updateRoleUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tabs
+
+### createTab
+
+`tabs.createTab`
+
+Create tab on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.tabs.createTab({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTab
+
+`tabs.deleteTab`
+
+Delete tab on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.tabs.deleteTab({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTabKlipInstance
+
+`tabs.deleteTabKlipInstance`
+
+Delete Klip from tab on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.tabs.deleteTabKlipInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `klipInstanceId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTabShareRight
+
+`tabs.deleteTabShareRight`
+
+Revoke group access to tab on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.tabs.deleteTabShareRight({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importTab
+
+`tabs.importTab`
+
+Import tab to client account on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.tabs.importTab({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `tab_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTabs
+
+`tabs.listTabs`
+
+List tabs on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.tabs.listTabs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tabs: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveTab
+
+`tabs.retrieveTab`
+
+Get tab on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.tabs.retrieveTab({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `full` | `boolean` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveTabKlipInstances
+
+`tabs.retrieveTabKlipInstances`
+
+List Klip instances on tab on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.tabs.retrieveTabKlipInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  klip_instances: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveTabLayout
+
+`tabs.retrieveTabLayout`
+
+Get tab layout on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.tabs.retrieveTabLayout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveTabShareRights
+
+`tabs.retrieveTabShareRights`
+
+Get tab share rights on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.tabs.retrieveTabShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setTabShareRights
+
+`tabs.setTabShareRights`
+
+Update tab share rights on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.tabs.setTabShareRights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `groups` | `Record<string, any>[]` | No | — |
+| `users` | `Record<string, any>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTab
+
+`tabs.updateTab`
+
+Update tab on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.tabs.updateTab({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTabKlipInstances
+
+`tabs.updateTabKlipInstances`
+
+Add Klip to tab on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.tabs.updateTabKlipInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `klips` | `Record<string, any>[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTabLayout
+
+`tabs.updateTabLayout`
+
+Replace a tab layout on Klipfolio (Klips left out are removed)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.tabs.updateTabLayout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `state` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### createUser
+
+`users.createUser`
+
+Create User on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.users.createUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `send_email` | `boolean` | No | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `roles` | `any[]` | Yes | — |
+| `email` | `string` | Yes | — |
+| `password` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteUser
+
+`users.deleteUser`
+
+Delete User on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.users.deleteUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteUserGroup
+
+`users.deleteUserGroup`
+
+Delete user from group on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.users.deleteUserGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteUserProperties
+
+`users.deleteUserProperties`
+
+Delete user property on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.users.deleteUserProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteUserRole
+
+`users.deleteUserRole`
+
+Delete user from role on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.users.deleteUserRole({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `roleid` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteUserTabInstance
+
+`users.deleteUserTabInstance`
+
+Delete user tab instance on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.users.deleteUserTabInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `tabInstanceId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUsers
+
+`users.listUsers`
+
+Get Users on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.users.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `client_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `full` | `boolean` | No | — |
+| `include_roles` | `boolean` | No | — |
+| `include_groups` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  users: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resendInviteUser
+
+`users.resendInviteUser`
+
+Resend the invitation email to a user on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.users.resendInviteUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resetPasswordUser
+
+`users.resetPasswordUser`
+
+Reset a user's password on Klipfolio
+
+**Risk:** `destructive`
+
+```ts
+await corsair.klipfolio.api.users.resetPasswordUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveUser
+
+`users.retrieveUser`
+
+Get User by ID on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.users.retrieveUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `full` | `boolean` | No | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveUserGroups
+
+`users.retrieveUserGroups`
+
+Get user groups on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.users.retrieveUserGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveUserProperties
+
+`users.retrieveUserProperties`
+
+Get user properties on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.users.retrieveUserProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveUserRoles
+
+`users.retrieveUserRoles`
+
+Get user roles on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.users.retrieveUserRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveUserTabInstances
+
+`users.retrieveUserTabInstances`
+
+Get user tab instances on Klipfolio
+
+**Risk:** `read`
+
+```ts
+await corsair.klipfolio.api.users.retrieveUserTabInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUser
+
+`users.updateUser`
+
+Update User on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.users.updateUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUserGroup
+
+`users.updateUserGroup`
+
+Add user to group on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.users.updateUserGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `can_edit` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUserProperties
+
+`users.updateUserProperties`
+
+Update user properties on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.users.updateUserProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `properties` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUserRole
+
+`users.updateUserRole`
+
+Assign user to role on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.users.updateUserRole({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `roleId` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `wire_id` | `any[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUserTabInstances
+
+`users.updateUserTabInstances`
+
+Add tabs to user on Klipfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.klipfolio.api.users.updateUserTabInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `tab_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status: number,
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
