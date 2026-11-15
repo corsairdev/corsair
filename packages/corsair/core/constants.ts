@@ -263,6 +263,7 @@ export const BaseProviders = [
 	'filevine',
 	'filloutforms',
 	'finage',
+	'findymail',
 	'finerworks',
 	'finmei',
 	'fireberry',
@@ -877,6 +878,7 @@ export const ProviderDisplayNames = {
 	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
 	finage: 'Finage',
+	findymail: 'Findymail',
 	finerworks: 'FinerWorks',
 	finmei: 'Finmei',
 	fireberry: 'Fireberry',
@@ -1498,6 +1500,7 @@ export type AllProviders =
 	| 'filevine'
 	| 'filloutforms'
 	| 'finage'
+	| 'findymail'
 	| 'finerworks'
 	| 'finmei'
 	| 'fireberry'
