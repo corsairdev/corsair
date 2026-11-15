@@ -186,12 +186,24 @@ describe('sanitizeData', () => {
 			safeField: 'visible',
 		};
 		expect(sanitizeData(sensitiveObj)).toEqual({
-			email: 'test@example.com',
+			email: '[REDACTED_EMAIL]',
 			apiKey: '[REDACTED]',
 			token: '[REDACTED]',
 			authSecret: '[REDACTED]',
 			privateKey: '[REDACTED]',
 			safeField: 'visible',
+		});
+	});
+
+	it('removes email addresses from provider error messages', () => {
+		expect(
+			sanitizeData({
+				message: 'Signer jane.doe+x@example.co.uk already exists',
+				context: { emails: ['a@b.io'] },
+			}),
+		).toEqual({
+			message: 'Signer [REDACTED_EMAIL] already exists',
+			context: { emails: ['[REDACTED_EMAIL]'] },
 		});
 	});
 });
@@ -286,6 +298,21 @@ describe('makeIgnisignBinaryRequest', () => {
 		});
 		expect(fetchSpy).toHaveBeenCalledTimes(2);
 		jest.useRealTimers();
+	});
+
+	it('returns the 429 at once when Retry-After is longer than the wait budget', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response(null, {
+				status: 429,
+				statusText: 'Too Many Requests',
+				headers: { 'retry-after': '120' },
+			}),
+		);
+
+		await expect(
+			makeIgnisignBinaryRequest('/v4/documents/doc_1/file', 'sk_test_key'),
+		).rejects.toMatchObject({ status: 429, retryAfter: 120_000 });
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
 	});
 
 	it('does not retry a POST binary request after 429', async () => {

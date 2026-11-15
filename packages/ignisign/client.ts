@@ -91,13 +91,16 @@ const SENSITIVE_FIELD_NAMES = new Set([
 	'authsecret',
 ]);
 
+// Signer and user email addresses echoed back in provider errors.
+const EMAIL_PATTERN = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+
 // `unknown` because untrusted input is inspected recursively before narrowing.
 export function sanitizeData(value: unknown): unknown {
 	if (value === null || value === undefined) {
 		return value;
 	}
 	if (typeof value === 'string') {
-		return value;
+		return value.replace(EMAIL_PATTERN, '[REDACTED_EMAIL]');
 	}
 	if (typeof value === 'number' || typeof value === 'boolean') {
 		return value;
@@ -303,10 +306,13 @@ export async function makeIgnisignBinaryRequest(
 			response.status === 429
 				? parseRetryAfterMs(response.headers.get('retry-after'))
 				: undefined;
+		// A Retry-After longer than our wait budget: give the 429 back rather than
+		// spending the retries before the provider allows another request.
 		const canRetry =
 			method === 'GET' &&
 			response.status === 429 &&
-			attempt < BINARY_MAX_RETRIES;
+			attempt < BINARY_MAX_RETRIES &&
+			(retryAfter === undefined || retryAfter <= BINARY_MAX_RETRY_DELAY_MS);
 
 		// Best-effort body cancellation so stream is released.
 		// `unknown` because cancellation rejection has no static type.
@@ -314,10 +320,7 @@ export async function makeIgnisignBinaryRequest(
 
 		if (canRetry) {
 			const fallbackDelay = 250 * 2 ** attempt;
-			const delay = Math.min(
-				retryAfter ?? fallbackDelay,
-				BINARY_MAX_RETRY_DELAY_MS,
-			);
+			const delay = retryAfter ?? fallbackDelay;
 			await new Promise<void>((resolve) => setTimeout(resolve, delay));
 			continue;
 		}
