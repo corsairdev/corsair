@@ -22,27 +22,26 @@ import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
-	const body = await request.text();
-	const headers = Object.fromEntries(request.headers);
-	const query = Object.fromEntries(new URL(request.url).searchParams);
-	const result = await processWebhook(corsair, headers, body, query);
-	return Response.json(result.response ?? { success: false }, {
-		status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
-	});
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
-
-`Response.json`, not `result.response` on its own: the latter is a plain object, and returning it makes even a handled delivery fail when Next.js tries to serialize the reply.
-
-Read the body as text, not `request.json()`. HMAC verification runs over the exact bytes Shippo signed, so a re-serialized body never matches; the handler needs the raw string.
-
-Pass the query through as the fourth argument. Shippo's delivery carries no account id, so a subscription URL like `?tenantId=acme` is the only way to route a delivery to a tenant; without it every delivery runs under `default`. That URL parameter is also one of Shippo's own security options, alongside an IP allowlist and HMAC.
-
-## Verifying deliveries
-
-Shippo supports **optional HMAC**, arranged with their support team rather than through `POST /webhooks`. When a secret is configured — `webhookSecret` on the plugin, or stored with `set_webhook_signature` — this plugin verifies the `Shippo-Auth-Signature` header on every delivery before any hook runs: SHA-256 over `<timestamp>.<raw body>`, compared in constant time, and a mismatch throws so the delivery is refused.
-
-With no secret configured, deliveries are accepted unsigned and the handler returns `signatureVerified: false`, so an unverified delivery is visible rather than silently trusted.
 
 ## Events
 

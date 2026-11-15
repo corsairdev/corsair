@@ -4,11 +4,7 @@ sidebarTitle: "Webhooks"
 description: "Sanity incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
-The Sanity plugin handles Sanity's GROQ-powered document webhooks. Create one with `webhooks.create`, or under **API > Webhooks** at [sanity.io/manage](https://www.sanity.io/manage), point its URL at your Corsair HTTP handler, and give it a secret. Each Sanity webhook has its own secret. Store the same value with `corsair.sanity.keys.set_webhook_signature(secret)`. Corsair keeps one secret per tenant, so all of one tenant's webhooks must share it, and different tenants should use different secrets. `sanity({ webhookSecret })` covers accounts with no stored secret, and a stored one takes precedence. Use that option only in a single-tenant app. Every tenant without a stored secret falls back to it, and then a delivery signed for one tenant also verifies under another's `tenantId`.
-
-Only signed deliveries are accepted. If no secret is set, or a delivery fails verification, `processWebhook` reports a failure and no hook runs after it. The handler below then answers 500, and Sanity retries twice, 30 seconds apart. Signatures more than 15 minutes from now are refused. Deliveries can repeat, so deduplicate by `idempotencyKey`.
-
-On Corsair's cloud, Hub routes each delivery by its `sanity-project-id` header to the account that stored that project id. In your own handler, `processWebhook` takes the tenant from `?tenantId=` and uses `default` without it. In a multi-tenant app, put `?tenantId=<tenant>` on each tenant's webhook URL. The handler below forwards the query to `processWebhook`. The signature covers the body but not the URL or the headers, so give every tenant's webhook its own secret. A delivery replayed under another `tenantId` then fails that tenant's check. A `before` hook runs ahead of the signature check, so it can receive an unsigned or forged delivery. Keep side effects in `after`.
+The Sanity plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/sanity/overview) for setup context and the exact URL shape).
 
 <Info>
 **New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
@@ -27,15 +23,22 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    // The raw text: Sanity signs the exact bytes it sent, so don't parse it first.
-    const body = await request.text();
-    // The query carries ?tenantId=, which picks the tenant's signing secret.
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
     const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
     const result = await processWebhook(corsair, headers, body, query);
-    // Answer 500 when processing failed (no signing secret, or a delivery
-    // that failed verification). Sanity retries a 5xx and a 429, never another 4xx.
-    return Response.json(result.response ?? { success: false }, {
-        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
     });
 }
 ```

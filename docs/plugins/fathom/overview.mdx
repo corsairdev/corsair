@@ -1,0 +1,136 @@
+---
+title: "Fathom plugin"
+sidebarTitle: "Overview"
+description: "Privacy-focused web analytics platform for tracking visitors, sites, milestones, and custom aggregation reports."
+---
+
+Use **Fathom** through Corsair: one client, typed API calls.
+
+Fathom Analytics provides simple, privacy-first website analytics without cookies or tracking personal data.
+To connect to the API, generate an API token from your Fathom dashboard under Settings -> API (or https://app.usefathom.com/api).
+Provide the API token as `key` or store it in your account keys under `api_key`.
+
+Things to know:
+- **Rate limits:** Fathom enforces both an hourly volume limit and a concurrency limit per account. When exceeded, the API returns HTTP 429 with a `Retry-After` header.
+- **Retired endpoints:** Fathom retired the Wipe endpoints and the event-by-ID endpoints (`events.create`, `events.get`, `events.update`, `events.delete`, `events.wipe`, `sites.wipe`); they return HTTP 410 Gone. Events now appear once your site tracks them: read them with `events.list` and set their currency with `events.setCurrency`. `events.deleteByName` only removes an event's currency setting; it does not delete the event or its completions. Wiping data is no longer possible through the API.
+- **Aggregation filtering:** Use `reports.aggregation` to query pageview or event analytics with flexible grouping and date ranges. Filters are structured objects matching supported operators (`is`, `is not`, `is like`, `is not like`, `matching`, `not matching`).
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/fathom better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/fathom better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/fathom better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/fathom better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { fathom } from '@corsair-dev/fathom';
+
+export const corsair = createCorsair({
+	plugins: [
+		fathom(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Fathom API key before the first call: `pnpm corsair setup --plugin=fathom --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+fathom()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'fathom',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List sites in Fathom**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fathom.api.sites.list({ limit: 10 });
+```
+
+
+**Create a new site in Fathom**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fathom.api.sites.create({ name: 'My Portfolio Website' });
+```
+
+
+See the full list on the [API](/plugins/fathom/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/fathom/api">
+    Every `fathom.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
