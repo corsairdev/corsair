@@ -1468,10 +1468,10 @@ export type ProjectId = z.infer<typeof ProjectIdSchema>;
 
 export const EmbeddingRequestSchema = z
 	.object({
-		hexUserAttributes: z.record(z.string()).optional(),
+		hexUserAttributes: z.record(z.string(), z.string()).optional(),
 		scope: z.array(z.string()).optional(),
 		// Hex input names and values are caller-defined serialized app state.
-		inputParameters: z.record(z.unknown()).optional(),
+		inputParameters: z.record(z.string(), z.unknown()).optional(),
 		expiresIn: z.number().optional(),
 		displayOptions: z
 			.object({
@@ -2268,7 +2268,7 @@ export type ProjectRunNotification = z.infer<
 export const RunProjectRequestBodySchema = z
 	.object({
 		// Published app input names and values are caller-defined serialized state.
-		inputParams: z.record(z.unknown()).optional(),
+		inputParams: z.record(z.string(), z.unknown()).optional(),
 		dryRun: z.boolean().optional(),
 		updateCache: z.boolean().optional(),
 		notifications: z.array(ProjectRunNotificationSchema).optional(),
@@ -3297,10 +3297,10 @@ export type DataConnectionsUpdateSchemaOutput = z.infer<
 export const embeddingCreatePresignedUrlInputSchema = z
 	.object({
 		projectId: ProjectIdSchema,
-		hexUserAttributes: z.record(z.string()).optional(),
+		hexUserAttributes: z.record(z.string(), z.string()).optional(),
 		scope: z.array(z.string()).optional(),
 		// Hex input names and values are caller-defined serialized app state.
-		inputParameters: z.record(z.unknown()).optional(),
+		inputParameters: z.record(z.string(), z.unknown()).optional(),
 		expiresIn: z.number().optional(),
 		displayOptions: z
 			.object({
@@ -3577,7 +3577,7 @@ export const projectRunsRunInputSchema = z
 	.object({
 		projectId: z.string(),
 		// Published app input names and values are caller-defined serialized state.
-		inputParams: z.record(z.unknown()).optional(),
+		inputParams: z.record(z.string(), z.unknown()).optional(),
 		dryRun: z.boolean().optional(),
 		updateCache: z.boolean().optional(),
 		notifications: z.array(ProjectRunNotificationSchema).optional(),
