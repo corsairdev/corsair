@@ -2548,7 +2548,7 @@ Replace a product image with binary data
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.products.images.update({ id: 1, data: Blob });
+await corsair.pipedrive.api.products.images.update({ id: 1, data: new Blob([await file.arrayBuffer()], { type: file.type }) });
 ```
 
 **Input**
@@ -2558,7 +2558,7 @@ await corsair.pipedrive.api.products.images.update({ id: 1, data: Blob });
 | `id` | `number` | Yes | — |
 | `data` | `custom` | Yes | — |
 
-OAuth requires products:full. Supply an actual Blob as data; the request sends the documented multipart/form-data binary field named data. The documented API token cost is 20 tokens.
+OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes; no portable binary literal is provided. The documented API token cost is 20 tokens.
 
 
 
@@ -2599,7 +2599,7 @@ Upload a binary image for a product
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.products.images.upload({ id: 1, data: Blob });
+await corsair.pipedrive.api.products.images.upload({ id: 1, data: new Blob([await file.arrayBuffer()], { type: file.type }) });
 ```
 
 **Input**
@@ -2609,7 +2609,7 @@ await corsair.pipedrive.api.products.images.upload({ id: 1, data: Blob });
 | `id` | `number` | Yes | — |
 | `data` | `custom` | Yes | — |
 
-OAuth requires products:full. Supply an actual Blob as data; the request sends the documented multipart/form-data binary field named data. The documented API token cost is 20 tokens.
+OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes; no portable binary literal is provided. The documented API token cost is 20 tokens.
 
 
 

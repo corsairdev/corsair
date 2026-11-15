@@ -1,7 +1,7 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "Pipedrive"
 description: "Manage selected Pipedrive v2 deals, contacts, activities, tasks, and product catalog operations with validated requests, responses, and cursor pagination."
-overviewNote: "This deliberately partial implementation covers selected list, get, create, update, delete, search, product-variation, image, and follower operations for deals, persons, organizations, activities, tasks, and products. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Reads require the resource's documented :read or :full OAuth scope; writes and deletes require its :full scope. Product image upload/update accept an actual Blob and send the documented multipart field data. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
+overviewNote: "This deliberately partial implementation covers selected list, get, create, update, delete, search, product-variation, image, and follower operations for deals, persons, organizations, activities, tasks, and products. Configure an API token or OAuth 2.0 credentials before making calls. API tokens use the x-api-token header. OAuth access tokens refresh automatically using Pipedrive's documented token endpoint; the app must have the requested resource :full scopes configured in Pipedrive. Product image upload/update accept a runtime Blob or File as data and send the documented multipart field. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
 examples:
   read:
     path: deals.get
@@ -76,8 +76,8 @@ apiNotes:
   products.variations.update: "OAuth requires products:full. The parent product ID and product_variation_id are both required; supplied prices require price and currency. The documented API token cost is 5 tokens."
   products.variations.delete: "OAuth requires products:full. This removes the specified product variation. The documented API token cost is 3 tokens."
   products.images.get: "OAuth requires products:read or products:full. The response is image metadata and a public URL, not image bytes; Pipedrive says the public URL is valid for 7 days. The documented API token cost is 10 tokens."
-  products.images.upload: "OAuth requires products:full. Supply an actual Blob as data; the request sends the documented multipart/form-data binary field named data. The documented API token cost is 20 tokens."
-  products.images.update: "OAuth requires products:full. Supply an actual Blob as data; the request sends the documented multipart/form-data binary field named data. The documented API token cost is 20 tokens."
+  products.images.upload: "OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes; no portable binary literal is provided. The documented API token cost is 20 tokens."
+  products.images.update: "OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes; no portable binary literal is provided. The documented API token cost is 20 tokens."
   products.images.delete: "OAuth requires products:full. This deletes the product's image. The documented API token cost is 6 tokens."
   products.followers.list: "OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
   products.followers.create: "OAuth requires products:full. The request body requires the user_id of the user to add as a follower. The documented API token cost is 5 tokens."
@@ -159,9 +159,9 @@ apiExamples:
   products.images.get:
     call: "{ id: 1 }"
   products.images.upload:
-    call: "{ id: 1, data: Blob }"
+    call: "{ id: 1, data: new Blob([await file.arrayBuffer()], { type: file.type }) }"
   products.images.update:
-    call: "{ id: 1, data: Blob }"
+    call: "{ id: 1, data: new Blob([await file.arrayBuffer()], { type: file.type }) }"
   products.images.delete:
     call: "{ id: 1 }"
   products.followers.list:

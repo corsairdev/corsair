@@ -6,7 +6,7 @@ description: "Manage selected Pipedrive v2 deals, contacts, activities, tasks, a
 
 Use **Pipedrive** through Corsair: one client, typed API calls.
 
-This deliberately partial implementation covers selected list, get, create, update, delete, search, product-variation, image, and follower operations for deals, persons, organizations, activities, tasks, and products. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Reads require the resource's documented :read or :full OAuth scope; writes and deletes require its :full scope. Product image upload/update accept an actual Blob and send the documented multipart field data. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled.
+This deliberately partial implementation covers selected list, get, create, update, delete, search, product-variation, image, and follower operations for deals, persons, organizations, activities, tasks, and products. Configure an API token or OAuth 2.0 credentials before making calls. API tokens use the x-api-token header. OAuth access tokens refresh automatically using Pipedrive's documented token endpoint; the app must have the requested resource :full scopes configured in Pipedrive. Product image upload/update accept a runtime Blob or File as data and send the documented multipart field. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled.
 
 **What you get:**
 

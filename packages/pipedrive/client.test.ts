@@ -5,6 +5,8 @@ import {
 	PIPEDRIVE_API_BASE,
 	PIPEDRIVE_RATE_LIMIT_CONFIG,
 } from './client';
+import type { PipedriveKeyBuilderContext } from './index';
+import { pipedrive } from './index';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -182,6 +184,124 @@ describe('Pipedrive HTTP client', () => {
 			if (!(rejection instanceof ApiError))
 				throw new Error('Expected ApiError');
 			expect(rejection.retryAfter).toBe(4000);
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('configures Pipedrive OAuth and refreshes expired and rejected access tokens', async () => {
+		const plugin = pipedrive({ authType: 'oauth_2' });
+		expect(plugin.oauthConfig).toEqual({
+			providerName: 'Pipedrive',
+			authUrl: 'https://oauth.pipedrive.com/oauth/authorize',
+			tokenUrl: 'https://oauth.pipedrive.com/oauth/token',
+			tokenAuthMethod: 'basic',
+			scopes: [
+				'deals:full',
+				'contacts:full',
+				'activities:full',
+				'projects:full',
+				'products:full',
+			],
+		});
+
+		let accessToken: string | null = 'expired-access-token';
+		let refreshToken: string | null = 'initial-refresh-token';
+		let expiresAt: string | null = '1';
+		const writes: string[] = [];
+		const keys = {
+			get_dek: async () => 'test-dek',
+			issue_new_dek: async () => 'test-dek',
+			get_access_token: async () => accessToken,
+			set_access_token: async (value: string) => {
+				accessToken = value;
+				writes.push(`access:${value}`);
+			},
+			get_refresh_token: async () => refreshToken,
+			set_refresh_token: async (value: string) => {
+				refreshToken = value;
+				writes.push(`refresh:${value}`);
+			},
+			get_expires_at: async () => expiresAt,
+			set_expires_at: async (value: string) => {
+				expiresAt = value;
+				writes.push('expires');
+			},
+			get_scope: async () => null,
+			set_scope: async () => undefined,
+			get_integration_credentials: async () => ({
+				client_id: 'pipedrive-client-id',
+				client_secret: 'pipedrive-client-secret',
+				redirect_url: null,
+			}),
+		} satisfies PipedriveKeyBuilderContext['keys'];
+		const context = {
+			authType: 'oauth_2',
+			options: { authType: 'oauth_2' },
+			tenantId: 'test-tenant',
+			keys,
+		} satisfies PipedriveKeyBuilderContext;
+		const originalFetch = globalThis.fetch;
+		const requests: { url: string; init: RequestInit }[] = [];
+		const responseBodies = [
+			{
+				access_token: 'fresh-access-token',
+				refresh_token: 'rotated-refresh-token',
+				expires_in: 3600,
+			},
+			{
+				access_token: 'forced-access-token',
+				refresh_token: 'second-rotated-refresh-token',
+				expires_in: 3600,
+			},
+		];
+		globalThis.fetch = async (input, init) => {
+			requests.push({ url: String(input), init: init ?? {} });
+			const body = responseBodies.shift();
+			if (!body) throw new Error('Unexpected extra OAuth refresh request');
+			return new Response(JSON.stringify(body), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		};
+		try {
+			await expect(plugin.keyBuilder(context, 'endpoint')).resolves.toBe(
+				'fresh-access-token',
+			);
+			expect(requests).toHaveLength(1);
+			expect(requests[0]?.url).toBe('https://oauth.pipedrive.com/oauth/token');
+			expect(new Headers(requests[0]?.init.headers).get('Authorization')).toBe(
+				`Basic ${Buffer.from(
+					'pipedrive-client-id:pipedrive-client-secret',
+				).toString('base64')}`,
+			);
+			expect(
+				Object.fromEntries(new URLSearchParams(String(requests[0]?.init.body))),
+			).toEqual({
+				grant_type: 'refresh_token',
+				refresh_token: 'initial-refresh-token',
+			});
+			expect(accessToken).toBe('fresh-access-token');
+			expect(refreshToken).toBe('rotated-refresh-token');
+			expect(writes).toContain('access:fresh-access-token');
+			expect(writes).toContain('refresh:rotated-refresh-token');
+
+			// `unknown` because the shared OAuth helper installs this internal hook dynamically.
+			const refreshAuth: unknown = Reflect.get(context, '_refreshAuth');
+			expect(typeof refreshAuth).toBe('function');
+			if (typeof refreshAuth !== 'function') {
+				throw new Error('Expected the OAuth helper to install a refresh hook');
+			}
+			await expect(refreshAuth()).resolves.toBe('forced-access-token');
+			expect(requests).toHaveLength(2);
+			expect(
+				Object.fromEntries(new URLSearchParams(String(requests[1]?.init.body))),
+			).toEqual({
+				grant_type: 'refresh_token',
+				refresh_token: 'rotated-refresh-token',
+			});
+			expect(accessToken).toBe('forced-access-token');
+			expect(refreshToken).toBe('second-rotated-refresh-token');
 		} finally {
 			globalThis.fetch = originalFetch;
 		}

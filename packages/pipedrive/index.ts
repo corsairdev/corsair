@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
 	Activities,
 	Deals,
@@ -512,6 +512,16 @@ export const pipedriveAuthConfig = {
 	oauth_2: {},
 } as const satisfies PluginAuthConfig;
 
+const PIPEDRIVE_OAUTH_AUTH_URL = 'https://oauth.pipedrive.com/oauth/authorize';
+const PIPEDRIVE_OAUTH_TOKEN_URL = 'https://oauth.pipedrive.com/oauth/token';
+const PIPEDRIVE_OAUTH_SCOPES = [
+	'deals:full',
+	'contacts:full',
+	'activities:full',
+	'projects:full',
+	'products:full',
+] as const;
+
 const defaultAuthType: AuthTypes = 'api_key';
 
 export type BasePipedrivePlugin<T extends PipedrivePluginOptions> =
@@ -547,6 +557,13 @@ export function pipedrive<const T extends PipedrivePluginOptions>(
 	return {
 		id: 'pipedrive',
 		authConfig: pipedriveAuthConfig,
+		oauthConfig: {
+			providerName: 'Pipedrive',
+			authUrl: PIPEDRIVE_OAUTH_AUTH_URL,
+			tokenUrl: PIPEDRIVE_OAUTH_TOKEN_URL,
+			tokenAuthMethod: 'basic',
+			scopes: [...PIPEDRIVE_OAUTH_SCOPES],
+		},
 		schema: PipedriveSchema,
 		options,
 		hooks: options.hooks,
@@ -559,10 +576,14 @@ export function pipedrive<const T extends PipedrivePluginOptions>(
 			if (source !== 'endpoint') return '';
 			if (options.key) return options.key;
 			if (!ctx.keys) throw new AuthMissingError('pipedrive', ctx.authType);
-			const credential =
-				ctx.authType === 'oauth_2'
-					? await ctx.keys.get_access_token()
-					: await ctx.keys.get_api_key();
+			if (ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'pipedrive',
+					tokenUrl: PIPEDRIVE_OAUTH_TOKEN_URL,
+					tokenAuthMethod: 'basic',
+				});
+			}
+			const credential = await ctx.keys.get_api_key();
 			if (!credential) throw new AuthMissingError('pipedrive', ctx.authType);
 			return credential;
 		},

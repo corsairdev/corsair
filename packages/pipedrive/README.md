@@ -10,7 +10,7 @@ pnpm add @corsair-dev/pipedrive
 
 ## Authentication
 
-Configure an API token or OAuth 2.0 access token. Pipedrive accepts API tokens in the `x-api-token` header and OAuth access tokens as Bearer authorization. Deal reads require `deals:read` or `deals:full`; person and organization reads require `contacts:read` or `contacts:full`; activity reads require `activities:read` or `activities:full`; task reads require `projects:read` or `projects:full`; product reads require `products:read` or `products:full` (search also accepts `search:read`). Corresponding writes and deletes require each resource's `:full` scope.
+Configure an API token or OAuth 2.0 credentials. Pipedrive accepts API tokens in the `x-api-token` header and OAuth access tokens as Bearer authorization. OAuth access tokens are refreshed automatically through Pipedrive's documented token endpoint; refresh requires the integration's client ID and secret plus the account's refresh token. Configure the Pipedrive app with the resource `:full` scopes used by the implemented write-capable operations (`deals:full`, `contacts:full`, `activities:full`, `projects:full`, and `products:full`). Those scopes also grant reads for their resource. Product image upload/update inputs must be actual runtime `Blob` or `File` values; the API sends their bytes in Pipedrive's multipart `data` field.
 
 ## Implemented operations
 
