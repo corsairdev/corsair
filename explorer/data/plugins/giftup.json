@@ -1,0 +1,3153 @@
+{
+  "id": "giftup",
+  "displayName": "Gift Up!",
+  "description": "Digital and physical gift card management, issuance, redemption, orders, and balances.",
+  "npmPackageName": "@corsair-dev/giftup",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 51,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "giftup.api.company.get",
+      "shortPath": "company.get",
+      "description": "Retrieve current company account profile and settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "onboardingCompleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "canShowCheckout",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isCheckoutLive",
+            "optional": true,
+            "type": "boolean | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.get",
+      "shortPath": "giftCards.get",
+      "description": "Retrieve details and remaining balance of a gift card by code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canBeRedeemed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hasExpired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "notYetValid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isVoided",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fulfilledOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipientName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backingType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "remainingValue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remainingUnits",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "initialValue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "initialUnits",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "equivalentValuePerUnit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "terms",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "validFrom",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "voidedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fulfilledBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null } | null"
+          },
+          {
+            "key": "postalFulfilment",
+            "optional": true,
+            "type": "{ address?: { countryCode?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, name?: string | null } | null, shippingOptionName?: string | null } | null"
+          },
+          {
+            "key": "emailFulfilment",
+            "optional": true,
+            "type": "{ emailAddress?: string | null, scheduledFor?: string | null } | null"
+          },
+          {
+            "key": "downloadLinks",
+            "optional": true,
+            "type": "{ artworkUrl?: string | null, imageUrl?: string | null, pdfUrl?: string | null, appleWalletUrl?: string | null, googleWalletUrl?: string | null } | null"
+          },
+          {
+            "key": "ledger",
+            "optional": true,
+            "type": "{ id: string, eventType?: string | null, eventOccuredOn?: string | null, eventOccuredAtLocationId?: string | null, units?: number | null, value?: number | null, whoEmail?: string | null, whoName?: string | null, reason?: string | null, metadata?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.list",
+      "shortPath": "giftCards.list",
+      "description": "List gift cards with status, date, order, SKU and email filters; returns giftCards with total and hasMore",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | expired | redeemed | voided"
+          },
+          {
+            "key": "createdOnOrAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedOnOrAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchaserEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paymentTransactionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "giftCards",
+            "optional": false,
+            "type": "{ canBeRedeemed?: boolean | null, hasExpired?: boolean | null, notYetValid?: boolean | null, isVoided?: boolean | null, code: string, title?: string | null, subTitle?: string | null, message?: string | null, fulfilledOn?: string | null, recipientName?: string | null, recipientEmail?: string | null, backingType?: string | null, remainingValue?: number | null, remainingUnits?: number | null, initialValue?: number | null, initialUnits?: number | null, equivalentValuePerUnit?: number | null, terms?: string | null, sku?: string | null, expiresOn?: string | null, validFrom?: string | null, voidedOn?: string | null, fulfilledBy?: string | null, order?: { id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null } | null, postalFulfilment?: { address?: { countryCode?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, name?: string | null } | null, shippingOptionName?: string | null } | null, emailFulfilment?: { emailAddress?: string | null, scheduledFor?: string | null } | null, downloadLinks?: { artworkUrl?: string | null, imageUrl?: string | null, pdfUrl?: string | null, appleWalletUrl?: string | null, googleWalletUrl?: string | null } | null, ledger?: { id: string, eventType?: string | null, eventOccuredOn?: string | null, eventOccuredAtLocationId?: string | null, units?: number | null, value?: number | null, whoEmail?: string | null, whoName?: string | null, reason?: string | null, metadata?: Record<string, any> | null }[] | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.reactivate",
+      "shortPath": "giftCards.reactivate",
+      "description": "Reactivate a previously voided gift card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.redeem",
+      "shortPath": "giftCards.redeem",
+      "description": "Redeem an amount or units against a gift card balance",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redeemedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redeemedAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remainingCredit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "redeemedUnits",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remainingUnits",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.redeemInFull",
+      "shortPath": "giftCards.redeemInFull",
+      "description": "Redeem the entire remaining balance of a gift card",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redeemedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redeemedAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remainingCredit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "redeemedUnits",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remainingUnits",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.topUp",
+      "shortPath": "giftCards.topUp",
+      "description": "Add currency or units to a gift card balance (issues new spendable value)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "remainingCredit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remainingUnits",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.transferBalances",
+      "shortPath": "giftCards.transferBalances",
+      "description": "Transfer remaining balances from source gift cards to a destination gift card",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceGiftCards",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "destinationGiftCard",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transferredCredit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "transferredUnits",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.undoRedemption",
+      "shortPath": "giftCards.undoRedemption",
+      "description": "Reverse a previous redemption, adding the redeemed balance back to the gift card",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amountReversed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unitsReversed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "alreadyReversed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "remainingCredit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remainingUnits",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.update",
+      "shortPath": "giftCards.update",
+      "description": "Update gift card properties using JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add, path: string, value: any } | { op: remove, path: string } | { op: replace, path: string, value: any } | { op: move, path: string, from: string } | { op: copy, path: string, from: string } | { op: test, path: string, value: any })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ canBeRedeemed?: boolean | null, hasExpired?: boolean | null, notYetValid?: boolean | null, isVoided?: boolean | null, code: string, title?: string | null, subTitle?: string | null, message?: string | null, fulfilledOn?: string | null, recipientName?: string | null, recipientEmail?: string | null, backingType?: string | null, remainingValue?: number | null, remainingUnits?: number | null, initialValue?: number | null, initialUnits?: number | null, equivalentValuePerUnit?: number | null, terms?: string | null, sku?: string | null, expiresOn?: string | null, validFrom?: string | null, voidedOn?: string | null, fulfilledBy?: string | null, order?: { id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null } | null, postalFulfilment?: { address?: { countryCode?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, name?: string | null } | null, shippingOptionName?: string | null } | null, emailFulfilment?: { emailAddress?: string | null, scheduledFor?: string | null } | null, downloadLinks?: { artworkUrl?: string | null, imageUrl?: string | null, pdfUrl?: string | null, appleWalletUrl?: string | null, googleWalletUrl?: string | null } | null, ledger?: { id: string, eventType?: string | null, eventOccuredOn?: string | null, eventOccuredAtLocationId?: string | null, units?: number | null, value?: number | null, whoEmail?: string | null, whoName?: string | null, reason?: string | null, metadata?: Record<string, any> | null }[] | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.giftCards.void",
+      "shortPath": "giftCards.void",
+      "description": "Void a gift card to prevent further redemptions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a new item group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "autoExpand",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, sortOrder?: number | null, autoExpand?: boolean | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete an item group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Retrieve details of an item group by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "autoExpand",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List all item groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, sortOrder?: number | null, autoExpand?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "giftup.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update an item group using JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add, path: string, value: any } | { op: remove, path: string } | { op: replace, path: string, value: any } | { op: move, path: string, from: string } | { op: copy, path: string, from: string } | { op: test, path: string, value: any })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, sortOrder?: number | null, autoExpand?: boolean | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.integrations.getStripeConnection",
+      "shortPath": "integrations.getStripeConnection",
+      "description": "Get Stripe integration connection status and enabled payment methods",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enableIdeal",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableBancontact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableGiropay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableEps",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableMultibanco",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enablePrzelewy24",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableWeChat",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableAlipay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enablePayPal",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableKlarna",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableAffirm",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableAfterpayClearpay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableFpx",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableBlik",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableCashApp",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableGrabPay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enablePayNow",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enablePromptPay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enablePix",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableZip",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableMobilePay",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "livePublicKey",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "testPublicKey",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "connectAccountId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "applicationFeePercentage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "applicationFeeFixed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "statementDescriptor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reviewAction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "threeDSecureRequired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "useStripeCheckout",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "createCustomerAccounts",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "askForFullAddress",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.integrations.updateStripeConnection",
+      "shortPath": "integrations.updateStripeConnection",
+      "description": "Change Stripe payment settings for the checkout and return the connection test result",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enableIdeal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableBancontact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableGiropay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableEps",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableMultibanco",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enablePrzelewy24",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableWeChat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableAlipay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enablePayPal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableKlarna",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableAffirm",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableAfterpayClearpay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableFpx",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableBlik",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableCashApp",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableGrabPay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enablePayNow",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enablePromptPay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enablePix",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableZip",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableMobilePay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "statementDescriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reviewAction",
+            "optional": true,
+            "type": "Continue | WaitForApproval"
+          },
+          {
+            "key": "threeDSecureRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useStripeCheckout",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createCustomerAccounts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "askForFullAddress",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "testResult",
+            "optional": true,
+            "type": "{ hasWebhooks?: boolean | null, canReadAccount?: boolean | null, canReadSource?: boolean | null, canWritePaymentIntent?: boolean | null, canWriteCharge?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.items.create",
+      "shortPath": "items.create",
+      "description": "Create a new gift card item product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backingType",
+            "optional": true,
+            "type": "Currency | Units",
+            "description": "Defaults to \"Currency\"."
+          },
+          {
+            "key": "priceType",
+            "optional": true,
+            "type": "Specified | Custom",
+            "description": "Defaults to \"Specified\"."
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "equivalentValuePerUnit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "minimumPrice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "maximumPrice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "availableFrom",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "availableUntil",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "overrideValidFrom",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "validFrom",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "validFromInDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "overrideExpiry",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expiresOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresInMonths",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "expiresInDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "detailsURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stockLevel",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "perOrderLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "additionalTerms",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backingType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "priceType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "equivalentValuePerUnit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "minimumPrice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "maximumPrice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "availableFrom",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "availableUntil",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "overrideValidFrom",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "validFrom",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "validFromInDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "overrideExpiry",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "expiresOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresInMonths",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "expiresInDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "detailsURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "artworkURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stockLevel",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "codes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "perOrderLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "additionalTerms",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.items.delete",
+      "shortPath": "items.delete",
+      "description": "Delete a gift card item product",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.items.get",
+      "shortPath": "items.get",
+      "description": "Retrieve details of an item by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backingType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "priceType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "equivalentValuePerUnit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "minimumPrice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "maximumPrice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "availableFrom",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "availableUntil",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "overrideValidFrom",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "validFrom",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "validFromInDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "overrideExpiry",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "expiresOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresInMonths",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "expiresInDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "detailsURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "artworkURL",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stockLevel",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "codes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "perOrderLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "additionalTerms",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.items.list",
+      "shortPath": "items.list",
+      "description": "List gift card items with optional group filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, backingType?: string | null, priceType?: string | null, price?: number | null, value?: number | null, units?: number | null, equivalentValuePerUnit?: number | null, minimumPrice?: number | null, maximumPrice?: number | null, availableFrom?: string | null, availableUntil?: string | null, overrideValidFrom?: boolean | null, validFrom?: string | null, validFromInDays?: number | null, overrideExpiry?: boolean | null, expiresOn?: string | null, expiresInMonths?: number | null, expiresInDays?: number | null, group?: string | null, groupId?: string | null, detailsURL?: string | null, artworkURL?: string | null, stockLevel?: number | null, codes?: string[] | null, perOrderLimit?: number | null, additionalTerms?: string | null, sku?: string | null }[]"
+      }
+    },
+    {
+      "path": "giftup.api.items.update",
+      "shortPath": "items.update",
+      "description": "Update item properties using JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add, path: string, value: any } | { op: remove, path: string } | { op: replace, path: string, value: any } | { op: move, path: string, from: string } | { op: copy, path: string, from: string } | { op: test, path: string, value: any })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, backingType?: string | null, priceType?: string | null, price?: number | null, value?: number | null, units?: number | null, equivalentValuePerUnit?: number | null, minimumPrice?: number | null, maximumPrice?: number | null, availableFrom?: string | null, availableUntil?: string | null, overrideValidFrom?: boolean | null, validFrom?: string | null, validFromInDays?: number | null, overrideExpiry?: boolean | null, expiresOn?: string | null, expiresInMonths?: number | null, expiresInDays?: number | null, group?: string | null, groupId?: string | null, detailsURL?: string | null, artworkURL?: string | null, stockLevel?: number | null, codes?: string[] | null, perOrderLimit?: number | null, additionalTerms?: string | null, sku?: string | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List all company store locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null }[]"
+      }
+    },
+    {
+      "path": "giftup.api.orders.addNote",
+      "shortPath": "orders.addNote",
+      "description": "Add an internal note to an order",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.orders.create",
+      "shortPath": "orders.create",
+      "description": "Create an order and issue its gift cards. Live mode charges the Gift Up fee; recipientDetails makes Gift Up email the gift card unless disableAllEmails is true",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disableAllEmails",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "purchaserEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "purchaserName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "serviceFee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemDetails",
+            "optional": false,
+            "type": "{ quantity: number, id?: string, name?: string, description?: string, code?: string, backingType?: Currency | Units, price?: number, value?: number, units?: number | null, equivalentValuePerUnit?: number | null, overrideExpiry?: boolean, expiresOn?: string | null, expiresInMonths?: number | null, expiresInDays?: number | null, overrideValidFrom?: boolean, validFrom?: string | null, validFromInDays?: number | null, sku?: string, terms?: string | null }[]"
+          },
+          {
+            "key": "recipientDetails",
+            "optional": true,
+            "type": "{ recipientName?: string, recipientEmail?: string, message?: string, scheduledFor?: string, fulfilmentMethod?: Email | Post | None, shippingAddress?: { address1?: string, address2?: string, city?: string, state?: string, postalCode?: string, countryCode?: string }, shippingOption?: { id?: string, name?: string, price?: number } }"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ label: string, value: string | number | boolean, showOnGiftCard?: boolean, showOnRedeemApp?: boolean }[]"
+          },
+          {
+            "key": "salesTaxes",
+            "optional": true,
+            "type": "{ label: string, amount: number, type: inclusive | exclusive }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orderNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "selectedRecipient",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "purchaserEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "purchaserName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tip",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "serviceFee",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "shippingFee",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promotions",
+            "optional": true,
+            "type": "{ promotionId?: string | null, name?: string | null, code?: string | null }[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ label: string, value?: string | number | boolean | null }[] | null"
+          },
+          {
+            "key": "salesTaxes",
+            "optional": true,
+            "type": "{ label?: string | null, amount?: number | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{ id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "downloadLinks",
+            "optional": true,
+            "type": "{ single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null"
+          },
+          {
+            "key": "payment",
+            "optional": true,
+            "type": "{ provider?: string | null, transactionId?: string | null, accountId?: string | null } | null"
+          },
+          {
+            "key": "fulfilments",
+            "optional": true,
+            "type": "{ id?: string | null, emailAddress?: string | null, scheduledFor?: string | null, success?: boolean | null }[] | null"
+          },
+          {
+            "key": "giftCards",
+            "optional": true,
+            "type": "{ canBeRedeemed?: boolean | null, hasExpired?: boolean | null, notYetValid?: boolean | null, isVoided?: boolean | null, code: string, title?: string | null, subTitle?: string | null, message?: string | null, fulfilledOn?: string | null, recipientName?: string | null, recipientEmail?: string | null, backingType?: string | null, remainingValue?: number | null, remainingUnits?: number | null, initialValue?: number | null, initialUnits?: number | null, equivalentValuePerUnit?: number | null, terms?: string | null, sku?: string | null, expiresOn?: string | null, validFrom?: string | null, voidedOn?: string | null, fulfilledBy?: string | null, order?: { id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null } | null, postalFulfilment?: { address?: { countryCode?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, name?: string | null } | null, shippingOptionName?: string | null } | null, emailFulfilment?: { emailAddress?: string | null, scheduledFor?: string | null } | null, downloadLinks?: { artworkUrl?: string | null, imageUrl?: string | null, pdfUrl?: string | null, appleWalletUrl?: string | null, googleWalletUrl?: string | null } | null, ledger?: { id: string, eventType?: string | null, eventOccuredOn?: string | null, eventOccuredAtLocationId?: string | null, units?: number | null, value?: number | null, whoEmail?: string | null, whoName?: string | null, reason?: string | null, metadata?: Record<string, any> | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Retrieve details of a specific order by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orderNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "selectedRecipient",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "purchaserEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "purchaserName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tip",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "serviceFee",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "shippingFee",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promotions",
+            "optional": true,
+            "type": "{ promotionId?: string | null, name?: string | null, code?: string | null }[] | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ label: string, value?: string | number | boolean | null }[] | null"
+          },
+          {
+            "key": "salesTaxes",
+            "optional": true,
+            "type": "{ label?: string | null, amount?: number | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{ id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "downloadLinks",
+            "optional": true,
+            "type": "{ single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null"
+          },
+          {
+            "key": "payment",
+            "optional": true,
+            "type": "{ provider?: string | null, transactionId?: string | null, accountId?: string | null } | null"
+          },
+          {
+            "key": "fulfilments",
+            "optional": true,
+            "type": "{ id?: string | null, emailAddress?: string | null, scheduledFor?: string | null, success?: boolean | null }[] | null"
+          },
+          {
+            "key": "giftCards",
+            "optional": true,
+            "type": "{ canBeRedeemed?: boolean | null, hasExpired?: boolean | null, notYetValid?: boolean | null, isVoided?: boolean | null, code: string, title?: string | null, subTitle?: string | null, message?: string | null, fulfilledOn?: string | null, recipientName?: string | null, recipientEmail?: string | null, backingType?: string | null, remainingValue?: number | null, remainingUnits?: number | null, initialValue?: number | null, initialUnits?: number | null, equivalentValuePerUnit?: number | null, terms?: string | null, sku?: string | null, expiresOn?: string | null, validFrom?: string | null, voidedOn?: string | null, fulfilledBy?: string | null, order?: { id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null } | null, postalFulfilment?: { address?: { countryCode?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, name?: string | null } | null, shippingOptionName?: string | null } | null, emailFulfilment?: { emailAddress?: string | null, scheduledFor?: string | null } | null, downloadLinks?: { artworkUrl?: string | null, imageUrl?: string | null, pdfUrl?: string | null, appleWalletUrl?: string | null, googleWalletUrl?: string | null } | null, ledger?: { id: string, eventType?: string | null, eventOccuredOn?: string | null, eventOccuredAtLocationId?: string | null, units?: number | null, value?: number | null, whoEmail?: string | null, whoName?: string | null, reason?: string | null, metadata?: Record<string, any> | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List orders filtered by creation date, purchaser email or source; returns orders with total and hasMore",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdOnOrAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchaserEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "API | Checkout | Dashboard | Import | Square | Vend | External"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null, fulfilments?: { id?: string | null, emailAddress?: string | null, scheduledFor?: string | null, success?: boolean | null }[] | null, giftCards?: { canBeRedeemed?: boolean | null, hasExpired?: boolean | null, notYetValid?: boolean | null, isVoided?: boolean | null, code: string, title?: string | null, subTitle?: string | null, message?: string | null, fulfilledOn?: string | null, recipientName?: string | null, recipientEmail?: string | null, backingType?: string | null, remainingValue?: number | null, remainingUnits?: number | null, initialValue?: number | null, initialUnits?: number | null, equivalentValuePerUnit?: number | null, terms?: string | null, sku?: string | null, expiresOn?: string | null, validFrom?: string | null, voidedOn?: string | null, fulfilledBy?: string | null, order?: { id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null } | null, postalFulfilment?: { address?: { countryCode?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, name?: string | null } | null, shippingOptionName?: string | null } | null, emailFulfilment?: { emailAddress?: string | null, scheduledFor?: string | null } | null, downloadLinks?: { artworkUrl?: string | null, imageUrl?: string | null, pdfUrl?: string | null, appleWalletUrl?: string | null, googleWalletUrl?: string | null } | null, ledger?: { id: string, eventType?: string | null, eventOccuredOn?: string | null, eventOccuredAtLocationId?: string | null, units?: number | null, value?: number | null, whoEmail?: string | null, whoName?: string | null, reason?: string | null, metadata?: Record<string, any> | null }[] | null }[] | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.orders.markAsPosted",
+      "shortPath": "orders.markAsPosted",
+      "description": "Mark a postal order as posted and update gift card codes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "codes",
+            "optional": false,
+            "type": "{ oldCode: string, newCode: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.orders.update",
+      "shortPath": "orders.update",
+      "description": "Update order properties using JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add, path: string, value: any } | { op: remove, path: string } | { op: replace, path: string, value: any } | { op: move, path: string, from: string } | { op: copy, path: string, from: string } | { op: test, path: string, value: any })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null, fulfilments?: { id?: string | null, emailAddress?: string | null, scheduledFor?: string | null, success?: boolean | null }[] | null, giftCards?: { canBeRedeemed?: boolean | null, hasExpired?: boolean | null, notYetValid?: boolean | null, isVoided?: boolean | null, code: string, title?: string | null, subTitle?: string | null, message?: string | null, fulfilledOn?: string | null, recipientName?: string | null, recipientEmail?: string | null, backingType?: string | null, remainingValue?: number | null, remainingUnits?: number | null, initialValue?: number | null, initialUnits?: number | null, equivalentValuePerUnit?: number | null, terms?: string | null, sku?: string | null, expiresOn?: string | null, validFrom?: string | null, voidedOn?: string | null, fulfilledBy?: string | null, order?: { id: string, orderNumber?: string | null, createdOn?: string | null, selectedRecipient?: string | null, purchaserEmail?: string | null, purchaserName?: string | null, currency?: string | null, revenue?: number | null, tip?: number | null, serviceFee?: number | null, discount?: number | null, shippingFee?: number | null, referrer?: string | null, source?: string | null, promotions?: { promotionId?: string | null, name?: string | null, code?: string | null }[] | null, customFields?: { label: string, value?: string | number | boolean | null }[] | null, salesTaxes?: { label?: string | null, amount?: number | null, type?: string | null }[] | null, notes?: { id?: string | null, content?: string | null, createdOn?: string | null, username?: string | null }[] | null, metadata?: Record<string, any> | null, downloadLinks?: { single?: { imageUrl?: string | null, pdfUrl?: string | null } | null, zip?: { imageUrl?: string | null, pdfUrl?: string | null } | null } | null, payment?: { provider?: string | null, transactionId?: string | null, accountId?: string | null } | null } | null, postalFulfilment?: { address?: { countryCode?: string | null, address1?: string | null, address2?: string | null, city?: string | null, state?: string | null, postalCode?: string | null, name?: string | null } | null, shippingOptionName?: string | null } | null, emailFulfilment?: { emailAddress?: string | null, scheduledFor?: string | null } | null, downloadLinks?: { artworkUrl?: string | null, imageUrl?: string | null, pdfUrl?: string | null, appleWalletUrl?: string | null, googleWalletUrl?: string | null } | null, ledger?: { id: string, eventType?: string | null, eventOccuredOn?: string | null, eventOccuredAtLocationId?: string | null, units?: number | null, value?: number | null, whoEmail?: string | null, whoName?: string | null, reason?: string | null, metadata?: Record<string, any> | null }[] | null }[] | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.partners.createAccount",
+      "shortPath": "partners.createAccount",
+      "description": "Provision a new Gift Up account for another business owner (Partner API, pre-approved partners only)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "websiteUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inviteCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPartnerResponsibleForBilling",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPartnerResponsibleForPaymentProviders",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ companyId: string, companyName?: string | null, accountName?: string | null, currency?: string | null, createdOn?: string | null }[]"
+      }
+    },
+    {
+      "path": "giftup.api.ping.get",
+      "shortPath": "ping.get",
+      "description": "Test connectivity and authorization with the Gift Up! API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "giftup.api.ping.post",
+      "shortPath": "ping.post",
+      "description": "Echo test with the Gift Up! API returning the posted payload",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "giftup.api.promotions.list",
+      "shortPath": "promotions.list",
+      "description": "List all active and scheduled checkout promotions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, noBenefit?: boolean | null, publishedOn?: string | null, stoppedOn?: string | null, benefits?: {} | null, usage?: {} | null, limitations?: {} | null, triggers?: {} | null }[]"
+      }
+    },
+    {
+      "path": "giftup.api.reports.getTransaction",
+      "shortPath": "reports.getTransaction",
+      "description": "Retrieve a specific ledger report transaction by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventOccuredOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventOccuredAtLocationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giftUpFee",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "whoName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "whoEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orderDetails",
+            "optional": true,
+            "type": "{ income?: number | null, serviceFee?: number | null, tip?: number | null, shippingFee?: number | null } | null"
+          },
+          {
+            "key": "giftCard",
+            "optional": true,
+            "type": "{ id?: string | null, code?: string | null, valueChange?: number | null, unitChange?: number | null, title?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.reports.listTransactions",
+      "shortPath": "reports.listTransactions",
+      "description": "List ledger transactions filtered by date range, event type, user, location or code; returns transactions with total and hasMore",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventOccurredOnOrAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventOccurredOnOrBefore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "(OrderPlaced | GiftCardCreated | CreditAdded | Redeemed | Expired | Unexpired | Voided | Reactivated)[]"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactions",
+            "optional": false,
+            "type": "{ id: string, eventOccuredOn?: string | null, eventOccuredAtLocationId?: string | null, eventType?: string | null, reason?: string | null, referrer?: string | null, metadata?: Record<string, any> | null, orderId?: string | null, currency?: string | null, giftUpFee?: number | string | null, whoName?: string | null, whoEmail?: string | null, orderDetails?: { income?: number | null, serviceFee?: number | null, tip?: number | null, shippingFee?: number | null } | null, giftCard?: { id?: string | null, code?: string | null, valueChange?: number | null, unitChange?: number | null, title?: string | null } | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.settings.deleteArtwork",
+      "shortPath": "settings.deleteArtwork",
+      "description": "Delete uploaded gift card design artwork by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.settings.getCheckout",
+      "shortPath": "settings.getCheckout",
+      "description": "Get company checkout styling, tips, and service fee settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logoUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "introductionText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fontFamily",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fontSize",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "themeColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hostedBackgroundColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hostedTextColor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "continueLinkText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "continueLinkUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "additionalCustomHtml",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "showBalanceChecker",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "defaultFor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "serviceFeeCharged",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "serviceFeeFixed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "serviceFeePercentage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tipsEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowCustomTipValues",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "overrideTipValues",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.settings.getEmail",
+      "shortPath": "settings.getEmail",
+      "description": "Get email branding, sender, and template settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logoUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logoAlignment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logoWidth",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "fromEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fromName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giftCardEmail",
+            "optional": true,
+            "type": "{ subjectLine?: string | null, title?: string | null, introText?: string | null, footerText?: string | null, buttonLabel?: string | null, buttonUrl?: string | null, buttonColour?: string | null, buttonAlignment?: string | null } | null"
+          },
+          {
+            "key": "receiptEmail",
+            "optional": true,
+            "type": "{ subjectLine?: string | null, title?: string | null, introText?: string | null, footerText?: string | null, buttonLabel?: string | null, buttonUrl?: string | null, buttonColour?: string | null, buttonAlignment?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.settings.getGiftCard",
+      "shortPath": "settings.getGiftCard",
+      "description": "Get gift card barcode, expiry, and terms defaults",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "defaultDescription",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "barcodeFormat",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiryInMonths",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "expiryInDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "validFromInDays",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "showIssuedOnDate",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "showBalance",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "showBarcode",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "generalTerms",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "codeFormat",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.settings.getShipping",
+      "shortPath": "settings.getShipping",
+      "description": "Get physical shipping and postal delivery options",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enableDigitalFulfilment",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enableSelfFulfilledPostal",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enablePostalMessage",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "postalShippingOptions",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, price?: number | null, sortOrder?: number | null, type?: string | null, countries?: { name?: string | null, IsoCode?: string | null, isoCode?: string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.settings.listArtwork",
+      "shortPath": "settings.listArtwork",
+      "description": "List uploaded gift card design artwork",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url?: string | null, sortOrder?: number | null }[]"
+      }
+    },
+    {
+      "path": "giftup.api.settings.updateCheckout",
+      "shortPath": "settings.updateCheckout",
+      "description": "Update checkout settings using JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add, path: string, value: any } | { op: remove, path: string } | { op: replace, path: string, value: any } | { op: move, path: string, from: string } | { op: copy, path: string, from: string } | { op: test, path: string, value: any })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ logoUrl?: string | null, introductionText?: string | null, fontFamily?: string | null, fontSize?: string | null, themeColor?: string | null, backgroundColor?: string | null, hostedBackgroundColor?: string | null, hostedTextColor?: string | null, continueLinkText?: string | null, continueLinkUrl?: string | null, redirectUrl?: string | null, additionalCustomHtml?: string | null, showBalanceChecker?: boolean | null, defaultFor?: string | null, serviceFeeCharged?: boolean | null, serviceFeeFixed?: number | null, serviceFeePercentage?: number | null, tipsEnabled?: boolean | null, allowCustomTipValues?: boolean | null, overrideTipValues?: string[] | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.settings.updateEmail",
+      "shortPath": "settings.updateEmail",
+      "description": "Update email settings using JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add, path: string, value: any } | { op: remove, path: string } | { op: replace, path: string, value: any } | { op: move, path: string, from: string } | { op: copy, path: string, from: string } | { op: test, path: string, value: any })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ logoUrl?: string | null, logoAlignment?: string | null, logoWidth?: number | null, fromEmail?: string | null, fromName?: string | null, giftCardEmail?: { subjectLine?: string | null, title?: string | null, introText?: string | null, footerText?: string | null, buttonLabel?: string | null, buttonUrl?: string | null, buttonColour?: string | null, buttonAlignment?: string | null } | null, receiptEmail?: { subjectLine?: string | null, title?: string | null, introText?: string | null, footerText?: string | null, buttonLabel?: string | null, buttonUrl?: string | null, buttonColour?: string | null, buttonAlignment?: string | null } | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.settings.updateGiftCard",
+      "shortPath": "settings.updateGiftCard",
+      "description": "Update gift card settings using JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add, path: string, value: any } | { op: remove, path: string } | { op: replace, path: string, value: any } | { op: move, path: string, from: string } | { op: copy, path: string, from: string } | { op: test, path: string, value: any })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ defaultDescription?: string | null, barcodeFormat?: string | null, expiryInMonths?: number | null, expiryInDays?: number | null, validFromInDays?: number | null, showIssuedOnDate?: boolean | null, showBalance?: boolean | null, showBarcode?: boolean | null, generalTerms?: string | null, codeFormat?: string | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.settings.uploadArtwork",
+      "shortPath": "settings.uploadArtwork",
+      "description": "Upload gift card artwork from a URL or data URI; replaceAllExistingArtwork deletes all existing artwork first",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replaceAllExistingArtwork",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "replaceArtworkId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url?: string | null, sortOrder?: number | null } | { id: string, url?: string | null, sortOrder?: number | null }[] | Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a staff user account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | \"\" | null | undefined"
+      }
+    },
+    {
+      "path": "giftup.api.users.get",
+      "shortPath": "users.get",
+      "description": "Retrieve user details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatarUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isAdministrator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "emailConfirmed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hiddenInRedeemApp",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "disableSearchInRedeemApp",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hideLogInRedeemApp",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "expiredGiftCardRedemptionDisabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redeemLocationRestrictionEnforced",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ id: string, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.users.invite",
+      "shortPath": "users.invite",
+      "description": "Invite a staff user or administrator",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatarUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAdministrator",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hiddenInRedeemApp",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableSearchInRedeemApp",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideLogInRedeemApp",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expiredGiftCardRedemptionDisabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "redeemLocationRestrictionEnforced",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatarUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isAdministrator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "emailConfirmed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hiddenInRedeemApp",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "disableSearchInRedeemApp",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hideLogInRedeemApp",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "expiredGiftCardRedemptionDisabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redeemLocationRestrictionEnforced",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ id: string, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "giftup.api.users.list",
+      "shortPath": "users.list",
+      "description": "List staff users and administrators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, email?: string | null, avatarUrl?: string | null, pin?: string | null, isAdministrator?: boolean | null, emailConfirmed?: boolean | null, hiddenInRedeemApp?: boolean | null, disableSearchInRedeemApp?: boolean | null, hideLogInRedeemApp?: boolean | null, expiredGiftCardRedemptionDisabled?: boolean | null, redeemLocationRestrictionEnforced?: boolean | null, locations?: { id: string, name?: string | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "giftup.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update staff user details using JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add, path: string, value: any } | { op: remove, path: string } | { op: replace, path: string, value: any } | { op: move, path: string, from: string } | { op: copy, path: string, from: string } | { op: test, path: string, value: any })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, email?: string | null, avatarUrl?: string | null, pin?: string | null, isAdministrator?: boolean | null, emailConfirmed?: boolean | null, hiddenInRedeemApp?: boolean | null, disableSearchInRedeemApp?: boolean | null, hideLogInRedeemApp?: boolean | null, expiredGiftCardRedemptionDisabled?: boolean | null, redeemLocationRestrictionEnforced?: boolean | null, locations?: { id: string, name?: string | null }[] | null } | Record<string, any> | \"\" | null | undefined"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
