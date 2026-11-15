@@ -108,6 +108,8 @@ This inventory was checked against the official [API index](https://dev.freeagen
 - The docs index provides resource documentation but no webhook delivery/receiver contract. Webhooks remain excluded and `webhooks` is empty.
 - The API versioning page says `X-Api-Version` is optional and omitting it selects the current behavior. No date-version header is sent, so the plugin uses FreeAgent's documented current default.
 
+**Test coverage remains partial too:** `endpoints.test.ts` checks registry/schema alignment, accepted input shapes, and risk metadata; it does not yet execute and assert the HTTP method, path, body, and parsed response for each of the 31 registered handlers. The client tests cover auth, pagination headers, and 429 retries. Add the per-operation wire-level test matrix before describing this plugin's endpoint coverage as complete.
+
 ## Sources and evidence
 
 - [Official API index](https://dev.freeagent.com/docs)
