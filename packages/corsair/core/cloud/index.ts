@@ -135,7 +135,7 @@ function buildCloudSurface<Plugins extends readonly CorsairPlugin[]>(
 		return {
 			withTenant: (
 				tenantId: string,
-				options?: { accounts?: Record<string, string> },
+				options?: { accounts?: Record<string, string | undefined> },
 			) => {
 				if (options?.accounts && Object.keys(options.accounts).length > 0) {
 					throw new Error(
