@@ -1,0 +1,1458 @@
+---
+title: "Endorsal API reference"
+sidebarTitle: "API"
+description: "API reference for the Endorsal plugin in Corsair: every `endorsal.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Autorequests
+
+### campaigns.byId.get
+
+`autorequests.campaigns.byId.get`
+
+Retrieve an AutoRequest campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.autorequests.campaigns.byId.get({ id: 'campaign_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### campaigns.get
+
+`autorequests.campaigns.get`
+
+List AutoRequest campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.autorequests.campaigns.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+
+
+
+---
+
+## Contacts
+
+### byId.delete
+
+`contacts.byId.delete`
+
+Archive a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.endorsal.api.contacts.byId.delete({ id: 'contact_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### byId.get
+
+`contacts.byId.get`
+
+Retrieve a contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.contacts.byId.get({ id: 'contact_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  externalID?: string | null,
+  importedFrom?: string | null,
+  avatar?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  website?: string | null,
+  propertyID?: string | null,
+  customAttributes?: Record<string, JsonValue> | null,
+  activity?: {
+    added?: number | string | null,
+    updated?: number | string | null,
+    lastContacted?: number | string | null,
+    lastOpened?: number | string | null,
+    lastClicked?: number | string | null,
+    lastEmailOpened?: number | string | null,
+    lastEmailClicked?: number | string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### byId.patch
+
+`contacts.byId.patch`
+
+Update contact fields
+
+**Risk:** `write`
+
+```ts
+await corsair.endorsal.api.contacts.byId.patch({ id: 'contact_123', fields: { company: 'Example Inc' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+List contacts for the configured property
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.contacts.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  externalID?: string | null,
+  importedFrom?: string | null,
+  avatar?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  website?: string | null,
+  propertyID?: string | null,
+  customAttributes?: Record<string, JsonValue> | null,
+  activity?: {
+    added?: number | string | null,
+    updated?: number | string | null,
+    lastContacted?: number | string | null,
+    lastOpened?: number | string | null,
+    lastClicked?: number | string | null,
+    lastEmailOpened?: number | string | null,
+    lastEmailClicked?: number | string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`contacts.post`
+
+Create a contact; with campaignID, enroll it in an AutoRequest campaign that emails the contact. Destructive because that enrollment sends email
+
+**Risk:** `destructive`
+
+```ts
+await corsair.endorsal.api.contacts.post({ contact: { email: 'jane.doe@example.com' }, campaignID: 'campaign_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+| `campaignID` | `string` | No | — |
+
+At least one of `contact.email` or `contact.phone` is required. `campaignID` is a query parameter, not part of the JSON body. Enrolling a contact in a campaign makes Endorsal email them a review request.
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  name?: string,
+  email?: string,
+  phone?: string,
+  avatar?: string,
+  location?: string,
+  position?: string,
+  company?: string,
+  website?: string,
+  externalID?: string,
+  importedFrom?: string,
+  propertyID?: string,
+  customAttributes?: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  externalID?: string | null,
+  importedFrom?: string | null,
+  avatar?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  website?: string | null,
+  propertyID?: string | null,
+  customAttributes?: Record<string, JsonValue> | null,
+  activity?: {
+    added?: number | string | null,
+    updated?: number | string | null,
+    lastContacted?: number | string | null,
+    lastOpened?: number | string | null,
+    lastClicked?: number | string | null,
+    lastEmailOpened?: number | string | null,
+    lastEmailClicked?: number | string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search.post
+
+`contacts.search.post`
+
+Search contacts with AND-combined match conditions
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.contacts.search.post({ query: [{ field: 'name', operator: 'contains', value: 'Jane' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object[]` | Yes | — |
+
+`operator` accepts the TypeScript string-literal union `'=' | '>' | '>=' | '<' | '<=' | '!=' | 'contains' | 'in'`. The `in` comparison operator requires an array value. Match objects are combined with AND.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  field: string,
+  operator: string,
+  value: string | number | null | (string | number)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  externalID?: string | null,
+  importedFrom?: string | null,
+  avatar?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  website?: string | null,
+  propertyID?: string | null,
+  customAttributes?: Record<string, JsonValue> | null,
+  activity?: {
+    added?: number | string | null,
+    updated?: number | string | null,
+    lastContacted?: number | string | null,
+    lastOpened?: number | string | null,
+    lastClicked?: number | string | null,
+    lastEmailOpened?: number | string | null,
+    lastEmailClicked?: number | string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testimonials.get
+
+`contacts.testimonials.get`
+
+List testimonials for a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.contacts.testimonials.get({ id: 'contact_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  propertyID?: string | null,
+  comments?: string | null,
+  rating?: number | null,
+  avatar?: {
+    url?: string | null,
+    sizes?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null,
+      original?: string | null
+    } | null
+  } | null,
+  email?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  formID?: string | null,
+  added?: number | string | null,
+  approved?: number | null,
+  featured?: number | null,
+  tags?: (string | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### byId.delete
+
+`tags.byId.delete`
+
+Delete a tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.endorsal.api.tags.byId.delete({ id: 'tag_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### byId.get
+
+`tags.byId.get`
+
+Retrieve a tag by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.tags.byId.get({ id: 'tag_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  type?: string | null,
+  propertyID?: string | null,
+  slug?: string | null,
+  description?: string | null,
+  image?: string | null,
+  link?: string | null,
+  sku?: string | null,
+  edited?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### byId.patch
+
+`tags.byId.patch`
+
+Update tag fields
+
+**Risk:** `write`
+
+```ts
+await corsair.endorsal.api.tags.byId.patch({ id: 'tag_123', fields: { description: 'Updated description' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`tags.get`
+
+List tags for the configured property
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.tags.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  type?: string | null,
+  propertyID?: string | null,
+  slug?: string | null,
+  description?: string | null,
+  image?: string | null,
+  link?: string | null,
+  sku?: string | null,
+  edited?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`tags.post`
+
+Create a tag or product tag
+
+**Risk:** `write`
+
+```ts
+await corsair.endorsal.api.tags.post({ name: 'Favourite Reviews', type: 'tag' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `image` | `string` | No | — |
+| `link` | `string` | No | — |
+| `sku` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  type?: string | null,
+  propertyID?: string | null,
+  slug?: string | null,
+  description?: string | null,
+  image?: string | null,
+  link?: string | null,
+  sku?: string | null,
+  edited?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testimonials.get
+
+`tags.testimonials.get`
+
+List testimonials associated with a tag
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.tags.testimonials.get({ id: 'tag_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  propertyID?: string | null,
+  comments?: string | null,
+  rating?: number | null,
+  avatar?: {
+    url?: string | null,
+    sizes?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null,
+      original?: string | null
+    } | null
+  } | null,
+  email?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  formID?: string | null,
+  added?: number | string | null,
+  approved?: number | null,
+  featured?: number | null,
+  tags?: (string | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Testimonials
+
+### byId.delete
+
+`testimonials.byId.delete`
+
+Delete a testimonial
+
+**Risk:** `destructive`
+
+```ts
+await corsair.endorsal.api.testimonials.byId.delete({ id: 'testimonial_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### byId.get
+
+`testimonials.byId.get`
+
+Retrieve a testimonial by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.testimonials.byId.get({ id: 'testimonial_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  propertyID?: string | null,
+  comments?: string | null,
+  rating?: number | null,
+  avatar?: {
+    url?: string | null,
+    sizes?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null,
+      original?: string | null
+    } | null
+  } | null,
+  email?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  formID?: string | null,
+  added?: number | string | null,
+  approved?: number | null,
+  featured?: number | null,
+  tags?: (string | null)[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### byId.patch
+
+`testimonials.byId.patch`
+
+Update testimonial fields
+
+**Risk:** `write`
+
+```ts
+await corsair.endorsal.api.testimonials.byId.patch({ id: 'testimonial_123', fields: { comments: 'Updated review' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### byId.tag.post
+
+`testimonials.byId.tag.post`
+
+Add tags to a testimonial
+
+**Risk:** `write`
+
+```ts
+await corsair.endorsal.api.testimonials.byId.tag.post({ id: 'testimonial_123', tags: [{ _id: 'tag_123' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `tags` | `object[]` | Yes | — |
+
+Each tag may be a new tag (`name` and `type`) or an existing tag reference (`_id`).
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+(
+  {
+    name: string,
+    type: string,
+    description?: string,
+    image?: string,
+    link?: string,
+    sku?: string
+  } | {
+    _id: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  propertyID?: string | null,
+  comments?: string | null,
+  rating?: number | null,
+  avatar?: {
+    url?: string | null,
+    sizes?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null,
+      original?: string | null
+    } | null
+  } | null,
+  email?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  formID?: string | null,
+  added?: number | string | null,
+  approved?: number | null,
+  featured?: number | null,
+  tags?: (string | null)[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`testimonials.get`
+
+List testimonials for the configured property
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.testimonials.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  propertyID?: string | null,
+  comments?: string | null,
+  rating?: number | null,
+  avatar?: {
+    url?: string | null,
+    sizes?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null,
+      original?: string | null
+    } | null
+  } | null,
+  email?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  formID?: string | null,
+  added?: number | string | null,
+  approved?: number | null,
+  featured?: number | null,
+  tags?: (string | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`testimonials.post`
+
+Create a testimonial
+
+**Risk:** `write`
+
+```ts
+await corsair.endorsal.api.testimonials.post({ name: 'Jane Doe', propertyID: 'property_123', comments: 'Great service' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `propertyID` | `string` | Yes | — |
+| `comments` | `string` | Yes | — |
+| `rating` | `number` | No | — |
+| `avatar` | `string` | No | — |
+| `email` | `string` | No | — |
+| `location` | `string` | No | — |
+| `position` | `string` | No | — |
+| `company` | `string` | No | — |
+| `approved` | `number` | No | — |
+| `featured` | `number` | No | — |
+| `added` | `string` | No | — |
+
+`approved` and `featured` use numeric provider states: approved is 0, 1, or 2; featured is 0 or 1.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  propertyID?: string | null,
+  comments?: string | null,
+  rating?: number | null,
+  avatar?: {
+    url?: string | null,
+    sizes?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null,
+      original?: string | null
+    } | null
+  } | null,
+  email?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  formID?: string | null,
+  added?: number | string | null,
+  approved?: number | null,
+  featured?: number | null,
+  tags?: (string | null)[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search.post
+
+`testimonials.search.post`
+
+Search testimonials with AND-combined match conditions
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.testimonials.search.post({ query: [{ field: 'rating', operator: '=', value: 5 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object[]` | Yes | — |
+
+`operator` accepts the TypeScript string-literal union `'=' | '>' | '>=' | '<' | '<=' | '!=' | 'contains' | 'in'`. The `in` comparison operator requires an array value. Match objects are combined with AND.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  field: string,
+  operator: string,
+  value: string | number | null | (string | number)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  name?: string | null,
+  propertyID?: string | null,
+  comments?: string | null,
+  rating?: number | null,
+  avatar?: {
+    url?: string | null,
+    sizes?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null,
+      original?: string | null
+    } | null
+  } | null,
+  email?: string | null,
+  location?: string | null,
+  position?: string | null,
+  company?: string | null,
+  formID?: string | null,
+  added?: number | string | null,
+  approved?: number | null,
+  featured?: number | null,
+  tags?: (string | null)[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Wall Of Love
+
+### get
+
+`wallOfLove.get`
+
+Retrieve a Wall of Love and its testimonials, optionally rendered
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.wallOfLove.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `render` | `boolean` | No | — |
+
+With `render: true`, Endorsal returns rendered HTML; otherwise it returns the Wall of Love JSON response.
+
+
+
+**Output:** `object \| string`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean,
+  data: {
+    _id?: string,
+    widgetName?: string | null,
+    widgetTheme?: string | null,
+    formID?: string | null,
+    propertyID?: string | JsonValue | null,
+    widgetLayout?: string | null,
+    carouselSettings?: Record<string, JsonValue> | null,
+    gridSettings?: Record<string, JsonValue> | null,
+    source?: string | null,
+    hideTestimonials?: boolean | null,
+    hiddenTestimonials?: string[] | Record<string, JsonValue> | null,
+    onlyShowFeatured?: boolean | null,
+    showSource?: boolean | null,
+    showBranding?: boolean | null,
+    randomize?: boolean | null,
+    showRecency?: boolean | null,
+    widgetTag?: string | null,
+    edited?: number | string | null,
+    testimonials?: {
+      _id?: string,
+      name?: string | null,
+      propertyID?: string | null,
+      comments?: string | null,
+      rating?: number | null,
+      avatar?: {
+        url?: string | null,
+        sizes?: {
+          small?: string | null,
+          medium?: string | null,
+          large?: string | null,
+          original?: string | null
+        } | null
+      } | null,
+      email?: string | null,
+      location?: string | null,
+      position?: string | null,
+      company?: string | null,
+      formID?: string | null,
+      added?: number | string | null,
+      approved?: number | null,
+      featured?: number | null,
+      tags?: (string | null)[] | null
+    }[],
+    settings?: Record<string, JsonValue> | null,
+    truncate?: Record<string, JsonValue> | null
+  }
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Widgets
+
+### byId.get
+
+`widgets.byId.get`
+
+Retrieve a widget and its testimonials, optionally rendered
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.widgets.byId.get({ id: 'widget_123', render: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `render` | `boolean` | No | — |
+
+With `render: true`, Endorsal returns rendered HTML; otherwise it returns a JSON widget response.
+
+
+
+**Output:** `object \| string`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean,
+  data: {
+    _id?: string,
+    widgetName?: string | null,
+    widgetTheme?: string | null,
+    formID?: string | null,
+    propertyID?: string | JsonValue | null,
+    widgetLayout?: string | null,
+    carouselSettings?: Record<string, JsonValue> | null,
+    gridSettings?: Record<string, JsonValue> | null,
+    source?: string | null,
+    hideTestimonials?: boolean | null,
+    hiddenTestimonials?: string[] | Record<string, JsonValue> | null,
+    onlyShowFeatured?: boolean | null,
+    showSource?: boolean | null,
+    showBranding?: boolean | null,
+    randomize?: boolean | null,
+    showRecency?: boolean | null,
+    widgetTag?: string | null,
+    edited?: number | string | null,
+    testimonials?: {
+      _id?: string,
+      name?: string | null,
+      propertyID?: string | null,
+      comments?: string | null,
+      rating?: number | null,
+      avatar?: {
+        url?: string | null,
+        sizes?: {
+          small?: string | null,
+          medium?: string | null,
+          large?: string | null,
+          original?: string | null
+        } | null
+      } | null,
+      email?: string | null,
+      location?: string | null,
+      position?: string | null,
+      company?: string | null,
+      formID?: string | null,
+      added?: number | string | null,
+      approved?: number | null,
+      featured?: number | null,
+      tags?: (string | null)[] | null
+    }[]
+  }
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`widgets.get`
+
+List widgets for the configured property
+
+**Risk:** `read`
+
+```ts
+await corsair.endorsal.api.widgets.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  _id?: string,
+  widgetName?: string | null,
+  widgetTheme?: string | null,
+  formID?: string | null,
+  propertyID?: string | JsonValue | null,
+  widgetLayout?: string | null,
+  carouselSettings?: Record<string, JsonValue> | null,
+  gridSettings?: Record<string, JsonValue> | null,
+  source?: string | null,
+  hideTestimonials?: boolean | null,
+  hiddenTestimonials?: string[] | Record<string, JsonValue> | null,
+  onlyShowFeatured?: boolean | null,
+  showSource?: boolean | null,
+  showBranding?: boolean | null,
+  randomize?: boolean | null,
+  showRecency?: boolean | null,
+  widgetTag?: string | null,
+  edited?: number | string | null,
+  testimonials?: {
+    _id?: string,
+    name?: string | null,
+    propertyID?: string | null,
+    comments?: string | null,
+    rating?: number | null,
+    avatar?: {
+      url?: string | null,
+      sizes?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null,
+        original?: string | null
+      } | null
+    } | null,
+    email?: string | null,
+    location?: string | null,
+    position?: string | null,
+    company?: string | null,
+    formID?: string | null,
+    added?: number | string | null,
+    approved?: number | null,
+    featured?: number | null,
+    tags?: (string | null)[] | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

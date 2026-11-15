@@ -1,0 +1,471 @@
+{
+  "id": "genderapi",
+  "displayName": "Gender API",
+  "description": "Look up the gender behind a first name with Gender API - one name, up to 100 at once, an email address or a full name, each answer scored with its sample count and accuracy.",
+  "npmPackageName": "@corsair-dev/genderapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "genderapi.api.account.stats",
+      "shortPath": "account.stats",
+      "description": "Read the remaining request count and whether the monthly limit is used up",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_limit_reached",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "remaining_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount_month_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "amount_month_bought",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapi.api.countryOfOrigin.get",
+      "shortPath": "countryOfOrigin.get",
+      "description": "Find the countries a first name most likely comes from, each with a probability score",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The first name to look up"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country_of_origin",
+            "optional": false,
+            "type": "{ country_name?: string, country: string, probability: number, continental_region?: string, statistical_region?: string, countryName?: string, continentalRegion?: string, statisticalRegion?: string }[]"
+          },
+          {
+            "key": "name_sanitized",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "samples",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "accuracy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "country_of_origin_map_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapi.api.email.lookup",
+      "shortPath": "email.lookup",
+      "description": "Extract the first and last name from an email address and look up the gender behind the first name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "An email address that contains a first name"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Localizes the answer"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name_sanitized",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "samples",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "accuracy",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errno",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errmsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mail_provider",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapi.api.fullName.split",
+      "shortPath": "fullName.split",
+      "description": "Split a full name into first and last name, then look up the gender behind the first name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "split",
+            "optional": false,
+            "type": "string",
+            "description": "The full name to split into first and last name before the lookup"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Localizes the answer"
+          },
+          {
+            "key": "strict",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, returns a null last name if it is not in the database; when false, tries to extract it anyway"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name_sanitized",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "samples",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "accuracy",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errno",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errmsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "strict",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapi.api.lookup.multi",
+      "shortPath": "lookup.multi",
+      "description": "Look up up to 100 names in one request, answered in the same order, with an optional country per name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "names",
+            "optional": false,
+            "type": "string[]",
+            "description": "Names to look up together, answered in the same order"
+          },
+          {
+            "key": "countries",
+            "optional": true,
+            "type": "string[]",
+            "description": "One country code per name, in the same order. A single code applies to every name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ name: string, name_sanitized?: string, gender: string, samples: number, accuracy: number, country?: string, duration?: string, credits_used?: number, errno?: number, errmsg?: string }[]"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "genderapi.api.lookup.name",
+      "shortPath": "lookup.name",
+      "description": "Look up the gender behind one first name, with the sample count and the accuracy behind the answer. A country, locale or IP localizes it, which changes the answer for names such as Andrea",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The first name to look up"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Localizes the answer, which changes it for names such as Andrea: male in Italy, female in Germany"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "Localizes by browser locale instead of an explicit country"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string | string",
+            "description": "Localizes by the customer IP address instead of an explicit country"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name_sanitized",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "samples",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "accuracy",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errno",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errmsg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
