@@ -565,6 +565,7 @@ export const BaseProviders = [
 	'tisane',
 	'tldv',
 	'todoist',
+	'tomba',
 	'toggl',
 	'tokenmetrics',
 	'tpscheck',
@@ -1192,6 +1193,7 @@ export const ProviderDisplayNames = {
 	tisane: 'Tisane',
 	tldv: 'tl;dv',
 	todoist: 'Todoist',
+	tomba: 'Tomba',
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
 	tpscheck: 'TPSCheck',
@@ -1826,6 +1828,7 @@ export type AllProviders =
 	| 'tisane'
 	| 'tldv'
 	| 'todoist'
+	| 'tomba'
 	| 'toggl'
 	| 'tokenmetrics'
 	| 'tpscheck'
