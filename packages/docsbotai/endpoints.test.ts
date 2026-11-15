@@ -368,7 +368,7 @@ describe('DocsBot API boundary', () => {
 			'webhooks.delete',
 		]);
 		// Semantic search costs 0.1 AI credit but only returns data: a metered read.
-		expect(plugin.endpointMeta?.['search.search'].riskLevel).toBe('read');
+		expect(plugin.endpointMeta?.['search.search']?.riskLevel).toBe('read');
 	});
 
 	it('forwards pagination and parses nullable source files', async () => {
@@ -559,22 +559,23 @@ describe('DocsBot API boundary', () => {
 	});
 
 	it('asks for a connection when no API key is stored', async () => {
-		const unkeyed = docsbotai();
+		const { keyBuilder } = docsbotai();
+		if (!keyBuilder) throw new Error('docsbotai has no key builder');
 		// The key builder only reads authType and keys.get_api_key.
 		const keyCtx = (key: string | null) =>
 			({
 				authType: 'api_key',
 				keys: { get_api_key: async () => key },
-			}) as unknown as Parameters<typeof unkeyed.keyBuilder>[0];
-		await expect(unkeyed.keyBuilder(keyCtx(null), 'endpoint')).rejects.toThrow(
+			}) as unknown as Parameters<typeof keyBuilder>[0];
+		await expect(keyBuilder(keyCtx(null), 'endpoint')).rejects.toThrow(
 			'auth-missing',
 		);
-		await expect(unkeyed.keyBuilder(keyCtx(''), 'endpoint')).rejects.toThrow(
+		await expect(keyBuilder(keyCtx(''), 'endpoint')).rejects.toThrow(
 			'auth-missing',
 		);
-		await expect(
-			unkeyed.keyBuilder(keyCtx('stored'), 'endpoint'),
-		).resolves.toBe('stored');
+		await expect(keyBuilder(keyCtx('stored'), 'endpoint')).resolves.toBe(
+			'stored',
+		);
 	});
 
 	describe('secure uploads', () => {
