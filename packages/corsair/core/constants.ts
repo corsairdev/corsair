@@ -569,6 +569,7 @@ export const BaseProviders = [
 	'tokenmetrics',
 	'tpscheck',
 	'trello',
+	'triggercmd',
 	'tripadvisor',
 	'trustpilot',
 	'turbotpipes',
@@ -1196,6 +1197,7 @@ export const ProviderDisplayNames = {
 	tokenmetrics: 'Token Metrics',
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
+	triggercmd: 'TRIGGERcmd',
 	tripadvisor: 'Tripadvisor',
 	trustpilot: 'Trustpilot',
 	turbotpipes: 'Turbot Pipes',
@@ -1830,6 +1832,7 @@ export type AllProviders =
 	| 'tokenmetrics'
 	| 'tpscheck'
 	| 'trello'
+	| 'triggercmd'
 	| 'tripadvisor'
 	| 'trustpilot'
 	| 'turbotpipes'
