@@ -336,24 +336,23 @@ describe('Short.io public request seam', () => {
 		);
 	});
 	it('preserves 429 status, body, and retry-after after core retries', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{
-					method: 'POST',
-					url: '/links',
-					body: { originalURL: 'https://example.com/alice@example.com' },
-				},
-				{
-					url: 'https://api.short.io/links?originalURL=alice%40example.com',
-					ok: false,
-					status: 429,
-					statusText: 'Too Many Requests',
-					body: { error: 'rate limit' },
-				},
-				'Rate limited',
-				{ retryAfter: 3000 },
-			),
+		const coreError = new ApiError(
+			{
+				method: 'POST',
+				url: '/links',
+				body: { originalURL: 'https://example.com/alice@example.com' },
+			},
+			{
+				url: 'https://api.short.io/links?originalURL=alice%40example.com',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: 'rate limit' },
+			},
+			'Rate limited',
+			{ retryAfter: 3000 },
 		);
+		mockRequest.mockRejectedValue(coreError);
 		// JavaScript may throw values that are not Error instances.
 		let caught: unknown;
 		try {
@@ -364,7 +363,9 @@ describe('Short.io public request seam', () => {
 		} catch (error) {
 			caught = error;
 		}
-		// Core's ApiError comes through (R8), minus the request body and query.
+		// Core's ApiError comes through unchanged (R8): the same instance,
+		// minus the request body and query.
+		expect(caught).toBe(coreError);
 		expect(caught).toBeInstanceOf(ApiError);
 		expect(caught).toMatchObject({
 			status: 429,

@@ -45,29 +45,16 @@ export async function makeShortioRequest(
 		// Endpoint-specific response schemas narrow the untrusted payload.
 		return await request<unknown>(config, requestOptions, { rateLimitConfig });
 	} catch (error) {
-		// Core's ApiError goes through as an ApiError (status and retryAfter
-		// drive the 429 handler), rebuilt without the request body, query and
-		// URL query string: they hold link URLs, paths and titles.
+		// Core's ApiError goes through as the same instance (status, retryAfter
+		// and anything else core sets stay intact), with the request body, query
+		// and URL query string dropped: they hold link URLs, paths and titles.
 		if (error instanceof ApiError) {
-			const sanitized = new ApiError(
-				{ ...error.request, body: undefined, query: undefined },
-				{
-					url: error.url.split('?')[0] ?? error.url,
-					ok: false,
-					status: error.status,
-					statusText: error.statusText,
-					body: error.body,
+			Object.defineProperties(error, {
+				request: {
+					value: { ...error.request, body: undefined, query: undefined },
 				},
-				error.message,
-				{
-					retryAfter: error.retryAfter,
-					rateLimitReset: error.rateLimitReset,
-					rateLimitRemaining: error.rateLimitRemaining,
-					rateLimitLimit: error.rateLimitLimit,
-				},
-			);
-			sanitized.stack = error.stack;
-			throw sanitized;
+				url: { value: error.url.split('?')[0] ?? error.url },
+			});
 		}
 		throw error;
 	}
