@@ -130,6 +130,38 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+/**
+ * Core builds ApiError.message from the raw body (`message`, `error`, `detail`,
+ * or the whole body as JSON), so the message is rebuilt from the redacted body.
+ */
+function buildErrorMessage(
+	// `unknown` because the redacted body keeps the provider's untrusted shape.
+	sanitizedBody: unknown,
+	status: number,
+	statusText: string,
+): string {
+	if (isRecord(sanitizedBody)) {
+		for (const field of ['message', 'error', 'detail']) {
+			const value = sanitizedBody[field];
+			if (typeof value === 'string' && value.length > 0) {
+				return value;
+			}
+		}
+	}
+	if (typeof sanitizedBody === 'string' && sanitizedBody.length > 0) {
+		return `Ignisign request failed with status ${status}: ${sanitizedBody}`;
+	}
+	let bodyText = '';
+	try {
+		bodyText = sanitizedBody === undefined ? '' : JSON.stringify(sanitizedBody);
+	} catch {
+		bodyText = '';
+	}
+	return `Ignisign request failed with status ${status} ${statusText}${
+		bodyText ? `: ${bodyText}` : ''
+	}`;
+}
+
 function parseRetryAfterMs(headerValue: string | null): number | undefined {
 	if (!headerValue) return undefined;
 	const seconds = Number.parseInt(headerValue, 10);
@@ -220,13 +252,11 @@ export async function makeIgnisignRequest<T>(
 			// `unknown` because error.body has no static type from corsair/http.
 			const rawBody: unknown = error.body;
 			const sanitizedBody = sanitizeData(rawBody);
-			let errorMessage = error.message;
-			if (
-				isRecord(sanitizedBody) &&
-				typeof sanitizedBody.message === 'string'
-			) {
-				errorMessage = sanitizedBody.message;
-			}
+			const errorMessage = buildErrorMessage(
+				sanitizedBody,
+				error.status,
+				error.statusText,
+			);
 			throw new ApiError(
 				{ method, url: endpoint },
 				{

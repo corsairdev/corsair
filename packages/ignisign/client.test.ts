@@ -151,6 +151,56 @@ describe('makeIgnisignRequest', () => {
 		});
 	});
 
+	it('builds the error message from the redacted body when it has no message field', async () => {
+		const detailError = new ApiError(
+			{ method: 'POST', url: '/v4/signers' },
+			{
+				url: `${IGNISIGN_API_BASE}/v4/signers`,
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable Entity',
+				body: { detail: 'Signer jane.doe@example.com is invalid' },
+			},
+			// Core copies `detail` into the message.
+			'Signer jane.doe@example.com is invalid',
+		);
+		const rawBody = { code: 'SIGNER_CONFLICT', authSecret: 'raw-auth-secret' };
+		const genericError = new ApiError(
+			{ method: 'POST', url: '/v4/signers' },
+			{
+				url: `${IGNISIGN_API_BASE}/v4/signers`,
+				ok: false,
+				status: 409,
+				statusText: 'Conflict',
+				body: rawBody,
+			},
+			// Core's fallback message embeds the whole raw body.
+			`Generic Error: status: 409; status text: Conflict; body: ${JSON.stringify(rawBody, null, 2)}`,
+		);
+		mockRequest
+			.mockRejectedValueOnce(detailError)
+			.mockRejectedValueOnce(genericError);
+
+		// `unknown` because rejection value has no static type; assertions narrow it.
+		const first: unknown = await makeIgnisignRequest('/v4/signers', 'key', {
+			method: 'POST',
+		}).catch((caught: unknown) => caught);
+		// `unknown` because rejection value has no static type; assertions narrow it.
+		const second: unknown = await makeIgnisignRequest('/v4/signers', 'key', {
+			method: 'POST',
+		}).catch((caught: unknown) => caught);
+
+		expect(first).toBeInstanceOf(ApiError);
+		expect((first as ApiError).message).toBe(
+			'Signer [REDACTED_EMAIL] is invalid',
+		);
+		expect(second).toBeInstanceOf(ApiError);
+		const secondMessage = (second as ApiError).message;
+		expect(secondMessage).not.toContain('raw-auth-secret');
+		expect(secondMessage).toContain('409');
+		expect(secondMessage).toContain('SIGNER_CONFLICT');
+	});
+
 	it('rethrows 429 ApiError preserving status and retryAfter', async () => {
 		const rateLimitError = createApiError(429, 'Too many requests', 5000);
 		mockRequest.mockRejectedValue(rateLimitError);
