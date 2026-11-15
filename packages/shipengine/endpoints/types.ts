@@ -3887,76 +3887,6 @@ const shipEngineSchema596 = z
 		zone: shipEngineSchema525.optional(),
 	})
 	.strict();
-const shipEngineSchema598 = z
-	.object({
-		carrier_id: shipEngineSchema116.optional(),
-		service_code: shipEngineSchema282.optional(),
-		shipping_rule_id: shipEngineSchema116.optional(),
-		external_order_id: shipEngineSchema36.optional(),
-		items: shipEngineSchema283.optional(),
-		tax_identifiers: shipEngineSchema288.optional(),
-		external_shipment_id: shipEngineSchema294.optional(),
-		shipment_number: shipEngineSchema294.optional(),
-		ship_date: shipEngineSchema295.optional(),
-		ship_to: shipEngineSchema297.optional(),
-		ship_from: shipEngineSchema303.optional(),
-		warehouse_id: shipEngineSchema302.optional(),
-		return_to: shipEngineSchema303.optional(),
-		is_return: shipEngineSchema304.optional(),
-		confirmation: shipEngineSchema305.optional(),
-		customs: shipEngineSchema307.optional(),
-		advanced_options: shipEngineSchema325.optional(),
-		insurance_provider: shipEngineSchema343.optional(),
-		order_source_code: shipEngineSchema286.optional(),
-		packages: shipEngineSchema345.optional(),
-		comparison_rate_type: shipEngineSchema365.optional(),
-	})
-	.strict();
-const shipEngineSchema597 = z
-	.object({
-		text: shipEngineSchema34,
-		shipment: shipEngineSchema598.optional(),
-	})
-	.strict();
-const shipEngineSchema600 = z
-	.object({
-		shipment_id: shipEngineSchema89.optional(),
-		carrier_id: shipEngineSchema145.optional(),
-		service_code: shipEngineSchema451.optional(),
-		shipping_rule_id: shipEngineSchema145.optional(),
-		external_order_id: shipEngineSchema47.optional(),
-		items: shipEngineSchema452.optional(),
-		tax_identifiers: shipEngineSchema459.optional(),
-		external_shipment_id: shipEngineSchema465.optional(),
-		shipment_number: shipEngineSchema465.optional(),
-		ship_date: shipEngineSchema466.optional(),
-		created_at: shipEngineSchema21.optional(),
-		modified_at: shipEngineSchema21.optional(),
-		shipment_status: shipEngineSchema467.optional(),
-		ship_to: shipEngineSchema469.optional(),
-		ship_from: shipEngineSchema470.optional(),
-		warehouse_id: shipEngineSchema471.optional(),
-		return_to: shipEngineSchema470.optional(),
-		is_return: shipEngineSchema472.optional(),
-		confirmation: shipEngineSchema473.optional(),
-		customs: shipEngineSchema474.optional(),
-		advanced_options: shipEngineSchema487.optional(),
-		insurance_provider: shipEngineSchema505.optional(),
-		tags: shipEngineSchema507.optional(),
-		order_source_code: shipEngineSchema457.optional(),
-		packages: shipEngineSchema509.optional(),
-		total_weight: shipEngineSchema523.optional(),
-		comparison_rate_type: shipEngineSchema524.optional(),
-		zone: shipEngineSchema525.optional(),
-	})
-	.strict();
-const shipEngineSchema599 = z
-	.object({
-		score: shipEngineSchema45,
-		shipment: shipEngineSchema600,
-		entities: shipEngineSchema55,
-	})
-	.strict();
 const shipEngineSchema601 = z
 	.object({
 		carrier_id: shipEngineSchema116.optional(),
@@ -4193,9 +4123,6 @@ const shipEngineSchema626 = z
 		return_address: shipEngineSchema65,
 	})
 	.strict();
-const shipEngineSchema627 = z
-	.object({ is_default: shipEngineSchema304.optional() })
-	.strict();
 
 export const ShipEngineEndpointInputSchemas = {
 	'account.listAccountSettings': z.object({}).strict(),
@@ -4244,9 +4171,6 @@ export const ShipEngineEndpointInputSchemas = {
 		.object({ path: z.object({ batch_id: shipEngineSchema117 }).strict() })
 		.strict(),
 	'batches.getBatchById': z
-		.object({ path: z.object({ batch_id: shipEngineSchema117 }).strict() })
-		.strict(),
-	'batches.updateBatch': z
 		.object({ path: z.object({ batch_id: shipEngineSchema117 }).strict() })
 		.strict(),
 	'batches.addToBatch': z
@@ -4555,7 +4479,6 @@ export const ShipEngineEndpointInputSchemas = {
 			path: z.object({ external_shipment_id: shipEngineSchema28 }).strict(),
 		})
 		.strict(),
-	'shipments.parseShipment': z.object({ body: shipEngineSchema597 }).strict(),
 	'shipments.getShipmentById': z
 		.object({ path: z.object({ shipment_id: shipEngineSchema117 }).strict() })
 		.strict(),
@@ -4579,9 +4502,6 @@ export const ShipEngineEndpointInputSchemas = {
 		.strict(),
 	'shipments.shipmentsUpdateTags': z
 		.object({ body: shipEngineSchema608 })
-		.strict(),
-	'shipments.shipmentsListTags': z
-		.object({ path: z.object({ shipment_id: shipEngineSchema117 }).strict() })
 		.strict(),
 	'shipments.tagShipment': z
 		.object({
@@ -4681,12 +4601,6 @@ export const ShipEngineEndpointInputSchemas = {
 	'warehouses.deleteWarehouse': z
 		.object({ path: z.object({ warehouse_id: shipEngineSchema117 }).strict() })
 		.strict(),
-	'warehouses.updateWarehouseSettings': z
-		.object({
-			path: z.object({ warehouse_id: shipEngineSchema117 }).strict(),
-			body: shipEngineSchema627,
-		})
-		.strict(),
 } as const;
 
 export const ShipEngineEndpointOutputSchemas = {
@@ -4703,7 +4617,6 @@ export const ShipEngineEndpointOutputSchemas = {
 	'batches.getBatchByExternalId': shipEngineSchema130,
 	'batches.deleteBatch': shipEngineSchema32,
 	'batches.getBatchById': shipEngineSchema130,
-	'batches.updateBatch': shipEngineSchema32,
 	'batches.addToBatch': shipEngineSchema32,
 	'batches.listBatchErrors': shipEngineSchema132,
 	'batches.processBatch': shipEngineSchema32,
@@ -4765,14 +4678,12 @@ export const ShipEngineEndpointOutputSchemas = {
 	'shipments.listShipments': shipEngineSchema587,
 	'shipments.createShipments': shipEngineSchema591,
 	'shipments.getShipmentByExternalId': shipEngineSchema596,
-	'shipments.parseShipment': shipEngineSchema599,
 	'shipments.getShipmentById': shipEngineSchema596,
 	'shipments.updateShipment': shipEngineSchema602,
 	'shipments.cancelShipments': shipEngineSchema32,
 	// Live API returns an array of rate responses here; the OpenAPI contract shows a single object.
 	'shipments.listShipmentRates': z.array(shipEngineSchema603),
 	'shipments.shipmentsUpdateTags': z.undefined(),
-	'shipments.shipmentsListTags': shipEngineSchema611,
 	'shipments.tagShipment': shipEngineSchema611,
 	'shipments.untagShipment': shipEngineSchema32,
 	'tags.listTags': shipEngineSchema612,
@@ -4789,7 +4700,6 @@ export const ShipEngineEndpointOutputSchemas = {
 	'warehouses.getWarehouseById': shipEngineSchema626,
 	'warehouses.updateWarehouse': shipEngineSchema32,
 	'warehouses.deleteWarehouse': shipEngineSchema32,
-	'warehouses.updateWarehouseSettings': shipEngineSchema32,
 } as const;
 
 export type ShipEngineOperationName =

@@ -68,10 +68,6 @@ export const shipEngineEndpointSchemas = {
 		input: ShipEngineEndpointInputSchemas['batches.getBatchById'],
 		output: ShipEngineEndpointOutputSchemas['batches.getBatchById'],
 	},
-	'batches.updateBatch': {
-		input: ShipEngineEndpointInputSchemas['batches.updateBatch'],
-		output: ShipEngineEndpointOutputSchemas['batches.updateBatch'],
-	},
 	'batches.addToBatch': {
 		input: ShipEngineEndpointInputSchemas['batches.addToBatch'],
 		output: ShipEngineEndpointOutputSchemas['batches.addToBatch'],
@@ -302,10 +298,6 @@ export const shipEngineEndpointSchemas = {
 		output:
 			ShipEngineEndpointOutputSchemas['shipments.getShipmentByExternalId'],
 	},
-	'shipments.parseShipment': {
-		input: ShipEngineEndpointInputSchemas['shipments.parseShipment'],
-		output: ShipEngineEndpointOutputSchemas['shipments.parseShipment'],
-	},
 	'shipments.getShipmentById': {
 		input: ShipEngineEndpointInputSchemas['shipments.getShipmentById'],
 		output: ShipEngineEndpointOutputSchemas['shipments.getShipmentById'],
@@ -325,10 +317,6 @@ export const shipEngineEndpointSchemas = {
 	'shipments.shipmentsUpdateTags': {
 		input: ShipEngineEndpointInputSchemas['shipments.shipmentsUpdateTags'],
 		output: ShipEngineEndpointOutputSchemas['shipments.shipmentsUpdateTags'],
-	},
-	'shipments.shipmentsListTags': {
-		input: ShipEngineEndpointInputSchemas['shipments.shipmentsListTags'],
-		output: ShipEngineEndpointOutputSchemas['shipments.shipmentsListTags'],
 	},
 	'shipments.tagShipment': {
 		input: ShipEngineEndpointInputSchemas['shipments.tagShipment'],
@@ -394,11 +382,6 @@ export const shipEngineEndpointSchemas = {
 		input: ShipEngineEndpointInputSchemas['warehouses.deleteWarehouse'],
 		output: ShipEngineEndpointOutputSchemas['warehouses.deleteWarehouse'],
 	},
-	'warehouses.updateWarehouseSettings': {
-		input: ShipEngineEndpointInputSchemas['warehouses.updateWarehouseSettings'],
-		output:
-			ShipEngineEndpointOutputSchemas['warehouses.updateWarehouseSettings'],
-	},
 } as const satisfies RequiredPluginEndpointSchemas<ShipEngineNestedEndpoints>;
 
 export const shipEngineEndpointMeta = {
@@ -459,10 +442,6 @@ export const shipEngineEndpointMeta = {
 	'batches.getBatchById': {
 		riskLevel: SHIPENGINE_OPERATIONS['batches.getBatchById'].risk,
 		description: SHIPENGINE_OPERATIONS['batches.getBatchById'].summary,
-	},
-	'batches.updateBatch': {
-		riskLevel: SHIPENGINE_OPERATIONS['batches.updateBatch'].risk,
-		description: SHIPENGINE_OPERATIONS['batches.updateBatch'].summary,
 	},
 	'batches.addToBatch': {
 		riskLevel: SHIPENGINE_OPERATIONS['batches.addToBatch'].risk,
@@ -705,10 +684,6 @@ export const shipEngineEndpointMeta = {
 		description:
 			SHIPENGINE_OPERATIONS['shipments.getShipmentByExternalId'].summary,
 	},
-	'shipments.parseShipment': {
-		riskLevel: SHIPENGINE_OPERATIONS['shipments.parseShipment'].risk,
-		description: SHIPENGINE_OPERATIONS['shipments.parseShipment'].summary,
-	},
 	'shipments.getShipmentById': {
 		riskLevel: SHIPENGINE_OPERATIONS['shipments.getShipmentById'].risk,
 		description: SHIPENGINE_OPERATIONS['shipments.getShipmentById'].summary,
@@ -728,10 +703,6 @@ export const shipEngineEndpointMeta = {
 	'shipments.shipmentsUpdateTags': {
 		riskLevel: SHIPENGINE_OPERATIONS['shipments.shipmentsUpdateTags'].risk,
 		description: SHIPENGINE_OPERATIONS['shipments.shipmentsUpdateTags'].summary,
-	},
-	'shipments.shipmentsListTags': {
-		riskLevel: SHIPENGINE_OPERATIONS['shipments.shipmentsListTags'].risk,
-		description: SHIPENGINE_OPERATIONS['shipments.shipmentsListTags'].summary,
 	},
 	'shipments.tagShipment': {
 		riskLevel: SHIPENGINE_OPERATIONS['shipments.tagShipment'].risk,
@@ -798,10 +769,5 @@ export const shipEngineEndpointMeta = {
 	'warehouses.deleteWarehouse': {
 		riskLevel: SHIPENGINE_OPERATIONS['warehouses.deleteWarehouse'].risk,
 		description: SHIPENGINE_OPERATIONS['warehouses.deleteWarehouse'].summary,
-	},
-	'warehouses.updateWarehouseSettings': {
-		riskLevel: SHIPENGINE_OPERATIONS['warehouses.updateWarehouseSettings'].risk,
-		description:
-			SHIPENGINE_OPERATIONS['warehouses.updateWarehouseSettings'].summary,
 	},
 } as const satisfies RequiredPluginEndpointMeta<ShipEngineNestedEndpoints>;

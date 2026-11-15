@@ -121,9 +121,6 @@ const testInputs = {
 	'batches.getBatchById': ShipEngineEndpointInputSchemas[
 		'batches.getBatchById'
 	].parse({ path: { batch_id: 'se-28529731' } }),
-	'batches.updateBatch': ShipEngineEndpointInputSchemas[
-		'batches.updateBatch'
-	].parse({ path: { batch_id: 'se-28529731' } }),
 	'batches.addToBatch': ShipEngineEndpointInputSchemas[
 		'batches.addToBatch'
 	].parse({ path: { batch_id: 'se-28529731' }, body: {} }),
@@ -450,13 +447,6 @@ const testInputs = {
 	'shipments.getShipmentByExternalId': ShipEngineEndpointInputSchemas[
 		'shipments.getShipmentByExternalId'
 	].parse({ path: { external_shipment_id: 'example' } }),
-	'shipments.parseShipment': ShipEngineEndpointInputSchemas[
-		'shipments.parseShipment'
-	].parse({
-		body: {
-			text: "I have a 4oz package that's 5x10x14in, and I need to ship it to Margie McMiller at 3800 North Lamar suite 200 in austin, tx 78652. Please send it via USPS first class and require an adult signature. It also needs to be insured for $400.\n",
-		},
-	}),
 	'shipments.getShipmentById': ShipEngineEndpointInputSchemas[
 		'shipments.getShipmentById'
 	].parse({ path: { shipment_id: 'se-28529731' } }),
@@ -493,9 +483,6 @@ const testInputs = {
 	'shipments.shipmentsUpdateTags': ShipEngineEndpointInputSchemas[
 		'shipments.shipmentsUpdateTags'
 	].parse({ body: {} }),
-	'shipments.shipmentsListTags': ShipEngineEndpointInputSchemas[
-		'shipments.shipmentsListTags'
-	].parse({ path: { shipment_id: 'se-28529731' } }),
 	'shipments.tagShipment': ShipEngineEndpointInputSchemas[
 		'shipments.tagShipment'
 	].parse({ path: { shipment_id: 'se-28529731', tag_name: 'Fragile' } }),
@@ -583,9 +570,6 @@ const testInputs = {
 	'warehouses.deleteWarehouse': ShipEngineEndpointInputSchemas[
 		'warehouses.deleteWarehouse'
 	].parse({ path: { warehouse_id: 'se-28529731' } }),
-	'warehouses.updateWarehouseSettings': ShipEngineEndpointInputSchemas[
-		'warehouses.updateWarehouseSettings'
-	].parse({ path: { warehouse_id: 'se-28529731' }, body: {} }),
 } satisfies ShipEngineEndpointInputs;
 
 const testOutputs = {
@@ -799,8 +783,6 @@ const testOutputs = {
 		paperless_download: {},
 		status: 'open',
 	}),
-	'batches.updateBatch':
-		ShipEngineEndpointOutputSchemas['batches.updateBatch'].parse(''),
 	'batches.addToBatch':
 		ShipEngineEndpointOutputSchemas['batches.addToBatch'].parse(''),
 	'batches.listBatchErrors': ShipEngineEndpointOutputSchemas[
@@ -1353,15 +1335,6 @@ const testOutputs = {
 		packages: [{ weight: { value: 0, unit: 'pound' } }],
 		total_weight: { value: 0, unit: 'pound' },
 	}),
-	'shipments.parseShipment': ShipEngineEndpointOutputSchemas[
-		'shipments.parseShipment'
-	].parse({
-		score: 0,
-		shipment: {},
-		entities: [
-			{ type: 'x', score: 0, text: 'x', start_index: 0, end_index: 0 },
-		],
-	}),
 	'shipments.getShipmentById': ShipEngineEndpointOutputSchemas[
 		'shipments.getShipmentById'
 	].parse({
@@ -1538,9 +1511,6 @@ const testOutputs = {
 		ShipEngineEndpointOutputSchemas['shipments.shipmentsUpdateTags'].parse(
 			undefined,
 		),
-	'shipments.shipmentsListTags': ShipEngineEndpointOutputSchemas[
-		'shipments.shipmentsListTags'
-	].parse({ tags: ['example'] }),
 	'shipments.tagShipment': ShipEngineEndpointOutputSchemas[
 		'shipments.tagShipment'
 	].parse({ tags: ['example'] }),
@@ -1637,10 +1607,6 @@ const testOutputs = {
 		ShipEngineEndpointOutputSchemas['warehouses.updateWarehouse'].parse(''),
 	'warehouses.deleteWarehouse':
 		ShipEngineEndpointOutputSchemas['warehouses.deleteWarehouse'].parse(''),
-	'warehouses.updateWarehouseSettings':
-		ShipEngineEndpointOutputSchemas['warehouses.updateWarehouseSettings'].parse(
-			'',
-		),
 } satisfies ShipEngineEndpointOutputs;
 
 function makeJsonResponse(value: unknown): Response {
@@ -1773,5 +1739,5 @@ describe('ShipEngine operations', () => {
 			fetchMock.mockRestore();
 		}
 	});
-	expect(SHIPENGINE_OPERATION_NAMES).toHaveLength(92);
+	expect(SHIPENGINE_OPERATION_NAMES).toHaveLength(88);
 });

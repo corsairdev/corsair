@@ -59,7 +59,6 @@ export const ShipEngine = {
 		getBatchByExternalId: createOperation('batches.getBatchByExternalId'),
 		deleteBatch: createOperation('batches.deleteBatch'),
 		getBatchById: createOperation('batches.getBatchById'),
-		updateBatch: createOperation('batches.updateBatch'),
 		addToBatch: createOperation('batches.addToBatch'),
 		listBatchErrors: createOperation('batches.listBatchErrors'),
 		processBatch: createOperation('batches.processBatch'),
@@ -152,13 +151,11 @@ export const ShipEngine = {
 		getShipmentByExternalId: createOperation(
 			'shipments.getShipmentByExternalId',
 		),
-		parseShipment: createOperation('shipments.parseShipment'),
 		getShipmentById: createOperation('shipments.getShipmentById'),
 		updateShipment: createOperation('shipments.updateShipment'),
 		cancelShipments: createOperation('shipments.cancelShipments'),
 		listShipmentRates: createOperation('shipments.listShipmentRates'),
 		shipmentsUpdateTags: createOperation('shipments.shipmentsUpdateTags'),
-		shipmentsListTags: createOperation('shipments.shipmentsListTags'),
 		tagShipment: createOperation('shipments.tagShipment'),
 		untagShipment: createOperation('shipments.untagShipment'),
 	},
@@ -183,9 +180,6 @@ export const ShipEngine = {
 		getWarehouseById: createOperation('warehouses.getWarehouseById'),
 		updateWarehouse: createOperation('warehouses.updateWarehouse'),
 		deleteWarehouse: createOperation('warehouses.deleteWarehouse'),
-		updateWarehouseSettings: createOperation(
-			'warehouses.updateWarehouseSettings',
-		),
 	},
 } as const;
 

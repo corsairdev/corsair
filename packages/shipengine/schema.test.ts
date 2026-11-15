@@ -15,8 +15,8 @@ describe('ShipEngine schemas', () => {
 		expect(ShipEngineSchema.entities).toEqual({});
 	});
 
-	it('registers input/output schemas and metadata for all 92 non-webhook operations', () => {
-		expect(Object.keys(ShipEngineEndpointInputSchemas)).toHaveLength(92);
+	it('registers input/output schemas and metadata for all 88 non-webhook operations', () => {
+		expect(Object.keys(ShipEngineEndpointInputSchemas)).toHaveLength(88);
 		expect(Object.keys(ShipEngineEndpointOutputSchemas)).toEqual(
 			SHIPENGINE_OPERATION_NAMES,
 		);
@@ -29,6 +29,18 @@ describe('ShipEngine schemas', () => {
 		expect(
 			SHIPENGINE_OPERATION_NAMES.some((name) => name.includes('Webhook')),
 		).toBe(false);
+	});
+
+	it('leaves out the documented routes the live API does not serve', () => {
+		const operations: readonly string[] = SHIPENGINE_OPERATION_NAMES;
+		for (const name of [
+			'batches.updateBatch',
+			'shipments.parseShipment',
+			'shipments.shipmentsListTags',
+			'warehouses.updateWarehouseSettings',
+		]) {
+			expect(operations).not.toContain(name);
+		}
 	});
 
 	it('accepts the documented inputs the generated contract dropped or mislabelled', () => {

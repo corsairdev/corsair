@@ -56,8 +56,6 @@ apiExamples:
     args: {"path":{"batch_id":"se-28529731"}}
   "batches.getBatchById":
     args: {"path":{"batch_id":"se-28529731"}}
-  "batches.updateBatch":
-    args: {"path":{"batch_id":"se-28529731"}}
   "batches.addToBatch":
     args: {"path":{"batch_id":"se-28529731"},"body":{}}
   "batches.listBatchErrors":
@@ -166,8 +164,6 @@ apiExamples:
     args: {"body":{"shipments":[{"carrier_id":"se-28529731","service_code":"usps_first_class_mail","ship_to":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"},"ship_from":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"}}]}}
   "shipments.getShipmentByExternalId":
     args: {"path":{"external_shipment_id":"example"}}
-  "shipments.parseShipment":
-    args: {"body":{"text":"Example shipment from 123 Example St, Example City, CA 94000"}}
   "shipments.getShipmentById":
     args: {"path":{"shipment_id":"se-28529731"}}
   "shipments.updateShipment":
@@ -178,8 +174,6 @@ apiExamples:
     args: {"path":{"shipment_id":"se-28529731"}}
   "shipments.shipmentsUpdateTags":
     args: {"body":{}}
-  "shipments.shipmentsListTags":
-    args: {"path":{"shipment_id":"se-28529731"}}
   "shipments.tagShipment":
     args: {"path":{"shipment_id":"se-28529731","tag_name":"example"}}
   "shipments.untagShipment":
@@ -212,5 +206,3 @@ apiExamples:
     args: {"path":{"warehouse_id":"se-28529731"},"body":{"name":"example","origin_address":{"name":"example","address_line1":"123 Example St","city_locality":"Example City","state_province":"CA","postal_code":"94000"}}}
   "warehouses.deleteWarehouse":
     args: {"path":{"warehouse_id":"se-28529731"}}
-  "warehouses.updateWarehouseSettings":
-    args: {"path":{"warehouse_id":"se-28529731"},"body":{}}
