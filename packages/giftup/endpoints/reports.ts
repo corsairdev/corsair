@@ -13,13 +13,33 @@ import {
 	ReportTransactionSchema,
 } from './types';
 
+/**
+ * Gift Up's reference shows the list key as `tranasctions` in its example and
+ * `transactions` in the property table; accept either.
+ */
+// `unknown` because the raw response is checked before key access
+function normalizeTransactionsEnvelope(response: unknown): unknown {
+	if (
+		typeof response === 'object' &&
+		response !== null &&
+		!Array.isArray(response) &&
+		!('transactions' in response) &&
+		'tranasctions' in response
+	) {
+		const { tranasctions, ...rest } = response;
+		return { ...rest, transactions: tranasctions };
+	}
+	return response;
+}
+
 export const Reports = {
 	listTransactions: async (
 		ctx: GiftUpContext,
 		input: ReportsListTransactionsInput,
 	): Promise<ReportsListTransactionsResponse> => {
 		const parsed = ReportsListTransactionsInputSchema.parse(input);
-		const response = await makeGiftUpRequest<ReportsListTransactionsResponse>(
+		// `unknown` because the envelope is normalized below before validation
+		const response = await makeGiftUpRequest<unknown>(
 			'/reports/transactions',
 			ctx.key,
 			{
@@ -28,7 +48,9 @@ export const Reports = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return ReportsListTransactionsResponseSchema.parse(response);
+		return ReportsListTransactionsResponseSchema.parse(
+			normalizeTransactionsEnvelope(response),
+		);
 	},
 	getTransaction: async (
 		ctx: GiftUpContext,

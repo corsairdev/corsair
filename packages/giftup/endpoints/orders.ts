@@ -9,6 +9,7 @@ import type {
 	OrdersListResponse,
 	OrdersMarkAsPostedInput,
 	OrdersUpdateInput,
+	OrdersUpdateResponse,
 	SuccessResponse,
 } from './types';
 import {
@@ -20,6 +21,7 @@ import {
 	OrdersListResponseSchema,
 	OrdersMarkAsPostedInputSchema,
 	OrdersUpdateInputSchema,
+	OrdersUpdateResponseSchema,
 	SuccessResponseSchema,
 } from './types';
 
@@ -67,9 +69,9 @@ export const Orders = {
 	update: async (
 		ctx: GiftUpContext,
 		input: OrdersUpdateInput,
-	): Promise<Order> => {
+	): Promise<OrdersUpdateResponse> => {
 		const parsed = OrdersUpdateInputSchema.parse(input);
-		const response = await makeGiftUpRequest<Order>(
+		const response = await makeGiftUpRequest<OrdersUpdateResponse>(
 			`/orders/${encodeGiftUpPathId(parsed.id)}`,
 			ctx.key,
 			{
@@ -78,7 +80,7 @@ export const Orders = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return OrderSchema.parse(response);
+		return OrdersUpdateResponseSchema.parse(response);
 	},
 	addNote: async (
 		ctx: GiftUpContext,

@@ -8,6 +8,7 @@ import type {
 	ItemsListInput,
 	ItemsListResponse,
 	ItemsUpdateInput,
+	ItemsUpdateResponse,
 	SuccessResponse,
 } from './types';
 import {
@@ -18,6 +19,7 @@ import {
 	ItemsListInputSchema,
 	ItemsListResponseSchema,
 	ItemsUpdateInputSchema,
+	ItemsUpdateResponseSchema,
 	SuccessResponseSchema,
 } from './types';
 
@@ -65,9 +67,9 @@ export const Items = {
 	update: async (
 		ctx: GiftUpContext,
 		input: ItemsUpdateInput,
-	): Promise<Item> => {
+	): Promise<ItemsUpdateResponse> => {
 		const parsed = ItemsUpdateInputSchema.parse(input);
-		const response = await makeGiftUpRequest<Item>(
+		const response = await makeGiftUpRequest<ItemsUpdateResponse>(
 			`/items/${encodeGiftUpPathId(parsed.id)}`,
 			ctx.key,
 			{
@@ -76,7 +78,7 @@ export const Items = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return ItemSchema.parse(response);
+		return ItemsUpdateResponseSchema.parse(response);
 	},
 	delete: async (
 		ctx: GiftUpContext,

@@ -3,11 +3,13 @@ import type { GiftUpContext } from '../index';
 import type {
 	IntegrationsGetStripeInput,
 	IntegrationsUpdateStripeInput,
+	IntegrationsUpdateStripeResponse,
 	StripeConnection,
 } from './types';
 import {
 	IntegrationsGetStripeInputSchema,
 	IntegrationsUpdateStripeInputSchema,
+	IntegrationsUpdateStripeResponseSchema,
 	StripeConnectionSchema,
 } from './types';
 
@@ -30,9 +32,9 @@ export const Integrations = {
 	updateStripeConnection: async (
 		ctx: GiftUpContext,
 		input: IntegrationsUpdateStripeInput,
-	): Promise<StripeConnection> => {
+	): Promise<IntegrationsUpdateStripeResponse> => {
 		const parsed = IntegrationsUpdateStripeInputSchema.parse(input);
-		const response = await makeGiftUpRequest<StripeConnection>(
+		const response = await makeGiftUpRequest<IntegrationsUpdateStripeResponse>(
 			'/integrations/stripe/connection',
 			ctx.key,
 			{
@@ -41,6 +43,6 @@ export const Integrations = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return StripeConnectionSchema.parse(response);
+		return IntegrationsUpdateStripeResponseSchema.parse(response);
 	},
 };

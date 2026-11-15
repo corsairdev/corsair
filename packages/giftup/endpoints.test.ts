@@ -113,13 +113,14 @@ describe('Gift Up! endpoints', () => {
 		};
 
 		it('giftCards.list sends GET /gift-cards with query params', async () => {
-			mockRequest.mockResolvedValue([sampleCard]);
+			const envelope = { giftCards: [sampleCard], total: 1, hasMore: false };
+			mockRequest.mockResolvedValue(envelope);
 			const result = await GiftCards.list(ctx, {
 				limit: 10,
 				offset: 0,
 				status: 'active',
 			});
-			expect(result).toEqual([sampleCard]);
+			expect(result).toEqual(envelope);
 			expect(mockRequest).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
@@ -158,15 +159,13 @@ describe('Gift Up! endpoints', () => {
 		});
 
 		it('giftCards.reactivate sends POST /gift-cards/{code}/reactivate', async () => {
-			mockRequest.mockResolvedValue({
-				isRedeemed: false,
-				isAlreadyActive: true,
-			});
+			// Gift Up documents no success body for reactivate
+			mockRequest.mockResolvedValue(undefined);
 			const result = await GiftCards.reactivate(ctx, {
 				code: 'GC-123',
 				reason: 'Customer request',
 			});
-			expect(result).toEqual({ isRedeemed: false, isAlreadyActive: true });
+			expect(result).toBeUndefined();
 			expect(mockRequest).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
@@ -178,15 +177,13 @@ describe('Gift Up! endpoints', () => {
 		});
 
 		it('giftCards.void sends POST /gift-cards/{code}/void', async () => {
-			mockRequest.mockResolvedValue({
-				isRedeemed: false,
-				isAlreadyVoided: false,
-			});
+			// Gift Up documents no success body for void
+			mockRequest.mockResolvedValue('');
 			const result = await GiftCards.void(ctx, {
 				code: 'GC-123',
 				reason: 'Lost card',
 			});
-			expect(result).toEqual({ isRedeemed: false, isAlreadyVoided: false });
+			expect(result).toBe('');
 			expect(mockRequest).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
@@ -322,9 +319,10 @@ describe('Gift Up! endpoints', () => {
 		};
 
 		it('orders.list sends GET /orders', async () => {
-			mockRequest.mockResolvedValue([sampleOrder]);
+			const envelope = { orders: [sampleOrder], total: 1, hasMore: false };
+			mockRequest.mockResolvedValue(envelope);
 			const result = await Orders.list(ctx, { limit: 5 });
-			expect(result).toEqual([sampleOrder]);
+			expect(result).toEqual(envelope);
 			expect(mockRequest).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
@@ -567,9 +565,10 @@ describe('Gift Up! endpoints', () => {
 		};
 
 		it('reports.listTransactions sends GET /reports/transactions', async () => {
-			mockRequest.mockResolvedValue([sampleTx]);
+			const envelope = { transactions: [sampleTx], total: 1, hasMore: false };
+			mockRequest.mockResolvedValue(envelope);
 			const result = await Reports.listTransactions(ctx, { limit: 10 });
-			expect(result).toEqual([sampleTx]);
+			expect(result).toEqual(envelope);
 			expect(mockRequest).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
@@ -706,20 +705,48 @@ describe('Gift Up! endpoints', () => {
 
 	describe('12. Integrations endpoints', () => {
 		it('covers integrations operations', async () => {
-			mockRequest.mockResolvedValue({ connected: true, enableIdeal: true });
+			mockRequest.mockResolvedValue({ enableIdeal: true, enablePayPal: false });
 			const stripe = await Integrations.getStripeConnection(ctx, {});
-			expect(stripe).toEqual({ connected: true, enableIdeal: true });
+			expect(stripe).toEqual({ enableIdeal: true, enablePayPal: false });
 
+			// The documented POST response is the connection test result
+			const testResult = {
+				testResult: {
+					hasWebhooks: true,
+					canReadAccount: true,
+					canReadSource: true,
+					canWritePaymentIntent: true,
+					canWriteCharge: true,
+				},
+			};
+			mockRequest.mockResolvedValue(testResult);
 			const updatedStripe = await Integrations.updateStripeConnection(ctx, {
 				enableIdeal: false,
 			});
-			expect(updatedStripe).toEqual({ connected: true, enableIdeal: true });
+			expect(updatedStripe).toEqual(testResult);
+			expect(mockRequest).toHaveBeenLastCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/integrations/stripe/connection',
+					body: { enableIdeal: false },
+				}),
+			);
 		});
 	});
 
 	describe('13. Partners endpoints', () => {
 		it('partners.createAccount sends POST /partners/account/create', async () => {
-			const mockAccount = { companyId: 'comp-10', apiKey: 'new-key' };
+			// Documented response: an array of account records
+			const mockAccount = [
+				{
+					companyId: '408ef75c-121c-4d48-9bfe-b2bb0f3d7744',
+					companyName: 'Company',
+					accountName: '',
+					currency: 'USD',
+					createdOn: '2026-06-10T15:02:17.786Z',
+				},
+			];
 			mockRequest.mockResolvedValue(mockAccount);
 			const result = await Partners.createAccount(ctx, {
 				email: 'owner@example.com',
@@ -736,6 +763,199 @@ describe('Gift Up! endpoints', () => {
 					url: '/partners/account/create',
 				}),
 			);
+		});
+	});
+
+	describe('documented request and response shapes (Gift Up reference)', () => {
+		it('orders.create forwards item id, override flags, recipientDetails and typed custom fields', async () => {
+			mockRequest.mockResolvedValue({
+				id: 'order-2',
+				orderNumber: '10152',
+				customFields: [
+					{ label: 'Telephone', value: '01234 567780' },
+					{ label: 'IsMember', value: true },
+				],
+				metadata: { count: 3, nested: { a: 1 } },
+				payment: { provider: 'Stripe', accountId: 'acct_1' },
+				fulfilments: [
+					{ id: 'f-1', emailAddress: 'val@example.com', success: true },
+				],
+			});
+			const input = {
+				disableAllEmails: true,
+				purchaserEmail: 'buyer@example.com',
+				purchaserName: 'Buyer Bob',
+				itemDetails: [
+					{
+						quantity: 2,
+						id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+						overrideExpiry: true,
+						expiresInMonths: 6,
+						overrideValidFrom: true,
+						validFromInDays: 1,
+					},
+				],
+				recipientDetails: {
+					recipientName: 'Val',
+					recipientEmail: 'val@example.com',
+					message: 'Happy birthday',
+					fulfilmentMethod: 'Email' as const,
+				},
+				customFields: [
+					{ label: 'IsMember', value: true, showOnGiftCard: true },
+				],
+				salesTaxes: [{ label: 'GST', amount: 15, type: 'inclusive' as const }],
+				metadata: { externalId: 42 },
+			};
+			const order = await Orders.create(ctx, input);
+			expect(order.customFields?.[1]?.value).toBe(true);
+			expect(order.fulfilments?.[0]?.success).toBe(true);
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/orders',
+					body: input,
+				}),
+			);
+		});
+
+		it('orders.create rejects undocumented per-item recipient fields', async () => {
+			await expect(
+				Orders.create(ctx, {
+					purchaserEmail: 'buyer@example.com',
+					purchaserName: 'Buyer Bob',
+					itemDetails: [
+						// @ts-expect-error recipientEmail belongs in recipientDetails
+						{ quantity: 1, name: 'Card', recipientEmail: 'x@example.com' },
+					],
+				}),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		});
+
+		it('items.create sends expiresInMonths/expiresInDays and accepts the Custom price type', async () => {
+			mockRequest.mockResolvedValue({
+				id: 'item-9',
+				name: '$50 gift card',
+				priceType: 'Custom',
+				expiresInMonths: 12,
+				expiresInDays: null,
+				codes: [],
+				group: '',
+			});
+			const item = await Items.create(ctx, {
+				name: '$50 gift card',
+				priceType: 'Custom',
+				minimumPrice: 50,
+				overrideExpiry: true,
+				expiresInMonths: 12,
+			});
+			expect(item.expiresInMonths).toBe(12);
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					body: expect.objectContaining({
+						priceType: 'Custom',
+						expiresInMonths: 12,
+						overrideExpiry: true,
+					}),
+				}),
+			);
+		});
+
+		it('reports accept the documented list key typo and numeric orderDetails', async () => {
+			mockRequest.mockResolvedValue({
+				tranasctions: [
+					{
+						id: 'tx-9',
+						eventType: 'OrderPlaced',
+						giftUpFee: 2.69,
+						orderDetails: {
+							income: 77,
+							serviceFee: 0,
+							tip: 0,
+							shippingFee: 0,
+						},
+						giftCard: null,
+					},
+				],
+				total: 1,
+				hasMore: false,
+			});
+			const result = await Reports.listTransactions(ctx, {
+				events: ['OrderPlaced', 'Redeemed'],
+			});
+			expect(result.transactions[0]?.orderDetails?.income).toBe(77);
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					query: { events: ['OrderPlaced', 'Redeemed'] },
+				}),
+			);
+		});
+
+		it('gift card ledger and redeem calls accept non-string metadata values', async () => {
+			mockRequest.mockResolvedValue({
+				code: 'GC-1',
+				ledger: [
+					{
+						id: 'l-1',
+						eventType: 'Redeemed',
+						metadata: { ExternalOrderId: 7597, paid: true },
+					},
+				],
+			});
+			const card = await GiftCards.get(ctx, { code: 'GC-1' });
+			expect(card.ledger?.[0]?.metadata).toEqual({
+				ExternalOrderId: 7597,
+				paid: true,
+			});
+
+			mockRequest.mockResolvedValue({
+				transactionId: 'tx-1',
+				redeemedAmount: 50,
+				remainingCredit: 25,
+				redeemedUnits: null,
+				remainingUnits: null,
+			});
+			await GiftCards.redeem(ctx, {
+				code: 'GC-1',
+				amount: 50,
+				metadata: { ExternalOrderId: 7597 },
+			});
+			expect(mockRequest).toHaveBeenLastCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					body: { amount: 50, metadata: { ExternalOrderId: 7597 } },
+				}),
+			);
+		});
+
+		it('PATCH and status-only endpoints accept an empty body', async () => {
+			const patch = [{ op: 'replace' as const, path: '/name', value: 'X' }];
+			mockRequest.mockResolvedValue(undefined);
+			await expect(
+				Settings.updateCheckout(ctx, { patch }),
+			).resolves.toBeUndefined();
+			await expect(
+				Items.update(ctx, { id: 'item-1', patch }),
+			).resolves.toBeUndefined();
+			await expect(
+				Groups.create(ctx, { name: 'Fixed value' }),
+			).resolves.toBeUndefined();
+			mockRequest.mockResolvedValue('');
+			await expect(
+				Settings.uploadArtwork(ctx, { url: 'https://example.com/a.png' }),
+			).resolves.toBe('');
+		});
+
+		it('giftCards.list rejects a status Gift Up does not support', async () => {
+			await expect(
+				// @ts-expect-error status must be active, expired, redeemed or voided
+				GiftCards.list(ctx, { status: 'pending' }),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
 		});
 	});
 
@@ -776,6 +996,24 @@ describe('Gift Up! endpoints', () => {
 				pluginInstance.endpoints?.integrations.getStripeConnection,
 			).toBeDefined();
 			expect(pluginInstance.endpoints?.partners.createAccount).toBeDefined();
+		});
+
+		it('marks balance changes, sends and replace-all writes as destructive', () => {
+			for (const key of [
+				'giftCards.void',
+				'giftCards.topUp',
+				'giftCards.redeem',
+				'giftCards.redeemInFull',
+				'giftCards.undoRedemption',
+				'giftCards.transferBalances',
+				'orders.create',
+				'users.invite',
+				'settings.uploadArtwork',
+				'integrations.updateStripeConnection',
+				'partners.createAccount',
+			] as const) {
+				expect(giftupEndpointMeta[key].riskLevel).toBe('destructive');
+			}
 		});
 
 		it('matches all 51 operation keys across meta and schemas', () => {

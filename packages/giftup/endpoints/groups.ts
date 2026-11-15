@@ -7,6 +7,7 @@ import type {
 	GroupsListInput,
 	GroupsListResponse,
 	GroupsUpdateInput,
+	GroupsWriteResponse,
 	ItemGroup,
 	SuccessResponse,
 } from './types';
@@ -17,6 +18,7 @@ import {
 	GroupsListInputSchema,
 	GroupsListResponseSchema,
 	GroupsUpdateInputSchema,
+	GroupsWriteResponseSchema,
 	ItemGroupSchema,
 	SuccessResponseSchema,
 } from './types';
@@ -55,21 +57,25 @@ export const Groups = {
 	create: async (
 		ctx: GiftUpContext,
 		input: GroupsCreateInput,
-	): Promise<ItemGroup> => {
+	): Promise<GroupsWriteResponse> => {
 		const parsed = GroupsCreateInputSchema.parse(input);
-		const response = await makeGiftUpRequest<ItemGroup>('/groups', ctx.key, {
-			method: 'POST',
-			body: parsed,
-			testMode: ctx.options?.testMode,
-		});
-		return ItemGroupSchema.parse(response);
+		const response = await makeGiftUpRequest<GroupsWriteResponse>(
+			'/groups',
+			ctx.key,
+			{
+				method: 'POST',
+				body: parsed,
+				testMode: ctx.options?.testMode,
+			},
+		);
+		return GroupsWriteResponseSchema.parse(response);
 	},
 	update: async (
 		ctx: GiftUpContext,
 		input: GroupsUpdateInput,
-	): Promise<ItemGroup> => {
+	): Promise<GroupsWriteResponse> => {
 		const parsed = GroupsUpdateInputSchema.parse(input);
-		const response = await makeGiftUpRequest<ItemGroup>(
+		const response = await makeGiftUpRequest<GroupsWriteResponse>(
 			`/groups/${encodeGiftUpPathId(parsed.id)}`,
 			ctx.key,
 			{
@@ -78,7 +84,7 @@ export const Groups = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return ItemGroupSchema.parse(response);
+		return GroupsWriteResponseSchema.parse(response);
 	},
 	delete: async (
 		ctx: GiftUpContext,

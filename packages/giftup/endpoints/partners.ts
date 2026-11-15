@@ -1,18 +1,21 @@
 import { makeGiftUpRequest } from '../client';
 import type { GiftUpContext } from '../index';
-import type { PartnerAccount, PartnersCreateAccountInput } from './types';
+import type {
+	PartnersCreateAccountInput,
+	PartnersCreateAccountResponse,
+} from './types';
 import {
-	PartnerAccountSchema,
 	PartnersCreateAccountInputSchema,
+	PartnersCreateAccountResponseSchema,
 } from './types';
 
 export const Partners = {
 	createAccount: async (
 		ctx: GiftUpContext,
 		input: PartnersCreateAccountInput,
-	): Promise<PartnerAccount> => {
+	): Promise<PartnersCreateAccountResponse> => {
 		const parsed = PartnersCreateAccountInputSchema.parse(input);
-		const response = await makeGiftUpRequest<PartnerAccount>(
+		const response = await makeGiftUpRequest<PartnersCreateAccountResponse>(
 			'/partners/account/create',
 			ctx.key,
 			{
@@ -21,6 +24,6 @@ export const Partners = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return PartnerAccountSchema.parse(response);
+		return PartnersCreateAccountResponseSchema.parse(response);
 	},
 };

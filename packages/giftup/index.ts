@@ -449,7 +449,8 @@ export const giftupEndpointMeta = {
 	},
 	'giftCards.list': {
 		riskLevel: 'read',
-		description: 'List gift cards with optional date filters and pagination',
+		description:
+			'List gift cards with status, date, order, SKU and email filters; returns giftCards with total and hasMore',
 	},
 	'giftCards.get': {
 		riskLevel: 'read',
@@ -469,8 +470,9 @@ export const giftupEndpointMeta = {
 		description: 'Void a gift card to prevent further redemptions',
 	},
 	'giftCards.topUp': {
-		riskLevel: 'write',
-		description: 'Top up remaining credit or units on a gift card',
+		riskLevel: 'destructive',
+		description:
+			'Add currency or units to a gift card balance (issues new spendable value)',
 	},
 	'giftCards.redeem': {
 		riskLevel: 'destructive',
@@ -481,8 +483,9 @@ export const giftupEndpointMeta = {
 		description: 'Redeem the entire remaining balance of a gift card',
 	},
 	'giftCards.undoRedemption': {
-		riskLevel: 'write',
-		description: 'Refund or reverse a previously executed gift card redemption',
+		riskLevel: 'destructive',
+		description:
+			'Reverse a previous redemption, adding the redeemed balance back to the gift card',
 	},
 	'giftCards.transferBalances': {
 		riskLevel: 'destructive',
@@ -491,7 +494,8 @@ export const giftupEndpointMeta = {
 	},
 	'orders.list': {
 		riskLevel: 'read',
-		description: 'List orders with optional date filters and pagination',
+		description:
+			'List orders filtered by creation date, purchaser email or source; returns orders with total and hasMore',
 	},
 	'orders.get': {
 		riskLevel: 'read',
@@ -499,7 +503,8 @@ export const giftupEndpointMeta = {
 	},
 	'orders.create': {
 		riskLevel: 'destructive',
-		description: 'Create an order and issue associated gift cards',
+		description:
+			'Create an order and issue its gift cards. Live mode charges the Gift Up fee; recipientDetails makes Gift Up email the gift card unless disableAllEmails is true',
 	},
 	'orders.update': {
 		riskLevel: 'write',
@@ -564,7 +569,7 @@ export const giftupEndpointMeta = {
 	'reports.listTransactions': {
 		riskLevel: 'read',
 		description:
-			'List ledger report transactions with optional date range and pagination',
+			'List ledger transactions filtered by date range, event type, user, location or code; returns transactions with total and hasMore',
 	},
 	'reports.getTransaction': {
 		riskLevel: 'read',
@@ -599,8 +604,9 @@ export const giftupEndpointMeta = {
 		description: 'List uploaded gift card design artwork',
 	},
 	'settings.uploadArtwork': {
-		riskLevel: 'write',
-		description: 'Upload or set new gift card design artwork',
+		riskLevel: 'destructive',
+		description:
+			'Upload gift card artwork from a URL or data URI; replaceAllExistingArtwork deletes all existing artwork first',
 	},
 	'settings.deleteArtwork': {
 		riskLevel: 'destructive',
@@ -636,12 +642,14 @@ export const giftupEndpointMeta = {
 			'Get Stripe integration connection status and enabled payment methods',
 	},
 	'integrations.updateStripeConnection': {
-		riskLevel: 'write',
-		description: 'Update Stripe payment method settings',
+		riskLevel: 'destructive',
+		description:
+			'Change Stripe payment settings for the checkout and return the connection test result',
 	},
 	'partners.createAccount': {
-		riskLevel: 'write',
-		description: 'Provision a new Gift Up! merchant account via Partner API',
+		riskLevel: 'destructive',
+		description:
+			'Provision a new Gift Up account for another business owner (Partner API, pre-approved partners only)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof giftupEndpointsNested>;
 

@@ -1,7 +1,6 @@
 import { encodeGiftUpPathId, makeGiftUpRequest } from '../client';
 import type { GiftUpContext } from '../index';
 import type {
-	Artwork,
 	CheckoutSettings,
 	EmailSettings,
 	GiftCardSettings,
@@ -13,14 +12,17 @@ import type {
 	SettingsListArtworkInput,
 	SettingsListArtworkResponse,
 	SettingsUpdateCheckoutInput,
+	SettingsUpdateCheckoutResponse,
 	SettingsUpdateEmailInput,
+	SettingsUpdateEmailResponse,
 	SettingsUpdateGiftCardInput,
+	SettingsUpdateGiftCardResponse,
 	SettingsUploadArtworkInput,
+	SettingsUploadArtworkResponse,
 	ShippingSettings,
 	SuccessResponse,
 } from './types';
 import {
-	ArtworkSchema,
 	CheckoutSettingsSchema,
 	EmailSettingsSchema,
 	GiftCardSettingsSchema,
@@ -32,9 +34,13 @@ import {
 	SettingsListArtworkInputSchema,
 	SettingsListArtworkResponseSchema,
 	SettingsUpdateCheckoutInputSchema,
+	SettingsUpdateCheckoutResponseSchema,
 	SettingsUpdateEmailInputSchema,
+	SettingsUpdateEmailResponseSchema,
 	SettingsUpdateGiftCardInputSchema,
+	SettingsUpdateGiftCardResponseSchema,
 	SettingsUploadArtworkInputSchema,
+	SettingsUploadArtworkResponseSchema,
 	ShippingSettingsSchema,
 	SuccessResponseSchema,
 } from './types';
@@ -58,9 +64,9 @@ export const Settings = {
 	updateCheckout: async (
 		ctx: GiftUpContext,
 		input: SettingsUpdateCheckoutInput,
-	): Promise<CheckoutSettings> => {
+	): Promise<SettingsUpdateCheckoutResponse> => {
 		const parsed = SettingsUpdateCheckoutInputSchema.parse(input);
-		const response = await makeGiftUpRequest<CheckoutSettings>(
+		const response = await makeGiftUpRequest<SettingsUpdateCheckoutResponse>(
 			'/settings/checkout',
 			ctx.key,
 			{
@@ -69,7 +75,7 @@ export const Settings = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return CheckoutSettingsSchema.parse(response);
+		return SettingsUpdateCheckoutResponseSchema.parse(response);
 	},
 	getEmail: async (
 		ctx: GiftUpContext,
@@ -89,9 +95,9 @@ export const Settings = {
 	updateEmail: async (
 		ctx: GiftUpContext,
 		input: SettingsUpdateEmailInput,
-	): Promise<EmailSettings> => {
+	): Promise<SettingsUpdateEmailResponse> => {
 		const parsed = SettingsUpdateEmailInputSchema.parse(input);
-		const response = await makeGiftUpRequest<EmailSettings>(
+		const response = await makeGiftUpRequest<SettingsUpdateEmailResponse>(
 			'/settings/email',
 			ctx.key,
 			{
@@ -100,7 +106,7 @@ export const Settings = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return EmailSettingsSchema.parse(response);
+		return SettingsUpdateEmailResponseSchema.parse(response);
 	},
 	getGiftCard: async (
 		ctx: GiftUpContext,
@@ -120,9 +126,9 @@ export const Settings = {
 	updateGiftCard: async (
 		ctx: GiftUpContext,
 		input: SettingsUpdateGiftCardInput,
-	): Promise<GiftCardSettings> => {
+	): Promise<SettingsUpdateGiftCardResponse> => {
 		const parsed = SettingsUpdateGiftCardInputSchema.parse(input);
-		const response = await makeGiftUpRequest<GiftCardSettings>(
+		const response = await makeGiftUpRequest<SettingsUpdateGiftCardResponse>(
 			'/settings/gift-card',
 			ctx.key,
 			{
@@ -131,7 +137,7 @@ export const Settings = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return GiftCardSettingsSchema.parse(response);
+		return SettingsUpdateGiftCardResponseSchema.parse(response);
 	},
 	listArtwork: async (
 		ctx: GiftUpContext,
@@ -151,9 +157,9 @@ export const Settings = {
 	uploadArtwork: async (
 		ctx: GiftUpContext,
 		input: SettingsUploadArtworkInput,
-	): Promise<Artwork> => {
+	): Promise<SettingsUploadArtworkResponse> => {
 		const parsed = SettingsUploadArtworkInputSchema.parse(input);
-		const response = await makeGiftUpRequest<Artwork>(
+		const response = await makeGiftUpRequest<SettingsUploadArtworkResponse>(
 			'/settings/gift-card/artwork',
 			ctx.key,
 			{
@@ -162,7 +168,7 @@ export const Settings = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return ArtworkSchema.parse(response);
+		return SettingsUploadArtworkResponseSchema.parse(response);
 	},
 	deleteArtwork: async (
 		ctx: GiftUpContext,

@@ -9,6 +9,7 @@ import type {
 	UsersListInput,
 	UsersListResponse,
 	UsersUpdateInput,
+	UsersUpdateResponse,
 } from './types';
 import {
 	SuccessResponseSchema,
@@ -19,6 +20,7 @@ import {
 	UsersListInputSchema,
 	UsersListResponseSchema,
 	UsersUpdateInputSchema,
+	UsersUpdateResponseSchema,
 } from './types';
 
 export const Users = {
@@ -64,9 +66,9 @@ export const Users = {
 	update: async (
 		ctx: GiftUpContext,
 		input: UsersUpdateInput,
-	): Promise<User> => {
+	): Promise<UsersUpdateResponse> => {
 		const parsed = UsersUpdateInputSchema.parse(input);
-		const response = await makeGiftUpRequest<User>(
+		const response = await makeGiftUpRequest<UsersUpdateResponse>(
 			`/users/${encodeGiftUpPathId(parsed.id)}`,
 			ctx.key,
 			{
@@ -75,7 +77,7 @@ export const Users = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return UserSchema.parse(response);
+		return UsersUpdateResponseSchema.parse(response);
 	},
 	delete: async (
 		ctx: GiftUpContext,

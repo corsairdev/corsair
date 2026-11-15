@@ -18,6 +18,7 @@ import type {
 	GiftCardsUndoRedemptionInput,
 	GiftCardsUndoRedemptionResponse,
 	GiftCardsUpdateInput,
+	GiftCardsUpdateResponse,
 	GiftCardsVoidInput,
 	GiftCardsVoidResponse,
 } from './types';
@@ -39,6 +40,7 @@ import {
 	GiftCardsUndoRedemptionInputSchema,
 	GiftCardsUndoRedemptionResponseSchema,
 	GiftCardsUpdateInputSchema,
+	GiftCardsUpdateResponseSchema,
 	GiftCardsVoidInputSchema,
 	GiftCardsVoidResponseSchema,
 } from './types';
@@ -78,9 +80,9 @@ export const GiftCards = {
 	update: async (
 		ctx: GiftUpContext,
 		input: GiftCardsUpdateInput,
-	): Promise<GiftCard> => {
+	): Promise<GiftCardsUpdateResponse> => {
 		const parsed = GiftCardsUpdateInputSchema.parse(input);
-		const response = await makeGiftUpRequest<GiftCard>(
+		const response = await makeGiftUpRequest<GiftCardsUpdateResponse>(
 			`/gift-cards/${encodeGiftUpPathId(parsed.code)}`,
 			ctx.key,
 			{
@@ -89,7 +91,7 @@ export const GiftCards = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return GiftCardSchema.parse(response);
+		return GiftCardsUpdateResponseSchema.parse(response);
 	},
 	reactivate: async (
 		ctx: GiftUpContext,

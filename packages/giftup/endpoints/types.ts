@@ -40,9 +40,15 @@ export const JsonPatchOperationSchema = z.discriminatedUnion('op', [
 ]);
 export type JsonPatchOperation = z.infer<typeof JsonPatchOperationSchema>;
 
-// `unknown` because 200/204 empty responses can be null, undefined, empty object, or provider confirmation map
+// `unknown` because Gift Up metadata values can be any JSON type (string, number, boolean, object, array)
+export const MetadataSchema = z.record(z.string(), z.unknown());
+export type Metadata = z.infer<typeof MetadataSchema>;
+
+// `unknown` because endpoints documented as "returns a 200" can answer with no body (undefined),
+// an empty text body (''), null, or a confirmation object
 export const EmptyResponseSchema = z.union([
 	z.record(z.string(), z.unknown()),
+	z.literal(''),
 	z.null(),
 	z.undefined(),
 ]);
@@ -81,11 +87,12 @@ export type CompanyGetInput = z.infer<typeof CompanyGetInputSchema>;
 
 export const CompanySchema = z.object({
 	id: z.string(),
-	name: z.string(),
-	currency: z.string(),
-	onboardingCompleted: z.boolean(),
-	canShowCheckout: z.boolean(),
-	isCheckoutLive: z.boolean(),
+	name: z.string().nullable().optional(),
+	currency: z.string().nullable().optional(),
+	onboardingCompleted: z.boolean().nullable().optional(),
+	canShowCheckout: z.boolean().nullable().optional(),
+	// Documented as a boolean in the example and as a string in the property table
+	isCheckoutLive: z.union([z.boolean(), z.string()]).nullable().optional(),
 });
 export type Company = z.infer<typeof CompanySchema>;
 
@@ -93,37 +100,41 @@ export type Company = z.infer<typeof CompanySchema>;
 // 3. Gift Cards
 // ==========================================
 
+// Response schemas below are lenient on purpose: Gift Up documents example payloads,
+// not a schema, so optional fields accept null and absent values.
+
 export const GiftCardLedgerEntrySchema = z.object({
 	id: z.string(),
-	eventType: z.string(),
-	eventOccuredOn: z.string(),
+	eventType: z.string().nullable().optional(),
+	eventOccuredOn: z.string().nullable().optional(),
 	eventOccuredAtLocationId: z.string().nullable().optional(),
 	units: z.number().nullable().optional(),
 	value: z.number().nullable().optional(),
 	whoEmail: z.string().nullable().optional(),
 	whoName: z.string().nullable().optional(),
 	reason: z.string().nullable().optional(),
-	metadata: z.record(z.string(), z.string()).optional(),
+	metadata: MetadataSchema.nullable().optional(),
 });
 export type GiftCardLedgerEntry = z.infer<typeof GiftCardLedgerEntrySchema>;
 
 export const GiftCardPostalFulfilmentSchema = z.object({
 	address: z
 		.object({
-			countryCode: z.string().optional(),
-			address1: z.string().optional(),
+			countryCode: z.string().nullable().optional(),
+			address1: z.string().nullable().optional(),
 			address2: z.string().nullable().optional(),
-			city: z.string().optional(),
+			city: z.string().nullable().optional(),
 			state: z.string().nullable().optional(),
-			postalCode: z.string().optional(),
-			name: z.string().optional(),
+			postalCode: z.string().nullable().optional(),
+			name: z.string().nullable().optional(),
 		})
+		.nullable()
 		.optional(),
 	shippingOptionName: z.string().nullable().optional(),
 });
 
 export const GiftCardEmailFulfilmentSchema = z.object({
-	emailAddress: z.string().optional(),
+	emailAddress: z.string().nullable().optional(),
 	scheduledFor: z.string().nullable().optional(),
 });
 
@@ -135,23 +146,102 @@ export const GiftCardDownloadLinksSchema = z.object({
 	googleWalletUrl: z.string().nullable().optional(),
 });
 
+/** Custom field values can be strings, integers or booleans (Gift Up docs). */
+export const CustomFieldValueSchema = z.union([
+	z.string(),
+	z.number(),
+	z.boolean(),
+]);
+
+export const OrderPromotionSchema = z.object({
+	promotionId: z.string().nullable().optional(),
+	name: z.string().nullable().optional(),
+	code: z.string().nullable().optional(),
+});
+
+export const OrderCustomFieldSchema = z.object({
+	label: z.string(),
+	value: CustomFieldValueSchema.nullable().optional(),
+});
+
+export const OrderSalesTaxSchema = z.object({
+	label: z.string().nullable().optional(),
+	amount: z.number().nullable().optional(),
+	type: z.string().nullable().optional(),
+});
+
+export const OrderNoteSchema = z.object({
+	id: z.string().nullable().optional(),
+	content: z.string().nullable().optional(),
+	createdOn: z.string().nullable().optional(),
+	username: z.string().nullable().optional(),
+});
+
+export const OrderPaymentSchema = z.object({
+	provider: z.string().nullable().optional(),
+	transactionId: z.string().nullable().optional(),
+	accountId: z.string().nullable().optional(),
+});
+
+const OrderDownloadLinkPairSchema = z.object({
+	imageUrl: z.string().nullable().optional(),
+	pdfUrl: z.string().nullable().optional(),
+});
+
+export const OrderDownloadLinksSchema = z.object({
+	single: OrderDownloadLinkPairSchema.nullable().optional(),
+	zip: OrderDownloadLinkPairSchema.nullable().optional(),
+});
+
+export const OrderFulfilmentSchema = z.object({
+	id: z.string().nullable().optional(),
+	emailAddress: z.string().nullable().optional(),
+	scheduledFor: z.string().nullable().optional(),
+	success: z.boolean().nullable().optional(),
+});
+
+/** Order fields shared by the order object and the `order` embedded in a gift card. */
+export const OrderBaseSchema = z.object({
+	id: z.string(),
+	orderNumber: z.string().nullable().optional(),
+	createdOn: z.string().nullable().optional(),
+	selectedRecipient: z.string().nullable().optional(),
+	purchaserEmail: z.string().nullable().optional(),
+	purchaserName: z.string().nullable().optional(),
+	currency: z.string().nullable().optional(),
+	revenue: z.number().nullable().optional(),
+	tip: z.number().nullable().optional(),
+	serviceFee: z.number().nullable().optional(),
+	discount: z.number().nullable().optional(),
+	shippingFee: z.number().nullable().optional(),
+	referrer: z.string().nullable().optional(),
+	source: z.string().nullable().optional(),
+	promotions: z.array(OrderPromotionSchema).nullable().optional(),
+	customFields: z.array(OrderCustomFieldSchema).nullable().optional(),
+	salesTaxes: z.array(OrderSalesTaxSchema).nullable().optional(),
+	notes: z.array(OrderNoteSchema).nullable().optional(),
+	metadata: MetadataSchema.nullable().optional(),
+	downloadLinks: OrderDownloadLinksSchema.nullable().optional(),
+	payment: OrderPaymentSchema.nullable().optional(),
+});
+
 export const GiftCardSchema = z.object({
-	canBeRedeemed: z.boolean(),
-	hasExpired: z.boolean(),
-	notYetValid: z.boolean(),
-	isVoided: z.boolean(),
+	canBeRedeemed: z.boolean().nullable().optional(),
+	hasExpired: z.boolean().nullable().optional(),
+	notYetValid: z.boolean().nullable().optional(),
+	isVoided: z.boolean().nullable().optional(),
 	code: z.string(),
-	title: z.string(),
+	title: z.string().nullable().optional(),
 	subTitle: z.string().nullable().optional(),
 	message: z.string().nullable().optional(),
 	fulfilledOn: z.string().nullable().optional(),
 	recipientName: z.string().nullable().optional(),
 	recipientEmail: z.string().nullable().optional(),
-	backingType: z.string(),
-	remainingValue: z.number().nullable(),
-	remainingUnits: z.number().nullable(),
-	initialValue: z.number().nullable(),
-	initialUnits: z.number().nullable(),
+	backingType: z.string().nullable().optional(),
+	remainingValue: z.number().nullable().optional(),
+	remainingUnits: z.number().nullable().optional(),
+	initialValue: z.number().nullable().optional(),
+	initialUnits: z.number().nullable().optional(),
 	equivalentValuePerUnit: z.number().nullable().optional(),
 	terms: z.string().nullable().optional(),
 	sku: z.string().nullable().optional(),
@@ -159,27 +249,36 @@ export const GiftCardSchema = z.object({
 	validFrom: z.string().nullable().optional(),
 	voidedOn: z.string().nullable().optional(),
 	fulfilledBy: z.string().nullable().optional(),
+	order: OrderBaseSchema.nullable().optional(),
 	postalFulfilment: GiftCardPostalFulfilmentSchema.nullable().optional(),
 	emailFulfilment: GiftCardEmailFulfilmentSchema.nullable().optional(),
 	downloadLinks: GiftCardDownloadLinksSchema.nullable().optional(),
-	ledger: z.array(GiftCardLedgerEntrySchema).optional(),
+	ledger: z.array(GiftCardLedgerEntrySchema).nullable().optional(),
 });
 export type GiftCard = z.infer<typeof GiftCardSchema>;
 
 export const GiftCardsListInputSchema = z
 	.object({
+		status: z.enum(['active', 'expired', 'redeemed', 'voided']).optional(),
 		createdOnOrAfter: z.string().optional(),
-		createdOnOrBefore: z.string().optional(),
+		updatedOnOrAfter: z.string().optional(),
+		orderId: z.string().optional(),
+		sku: z.string().optional(),
+		recipientEmail: z.string().optional(),
+		purchaserEmail: z.string().optional(),
+		paymentTransactionId: z.string().optional(),
 		limit: z.number().int().min(1).max(100).optional(),
 		offset: z.number().int().min(0).optional(),
-		status: z.string().optional(),
-		promotionId: z.string().optional(),
-		orderId: z.string().optional(),
 	})
 	.strict();
 export type GiftCardsListInput = z.infer<typeof GiftCardsListInputSchema>;
 
-export const GiftCardsListResponseSchema = z.array(GiftCardSchema);
+/** GET /gift-cards returns `{ giftCards, total, hasMore }`, not a bare array. */
+export const GiftCardsListResponseSchema = z.object({
+	giftCards: z.array(GiftCardSchema),
+	total: z.number().nullable().optional(),
+	hasMore: z.boolean().nullable().optional(),
+});
 export type GiftCardsListResponse = z.infer<typeof GiftCardsListResponseSchema>;
 
 export const GiftCardsGetInputSchema = z
@@ -197,22 +296,30 @@ export const GiftCardsUpdateInputSchema = z
 	.strict();
 export type GiftCardsUpdateInput = z.infer<typeof GiftCardsUpdateInputSchema>;
 
+/** PATCH /gift-cards/{code}: Gift Up documents the status only, so an empty body is accepted. */
+export const GiftCardsUpdateResponseSchema = z.union([
+	GiftCardSchema,
+	EmptyResponseSchema,
+]);
+export type GiftCardsUpdateResponse = z.infer<
+	typeof GiftCardsUpdateResponseSchema
+>;
+
 export const GiftCardsReactivateInputSchema = z
 	.object({
 		code: z.string().min(1),
 		reason: z.string().optional(),
 		locationId: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.strict();
 export type GiftCardsReactivateInput = z.infer<
 	typeof GiftCardsReactivateInputSchema
 >;
 
-export const GiftCardsReactivateResponseSchema = z.object({
-	isRedeemed: z.boolean(),
-	isAlreadyActive: z.boolean(),
-});
+// Gift Up documents no 2xx body for reactivate/void; `isAlreadyActive` and
+// `isAlreadyVoided` belong to the 422 error body, which core raises as an ApiError.
+export const GiftCardsReactivateResponseSchema = EmptyResponseSchema;
 export type GiftCardsReactivateResponse = z.infer<
 	typeof GiftCardsReactivateResponseSchema
 >;
@@ -222,33 +329,30 @@ export const GiftCardsVoidInputSchema = z
 		code: z.string().min(1),
 		reason: z.string().optional(),
 		locationId: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.strict();
 export type GiftCardsVoidInput = z.infer<typeof GiftCardsVoidInputSchema>;
 
-export const GiftCardsVoidResponseSchema = z.object({
-	isRedeemed: z.boolean(),
-	isAlreadyVoided: z.boolean(),
-});
+export const GiftCardsVoidResponseSchema = EmptyResponseSchema;
 export type GiftCardsVoidResponse = z.infer<typeof GiftCardsVoidResponseSchema>;
 
 export const GiftCardsTopUpInputSchema = z
 	.object({
 		code: z.string().min(1),
-		amount: z.number().nullable().optional(),
-		units: z.number().nullable().optional(),
+		amount: z.number().positive().nullable().optional(),
+		units: z.number().int().positive().nullable().optional(),
 		reason: z.string().nullable().optional(),
 		locationId: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.strict();
 export type GiftCardsTopUpInput = z.infer<typeof GiftCardsTopUpInputSchema>;
 
 export const GiftCardsTopUpResponseSchema = z.object({
 	transactionId: z.string(),
-	remainingCredit: z.number(),
-	remainingUnits: z.number().nullable(),
+	remainingCredit: z.number().nullable().optional(),
+	remainingUnits: z.number().nullable().optional(),
 });
 export type GiftCardsTopUpResponse = z.infer<
 	typeof GiftCardsTopUpResponseSchema
@@ -257,22 +361,22 @@ export type GiftCardsTopUpResponse = z.infer<
 export const GiftCardsRedeemInputSchema = z
 	.object({
 		code: z.string().min(1),
-		amount: z.number().nullable().optional(),
-		units: z.number().nullable().optional(),
+		amount: z.number().positive().nullable().optional(),
+		units: z.number().int().positive().nullable().optional(),
 		reason: z.string().nullable().optional(),
 		locationId: z.string().nullable().optional(),
 		redeemedOn: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.strict();
 export type GiftCardsRedeemInput = z.infer<typeof GiftCardsRedeemInputSchema>;
 
 export const GiftCardsRedeemResponseSchema = z.object({
 	transactionId: z.string(),
-	redeemedAmount: z.number(),
-	remainingCredit: z.number(),
-	redeemedUnits: z.number().nullable(),
-	remainingUnits: z.number().nullable(),
+	redeemedAmount: z.number().nullable().optional(),
+	remainingCredit: z.number().nullable().optional(),
+	redeemedUnits: z.number().nullable().optional(),
+	remainingUnits: z.number().nullable().optional(),
 });
 export type GiftCardsRedeemResponse = z.infer<
 	typeof GiftCardsRedeemResponseSchema
@@ -284,20 +388,15 @@ export const GiftCardsRedeemInFullInputSchema = z
 		reason: z.string().nullable().optional(),
 		locationId: z.string().nullable().optional(),
 		redeemedOn: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.strict();
 export type GiftCardsRedeemInFullInput = z.infer<
 	typeof GiftCardsRedeemInFullInputSchema
 >;
 
-export const GiftCardsRedeemInFullResponseSchema = z.object({
-	transactionId: z.string(),
-	redeemedAmount: z.number(),
-	remainingCredit: z.number(),
-	redeemedUnits: z.number().nullable(),
-	remainingUnits: z.number().nullable(),
-});
+export const GiftCardsRedeemInFullResponseSchema =
+	GiftCardsRedeemResponseSchema;
 export type GiftCardsRedeemInFullResponse = z.infer<
 	typeof GiftCardsRedeemInFullResponseSchema
 >;
@@ -307,7 +406,7 @@ export const GiftCardsUndoRedemptionInputSchema = z
 		code: z.string().min(1),
 		transactionId: z.string().min(1),
 		reason: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.strict();
 export type GiftCardsUndoRedemptionInput = z.infer<
@@ -316,11 +415,11 @@ export type GiftCardsUndoRedemptionInput = z.infer<
 
 export const GiftCardsUndoRedemptionResponseSchema = z.object({
 	transactionId: z.string(),
-	amountReversed: z.number(),
-	unitsReversed: z.number(),
-	alreadyReversed: z.boolean(),
-	remainingCredit: z.number(),
-	remainingUnits: z.number().nullable(),
+	amountReversed: z.number().nullable().optional(),
+	unitsReversed: z.number().nullable().optional(),
+	alreadyReversed: z.boolean().nullable().optional(),
+	remainingCredit: z.number().nullable().optional(),
+	remainingUnits: z.number().nullable().optional(),
 });
 export type GiftCardsUndoRedemptionResponse = z.infer<
 	typeof GiftCardsUndoRedemptionResponseSchema
@@ -328,11 +427,11 @@ export type GiftCardsUndoRedemptionResponse = z.infer<
 
 export const GiftCardsTransferBalancesInputSchema = z
 	.object({
-		sourceGiftCards: z.array(z.string().min(1)),
+		sourceGiftCards: z.array(z.string().min(1)).min(1),
 		destinationGiftCard: z.string().min(1),
 		reason: z.string().nullable().optional(),
 		locationId: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.strict();
 export type GiftCardsTransferBalancesInput = z.infer<
@@ -340,8 +439,8 @@ export type GiftCardsTransferBalancesInput = z.infer<
 >;
 
 export const GiftCardsTransferBalancesResponseSchema = z.object({
-	transferredCredit: z.number(),
-	transferredUnits: z.number().nullable(),
+	transferredCredit: z.number().nullable().optional(),
+	transferredUnits: z.number().nullable().optional(),
 });
 export type GiftCardsTransferBalancesResponse = z.infer<
 	typeof GiftCardsTransferBalancesResponseSchema
@@ -351,87 +450,39 @@ export type GiftCardsTransferBalancesResponse = z.infer<
 // 4. Orders
 // ==========================================
 
-export const OrderPromotionSchema = z.object({
-	promotionId: z.string().optional(),
-	name: z.string().optional(),
-	code: z.string().optional(),
-});
-
-export const OrderCustomFieldSchema = z.object({
-	label: z.string(),
-	value: z.string(),
-});
-
-export const OrderSalesTaxSchema = z.object({
-	label: z.string(),
-	amount: z.number(),
-	type: z.string(),
-});
-
-export const OrderNoteSchema = z.object({
-	id: z.string(),
-	content: z.string(),
-	createdOn: z.string(),
-	username: z.string(),
-});
-
-export const OrderPaymentSchema = z.object({
-	provider: z.string().optional(),
-	transactionId: z.string().optional(),
-});
-
-export const OrderDownloadLinksSchema = z.object({
-	single: z
-		.object({
-			imageUrl: z.string().optional(),
-			pdfUrl: z.string().optional(),
-		})
-		.optional(),
-	zip: z
-		.object({
-			imageUrl: z.string().optional(),
-			pdfUrl: z.string().optional(),
-		})
-		.optional(),
-});
-
-export const OrderSchema = z.object({
-	id: z.string(),
-	orderNumber: z.string(),
-	createdOn: z.string(),
-	selectedRecipient: z.string().optional(),
-	purchaserEmail: z.string().optional(),
-	purchaserName: z.string().optional(),
-	currency: z.string(),
-	revenue: z.number(),
-	tip: z.number().optional(),
-	serviceFee: z.number().optional(),
-	discount: z.number().optional(),
-	shippingFee: z.number().optional(),
-	referrer: z.string().nullable().optional(),
-	source: z.string().optional(),
-	promotions: z.array(OrderPromotionSchema).optional(),
-	customFields: z.array(OrderCustomFieldSchema).optional(),
-	salesTaxes: z.array(OrderSalesTaxSchema).optional(),
-	notes: z.array(OrderNoteSchema).optional(),
-	metadata: z.record(z.string(), z.string()).optional(),
-	downloadLinks: OrderDownloadLinksSchema.nullable().optional(),
-	payment: OrderPaymentSchema.nullable().optional(),
-	giftCards: z.array(GiftCardSchema).optional(),
+export const OrderSchema = OrderBaseSchema.extend({
+	fulfilments: z.array(OrderFulfilmentSchema).nullable().optional(),
+	giftCards: z.array(GiftCardSchema).nullable().optional(),
 });
 export type Order = z.infer<typeof OrderSchema>;
 
 export const OrdersListInputSchema = z
 	.object({
 		createdOnOrAfter: z.string().optional(),
-		createdOnOrBefore: z.string().optional(),
+		purchaserEmail: z.string().optional(),
+		source: z
+			.enum([
+				'API',
+				'Checkout',
+				'Dashboard',
+				'Import',
+				'Square',
+				'Vend',
+				'External',
+			])
+			.optional(),
 		limit: z.number().int().min(1).max(100).optional(),
 		offset: z.number().int().min(0).optional(),
 	})
 	.strict();
 export type OrdersListInput = z.infer<typeof OrdersListInputSchema>;
 
-export const OrdersListResponseSchema = z.array(OrderSchema);
+/** GET /orders returns `{ orders, total, hasMore }`, not a bare array. */
+export const OrdersListResponseSchema = z.object({
+	orders: z.array(OrderSchema),
+	total: z.number().nullable().optional(),
+	hasMore: z.boolean().nullable().optional(),
+});
 export type OrdersListResponse = z.infer<typeof OrdersListResponseSchema>;
 
 export const OrdersGetInputSchema = z
@@ -441,29 +492,80 @@ export const OrdersGetInputSchema = z
 	.strict();
 export type OrdersGetInput = z.infer<typeof OrdersGetInputSchema>;
 
-export const OrderItemDetailInputSchema = z.object({
-	quantity: z.number().int().min(1).default(1),
-	name: z.string().optional(),
-	description: z.string().optional(),
-	code: z.string().optional(),
-	backingType: z.enum(['Currency', 'Units']).optional(),
-	price: z.number().optional(),
-	value: z.number().optional(),
-	units: z.number().nullable().optional(),
-	equivalentValuePerUnit: z.number().nullable().optional(),
-	itemId: z.string().optional(),
-	artworkId: z.string().optional(),
-	terms: z.string().optional(),
-	sku: z.string().optional(),
-	message: z.string().optional(),
-	recipientName: z.string().optional(),
-	recipientEmail: z.string().optional(),
-	expiresOn: z.string().optional(),
-	validFrom: z.string().optional(),
-	isPostalFulfilled: z.boolean().optional(),
-	isDigitalFulfilled: z.boolean().optional(),
-	scheduledDeliveryDate: z.string().optional(),
-});
+export const OrderItemDetailInputSchema = z
+	.object({
+		quantity: z.number().int().min(1).max(1000).default(1),
+		/** Id of an existing item. When set, Gift Up ignores the other fields except quantity, value and price. */
+		id: z.string().optional(),
+		name: z.string().optional(),
+		description: z.string().optional(),
+		code: z.string().optional(),
+		backingType: z.enum(['Currency', 'Units']).optional(),
+		price: z.number().optional(),
+		value: z.number().optional(),
+		units: z.number().int().nullable().optional(),
+		equivalentValuePerUnit: z.number().nullable().optional(),
+		overrideExpiry: z.boolean().optional(),
+		expiresOn: z.string().nullable().optional(),
+		expiresInMonths: z.number().int().nullable().optional(),
+		expiresInDays: z.number().nullable().optional(),
+		overrideValidFrom: z.boolean().optional(),
+		validFrom: z.string().nullable().optional(),
+		validFromInDays: z.number().nullable().optional(),
+		sku: z.string().optional(),
+		terms: z.string().nullable().optional(),
+	})
+	.strict();
+export type OrderItemDetailInput = z.infer<typeof OrderItemDetailInputSchema>;
+
+export const OrderShippingAddressInputSchema = z
+	.object({
+		address1: z.string().optional(),
+		address2: z.string().optional(),
+		city: z.string().optional(),
+		state: z.string().optional(),
+		postalCode: z.string().optional(),
+		countryCode: z.string().length(3).optional(),
+	})
+	.strict();
+
+export const OrderShippingOptionInputSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		price: z.number().optional(),
+	})
+	.strict();
+
+/** Order-level recipient. Without it Gift Up sends no gift card email. */
+export const OrderRecipientDetailsInputSchema = z
+	.object({
+		recipientName: z.string().optional(),
+		recipientEmail: z.string().email().optional(),
+		message: z.string().optional(),
+		scheduledFor: z.string().optional(),
+		fulfilmentMethod: z.enum(['Email', 'Post', 'None']).optional(),
+		shippingAddress: OrderShippingAddressInputSchema.optional(),
+		shippingOption: OrderShippingOptionInputSchema.optional(),
+	})
+	.strict();
+
+export const OrderCustomFieldInputSchema = z
+	.object({
+		label: z.string().min(1),
+		value: CustomFieldValueSchema,
+		showOnGiftCard: z.boolean().optional(),
+		showOnRedeemApp: z.boolean().optional(),
+	})
+	.strict();
+
+export const OrderSalesTaxInputSchema = z
+	.object({
+		label: z.string().min(1),
+		amount: z.number(),
+		type: z.enum(['inclusive', 'exclusive']),
+	})
+	.strict();
 
 export const OrdersCreateInputSchema = z
 	.object({
@@ -471,25 +573,35 @@ export const OrdersCreateInputSchema = z
 		disableAllEmails: z.boolean().optional(),
 		purchaserEmail: z.string().email(),
 		purchaserName: z.string().min(1),
-		tip: z.number().optional(),
-		serviceFee: z.number().optional(),
-		discount: z.number().optional(),
+		tip: z.number().min(0).optional(),
+		serviceFee: z.number().min(0).optional(),
+		discount: z.number().min(0).optional(),
 		referrer: z.string().optional(),
-		revenue: z.number().optional(),
+		revenue: z.number().min(0).optional(),
 		itemDetails: z.array(OrderItemDetailInputSchema).min(1),
-		customFields: z.array(OrderCustomFieldSchema).optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
+		recipientDetails: OrderRecipientDetailsInputSchema.optional(),
+		customFields: z.array(OrderCustomFieldInputSchema).optional(),
+		salesTaxes: z.array(OrderSalesTaxInputSchema).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.strict();
 export type OrdersCreateInput = z.input<typeof OrdersCreateInputSchema>;
 
 export const OrdersUpdateInputSchema = z
 	.object({
+		/** Order id or order number. */
 		id: z.string().min(1),
 		patch: z.array(JsonPatchOperationSchema),
 	})
 	.strict();
 export type OrdersUpdateInput = z.infer<typeof OrdersUpdateInputSchema>;
+
+/** PATCH /orders/{id}: Gift Up documents the status only, so an empty body is accepted. */
+export const OrdersUpdateResponseSchema = z.union([
+	OrderSchema,
+	EmptyResponseSchema,
+]);
+export type OrdersUpdateResponse = z.infer<typeof OrdersUpdateResponseSchema>;
 
 export const OrdersAddNoteInputSchema = z
 	.object({
@@ -501,7 +613,7 @@ export type OrdersAddNoteInput = z.infer<typeof OrdersAddNoteInputSchema>;
 
 export const OrderCodeUpdateSchema = z.object({
 	oldCode: z.string().min(1),
-	newCode: z.string().min(1),
+	newCode: z.string().min(3),
 });
 
 export const OrdersMarkAsPostedInputSchema = z
@@ -520,10 +632,10 @@ export type OrdersMarkAsPostedInput = z.infer<
 
 export const ItemSchema = z.object({
 	id: z.string(),
-	name: z.string(),
+	name: z.string().nullable().optional(),
 	description: z.string().nullable().optional(),
-	backingType: z.string(),
-	priceType: z.string(),
+	backingType: z.string().nullable().optional(),
+	priceType: z.string().nullable().optional(),
 	price: z.number().nullable().optional(),
 	value: z.number().nullable().optional(),
 	units: z.number().nullable().optional(),
@@ -532,18 +644,21 @@ export const ItemSchema = z.object({
 	maximumPrice: z.number().nullable().optional(),
 	availableFrom: z.string().nullable().optional(),
 	availableUntil: z.string().nullable().optional(),
-	overrideValidFrom: z.boolean().optional(),
+	overrideValidFrom: z.boolean().nullable().optional(),
 	validFrom: z.string().nullable().optional(),
 	validFromInDays: z.number().nullable().optional(),
-	overrideExpiry: z.boolean().optional(),
+	overrideExpiry: z.boolean().nullable().optional(),
 	expiresOn: z.string().nullable().optional(),
-	expiryInMonths: z.number().nullable().optional(),
-	expiryInDays: z.number().nullable().optional(),
-	sortOrder: z.number().int().optional(),
+	expiresInMonths: z.number().nullable().optional(),
+	expiresInDays: z.number().nullable().optional(),
+	group: z.string().nullable().optional(),
 	groupId: z.string().nullable().optional(),
-	artworkId: z.string().nullable().optional(),
-	isPromoted: z.boolean().optional(),
-	terms: z.string().nullable().optional(),
+	detailsURL: z.string().nullable().optional(),
+	artworkURL: z.string().nullable().optional(),
+	stockLevel: z.number().nullable().optional(),
+	codes: z.array(z.string()).nullable().optional(),
+	perOrderLimit: z.number().nullable().optional(),
+	additionalTerms: z.string().nullable().optional(),
 	sku: z.string().nullable().optional(),
 });
 export type Item = z.infer<typeof ItemSchema>;
@@ -570,25 +685,30 @@ export const ItemsCreateInputSchema = z
 		name: z.string().min(1),
 		description: z.string().optional(),
 		backingType: z.enum(['Currency', 'Units']).optional().default('Currency'),
-		priceType: z
-			.enum(['Specified', 'Variable', 'Donation'])
-			.optional()
-			.default('Specified'),
+		priceType: z.enum(['Specified', 'Custom']).optional().default('Specified'),
 		price: z.number().optional(),
 		value: z.number().optional(),
-		units: z.number().nullable().optional(),
+		units: z.number().int().nullable().optional(),
 		equivalentValuePerUnit: z.number().nullable().optional(),
 		minimumPrice: z.number().nullable().optional(),
 		maximumPrice: z.number().nullable().optional(),
 		availableFrom: z.string().nullable().optional(),
 		availableUntil: z.string().nullable().optional(),
+		overrideValidFrom: z.boolean().optional(),
+		validFrom: z.string().nullable().optional(),
 		validFromInDays: z.number().nullable().optional(),
-		expiryInMonths: z.number().nullable().optional(),
-		expiryInDays: z.number().nullable().optional(),
-		sortOrder: z.number().int().optional(),
+		overrideExpiry: z.boolean().optional(),
+		expiresOn: z.string().nullable().optional(),
+		expiresInMonths: z.number().int().nullable().optional(),
+		expiresInDays: z.number().nullable().optional(),
+		/** Group name. Set either group or groupId, not both. */
+		group: z.string().nullable().optional(),
 		groupId: z.string().nullable().optional(),
-		artworkId: z.string().nullable().optional(),
-		terms: z.string().nullable().optional(),
+		detailsURL: z.string().url().nullable().optional(),
+		stockLevel: z.number().int().nullable().optional(),
+		codes: z.array(z.string()).optional(),
+		perOrderLimit: z.number().int().nullable().optional(),
+		additionalTerms: z.string().nullable().optional(),
 		sku: z.string().nullable().optional(),
 	})
 	.strict();
@@ -601,6 +721,13 @@ export const ItemsUpdateInputSchema = z
 	})
 	.strict();
 export type ItemsUpdateInput = z.infer<typeof ItemsUpdateInputSchema>;
+
+/** PATCH /items/{id}: Gift Up documents the status only, so an empty body is accepted. */
+export const ItemsUpdateResponseSchema = z.union([
+	ItemSchema,
+	EmptyResponseSchema,
+]);
+export type ItemsUpdateResponse = z.infer<typeof ItemsUpdateResponseSchema>;
 
 export const ItemsDeleteInputSchema = z
 	.object({
@@ -615,10 +742,10 @@ export type ItemsDeleteInput = z.infer<typeof ItemsDeleteInputSchema>;
 
 export const ItemGroupSchema = z.object({
 	id: z.string(),
-	name: z.string(),
+	name: z.string().nullable().optional(),
 	description: z.string().nullable().optional(),
-	sortOrder: z.number().int().optional(),
-	autoExpand: z.boolean().optional(),
+	sortOrder: z.number().nullable().optional(),
+	autoExpand: z.boolean().nullable().optional(),
 });
 export type ItemGroup = z.infer<typeof ItemGroupSchema>;
 
@@ -645,6 +772,13 @@ export const GroupsCreateInputSchema = z
 	.strict();
 export type GroupsCreateInput = z.infer<typeof GroupsCreateInputSchema>;
 
+/** POST /groups and PATCH /groups/{id}: Gift Up documents the 200 status only, so an empty body is accepted. */
+export const GroupsWriteResponseSchema = z.union([
+	ItemGroupSchema,
+	EmptyResponseSchema,
+]);
+export type GroupsWriteResponse = z.infer<typeof GroupsWriteResponseSchema>;
+
 export const GroupsUpdateInputSchema = z
 	.object({
 		id: z.string().min(1),
@@ -666,7 +800,7 @@ export type GroupsDeleteInput = z.infer<typeof GroupsDeleteInputSchema>;
 
 export const LocationSchema = z.object({
 	id: z.string(),
-	name: z.string(),
+	name: z.string().nullable().optional(),
 });
 export type Location = z.infer<typeof LocationSchema>;
 
@@ -682,12 +816,15 @@ export type LocationsListResponse = z.infer<typeof LocationsListResponseSchema>;
 
 export const PromotionSchema = z.object({
 	id: z.string(),
-	name: z.string(),
-	noBenefit: z.boolean().optional(),
-	publishedOn: z.string().optional(),
+	name: z.string().nullable().optional(),
+	noBenefit: z.boolean().nullable().optional(),
+	publishedOn: z.string().nullable().optional(),
 	stoppedOn: z.string().nullable().optional(),
-	// `passthrough` because promotion benefits structures vary by promotion type
-	benefits: z.object({}).passthrough().optional(),
+	// `passthrough` because benefits, usage, limitations and triggers vary by promotion type
+	benefits: z.object({}).passthrough().nullable().optional(),
+	usage: z.object({}).passthrough().nullable().optional(),
+	limitations: z.object({}).passthrough().nullable().optional(),
+	triggers: z.object({}).passthrough().nullable().optional(),
 });
 export type Promotion = z.infer<typeof PromotionSchema>;
 
@@ -705,25 +842,34 @@ export type PromotionsListResponse = z.infer<
 
 export const ReportTransactionSchema = z.object({
 	id: z.string(),
-	eventOccuredOn: z.string(),
+	eventOccuredOn: z.string().nullable().optional(),
 	eventOccuredAtLocationId: z.string().nullable().optional(),
-	eventType: z.string(),
+	eventType: z.string().nullable().optional(),
 	reason: z.string().nullable().optional(),
 	referrer: z.string().nullable().optional(),
-	metadata: z.record(z.string(), z.string()).optional(),
+	metadata: MetadataSchema.nullable().optional(),
 	orderId: z.string().nullable().optional(),
-	currency: z.string().optional(),
-	giftUpFee: z.number().optional(),
+	currency: z.string().nullable().optional(),
+	giftUpFee: z.union([z.number(), z.string()]).nullable().optional(),
 	whoName: z.string().nullable().optional(),
 	whoEmail: z.string().nullable().optional(),
-	orderDetails: z.record(z.string(), z.string()).nullable().optional(),
+	/** Financial details; only set on OrderPlaced events. */
+	orderDetails: z
+		.object({
+			income: z.number().nullable().optional(),
+			serviceFee: z.number().nullable().optional(),
+			tip: z.number().nullable().optional(),
+			shippingFee: z.number().nullable().optional(),
+		})
+		.nullable()
+		.optional(),
 	giftCard: z
 		.object({
-			id: z.string().optional(),
-			code: z.string().optional(),
-			valueChange: z.number().optional(),
-			unitChange: z.number().optional(),
-			title: z.string().optional(),
+			id: z.string().nullable().optional(),
+			code: z.string().nullable().optional(),
+			valueChange: z.number().nullable().optional(),
+			unitChange: z.number().nullable().optional(),
+			title: z.string().nullable().optional(),
 		})
 		.nullable()
 		.optional(),
@@ -734,6 +880,23 @@ export const ReportsListTransactionsInputSchema = z
 	.object({
 		eventOccurredOnOrAfter: z.string().optional(),
 		eventOccurredOnOrBefore: z.string().optional(),
+		events: z
+			.array(
+				z.enum([
+					'OrderPlaced',
+					'GiftCardCreated',
+					'CreditAdded',
+					'Redeemed',
+					'Expired',
+					'Unexpired',
+					'Voided',
+					'Reactivated',
+				]),
+			)
+			.optional(),
+		users: z.array(z.string()).optional(),
+		locations: z.array(z.string()).optional(),
+		code: z.string().optional(),
 		limit: z.number().int().min(1).max(100).optional(),
 		offset: z.number().int().min(0).optional(),
 	})
@@ -742,9 +905,12 @@ export type ReportsListTransactionsInput = z.infer<
 	typeof ReportsListTransactionsInputSchema
 >;
 
-export const ReportsListTransactionsResponseSchema = z.array(
-	ReportTransactionSchema,
-);
+/** GET /reports/transactions returns `{ transactions, total, hasMore }`, not a bare array. */
+export const ReportsListTransactionsResponseSchema = z.object({
+	transactions: z.array(ReportTransactionSchema),
+	total: z.number().nullable().optional(),
+	hasMore: z.boolean().nullable().optional(),
+});
 export type ReportsListTransactionsResponse = z.infer<
 	typeof ReportsListTransactionsResponseSchema
 >;
@@ -765,24 +931,24 @@ export type ReportsGetTransactionInput = z.infer<
 export const CheckoutSettingsSchema = z.object({
 	logoUrl: z.string().nullable().optional(),
 	introductionText: z.string().nullable().optional(),
-	fontFamily: z.string().optional(),
-	fontSize: z.string().optional(),
-	themeColor: z.string().optional(),
-	backgroundColor: z.string().optional(),
-	hostedBackgroundColor: z.string().optional(),
-	hostedTextColor: z.string().optional(),
+	fontFamily: z.string().nullable().optional(),
+	fontSize: z.string().nullable().optional(),
+	themeColor: z.string().nullable().optional(),
+	backgroundColor: z.string().nullable().optional(),
+	hostedBackgroundColor: z.string().nullable().optional(),
+	hostedTextColor: z.string().nullable().optional(),
 	continueLinkText: z.string().nullable().optional(),
 	continueLinkUrl: z.string().nullable().optional(),
 	redirectUrl: z.string().nullable().optional(),
 	additionalCustomHtml: z.string().nullable().optional(),
-	showBalanceChecker: z.boolean().optional(),
-	defaultFor: z.string().optional(),
-	serviceFeeCharged: z.boolean().optional(),
-	serviceFeeFixed: z.number().optional(),
-	serviceFeePercentage: z.number().optional(),
-	tipsEnabled: z.boolean().optional(),
-	allowCustomTipValues: z.boolean().optional(),
-	overrideTipValues: z.array(z.string()).optional(),
+	showBalanceChecker: z.boolean().nullable().optional(),
+	defaultFor: z.string().nullable().optional(),
+	serviceFeeCharged: z.boolean().nullable().optional(),
+	serviceFeeFixed: z.number().nullable().optional(),
+	serviceFeePercentage: z.number().nullable().optional(),
+	tipsEnabled: z.boolean().nullable().optional(),
+	allowCustomTipValues: z.boolean().nullable().optional(),
+	overrideTipValues: z.array(z.string()).nullable().optional(),
 });
 export type CheckoutSettings = z.infer<typeof CheckoutSettingsSchema>;
 
@@ -800,32 +966,34 @@ export type SettingsUpdateCheckoutInput = z.infer<
 	typeof SettingsUpdateCheckoutInputSchema
 >;
 
+/** The settings PATCH endpoints document a 200 status only, so an empty body is accepted. */
+export const SettingsUpdateCheckoutResponseSchema = z.union([
+	CheckoutSettingsSchema,
+	EmptyResponseSchema,
+]);
+export type SettingsUpdateCheckoutResponse = z.infer<
+	typeof SettingsUpdateCheckoutResponseSchema
+>;
+
+const EmailTemplateSettingsSchema = z.object({
+	subjectLine: z.string().nullable().optional(),
+	title: z.string().nullable().optional(),
+	introText: z.string().nullable().optional(),
+	footerText: z.string().nullable().optional(),
+	buttonLabel: z.string().nullable().optional(),
+	buttonUrl: z.string().nullable().optional(),
+	buttonColour: z.string().nullable().optional(),
+	buttonAlignment: z.string().nullable().optional(),
+});
+
 export const EmailSettingsSchema = z.object({
 	logoUrl: z.string().nullable().optional(),
-	logoAlignment: z.string().optional(),
-	logoWidth: z.number().optional(),
-	fromEmail: z.string().optional(),
-	fromName: z.string().optional(),
-	giftCardEmail: z
-		.object({
-			subjectLine: z.string().optional(),
-			title: z.string().optional(),
-			introText: z.string().optional(),
-			footerText: z.string().optional(),
-			buttonLabel: z.string().optional(),
-			buttonUrl: z.string().optional(),
-			buttonColour: z.string().optional(),
-			buttonAlignment: z.string().optional(),
-		})
-		.optional(),
-	receiptEmail: z
-		.object({
-			subjectLine: z.string().optional(),
-			title: z.string().optional(),
-			introText: z.string().optional(),
-			footerText: z.string().optional(),
-		})
-		.optional(),
+	logoAlignment: z.string().nullable().optional(),
+	logoWidth: z.number().nullable().optional(),
+	fromEmail: z.string().nullable().optional(),
+	fromName: z.string().nullable().optional(),
+	giftCardEmail: EmailTemplateSettingsSchema.nullable().optional(),
+	receiptEmail: EmailTemplateSettingsSchema.nullable().optional(),
 });
 export type EmailSettings = z.infer<typeof EmailSettingsSchema>;
 
@@ -841,17 +1009,25 @@ export type SettingsUpdateEmailInput = z.infer<
 	typeof SettingsUpdateEmailInputSchema
 >;
 
+export const SettingsUpdateEmailResponseSchema = z.union([
+	EmailSettingsSchema,
+	EmptyResponseSchema,
+]);
+export type SettingsUpdateEmailResponse = z.infer<
+	typeof SettingsUpdateEmailResponseSchema
+>;
+
 export const GiftCardSettingsSchema = z.object({
 	defaultDescription: z.string().nullable().optional(),
-	barcodeFormat: z.string().optional(),
+	barcodeFormat: z.string().nullable().optional(),
 	expiryInMonths: z.number().nullable().optional(),
 	expiryInDays: z.number().nullable().optional(),
 	validFromInDays: z.number().nullable().optional(),
-	showIssuedOnDate: z.boolean().optional(),
-	showBalance: z.boolean().optional(),
-	showBarcode: z.boolean().optional(),
+	showIssuedOnDate: z.boolean().nullable().optional(),
+	showBalance: z.boolean().nullable().optional(),
+	showBarcode: z.boolean().nullable().optional(),
 	generalTerms: z.string().nullable().optional(),
-	codeFormat: z.string().optional(),
+	codeFormat: z.string().nullable().optional(),
 });
 export type GiftCardSettings = z.infer<typeof GiftCardSettingsSchema>;
 
@@ -869,10 +1045,18 @@ export type SettingsUpdateGiftCardInput = z.infer<
 	typeof SettingsUpdateGiftCardInputSchema
 >;
 
+export const SettingsUpdateGiftCardResponseSchema = z.union([
+	GiftCardSettingsSchema,
+	EmptyResponseSchema,
+]);
+export type SettingsUpdateGiftCardResponse = z.infer<
+	typeof SettingsUpdateGiftCardResponseSchema
+>;
+
 export const ArtworkSchema = z.object({
 	id: z.string(),
-	url: z.string(),
-	sortOrder: z.number().int().optional(),
+	url: z.string().nullable().optional(),
+	sortOrder: z.number().nullable().optional(),
 });
 export type Artwork = z.infer<typeof ArtworkSchema>;
 
@@ -888,13 +1072,30 @@ export type SettingsListArtworkResponse = z.infer<
 
 export const SettingsUploadArtworkInputSchema = z
 	.object({
-		url: z.string().url(),
+		/** An absolute image URL, or a base64 data URI starting with `data:image`. */
+		url: z
+			.string()
+			.min(1)
+			.refine((v) => v.startsWith('data:image') || /^https?:\/\//i.test(v), {
+				message: 'url must be an absolute http(s) URL or a data:image URI',
+			}),
+		/** Deletes every existing artwork before adding this one. */
 		replaceAllExistingArtwork: z.boolean().optional(),
 		replaceArtworkId: z.string().optional(),
 	})
 	.strict();
 export type SettingsUploadArtworkInput = z.infer<
 	typeof SettingsUploadArtworkInputSchema
+>;
+
+/** POST /settings/gift-card/artwork documents a 200 status only, so an empty body is accepted. */
+export const SettingsUploadArtworkResponseSchema = z.union([
+	ArtworkSchema,
+	z.array(ArtworkSchema),
+	EmptyResponseSchema,
+]);
+export type SettingsUploadArtworkResponse = z.infer<
+	typeof SettingsUploadArtworkResponseSchema
 >;
 
 export const SettingsDeleteArtworkInputSchema = z
@@ -908,25 +1109,31 @@ export type SettingsDeleteArtworkInput = z.infer<
 
 export const ShippingPostalOptionSchema = z.object({
 	id: z.string(),
-	name: z.string(),
-	price: z.number(),
-	sortOrder: z.number().int().optional(),
-	type: z.string(),
+	name: z.string().nullable().optional(),
+	price: z.number().nullable().optional(),
+	sortOrder: z.number().nullable().optional(),
+	type: z.string().nullable().optional(),
 	countries: z
 		.array(
 			z.object({
-				name: z.string(),
-				IsoCode: z.string().optional(),
+				name: z.string().nullable().optional(),
+				// The docs' example uses `IsoCode`, the property table `isoCode`
+				IsoCode: z.string().nullable().optional(),
+				isoCode: z.string().nullable().optional(),
 			}),
 		)
+		.nullable()
 		.optional(),
 });
 
 export const ShippingSettingsSchema = z.object({
-	enableDigitalFulfilment: z.boolean(),
-	enableSelfFulfilledPostal: z.boolean(),
-	enablePostalMessage: z.boolean().optional(),
-	postalShippingOptions: z.array(ShippingPostalOptionSchema).optional(),
+	enableDigitalFulfilment: z.boolean().nullable().optional(),
+	enableSelfFulfilledPostal: z.boolean().nullable().optional(),
+	enablePostalMessage: z.boolean().nullable().optional(),
+	postalShippingOptions: z
+		.array(ShippingPostalOptionSchema)
+		.nullable()
+		.optional(),
 });
 export type ShippingSettings = z.infer<typeof ShippingSettingsSchema>;
 
@@ -941,23 +1148,23 @@ export type SettingsGetShippingInput = z.infer<
 
 export const UserLocationSchema = z.object({
 	id: z.string(),
-	name: z.string(),
+	name: z.string().nullable().optional(),
 });
 
 export const UserSchema = z.object({
 	id: z.string(),
-	name: z.string(),
-	email: z.string(),
+	name: z.string().nullable().optional(),
+	email: z.string().nullable().optional(),
 	avatarUrl: z.string().nullable().optional(),
 	pin: z.string().nullable().optional(),
-	isAdministrator: z.boolean().optional(),
-	emailConfirmed: z.boolean().optional(),
-	hiddenInRedeemApp: z.boolean().optional(),
-	disableSearchInRedeemApp: z.boolean().optional(),
-	hideLogInRedeemApp: z.boolean().optional(),
-	expiredGiftCardRedemptionDisabled: z.boolean().optional(),
-	redeemLocationRestrictionEnforced: z.boolean().optional(),
-	locations: z.array(UserLocationSchema).optional(),
+	isAdministrator: z.boolean().nullable().optional(),
+	emailConfirmed: z.boolean().nullable().optional(),
+	hiddenInRedeemApp: z.boolean().nullable().optional(),
+	disableSearchInRedeemApp: z.boolean().nullable().optional(),
+	hideLogInRedeemApp: z.boolean().nullable().optional(),
+	expiredGiftCardRedemptionDisabled: z.boolean().nullable().optional(),
+	redeemLocationRestrictionEnforced: z.boolean().nullable().optional(),
+	locations: z.array(UserLocationSchema).nullable().optional(),
 });
 export type User = z.infer<typeof UserSchema>;
 
@@ -978,6 +1185,8 @@ export const UsersInviteInputSchema = z
 	.object({
 		email: z.string().email(),
 		name: z.string().optional(),
+		/** An image URL or a base64 data URI. */
+		avatarUrl: z.string().optional(),
 		pin: z.string().optional(),
 		isAdministrator: z.boolean().optional(),
 		hiddenInRedeemApp: z.boolean().optional(),
@@ -985,7 +1194,6 @@ export const UsersInviteInputSchema = z
 		hideLogInRedeemApp: z.boolean().optional(),
 		expiredGiftCardRedemptionDisabled: z.boolean().optional(),
 		redeemLocationRestrictionEnforced: z.boolean().optional(),
-		locationIds: z.array(z.string()).optional(),
 	})
 	.strict();
 export type UsersInviteInput = z.infer<typeof UsersInviteInputSchema>;
@@ -998,6 +1206,13 @@ export const UsersUpdateInputSchema = z
 	.strict();
 export type UsersUpdateInput = z.infer<typeof UsersUpdateInputSchema>;
 
+/** PATCH /users/{id}: Gift Up documents the status only, so an empty body is accepted. */
+export const UsersUpdateResponseSchema = z.union([
+	UserSchema,
+	EmptyResponseSchema,
+]);
+export type UsersUpdateResponse = z.infer<typeof UsersUpdateResponseSchema>;
+
 export const UsersDeleteInputSchema = z
 	.object({
 		id: z.string().min(1),
@@ -1009,17 +1224,41 @@ export type UsersDeleteInput = z.infer<typeof UsersDeleteInputSchema>;
 // 12. Integrations
 // ==========================================
 
+// The Stripe secret keys (liveSecretKey, testSecretKey) are left out on purpose:
+// z.object strips them from the GET response so they never reach an agent.
 export const StripeConnectionSchema = z.object({
-	enableIdeal: z.boolean().optional(),
-	enableBancontact: z.boolean().optional(),
-	enableGiropay: z.boolean().optional(),
-	enableEps: z.boolean().optional(),
-	enableMultibanco: z.boolean().optional(),
-	enablePrzelewy24: z.boolean().optional(),
-	enableWeChat: z.boolean().optional(),
-	enableAlipay: z.boolean().optional(),
-	stripeAccountId: z.string().nullable().optional(),
-	connected: z.boolean().optional(),
+	enableIdeal: z.boolean().nullable().optional(),
+	enableBancontact: z.boolean().nullable().optional(),
+	enableGiropay: z.boolean().nullable().optional(),
+	enableEps: z.boolean().nullable().optional(),
+	enableMultibanco: z.boolean().nullable().optional(),
+	enablePrzelewy24: z.boolean().nullable().optional(),
+	enableWeChat: z.boolean().nullable().optional(),
+	enableAlipay: z.boolean().nullable().optional(),
+	enablePayPal: z.boolean().nullable().optional(),
+	enableKlarna: z.boolean().nullable().optional(),
+	enableAffirm: z.boolean().nullable().optional(),
+	enableAfterpayClearpay: z.boolean().nullable().optional(),
+	enableFpx: z.boolean().nullable().optional(),
+	enableBlik: z.boolean().nullable().optional(),
+	enableCashApp: z.boolean().nullable().optional(),
+	enableGrabPay: z.boolean().nullable().optional(),
+	enablePayNow: z.boolean().nullable().optional(),
+	enablePromptPay: z.boolean().nullable().optional(),
+	enablePix: z.boolean().nullable().optional(),
+	enableZip: z.boolean().nullable().optional(),
+	enableMobilePay: z.boolean().nullable().optional(),
+	livePublicKey: z.string().nullable().optional(),
+	testPublicKey: z.string().nullable().optional(),
+	connectAccountId: z.string().nullable().optional(),
+	applicationFeePercentage: z.number().nullable().optional(),
+	applicationFeeFixed: z.number().nullable().optional(),
+	statementDescriptor: z.string().nullable().optional(),
+	reviewAction: z.string().nullable().optional(),
+	threeDSecureRequired: z.boolean().nullable().optional(),
+	useStripeCheckout: z.boolean().nullable().optional(),
+	createCustomerAccounts: z.boolean().nullable().optional(),
+	askForFullAddress: z.boolean().nullable().optional(),
 });
 export type StripeConnection = z.infer<typeof StripeConnectionSchema>;
 
@@ -1038,10 +1277,46 @@ export const IntegrationsUpdateStripeInputSchema = z
 		enablePrzelewy24: z.boolean().optional(),
 		enableWeChat: z.boolean().optional(),
 		enableAlipay: z.boolean().optional(),
+		enablePayPal: z.boolean().optional(),
+		enableKlarna: z.boolean().optional(),
+		enableAffirm: z.boolean().optional(),
+		enableAfterpayClearpay: z.boolean().optional(),
+		enableFpx: z.boolean().optional(),
+		enableBlik: z.boolean().optional(),
+		enableCashApp: z.boolean().optional(),
+		enableGrabPay: z.boolean().optional(),
+		enablePayNow: z.boolean().optional(),
+		enablePromptPay: z.boolean().optional(),
+		enablePix: z.boolean().optional(),
+		enableZip: z.boolean().optional(),
+		enableMobilePay: z.boolean().optional(),
+		statementDescriptor: z.string().optional(),
+		reviewAction: z.enum(['Continue', 'WaitForApproval']).optional(),
+		threeDSecureRequired: z.boolean().optional(),
+		useStripeCheckout: z.boolean().optional(),
+		createCustomerAccounts: z.boolean().optional(),
+		askForFullAddress: z.boolean().optional(),
 	})
 	.strict();
 export type IntegrationsUpdateStripeInput = z.infer<
 	typeof IntegrationsUpdateStripeInputSchema
+>;
+
+/** POST /integrations/stripe/connection returns the connection test result. */
+export const IntegrationsUpdateStripeResponseSchema = z.object({
+	testResult: z
+		.object({
+			hasWebhooks: z.boolean().nullable().optional(),
+			canReadAccount: z.boolean().nullable().optional(),
+			canReadSource: z.boolean().nullable().optional(),
+			canWritePaymentIntent: z.boolean().nullable().optional(),
+			canWriteCharge: z.boolean().nullable().optional(),
+		})
+		.nullable()
+		.optional(),
+});
+export type IntegrationsUpdateStripeResponse = z.infer<
+	typeof IntegrationsUpdateStripeResponseSchema
 >;
 
 // ==========================================
@@ -1058,6 +1333,9 @@ export const PartnersCreateAccountInputSchema = z
 		countryCode: z.string().length(3),
 		websiteUrl: z.string().url().optional(),
 		timeZone: z.string().optional(),
+		inviteCode: z.string().optional(),
+		isPartnerResponsibleForBilling: z.boolean().optional(),
+		isPartnerResponsibleForPaymentProviders: z.boolean().optional(),
 	})
 	.strict();
 export type PartnersCreateAccountInput = z.infer<
@@ -1065,12 +1343,20 @@ export type PartnersCreateAccountInput = z.infer<
 >;
 
 export const PartnerAccountSchema = z.object({
-	companyId: z.string().optional(),
-	apiKey: z.string().optional(),
-	userId: z.string().optional(),
-	company: CompanySchema.optional(),
+	companyId: z.string(),
+	companyName: z.string().nullable().optional(),
+	accountName: z.string().nullable().optional(),
+	currency: z.string().nullable().optional(),
+	createdOn: z.string().nullable().optional(),
 });
 export type PartnerAccount = z.infer<typeof PartnerAccountSchema>;
+
+/** POST /partners/account/create returns an array of account records. */
+export const PartnersCreateAccountResponseSchema =
+	z.array(PartnerAccountSchema);
+export type PartnersCreateAccountResponse = z.infer<
+	typeof PartnersCreateAccountResponseSchema
+>;
 
 // ==========================================
 // Master Schemas and Types Map
@@ -1136,7 +1422,7 @@ export const GiftUpEndpointOutputSchemas = {
 	'company.get': CompanySchema,
 	'giftCards.list': GiftCardsListResponseSchema,
 	'giftCards.get': GiftCardSchema,
-	'giftCards.update': GiftCardSchema,
+	'giftCards.update': GiftCardsUpdateResponseSchema,
 	'giftCards.reactivate': GiftCardsReactivateResponseSchema,
 	'giftCards.void': GiftCardsVoidResponseSchema,
 	'giftCards.topUp': GiftCardsTopUpResponseSchema,
@@ -1147,41 +1433,41 @@ export const GiftUpEndpointOutputSchemas = {
 	'orders.list': OrdersListResponseSchema,
 	'orders.get': OrderSchema,
 	'orders.create': OrderSchema,
-	'orders.update': OrderSchema,
+	'orders.update': OrdersUpdateResponseSchema,
 	'orders.addNote': SuccessResponseSchema,
 	'orders.markAsPosted': SuccessResponseSchema,
 	'items.list': ItemsListResponseSchema,
 	'items.get': ItemSchema,
 	'items.create': ItemSchema,
-	'items.update': ItemSchema,
+	'items.update': ItemsUpdateResponseSchema,
 	'items.delete': SuccessResponseSchema,
 	'groups.list': GroupsListResponseSchema,
 	'groups.get': ItemGroupSchema,
-	'groups.create': ItemGroupSchema,
-	'groups.update': ItemGroupSchema,
+	'groups.create': GroupsWriteResponseSchema,
+	'groups.update': GroupsWriteResponseSchema,
 	'groups.delete': SuccessResponseSchema,
 	'locations.list': LocationsListResponseSchema,
 	'promotions.list': PromotionsListResponseSchema,
 	'reports.listTransactions': ReportsListTransactionsResponseSchema,
 	'reports.getTransaction': ReportTransactionSchema,
 	'settings.getCheckout': CheckoutSettingsSchema,
-	'settings.updateCheckout': CheckoutSettingsSchema,
+	'settings.updateCheckout': SettingsUpdateCheckoutResponseSchema,
 	'settings.getEmail': EmailSettingsSchema,
-	'settings.updateEmail': EmailSettingsSchema,
+	'settings.updateEmail': SettingsUpdateEmailResponseSchema,
 	'settings.getGiftCard': GiftCardSettingsSchema,
-	'settings.updateGiftCard': GiftCardSettingsSchema,
+	'settings.updateGiftCard': SettingsUpdateGiftCardResponseSchema,
 	'settings.listArtwork': SettingsListArtworkResponseSchema,
-	'settings.uploadArtwork': ArtworkSchema,
+	'settings.uploadArtwork': SettingsUploadArtworkResponseSchema,
 	'settings.deleteArtwork': SuccessResponseSchema,
 	'settings.getShipping': ShippingSettingsSchema,
 	'users.list': UsersListResponseSchema,
 	'users.get': UserSchema,
 	'users.invite': UserSchema,
-	'users.update': UserSchema,
+	'users.update': UsersUpdateResponseSchema,
 	'users.delete': SuccessResponseSchema,
 	'integrations.getStripeConnection': StripeConnectionSchema,
-	'integrations.updateStripeConnection': StripeConnectionSchema,
-	'partners.createAccount': PartnerAccountSchema,
+	'integrations.updateStripeConnection': IntegrationsUpdateStripeResponseSchema,
+	'partners.createAccount': PartnersCreateAccountResponseSchema,
 } as const;
 
 export type GiftUpEndpointInputs = {

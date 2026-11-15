@@ -101,9 +101,12 @@ describe('Gift Up! schemas', () => {
 			};
 			expect(CompanySchema.parse(valid)).toEqual(valid);
 
-			expect(() =>
-				CompanySchema.parse({ id: '123', name: 'Incomplete' }),
-			).toThrow();
+			// Response parsing is lenient on optional fields, but the id is required
+			expect(CompanySchema.parse({ id: '123', name: 'Partial' })).toEqual({
+				id: '123',
+				name: 'Partial',
+			});
+			expect(() => CompanySchema.parse({ name: 'No id' })).toThrow();
 		});
 	});
 
@@ -356,10 +359,19 @@ describe('Gift Up! schemas', () => {
 
 		it('validates StripeConnectionSchema', () => {
 			const stripe = {
-				connected: true,
-				stripeAccountId: 'acct_123',
+				enableIdeal: false,
+				enablePayPal: true,
+				livePublicKey: 'pk_live_****',
+				liveSecretKey: 'sk_live_****',
+				testSecretKey: 'sk_test_****',
+				reviewAction: 'Continue',
 			};
-			expect(StripeConnectionSchema.parse(stripe).connected).toBe(true);
+			const parsed = StripeConnectionSchema.parse(stripe);
+			expect(parsed.enablePayPal).toBe(true);
+			expect(parsed.reviewAction).toBe('Continue');
+			// Stripe secret keys are stripped from the output
+			expect('liveSecretKey' in parsed).toBe(false);
+			expect('testSecretKey' in parsed).toBe(false);
 		});
 
 		it('validates PartnersCreateAccountInputSchema', () => {
