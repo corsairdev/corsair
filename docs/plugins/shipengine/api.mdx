@@ -6125,7 +6125,7 @@ await corsair.shipengine.api.labels.voidLabel({
 
 Create Manifest
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.shipengine.api.manifests.createManifest({
@@ -6138,6 +6138,8 @@ await corsair.shipengine.api.manifests.createManifest({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `object` | Yes | — |
+
+Create Manifest closes out the listed labels with the carrier. Some carriers (Royal Mail) do not let a manifested label be voided through the API, so check the label list before calling.
 
 <AccordionGroup>
 <Accordion title="body full type">
