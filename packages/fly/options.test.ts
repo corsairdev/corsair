@@ -19,26 +19,48 @@ if (false) {
 describe('Fly endpoint metadata', () => {
 	const meta = fly().endpointMeta as Record<
 		string,
-		{ riskLevel: string; irreversible?: boolean }
+		{ riskLevel: string; irreversible?: boolean; description?: string }
 	>;
-	it('marks billed add-on changes and the password reset destructive', () => {
-		expect(meta['addOns.create']?.riskLevel).toBe('destructive');
-		expect(meta['addOns.update']?.riskLevel).toBe('destructive');
-		expect(meta['addOns.resetPassword']?.riskLevel).toBe('destructive');
+	it('marks operations that spend money or run arbitrary commands destructive', () => {
+		for (const path of [
+			'machines.create',
+			'machines.update',
+			'machines.exec',
+			'volumes.create',
+			'volumes.extend',
+			'volumes.createSnapshot',
+			'certificates.request',
+			'ipAssignments.create',
+			'secrets.set',
+			'secrets.update',
+		]) {
+			expect(meta[path]?.riskLevel).toBe('destructive');
+		}
 	});
 	it('flags deletes as irreversible so approvals say so', () => {
-		for (const path of [
-			'organizations.delete',
-			'wireguard.removePeer',
-			'addOns.delete',
-			'addOns.resetPassword',
-			'thirdParty.delete',
-		]) {
+		const deletes = Object.keys(meta).filter((path) =>
+			path.endsWith('.delete'),
+		);
+		expect(deletes).toHaveLength(6);
+		for (const path of [...deletes, 'machines.deleteMetadataKey']) {
 			expect(meta[path]).toMatchObject({
 				riskLevel: 'destructive',
 				irreversible: true,
 			});
 		}
 		expect(meta['apps.list']?.irreversible).toBeUndefined();
+	});
+	it('keeps reads read and gives every operation a description', () => {
+		for (const path of [
+			'apps.list',
+			'machines.wait',
+			'machines.listProcesses',
+			'tokens.current',
+		]) {
+			expect(meta[path]?.riskLevel).toBe('read');
+		}
+		for (const entry of Object.values(meta)) {
+			expect(entry.description?.length).toBeGreaterThan(10);
+		}
 	});
 });

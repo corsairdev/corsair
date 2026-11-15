@@ -3,6 +3,7 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
+	EndpointMetaEntry,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -31,115 +32,152 @@ export type FlyKeyBuilderContext = KeyBuilderContext<FlyPluginOptions>;
 const flyEndpoints = {
 	apps: {
 		list: operations.apps.list.endpoint,
+		create: operations.apps.create.endpoint,
 		get: operations.apps.get.endpoint,
-		nameAvailable: operations.apps.nameAvailable.endpoint,
+		delete: operations.apps.delete.endpoint,
 	},
-	organizations: {
-		list: operations.organizations.list.endpoint,
-		get: operations.organizations.get.endpoint,
-		personal: operations.organizations.personal.endpoint,
-		delete: operations.organizations.delete.endpoint,
+	machines: {
+		list: operations.machines.list.endpoint,
+		listForOrg: operations.machines.listForOrg.endpoint,
+		create: operations.machines.create.endpoint,
+		get: operations.machines.get.endpoint,
+		update: operations.machines.update.endpoint,
+		delete: operations.machines.delete.endpoint,
+		start: operations.machines.start.endpoint,
+		stop: operations.machines.stop.endpoint,
+		restart: operations.machines.restart.endpoint,
+		suspend: operations.machines.suspend.endpoint,
+		signal: operations.machines.signal.endpoint,
+		wait: operations.machines.wait.endpoint,
+		cordon: operations.machines.cordon.endpoint,
+		uncordon: operations.machines.uncordon.endpoint,
+		exec: operations.machines.exec.endpoint,
+		getLease: operations.machines.getLease.endpoint,
+		createLease: operations.machines.createLease.endpoint,
+		releaseLease: operations.machines.releaseLease.endpoint,
+		getMetadata: operations.machines.getMetadata.endpoint,
+		getMetadataKey: operations.machines.getMetadataKey.endpoint,
+		updateMetadata: operations.machines.updateMetadata.endpoint,
+		setMetadataKey: operations.machines.setMetadataKey.endpoint,
+		deleteMetadataKey: operations.machines.deleteMetadataKey.endpoint,
+		listEvents: operations.machines.listEvents.endpoint,
+		listProcesses: operations.machines.listProcesses.endpoint,
+		listVersions: operations.machines.listVersions.endpoint,
 	},
-	checks: {
-		jobs: operations.checks.jobs.endpoint,
-		locations: operations.checks.locations.endpoint,
-		createJob: operations.checks.createJob.endpoint,
-		runJob: operations.checks.runJob.endpoint,
+	volumes: {
+		list: operations.volumes.list.endpoint,
+		listForOrg: operations.volumes.listForOrg.endpoint,
+		create: operations.volumes.create.endpoint,
+		get: operations.volumes.get.endpoint,
+		update: operations.volumes.update.endpoint,
+		delete: operations.volumes.delete.endpoint,
+		extend: operations.volumes.extend.endpoint,
+		listSnapshots: operations.volumes.listSnapshots.endpoint,
+		createSnapshot: operations.volumes.createSnapshot.endpoint,
 	},
-	wireguard: {
-		listPeers: operations.wireguard.listPeers.endpoint,
-		getPeer: operations.wireguard.getPeer.endpoint,
-		addPeer: operations.wireguard.addPeer.endpoint,
-		removePeer: operations.wireguard.removePeer.endpoint,
-		validatePeers: operations.wireguard.validatePeers.endpoint,
+	secrets: {
+		list: operations.secrets.list.endpoint,
+		get: operations.secrets.get.endpoint,
+		set: operations.secrets.set.endpoint,
+		update: operations.secrets.update.endpoint,
+		delete: operations.secrets.delete.endpoint,
 	},
-	addOns: {
-		list: operations.addOns.list.endpoint,
-		get: operations.addOns.get.endpoint,
-		plans: operations.addOns.plans.endpoint,
-		provider: operations.addOns.provider.endpoint,
-		create: operations.addOns.create.endpoint,
-		update: operations.addOns.update.endpoint,
-		delete: operations.addOns.delete.endpoint,
-		resetPassword: operations.addOns.resetPassword.endpoint,
+	certificates: {
+		list: operations.certificates.list.endpoint,
+		get: operations.certificates.get.endpoint,
+		request: operations.certificates.request.endpoint,
+		check: operations.certificates.check.endpoint,
+		delete: operations.certificates.delete.endpoint,
 	},
-	thirdParty: {
-		list: operations.thirdParty.list.endpoint,
-		create: operations.thirdParty.create.endpoint,
-		update: operations.thirdParty.update.endpoint,
-		delete: operations.thirdParty.delete.endpoint,
+	ipAssignments: {
+		list: operations.ipAssignments.list.endpoint,
+		create: operations.ipAssignments.create.endpoint,
+		delete: operations.ipAssignments.delete.endpoint,
 	},
-	account: {
-		userOnlyToken: operations.account.userOnlyToken.endpoint,
-		viewer: operations.account.viewer.endpoint,
+	tokens: {
+		current: operations.tokens.current.endpoint,
 	},
-	platform: { nearestRegion: operations.platform.nearestRegion.endpoint },
+	platform: {
+		regions: operations.platform.regions.endpoint,
+	},
 } as const;
 
-// Build metadata from the same definitions that perform runtime validation.
-function metadata() {
-	const schemas: Record<string, { input: z.ZodType; output: z.ZodType }> = {};
-	for (const [group, entries] of Object.entries(operations)) {
-		for (const [name, definition] of Object.entries(entries)) {
-			const key = `${group}.${name}`;
-			schemas[key] = { input: definition.input, output: definition.output };
-		}
-	}
-	return { schemas };
-}
-const meta = metadata();
-const flyMetadataDefinitions = {
-	'apps.list': operations.apps.list,
-	'apps.get': operations.apps.get,
-	'apps.nameAvailable': operations.apps.nameAvailable,
-	'organizations.list': operations.organizations.list,
-	'organizations.get': operations.organizations.get,
-	'organizations.personal': operations.organizations.personal,
-	'organizations.delete': operations.organizations.delete,
-	'checks.jobs': operations.checks.jobs,
-	'checks.locations': operations.checks.locations,
-	'checks.createJob': operations.checks.createJob,
-	'checks.runJob': operations.checks.runJob,
-	'wireguard.listPeers': operations.wireguard.listPeers,
-	'wireguard.getPeer': operations.wireguard.getPeer,
-	'wireguard.addPeer': operations.wireguard.addPeer,
-	'wireguard.removePeer': operations.wireguard.removePeer,
-	'wireguard.validatePeers': operations.wireguard.validatePeers,
-	'addOns.list': operations.addOns.list,
-	'addOns.get': operations.addOns.get,
-	'addOns.plans': operations.addOns.plans,
-	'addOns.provider': operations.addOns.provider,
-	'addOns.create': operations.addOns.create,
-	'addOns.update': operations.addOns.update,
-	'addOns.delete': operations.addOns.delete,
-	'addOns.resetPassword': operations.addOns.resetPassword,
-	'thirdParty.list': operations.thirdParty.list,
-	'thirdParty.create': operations.thirdParty.create,
-	'thirdParty.update': operations.thirdParty.update,
-	'thirdParty.delete': operations.thirdParty.delete,
-	'account.userOnlyToken': operations.account.userOnlyToken,
-	'account.viewer': operations.account.viewer,
-	'platform.nearestRegion': operations.platform.nearestRegion,
+type OperationMeta = {
+	riskLevel: EndpointMetaEntry['riskLevel'];
+	description: string;
+	irreversible?: boolean;
+};
+// Approval prompts read riskLevel, description and the irreversible flag.
+const entry = ({ riskLevel, description, irreversible }: OperationMeta) => ({
+	riskLevel,
+	description,
+	...(irreversible ? { irreversible: true } : {}),
+});
+const flyEndpointMeta = {
+	'apps.list': entry(operations.apps.list),
+	'apps.create': entry(operations.apps.create),
+	'apps.get': entry(operations.apps.get),
+	'apps.delete': entry(operations.apps.delete),
+	'machines.list': entry(operations.machines.list),
+	'machines.listForOrg': entry(operations.machines.listForOrg),
+	'machines.create': entry(operations.machines.create),
+	'machines.get': entry(operations.machines.get),
+	'machines.update': entry(operations.machines.update),
+	'machines.delete': entry(operations.machines.delete),
+	'machines.start': entry(operations.machines.start),
+	'machines.stop': entry(operations.machines.stop),
+	'machines.restart': entry(operations.machines.restart),
+	'machines.suspend': entry(operations.machines.suspend),
+	'machines.signal': entry(operations.machines.signal),
+	'machines.wait': entry(operations.machines.wait),
+	'machines.cordon': entry(operations.machines.cordon),
+	'machines.uncordon': entry(operations.machines.uncordon),
+	'machines.exec': entry(operations.machines.exec),
+	'machines.getLease': entry(operations.machines.getLease),
+	'machines.createLease': entry(operations.machines.createLease),
+	'machines.releaseLease': entry(operations.machines.releaseLease),
+	'machines.getMetadata': entry(operations.machines.getMetadata),
+	'machines.getMetadataKey': entry(operations.machines.getMetadataKey),
+	'machines.updateMetadata': entry(operations.machines.updateMetadata),
+	'machines.setMetadataKey': entry(operations.machines.setMetadataKey),
+	'machines.deleteMetadataKey': entry(operations.machines.deleteMetadataKey),
+	'machines.listEvents': entry(operations.machines.listEvents),
+	'machines.listProcesses': entry(operations.machines.listProcesses),
+	'machines.listVersions': entry(operations.machines.listVersions),
+	'volumes.list': entry(operations.volumes.list),
+	'volumes.listForOrg': entry(operations.volumes.listForOrg),
+	'volumes.create': entry(operations.volumes.create),
+	'volumes.get': entry(operations.volumes.get),
+	'volumes.update': entry(operations.volumes.update),
+	'volumes.delete': entry(operations.volumes.delete),
+	'volumes.extend': entry(operations.volumes.extend),
+	'volumes.listSnapshots': entry(operations.volumes.listSnapshots),
+	'volumes.createSnapshot': entry(operations.volumes.createSnapshot),
+	'secrets.list': entry(operations.secrets.list),
+	'secrets.get': entry(operations.secrets.get),
+	'secrets.set': entry(operations.secrets.set),
+	'secrets.update': entry(operations.secrets.update),
+	'secrets.delete': entry(operations.secrets.delete),
+	'certificates.list': entry(operations.certificates.list),
+	'certificates.get': entry(operations.certificates.get),
+	'certificates.request': entry(operations.certificates.request),
+	'certificates.check': entry(operations.certificates.check),
+	'certificates.delete': entry(operations.certificates.delete),
+	'ipAssignments.list': entry(operations.ipAssignments.list),
+	'ipAssignments.create': entry(operations.ipAssignments.create),
+	'ipAssignments.delete': entry(operations.ipAssignments.delete),
+	'tokens.current': entry(operations.tokens.current),
+	'platform.regions': entry(operations.platform.regions),
 } satisfies RequiredPluginEndpointMeta<typeof flyEndpoints>;
-// Deletes and the password reset cannot be undone; core adds "(irreversible)" to approvals.
-const irreversibleOperations = new Set([
-	'organizations.delete',
-	'wireguard.removePeer',
-	'addOns.delete',
-	'addOns.resetPassword',
-	'thirdParty.delete',
-]);
-const flyEndpointMeta = Object.fromEntries(
-	Object.entries(flyMetadataDefinitions).map(([path, definition]) => [
-		path,
-		{
-			riskLevel: definition.riskLevel,
-			description: definition.description,
-			...(irreversibleOperations.has(path) ? { irreversible: true } : {}),
-		},
-	]),
-);
-export const flyEndpointSchemas = meta.schemas;
+
+export const flyEndpointSchemas = Object.fromEntries(
+	Object.entries(operations).flatMap(([group, entries]) =>
+		Object.entries(entries).map(([name, definition]) => [
+			`${group}.${name}`,
+			{ input: definition.input, output: definition.output },
+		]),
+	),
+) satisfies Record<string, { input: z.ZodType; output: z.ZodType }>;
 export const flyAuthConfig = {
 	api_key: { account: [] as const },
 } as const satisfies PluginAuthConfig;
@@ -187,4 +225,4 @@ export function fly(incomingOptions: FlyPluginOptions = {}): InternalFlyPlugin {
 	} satisfies InternalFlyPlugin;
 }
 
-export { FlyGraphQLError } from './client';
+export { flyAuthorization } from './client';
