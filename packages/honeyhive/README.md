@@ -69,6 +69,7 @@ Auth: API key. Corsair prompts your tenant for credentials on first use.
 - `api_key`: a classic project API key (`hh_...`). Sessions, event ingestion, metrics, configurations and the legacy routes use it.
 - `data_plane_api_key` (account field): a data plane fine-grained key (`hh_fgdp_...`) for the project-scoped operations that take a `project_id`.
 - `control_plane_api_key` (account field): a control plane fine-grained key (`hh_fgcp_...`) for `projects.*`.
+- A connection with only fine-grained keys works for the operations those keys cover; operations that need the classic key raise `AuthMissingError` instead of sending a fine-grained key.
 - `base_url` (account field, optional): your data plane URL for a dedicated or self-hosted deployment. Defaults to https://api.dp1.us.honeyhive.ai.
 
 ## Webhooks
