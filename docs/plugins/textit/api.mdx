@@ -137,9 +137,9 @@ await corsair.textit.api.broadcasts.list({});
 
 `broadcasts.send`
 
-Send a translated broadcast to contacts, groups or URNs.
+Send a translated broadcast to contacts, groups or URNs; it messages real people.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.textit.api.broadcasts.send({
@@ -234,9 +234,9 @@ Record<string, {
 
 `campaignEvents.create`
 
-Create a scheduled campaign event.
+Create a campaign event that messages or starts a flow for every contact in the campaign group.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.textit.api.campaignEvents.create({ "campaign": "f14e4ff0-724d-43fe-a953-1d16aefd1c00", "relative_to": "registration", "offset": 7, "unit": "days", "delivery_hour": 9, "message": "Hello!" });
@@ -400,14 +400,15 @@ await corsair.textit.api.campaignEvents.list({});
 
 `campaignEvents.update`
 
-Update a scheduled campaign event.
+Update a campaign event that messages or starts a flow for every contact in the campaign group.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.textit.api.campaignEvents.update({
 	uuid: '6a6d7531-6b44-4c45-8c33-957ddd8dfabc',
 	body: {
+		campaign: 'f14e4ff0-724d-43fe-a953-1d16aefd1c00',
 		relative_to: 'registration',
 		offset: 7,
 		unit: 'days',
@@ -429,7 +430,7 @@ await corsair.textit.api.campaignEvents.update({
 
 ```ts
 {
-  campaign?: string,
+  campaign: string,
   relative_to: string,
   offset: number,
   unit: minutes | hours | days | weeks,
@@ -608,7 +609,7 @@ Update a campaign by UUID.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.campaigns.update({ uuid: 'f14e4ff0-724d-43fe-a953-1d16aefd1c00', name: 'Reminders' });
+await corsair.textit.api.campaigns.update({ uuid: 'f14e4ff0-724d-43fe-a953-1d16aefd1c00', name: 'Reminders', group: '09d23a05-47fe-11e4-bfe9-b8f6b119e9ab' });
 ```
 
 **Input**
@@ -616,8 +617,8 @@ await corsair.textit.api.campaigns.update({ uuid: 'f14e4ff0-724d-43fe-a953-1d16a
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `group` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `group` | `string` | Yes | — |
 
 
 
@@ -1109,7 +1110,7 @@ Update a custom contact field by key.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.fields.update({ key: 'nickname', name: 'Nickname' });
+await corsair.textit.api.fields.update({ "key": "nickname", "name": "Nickname", "type": "text" });
 ```
 
 **Input**
@@ -1117,8 +1118,8 @@ await corsair.textit.api.fields.update({ key: 'nickname', name: 'Nickname' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `key` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `type` | `text \| number \| datetime \| state \| district \| ward` | No | — |
+| `name` | `string` | Yes | — |
+| `type` | `text \| number \| datetime \| state \| district \| ward` | Yes | — |
 
 
 
@@ -1214,9 +1215,9 @@ await corsair.textit.api.flows.list({});
 
 `flowStarts.create`
 
-Start contacts, groups or URNs in a flow.
+Start contacts, groups or URNs in a flow, which can message them.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.textit.api.flowStarts.create({
@@ -1805,7 +1806,7 @@ await corsair.textit.api.media.upload({ file: new Blob(['example'], { type: 'tex
 
 `messageActions.apply`
 
-Apply a bulk message action, including permanent deletion; inspect failures.
+Label, archive, restore or permanently delete incoming messages by integer id; inspect failures.
 
 **Risk:** `destructive`
 
@@ -1880,6 +1881,7 @@ await corsair.textit.api.messages.list({});
 
 ```ts
 {
+  id?: number | null,
   uuid?: string | null,
   contact?: {
     uuid?: string | null,
@@ -1928,9 +1930,9 @@ await corsair.textit.api.messages.list({});
 
 `messages.send`
 
-Send a message to a contact.
+Send a message to a contact; it messages a real person.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.textit.api.messages.send({ contact: 'd33e9ad5-5c35-414c-abd4-e7451c69ff1d', text: 'Hello!' });
@@ -1964,6 +1966,7 @@ await corsair.textit.api.messages.send({ contact: 'd33e9ad5-5c35-414c-abd4-e7451
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
 | `uuid` | `string \| null` | No | — |
 | `contact` | `object \| null` | No | — |
 | `urn` | `string \| null` | No | — |
@@ -2632,3 +2635,4 @@ await corsair.textit.api.workspace.get({});
 
 
 ---
+
