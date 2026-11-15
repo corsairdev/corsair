@@ -29,6 +29,7 @@ type Corsair = ReturnType<typeof makeCorsair>;
 // Each call either returns data or fails with the provider's scope error;
 // anything else (a 404, a schema failure, a transport error) fails the test.
 async function readOrScopeError(
+	// `unknown` because each wrapped operation returns its own response type; only success or failure matters here.
 	call: () => Promise<unknown>,
 ): Promise<'ok' | 'insufficient_scope'> {
 	try {
@@ -116,6 +117,7 @@ live('LiveSession live API', () => {
 				date_from: 'TODAY',
 				tz: 'Not/AZone',
 			})
+			// `unknown` because a rejected promise can carry any value; the assertions below narrow it.
 			.catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		expect((error as ApiError).status).toBe(400);

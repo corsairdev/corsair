@@ -654,6 +654,7 @@ describe('LiveSession output validation and errors', () => {
 
 		const error = await livesession({ key: 'test-token' })
 			.endpoints!.sessions.list(mockCtx, { email })
+			// `unknown` because a rejected promise can carry any value; the assertions below narrow it.
 			.catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
@@ -692,6 +693,7 @@ describe('LiveSession output validation and errors', () => {
 				website_id: 'website-1',
 				version: 'v1.0',
 			})
+			// `unknown` because a rejected promise can carry any value; the assertions below narrow it.
 			.catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
@@ -717,6 +719,7 @@ describe('LiveSession output validation and errors', () => {
 
 		const error = await livesession({ key: 'test-token' })
 			.endpoints!.websites.list(mockCtx, {})
+			// `unknown` because a rejected promise can carry any value; the assertions below narrow it.
 			.catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
