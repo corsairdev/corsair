@@ -148,10 +148,15 @@ describe('Handwrytten Schemas', () => {
 			const valid = {
 				card_id: 200,
 				message: 'Happy Birthday!',
+				font_label: 'Chill Charity',
+				sender_address1: '1 Sender Rd',
+				sender_city: 'Austin',
+				sender_zip: '78701',
 				recipient_address1: '123 Main St',
 				recipient_city: 'Austin',
 				recipient_state: 'TX',
 				recipient_zip: '78701',
+				delivery_confirmation: 2,
 			};
 			expect(OrdersSendSingleInputSchema.parse(valid)).toMatchObject(valid);
 
@@ -206,20 +211,32 @@ describe('Handwrytten Schemas', () => {
 				CustomCardsDimensionsInputSchema.parse({ orientation: 'portrait' }),
 			).toEqual({ orientation: 'portrait' });
 
-			expect(CustomCardsPresetImagesInputSchema.parse({})).toEqual({});
+			// dimension_id is a required query parameter in the spec
+			expect(() => CustomCardsPresetImagesInputSchema.parse({})).toThrow();
+			expect(
+				CustomCardsPresetImagesInputSchema.parse({ dimension_id: 1 }),
+			).toEqual({ dimension_id: 1 });
 			expect(CustomCardsListImagesInputSchema.parse({})).toEqual({});
 
 			expect(
 				CustomCardsUploadImageInputSchema.parse({
-					image: 'data:image/png;base64,iVBOR',
-					name: 'logo.png',
+					file: 'iVBOR',
+					file_name: 'logo.png',
+					type: 'logo',
 				}),
-			).toEqual({
-				image: 'data:image/png;base64,iVBOR',
-				name: 'logo.png',
-			});
+			).toEqual({ file: 'iVBOR', file_name: 'logo.png', type: 'logo' });
 			expect(() =>
-				CustomCardsUploadImageInputSchema.parse({ image: '' }),
+				CustomCardsUploadImageInputSchema.parse({ file: '' }),
+			).toThrow();
+			expect(() =>
+				CustomCardsUploadImageInputSchema.parse({ image: 'iVBOR' }),
+			).toThrow();
+			// the spec's cover field is cover_id
+			expect(
+				CustomCardsCreateInputSchema.parse({ name: 'Card', cover_id: 5 }),
+			).toEqual({ name: 'Card', cover_id: 5 });
+			expect(() =>
+				CustomCardsCreateInputSchema.parse({ name: 'Card', cover_image_id: 5 }),
 			).toThrow();
 
 			expect(
@@ -251,9 +268,9 @@ describe('Handwrytten Schemas', () => {
 	describe('Address Book schemas', () => {
 		it('validates countries, states, recipients, and senders', () => {
 			expect(AddressBookCountriesInputSchema.parse({})).toEqual({});
-			expect(
-				AddressBookStatesInputSchema.parse({ country_code: 'US' }),
-			).toEqual({ country_code: 'US' });
+			expect(AddressBookStatesInputSchema.parse({ country_id: 1 })).toEqual({
+				country_id: 1,
+			});
 
 			expect(AddressBookListRecipientsInputSchema.parse({})).toEqual({});
 
@@ -465,7 +482,17 @@ describe('Handwrytten Schemas', () => {
 				card_id: 10,
 				message: 'Hello neighbor!',
 				records: 50,
+				country: 'US',
+				return_address_id: 7,
+				shipping_method_id: 1,
 			};
+			expect(() =>
+				ProspectingPreviewInputSchema.parse({
+					card_id: 10,
+					message: 'Hello neighbor!',
+					records: 50,
+				}),
+			).toThrow();
 			expect(ProspectingPreviewInputSchema.parse(previewInput)).toMatchObject(
 				previewInput,
 			);
@@ -477,6 +504,10 @@ describe('Handwrytten Schemas', () => {
 				address: '100 Main St',
 				city: 'Phoenix',
 				zip: '85001',
+				return_address_id: 7,
+				font: 'hwDavid',
+				radius: 5,
+				shipping_method_id: 1,
 			};
 			expect(
 				ProspectingCreateOrderInputSchema.parse(createInput),
@@ -490,8 +521,11 @@ describe('Handwrytten Schemas', () => {
 			expect(BasketClearInputSchema.parse({})).toEqual({});
 			expect(BasketSendInputSchema.parse({})).toEqual({});
 			expect(
-				BasketSendInputSchema.parse({ couponCode: 'SAVE10', notes: 'Urgent' }),
-			).toEqual({ couponCode: 'SAVE10', notes: 'Urgent' });
+				BasketSendInputSchema.parse({
+					couponCode: 'SAVE10',
+					notes: { '196936': 'Urgent' },
+				}),
+			).toEqual({ couponCode: 'SAVE10', notes: { '196936': 'Urgent' } });
 		});
 
 		it('validates Auth endpoints', () => {
