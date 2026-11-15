@@ -1,0 +1,1873 @@
+{
+  "id": "gosquared",
+  "displayName": "GoSquared",
+  "description": "Real-time web analytics, historical trends, customer CRM, event tracking, and live chat messaging.",
+  "npmPackageName": "@corsair-dev/gosquared",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 48,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "site_token"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gosquared.api.account.createSite",
+      "shortPath": "account.createSite",
+      "description": "Create and provision a new site for tracking in GoSquared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "plan_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.account.getBlocked",
+      "shortPath": "account.getBlocked",
+      "description": "Retrieve blocked IP addresses and bot settings for a site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "presenter",
+            "optional": true,
+            "type": "plain | tags | indexedTags"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "visitors",
+            "optional": true,
+            "type": "{ list: any[], cardinality?: number } | Record<string, string>"
+          },
+          {
+            "key": "ips",
+            "optional": true,
+            "type": "{ list: any[], cardinality?: number }"
+          },
+          {
+            "key": "bots",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.account.getSharedUsers",
+      "shortPath": "account.getSharedUsers",
+      "description": "Retrieve team members with access to a GoSquared project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ id?: string | number, email?: string, state?: string, role?: string }[]"
+          },
+          {
+            "key": "cardinality",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.account.getSite",
+      "shortPath": "account.getSite",
+      "description": "Retrieve configuration and details for a specific site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "plan_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.account.getSites",
+      "shortPath": "account.getSites",
+      "description": "Retrieve all sites accessible by the GoSquared account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presenter",
+            "optional": true,
+            "type": "grouped | flat"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ site_token: string, name?: string | null, domain_name?: string, domain?: string, url?: string, id?: number | string, timezone?: string, created?: string, user_id?: number | string, plan_name?: string }[] | Record<string, { site_token: string, name?: string | null, domain_name?: string, domain?: string, url?: string, id?: number | string, timezone?: string, created?: string, user_id?: number | string, plan_name?: string }[]>"
+      }
+    },
+    {
+      "path": "gosquared.api.auth.getTokenInfo",
+      "shortPath": "auth.getTokenInfo",
+      "description": "Validate API key and retrieve associated scopes and token info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scopes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.chat.archiveChat",
+      "shortPath": "chat.archiveChat",
+      "description": "Archive an active chat conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.chat.getChat",
+      "shortPath": "chat.getChat",
+      "description": "Retrieve a specific live chat conversation by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.chat.getChatFeed",
+      "shortPath": "chat.getChatFeed",
+      "description": "Retrieve message history and event feed for a chat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.chat.getChats",
+      "shortPath": "chat.getChats",
+      "description": "Retrieve active conversation threads in GoSquared Live Chat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.chat.sendMessage",
+      "shortPath": "chat.sendMessage",
+      "description": "Send a message in a chat conversation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "agent | client | bot"
+          },
+          {
+            "key": "auth",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.chat.unarchiveChat",
+      "shortPath": "chat.unarchiveChat",
+      "description": "Unarchive a previously archived chat conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.now.getBrowsers",
+      "shortPath": "now.getBrowsers",
+      "description": "Retrieve browsers currently in use by active visitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.now.getCampaigns",
+      "shortPath": "now.getCampaigns",
+      "description": "Retrieve active marketing campaigns driving current traffic",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.now.getConcurrents",
+      "shortPath": "now.getConcurrents",
+      "description": "Retrieve current count of concurrent visitors online",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "visitors",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "returning",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tagged",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.now.getCountries",
+      "shortPath": "now.getCountries",
+      "description": "Retrieve countries of origin for active online visitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.now.getGeo",
+      "shortPath": "now.getGeo",
+      "description": "Retrieve real-time visitor geographic coordinate clusters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.now.getOverview",
+      "shortPath": "now.getOverview",
+      "description": "Retrieve real-time summary of concurrent visitors and traffic",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minimal",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "visitors",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageviews",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visitors_direct",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visitors_search",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visitors_referral",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visitors_campaign",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.now.getPages",
+      "shortPath": "now.getPages",
+      "description": "Retrieve top active pages viewed right now",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.now.getPlatforms",
+      "shortPath": "now.getPlatforms",
+      "description": "Retrieve operating platforms used by active online visitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.now.getSources",
+      "shortPath": "now.getSources",
+      "description": "Retrieve current traffic sources referring active visitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.now.getTimeSeries",
+      "shortPath": "now.getTimeSeries",
+      "description": "Retrieve recent time series of concurrent visitor activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.now.getVisitors",
+      "shortPath": "now.getVisitors",
+      "description": "Retrieve detailed list of active concurrent visitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.people.deletePerson",
+      "shortPath": "people.deletePerson",
+      "description": "Permanently delete a person profile and all its data from People CRM",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blacklist",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.people.getDevice",
+      "shortPath": "people.getDevice",
+      "description": "Retrieve technical specifications for a single device",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.people.getDevices",
+      "shortPath": "people.getDevices",
+      "description": "Retrieve paginated list of all tracked user devices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.people.getEventTypes",
+      "shortPath": "people.getEventTypes",
+      "description": "Retrieve custom event type definitions in People CRM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.people.getPeople",
+      "shortPath": "people.getPeople",
+      "description": "Search and query customer profiles in People CRM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.people.getPerson",
+      "shortPath": "people.getPerson",
+      "description": "Retrieve a specific person profile by ID or email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.people.getPersonDevices",
+      "shortPath": "people.getPersonDevices",
+      "description": "Retrieve devices associated with a person in People CRM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.people.getPersonFeed",
+      "shortPath": "people.getPersonFeed",
+      "description": "Retrieve chronological interaction feed for a person",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.people.getPropertyTypes",
+      "shortPath": "people.getPropertyTypes",
+      "description": "Retrieve user property type definitions in People CRM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.people.getSmartGroups",
+      "shortPath": "people.getSmartGroups",
+      "description": "Retrieve saved smart groups and segment criteria",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | Record<string, any>"
+      }
+    },
+    {
+      "path": "gosquared.api.tracking.identify",
+      "shortPath": "tracking.identify",
+      "description": "Identify or update user profile traits in People CRM",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitor_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{ email?: string, name?: string | null, first_name?: string | null, last_name?: string | null, phone?: string | null, created_at?: string, company?: Record<string, any>, custom?: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.tracking.trackEvent",
+      "shortPath": "tracking.trackEvent",
+      "description": "Track a custom user event with optional event data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ name: string, data?: Record<string, any> }"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitor_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.tracking.trackPageview",
+      "shortPath": "tracking.trackPageview",
+      "description": "Track a pageview with URL and page title",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ url: string, title?: string }"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.tracking.trackTransaction",
+      "shortPath": "tracking.trackTransaction",
+      "description": "Track an e-commerce purchase transaction with line items",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transaction",
+            "optional": false,
+            "type": "{ id?: string, revenue?: number, quantity?: number, items?: { name: string, price?: number, quantity?: number, revenue?: number, categories?: string[] }[] }"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitor_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getAggregate",
+      "shortPath": "trends.getAggregate",
+      "description": "Retrieve aggregate historical trends and total metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getBrowser",
+      "shortPath": "trends.getBrowser",
+      "description": "Retrieve historical traffic breakdown by browser",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getCountry",
+      "shortPath": "trends.getCountry",
+      "description": "Retrieve historical traffic breakdown by country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getEvent",
+      "shortPath": "trends.getEvent",
+      "description": "Retrieve historical custom event tracking metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getLanguage",
+      "shortPath": "trends.getLanguage",
+      "description": "Retrieve historical traffic breakdown by visitor language",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getOrganisation",
+      "shortPath": "trends.getOrganisation",
+      "description": "Retrieve historical traffic by visiting organization/ISP",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getOs",
+      "shortPath": "trends.getOs",
+      "description": "Retrieve historical traffic breakdown by operating system",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getPage",
+      "shortPath": "trends.getPage",
+      "description": "Retrieve historical pageview and URL performance metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getPath1",
+      "shortPath": "trends.getPath1",
+      "description": "Retrieve historical top-level URL path segment metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getScreenDimensions",
+      "shortPath": "trends.getScreenDimensions",
+      "description": "Retrieve historical screen resolution metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    },
+    {
+      "path": "gosquared.api.trends.getSources",
+      "shortPath": "trends.getSources",
+      "description": "Retrieve historical traffic sources and referral channels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "hour | day | month"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "dateFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | Record<string, any>[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
