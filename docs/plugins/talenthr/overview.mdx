@@ -1,0 +1,146 @@
+---
+title: "TalentHR plugin"
+sidebarTitle: "Overview"
+description: "HR management with TalentHR - hire, update, terminate and rehire employees, read the directory, book and approve time off, and manage the divisions, departments, locations and job titles those records reference."
+---
+
+Use **TalentHR** through Corsair: one client, typed API calls.
+
+Create a key in TalentHR under Domain settings, API. The request authenticates with HTTP Basic, where the key is the username and the password is ignored; this plugin builds that header for you. The key is scoped to one TalentHR domain, so a key from another domain reads as a missing tenant.
+
+Things to know before you call:
+
+- **A wrong key looks like a missing tenant.** TalentHR answers a refused key with 401 and the body `{"success": false, "error": {"hr_code_key": "not_found_tenancy"}}`. The plugin keeps both readings on `TalentHRAPIError`: `isAuthError` is true for the 401 and `isTenantNotFound` is true when the body names the tenant. Check the status first; a working key on the wrong domain produces the same body.
+- **Every answer is an envelope.** Successful calls are `{ success: true, data }` and the plugin returns `data` alone. The deletes answer `{ success: true }` with no `data`, so their result is that object.
+- **Updates are not partial.** `employees.update` requires `first_name`, `last_name` and `email` on every call, because TalentHR treats the body as the full contact record rather than a patch. Read the employee first and send those three back with the fields you are changing.
+- **Hiring sends email.** `employees.hire` emails the new employee unless you pass `prevent_email: true`.
+- **Booking time off emails a manager.** `timeOff.create` with `preapproved: false` or without `preapproved` sends the employee's manager an approval email. Passing `preapproved: true` approves it directly when the caller's role allows.
+- **Time off amounts are strings.** Every budget field arrives as a string with three decimals, such as `"10.000"`. Parse them before doing arithmetic.
+- **Paging is offset based.** `employees.directory` takes `limit` (default 10, maximum 100) and `offset`, and answers `{ total, rows }` where `total` counts every match, not the page.
+- **Deletes can be refused.** A division, department or job title that an active job position uses cannot be deleted, and a delete clears that record from benefits, reviews and tasks that referenced it.
+- **Rate limit.** TalentHR allows 2000 requests per minute per key and sends no `Retry-After` header. The plugin retries a 429 three times with exponential backoff.
+
+**What you get:**
+
+- 25 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/talenthr better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/talenthr better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/talenthr better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/talenthr better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { talenthr } from '@corsair-dev/talenthr';
+
+export const corsair = createCorsair({
+	plugins: [
+		talenthr(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the TalentHR API key before the first call: `pnpm corsair setup --plugin=talenthr --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+talenthr()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'talenthr',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of the directory**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.talenthr.api.employees.directory({ limit: 25 });
+```
+
+
+**Book a day of sick leave**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.talenthr.api.timeOff.create({
+	employeeId: 15,
+	start_date: '2026-12-01',
+	end_date: '2026-12-01',
+	timeoff_type_id: 1,
+});
+```
+
+
+See the full list on the [API](/plugins/talenthr/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/talenthr/api">
+    Every `talenthr.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

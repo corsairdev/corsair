@@ -4412,6 +4412,14 @@
                 ]
               },
               {
+                "group": "TalentHR",
+                "pages": [
+                  "plugins/talenthr/overview",
+                  "plugins/talenthr/api",
+                  "plugins/talenthr/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
