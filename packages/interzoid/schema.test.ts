@@ -8,8 +8,10 @@ describe('Interzoid Schemas', () => {
 	it('keeps registry, endpoint schemas, and endpoint metadata in sync', () => {
 		const plugin = interzoid();
 		const registeredKeys: string[] = [];
+		// Heterogeneous endpoint signatures cannot be enumerated as a uniform map without this narrowing.
+		const endpoints = plugin.endpoints as object;
 
-		for (const [groupKey, groupEndpoints] of Object.entries(plugin.endpoints)) {
+		for (const [groupKey, groupEndpoints] of Object.entries(endpoints)) {
 			if (typeof groupEndpoints === 'object' && groupEndpoints !== null) {
 				for (const opKey of Object.keys(groupEndpoints)) {
 					registeredKeys.push(`${groupKey}.${opKey}`);
