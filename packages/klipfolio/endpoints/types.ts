@@ -39,8 +39,16 @@ const KlipfolioWriteEnvelopeOutputSchema = z.object({
 	meta: KlipfolioMetaOutputSchema,
 });
 
+// Klipfolio pages every list with offset (default 0) and limit (default 25,
+// at most 100; more is a 400).
+const KlipfolioPageInput = {
+	limit: z.number().int().min(1).max(100).optional(),
+	offset: z.number().int().min(0).optional(),
+};
+
 const ListClientsInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		external_id: z.string().optional(),
 		status: z.enum(['setup', 'trial', 'active', 'disabled']).optional(),
 	})
@@ -188,6 +196,7 @@ const DeleteClientShareRightInputSchema = z
 
 const ListDatasourcesInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		client_id: z.string().optional(),
 	})
 	.passthrough();
@@ -314,6 +323,7 @@ const DeleteDatasourceShareRightInputSchema = z
 
 const ListDatasourceInstancesInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		datasource_id: z.string().optional(),
 		client_id: z.string().optional(),
 	})
@@ -402,6 +412,7 @@ const DeleteDatasourceInstancesPropertiesInputSchema = z
 
 const ListGroupsInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		client_id: z.string().optional(),
 	})
 	.passthrough();
@@ -514,6 +525,7 @@ const DeleteGroupUserInputSchema = z
 
 const ListKlipsInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		datasource_id: z.string().optional(),
 		client_id: z.string().optional(),
 	})
@@ -691,6 +703,7 @@ const CreateDashboardPublishedLinksInputSchema = z
 
 const ListDashboardPublishedLinksInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		dashboard_id: z.string().optional(),
 		client_id: z.string().optional(),
 	})
@@ -726,6 +739,7 @@ const DeleteDashboardPublishedLinksInputSchema = z
 
 const ListRolesInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		client_id: z.string().optional(),
 	})
 	.passthrough();
@@ -816,6 +830,7 @@ const DeleteRolePermissionsInputSchema = z
 
 const ListTabsInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		client_id: z.string().optional(),
 	})
 	.passthrough();
@@ -936,6 +951,7 @@ const ImportTabInputSchema = z
 
 const ListUsersInputSchema = z
 	.object({
+		...KlipfolioPageInput,
 		client_id: z.string().optional(),
 		email: z.string().optional(),
 		external_id: z.string().optional(),

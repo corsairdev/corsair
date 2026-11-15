@@ -224,6 +224,29 @@ describe('Klipfolio schema', () => {
 		).toBe(false);
 	});
 
+	it('declares limit and offset on list operations', () => {
+		const listUsers = KlipfolioEndpointInputSchemas.listUsers;
+		expect(listUsers.safeParse({ limit: 10, offset: 10 }).success).toBe(true);
+		// Klipfolio answers 400 above 100.
+		expect(listUsers.safeParse({ limit: 101 }).success).toBe(false);
+		expect(listUsers.safeParse({ offset: -1 }).success).toBe(false);
+		for (const operation of [
+			'listClients',
+			'listDatasources',
+			'listDatasourceInstances',
+			'listGroups',
+			'listKlips',
+			'listRoles',
+			'listTabs',
+			'listDashboardPublishedLinks',
+		] as const) {
+			expect(
+				KlipfolioEndpointInputSchemas[operation].safeParse({ limit: 0 })
+					.success,
+			).toBe(false);
+		}
+	});
+
 	it('rejects undocumented enum values at the input boundary', () => {
 		// unknown: zod v4 schema objects are exercised structurally through
 		// safeParse; stricter typing would couple the test to zod internals.
