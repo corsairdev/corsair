@@ -374,6 +374,7 @@ export const BaseProviders = [
 	'linguapop',
 	'linkedin',
 	'litescrape',
+	'livesession',
 	'loyverse',
 	'magichour',
 	'mailboxlayer',
@@ -986,6 +987,7 @@ export const ProviderDisplayNames = {
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
+	livesession: 'LiveSession',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
 	mailboxlayer: 'MailboxLayer',
@@ -1605,6 +1607,7 @@ export type AllProviders =
 	| 'linguapop'
 	| 'linkedin'
 	| 'litescrape'
+	| 'livesession'
 	| 'loyverse'
 	| 'magichour'
 	| 'mailboxlayer'
