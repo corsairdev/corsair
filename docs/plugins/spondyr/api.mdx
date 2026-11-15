@@ -1,0 +1,1725 @@
+---
+title: "Spondyr API reference"
+sidebarTitle: "API"
+description: "API reference for the Spondyr plugin in Corsair: every `spondyr.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Batch
+
+### send
+
+`batch.send`
+
+Generate correspondence for a list of data objects in one request, optionally merging shared data into each
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.batch.send({ event_type: 'OrderPlaced', data: [{ Recipient: 'a@acme.com' }, { Recipient: 'b@acme.com' }], shared_data: { Message: 'Hello World!' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | — |
+| `data` | `Record<string, string \| number \| boolean \| null>[]` | Yes | One entry per correspondence to generate |
+| `shared_data` | `Record<string, string \| number \| boolean \| null>` | No | Merged into every entry of `data` before processing |
+| `is_generate_only` | `boolean` | No | — |
+
+`shared_data` is merged into every entry of `data`. The response ReferenceID is for `batch.status`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### status
+
+`batch.status`
+
+Read a batch progress: items processed, and the reference ID of each item that errored
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.batch.status({ reference_id: 'batch-reference' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reference_id` | `string` | Yes | The ReferenceID returned by `batch.send` |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+| `EventType` | `string \| null` | No | — |
+| `IsGenerateOnly` | `boolean \| null` | No | — |
+| `StatusCode` | `string \| null` | No | — |
+| `StatusName` | `string \| null` | No | — |
+| `CreatedDate` | `string \| null` | No | — |
+| `URI` | `string \| null` | No | Valid for 20 minutes |
+| `BatchSize` | `number \| null` | No | — |
+| `TotalProcessed` | `number \| null` | No | — |
+| `BatchErrors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="BatchErrors full type">
+
+```ts
+{
+  ReferenceID?: string | null,
+  Index?: number | null,
+  Issue?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conditions
+
+### create
+
+`conditions.create`
+
+Create a Condition that decides which template is used
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.conditions.create({ transaction_type: 'Customer Orders', name: 'Is Express', field_name: 'Shipping', possible_values: 'Express' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `field_name` | `string` | Yes | The Transaction Type field this condition inspects |
+| `possible_values` | `string` | No | Values to match, each on its own line |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`conditions.delete`
+
+Delete a Condition; templates that reference it stop matching
+
+**Risk:** `destructive`
+
+```ts
+await corsair.spondyr.api.conditions.delete({ transaction_type: 'Customer Orders', condition: 'Is Express' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `condition` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`conditions.get`
+
+Get one Condition and the field it inspects
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.conditions.get({ transaction_type: 'Customer Orders', condition: 'Is Express' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `condition` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `TransactionType` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `FieldName` | `string \| null` | No | — |
+| `PossibleValues` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`conditions.list`
+
+List the template-selection Conditions of a Transaction Type
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.conditions.list({ transaction_type: 'Customer Orders' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `Data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Data full type">
+
+```ts
+{
+  TransactionType: string,
+  Name: string,
+  FieldName?: string | null,
+  PossibleValues?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`conditions.update`
+
+Change a Condition field or its accepted values
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.conditions.update({ transaction_type: 'Customer Orders', condition: 'Is Express', name: 'Is Express', field_name: 'Shipping' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `field_name` | `string` | Yes | The Transaction Type field this condition inspects |
+| `possible_values` | `string` | No | Values to match, each on its own line |
+| `condition` | `string` | Yes | The Condition to update |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+## Correspondence
+
+### deliver
+
+`correspondence.deliver`
+
+Deliver correspondence that was generated with `is_generate_only`, optionally to extra recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.correspondence.deliver({ reference_id: 'c1a2b3-reference', original_recipients: 'All' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reference_id` | `string` | Yes | The ReferenceID returned by `correspondence.send` |
+| `template` | `string` | No | Template names to deliver, comma separated; default "All" |
+| `original_recipients` | `string` | No | "All", "None", or Recipient names; default "All" |
+| `new_recipients` | `object[]` | No | Extra recipients beyond the ones the correspondence resolved |
+
+Set `original_recipients` to "None" to deliver only to `new_recipients`. A targeted delivery method needs the matching address, which the input schema checks.
+
+<AccordionGroup>
+<Accordion title="new_recipients full type">
+
+```ts
+{
+  Template?: string,
+  RemoteID?: string,
+  FirstName?: string,
+  LastName?: string,
+  Address1?: string,
+  Address2?: string,
+  City?: string,
+  State?: string,
+  Zip?: string,
+  Fax?: string,
+  Email?: string,
+  MobilePhone?: string,
+  TargetedDeliveryMethod?: Email | Fax | Mail | Text
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### retry
+
+`correspondence.retry`
+
+Retry the templates that errored on a previous request
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.correspondence.retry({ reference_id: 'c1a2b3-reference' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reference_id` | `string` | Yes | ReferenceID of the request that errored |
+| `template` | `string` | No | Template names to retry, comma separated; default "All" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### search
+
+`correspondence.search`
+
+Search past requests by batch, Event Type or Search Filter, with paging up to 250 a page
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.correspondence.search({ event_type: 'OrderPlaced', page: 1, page_size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_reference_id` | `string` | No | Only correspondence from this batch |
+| `event_type` | `string` | No | Only this Event Type; omitted searches every type |
+| `search_name` | `string` | No | Search Filter name |
+| `search_value` | `string` | No | Search Filter value to match |
+| `page` | `number` | No | Default 1 |
+| `page_size` | `number` | No | Default 10, maximum 250 |
+| `sort_column` | `string` | No | Default "CreatedDate" |
+| `sort_order` | `ASC \| DESC` | No | — |
+
+Omit `event_type` to search every type. `page_size` is capped at 250.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `Data` | `object[]` | Yes | — |
+| `PageCount` | `number \| null` | No | — |
+| `RecordCount` | `number \| null` | No | — |
+| `Page` | `number \| null` | No | — |
+| `PageSize` | `number \| null` | No | — |
+| `SortColumn` | `string \| null` | No | — |
+| `SortOrder` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Data full type">
+
+```ts
+{
+  ReferenceID: string,
+  StatusCode?: string | null,
+  StatusName?: string | null,
+  CreatedDate?: string | null,
+  Correspondence?: {
+    URI?: string | null,
+    Template?: string | null,
+    ContentType?: string | null,
+    StatusCode?: string | null,
+    StatusName?: string | null,
+    CreatedDate?: string | null,
+    Recipients?: {
+      Name?: string | null,
+      DeliveryTo?: string | null,
+      DeliveryStatusCode?: string | null,
+      DeliveryStatusName?: string | null,
+      IsSuccessful?: boolean | null,
+      Details?: string | null,
+      DeliveryDate?: string | null,
+      CoverPageURI?: string | null
+    }[] | null,
+    SearchFilters?: {
+      Name: string,
+      Value?: string | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`correspondence.send`
+
+Generate correspondence from a Transaction Type and either deliver it or hold it for `correspondence.deliver`
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.correspondence.send({ event_type: 'OrderPlaced', data: { OrderNumber: 12345 }, is_generate_only: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | Event Type name; Spondyr resolves the Transaction Type from it |
+| `data` | `Record<string, string \| number \| boolean \| null>` | Yes | The document data, in the shape of the Transaction Type JSON sample |
+| `is_generate_only` | `boolean` | No | When true the correspondence is generated but not delivered until `correspondence.deliver` is called |
+
+Pass `is_generate_only: true` to generate without delivering. The returned `ReferenceID` is what the status and deliver calls take.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### status
+
+`correspondence.status`
+
+Read the status of a generated request, one entry per template, with each recipient delivery result
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.correspondence.status({ reference_id: 'c1a2b3-reference', include_data: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reference_id` | `string` | Yes | — |
+| `include_data` | `boolean` | No | Also return the Data sent with the original request |
+
+`MATCH` and `SUBMITTED` mean work is still running. `FINISH` and `FINISHPART` are terminal, and `NOMATCH` means no template matched.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+| `EventType` | `string \| null` | No | — |
+| `CreatedDate` | `string \| null` | No | — |
+| `StatusCode` | `string \| null` | No | — |
+| `StatusName` | `string \| null` | No | — |
+| `Correspondence` | `object[] \| null` | No | — |
+| `Data` | `Record<string, string \| number \| boolean \| null> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Correspondence full type">
+
+```ts
+{
+  URI?: string | null,
+  Template?: string | null,
+  ContentType?: string | null,
+  StatusCode?: string | null,
+  StatusName?: string | null,
+  CreatedDate?: string | null,
+  Recipients?: {
+    Name?: string | null,
+    DeliveryTo?: string | null,
+    DeliveryStatusCode?: string | null,
+    DeliveryStatusName?: string | null,
+    IsSuccessful?: boolean | null,
+    Details?: string | null,
+    DeliveryDate?: string | null,
+    CoverPageURI?: string | null
+  }[] | null,
+  SearchFilters?: {
+    Name: string,
+    Value?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Event Types
+
+### create
+
+`eventTypes.create`
+
+Add an Event Type to a Transaction Type
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.eventTypes.create({ transaction_type: 'Customer Orders', name: 'OrderPlaced' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`eventTypes.delete`
+
+Delete an Event Type; templates that reference it stop matching
+
+**Risk:** `destructive`
+
+```ts
+await corsair.spondyr.api.eventTypes.delete({ event_type: 'OrderPlaced' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`eventTypes.get`
+
+Get one Event Type and the Transaction Type it belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.eventTypes.get({ event_type: 'OrderPlaced' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `TransactionType` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`eventTypes.list`
+
+List the Event Types of one Transaction Type
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.eventTypes.list({ transaction_type: 'Customer Orders' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | Transaction Type whose Event Types to list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `Data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Data full type">
+
+```ts
+{
+  TransactionType: string,
+  Name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`eventTypes.update`
+
+Rename an Event Type or move it to another Transaction Type
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.eventTypes.update({ transaction_type: 'Customer Orders', event_type: 'OrderPlaced', name: 'OrderCreated' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `event_type` | `string` | Yes | The Event Type to update |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+## Recipients
+
+### create
+
+`recipients.create`
+
+Create a Recipient; any address field may hold a `{FieldName}` placeholder
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.recipients.create({ transaction_type: 'Customer Orders', name: 'Customer', email: '{Customer.Email}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `remote_id` | `string` | No | The identifier in your own system; `{FieldName}` merges transaction data |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `address1` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `fax` | `string` | No | — |
+| `email` | `string` | No | — |
+| `mobile_phone` | `string` | No | — |
+
+Any address field may hold a `{FieldName}` placeholder that Spondyr resolves from the transaction data.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`recipients.delete`
+
+Delete a Recipient; templates that name it stop resolving
+
+**Risk:** `destructive`
+
+```ts
+await corsair.spondyr.api.recipients.delete({ transaction_type: 'Customer Orders', recipient: 'Customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `recipient` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`recipients.get`
+
+Get one Recipient and the placeholder fields it resolves
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.recipients.get({ transaction_type: 'Customer Orders', recipient: 'Customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `recipient` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `TransactionType` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `RemoteID` | `string \| null` | No | — |
+| `FirstName` | `string \| null` | No | — |
+| `LastName` | `string \| null` | No | — |
+| `Address1` | `string \| null` | No | — |
+| `Address2` | `string \| null` | No | — |
+| `City` | `string \| null` | No | — |
+| `State` | `string \| null` | No | — |
+| `Zip` | `string \| null` | No | — |
+| `Fax` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `MobilePhone` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`recipients.list`
+
+List a Transaction Type's Recipients with their addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.recipients.list({ transaction_type: 'Customer Orders' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `Data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Data full type">
+
+```ts
+{
+  TransactionType: string,
+  Name: string,
+  RemoteID?: string | null,
+  FirstName?: string | null,
+  LastName?: string | null,
+  Address1?: string | null,
+  Address2?: string | null,
+  City?: string | null,
+  State?: string | null,
+  Zip?: string | null,
+  Fax?: string | null,
+  Email?: string | null,
+  MobilePhone?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`recipients.update`
+
+Change a Recipient name, address or placeholder fields
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.recipients.update({ transaction_type: 'Customer Orders', recipient: 'Customer', name: 'Customer', mobile_phone: '{Customer.Mobile}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `remote_id` | `string` | No | The identifier in your own system; `{FieldName}` merges transaction data |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `address1` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `fax` | `string` | No | — |
+| `email` | `string` | No | — |
+| `mobile_phone` | `string` | No | — |
+| `recipient` | `string` | Yes | The Recipient to update |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+## Search Filters
+
+### create
+
+`searchFilters.create`
+
+Create a Search Filter that tags generated correspondence for later search
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.searchFilters.create({ transaction_type: 'Customer Orders', name: 'OrderNumber', tag: '{OrderNumber}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tag` | `string` | No | The value written onto matching correspondence; `{FieldName}` merges data |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`searchFilters.delete`
+
+Delete a Search Filter; existing tags stay on the documents
+
+**Risk:** `destructive`
+
+```ts
+await corsair.spondyr.api.searchFilters.delete({ search: 'OrderNumber' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`searchFilters.get`
+
+Get one Search Filter and the tag it writes onto correspondence
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.searchFilters.get({ search: 'OrderNumber' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | Yes | — |
+
+This route takes only the name; it is not scoped by Transaction Type.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `TransactionType` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Tag` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`searchFilters.list`
+
+List a Transaction Type's Search Filters
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.searchFilters.list({ transaction_type: 'Customer Orders' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `Data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Data full type">
+
+```ts
+{
+  TransactionType: string,
+  Name: string,
+  Tag?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`searchFilters.update`
+
+Change a Search Filter tag
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.searchFilters.update({ transaction_type: 'Customer Orders', search: 'OrderNumber', name: 'OrderNumber', tag: '{OrderNumber}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tag` | `string` | No | The value written onto matching correspondence; `{FieldName}` merges data |
+| `search` | `string` | Yes | The Search Filter to update |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a template from previously uploaded content, with its delivery recipients and conditions
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.templates.create({ transaction_type: 'Customer Orders', name: 'Order Confirmation', event_type: 'OrderPlaced', content_type: 'PDF', template_content_reference_id: '9f2c', recipients: [{ name: 'Customer', delivery_method: 'Email', email_subject: 'Your order' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `event_type` | `string` | Yes | — |
+| `content_type` | `PDF \| DOC \| HTML \| TEXT` | Yes | — |
+| `template_content_reference_id` | `string` | Yes | The ReferenceID returned by `templates.uploadContent` |
+| `recipients` | `object[]` | Yes | — |
+| `conditions` | `object \| < \| <=, compare_value: string })[]` | No | — |
+| `searches` | `string[]` | No | Search Filter names to tag with |
+
+Upload the file with `templates.uploadContent` first and pass its ReferenceID. DocuSign delivery needs at least one signer.
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  name: string,
+  delivery_method: string,
+  email_from_address?: string,
+  email_subject?: string,
+  email_body?: string,
+  mail_from_name?: string,
+  mail_from_address1?: string,
+  mail_from_address2?: string,
+  mail_from_city?: string,
+  mail_from_state?: string,
+  mail_from_zip?: string,
+  text_body?: string,
+  destination_folder?: string,
+  signers?: {
+    name: string,
+    email: string,
+    role: Signer | Agent | CC | Certified Delivery | Editor | In Person Signer | Intermediary
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="conditions full type">
+
+```ts
+(
+  {
+    name: string,
+    logical_operator: AND | OR,
+    compare_operator: = |
+  > |
+>= | < | <=, compare_value: string})[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.spondyr.api.templates.delete({ transaction_type: 'Customer Orders', template: 'Order Confirmation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `template` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Get one template with its content reference, recipients, conditions and search filters
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.templates.get({ transaction_type: 'Customer Orders', template: 'Order Confirmation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `template` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `TransactionType` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `EventType` | `string \| null` | No | — |
+| `ContentType` | `string \| null` | No | — |
+| `TemplateContentReferenceID` | `string \| null` | No | — |
+| `TemplateContent` | `string \| null` | No | — |
+| `Recipients` | `object[] \| null` | No | — |
+| `Conditions` | `object[] \| null` | No | — |
+| `Searches` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Recipients full type">
+
+```ts
+{
+  Name: string,
+  DeliveryMethod?: string | null,
+  EmailFromAddress?: string | null,
+  EmailSubject?: string | null,
+  EmailBody?: string | null,
+  MailFromName?: string | null,
+  MailFromAddress1?: string | null,
+  MailFromAddress2?: string | null,
+  MailFromCity?: string | null,
+  MailFromState?: string | null,
+  MailFromZip?: string | null,
+  TextBody?: string | null,
+  DestinationFolder?: string | null,
+  Signers?: {
+    Name: string,
+    Email: string,
+    Role: string
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="Conditions full type">
+
+```ts
+{
+  Name: string,
+  LogicalOperator?: string | null,
+  CompareOperator?: string | null,
+  CompareValue?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List the templates of a Transaction Type with their recipients
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.templates.list({ transaction_type: 'Customer Orders' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `Data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Data full type">
+
+```ts
+{
+  TransactionType: string,
+  Name: string,
+  EventType?: string | null,
+  ContentType?: string | null,
+  TemplateContentReferenceID?: string | null,
+  TemplateContent?: string | null,
+  Recipients?: {
+    Name: string,
+    DeliveryMethod?: string | null,
+    EmailFromAddress?: string | null,
+    EmailSubject?: string | null,
+    EmailBody?: string | null,
+    MailFromName?: string | null,
+    MailFromAddress1?: string | null,
+    MailFromAddress2?: string | null,
+    MailFromCity?: string | null,
+    MailFromState?: string | null,
+    MailFromZip?: string | null,
+    TextBody?: string | null,
+    DestinationFolder?: string | null,
+    Signers?: {
+      Name: string,
+      Email: string,
+      Role: string
+    }[] | null
+  }[] | null,
+  Conditions?: {
+    Name: string,
+    LogicalOperator?: string | null,
+    CompareOperator?: string | null,
+    CompareValue?: string | null
+  }[] | null,
+  Searches?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Change a template content, recipients, conditions or searches
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.templates.update({ transaction_type: 'Customer Orders', template: 'Order Confirmation', name: 'Order Confirmation', event_type: 'OrderPlaced', content_type: 'PDF', template_content_reference_id: '9f2c', recipients: [{ name: 'Customer', delivery_method: 'Email' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `event_type` | `string` | Yes | — |
+| `content_type` | `PDF \| DOC \| HTML \| TEXT` | Yes | — |
+| `template_content_reference_id` | `string` | Yes | The ReferenceID returned by `templates.uploadContent` |
+| `recipients` | `object[]` | Yes | — |
+| `conditions` | `object \| < \| <=, compare_value: string })[]` | No | — |
+| `searches` | `string[]` | No | Search Filter names to tag with |
+| `template` | `string` | Yes | The Template to update |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  name: string,
+  delivery_method: string,
+  email_from_address?: string,
+  email_subject?: string,
+  email_body?: string,
+  mail_from_name?: string,
+  mail_from_address1?: string,
+  mail_from_address2?: string,
+  mail_from_city?: string,
+  mail_from_state?: string,
+  mail_from_zip?: string,
+  text_body?: string,
+  destination_folder?: string,
+  signers?: {
+    name: string,
+    email: string,
+    role: Signer | Agent | CC | Certified Delivery | Editor | In Person Signer | Intermediary
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="conditions full type">
+
+```ts
+(
+  {
+    name: string,
+    logical_operator: AND | OR,
+    compare_operator: = |
+  > |
+>= | < | <=, compare_value: string})[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### uploadContent
+
+`templates.uploadContent`
+
+Upload a template file as base64 and return the reference ID a template needs; the content can attach to one template only
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.templates.uploadContent({ content: 'JVBERi0xLjQK' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | Base64-encoded bytes of the template file |
+
+Content is base64, and the returned ReferenceID can attach to one template only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+## Transaction Types
+
+### create
+
+`transactionTypes.create`
+
+Create a Transaction Type from a JSON sample that defines the template fields
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.transactionTypes.create({ name: 'Customer Orders', template_json: '{"OrderNumber":12345}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `template_json` | `string` | Yes | JSON sample defining the fields available to templates |
+
+`template_json` is the JSON sample that defines the fields available to templates.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`transactionTypes.delete`
+
+Delete a Transaction Type; every template, condition and search filter built on it goes with it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.spondyr.api.transactionTypes.delete({ transaction_type: 'Customer Orders' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+
+Deletes the type along with the templates, conditions and search filters built on it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`transactionTypes.get`
+
+Get one Transaction Type with its JSON and CSV field samples
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.transactionTypes.get({ transaction_type: 'Customer Orders' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `TemplateJSON` | `string \| null` | No | — |
+| `TemplateCSV` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`transactionTypes.list`
+
+List the Transaction Types on the subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.spondyr.api.transactionTypes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `Data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Data full type">
+
+```ts
+{
+  Name: string,
+  TemplateJSON?: string | null,
+  TemplateCSV?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transactionTypes.update`
+
+Change a Transaction Type name or its JSON sample
+
+**Risk:** `write`
+
+```ts
+await corsair.spondyr.api.transactionTypes.update({ transaction_type: 'Customer Orders', name: 'Orders', template_json: '{"OrderNumber":12345}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `template_json` | `string` | Yes | JSON sample defining the fields available to templates |
+| `transaction_type` | `string` | Yes | The Transaction Type to update; goes in the body, not the path |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `APIStatus` | `string` | Yes | `OK` or `ERROR`; a 200 can still be `ERROR` |
+| `ErrorMessage` | `string \| null` | No | — |
+| `ReferenceID` | `string \| null` | No | — |
+
+
+
+---
+
