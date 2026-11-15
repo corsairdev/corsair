@@ -1,0 +1,1061 @@
+{
+  "id": "geoapify",
+  "displayName": "Geoapify",
+  "description": "Geocode addresses in both directions with Geoapify - autocomplete them, search places by category, calculate routes, isolines and route matrices, and read time zones, boundaries, postcodes and elevation.",
+  "npmPackageName": "@corsair-dev/geoapify",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "geoapify.api.geo.boundaries",
+      "shortPath": "geo.boundaries",
+      "description": "Read the administrative boundaries a place belongs to, such as its city, county and country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "A place ID, such as the one a geocode result returned"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude of a point"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude of a point"
+          },
+          {
+            "key": "osm_id",
+            "optional": true,
+            "type": "number",
+            "description": "An OpenStreetMap ID"
+          },
+          {
+            "key": "osm_type",
+            "optional": true,
+            "type": "n | w | r",
+            "description": "The OSM type that goes with `osm_id`: `n` node, `w` way or `r` relation"
+          },
+          {
+            "key": "boundaries",
+            "optional": true,
+            "type": "string[]",
+            "description": "Which boundary kinds to return, such as `administrative` (the default) or `postal_code`"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ type?: string, properties?: Record<string, any>, geometry?: Record<string, any>, bbox?: number[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.geo.elevation",
+      "shortPath": "geo.elevation",
+      "description": "Sample the terrain elevation at one or more points, in metres or feet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": false,
+            "type": "{ lat: number, lon: number }[]",
+            "description": "The points to sample, in order"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial",
+            "description": "Metres or feet; metric is the default"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ location?: { lon?: number, lat?: number }, elevation: number | null, units?: string, distance?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.geo.ip",
+      "shortPath": "geo.ip",
+      "description": "Locate an IP address, or the caller when none is given, returning its country, city and coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string",
+            "description": "The IPv4 or IPv6 address to locate. Without one, Geoapify locates the caller"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "continent",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "postal",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ latitude?: number, longitude?: number }"
+          },
+          {
+            "key": "subdivisions",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.geo.postcodeList",
+      "shortPath": "geo.postcodeList",
+      "description": "Search postcodes by a prefix or a spatial filter, which is what a postcode autocomplete needs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "A postcode or a prefix, such as `1011`. Optional when a `filter` or `countrycode` narrows the list"
+          },
+          {
+            "key": "countrycode",
+            "optional": true,
+            "type": "string",
+            "description": "Restricts to one country"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string[]",
+            "description": "A spatial filter"
+          },
+          {
+            "key": "bias",
+            "optional": true,
+            "type": "string[]",
+            "description": "Biases toward a point or area"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "At most 500 results"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Skips this many results"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ postcode?: string, country_code?: string, lon?: number, lat?: number, city?: string, state?: string, state_code?: string, district?: string, suburb?: string, place_id?: string, formatted?: string }[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.geo.postcodeSearch",
+      "shortPath": "geo.postcodeSearch",
+      "description": "Look up a postcode, returning its coordinates and the places it covers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string",
+            "description": "The postcode to look up. Leave it out to search by `lat`/`lon`"
+          },
+          {
+            "key": "countrycode",
+            "optional": true,
+            "type": "string",
+            "description": "The country the postcode belongs to, which sharpens the result"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Finds the postcode at this point, instead of by `postcode`"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Finds the postcode at this point, instead of by `postcode`"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ postcode?: string, country_code?: string, lon?: number, lat?: number, city?: string, state?: string, state_code?: string, district?: string, suburb?: string, place_id?: string, formatted?: string }[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.geo.timezone",
+      "shortPath": "geo.timezone",
+      "description": "Read the time zone at a point, including whether daylight saving applies at a given moment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude of the point"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude of the point"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 8601 timestamp, such as `2026-11-12T09:16:00Z`, which decides whether daylight saving applies"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tzdb_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezones",
+            "optional": false,
+            "type": "{ name: string, type?: string, utc_offset?: string, offset_seconds?: number, abbreviation?: string, local_time?: string, next_transition?: { at?: string, before?: Record<string, any>, after?: Record<string, any>, offset_change_seconds?: number, kind?: string } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.geocode.autocomplete",
+      "shortPath": "geocode.autocomplete",
+      "description": "Suggest addresses from a partial one as a user types, which is what a search box needs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The partial address as the user types"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "country | state | city | postcode | street | amenity | locality",
+            "description": "Restricts the result to one kind of place"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "At most 100 results"
+          },
+          {
+            "key": "countrycodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Restricts the suggestions to these two-letter country codes"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string[]",
+            "description": "A spatial filter"
+          },
+          {
+            "key": "bias",
+            "optional": true,
+            "type": "string[]",
+            "description": "Biases toward a point or area"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ formatted?: string, address_line1?: string, address_line2?: string, name?: string, housenumber?: string, street?: string, city?: string, district?: string, postcode?: string, state?: string, state_code?: string, country?: string, country_code?: string, county?: string, suburb?: string, neighbourhood?: string, region?: string, lon: number, lat: number, place_id?: string, result_type?: string, rank?: { confidence?: number, confidence_city_level?: number, match_type?: string }, bbox?: { lon1: number, lat1: number, lon2: number, lat2: number }, timezone?: { name?: string, offset_STD?: string, offset_STD_seconds?: number, offset_DST?: string, offset_DST_seconds?: number, abbreviation_STD?: string, abbreviation_DST?: string } }[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ text?: string, parsed?: Record<string, any> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.geocode.forward",
+      "shortPath": "geocode.forward",
+      "description": "Turn an address or place name into coordinates, a formatted address and its components, with a confidence for the match",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The address or place to look up, such as `Berlin` or `10 Downing Street, London`"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "country | state | city | postcode | street | amenity | locality",
+            "description": "Restricts the result to one kind of place"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return, at most 100"
+          },
+          {
+            "key": "countrycodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Restricts the search to these two-letter country codes"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string[]",
+            "description": "A spatial filter such as `rect:13.3,52.4,13.5,52.6` or `countrycode:de`"
+          },
+          {
+            "key": "bias",
+            "optional": true,
+            "type": "string[]",
+            "description": "Bias results toward a point or area without excluding anything, such as `proximity:13.4,52.5`"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ formatted?: string, address_line1?: string, address_line2?: string, name?: string, housenumber?: string, street?: string, city?: string, district?: string, postcode?: string, state?: string, state_code?: string, country?: string, country_code?: string, county?: string, suburb?: string, neighbourhood?: string, region?: string, lon: number, lat: number, place_id?: string, result_type?: string, rank?: { confidence?: number, confidence_city_level?: number, match_type?: string }, bbox?: { lon1: number, lat1: number, lon2: number, lat2: number }, timezone?: { name?: string, offset_STD?: string, offset_STD_seconds?: number, offset_DST?: string, offset_DST_seconds?: number, abbreviation_STD?: string, abbreviation_DST?: string } }[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ text?: string, parsed?: Record<string, any> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.geocode.reverse",
+      "shortPath": "geocode.reverse",
+      "description": "Turn a latitude and longitude into the address at that point, with its full set of components",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude of the point"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude of the point"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "country | state | city | postcode | street | amenity | locality | building",
+            "description": "Restricts the result to one kind of place"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "At most 100 results"
+          },
+          {
+            "key": "countrycodes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Restricts the result to these two-letter country codes"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ formatted?: string, address_line1?: string, address_line2?: string, name?: string, housenumber?: string, street?: string, city?: string, district?: string, postcode?: string, state?: string, state_code?: string, country?: string, country_code?: string, county?: string, suburb?: string, neighbourhood?: string, region?: string, lon: number, lat: number, place_id?: string, result_type?: string, rank?: { confidence?: number, confidence_city_level?: number, match_type?: string }, bbox?: { lon1: number, lat1: number, lon2: number, lat2: number }, timezone?: { name?: string, offset_STD?: string, offset_STD_seconds?: number, offset_DST?: string, offset_DST_seconds?: number, abbreviation_STD?: string, abbreviation_DST?: string } }[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ text?: string, parsed?: Record<string, any> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.places.details",
+      "shortPath": "places.details",
+      "description": "Read one place by its ID, with its address, categories, contact details and opening hours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The `place_id` of a place, as returned by `places.search`"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ type?: string, properties: { formatted?: string, address_line1?: string, address_line2?: string, name?: string, housenumber?: string, street?: string, city?: string, district?: string, postcode?: string, state?: string, state_code?: string, country?: string, country_code?: string, county?: string, suburb?: string, neighbourhood?: string, region?: string, lon: number, lat: number, place_id: string, result_type?: string, rank?: { confidence?: number, confidence_city_level?: number, match_type?: string }, bbox?: { lon1: number, lat1: number, lon2: number, lat2: number }, timezone?: { name?: string, offset_STD?: string, offset_STD_seconds?: number, offset_DST?: string, offset_DST_seconds?: number, abbreviation_STD?: string, abbreviation_DST?: string }, categories?: string[], category?: string, details?: string[], website?: string, phone?: string, contact?: { phone?: string, email?: string, fax?: string }, opening_hours?: string, description?: string, brand?: string, operator?: string, facility_type?: string, datasource?: Record<string, any> }, geometry?: Record<string, any>, bbox?: number[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.places.search",
+      "shortPath": "places.search",
+      "description": "Find places by category within an area, such as restaurants inside a circle, with the details each place carries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "string[]",
+            "description": "What to look for, such as `catering.restaurant`, `accommodation.hotel` or `commercial.supermarket`"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "Where to look, such as a `circle:lon,lat,radius`, a `rect:lon1,lat1,lon2,lat2` or a `place:` ID"
+          },
+          {
+            "key": "bias",
+            "optional": true,
+            "type": "string",
+            "description": "Bias results toward a point or area"
+          },
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "string[]",
+            "description": "Extra conditions such as `named`, `website` or `opening_hours`"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "At most 500 places"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Skips this many results"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Filters by a place name"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ type?: string, properties: { formatted?: string, address_line1?: string, address_line2?: string, name?: string, housenumber?: string, street?: string, city?: string, district?: string, postcode?: string, state?: string, state_code?: string, country?: string, country_code?: string, county?: string, suburb?: string, neighbourhood?: string, region?: string, lon: number, lat: number, place_id: string, result_type?: string, rank?: { confidence?: number, confidence_city_level?: number, match_type?: string }, bbox?: { lon1: number, lat1: number, lon2: number, lat2: number }, timezone?: { name?: string, offset_STD?: string, offset_STD_seconds?: number, offset_DST?: string, offset_DST_seconds?: number, abbreviation_STD?: string, abbreviation_DST?: string }, categories?: string[], category?: string, details?: string[], website?: string, phone?: string, contact?: { phone?: string, email?: string, fax?: string }, opening_hours?: string, description?: string, brand?: string, operator?: string, facility_type?: string, datasource?: Record<string, any> }, geometry?: Record<string, any>, bbox?: number[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.routing.isoline",
+      "shortPath": "routing.isoline",
+      "description": "Calculate the area reachable from a point within a time or distance, one polygon per range. A slow calculation returns only an id to read it with later",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The `properties.id` of an earlier isoline. A slow calculation answers with no areas and only this ID; call again with it alone to read the result"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude of the center"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude of the center"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "time | distance",
+            "description": "Whether each range is a number of seconds (at most 3600) or metres (at most 100000)"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "number[]",
+            "description": "The ranges to draw, such as `[300, 600, 900]`"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "drive | truck | bicycle | scooter | walk | hike",
+            "description": "How to travel; drive is the default"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial",
+            "description": "Units of the answer"
+          },
+          {
+            "key": "avoid",
+            "optional": true,
+            "type": "string[]",
+            "description": "Features to avoid"
+          },
+          {
+            "key": "traffic",
+            "optional": true,
+            "type": "free_flow | approximated",
+            "description": "How to account for traffic"
+          },
+          {
+            "key": "max_speed",
+            "optional": true,
+            "type": "number",
+            "description": "A speed cap"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ type?: string, properties?: Record<string, any>, geometry?: Record<string, any>, bbox?: number[] }[]"
+          },
+          {
+            "key": "bbox",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.routing.matrix",
+      "shortPath": "routing.matrix",
+      "description": "Calculate the time and distance between every source and target, one row per source. A pair with no route has null distance and time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "drive | truck | light_truck | bicycle | mountain_bike | road_bike | scooter | walk | hike | motorcycle | bus",
+            "description": "How to travel, which decides every cell of the matrix"
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "{ lat: number, lon: number }[]",
+            "description": "Starting points, one row each"
+          },
+          {
+            "key": "targets",
+            "optional": false,
+            "type": "{ lat: number, lon: number }[]",
+            "description": "Destination points, one column each"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "balanced | short | less_maneuvers",
+            "description": "What to optimize for"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial",
+            "description": "Units of the answer"
+          },
+          {
+            "key": "avoid",
+            "optional": true,
+            "type": "(tolls | ferries | highways)[]",
+            "description": "Road types to avoid"
+          },
+          {
+            "key": "traffic",
+            "optional": true,
+            "type": "free_flow | approximated",
+            "description": "How to account for traffic"
+          },
+          {
+            "key": "max_speed",
+            "optional": true,
+            "type": "number",
+            "description": "A speed cap"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "distance_units",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sources_to_targets",
+            "optional": false,
+            "type": "{ distance?: number | null, time?: number | null, source_index?: number, target_index?: number }[][]"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ original_location?: number[], location?: number[] }[]"
+          },
+          {
+            "key": "targets",
+            "optional": true,
+            "type": "{ original_location?: number[], location?: number[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "geoapify.api.routing.route",
+      "shortPath": "routing.route",
+      "description": "Calculate a route between waypoints, with distance, time and optional turn-by-turn steps and geometry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "waypoints",
+            "optional": false,
+            "type": "string[]",
+            "description": "The points to route through, one `lat,lon` pair per entry, such as `[\"52.5163,13.3777\", \"52.52,13.405\"]`"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "drive | light_truck | medium_truck | truck | heavy_truck | truck_dangerous_goods | long_truck | bus | scooter | motorcycle | bicycle | mountain_bike | road_bike | walk | hike | transit | approximated_transit",
+            "description": "How to travel, which decides the roads and paths used"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "balanced | short | less_maneuvers",
+            "description": "What to optimize for; balanced is the default"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial",
+            "description": "Units of the answer"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "An IETF language tag such as `en` or `de`, which localizes names"
+          },
+          {
+            "key": "avoid",
+            "optional": true,
+            "type": "string[]",
+            "description": "Features to avoid, such as `tollways`, `ferries` or `highways`"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "(instruction_details | route_details | elevation | admin_areas | polyline5 | polyline6)[]",
+            "description": "Extras to include, such as `instruction_details` (maneuver details) or `elevation`"
+          },
+          {
+            "key": "traffic",
+            "optional": true,
+            "type": "free_flow | approximated",
+            "description": "How to account for traffic"
+          },
+          {
+            "key": "max_speed",
+            "optional": true,
+            "type": "number",
+            "description": "A speed cap for the route"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | geojson",
+            "description": "Defaults to `json` here; `geojson` adds the route geometry"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "global | eu",
+            "description": "`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ mode?: string, units?: string, distance?: number, time?: number, distance_units?: string, polyline5?: string, polyline6?: string, waypoints?: { location?: number[], original_index?: number }[], legs?: { distance?: number, time?: number, steps?: { distance?: number, time?: number, from_index?: number, to_index?: number, instruction?: { text?: string, type?: string, transition_instruction?: string, pre_transition_instruction?: string, post_transition_instruction?: string, streets?: string[] }, name?: string, toll?: boolean, ferry?: boolean }[], elevation?: number[], elevation_range?: number[][] }[], toll?: boolean, ferry?: boolean, country_code?: string[], geometry?: { lat: number, lon: number }[][] }[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "bbox",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

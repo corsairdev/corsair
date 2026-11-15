@@ -1,0 +1,759 @@
+{
+  "id": "keen",
+  "displayName": "Keen",
+  "description": "Event analytics with Keen - record single events and batches, inspect the collections and property types Keen inferred, run count, sum, average and the rest of its analyses, and manage saved queries and cached datasets.",
+  "npmPackageName": "@corsair-dev/keen",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "project_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "keen.api.collections.get",
+      "shortPath": "collections.get",
+      "description": "One collection’s property names and their inferred types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "string",
+            "description": "The event collection, such as `purchases`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string> | null",
+            "description": "Property name to inferred type: `num`, `string`, `bool` and so on."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "Every event collection on the project, with its properties and types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, properties?: Record<string, string> | null, url?: string | null }[]"
+      }
+    },
+    {
+      "path": "keen.api.datasets.delete",
+      "shortPath": "datasets.delete",
+      "description": "Delete a cached dataset and its computed rows; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetName",
+            "optional": false,
+            "type": "string",
+            "description": "The cached dataset name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.datasets.get",
+      "shortPath": "datasets.get",
+      "description": "One cached dataset’s definition, including how far behind its computation is",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetName",
+            "optional": false,
+            "type": "string",
+            "description": "The cached dataset name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataset_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "index_by",
+            "optional": true,
+            "type": "string | string[] | null"
+          },
+          {
+            "key": "last_scheduled_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "latest_subtimeframe_available",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "milliseconds_behind",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.datasets.list",
+      "shortPath": "datasets.list",
+      "description": "Cached dataset definitions, paged by `after_name`; `next_after_name` carries the cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Datasets per page. Defaults to 10, and Keen allows at most 100."
+          },
+          {
+            "key": "after_name",
+            "optional": true,
+            "type": "string",
+            "description": "The dataset name the next page starts after. Keen’s `next_page_url` names it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasets",
+            "optional": false,
+            "type": "{ project_id?: string | null, organization_id?: string | null, dataset_name: string, display_name?: string | null, query?: Record<string, any> | null, index_by?: string | string[] | null, last_scheduled_date?: string | null, latest_subtimeframe_available?: string | null, milliseconds_behind?: number | null, status?: string | null }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "The next page while more remain; absent on the last page."
+          },
+          {
+            "key": "next_after_name",
+            "optional": false,
+            "type": "string | null",
+            "description": "The `after_name` for the next page, read out of `next_page_url`; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.datasets.result",
+      "shortPath": "datasets.result",
+      "description": "A cached dataset’s computed rows, selected by the values of its `index_by` properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetName",
+            "optional": false,
+            "type": "string",
+            "description": "The cached dataset name."
+          },
+          {
+            "key": "index_by",
+            "optional": false,
+            "type": "string | Record<string, string | number | boolean>",
+            "description": "The index value that selects the rows: a string for a single string index property, or an object of property name to value when there are several or the value is not a string."
+          },
+          {
+            "key": "timeframe",
+            "optional": false,
+            "type": "string | { start: string, end: string }",
+            "description": "A relative timeframe in the dataset’s own unit, or an absolute window that lines up with its intervals."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "number | string | boolean | null | (number | string | boolean | null | Record<string, any>)[] | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.events.record",
+      "shortPath": "events.record",
+      "description": "Record one event in a collection; Keen answers `created` and takes up to 10 seconds to make it queryable",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "string",
+            "description": "The event collection, such as `purchases`."
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The event body. Its keys become properties. `keen.timestamp` overrides when Keen records it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.events.recordMany",
+      "shortPath": "events.recordMany",
+      "description": "Record events across one or more collections in one request, with a result per event. Keen recommends batches of 5,000 or less",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "Record<string, Record<string, any>[]>",
+            "description": "Collection name to events. Keen recommends batches of 5,000 or less."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, { success: boolean }[]>"
+      }
+    },
+    {
+      "path": "keen.api.properties.get",
+      "shortPath": "properties.get",
+      "description": "The type Keen inferred for one property, such as `num` or `string`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "string",
+            "description": "The event collection, such as `purchases`."
+          },
+          {
+            "key": "property",
+            "optional": false,
+            "type": "string",
+            "description": "The property name, which may contain dots, such as `item.price`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "property_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.queries.multiAnalysis",
+      "shortPath": "queries.multiAnalysis",
+      "description": "Run up to 10 analyses over one collection in one request, each under its own label",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_collection",
+            "optional": false,
+            "type": "string",
+            "description": "The event collection, such as `purchases`."
+          },
+          {
+            "key": "analyses",
+            "optional": false,
+            "type": "Record<string, { analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel, event_collection?: string, steps?: { event_collection: string, actor_property: string, timeframe?: string | { start: string, end: string }, timezone?: string, filters?: ({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[], optional?: boolean, inverted?: boolean, with_actors?: boolean }[], target_property?: string, timeframe?: string | { start: string, end: string }, interval?: minutely | hourly | daily | weekly | monthly | yearly, timezone?: string, filters?: ({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[], group_by?: (string | Record<string, any>)[], order_by?: { property_name: string, direction: ASC | DESC }[], limit?: number, percentile?: number | null, include_metadata?: boolean }>",
+            "description": "Label to analysis. Each label becomes a key in the result. Keen allows at most 10 analyses per request."
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "string | { start: string, end: string }",
+            "description": "A relative name, or an object with `start` and `end`."
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "minutely | hourly | daily | weekly | monthly | yearly"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[]"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "(string | Record<string, any>)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "Record<string, any> | Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.queries.run",
+      "shortPath": "queries.run",
+      "description": "Run one analysis (`count`, `sum`, `average`, `count_unique`, `percentile` and the rest) over a collection, with filters, grouping and intervals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "analysis_type",
+            "optional": false,
+            "type": "count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel"
+          },
+          {
+            "key": "event_collection",
+            "optional": true,
+            "type": "string",
+            "description": "The collection to analyze. Required for every analysis but `funnel`, whose steps name their own; inside a multi-analysis it comes from the outer request."
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{ event_collection: string, actor_property: string, timeframe?: string | { start: string, end: string }, timezone?: string, filters?: ({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[], optional?: boolean, inverted?: boolean, with_actors?: boolean }[]",
+            "description": "Required for `funnel`: the steps, in order."
+          },
+          {
+            "key": "target_property",
+            "optional": true,
+            "type": "string",
+            "description": "Required for every analysis except `count` and `funnel`."
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "string | { start: string, end: string }",
+            "description": "A relative name, or an object with `start` and `end`."
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "minutely | hourly | daily | weekly | monthly | yearly",
+            "description": "Split the result into one value per interval."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for interval boundaries, such as `US/Pacific`."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[]"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "(string | Record<string, any>)[]",
+            "description": "A property name, or a buckets or ranges object; all in Keen’s own shape."
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "{ property_name: string, direction: ASC | DESC }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum group rows to return."
+          },
+          {
+            "key": "percentile",
+            "optional": true,
+            "type": "number | null",
+            "description": "Required for `percentile`: the percentile to read, 0 to 100."
+          },
+          {
+            "key": "include_metadata",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "number | string | boolean | null | (number | string | boolean | null | Record<string, any>)[] | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.savedQueries.create",
+      "shortPath": "savedQueries.create",
+      "description": "Create or replace a saved query by name, with the refresh rate that caches its result",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queryName",
+            "optional": false,
+            "type": "string",
+            "description": "The saved query name, which is also its identifier."
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ event_collection: string, analyses: Record<string, { analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel, event_collection?: string, steps?: { event_collection: string, actor_property: string, timeframe?: string | { start: string, end: string }, timezone?: string, filters?: ({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[], optional?: boolean, inverted?: boolean, with_actors?: boolean }[], target_property?: string, timeframe?: string | { start: string, end: string }, interval?: minutely | hourly | daily | weekly | monthly | yearly, timezone?: string, filters?: ({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[], group_by?: (string | Record<string, any>)[], order_by?: { property_name: string, direction: ASC | DESC }[], limit?: number, percentile?: number | null, include_metadata?: boolean }>, timeframe?: string | { start: string, end: string }, interval?: minutely | hourly | daily | weekly | monthly | yearly, timezone?: string, filters?: ({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[], group_by?: (string | Record<string, any>)[], analysis_type: multi_analysis } | { analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel, event_collection?: string, steps?: { event_collection: string, actor_property: string, timeframe?: string | { start: string, end: string }, timezone?: string, filters?: ({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[], optional?: boolean, inverted?: boolean, with_actors?: boolean }[], target_property?: string, timeframe?: string | { start: string, end: string }, interval?: minutely | hourly | daily | weekly | monthly | yearly, timezone?: string, filters?: ({ operator: or, operands: { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any }[] } | { property_name: string, operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex, property_value: any })[], group_by?: (string | Record<string, any>)[], order_by?: { property_name: string, direction: ASC | DESC }[], limit?: number, percentile?: number | null, include_metadata?: boolean }",
+            "description": "One analysis, or a multi-analysis with `analysis_type: multi_analysis` and its `analyses` map."
+          },
+          {
+            "key": "refresh_rate",
+            "optional": false,
+            "type": "number",
+            "description": "Seconds between refreshes. `0` caches nothing; a cached query refreshes every 14400 (four hours) to 86400 (24 hours) seconds."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ display_name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "refresh_rate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_modified_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_last_modified_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "run_information",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ cached_query_url?: string | null, cached_query_results_url?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.savedQueries.delete",
+      "shortPath": "savedQueries.delete",
+      "description": "Delete a saved query and its cached result; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queryName",
+            "optional": false,
+            "type": "string",
+            "description": "The saved query name, which is also its identifier."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.savedQueries.get",
+      "shortPath": "savedQueries.get",
+      "description": "One saved query’s definition",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queryName",
+            "optional": false,
+            "type": "string",
+            "description": "The saved query name, which is also its identifier."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "refresh_rate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_modified_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_last_modified_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "run_information",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ cached_query_url?: string | null, cached_query_results_url?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.savedQueries.list",
+      "shortPath": "savedQueries.list",
+      "description": "Every saved query on the project, with its definition and refresh rate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "{ query_name: string, refresh_rate?: number | null, query?: Record<string, any> | null, metadata?: Record<string, any> | null, created_date?: string | null, last_modified_date?: string | null, user_last_modified_date?: string | null, run_information?: Record<string, any> | null, urls?: { cached_query_url?: string | null, cached_query_results_url?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "keen.api.savedQueries.result",
+      "shortPath": "savedQueries.result",
+      "description": "The cached result of a saved query, which is what makes a dashboard load instantly",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queryName",
+            "optional": false,
+            "type": "string",
+            "description": "The saved query name, which is also its identifier."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "number | string | boolean | null | (number | string | boolean | null | Record<string, any>)[] | Record<string, any>"
+          },
+          {
+            "key": "refresh_rate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_modified_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ cached_query_url?: string | null, cached_query_results_url?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
