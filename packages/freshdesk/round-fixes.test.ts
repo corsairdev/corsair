@@ -197,4 +197,68 @@ describe('Freshdesk bot round fixes', () => {
 			body,
 		});
 	});
+
+	// Multipart has no way to send an empty array or a null, so a clear would
+	// be dropped silently; the client refuses it before any request.
+	it.each([
+		[{ tags: [] }, 'tags'],
+		[{ custom_fields: { cf_region: null } }, 'custom_fields.cf_region'],
+		[{ responder_id: null }, 'responder_id'],
+	])('refuses field clears in a multipart update (%j)', async (body, field) => {
+		const caught = await makeFreshdeskRequest(
+			buildContext(),
+			'test-api-key',
+			FRESHDESK_OPERATIONS.updateTicketPut,
+			{ pathParams: { id: '7' }, body, attachments: [attachment] },
+			// unknown because Promise rejections do not have a guaranteed static type.
+		).catch((error: unknown) => error);
+		expect(caught).toBeInstanceOf(Error);
+		expect((caught as Error).message).toContain(field);
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('still sends field clears as JSON when nothing is attached', async () => {
+		const body = { tags: [], custom_fields: { cf_region: null } };
+		await makeFreshdeskRequest(
+			buildContext(),
+			'test-api-key',
+			FRESHDESK_OPERATIONS.updateTicketPut,
+			{ pathParams: { id: '7' }, body },
+		);
+		expect(mockedRequest.mock.calls.at(-1)?.[1].body).toEqual(body);
+	});
+
+	it('keeps path parameter values out of error URLs', async () => {
+		mockedRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'GET',
+					url: '/api/v2/contacts/private-user%40freshdesk.invalid',
+				},
+				{
+					url: 'https://acme.freshdesk.com/api/v2/contacts/private-user%40freshdesk.invalid',
+					ok: false,
+					status: 404,
+					statusText: 'Not Found',
+					body: undefined,
+				},
+				'Not Found',
+			),
+		);
+		const caught = await makeFreshdeskRequest(
+			buildContext(),
+			'test-api-key',
+			FRESHDESK_OPERATIONS.updateContactPut,
+			{
+				pathParams: { id: 'private-user@freshdesk.invalid' },
+				body: { name: 'x' },
+			},
+			// unknown because Promise rejections do not have a guaranteed static type.
+		).catch((error: unknown) => error);
+		if (!(caught instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(caught.status).toBe(404);
+		expect(JSON.stringify(caught)).not.toContain('private-user');
+		expect(caught.url).toBe('https://acme.freshdesk.com/api/v2/contacts/{id}');
+		expect(caught.request.url).toBe('/api/v2/contacts/{id}');
+	});
 });

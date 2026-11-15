@@ -233,6 +233,7 @@ describe('Freshdesk review fixes', () => {
 			required?: string[];
 			properties: Record<
 				string,
+				// unknown because only the property names are read, not their schemas.
 				{ required?: string[]; properties?: Record<string, unknown> }
 			>;
 		};

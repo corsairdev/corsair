@@ -85,14 +85,19 @@ const SAFE_ERROR_TOKEN = /^[A-Za-z0-9_.[\]-]{1,64}$/;
 
 // Freshdesk error bodies list { field, message, code }; messages can echo
 // request values, so only the field names and machine codes are kept.
+// unknown because core's ApiError.body is whatever the provider answered
+// (JSON, text or nothing); each level is narrowed before it is read.
 function describeFreshdeskErrors(body: unknown): string {
 	if (typeof body !== 'object' || body === null || !('errors' in body))
 		return '';
+	// unknown until Array.isArray confirms the provider sent a list.
 	const errors = (body as { errors: unknown }).errors;
 	if (!Array.isArray(errors)) return '';
 	const parts = errors
+		// unknown because list entries are provider JSON; each is narrowed below.
 		.map((entry: unknown) => {
 			if (typeof entry !== 'object' || entry === null) return null;
+			// unknown because field and code are only kept after typeof checks.
 			const { field, code } = entry as { field?: unknown; code?: unknown };
 			const safeCode =
 				typeof code === 'string' && SAFE_ERROR_TOKEN.test(code) ? code : null;
@@ -106,19 +111,23 @@ function describeFreshdeskErrors(body: unknown): string {
 	return parts.length > 0 ? ` (${parts.join(', ')})` : '';
 }
 
-function stripQuery(url: string): string {
-	const index = url.indexOf('?');
-	return index === -1 ? url : url.slice(0, index);
+function urlOrigin(url: string): string {
+	try {
+		return new URL(url).origin;
+	} catch {
+		return '';
+	}
 }
 
 // Rebuild core's ApiError so status, Retry-After and the rate-limit fields
 // (what error handlers and core read) survive, while the provider body, the
-// request body and query values (search filters hold emails) are dropped.
-function sanitizeApiError(error: ApiError): ApiError {
+// request body, query values (search filters hold emails) and path values
+// are dropped: the URLs carry the route template, e.g. /contacts/{id}.
+function sanitizeApiError(error: ApiError, templatePath: string): ApiError {
 	return new ApiError(
-		{ method: error.request.method, url: stripQuery(error.request.url) },
+		{ method: error.request.method, url: templatePath },
 		{
-			url: stripQuery(error.url),
+			url: `${urlOrigin(error.url)}${templatePath}`,
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -134,11 +143,41 @@ function sanitizeApiError(error: ApiError): ApiError {
 	);
 }
 
+// Multipart parts can't carry an empty array or a null, so a field clear sent
+// with an attachment would be dropped and the old value kept. Name the first
+// such field (never its value) and refuse the request instead.
+function findMultipartClear(
+	body: FreshdeskRouteInput['body'],
+): string | undefined {
+	for (const [key, value] of Object.entries(body ?? {})) {
+		if (value === null) return key;
+		if (Array.isArray(value)) {
+			if (value.length === 0) return key;
+			continue;
+		}
+		if (typeof value === 'object' && !JSON_PART_FIELDS.has(key)) {
+			for (const [nestedKey, nestedValue] of Object.entries(value)) {
+				if (
+					nestedValue === null ||
+					(Array.isArray(nestedValue) && nestedValue.length === 0)
+				)
+					return `${key}.${nestedKey}`;
+			}
+		}
+	}
+	return undefined;
+}
+
 function makeFormData(
 	body: FreshdeskRouteInput['body'],
 	attachments: FreshdeskRouteInput['attachments'],
 	attachmentField: string,
 ): FormData {
+	const cleared = findMultipartClear(body);
+	if (cleared)
+		throw new Error(
+			`Freshdesk can't clear ${cleared} in a request with attachments: send the attachment and the clear (empty list or null) as two separate updates.`,
+		);
 	const formData = new FormData();
 	for (const [key, value] of Object.entries(body ?? {})) {
 		if (Array.isArray(value)) {
@@ -206,6 +245,9 @@ export async function makeFreshdeskRequest(
 			return encodeURIComponent(value);
 		},
 	);
+	const templatePath = `${FRESHDESK_API_PATH}${definition.path
+		.replace('/api/v2', '')
+		.replace(/\[([^\]]+)\]/g, '{$1}')}`;
 	const hostname = await resolveDomain(ctx);
 	const config: OpenAPIConfig = {
 		BASE: `https://${hostname}`,
@@ -249,7 +291,7 @@ export async function makeFreshdeskRequest(
 		if (error instanceof ApiError) {
 			// Freshdesk validation errors can echo request fields and customer PII,
 			// so the ApiError is rebuilt without the raw API body or request data.
-			throw sanitizeApiError(error);
+			throw sanitizeApiError(error, templatePath);
 		}
 		// unknown because network and fetch implementations can reject with non-Error values.
 		throw new FreshdeskAPIError('Freshdesk API request failed');
