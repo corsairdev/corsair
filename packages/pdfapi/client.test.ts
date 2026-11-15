@@ -24,28 +24,15 @@ describe('PdfApi client', () => {
 		requestMock.mockReset();
 	});
 
-	it('keeps the transport single-attempt so the error handler owns 429 retries', async () => {
-		// A rate-limited response must surface after exactly one transport
-		// attempt; the plugin error handler is the single retry owner.
-		requestMock.mockRejectedValue(
-			new ApiError(apiRequest, rateLimitResult, 'Too Many Requests', {
-				retryAfter: 30000,
-			}),
-		);
-		await expect(
-			makePdfApiRequest({ key: 'secret' }, '/templates', { method: 'GET' }),
-		).rejects.toThrow(ApiError);
-		expect(requestMock).toHaveBeenCalledTimes(1);
-		// enabled stays true so the shared transport reads the Retry-After
-		// headers and attaches them to the thrown error; maxRetries 0 keeps
-		// the transport itself single-attempt.
-		expect(requestMock.mock.calls[0]?.[2]).toMatchObject({
-			rateLimitConfig: expect.objectContaining({
-				enabled: true,
-				maxRetries: 0,
-				headerNames: expect.objectContaining({ retryAfter: 'Retry-After' }),
-			}),
-		});
+	it('calls the documented /api base and leaves 429 retries to core', async () => {
+		requestMock.mockResolvedValue([]);
+		await makePdfApiRequest({ key: 'secret' }, '/templates', { method: 'GET' });
+		const config = requestMock.mock.calls[0]?.[0];
+		// https://pdf-api.io/templates (no /api) answers a 307 HTML redirect.
+		expect(config?.BASE).toBe('https://pdf-api.io/api');
+		// No rateLimitConfig override: core's default retries a 429 three
+		// times honouring Retry-After (R8).
+		expect(requestMock.mock.calls[0]?.[2]).toBeUndefined();
 	});
 
 	it('preserves status and Retry-After metadata on rate limits', async () => {
@@ -96,7 +83,7 @@ describe('PdfApi client', () => {
 		);
 	});
 
-	it('routes 429 through the plugin error handler with its retry budget', async () => {
+	it('does not retry a 429 again in the plugin error handler', async () => {
 		const rateLimit = new ApiError(
 			apiRequest,
 			rateLimitResult,
@@ -105,7 +92,6 @@ describe('PdfApi client', () => {
 		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimit)).toBe(true);
 		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(rateLimit);
-		expect(strategy.maxRetries).toBe(5);
-		expect(strategy.headersRetryAfterMs).toBe(30000);
+		expect(strategy.maxRetries).toBe(0);
 	});
 });
