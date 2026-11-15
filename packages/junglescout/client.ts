@@ -1,65 +1,110 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+
+export const JUNGLESCOUT_API_BASE = 'https://developer.junglescout.com';
+
+/**
+ * Jungle Scout rate limits allow up to 300 requests per minute with a burst limit
+ * of 15 requests per second. The client delegates retry backoff to error handlers
+ * while extracting Retry-After headers from 429 responses.
+ */
+export const JUNGLESCOUT_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
 
 export class JungleScoutAPIError extends Error {
 	constructor(
 		message: string,
+		public readonly status?: number,
 		public readonly code?: string,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'JungleScoutAPIError';
 	}
 }
 
-// TODO: Update with your API base URL
-const JUNGLESCOUT_API_BASE = 'https://api.example.com';
+export type JungleScoutRequestOptions = {
+	method?: 'GET' | 'POST';
+	// `unknown` because request bodies vary per endpoint schema and are narrowed before sending.
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+	apiType?: 'junglescout' | 'cobalt';
+};
 
 export async function makeJungleScoutRequest<T>(
 	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	apiKey?: string,
+	options: JungleScoutRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, apiType = 'junglescout' } = options;
+
+	// The official API requires its combined `KEY_NAME:API_KEY` authorization value.
+	if (apiKey === undefined || apiKey.trim().length === 0) {
+		throw new AuthMissingError('junglescout', 'api_key');
+	}
+
+	const authHeaders: Record<string, string> = { Authorization: apiKey };
 
 	const config: OpenAPIConfig = {
 		BASE: JUNGLESCOUT_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/vnd.junglescout.v1+json',
+			'Content-Type': 'application/vnd.api+json',
+			'X-API-Type': apiType,
+			...authHeaders,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		body: method === 'POST' ? body : undefined,
+		mediaType: 'application/vnd.api+json',
+		query,
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new JungleScoutAPIError(error.message);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: JUNGLESCOUT_RATE_LIMIT_CONFIG,
+		});
+	} catch (error: unknown) {
+		// Provider/network errors can contain request data; retain only safe HTTP metadata.
+		// Drop inputs and provider payloads because errors can echo searched terms or ASINs.
+		if (error instanceof ApiError) {
+			throw new ApiError(
+				{ method, url: endpoint },
+				{
+					url: `${JUNGLESCOUT_API_BASE}${endpoint}`,
+					ok: false,
+					status: error.status,
+					statusText: 'Request failed',
+					body: {},
+				},
+				`Jungle Scout API request failed with status ${error.status}`,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
-		throw new JungleScoutAPIError('Unknown error');
+		// `error` may contain an input-bearing request URL or provider response text.
+		throw new JungleScoutAPIError('Jungle Scout request failed');
 	}
 }

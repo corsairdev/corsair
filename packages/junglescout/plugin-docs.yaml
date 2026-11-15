@@ -1,4 +1,28 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "JungleScout"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: "Jungle Scout"
+description: "Query Amazon keyword intelligence, search volume trends, product database filters, sales estimates, and share of voice analytics via Jungle Scout."
+domain: "junglescout.com"
+overviewNote: |
+  Jungle Scout provides market research and analytics data for Amazon marketplaces.
+  Authenticate by generating an API Key from your Jungle Scout account Developer Settings. Pass the complete `<keyName>:<apiKey>` value. Set `apiType: 'cobalt'` for an Enterprise API key; the default is `junglescout`.
+
+apiNotes:
+  keywords.byAsin: "Query up to 10 ASINs per request. Returns exact and broad search volume, PPC bids, and competitor ranking data."
+  keywords.byKeyword: "Pass one or more search phrases in search_terms. Dominant category names vary by marketplace."
+  keywords.historicalSearchVolume: "Date ranges must use YYYY-MM-DD format with start date prior to end date."
+  productDatabase.query: "Supports filtering by price, rank, sales, reviews, ratings, seller types (amz/fba/fbm), and product tiers. include_keywords and exclude_keywords allow up to 100 values of at most 50 characters each."
+  salesEstimates.query: "End date must precede the current UTC date. Returns daily sales estimates and pricing trends."
+  shareOfVoice.get: "Returns organic, sponsored, and combined brand market share and top 3 ASIN click/conversion analytics."
+
+apiExamples:
+  keywords.byAsin:
+    call: "{ marketplace: 'us', asins: ['B08RT1NF23', 'B002UXRXE6'] }"
+  keywords.byKeyword:
+    call: "{ marketplace: 'us', search_terms: ['wireless earbuds'] }"
+  keywords.historicalSearchVolume:
+    call: "{ marketplace: 'us', keyword: 'yoga mat', start_date: '2024-01-01', end_date: '2024-06-01' }"
+  productDatabase.query:
+    call: "{ marketplace: 'us', include_keywords: ['stainless steel water bottle'] }"
+  salesEstimates.query:
+    call: "{ marketplace: 'us', asin: 'B08JYQLKXZ', start_date: '2024-01-01', end_date: '2024-01-15' }"
+  shareOfVoice.get:
+    call: "{ marketplace: 'us', keyword: 'coffee maker' }"

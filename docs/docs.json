@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -2364,19 +2371,19 @@
                 ]
               },
               {
-                "group": "Genderize",
-                "pages": [
-                  "plugins/genderize/overview",
-                  "plugins/genderize/api",
-                  "plugins/genderize/database"
-                ]
-              },
-              {
                 "group": "GenderAPI.io",
                 "pages": [
                   "plugins/genderapiio/overview",
                   "plugins/genderapiio/api",
                   "plugins/genderapiio/database"
+                ]
+              },
+              {
+                "group": "Genderize",
+                "pages": [
+                  "plugins/genderize/overview",
+                  "plugins/genderize/api",
+                  "plugins/genderize/database"
                 ]
               },
               {
@@ -2793,6 +2800,14 @@
                   "plugins/jira/api",
                   "plugins/jira/database",
                   "plugins/jira/webhooks"
+                ]
+              },
+              {
+                "group": "Jungle Scout",
+                "pages": [
+                  "plugins/junglescout/overview",
+                  "plugins/junglescout/api",
+                  "plugins/junglescout/database"
                 ]
               },
               {
@@ -4883,7 +4898,9 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": ["changelog"]
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       }

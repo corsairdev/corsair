@@ -1,42 +1,42 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { JungleScoutEndpointInputs, JungleScoutEndpointOutputs } from './endpoints/types';
-import { JungleScoutEndpointInputSchemas, JungleScoutEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import {
+	Keywords,
+	ProductDatabase,
+	SalesEstimates,
+	ShareOfVoice,
+} from './endpoints';
 import type {
-	JungleScoutWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { JungleScoutSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	JungleScoutEndpointInputs,
+	JungleScoutEndpointOutputs,
+} from './endpoints/types';
+import {
+	JungleScoutEndpointInputSchemas,
+	JungleScoutEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchJungleScoutTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveJungleScoutOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { JungleScoutSchema } from './schema';
 
 export type JungleScoutPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
+	apiType?: 'junglescout' | 'cobalt';
 	hooks?: InternalJungleScoutPlugin['hooks'];
-	webhookHooks?: InternalJungleScoutPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof jungleScoutEndpointsNested>;
+	permissions?: PluginPermissionsConfig<typeof junglescoutEndpointsNested>;
 };
 
 export type JungleScoutContext = CorsairPluginContext<
@@ -44,159 +44,189 @@ export type JungleScoutContext = CorsairPluginContext<
 	JungleScoutPluginOptions
 >;
 
-export type JungleScoutKeyBuilderContext = KeyBuilderContext<JungleScoutPluginOptions>;
-
-export type JungleScoutBoundEndpoints = BindEndpoints<typeof jungleScoutEndpointsNested>;
-
-type JungleScoutEndpoint<
-	K extends keyof JungleScoutEndpointOutputs,
-> = CorsairEndpoint<
-	JungleScoutContext,
-	JungleScoutEndpointInputs[K],
-	JungleScoutEndpointOutputs[K]
+export type JungleScoutKeyBuilderContext = KeyBuilderContext<
+	JungleScoutPluginOptions,
+	typeof jungleScoutAuthConfig
 >;
 
+export type JungleScoutBoundEndpoints = BindEndpoints<
+	typeof junglescoutEndpointsNested
+>;
+
+type JungleScoutEndpoint<K extends keyof JungleScoutEndpointOutputs> =
+	CorsairEndpoint<
+		JungleScoutContext,
+		JungleScoutEndpointInputs[K],
+		JungleScoutEndpointOutputs[K]
+	>;
+
 export type JungleScoutEndpoints = {
-	exampleGet: JungleScoutEndpoint<'exampleGet'>;
+	'keywords.byAsin': JungleScoutEndpoint<'keywords.byAsin'>;
+	'keywords.byKeyword': JungleScoutEndpoint<'keywords.byKeyword'>;
+	'keywords.historicalSearchVolume': JungleScoutEndpoint<'keywords.historicalSearchVolume'>;
+	'productDatabase.query': JungleScoutEndpoint<'productDatabase.query'>;
+	'salesEstimates.query': JungleScoutEndpoint<'salesEstimates.query'>;
+	'shareOfVoice.get': JungleScoutEndpoint<'shareOfVoice.get'>;
 };
 
-type JungleScoutWebhook<
-	K extends keyof JungleScoutWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<JungleScoutContext, TEvent, JungleScoutWebhookOutputs[K]>;
-
-export type JungleScoutWebhooks = {
-	example: JungleScoutWebhook<'example', ExampleEvent>;
-};
-
-export type JungleScoutBoundWebhooks = BindWebhooks<JungleScoutWebhooks>;
-
-const jungleScoutEndpointsNested = {
-	example: {
-		get: Example.get,
+const junglescoutEndpointsNested = {
+	keywords: {
+		byAsin: Keywords.byAsin,
+		byKeyword: Keywords.byKeyword,
+		historicalSearchVolume: Keywords.historicalSearchVolume,
+	},
+	productDatabase: {
+		query: ProductDatabase.query,
+	},
+	salesEstimates: {
+		query: SalesEstimates.query,
+	},
+	shareOfVoice: {
+		get: ShareOfVoice.get,
 	},
 } as const;
 
-const jungleScoutWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+export const junglescoutEndpointSchemas = {
+	'keywords.byAsin': {
+		input: JungleScoutEndpointInputSchemas['keywords.byAsin'],
+		output: JungleScoutEndpointOutputSchemas['keywords.byAsin'],
 	},
-} as const;
-
-export const jungleScoutEndpointSchemas = {
-	'example.get': {
-		input: JungleScoutEndpointInputSchemas.exampleGet,
-		output: JungleScoutEndpointOutputSchemas.exampleGet,
+	'keywords.byKeyword': {
+		input: JungleScoutEndpointInputSchemas['keywords.byKeyword'],
+		output: JungleScoutEndpointOutputSchemas['keywords.byKeyword'],
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof jungleScoutEndpointsNested>;
-
-const jungleScoutWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'keywords.historicalSearchVolume': {
+		input: JungleScoutEndpointInputSchemas['keywords.historicalSearchVolume'],
+		output: JungleScoutEndpointOutputSchemas['keywords.historicalSearchVolume'],
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof jungleScoutWebhooksNested>;
+	'productDatabase.query': {
+		input: JungleScoutEndpointInputSchemas['productDatabase.query'],
+		output: JungleScoutEndpointOutputSchemas['productDatabase.query'],
+	},
+	'salesEstimates.query': {
+		input: JungleScoutEndpointInputSchemas['salesEstimates.query'],
+		output: JungleScoutEndpointOutputSchemas['salesEstimates.query'],
+	},
+	'shareOfVoice.get': {
+		input: JungleScoutEndpointInputSchemas['shareOfVoice.get'],
+		output: JungleScoutEndpointOutputSchemas['shareOfVoice.get'],
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof junglescoutEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const jungleScoutEndpointMeta = {
-	'example.get': {
+const junglescoutEndpointMeta = {
+	'keywords.byAsin': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Query keywords and rankings for up to 10 Amazon ASINs',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof jungleScoutEndpointsNested>;
-
-export const jungleScoutAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
+	'keywords.byKeyword': {
+		riskLevel: 'read',
+		description:
+			'Discover keyword search volumes and relevancy metrics for search terms',
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+	'keywords.historicalSearchVolume': {
+		riskLevel: 'read',
+		description:
+			'Retrieve weekly historical search volume trends for a keyword',
 	},
-} as const satisfies PluginAuthConfig;
-
-export type BaseJungleScoutPlugin<T extends JungleScoutPluginOptions> = CorsairPlugin<
-	'junglescout',
-	typeof JungleScoutSchema,
-	typeof jungleScoutEndpointsNested,
-	typeof jungleScoutWebhooksNested,
-	T,
-	typeof defaultAuthType
+	'productDatabase.query': {
+		riskLevel: 'read',
+		description:
+			'Search Amazon product catalog with sales, revenue, rank, and review filters',
+	},
+	'salesEstimates.query': {
+		riskLevel: 'read',
+		description:
+			'Retrieve daily historical sales estimates and pricing for an ASIN',
+	},
+	'shareOfVoice.get': {
+		riskLevel: 'read',
+		description:
+			'Retrieve brand market share and visibility metrics for a search term',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof junglescoutEndpointsNested
 >;
 
-export type InternalJungleScoutPlugin = BaseJungleScoutPlugin<JungleScoutPluginOptions>;
+export const jungleScoutAuthConfig = {
+	api_key: {},
+} as const satisfies PluginAuthConfig;
 
-export type ExternalJungleScoutPlugin<T extends JungleScoutPluginOptions> =
-	BaseJungleScoutPlugin<T>;
+export type BaseJungleScoutPlugin<T extends JungleScoutPluginOptions> =
+	CorsairPlugin<
+		'junglescout',
+		typeof JungleScoutSchema,
+		typeof junglescoutEndpointsNested,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType,
+		typeof jungleScoutAuthConfig
+	>;
+
+export type InternalJungleScoutPlugin =
+	BaseJungleScoutPlugin<JungleScoutPluginOptions>;
 
 export function junglescout<const T extends JungleScoutPluginOptions>(
-	incomingOptions: JungleScoutPluginOptions & T = {} as JungleScoutPluginOptions & T,
-): ExternalJungleScoutPlugin<T> {
+	incomingOptions: JungleScoutPluginOptions &
+		T = {} as JungleScoutPluginOptions & T,
+): BaseJungleScoutPlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
+	const mergedErrorHandlers = {
+		...callers,
+		...builtIns,
+		...callers,
+		DEFAULT: callerDefault ?? builtInDefault,
+	};
+
 	return {
 		id: 'junglescout',
-		authConfig: jungleScoutAuthConfig,
 		schema: JungleScoutSchema,
-		options: options,
-		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
-		endpoints: jungleScoutEndpointsNested,
-		webhooks: jungleScoutWebhooksNested,
-		endpointMeta: jungleScoutEndpointMeta,
-		endpointSchemas: jungleScoutEndpointSchemas,
-		webhookSchemas: jungleScoutWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-junglescout-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchJungleScoutTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveJungleScoutOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		endpoints: junglescoutEndpointsNested,
+		webhooks: {},
+		endpointMeta: junglescoutEndpointMeta,
+		endpointSchemas: junglescoutEndpointSchemas,
+		options,
+		authConfig: jungleScoutAuthConfig,
+		errorHandlers: mergedErrorHandlers,
 		keyBuilder: async (ctx: JungleScoutKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
+			if (source !== 'endpoint') return '';
+			if (options.key !== undefined) {
+				if (!options.key.trim()) {
+					throw new AuthMissingError('junglescout', 'api_key');
+				}
 				return options.key;
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey) throw new AuthMissingError('junglescout', 'api_key');
+			return apiKey;
 		},
 	} satisfies InternalJungleScoutPlugin;
 }
 
-export type {
-	ExampleEvent,
-	JungleScoutWebhookOutputs,
-} from './webhooks/types';
+export default junglescout;
 
 export type {
+	HistoricalSearchVolumeInput,
+	HistoricalSearchVolumeResponse,
 	JungleScoutEndpointInputs,
 	JungleScoutEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	JungleScoutMarketplace,
+	KeywordsByAsinInput,
+	KeywordsByAsinResponse,
+	KeywordsByKeywordInput,
+	KeywordsByKeywordResponse,
+	ProductDatabaseQueryInput,
+	ProductDatabaseQueryResponse,
+	SalesEstimatesQueryInput,
+	SalesEstimatesQueryResponse,
+	ShareOfVoiceInput,
+	ShareOfVoiceResponse,
 } from './endpoints/types';
