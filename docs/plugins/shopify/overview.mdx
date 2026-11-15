@@ -6,33 +6,34 @@ description: "Read and manage products, variants, inventory, collections, orders
 
 Use **Shopify** through Corsair: one client, typed API calls, and incoming webhooks.
 
-Shopify needs two credentials per store: an Admin API access token and the
-store's `*.myshopify.com` domain. Both are stored on the account:
-`pnpm corsair setup --plugin=shopify --tenant=acme api_key=<token> shop_domain=<store>.myshopify.com`,
-or pass them as `key` and `shopDomain` in the plugin options. A token without
-a domain fails before the call, because every request URL is built from it.
+Connecting a store asks for its `*.myshopify.com` domain plus one of two
+credentials, all stored on the account:
 
-New apps are created in the Dev Dashboard at dev.shopify.com, not in the store
-admin: create the app there, add a version with the scopes the operations you
-call need (`read_products`, `write_products`, `read_orders`, `write_orders`,
-`read_customers`, `write_customers`, `read_inventory`, `write_inventory`),
-release it, and install it on the store. There are then two ways to get a
-token:
+- **Client ID and Client secret** of a Dev Dashboard app (every app created
+  since January 2026). The plugin exchanges them for an Admin API token with
+  the client credentials grant, keeps the token with its expiry, renews it
+  five minutes before Shopify's 24-hour limit, and renews once more if
+  Shopify rejects it early with a 401. Nothing has to be replaced by hand:
+  `pnpm corsair setup --plugin=shopify --tenant=acme shop_domain=<store>.myshopify.com client_id=<id> client_secret=<secret>`.
+- **Admin API access token** (`shpat_…`) from an app made with the old
+  admin-created custom app flow. Those tokens do not expire:
+  `pnpm corsair setup --plugin=shopify --tenant=acme api_key=<token> shop_domain=<store>.myshopify.com`.
+  A token and domain can also be passed as `key` and `shopDomain` in the
+  plugin options.
 
-- A token issued before January 2026 by the old admin-created custom app flow
-  still works, and so does any app already installed. Copy it from the app's
-  API credentials once; this is the simplest path for a single store.
-- For a new app, use the client credentials grant: copy the Client ID and
-  Client secret from the app's Settings, then exchange them for a token at
-  `POST https://<store>.myshopify.com/admin/oauth/access_token` with
-  `grant_type=client_credentials`. The token lasts 24 hours. This grant only
-  works when the app and the store belong to the same organisation in the Dev
-  Dashboard, so create the store from the Dev Dashboard's Dev stores page if
-  the exchange answers `shop_not_permitted`, and install the app on the store
-  first (the exchange answers `app_not_installed` until you do).
+When the client ID and secret are set they win: the API key slot then holds
+the token the plugin minted. A token or app without a domain fails before the
+call, because every request URL is built from it.
 
-The plugin stores the token it is given and does not renew it, so a token from
-the client credentials grant has to be replaced once a day.
+To make a Dev Dashboard app, open dev.shopify.com, create the app, add a
+version with the scopes the operations you call need (`read_products`,
+`write_products`, `read_orders`, `write_orders`, `read_customers`,
+`write_customers`, `read_inventory`, `write_inventory`), release it, and
+install it on the store. Copy the Client ID and Client secret from the app's
+Settings. The client credentials grant only works when the app and the store
+belong to the same organisation in the Dev Dashboard: if a call fails with
+`shop_not_permitted`, create the store from the Dev Dashboard's Dev stores
+page; `app_not_installed` means the app is not installed on the store yet.
 
 A Dev Dashboard app also needs protected customer data access before it can
 read customers. Request it in the Partner Dashboard (partners.shopify.com,
