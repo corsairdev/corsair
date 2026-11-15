@@ -19,9 +19,10 @@ export async function makeModelryRequest(
 	};
 	// The request helper must not claim a response type before schema validation.
 	return request<unknown>(config, options, {
+		// Core retries a 429 three times, honouring Retry-After (PLUGIN_PR_RULES R8).
 		rateLimitConfig: {
 			enabled: true,
-			maxRetries: 0,
+			maxRetries: 3,
 			initialRetryDelay: 1000,
 			backoffMultiplier: 2,
 			headerNames: { retryAfter: 'retry-after' },

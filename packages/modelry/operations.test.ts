@@ -291,17 +291,24 @@ it('rejects malformed provider fields', async () => {
 	);
 	await expect(api.products.get({ id: 1 })).rejects.toBeDefined();
 });
-it('does not retry a rate-limited write', async () => {
-	mock.mockResolvedValueOnce(
-		new Response(JSON.stringify({ error: 'rate limited' }), {
-			status: 429,
-			headers: { 'Content-Type': 'application/json', 'Retry-After': '1' },
-		}),
-	);
+it('retries a 429 through core, honouring Retry-After', async () => {
+	mock
+		.mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'rate limited' }), {
+				status: 429,
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '1' },
+			}),
+		)
+		.mockResolvedValueOnce(
+			new Response(JSON.stringify(one), {
+				status: 201,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
 	await expect(
 		api.products.create({ product: { title: 'Chair' } }),
-	).rejects.toBeDefined();
-	expect(mock).toHaveBeenCalledTimes(1);
+	).resolves.toEqual(one);
+	expect(mock).toHaveBeenCalledTimes(2);
 });
 it('forwards array filters with the documented bracket names', async () => {
 	mock.mockResolvedValueOnce(
