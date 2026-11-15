@@ -2491,6 +2491,14 @@
                 ]
               },
               {
+                "group": "Google Classroom",
+                "pages": [
+                  "plugins/googleclassroom/overview",
+                  "plugins/googleclassroom/api",
+                  "plugins/googleclassroom/database"
+                ]
+              },
+              {
                 "group": "Google Cloud Vision",
                 "pages": [
                   "plugins/googlecloudvision/overview",
