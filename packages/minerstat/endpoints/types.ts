@@ -12,6 +12,8 @@ const page = {
 	offset: z.number().int().optional(),
 };
 const hardwareType = z.enum(['ASIC', 'GPU', 'CPU', 'FPGA']);
+// Responses keep the documented values as hints but accept a type minerstat adds later.
+const hardwareTypeOut = z.union([hardwareType, z.string()]);
 const coin = z
 	.object({
 		slug: z.string(),
@@ -34,7 +36,7 @@ const hardware = z
 		slug: z.string(),
 		manufacturer: z.string(),
 		model: z.string(),
-		type: hardwareType,
+		type: hardwareTypeOut,
 		powerWatts: z.number().nullable(),
 		releaseDate: z.string().nullable(),
 	})
@@ -86,7 +88,7 @@ export const coins_getOutput = z
 			website: z.string().nullable(),
 			explorerUrl: z.string().nullable(),
 			consensusType: z.string().nullable(),
-			coinType: z.enum(['coin', 'pool']),
+			coinType: z.union([z.enum(['coin', 'pool']), z.string()]),
 			circulatingSupply: z.number().nullable(),
 			maxSupply: z.number().nullable(),
 		}),
@@ -124,7 +126,7 @@ export const hardware_getOutput = z
 				slug: z.string(),
 				name: z.string(),
 				manufacturer: z.string(),
-				type: hardwareType,
+				type: hardwareTypeOut,
 				defaultPowerWatts: z.number().nullable(),
 				releaseDate: z.string().nullable(),
 				specs: z.array(z.string()),
@@ -153,7 +155,7 @@ export const algorithms_getOutput = z
 						.object({
 							slug: z.string(),
 							name: z.string(),
-							type: hardwareType,
+							type: hardwareTypeOut,
 							hashrateHs: z.number(),
 							powerWatts: z.number().nullable(),
 						})
