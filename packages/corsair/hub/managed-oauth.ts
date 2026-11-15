@@ -1,4 +1,5 @@
 import { createAccountKeyManager } from '../core';
+import { AccountSelectionError, upsertAccount } from '../core/account-lookup';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
@@ -16,7 +17,8 @@ export type ManagedOAuthDeliveryErrorCode =
 	| 'invalid_corsair_instance'
 	| 'no_database'
 	| 'plugin_not_found'
-	| 'no_access_token';
+	| 'no_access_token'
+	| 'account_limit';
 
 export class ManagedOAuthDeliveryError extends Error {
 	readonly code: ManagedOAuthDeliveryErrorCode;
@@ -39,6 +41,8 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	// Provider token-body identity (Slack team, Notion workspace_id, …) the Hub
 	// forwards so the tenant-link resolver can read it. Absent = API-call class.
 	providerData?: Record<string, unknown>;
+	// Provider account identity; absent = the tenant's default account.
+	account?: { id: string; label?: string };
 };
 
 export type ProcessManagedOAuthDeliveryResult = {
@@ -60,6 +64,7 @@ export async function processManagedOAuthDelivery(
 		scope,
 		authType = 'managed',
 		providerData,
+		account,
 	} = options;
 
 	if (!accessToken.trim()) {
@@ -93,7 +98,29 @@ export async function processManagedOAuthDelivery(
 
 	await ensureCorsairProvisionedForTenant(corsair, tenantId);
 
+	let accountId: string | undefined;
+	if (account) {
+		try {
+			({ accountId } = await upsertAccount({
+				database: internal.database,
+				kek: internal.kek,
+				integrationName: pluginId,
+				tenantId,
+				identity: account,
+			}));
+		} catch (error) {
+			if (error instanceof AccountSelectionError) {
+				throw new ManagedOAuthDeliveryError(
+					error.code as 'account_limit',
+					error.message,
+				);
+			}
+			throw error;
+		}
+	}
+
 	const accountKm = createAccountKeyManager({
+		account: accountId ? { ref: accountId } : undefined,
 		authType,
 		integrationName: pluginId,
 		tenantId,
@@ -144,6 +171,7 @@ export async function processManagedOAuthDelivery(
 					link: tenantLink,
 					authType,
 					extraAccountFields,
+					accountId,
 				});
 			} catch (error) {
 				console.warn(

@@ -130,6 +130,7 @@ export type OAuthTokensTunnelPayload = {
 	// Provider token-body identity (team, workspace_id, …) forwarded so the SDK
 	// resolver can read it — secrets stripped Hub-side.
 	providerData?: Record<string, unknown>;
+	account?: { id: string; label?: string };
 };
 
 export type PermissionDecisionTunnelPayload = {
@@ -355,6 +356,7 @@ async function handleOAuthTokensTunnel(
 		scope: payload.scope,
 		authType: payload.authType,
 		providerData: payload.providerData,
+		account: payload.account,
 	});
 	return { status: 'ok' };
 }
