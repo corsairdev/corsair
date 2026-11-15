@@ -24,15 +24,15 @@ type RequestShape = {
 	sensitiveValues?: string[];
 };
 
-function operation<I, O>(config: {
+function operation<Input, ParsedInput, Output>(config: {
 	name: string;
 	method: Method;
-	path: (input: I) => string;
-	input: z.ZodType<I>;
-	output: z.ZodType<O>;
-	request: (input: I) => RequestShape;
+	path: (input: ParsedInput) => string;
+	input: z.ZodType<ParsedInput, z.ZodTypeDef, Input>;
+	output: z.ZodType<Output>;
+	request: (input: ParsedInput) => RequestShape;
 }) {
-	return async (ctx: MetaAdsContext, input: I): Promise<O> => {
+	return async (ctx: MetaAdsContext, input: Input): Promise<Output> => {
 		const parsedInput = config.input.parse(input);
 		const shape = config.request(parsedInput);
 		const response = await makeMetaAdsRequest(

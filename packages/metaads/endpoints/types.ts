@@ -855,7 +855,7 @@ export type MetaAdsEndpointInputs = {
 	creativesDelete: z.infer<typeof creativeDeleteInput>;
 	audiencesList: z.infer<typeof audienceListInput>;
 	audiencesGet: z.infer<typeof audienceGetInput>;
-	audiencesCreate: z.infer<typeof audienceCreateInput>;
+	audiencesCreate: z.input<typeof audienceCreateInput>;
 	audiencesUpdate: z.infer<typeof audienceUpdateInput>;
 	audiencesDelete: z.infer<typeof audienceDeleteInput>;
 	audiencesSessionsList: z.infer<typeof audienceSessionsListInput>;

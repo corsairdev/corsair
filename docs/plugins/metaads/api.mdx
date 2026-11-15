@@ -109,6 +109,7 @@ Meta requires access_token as a request parameter. Use a user or system-user acc
 
 
 ---
+
 ### usersList
 
 `accounts.usersList`
@@ -374,7 +375,7 @@ Change an ad name or delivery status
 **Risk:** `destructive`
 
 ```ts
-await corsair.metaads.api.ads.update({ adId: '120000000000003' });
+await corsair.metaads.api.ads.update({ adId: '120000000000003', name: 'Updated ad' });
 ```
 
 **Input**
@@ -437,7 +438,7 @@ await corsair.metaads.api.adSets.create({
 | `endTime` | `string` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
-This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values.
+Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values.
 
 
 
@@ -592,7 +593,7 @@ Change an ad set status, budget, or end time
 **Risk:** `destructive`
 
 ```ts
-await corsair.metaads.api.adSets.update({ adSetId: '120000000000002' });
+await corsair.metaads.api.adSets.update({ adSetId: '120000000000002', name: 'Updated ad set' });
 ```
 
 **Input**
@@ -641,7 +642,7 @@ await corsair.metaads.api.audiences.create({ accountId: '1234567890', name: 'Sam
 | `description` | `string` | No | — |
 | `subtype` | `CUSTOM` | No | Defaults to "CUSTOM". |
 
-Creates an empty custom audience only. Member uploads/removals are not exposed because core errors retain form data and the API may echo invalid-entry samples.
+Creates an empty CUSTOM audience. Members can be added or removed with usersAdd/usersRemove using SHA-256 email or phone hashes only, up to 10000 hashes per request; adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results.
 
 
 
@@ -917,7 +918,7 @@ await corsair.metaads.api.audiences.usersAdd({
 | `lastBatch` | `boolean` | Yes | — |
 | `estimatedTotal` | `number` | No | — |
 
-Only EMAIL_SHA256 and PHONE_SHA256 single-key records are accepted, up to 10000 per batch. Use a unique ad-account session ID and sequential batch numbers; input payloads are omitted from propagated error metadata and invalid-entry samples are stripped from results.
+Set schema to EMAIL_SHA256 or PHONE_SHA256; only single-key SHA-256 hashes are accepted, up to 10000 per batch. Use a unique ad-account session ID and sequential batch numbers; input payloads are omitted from propagated error metadata and invalid-entry samples are stripped from results.
 
 
 
@@ -957,7 +958,7 @@ await corsair.metaads.api.audiences.usersRemove({
 | `schema` | `EMAIL_SHA256 \| PHONE_SHA256` | Yes | — |
 | `hashes` | `string[]` | Yes | — |
 
-Removes up to 10000 EMAIL_SHA256 or PHONE_SHA256 hashes. Input payloads are omitted from propagated error metadata.
+Set schema to EMAIL_SHA256 or PHONE_SHA256; removes up to 10000 single-key SHA-256 hashes. Input payloads are omitted from propagated error metadata.
 
 
 
@@ -985,7 +986,11 @@ Create a campaign that can spend an ad account budget
 **Risk:** `destructive`
 
 ```ts
-await corsair.metaads.api.campaigns.create({ accountId: '1234567890', name: 'Sample campaign' });
+await corsair.metaads.api.campaigns.create({
+	accountId: '1234567890',
+	name: 'Sample campaign',
+	specialAdCategories: [],
+});
 ```
 
 **Input**
@@ -1001,7 +1006,7 @@ await corsair.metaads.api.campaigns.create({ accountId: '1234567890', name: 'Sam
 | `lifetimeBudget` | `number` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
-Campaign creation requires special_ad_categories. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units.
+Campaign creation requires objective (for example OUTCOME_TRAFFIC) and specialAdCategories (use [] when no special category applies). Meta v27's campaign-create example uses OUTCOME_TRAFFIC with an empty special_ad_categories array. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units.
 
 
 
@@ -1156,7 +1161,7 @@ Change campaign status or its budget and spend cap
 **Risk:** `destructive`
 
 ```ts
-await corsair.metaads.api.campaigns.update({ campaignId: '120000000000001' });
+await corsair.metaads.api.campaigns.update({ campaignId: '120000000000001', name: 'Updated campaign' });
 ```
 
 **Input**
@@ -1669,7 +1674,7 @@ await corsair.metaads.api.insights.enableFeature({ accountId: '1234567890' });
 | `accountId` | `string` | Yes | — |
 | `featureName` | `comscore \| impression_device \| time_of_day_viewer_tz \| frequency_value` | Yes | — |
 
-This is a one-way enable operation; Meta documents no API to disable a feature. New breakdown data can take about 24 hours to become available.
+Pass a documented featureName: comscore, impression_device, time_of_day_viewer_tz, or frequency_value. This is a one-way enable operation; Meta documents no API to disable a feature. New breakdown data can take about 24 hours to become available.
 
 
 

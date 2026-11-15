@@ -7,24 +7,24 @@ apiNotes:
   images.upload: "Accepts base64 bytes or copies an image by source account and hash. The adapter removes upload form data from propagated core errors."
   images.delete: "Only images not currently used by an ad creative can be deleted from the account library."
   campaigns.list: "Pass returned paging.cursors.after to continue; the adapter does not follow Meta's paging.next URL."
-  campaigns.create: "Campaign creation requires special_ad_categories. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units."
+  campaigns.create: "Campaign creation requires objective (for example OUTCOME_TRAFFIC) and specialAdCategories (use [] when no special category applies). Meta v27's campaign-create example uses OUTCOME_TRAFFIC with an empty special_ad_categories array. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units."
   campaigns.update: "Budget and spend-cap edits are consequential writes and aren't automatically retried."
   adSets.list: "Pass returned paging.cursors.after to continue; the adapter does not follow Meta's paging.next URL."
-  adSets.create: "This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values."
+  adSets.create: "Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values."
   ads.create: "Use an existing creative ID or an inline creative with object_story_spec. New ads enter review and can deliver after approval; this consequential write isn't automatically retried."
   creatives.create: "Use either an existing Page post ID or object_story_spec with page_id and exactly one documented content type: link_data, photo_data, video_data, text_data, or template_data. Political issue/election creatives need the documented authorizationCategory."
-  audiences.create: "Creates an empty custom audience only. Member uploads/removals are not exposed because core errors retain form data and the API may echo invalid-entry samples."
+  audiences.create: "Creates an empty CUSTOM audience. Members can be added or removed with usersAdd/usersRemove using SHA-256 email or phone hashes only, up to 10000 hashes per request; adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results."
   audiences.delete: "Deletion is permanent and ads using the audience stop; they cannot be restarted."
   audiences.sessionsList: "Reads documented upload session status fields; it does not upload audience members."
-  audiences.usersAdd: "Only EMAIL_SHA256 and PHONE_SHA256 single-key records are accepted, up to 10000 per batch. Use a unique ad-account session ID and sequential batch numbers; input payloads are omitted from propagated error metadata and invalid-entry samples are stripped from results."
-  audiences.usersRemove: "Removes up to 10000 EMAIL_SHA256 or PHONE_SHA256 hashes. Input payloads are omitted from propagated error metadata."
+  audiences.usersAdd: "Set schema to EMAIL_SHA256 or PHONE_SHA256; only single-key SHA-256 hashes are accepted, up to 10000 per batch. Use a unique ad-account session ID and sequential batch numbers; input payloads are omitted from propagated error metadata and invalid-entry samples are stripped from results."
+  audiences.usersRemove: "Set schema to EMAIL_SHA256 or PHONE_SHA256; removes up to 10000 single-key SHA-256 hashes. Input payloads are omitted from propagated error metadata."
   insights.list: "Synchronous metrics with allow-listed fields, breakdowns, filters, attribution windows, sorting, summary, and time increments. Meta may reject unsupported field/breakdown combinations."
   insights.createAsync: "Starts a non-idempotent Insights report job. Poll insights.getAsyncReport until completion, then call insights.getAsyncResults; report IDs expire after 30 days."
   insights.getAsyncReport: "Poll async_status and async_percent_completion. Failed jobs include documented error details on v25 and later."
   insights.getAsyncResults: "Fetch cursor-paginated results only after the report job completes."
   insights.listFeatures: "Lists documented account Insights features, including breakdown features."
   insights.listEnabledFeatures: "Lists enabled features; a missing feature is equivalent to disabled."
-  insights.enableFeature: "This is a one-way enable operation; Meta documents no API to disable a feature. New breakdown data can take about 24 hours to become available."
+  insights.enableFeature: "Pass a documented featureName: comscore, impression_device, time_of_day_viewer_tz, or frequency_value. This is a one-way enable operation; Meta documents no API to disable a feature. New breakdown data can take about 24 hours to become available."
 apiExamples:
   accounts.list: {}
   accounts.get:
@@ -47,8 +47,10 @@ apiExamples:
   campaigns.create:
     accountId: "1234567890"
     name: "Sample campaign"
+    specialAdCategories: []
   campaigns.update:
     campaignId: "120000000000001"
+    name: "Updated campaign"
   campaigns.delete:
     campaignId: "120000000000001"
   adSets.list:
@@ -64,6 +66,7 @@ apiExamples:
         countries: [US]
   adSets.update:
     adSetId: "120000000000002"
+    name: "Updated ad set"
   adSets.delete:
     adSetId: "120000000000002"
   ads.list:
@@ -77,6 +80,7 @@ apiExamples:
     creativeId: "120000000000004"
   ads.update:
     adId: "120000000000003"
+    name: "Updated ad"
   ads.delete:
     adId: "120000000000003"
   creatives.list:

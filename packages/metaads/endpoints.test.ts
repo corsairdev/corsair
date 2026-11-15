@@ -731,6 +731,19 @@ beforeEach(() => {
 });
 
 describe('Meta Ads operations', () => {
+	it('defaults audience subtype when callers omit it', async () => {
+		mockedRequest.mockResolvedValue(createResponse);
+
+		await Audiences.create(ctx, {
+			accountId: '123',
+			name: 'Test audience without subtype',
+		});
+
+		expect(mockedRequest.mock.calls[0]?.[2]).toMatchObject({
+			body: { name: 'Test audience without subtype', subtype: 'CUSTOM' },
+		});
+	});
+
 	it.each(cases)(
 		'$name uses the documented route and request shape',
 		async (testCase) => {
