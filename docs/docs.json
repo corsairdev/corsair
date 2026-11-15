@@ -4160,6 +4160,14 @@
                 ]
               },
               {
+                "group": "Stack Exchange",
+                "pages": [
+                  "plugins/stackexchange/overview",
+                  "plugins/stackexchange/api",
+                  "plugins/stackexchange/database"
+                ]
+              },
+              {
                 "group": "Starton",
                 "pages": [
                   "plugins/starton/overview",
