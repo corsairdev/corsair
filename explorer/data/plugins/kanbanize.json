@@ -1,0 +1,1853 @@
+{
+  "id": "kanbanize",
+  "displayName": "Kanbanize",
+  "description": "Kanban boards with Kanbanize (now Businessmap) - manage boards, workflows, columns and lanes, create and move cards with their custom fields, subtasks and comments, and read tags, users and the account's request limits.",
+  "npmPackageName": "@corsair-dev/kanbanize",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 39,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "subdomain"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kanbanize.api.boards.create",
+      "shortPath": "boards.create",
+      "description": "Create a Kanban board or an AI Canvas in a workspace; it starts with a cards workflow and an initiatives workflow",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace to create the board in."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "1 | 2",
+            "description": "`1` for a Kanban board, `2` for an AI Canvas. Defaults to `1`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ board_id: number, workspace_id?: number | null, is_archived?: 0 | 1 | null, name?: string | null, description?: string | null, type?: number | null, revision?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.boards.delete",
+      "shortPath": "boards.delete",
+      "description": "Delete a board with every card, workflow, column and lane on it; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.boards.get",
+      "shortPath": "boards.get",
+      "description": "One board with its workspace, type and revision",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ board_id: number, workspace_id?: number | null, is_archived?: 0 | 1 | null, name?: string | null, description?: string | null, type?: number | null, revision?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.boards.list",
+      "shortPath": "boards.list",
+      "description": "List boards, optionally limited to IDs, workspaces or the boards the key’s user is assigned to, with optional workflows and structure",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Only these boards."
+          },
+          {
+            "key": "workspace_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Only boards in these workspaces."
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`0` for live boards, `1` for archived ones."
+          },
+          {
+            "key": "if_assigned",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` for only the boards the key’s user is assigned to."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "(board_id | workspace_id | is_archived | name | description | type | revision)[]",
+            "description": "Return only these fields. The record’s ID is always included."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "(workflows | settings | structure | effective_cycle_time_column_ids | data_fields)[]",
+            "description": "Include these nested objects."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ board_id: number, workspace_id?: number | null, is_archived?: 0 | 1 | null, name?: string | null, description?: string | null, type?: number | null, revision?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.boards.update",
+      "shortPath": "boards.update",
+      "description": "Rename a board, change its description, or archive and restore it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` for on, `0` for off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ board_id: number, workspace_id?: number | null, is_archived?: 0 | 1 | null, name?: string | null, description?: string | null, type?: number | null, revision?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.cards.create",
+      "shortPath": "cards.create",
+      "description": "Create a card in a column and lane, with an owner, priority, deadline, tags, custom fields and subtasks, or from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "number",
+            "description": "The column the new card goes in, from `columns.list`."
+          },
+          {
+            "key": "lane_id",
+            "optional": false,
+            "type": "number",
+            "description": "The lane the new card goes in, from `lanes.list`."
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number",
+            "description": "`0` is the top."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "The card title."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "1 | 2 | 3 | 4",
+            "description": "`1` critical, `2` high, `3` average, `4` low."
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string",
+            "description": "Hexadecimal, such as `a1b2c3`."
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 with a timezone offset."
+          },
+          {
+            "key": "co_owner_ids_to_add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "watcher_ids_to_add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag_ids_to_add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "milestone_ids_to_add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number",
+            "description": "Create the card from this template."
+          },
+          {
+            "key": "custom_fields_to_add_or_update",
+            "optional": true,
+            "type": "{ field_id: number, value?: string | number | string[] | null, selected_values_to_add_or_update?: { value_id: number, position?: number }[], selected_value_ids_to_remove?: number[], other_value?: string | null, contributor_ids_to_add?: number[], contributor_ids_to_remove?: number[], vote?: 0 | 1, comment?: string | null }[]"
+          },
+          {
+            "key": "subtasks_to_add",
+            "optional": true,
+            "type": "{ description: string, owner_user_id?: number, deadline?: string }[]"
+          },
+          {
+            "key": "watch",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` to have the key’s user watch the new card."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ card_id: number, custom_id?: string | null, board_id?: number | null, workflow_id?: number | null, title?: string | null, owner_user_id?: number | null, type_id?: number | null, color?: string | null, section?: number | null, column_id?: number | null, lane_id?: number | null, last_column_id?: number | null, last_lane_id?: number | null, position?: number | null, description?: string | null, size?: number | null, priority?: number | null, deadline?: string | null, reporter?: { type?: string | null, value?: number | string | null } | null, created_at?: string | null, revision?: number | null, last_modified?: string | null, in_current_position_since?: string | null, is_blocked?: 0 | 1 | null, block_reason?: { block_type?: number | null, reason_id?: number | null, comment?: string | null } | null, finished_subtask_count?: number | null, unfinished_subtask_count?: number | null, tag_ids?: number[] | null, custom_fields?: Record<string, any>[] | null, subtasks?: Record<string, any>[] | null, linked_cards?: Record<string, any>[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.cards.delete",
+      "shortPath": "cards.delete",
+      "description": "Delete a card with its comments and subtasks; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          },
+          {
+            "key": "exceeding_reason",
+            "optional": true,
+            "type": "string",
+            "description": "Needed when deleting a card from a board that reaches a limit."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.cards.get",
+      "shortPath": "cards.get",
+      "description": "One card with its description, custom fields, subtasks and linked cards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ card_id: number, custom_id?: string | null, board_id?: number | null, workflow_id?: number | null, title?: string | null, owner_user_id?: number | null, type_id?: number | null, color?: string | null, section?: number | null, column_id?: number | null, lane_id?: number | null, last_column_id?: number | null, last_lane_id?: number | null, position?: number | null, description?: string | null, size?: number | null, priority?: number | null, deadline?: string | null, reporter?: { type?: string | null, value?: number | string | null } | null, created_at?: string | null, revision?: number | null, last_modified?: string | null, in_current_position_since?: string | null, is_blocked?: 0 | 1 | null, block_reason?: { block_type?: number | null, reason_id?: number | null, comment?: string | null } | null, finished_subtask_count?: number | null, unfinished_subtask_count?: number | null, tag_ids?: number[] | null, custom_fields?: Record<string, any>[] | null, subtasks?: Record<string, any>[] | null, linked_cards?: Record<string, any>[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.cards.list",
+      "shortPath": "cards.list",
+      "description": "Cards filtered by board, workflow, column, lane, owner, state or date, paged and with optional `expand` for custom fields, subtasks and links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "board_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "workflow_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | archived | discarded",
+            "description": "Defaults to `active`."
+          },
+          {
+            "key": "column_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "lane_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "owner_user_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "type_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "custom_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only cards with these custom IDs."
+          },
+          {
+            "key": "is_blocked",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` for on, `0` for off."
+          },
+          {
+            "key": "priorities",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "sizes",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "colors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "last_column_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "last_lane_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "version_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "archived_from_date",
+            "optional": true,
+            "type": "string",
+            "description": "Archived on or after this date, `YYYY-MM-DD`."
+          },
+          {
+            "key": "archived_to_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discarded_from_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discarded_to_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_from_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_to_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_modified_from_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_modified_to_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deadline_from_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deadline_to_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Cards per page. Defaults to 200."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these fields. The record’s ID is always included."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "(custom_fields | stickers | tag_ids | milestone_ids | co_owner_ids | watcher_ids | attachments | cover_image | checked_column_checklist_items | annotations | subtasks | linked_cards | transitions | block_times | logged_times)[]",
+            "description": "Include these nested objects."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ pagination?: { all_pages?: number | null, current_page?: number | null, results_per_page?: number | null } | null, data: { card_id: number, custom_id?: string | null, board_id?: number | null, workflow_id?: number | null, title?: string | null, owner_user_id?: number | null, type_id?: number | null, color?: string | null, section?: number | null, column_id?: number | null, lane_id?: number | null, last_column_id?: number | null, last_lane_id?: number | null, position?: number | null, description?: string | null, size?: number | null, priority?: number | null, deadline?: string | null, reporter?: { type?: string | null, value?: number | string | null } | null, created_at?: string | null, revision?: number | null, last_modified?: string | null, in_current_position_since?: string | null, is_blocked?: 0 | 1 | null, block_reason?: { block_type?: number | null, reason_id?: number | null, comment?: string | null } | null, finished_subtask_count?: number | null, unfinished_subtask_count?: number | null, tag_ids?: number[] | null, custom_fields?: Record<string, any>[] | null, subtasks?: Record<string, any>[] | null, linked_cards?: Record<string, any>[] | null }[] }"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next page while more remain; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.cards.update",
+      "shortPath": "cards.update",
+      "description": "Change a card’s fields, move it to another column or lane, add or remove tags and custom fields, or archive and discard it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          },
+          {
+            "key": "column_id",
+            "optional": true,
+            "type": "number",
+            "description": "The column the card sits in. On update, the card moves there."
+          },
+          {
+            "key": "lane_id",
+            "optional": true,
+            "type": "number",
+            "description": "The lane the card sits in. On update, the card moves there."
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number",
+            "description": "`0` is the top."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "null removes the owner."
+          },
+          {
+            "key": "type_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null",
+            "description": "null counts as a size of 1."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "1 | 2 | 3 | 4",
+            "description": "`1` critical, `2` high, `3` average, `4` low."
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string",
+            "description": "Hexadecimal, such as `a1b2c3`."
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 with a timezone offset. null removes the deadline."
+          },
+          {
+            "key": "co_owner_ids_to_add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "watcher_ids_to_add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag_ids_to_add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "milestone_ids_to_add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tag_ids_to_remove",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "milestone_ids_to_remove",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "co_owner_ids_to_remove",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "watcher_ids_to_remove",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "custom_fields_to_add_or_update",
+            "optional": true,
+            "type": "{ field_id: number, value?: string | number | string[] | null, selected_values_to_add_or_update?: { value_id: number, position?: number }[], selected_value_ids_to_remove?: number[], other_value?: string | null, contributor_ids_to_add?: number[], contributor_ids_to_remove?: number[], vote?: 0 | 1, comment?: string | null }[]"
+          },
+          {
+            "key": "custom_field_ids_to_remove",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "subtasks_to_add",
+            "optional": true,
+            "type": "{ description: string, owner_user_id?: number, deadline?: string }[]"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` archives the card."
+          },
+          {
+            "key": "is_discarded",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` discards the card."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ card_id: number, custom_id?: string | null, board_id?: number | null, workflow_id?: number | null, title?: string | null, owner_user_id?: number | null, type_id?: number | null, color?: string | null, section?: number | null, column_id?: number | null, lane_id?: number | null, last_column_id?: number | null, last_lane_id?: number | null, position?: number | null, description?: string | null, size?: number | null, priority?: number | null, deadline?: string | null, reporter?: { type?: string | null, value?: number | string | null } | null, created_at?: string | null, revision?: number | null, last_modified?: string | null, in_current_position_since?: string | null, is_blocked?: 0 | 1 | null, block_reason?: { block_type?: number | null, reason_id?: number | null, comment?: string | null } | null, finished_subtask_count?: number | null, unfinished_subtask_count?: number | null, tag_ids?: number[] | null, custom_fields?: Record<string, any>[] | null, subtasks?: Record<string, any>[] | null, linked_cards?: Record<string, any>[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.columns.create",
+      "shortPath": "columns.create",
+      "description": "Create a main column in a workflow section, or a subcolumn under another column",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": false,
+            "type": "number",
+            "description": "`0` is the leftmost."
+          },
+          {
+            "key": "workflow_id",
+            "optional": true,
+            "type": "number",
+            "description": "A main column, in a workflow. Needs `section`. Cannot be used with `parent_column_id`."
+          },
+          {
+            "key": "section",
+            "optional": true,
+            "type": "1 | 2 | 3 | 4",
+            "description": "`1` backlog, `2` requested, `3` progress, `4` done. Required with `workflow_id`."
+          },
+          {
+            "key": "parent_column_id",
+            "optional": true,
+            "type": "number",
+            "description": "A subcolumn, under this parent. Cannot be used with `workflow_id`."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string",
+            "description": "Hexadecimal, such as `a1b2c3`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ column_id: number, workflow_id?: number | null, section?: number | null, parent_column_id?: number | null, position?: number | null, name?: string | null, description?: string | null, color?: string | null, limit?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.columns.delete",
+      "shortPath": "columns.delete",
+      "description": "Delete a column and its subcolumns; cards in it are lost, so they are moved first in practice",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "number",
+            "description": "The column ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.columns.get",
+      "shortPath": "columns.get",
+      "description": "One column with its section, position and WIP limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "number",
+            "description": "The column ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ column_id: number, workflow_id?: number | null, section?: number | null, parent_column_id?: number | null, position?: number | null, name?: string | null, description?: string | null, color?: string | null, limit?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.columns.list",
+      "shortPath": "columns.list",
+      "description": "The columns on a board, including subcolumns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these fields. The record’s ID is always included."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ column_id: number, workflow_id?: number | null, section?: number | null, parent_column_id?: number | null, position?: number | null, name?: string | null, description?: string | null, color?: string | null, limit?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.columns.update",
+      "shortPath": "columns.update",
+      "description": "Rename a column, set its WIP limit, move it between sections, or reparent a subcolumn",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "number",
+            "description": "The column ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Work-in-progress limit."
+          },
+          {
+            "key": "section",
+            "optional": true,
+            "type": "1 | 2 | 3 | 4",
+            "description": "Move a main column to another section."
+          },
+          {
+            "key": "parent_column_id",
+            "optional": true,
+            "type": "number",
+            "description": "Move a subcolumn under another parent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ column_id: number, workflow_id?: number | null, section?: number | null, parent_column_id?: number | null, position?: number | null, name?: string | null, description?: string | null, color?: string | null, limit?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Add a comment to a card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ comment_id: number, type?: string | null, author?: Record<string, any> | null, text?: string | null, created_at?: string | null, last_modified?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "The comments on a card, oldest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ comment_id: number, type?: string | null, author?: Record<string, any> | null, text?: string | null, created_at?: string | null, last_modified?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.lanes.create",
+      "shortPath": "lanes.create",
+      "description": "Create a lane on a workflow, or a nested lane under another lane",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workflow_id",
+            "optional": true,
+            "type": "number",
+            "description": "A top-level lane on this workflow. Cannot be used with `parent_lane_id`."
+          },
+          {
+            "key": "parent_lane_id",
+            "optional": true,
+            "type": "number",
+            "description": "A nested lane under this one. Cannot be used with `workflow_id`."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ lane_id: number, workflow_id?: number | null, parent_lane_id?: number | null, position?: number | null, name?: string | null, description?: string | null, color?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.lanes.delete",
+      "shortPath": "lanes.delete",
+      "description": "Delete a lane with its nested lanes and any cards in them",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "lane_id",
+            "optional": false,
+            "type": "number",
+            "description": "The lane ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.lanes.get",
+      "shortPath": "lanes.get",
+      "description": "One lane on a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "lane_id",
+            "optional": false,
+            "type": "number",
+            "description": "The lane ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ lane_id: number, workflow_id?: number | null, parent_lane_id?: number | null, position?: number | null, name?: string | null, description?: string | null, color?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.lanes.list",
+      "shortPath": "lanes.list",
+      "description": "The lanes on a board, including nested ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ lane_id: number, workflow_id?: number | null, parent_lane_id?: number | null, position?: number | null, name?: string | null, description?: string | null, color?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.lanes.update",
+      "shortPath": "lanes.update",
+      "description": "Rename a lane, move it, or reparent it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "lane_id",
+            "optional": false,
+            "type": "number",
+            "description": "The lane ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_lane_id",
+            "optional": true,
+            "type": "number",
+            "description": "The lane ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ lane_id: number, workflow_id?: number | null, parent_lane_id?: number | null, position?: number | null, name?: string | null, description?: string | null, color?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.limits.get",
+      "shortPath": "limits.get",
+      "description": "The account’s hourly and minutely request ceilings, which is what a 429 is measured against",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, limit?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.me.get",
+      "shortPath": "me.get",
+      "description": "The user the API key belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ user_id: number, email?: string | null, username?: string | null, realname?: string | null, avatar?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.subtasks.create",
+      "shortPath": "subtasks.create",
+      "description": "Add a subtask to a card, with an owner and a deadline",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner_user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 with a timezone offset."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ subtask_id: number, description?: string | null, owner_user_id?: number | null, deadline?: string | null, finished_at?: string | null, position?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.subtasks.delete",
+      "shortPath": "subtasks.delete",
+      "description": "Delete a subtask from a card; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          },
+          {
+            "key": "subtask_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.subtasks.list",
+      "shortPath": "subtasks.list",
+      "description": "The subtasks of a card",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ subtask_id: number, description?: string | null, owner_user_id?: number | null, deadline?: string | null, finished_at?: string | null, position?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.subtasks.update",
+      "shortPath": "subtasks.update",
+      "description": "Change a subtask, or mark it finished or unfinished",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card_id",
+            "optional": false,
+            "type": "number",
+            "description": "The card ID, as returned by `cards.list`."
+          },
+          {
+            "key": "subtask_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_finished",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` marks the subtask done."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ subtask_id: number, description?: string | null, owner_user_id?: number | null, deadline?: string | null, finished_at?: string | null, position?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "Every tag on the account, with its availability and enabled state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tag_id: number, label?: string | null, color?: string | null, availability?: number | null, is_enabled?: 0 | 1 | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.users.list",
+      "shortPath": "users.list",
+      "description": "Every user on the account, for looking up owner and watcher IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these fields. The record’s ID is always included."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ user_id: number, username?: string | null, realname?: string | null, email?: string | null, avatar?: string | null, is_enabled?: 0 | 1 | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a URL to receive a board’s events. The plugin does not handle the deliveries itself",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The HTTP or HTTPS endpoint to notify."
+          },
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board whose events it receives."
+          },
+          {
+            "key": "is_enabled",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Defaults to `1`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ webhook_id: number, url?: string | null, is_enabled?: 0 | 1 | null, board_id?: number | null, secret?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook so its URL stops receiving events",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "Webhooks registered on the account, with their board and URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ webhook_id: number, url?: string | null, is_enabled?: 0 | 1 | null, board_id?: number | null, secret?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Point a webhook at another URL or board, or enable and disable it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "board_id",
+            "optional": true,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "is_enabled",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` for on, `0` for off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ webhook_id: number, url?: string | null, is_enabled?: 0 | 1 | null, board_id?: number | null, secret?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.workflows.create",
+      "shortPath": "workflows.create",
+      "description": "Create a cards, initiative or timeline workflow on a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "0 | 1 | 2",
+            "description": "`0` for a cards workflow, `1` for an initiative workflow, `2` for a timeline workflow."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number",
+            "description": "`0` is the topmost."
+          },
+          {
+            "key": "is_enabled",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` for on, `0` for off."
+          },
+          {
+            "key": "is_collapsible",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` for on, `0` for off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ workflow_id: number, name?: string | null, type?: number | null, position?: number | null, is_enabled?: 0 | 1 | null, is_collapsible?: 0 | 1 | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.workflows.delete",
+      "shortPath": "workflows.delete",
+      "description": "Delete a workflow with its columns, lanes and any cards in them; it cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "workflow_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workflow ID, from `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "The resource is gone."
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.workflows.get",
+      "shortPath": "workflows.get",
+      "description": "One workflow on a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "workflow_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workflow ID, from `workflows.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ workflow_id: number, name?: string | null, type?: number | null, position?: number | null, is_enabled?: 0 | 1 | null, is_collapsible?: 0 | 1 | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.workflows.list",
+      "shortPath": "workflows.list",
+      "description": "The workflows on a board, in display order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ workflow_id: number, name?: string | null, type?: number | null, position?: number | null, is_enabled?: 0 | 1 | null, is_collapsible?: 0 | 1 | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kanbanize.api.workflows.update",
+      "shortPath": "workflows.update",
+      "description": "Rename a workflow, move it, or enable and disable it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number",
+            "description": "The board ID, as returned by `boards.list`."
+          },
+          {
+            "key": "workflow_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workflow ID, from `workflows.list`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_enabled",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` for on, `0` for off."
+          },
+          {
+            "key": "is_collapsible",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "`1` for on, `0` for off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ workflow_id: number, name?: string | null, type?: number | null, position?: number | null, is_enabled?: 0 | 1 | null, is_collapsible?: 0 | 1 | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
