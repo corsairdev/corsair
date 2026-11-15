@@ -6255,5 +6255,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/polygon",
+    "dir": "packages/polygon",
+    "name": "Polygon OMS",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
