@@ -1,0 +1,160 @@
+---
+title: "Serply API reference"
+sidebarTitle: "API"
+description: "API reference for the Serply plugin in Corsair: every `serply.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Articles
+
+### search
+
+`articles.search`
+
+Search Google Scholar. An uncached success spends one Serply credit.
+
+**Risk:** `write`
+
+```ts
+await corsair.serply.api.articles.search({ q: 'bicycle' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+GET /v1/scholar. A row is stored when id is present. Author names are not stored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `articles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="articles full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  link?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### search
+
+`images.search`
+
+Search Google images. An uncached success spends one Serply credit.
+
+**Risk:** `write`
+
+```ts
+await corsair.serply.api.images.search({ q: 'bicycle', num: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `num` | `number` | No | — |
+
+GET /v1/image. A row is stored when link.href is present. The row id is that href.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  id: string,
+  src?: string,
+  alt?: string,
+  title?: string,
+  domain?: string,
+  originalSrc?: string,
+  width?: string,
+  height?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Places
+
+### search
+
+`places.search`
+
+Search Google maps. An uncached success spends one Serply credit.
+
+**Risk:** `write`
+
+```ts
+await corsair.serply.api.places.search({ q: 'bicycle' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+GET /v1/maps/search/{query}. A row is stored when place_id or data_id is present.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  latitude?: number,
+  longitude?: number,
+  rating?: number,
+  address?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

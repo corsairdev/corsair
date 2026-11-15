@@ -1,0 +1,27 @@
+displayName: Serply
+description: Search Google images, maps, and Scholar through Serply. The key is sent in X-Api-Key.
+domain: serply.io
+recommendedAuth: api_key
+overviewNote: |
+  Empty-key GET requests to /v1/image, /v1/maps/search/test, and /v1/scholar each returned HTTP 401 with detail "API key missing". A successful uncached search spends one credit. The query is not written to the event. Phone numbers and author names are not stored.
+examples:
+  read:
+    path: images.search
+    title: Search images
+    args:
+      q: bicycle
+      num: 5
+apiNotes:
+  images.search: |
+    GET /v1/image. A row is stored when link.href is present. The row id is that href.
+  places.search: |
+    GET /v1/maps/search/{query}. A row is stored when place_id or data_id is present.
+  articles.search: |
+    GET /v1/scholar. A row is stored when id is present. Author names are not stored.
+apiExamples:
+  images.search:
+    call: "{ q: 'bicycle', num: 5 }"
+  places.search:
+    call: "{ q: 'bicycle' }"
+  articles.search:
+    call: "{ q: 'bicycle' }"
