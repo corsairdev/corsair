@@ -138,11 +138,7 @@ describe('GoSquared client tests', () => {
 			expect(caught).toBeInstanceOf(ApiError);
 			const sanitized = caught as ApiError;
 			expect(sanitized.status).toBe(400);
-			expect(sanitized.request.body).toEqual({
-				apiKey: '[REDACTED]',
-				siteToken: '[REDACTED]',
-				event: 'Click',
-			});
+			expect(sanitized.request.body).toBeUndefined();
 			expect(sanitized.body).toEqual({
 				message: 'Invalid parameter',
 				apiKey: '[REDACTED]',
@@ -301,13 +297,9 @@ describe('GoSquared client tests', () => {
 			);
 
 			const sanitized = sanitizeError(apiErr) as ApiError;
-			// `unknown` because sanitized request body retains dynamic json shape.
-			const reqBody = sanitized.request.body as Record<string, unknown>;
-			expect(reqBody.person_id).toBe('[REDACTED]');
-			// `unknown` because properties object retains dynamic json shape.
-			const props = reqBody.properties as Record<string, unknown>;
-			expect(props.email).toBe('[REDACTED]');
-			expect(props.plan).toBe('pro');
+			// The whole request body is dropped: profile properties are customer data.
+			expect(sanitized.request.body).toBeUndefined();
+			expect(JSON.stringify(sanitized)).not.toContain('customer@example.com');
 
 			// `unknown` because sanitized response body retains dynamic json shape.
 			const resBody = sanitized.body as Record<string, unknown>;

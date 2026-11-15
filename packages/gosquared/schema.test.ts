@@ -83,14 +83,14 @@ describe('Gosquared schema tests', () => {
 		});
 
 		it('validates account.createSite input and output schemas', () => {
-			const input = { domain_name: 'site.example.com', name: 'My Site' };
+			const input = { url: 'https://site.example.com', name: 'My Site' };
 			expect(
 				GosquaredEndpointInputSchemas['account.createSite'].parse(input),
 			).toEqual(input);
 			// `unknown` because empty domain throws Zod validation error.
 			expect(() =>
 				GosquaredEndpointInputSchemas['account.createSite'].parse({
-					domain_name: '',
+					url: '',
 				}),
 			).toThrow();
 
@@ -305,6 +305,7 @@ describe('Gosquared schema tests', () => {
 					url: 'https://example.com/pricing',
 					title: 'Pricing Page',
 				},
+				visitor_id: 'visitor-1',
 			};
 			expect(
 				GosquaredEndpointInputSchemas['tracking.trackPageview'].parse(valid),

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GosquaredEndpoints } from '..';
-import { makeGosquaredRequest } from '../client';
+import { makeGosquaredRequest, resolveSiteToken } from '../client';
 import type { GosquaredEndpointOutputs } from './types';
 import {
 	GosquaredEndpointInputSchemas,
@@ -13,7 +13,7 @@ export const getOverview: GosquaredEndpoints['now.getOverview'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getOverview'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.minimal !== undefined) query.minimal = parsed.minimal;
 
@@ -45,7 +45,7 @@ export const getConcurrents: GosquaredEndpoints['now.getConcurrents'] = async (
 	const parsed =
 		GosquaredEndpointInputSchemas['now.getConcurrents'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 
 	const response = await makeGosquaredRequest<
@@ -75,7 +75,7 @@ export const getPages: GosquaredEndpoints['now.getPages'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getPages'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;
 
@@ -106,7 +106,7 @@ export const getSources: GosquaredEndpoints['now.getSources'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getSources'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;
 
@@ -138,7 +138,7 @@ export const getTimeSeries: GosquaredEndpoints['now.getTimeSeries'] = async (
 	const parsed =
 		GosquaredEndpointInputSchemas['now.getTimeSeries'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 
 	const response = await makeGosquaredRequest<
@@ -168,8 +168,9 @@ export const getBrowsers: GosquaredEndpoints['now.getBrowsers'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getBrowsers'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
+	if (parsed.limit !== undefined) query.limit = parsed.limit;
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['now.getBrowsers']
@@ -198,8 +199,9 @@ export const getCountries: GosquaredEndpoints['now.getCountries'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getCountries'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
+	if (parsed.limit !== undefined) query.limit = parsed.limit;
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['now.getCountries']
@@ -228,8 +230,9 @@ export const getPlatforms: GosquaredEndpoints['now.getPlatforms'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getPlatforms'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
+	if (parsed.limit !== undefined) query.limit = parsed.limit;
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['now.getPlatforms']
@@ -258,7 +261,7 @@ export const getVisitors: GosquaredEndpoints['now.getVisitors'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getVisitors'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;
 
@@ -286,8 +289,9 @@ export const getVisitors: GosquaredEndpoints['now.getVisitors'] = async (
 export const getGeo: GosquaredEndpoints['now.getGeo'] = async (ctx, input) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getGeo'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
+	if (parsed.limit !== undefined) query.limit = parsed.limit;
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['now.getGeo']
@@ -316,7 +320,7 @@ export const getCampaigns: GosquaredEndpoints['now.getCampaigns'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['now.getCampaigns'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 
 	const response = await makeGosquaredRequest<

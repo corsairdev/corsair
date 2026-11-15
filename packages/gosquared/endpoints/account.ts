@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GosquaredEndpoints } from '..';
-import { makeGosquaredRequest } from '../client';
+import { makeGosquaredRequest, resolveSiteToken } from '../client';
 import type { GosquaredEndpointOutputs } from './types';
 import {
 	GosquaredEndpointInputSchemas,
@@ -22,7 +22,6 @@ export const getSites: GosquaredEndpoints['account.getSites'] = async (
 	>('/account/v1/sites', ctx.key, {
 		method: 'GET',
 		query,
-		siteToken: ctx.options?.siteToken,
 	});
 
 	const parsedResponse =
@@ -50,7 +49,6 @@ export const createSite: GosquaredEndpoints['account.createSite'] = async (
 	>('/account/v1/sites', ctx.key, {
 		method: 'POST',
 		body: parsed,
-		siteToken: ctx.options?.siteToken,
 	});
 
 	const parsedResponse =
@@ -76,7 +74,6 @@ export const getSite: GosquaredEndpoints['account.getSite'] = async (
 		GosquaredEndpointOutputs['account.getSite']
 	>(`/account/v1/sites/${encodeURIComponent(parsed.site_token)}`, ctx.key, {
 		method: 'GET',
-		siteToken: ctx.options?.siteToken,
 	});
 
 	const parsedResponse =
@@ -97,7 +94,7 @@ export const getSharedUsers: GosquaredEndpoints['account.getSharedUsers'] =
 		const parsed =
 			GosquaredEndpointInputSchemas['account.getSharedUsers'].parse(input);
 		const query: Record<string, string | number | boolean | undefined> = {};
-		const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+		const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 		if (siteToken) {
 			query.site_token = siteToken;
 		}
@@ -130,7 +127,7 @@ export const getBlocked: GosquaredEndpoints['account.getBlocked'] = async (
 	const parsed =
 		GosquaredEndpointInputSchemas['account.getBlocked'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) {
 		query.site_token = siteToken;
 	}

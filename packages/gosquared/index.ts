@@ -36,19 +36,39 @@ import { GosquaredSchema } from './schema';
 export type GosquaredPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * The project's site token (`GSN-…`). Every Now, Trends, People, Tracking
+	 * and Chat call is scoped to one project, so a connection stores it next to
+	 * the API key; this option overrides the stored value.
+	 */
 	siteToken?: string;
 	hooks?: InternalGosquaredPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof gosquaredEndpointsNested>;
 };
 
+/**
+ * GoSquared scopes every project-level call to a site token, which the API key
+ * does not imply. Declaring `account: ['site_token']` stores it per connection
+ * and generates `ctx.keys.get_site_token()`.
+ */
+export const gosquaredAuthConfig = {
+	api_key: {
+		account: ['site_token'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type GosquaredContext = CorsairPluginContext<
 	typeof GosquaredSchema,
-	GosquaredPluginOptions
+	GosquaredPluginOptions,
+	undefined,
+	typeof gosquaredAuthConfig
 >;
 
-export type GosquaredKeyBuilderContext =
-	KeyBuilderContext<GosquaredPluginOptions>;
+export type GosquaredKeyBuilderContext = KeyBuilderContext<
+	GosquaredPluginOptions,
+	typeof gosquaredAuthConfig
+>;
 
 export type GosquaredBoundEndpoints = BindEndpoints<
 	typeof gosquaredEndpointsNested
@@ -102,6 +122,7 @@ const gosquaredEndpointsNested = {
 	people: {
 		getPeople: People.getPeople,
 		getPerson: People.getPerson,
+		deletePerson: People.deletePerson,
 		getPersonFeed: People.getPersonFeed,
 		getPersonDevices: People.getPersonDevices,
 		getSmartGroups: People.getSmartGroups,
@@ -245,6 +266,10 @@ export const gosquaredEndpointSchemas = {
 	'people.getPerson': {
 		input: GosquaredEndpointInputSchemas['people.getPerson'],
 		output: GosquaredEndpointOutputSchemas['people.getPerson'],
+	},
+	'people.deletePerson': {
+		input: GosquaredEndpointInputSchemas['people.deletePerson'],
+		output: GosquaredEndpointOutputSchemas['people.deletePerson'],
 	},
 	'people.getPersonFeed': {
 		input: GosquaredEndpointInputSchemas['people.getPersonFeed'],
@@ -442,6 +467,11 @@ export const gosquaredEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Retrieve a specific person profile by ID or email',
 	},
+	'people.deletePerson': {
+		riskLevel: 'destructive',
+		description:
+			'Permanently delete a person profile and all its data from People CRM',
+	},
 	'people.getPersonFeed': {
 		riskLevel: 'read',
 		description: 'Retrieve chronological interaction feed for a person',
@@ -519,10 +549,6 @@ export const gosquaredEndpointMeta = {
 	typeof gosquaredEndpointsNested
 >;
 
-export const gosquaredAuthConfig = {
-	api_key: {},
-} as const satisfies PluginAuthConfig;
-
 export type BaseGosquaredPlugin<T extends GosquaredPluginOptions> =
 	CorsairPlugin<
 		'gosquared',
@@ -574,6 +600,17 @@ export function gosquared<const T extends GosquaredPluginOptions>(
 			if (!ctx.keys) throw new AuthMissingError('gosquared', 'api_key');
 			const apiKey = await ctx.keys.get_api_key();
 			if (!apiKey) throw new AuthMissingError('gosquared', 'api_key');
+			// A connection without its project's site token can't make the
+			// project-scoped calls, so it counts as not connected yet.
+			const siteToken =
+				options.siteToken?.trim() || (await ctx.keys.get_site_token())?.trim();
+			if (!siteToken) {
+				throw new AuthMissingError(
+					'gosquared',
+					'site_token',
+					'[auth-missing:gosquared:site_token]: a GoSquared site token (GSN-…) is required; find it under Project Settings > General in GoSquared',
+				);
+			}
 			return apiKey;
 		},
 	} satisfies InternalGosquaredPlugin;

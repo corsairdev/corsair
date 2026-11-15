@@ -45,6 +45,8 @@ function buildCtx(options: { siteToken?: string } = {}): Ctx {
 			issue_new_dek: () => Promise.resolve('test-dek'),
 			get_api_key: () => Promise.resolve('test-api-key'),
 			set_api_key: () => Promise.resolve(),
+			get_site_token: () => Promise.resolve('GSN-STORED-SITE'),
+			set_site_token: () => Promise.resolve(),
 			get_webhook_signature: () => Promise.resolve(null),
 			set_webhook_signature: () => Promise.resolve(),
 		},
@@ -73,7 +75,6 @@ describe('GoSquared endpoints test suite', () => {
 				{
 					method: 'GET',
 					query: { presenter: 'flat' },
-					siteToken: 'GSN-DEFAULT-SITE',
 				},
 			);
 			expect(mockLogEvent).toHaveBeenCalledWith(
@@ -91,7 +92,7 @@ describe('GoSquared endpoints test suite', () => {
 			});
 
 			const res = await Account.createSite(mockCtx, {
-				domain_name: 'test.com',
+				url: 'https://test.com',
 				name: 'Test',
 			});
 			expect(res).toEqual({
@@ -103,8 +104,7 @@ describe('GoSquared endpoints test suite', () => {
 				'test-api-key',
 				{
 					method: 'POST',
-					body: { domain_name: 'test.com', name: 'Test' },
-					siteToken: 'GSN-DEFAULT-SITE',
+					body: { url: 'https://test.com', name: 'Test' },
 				},
 			);
 			expect(mockLogEvent).toHaveBeenCalledWith(
@@ -125,7 +125,6 @@ describe('GoSquared endpoints test suite', () => {
 				'test-api-key',
 				{
 					method: 'GET',
-					siteToken: 'GSN-DEFAULT-SITE',
 				},
 			);
 		});
@@ -469,8 +468,7 @@ describe('GoSquared endpoints test suite', () => {
 				{
 					method: 'GET',
 					query: {
-						sort: 'created_at',
-						order: 'asc',
+						sort: 'created_at:asc',
 						limit: 25,
 						site_token: 'GSN-DEFAULT-SITE',
 					},
@@ -656,6 +654,7 @@ describe('GoSquared endpoints test suite', () => {
 			mockMakeRequest.mockResolvedValue({ success: true });
 			await Tracking.trackPageview(mockCtx, {
 				page: { url: 'https://example.com', title: 'Home' },
+				visitor_id: 'visitor-1',
 			});
 
 			expect(mockMakeRequest).toHaveBeenCalledWith(
@@ -665,6 +664,7 @@ describe('GoSquared endpoints test suite', () => {
 					method: 'POST',
 					body: {
 						page: { url: 'https://example.com', title: 'Home' },
+						visitor_id: 'visitor-1',
 					},
 					siteToken: 'GSN-DEFAULT-SITE',
 				},

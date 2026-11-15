@@ -46,6 +46,20 @@ const SENSITIVE_FIELD_NAMES = new Set([
 export function scrubUrl(rawUrl: string): string {
 	try {
 		const parsed = new URL(rawUrl);
+		// Person and chat ids are often `email:<address>`, so a path segment that
+		// decodes to an email address is masked as well.
+		parsed.pathname = parsed.pathname
+			.split('/')
+			.map((segment) => {
+				let decoded = segment;
+				try {
+					decoded = decodeURIComponent(segment);
+				} catch {
+					// Keep a malformed segment as it is.
+				}
+				return decoded.includes('@') ? '[REDACTED]' : segment;
+			})
+			.join('/');
 		for (const [key] of parsed.searchParams) {
 			const normalized = key.toLowerCase().replace(/[-_]/g, '');
 			if (
@@ -132,10 +146,9 @@ export function sanitizeError(error: unknown): Error {
 								unknown
 							>)
 						: undefined,
-				body:
-					error.request.body !== undefined
-						? redactSensitiveData(error.request.body)
-						: undefined,
+				// Request bodies carry customer data (profile properties, chat
+				// message text, transaction items), so they are dropped entirely.
+				body: undefined,
 			},
 			{
 				status: error.status,
@@ -161,6 +174,31 @@ export function sanitizeError(error: unknown): Error {
 		return error;
 	}
 	return new GosquaredAPIError('Unknown error');
+}
+
+/**
+ * The site token for a project-scoped call: the call's own `site_token`, then
+ * the plugin option, then the one stored with the connection.
+ */
+export async function resolveSiteToken(
+	ctx: {
+		options?: { siteToken?: string };
+		keys?: { get_site_token?: () => Promise<string | null | undefined> };
+	},
+	override?: string,
+): Promise<string> {
+	const token =
+		override?.trim() ||
+		ctx.options?.siteToken?.trim() ||
+		(await ctx.keys?.get_site_token?.())?.trim();
+	if (!token) {
+		throw new AuthMissingError(
+			'gosquared',
+			'site_token',
+			'[auth-missing:gosquared:site_token]: a GoSquared site token (GSN-…) is required; find it under Project Settings > General in GoSquared',
+		);
+	}
+	return token;
 }
 
 export async function makeGosquaredRequest<T>(

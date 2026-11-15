@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GosquaredContext, GosquaredEndpoints } from '..';
-import { makeGosquaredRequest } from '../client';
+import { makeGosquaredRequest, resolveSiteToken } from '../client';
 import type { TrendsOutput, TrendsQueryInput } from './types';
 import { TrendsOutputSchema, TrendsQueryInputSchema } from './types';
 
@@ -28,7 +28,7 @@ async function fetchTrendsDimension(
 		from: parsed.from,
 		to: parsed.to,
 	};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.interval) query.interval = parsed.interval;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;

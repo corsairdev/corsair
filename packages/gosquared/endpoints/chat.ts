@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GosquaredEndpoints } from '..';
-import { makeGosquaredRequest } from '../client';
+import { makeGosquaredRequest, resolveSiteToken } from '../client';
 import type { GosquaredEndpointOutputs } from './types';
 import {
 	GosquaredEndpointInputSchemas,
@@ -13,7 +13,7 @@ export const getChats: GosquaredEndpoints['chat.getChats'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['chat.getChats'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;
 	if (parsed.from) query.from = parsed.from;
@@ -45,7 +45,7 @@ export const getChat: GosquaredEndpoints['chat.getChat'] = async (
 	input,
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['chat.getChat'].parse(input);
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['chat.getChat']
@@ -73,7 +73,7 @@ export const getChatFeed: GosquaredEndpoints['chat.getChatFeed'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['chat.getChatFeed'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;
 	if (parsed.from) query.from = parsed.from;
@@ -105,7 +105,7 @@ export const archiveChat: GosquaredEndpoints['chat.archiveChat'] = async (
 	input,
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['chat.archiveChat'].parse(input);
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['chat.archiveChat']
@@ -133,7 +133,7 @@ export const unarchiveChat: GosquaredEndpoints['chat.unarchiveChat'] = async (
 ) => {
 	const parsed =
 		GosquaredEndpointInputSchemas['chat.unarchiveChat'].parse(input);
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['chat.unarchiveChat']
@@ -160,7 +160,7 @@ export const sendMessage: GosquaredEndpoints['chat.sendMessage'] = async (
 	input,
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['chat.sendMessage'].parse(input);
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (parsed.auth) query.auth = parsed.auth;
 

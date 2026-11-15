@@ -44,8 +44,10 @@ export const GetSitesOutputSchema = z.union([
 
 export const CreateSiteInputSchema = z
 	.object({
-		domain_name: z.string().min(1),
+		// GoSquared's create-site body takes the site's address as `url`.
+		url: z.string().url(),
 		name: z.string().optional(),
+		timezone: z.string().optional(),
 	})
 	.strict();
 
@@ -170,7 +172,9 @@ export const GetPeopleInputSchema = z
 	.object({
 		site_token: z.string().optional(),
 		limit: z.union([z.number(), z.string()]).optional(),
+		// A property name, optionally with `:asc` or `:desc` (e.g. `last.seen:desc`).
 		sort: z.string().optional(),
+		// Appended to `sort` as `:<order>`; GoSquared has no separate order parameter.
 		order: z.enum(['asc', 'desc']).optional(),
 		filters: z.string().optional(),
 	})
@@ -189,6 +193,17 @@ export const GetPersonInputSchema = z
 	.strict();
 
 export const GetPersonOutputSchema = DynamicRecordSchema;
+
+export const DeletePersonInputSchema = z
+	.object({
+		person_id: z.string().min(1),
+		site_token: z.string().optional(),
+		// Also adds the profile's ids and email to GoSquared's id blacklist.
+		blacklist: z.boolean().optional(),
+	})
+	.strict();
+
+export const DeletePersonOutputSchema = SuccessResponseSchema;
 
 export const GetPersonFeedInputSchema = z
 	.object({
@@ -298,10 +313,11 @@ export const IdentifyInputSchema = z
 		properties: z
 			.object({
 				email: z.string().optional(),
-				name: z.string().optional(),
-				first_name: z.string().optional(),
-				last_name: z.string().optional(),
-				phone: z.string().optional(),
+				// GoSquared documents null for these to clear a stored value.
+				name: z.string().nullable().optional(),
+				first_name: z.string().nullable().optional(),
+				last_name: z.string().nullable().optional(),
+				phone: z.string().nullable().optional(),
 				created_at: z.string().optional(),
 				// `unknown` because company metadata has dynamic user-defined fields.
 				company: z.record(z.string(), z.unknown()).optional(),
@@ -349,7 +365,8 @@ export const TrackPageviewInputSchema = z
 			title: z.string().optional(),
 		}),
 		person_id: z.string().optional(),
-		visitor_id: z.string().optional(),
+		// Required by GoSquared for pageviews (events and properties take either id).
+		visitor_id: z.string().min(1),
 		timestamp: z.string().optional(),
 	})
 	.strict();
@@ -419,7 +436,7 @@ export const SendChatMessageInputSchema = z
 		chat_id: z.string().min(1),
 		site_token: z.string().optional(),
 		content: z.string().min(1),
-		from: z.enum(['agent', 'client']).optional(),
+		from: z.enum(['agent', 'client', 'bot']).optional(),
 		auth: z.string().optional(),
 	})
 	.strict();
@@ -460,11 +477,11 @@ export const GosquaredEndpointInputSchemas = {
 	'now.getPages': NowStandardQueryInputSchema,
 	'now.getSources': NowStandardQueryInputSchema,
 	'now.getTimeSeries': NowSimpleInputSchema,
-	'now.getBrowsers': NowSimpleInputSchema,
-	'now.getCountries': NowSimpleInputSchema,
-	'now.getPlatforms': NowSimpleInputSchema,
+	'now.getBrowsers': NowStandardQueryInputSchema,
+	'now.getCountries': NowStandardQueryInputSchema,
+	'now.getPlatforms': NowStandardQueryInputSchema,
 	'now.getVisitors': NowStandardQueryInputSchema,
-	'now.getGeo': NowSimpleInputSchema,
+	'now.getGeo': NowStandardQueryInputSchema,
 	'now.getCampaigns': NowSimpleInputSchema,
 
 	// Trends
@@ -483,6 +500,7 @@ export const GosquaredEndpointInputSchemas = {
 	// People
 	'people.getPeople': GetPeopleInputSchema,
 	'people.getPerson': GetPersonInputSchema,
+	'people.deletePerson': DeletePersonInputSchema,
 	'people.getPersonFeed': GetPersonFeedInputSchema,
 	'people.getPersonDevices': GetPersonDevicesInputSchema,
 	'people.getSmartGroups': GetSmartGroupsInputSchema,
@@ -546,6 +564,7 @@ export const GosquaredEndpointOutputSchemas = {
 	// People
 	'people.getPeople': GetPeopleOutputSchema,
 	'people.getPerson': GetPersonOutputSchema,
+	'people.deletePerson': DeletePersonOutputSchema,
 	'people.getPersonFeed': GetPersonFeedOutputSchema,
 	'people.getPersonDevices': GetPersonDevicesOutputSchema,
 	'people.getSmartGroups': GetSmartGroupsOutputSchema,

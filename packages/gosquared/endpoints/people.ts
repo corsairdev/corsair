@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GosquaredEndpoints } from '..';
-import { makeGosquaredRequest } from '../client';
+import { makeGosquaredRequest, resolveSiteToken } from '../client';
 import type { GosquaredEndpointOutputs } from './types';
 import {
 	GosquaredEndpointInputSchemas,
@@ -13,11 +13,17 @@ export const getPeople: GosquaredEndpoints['people.getPeople'] = async (
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['people.getPeople'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;
-	if (parsed.sort) query.sort = parsed.sort;
-	if (parsed.order) query.order = parsed.order;
+	// GoSquared takes the direction inside `sort` (`last.seen:desc`), so a
+	// separate `order` is folded into it rather than sent on its own.
+	if (parsed.order) {
+		const field = (parsed.sort ?? 'last.seen').replace(/:(asc|desc)$/i, '');
+		query.sort = `${field}:${parsed.order}`;
+	} else if (parsed.sort) {
+		query.sort = parsed.sort;
+	}
 	if (parsed.filters) query.filters = parsed.filters;
 
 	const response = await makeGosquaredRequest<
@@ -46,7 +52,7 @@ export const getPerson: GosquaredEndpoints['people.getPerson'] = async (
 	input,
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['people.getPerson'].parse(input);
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['people.getPerson']
@@ -68,6 +74,39 @@ export const getPerson: GosquaredEndpoints['people.getPerson'] = async (
 	return parsedResponse;
 };
 
+export const deletePerson: GosquaredEndpoints['people.deletePerson'] = async (
+	ctx,
+	input,
+) => {
+	const parsed =
+		GosquaredEndpointInputSchemas['people.deletePerson'].parse(input);
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
+	const query: Record<string, string | number | boolean | undefined> = {};
+	if (parsed.blacklist !== undefined) query.blacklist = parsed.blacklist;
+
+	const response = await makeGosquaredRequest<
+		GosquaredEndpointOutputs['people.deletePerson']
+	>(`/people/v1/people/${encodeURIComponent(parsed.person_id)}`, ctx.key, {
+		method: 'DELETE',
+		query,
+		siteToken,
+	});
+
+	const parsedResponse =
+		GosquaredEndpointOutputSchemas['people.deletePerson'].parse(
+			response ?? {},
+		);
+
+	await logEventFromContext(
+		ctx,
+		'gosquared.people.deletePerson',
+		{ success: true },
+		'completed',
+	);
+
+	return parsedResponse;
+};
+
 export const getPersonFeed: GosquaredEndpoints['people.getPersonFeed'] = async (
 	ctx,
 	input,
@@ -75,7 +114,7 @@ export const getPersonFeed: GosquaredEndpoints['people.getPersonFeed'] = async (
 	const parsed =
 		GosquaredEndpointInputSchemas['people.getPersonFeed'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;
 	if (parsed.from) query.from = parsed.from;
@@ -107,7 +146,7 @@ export const getPersonDevices: GosquaredEndpoints['people.getPersonDevices'] =
 		const parsed =
 			GosquaredEndpointInputSchemas['people.getPersonDevices'].parse(input);
 		const query: Record<string, string | number | boolean | undefined> = {};
-		const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+		const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 		if (siteToken) query.site_token = siteToken;
 		if (parsed.limit !== undefined) query.limit = parsed.limit;
 
@@ -141,7 +180,7 @@ export const getSmartGroups: GosquaredEndpoints['people.getSmartGroups'] =
 		const parsed =
 			GosquaredEndpointInputSchemas['people.getSmartGroups'].parse(input);
 		const query: Record<string, string | number | boolean | undefined> = {};
-		const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+		const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 		if (siteToken) query.site_token = siteToken;
 
 		const response = await makeGosquaredRequest<
@@ -172,7 +211,7 @@ export const getDevices: GosquaredEndpoints['people.getDevices'] = async (
 	const parsed =
 		GosquaredEndpointInputSchemas['people.getDevices'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 	if (parsed.limit !== undefined) query.limit = parsed.limit;
 
@@ -202,7 +241,7 @@ export const getDevice: GosquaredEndpoints['people.getDevice'] = async (
 	input,
 ) => {
 	const parsed = GosquaredEndpointInputSchemas['people.getDevice'].parse(input);
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 	const response = await makeGosquaredRequest<
 		GosquaredEndpointOutputs['people.getDevice']
@@ -231,7 +270,7 @@ export const getEventTypes: GosquaredEndpoints['people.getEventTypes'] = async (
 	const parsed =
 		GosquaredEndpointInputSchemas['people.getEventTypes'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 	if (siteToken) query.site_token = siteToken;
 
 	const response = await makeGosquaredRequest<
@@ -260,7 +299,7 @@ export const getPropertyTypes: GosquaredEndpoints['people.getPropertyTypes'] =
 		const parsed =
 			GosquaredEndpointInputSchemas['people.getPropertyTypes'].parse(input);
 		const query: Record<string, string | number | boolean | undefined> = {};
-		const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+		const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 		if (siteToken) query.site_token = siteToken;
 
 		const response = await makeGosquaredRequest<

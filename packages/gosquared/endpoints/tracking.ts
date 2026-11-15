@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GosquaredEndpoints } from '..';
-import { makeGosquaredRequest } from '../client';
+import { makeGosquaredRequest, resolveSiteToken } from '../client';
 import type { GosquaredEndpointOutputs } from './types';
 import {
 	GosquaredEndpointInputSchemas,
@@ -13,7 +13,7 @@ export const trackEvent: GosquaredEndpoints['tracking.trackEvent'] = async (
 ) => {
 	const parsed =
 		GosquaredEndpointInputSchemas['tracking.trackEvent'].parse(input);
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 	const { site_token: _, ...body } = parsed;
 
@@ -44,7 +44,7 @@ export const identify: GosquaredEndpoints['tracking.identify'] = async (
 ) => {
 	const parsed =
 		GosquaredEndpointInputSchemas['tracking.identify'].parse(input);
-	const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+	const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 	const { site_token: _, ...body } = parsed;
 
@@ -73,7 +73,7 @@ export const trackTransaction: GosquaredEndpoints['tracking.trackTransaction'] =
 	async (ctx, input) => {
 		const parsed =
 			GosquaredEndpointInputSchemas['tracking.trackTransaction'].parse(input);
-		const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+		const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 		const { site_token: _, ...body } = parsed;
 
@@ -104,7 +104,7 @@ export const trackPageview: GosquaredEndpoints['tracking.trackPageview'] =
 	async (ctx, input) => {
 		const parsed =
 			GosquaredEndpointInputSchemas['tracking.trackPageview'].parse(input);
-		const siteToken = parsed.site_token ?? ctx.options?.siteToken;
+		const siteToken = await resolveSiteToken(ctx, parsed.site_token);
 
 		const { site_token: _, ...body } = parsed;
 
