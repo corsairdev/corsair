@@ -129,9 +129,11 @@ async function retryDelay(milliseconds: number): Promise<void> {
 }
 
 function toBase64(bytes: Uint8Array): string {
-	let binary = '';
-	for (const byte of bytes) binary += String.fromCharCode(byte);
-	return globalThis.btoa(binary);
+	// One pass in native code; building a per-byte string for btoa took ~400 MB
+	// of memory for an 8 MiB label.
+	return Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength).toString(
+		'base64',
+	);
 }
 
 async function readBytes(response: Response): Promise<Uint8Array> {
