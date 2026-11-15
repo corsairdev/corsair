@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 const integer = z.number().int();
+// Responses are parsed leniently: MoonClerk serializes missing values as null
+// and may add statuses later, so output fields are nullable and statuses open.
 const nullableString = z.string().nullable().optional();
 const nullableInteger = integer.nullable().optional();
 const address = z
@@ -15,27 +17,28 @@ const address = z
 	.passthrough();
 const customField = z
 	.object({
-		id: integer.optional(),
-		type: z.string().optional(),
+		id: integer.nullable().optional(),
+		type: z.string().nullable().optional(),
 		response: z
 			.union([z.string(), z.number(), z.boolean(), z.null(), address])
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 const customFields = z.record(z.string(), customField);
 const paymentMethod = z
 	.object({
-		type: z.string().optional(),
-		last4: z.string().optional(),
+		type: z.string().nullable().optional(),
+		last4: z.string().nullable().optional(),
 		exp_month: nullableInteger,
 		exp_year: nullableInteger,
-		brand: z.string().optional(),
+		brand: z.string().nullable().optional(),
 	})
 	.passthrough();
 const coupon = z
 	.object({
-		code: z.string().optional(),
-		duration: z.string().optional(),
+		code: z.string().nullable().optional(),
+		duration: z.string().nullable().optional(),
 		amount_off: nullableInteger,
 		currency: nullableString,
 		percent_off: z.number().nullable().optional(),
@@ -46,34 +49,34 @@ const coupon = z
 	.passthrough();
 const discount = z
 	.object({
-		coupon: coupon.optional(),
+		coupon: coupon.nullable().optional(),
 		starts_at: nullableString,
 		ends_at: nullableString,
 	})
 	.passthrough();
 const checkout = z
 	.object({
-		amount_due: integer.optional(),
+		amount_due: integer.nullable().optional(),
 		coupon_amount: nullableInteger,
 		coupon_code: nullableString,
-		date: z.string().optional(),
-		fee: integer.optional(),
-		subtotal: integer.optional(),
-		token: z.string().optional(),
-		total: integer.optional(),
+		date: z.string().nullable().optional(),
+		fee: integer.nullable().optional(),
+		subtotal: integer.nullable().optional(),
+		token: z.string().nullable().optional(),
+		total: integer.nullable().optional(),
 		trial_period_days: nullableInteger,
 		upfront_amount: nullableInteger,
 	})
 	.passthrough();
 const plan = z
 	.object({
-		id: integer.optional(),
+		id: integer.nullable().optional(),
 		plan_reference: nullableString,
-		amount: integer.optional(),
+		amount: integer.nullable().optional(),
 		amount_description: nullableString,
-		currency: z.string().optional(),
-		interval: z.string().optional(),
-		interval_count: integer.optional(),
+		currency: z.string().nullable().optional(),
+		interval: z.string().nullable().optional(),
+		interval_count: integer.nullable().optional(),
 	})
 	.passthrough();
 const subscriptionStatus = z.enum([
@@ -87,9 +90,9 @@ const subscriptionStatus = z.enum([
 const paymentStatus = z.enum(['successful', 'refunded', 'failed']);
 const subscription = z
 	.object({
-		id: integer.optional(),
+		id: integer.nullable().optional(),
 		subscription_reference: nullableString,
-		status: subscriptionStatus.optional(),
+		status: subscriptionStatus.or(z.string()).nullable().optional(),
 		start: nullableString,
 		first_payment_attempt: nullableString,
 		next_payment_attempt: nullableString,
@@ -101,58 +104,58 @@ const subscription = z
 		expires_at: nullableString,
 		canceled_at: nullableString,
 		ended_at: nullableString,
-		plan: plan.optional(),
+		plan: plan.nullable().optional(),
 	})
 	.passthrough();
 export const MoonClerkFormSchema = z
 	.object({
-		id: integer.optional(),
-		title: z.string().optional(),
-		access_token: z.string().optional(),
-		currency: z.string().optional(),
-		payment_volume: integer.optional(),
-		successful_checkout_count: integer.optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+		id: integer.nullable().optional(),
+		title: z.string().nullable().optional(),
+		access_token: z.string().nullable().optional(),
+		currency: z.string().nullable().optional(),
+		payment_volume: integer.nullable().optional(),
+		successful_checkout_count: integer.nullable().optional(),
+		created_at: z.string().nullable().optional(),
+		updated_at: z.string().nullable().optional(),
 	})
 	.passthrough();
 export const MoonClerkCustomerSchema = z
 	.object({
-		id: integer.optional(),
-		account_balance: integer.optional(),
-		name: z.string().optional(),
-		email: z.string().optional(),
-		payment_method: paymentMethod.optional(),
+		id: integer.nullable().optional(),
+		account_balance: integer.nullable().optional(),
+		name: z.string().nullable().optional(),
+		email: z.string().nullable().optional(),
+		payment_method: paymentMethod.nullable().optional(),
 		custom_id: nullableString,
 		customer_reference: nullableString,
 		discount: discount.nullable().optional(),
-		delinquent: z.boolean().optional(),
-		management_url: z.string().optional(),
-		custom_fields: customFields.optional(),
-		form_id: integer.optional(),
-		checkout: checkout.optional(),
-		subscription: subscription.optional(),
+		delinquent: z.boolean().nullable().optional(),
+		management_url: z.string().nullable().optional(),
+		custom_fields: customFields.nullable().optional(),
+		form_id: integer.nullable().optional(),
+		checkout: checkout.nullable().optional(),
+		subscription: subscription.nullable().optional(),
 	})
 	.passthrough();
 export const MoonClerkPaymentSchema = z
 	.object({
-		id: integer.optional(),
-		date: z.string().optional(),
-		status: paymentStatus.optional(),
-		currency: z.string().optional(),
-		amount: integer.optional(),
-		fee: integer.optional(),
-		amount_refunded: integer.optional(),
+		id: integer.nullable().optional(),
+		date: z.string().nullable().optional(),
+		status: paymentStatus.or(z.string()).nullable().optional(),
+		currency: z.string().nullable().optional(),
+		amount: integer.nullable().optional(),
+		fee: integer.nullable().optional(),
+		amount_refunded: integer.nullable().optional(),
 		amount_description: nullableString,
-		name: z.string().optional(),
-		email: z.string().optional(),
-		payment_method: paymentMethod.optional(),
+		name: z.string().nullable().optional(),
+		email: z.string().nullable().optional(),
+		payment_method: paymentMethod.nullable().optional(),
 		charge_reference: nullableString,
 		customer_id: nullableInteger,
 		customer_reference: nullableString,
 		invoice_reference: nullableString,
-		custom_fields: customFields.optional(),
-		form_id: integer.optional(),
+		custom_fields: customFields.nullable().optional(),
+		form_id: integer.nullable().optional(),
 		custom_id: nullableString,
 		checkout: checkout.nullable().optional(),
 		coupon: coupon.nullable().optional(),

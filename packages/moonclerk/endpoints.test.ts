@@ -158,6 +158,33 @@ describe('MoonClerk public endpoints', () => {
 			expect(schema.output.safeParse({}).success).toBe(false);
 		}
 	});
+	it('accepts statuses and nulls the reference does not list', async () => {
+		const customer = {
+			id: 7,
+			name: null,
+			email: null,
+			payment_method: null,
+			checkout: null,
+			subscription: { id: 1, status: 'incomplete', plan: null },
+		};
+		fetchMock.mockResolvedValueOnce(json({ customer }));
+		await expect(endpoints.customers.get(ctx, { id: 7 })).resolves.toEqual({
+			customer,
+		});
+		const payment = {
+			id: 8,
+			status: 'pending',
+			payment_method: null,
+			name: null,
+			email: null,
+			custom_fields: null,
+			form_id: null,
+		};
+		fetchMock.mockResolvedValueOnce(json({ payment }));
+		await expect(endpoints.payments.get(ctx, { id: 8 })).resolves.toEqual({
+			payment,
+		});
+	});
 	it('rejects a missing key before making a request', async () => {
 		await expect(
 			endpoints.forms.list({ ...ctx, key: '' }, {}),
