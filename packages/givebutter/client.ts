@@ -3,35 +3,19 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export const GIVEBUTTER_API_BASE = 'https://api.givebutter.com';
 
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	// Core retries a 429 here, honouring Retry-After: the provider refused the request
+	// before running it, so a write is safe to resend (PLUGIN_PR_RULES R8/R9).
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
-
-export class GivebutterAPIError extends Error {
-	readonly status?: number;
-	// ApiError.body is provider-controlled JSON, so it cannot safely be narrowed before
-	// Givebutter publishes a stable error payload schema.
-	readonly body?: unknown;
-	readonly retryAfter?: number;
-
-	constructor(message: string, cause?: Error) {
-		super(message, cause ? { cause } : undefined);
-		this.name = 'GivebutterAPIError';
-		if (cause instanceof ApiError) {
-			this.status = cause.status;
-			this.body = cause.body;
-			this.retryAfter = cause.retryAfter;
-		}
-	}
-}
 
 type RequestOptions = {
 	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -40,7 +24,7 @@ type RequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
-/** Sends one documented Givebutter REST request with no automatic write retry. */
+/** Sends one documented Givebutter REST request. Core's ApiError passes through unchanged. */
 export async function makeGivebutterRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -65,14 +49,7 @@ export async function makeGivebutterRequest<T>(
 		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof GivebutterAPIError) throw error;
-		if (error instanceof Error)
-			throw new GivebutterAPIError(error.message, error);
-		throw new GivebutterAPIError('Unknown Givebutter API error');
-	}
+	return request<T>(config, requestOptions, {
+		rateLimitConfig: RATE_LIMIT_CONFIG,
+	});
 }
