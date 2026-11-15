@@ -75,7 +75,7 @@ export async function makeD2LBrightspaceRequest<T>(
 		body: options.body,
 		mediaType: 'application/json',
 	};
-	return request<T>(config, requestOptions, {
+	const result = await request<T | ''>(config, requestOptions, {
 		rateLimitConfig: {
 			enabled: true,
 			maxRetries: 0,
@@ -84,4 +84,7 @@ export async function makeD2LBrightspaceRequest<T>(
 			headerNames: { retryAfter: 'Retry-After' },
 		},
 	});
+	// PUT and DELETE routes answer 200 with an empty body; a non-JSON empty
+	// body reaches us as '' rather than undefined.
+	return (result === '' ? undefined : result) as T;
 }
