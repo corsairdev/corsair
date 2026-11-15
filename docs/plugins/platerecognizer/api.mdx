@@ -1,0 +1,113 @@
+---
+title: "Plate Recognizer API reference"
+sidebarTitle: "API"
+description: "API reference for Plate Recognizer: every `platerecognizer.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Plates
+
+### read
+
+`plates.read`
+
+Read plates from a base64 image. Snapshot charges a lookup. Plate text is not stored.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.platerecognizer.api.plates.read({ upload: 'base64', regions: ['us-ca'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload` | `string` | Yes | Base64 image. Sent as the upload form field. |
+| `regions` | `string[]` | No | — |
+| `cameraId` | `string` | No | — |
+| `mmc` | `boolean` | No | — |
+
+POST /v1/plate-reader/ with form field upload set to the base64 image. Optional regions repeat, camera_id, and mmc. The response requires a results array. Each result may include plate, score, dscore, and region.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `processing_time` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `camera_id` | `string \| null` | No | — |
+| `timestamp` | `string` | No | — |
+| `version` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  plate?: string,
+  score?: number,
+  dscore?: number,
+  region?: {
+    code?: string,
+    score?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Read the current Snapshot usage period.
+
+**Risk:** `read`
+
+```ts
+await corsair.platerecognizer.api.usage.get({});
+```
+
+**Input:** _empty object_
+
+GET /v1/statistics/. Official fields are usage.month, usage.calls, usage.year, usage.resets_on, and total_calls.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usage` | `object` | No | — |
+| `total_calls` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  month?: number,
+  calls?: number,
+  year?: number,
+  resets_on?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -434,6 +434,7 @@ export const BaseProviders = [
 	'pinecone',
 	'placid',
 	'plain',
+	'platerecognizer',
 	'ploid',
 	'pointagram',
 	'polygonio',
@@ -1047,6 +1048,7 @@ export const ProviderDisplayNames = {
 	pinecone: 'Pinecone',
 	placid: 'Placid',
 	plain: 'Plain',
+	platerecognizer: 'Plate Recognizer',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
 	polygonio: 'Polygon.io',
@@ -1667,6 +1669,7 @@ export type AllProviders =
 	| 'pinecone'
 	| 'placid'
 	| 'plain'
+	| 'platerecognizer'
 	| 'ploid'
 	| 'pointagram'
 	| 'polygonio'

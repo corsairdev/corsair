@@ -1,0 +1,21 @@
+displayName: Plate Recognizer
+description: Read Snapshot usage and recognize a license plate from a base64 image. Requests send Authorization Token.
+domain: platerecognizer.com
+recommendedAuth: api_key
+overviewNote: |
+  Auth is Authorization Token, not Bearer. An empty token on GET /v1/statistics/ returned HTTP 403. Plate reads spend a Snapshot lookup and are not stored, because a plate is not a stable id. Usage is stored for the documented year and month.
+examples:
+  read:
+    path: usage.get
+    title: Read usage
+    args: {}
+apiNotes:
+  usage.get: |
+    GET /v1/statistics/. Official fields are usage.month, usage.calls, usage.year, usage.resets_on, and total_calls.
+  plates.read: |
+    POST /v1/plate-reader/ with form field upload set to the base64 image. Optional regions repeat, camera_id, and mmc. The response requires a results array. Each result may include plate, score, dscore, and region.
+apiExamples:
+  usage.get:
+    call: "{}"
+  plates.read:
+    call: "{ upload: 'base64', regions: ['us-ca'] }"
