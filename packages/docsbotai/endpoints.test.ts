@@ -1,0 +1,839 @@
+import { lookup } from 'node:dns/promises';
+import { request as httpsRequest } from 'node:https';
+import { PassThrough } from 'node:stream';
+import { ApiError, request } from 'corsair/http';
+import { DocsbotaiEndpointOutputSchemas } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import type { DocsbotaiContext } from './index';
+import { docsbotai, docsbotaiEndpointSchemas } from './index';
+
+jest.mock('node:dns/promises', () => ({ lookup: jest.fn() }));
+jest.mock('node:https', () => ({ request: jest.fn() }));
+
+jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
+	request: jest.fn(),
+}));
+
+const mockRequest = request as jest.Mock;
+const ctx = { key: 'secret-key' } as DocsbotaiContext;
+const plugin = docsbotai({ key: 'secret-key' });
+const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+const ids = { teamId: 'team', botId: 'bot' };
+
+// Contract fixtures cover heterogeneous operation inputs and unparsed provider
+// responses, so their shared table cannot assume one request or result shape.
+const cases: Array<{
+	name: string;
+	call: () => Promise<unknown>;
+	method: string;
+	url: string;
+	response: unknown;
+	body?: unknown;
+	query?: unknown;
+	host?: string;
+}> = [
+	{
+		name: 'teams.list',
+		call: () => endpoints.teams.list(ctx, {}),
+		method: 'GET',
+		url: '/teams',
+		response: [{ id: 'team' }],
+	},
+	{
+		name: 'teams.get',
+		call: () => endpoints.teams.get(ctx, ids),
+		method: 'GET',
+		url: '/teams/team',
+		response: { id: 'team' },
+	},
+	{
+		name: 'teams.update',
+		call: () => endpoints.teams.update(ctx, { teamId: 'team', name: 'New' }),
+		method: 'PUT',
+		url: '/teams/team',
+		body: { name: 'New' },
+		response: { id: 'team', name: 'New' },
+	},
+	{
+		name: 'teams.listMembers',
+		call: () => endpoints.teams.listMembers(ctx, ids),
+		method: 'GET',
+		url: '/teams/team/members',
+		response: [{ uid: 'user' }],
+	},
+	{
+		name: 'bots.list',
+		call: () => endpoints.bots.list(ctx, { teamId: 'team', page: 2 }),
+		method: 'GET',
+		url: '/teams/team/bots',
+		query: { page: 2 },
+		response: [{ id: 'bot' }],
+	},
+	{
+		name: 'bots.get',
+		call: () => endpoints.bots.get(ctx, ids),
+		method: 'GET',
+		url: '/teams/team/bots/bot',
+		response: { id: 'bot' },
+	},
+	{
+		name: 'bots.create',
+		call: () => endpoints.bots.create(ctx, { teamId: 'team', name: 'Bot' }),
+		method: 'POST',
+		url: '/teams/team/bots',
+		body: { name: 'Bot' },
+		response: { id: 'bot' },
+	},
+	{
+		name: 'bots.update',
+		call: () => endpoints.bots.update(ctx, { ...ids, name: 'New' }),
+		method: 'PUT',
+		url: '/teams/team/bots/bot',
+		body: { name: 'New' },
+		response: { id: 'bot' },
+	},
+	{
+		name: 'bots.delete',
+		call: () => endpoints.bots.delete(ctx, ids),
+		method: 'DELETE',
+		url: '/teams/team/bots/bot',
+		response: { message: 'deleted' },
+	},
+	{
+		name: 'bots.stats',
+		call: () => endpoints.bots.stats(ctx, { ...ids, timeDelta: 30 }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/stats',
+		query: { timeDelta: 30 },
+		response: { totalCount: 1 },
+	},
+	{
+		name: 'bots.reports',
+		call: () => endpoints.bots.reports(ctx, { ...ids, month: '2026-01' }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/reports',
+		query: { month: '2026-01' },
+		response: { availableReports: [], report: null },
+	},
+	{
+		name: 'sources.list',
+		call: () => endpoints.sources.list(ctx, { ...ids, page: 2 }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/sources',
+		query: { page: 2 },
+		response: { sources: [], pagination: { page: 2 } },
+	},
+	{
+		name: 'sources.get',
+		call: () => endpoints.sources.get(ctx, { ...ids, sourceId: 's' }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/sources/s',
+		response: { id: 's', file: null },
+	},
+	{
+		name: 'sources.create',
+		call: () =>
+			endpoints.sources.create(ctx, {
+				...ids,
+				type: 'url',
+				url: 'https://example.com',
+			}),
+		method: 'POST',
+		url: '/teams/team/bots/bot/sources',
+		body: { type: 'url', url: 'https://example.com' },
+		response: { id: 's' },
+	},
+	{
+		name: 'sources.retry',
+		call: () => endpoints.sources.retry(ctx, { ...ids, sourceId: 's' }),
+		method: 'PUT',
+		url: '/teams/team/bots/bot/sources/s',
+		response: { id: 's' },
+	},
+	{
+		name: 'sources.delete',
+		call: () => endpoints.sources.delete(ctx, { ...ids, sourceId: 's' }),
+		method: 'DELETE',
+		url: '/teams/team/bots/bot/sources/s',
+		response: { message: 'deleted' },
+	},
+	{
+		name: 'sources.getUploadUrl',
+		call: () =>
+			endpoints.sources.getUploadUrl(ctx, { ...ids, fileName: 'file.pdf' }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/upload-url',
+		query: { fileName: 'file.pdf' },
+		response: {
+			url: 'https://storage.googleapis.com/bucket/file',
+			file: 'file.pdf',
+		},
+	},
+	{
+		name: 'questions.list',
+		call: () => endpoints.questions.list(ctx, { ...ids, page: 2 }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/questions',
+		query: { page: 2 },
+		response: { questions: [], pagination: {} },
+	},
+	{
+		name: 'questions.delete',
+		call: () => endpoints.questions.delete(ctx, { ...ids, questionId: 'q' }),
+		method: 'DELETE',
+		url: '/teams/team/bots/bot/questions/q',
+		response: { message: 'deleted' },
+	},
+	{
+		name: 'questions.rate',
+		call: () =>
+			endpoints.questions.rate(ctx, { ...ids, answerId: 'a', rating: 1 }),
+		method: 'PUT',
+		url: '/teams/team/bots/bot/rate/a',
+		body: { rating: 1 },
+		response: true,
+		host: 'chat',
+	},
+	{
+		name: 'conversations.list',
+		call: () => endpoints.conversations.list(ctx, { ...ids, page: 2 }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/conversations',
+		query: { page: 2 },
+		response: { conversations: [], pagination: {} },
+	},
+	{
+		name: 'conversations.delete',
+		call: () =>
+			endpoints.conversations.delete(ctx, { ...ids, conversationId: 'c' }),
+		method: 'DELETE',
+		url: '/teams/team/bots/bot/conversations/c',
+		response: { message: 'deleted' },
+	},
+	{
+		name: 'conversations.captureLead',
+		call: () =>
+			endpoints.conversations.captureLead(ctx, {
+				...ids,
+				conversationId: 'c',
+				metadata: { email: 'a@example.com' },
+			}),
+		method: 'POST',
+		url: '/teams/team/bots/bot/conversations/c/lead',
+		body: { metadata: { email: 'a@example.com' } },
+		response: true,
+		host: 'chat',
+	},
+	{
+		name: 'conversations.ticket',
+		call: () =>
+			endpoints.conversations.ticket(ctx, { ...ids, conversationId: 'c' }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/conversations/c/ticket',
+		response: { subject: 'Help', message: 'Please help' },
+		host: 'chat',
+	},
+	{
+		name: 'leads.list',
+		call: () => endpoints.leads.list(ctx, { ...ids, page: 2 }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/leads',
+		query: { page: 2 },
+		response: { leads: [], pagination: {} },
+	},
+	{
+		name: 'leads.delete',
+		call: () => endpoints.leads.delete(ctx, { ...ids, leadId: 'l' }),
+		method: 'DELETE',
+		url: '/teams/team/bots/bot/leads/l',
+		response: { message: 'deleted' },
+	},
+	{
+		name: 'research.list',
+		call: () => endpoints.research.list(ctx, { ...ids, page: 2 }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/research',
+		query: { page: 2 },
+		response: { jobs: [], pagination: {} },
+	},
+	{
+		name: 'search.search',
+		call: () => endpoints.search.search(ctx, { ...ids, query: 'hello' }),
+		method: 'POST',
+		url: '/teams/team/bots/bot/search',
+		body: { query: 'hello' },
+		response: [{ content: 'text' }],
+		host: 'chat',
+	},
+	{
+		name: 'webhooks.list',
+		call: () => endpoints.webhooks.list(ctx, ids),
+		method: 'GET',
+		url: '/teams/team/bots/bot/webhooks',
+		response: { webhooks: [{ id: 'hook' }] },
+	},
+	{
+		name: 'webhooks.get',
+		call: () => endpoints.webhooks.get(ctx, { ...ids, webhookId: 'hook' }),
+		method: 'GET',
+		url: '/teams/team/bots/bot/webhooks/hook',
+		response: { id: 'hook' },
+	},
+	{
+		name: 'webhooks.create',
+		call: () =>
+			endpoints.webhooks.create(ctx, {
+				...ids,
+				targetUrl: 'https://example.com/hook',
+				events: ['lead.created'],
+			}),
+		method: 'POST',
+		url: '/teams/team/bots/bot/webhooks',
+		body: { targetUrl: 'https://example.com/hook', events: ['lead.created'] },
+		response: { id: 'hook' },
+	},
+	{
+		name: 'webhooks.update',
+		call: () =>
+			endpoints.webhooks.update(ctx, {
+				...ids,
+				webhookId: 'hook',
+				status: 'active',
+			}),
+		method: 'PATCH',
+		url: '/teams/team/bots/bot/webhooks/hook',
+		body: { status: 'active' },
+		response: { id: 'hook' },
+	},
+	{
+		name: 'webhooks.delete',
+		call: () => endpoints.webhooks.delete(ctx, { ...ids, webhookId: 'hook' }),
+		method: 'DELETE',
+		url: '/teams/team/bots/bot/webhooks/hook',
+		response: { message: 'success', id: 'hook' },
+	},
+];
+
+describe('DocsBot API boundary', () => {
+	beforeEach(() => mockRequest.mockReset());
+
+	it.each(cases)(
+		'$name forwards and parses its contract',
+		async ({ call, method, url, response, body, query, host }) => {
+			mockRequest.mockResolvedValue(response);
+			expect(await call()).toEqual(response);
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.objectContaining({
+					BASE:
+						host === 'chat'
+							? 'https://api.docsbot.ai'
+							: 'https://docsbot.ai/api',
+					TOKEN: 'secret-key',
+				}),
+				expect.objectContaining({ method, url, body, query }),
+				expect.anything(),
+			);
+		},
+	);
+
+	it('keeps endpoint metadata and schemas in sync', () => {
+		const paths = Object.entries(endpoints)
+			.flatMap(([group, operations]) =>
+				Object.keys(operations).map((name) => `${group}.${name}`),
+			)
+			.sort();
+		expect(Object.keys(docsbotaiEndpointSchemas).sort()).toEqual(paths);
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(paths);
+		expect(
+			[...cases.map(({ name }) => name), 'sources.uploadFile'].sort(),
+		).toEqual(paths);
+		expect(plugin.webhooks).toEqual({});
+	});
+
+	it('marks deletes and credit-spending jobs as destructive (R8)', () => {
+		const destructive = Object.entries(plugin.endpointMeta ?? {})
+			.filter(([, meta]) => meta.riskLevel === 'destructive')
+			.map(([name]) => name)
+			.sort();
+		expect(destructive).toEqual([
+			'bots.delete',
+			'conversations.delete',
+			'conversations.ticket',
+			'leads.delete',
+			'questions.delete',
+			'sources.create',
+			'sources.delete',
+			'sources.retry',
+			'webhooks.delete',
+		]);
+		// Semantic search costs 0.1 AI credit but only returns data: a metered read.
+		expect(plugin.endpointMeta?.['search.search']?.riskLevel).toBe('read');
+	});
+
+	it('forwards pagination and parses nullable source files', async () => {
+		mockRequest.mockResolvedValue({
+			sources: [{ id: 's', file: null }],
+			pagination: { page: 2, hasMorePages: false },
+		});
+		const result = await endpoints.sources.list(ctx, {
+			...ids,
+			page: 2,
+			limit: 20,
+		});
+		expect(result.sources[0]?.file).toBeNull();
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://docsbot.ai/api',
+				TOKEN: 'secret-key',
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/teams/team/bots/bot/sources',
+				query: { page: 2, limit: 20 },
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('parses a new source with null faqs and indexedUrls (live response)', async () => {
+		// Trimmed from a live sources.create response on a free account.
+		const created = {
+			id: 'source',
+			type: 'url',
+			title: 'corsair-plugin-test',
+			url: 'https://corsair.dev/',
+			file: null,
+			faqs: null,
+			processImages: false,
+			ocr: false,
+			crawlerJS: false,
+			indexedUrls: null,
+			createdAt: '2026-11-15T01:02:41.094Z',
+			warnsList: [],
+			pageCount: 3,
+			ocrAiCredits: 0,
+			imageAiCredits: 0,
+			refreshing: false,
+			chunkCount: 25,
+			status: 'ready',
+		};
+		mockRequest.mockResolvedValue(created);
+		await expect(
+			endpoints.sources.create(ctx, {
+				...ids,
+				type: 'url',
+				url: 'https://corsair.dev',
+			}),
+		).resolves.toMatchObject({ faqs: null, indexedUrls: null });
+		await expect(
+			endpoints.sources.get(ctx, { ...ids, sourceId: 'source' }),
+		).resolves.toMatchObject({ id: 'source' });
+	});
+
+	it('parses live statistics with null daily values', async () => {
+		// Trimmed from a live bots.stats response for a new bot.
+		const stats = {
+			labels: ['11/14', '11/15'],
+			countData: [0, 0],
+			couldAnswerData: [null, null],
+			csatData: [null, null],
+			answeredRateData: [null, null],
+			totalCount: 0,
+			resolutionRate: '0',
+			totalCsat: null,
+			conversationTopicData: {},
+		};
+		mockRequest.mockResolvedValue(stats);
+		await expect(endpoints.bots.stats(ctx, ids)).resolves.toMatchObject({
+			couldAnswerData: [null, null],
+			totalCsat: null,
+		});
+	});
+
+	it('reads the webhooks envelope DocsBot returns (live response)', async () => {
+		mockRequest.mockResolvedValue({
+			webhooks: [
+				{
+					id: 'hook',
+					label: 'corsair-plugin-test',
+					targetUrl: 'https://example.com/corsair-plugin-test',
+					events: ['conversation.rated'],
+					status: 'active',
+					source: 'admin',
+					expirationDate: null,
+					lastTriggeredAt: null,
+					lastResponseStatus: null,
+					lastError: null,
+					createdAt: '2026-11-15T01:04:09.058Z',
+					updatedAt: '2026-11-15T01:04:10.370Z',
+				},
+			],
+		});
+		const result = await endpoints.webhooks.list(ctx, ids);
+		expect(result.webhooks[0]?.id).toBe('hook');
+	});
+
+	it('retries a source with a bodyless PUT', async () => {
+		mockRequest.mockResolvedValue({ id: 'source', file: null });
+		await endpoints.sources.retry(ctx, { ...ids, sourceId: 'source' });
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'PUT',
+			url: '/teams/team/bots/bot/sources/source',
+			body: undefined,
+		});
+	});
+
+	it('leaves semantic search defaults to DocsBot and uses the chat host', async () => {
+		mockRequest.mockResolvedValue([
+			{ title: null, url: null, fileId: null, page: null, content: 'text' },
+		]);
+		await endpoints.search.search(ctx, { ...ids, query: 'hello' });
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			BASE: 'https://api.docsbot.ai',
+			TOKEN: 'secret-key',
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			body: { query: 'hello' },
+		});
+	});
+
+	it('accepts legacy and paginated bot listings', async () => {
+		mockRequest.mockResolvedValueOnce([{ id: 'b' }]).mockResolvedValueOnce({
+			bots: [{ id: 'b' }],
+			totalCount: 1,
+			page: 0,
+			pageSize: 10,
+			totalPages: 1,
+		});
+		expect(await endpoints.bots.list(ctx, { teamId: 'team' })).toEqual([
+			{ id: 'b' },
+		]);
+		expect(
+			await endpoints.bots.list(ctx, { teamId: 'team', pageSize: 10 }),
+		).toMatchObject({ bots: [{ id: 'b' }] });
+	});
+
+	it('rejects unsafe path segments and missing admin credentials', async () => {
+		await expect(
+			endpoints.bots.get(ctx, { teamId: '..', botId: 'b' }),
+		).rejects.toThrow();
+		await expect(
+			endpoints.teams.list({ key: '' } as DocsbotaiContext, {}),
+		).rejects.toThrow('auth-missing');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('preserves deleted question fields and forwards non-first-page filters', async () => {
+		mockRequest.mockResolvedValue({
+			questions: [
+				{ id: 'q', deleted: true, question: null, answer: null, sources: null },
+			],
+			pagination: { page: 3 },
+		});
+		const response = await endpoints.questions.list(ctx, {
+			...ids,
+			page: 3,
+			couldAnswer: false,
+		});
+		expect(response.questions[0]).toMatchObject({
+			deleted: true,
+			question: null,
+			answer: null,
+			sources: null,
+		});
+		expect(mockRequest.mock.calls[0]?.[1].query).toEqual({
+			page: 3,
+			couldAnswer: false,
+		});
+	});
+
+	it('forwards webhook subscription fields without path identifiers', async () => {
+		mockRequest.mockResolvedValue({
+			id: 'hook',
+			targetUrl: 'https://example.com/hook',
+			events: ['lead.created'],
+			status: 'active',
+		});
+		const result = await endpoints.webhooks.create(ctx, {
+			...ids,
+			targetUrl: 'https://example.com/hook',
+			events: ['lead.created'],
+		});
+		expect(result.id).toBe('hook');
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/teams/team/bots/bot/webhooks',
+			body: { targetUrl: 'https://example.com/hook', events: ['lead.created'] },
+		});
+	});
+
+	it("leaves 429 retries to core and rethrows core's ApiError unchanged", async () => {
+		const coreError = new ApiError(
+			{
+				method: 'POST',
+				url: '/teams/team/bots',
+				body: { name: 'Bot for alice@example.com' },
+			},
+			{
+				url: 'https://docsbot.ai/api/teams/team/bots?q=alice%40example.com',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: 'rate limited' },
+			},
+			'Too Many Requests',
+			{ retryAfter: 10 },
+		);
+		mockRequest.mockRejectedValue(coreError);
+		// unknown because a rejection has no static type until inspected
+		const caught: unknown = await endpoints.bots
+			.create(ctx, { teamId: 'team', name: 'Bot' })
+			.catch((error: unknown) => error);
+		expect(caught).toBe(coreError);
+		expect(caught).toMatchObject({
+			status: 429,
+			retryAfter: 10,
+			body: { error: 'rate limited' },
+		});
+		expect(JSON.stringify(caught)).not.toContain('alice@example.com');
+		expect(JSON.stringify(caught)).not.toContain('alice%40example.com');
+		expect((caught as ApiError).url).toBe(
+			'https://docsbot.ai/api/teams/team/bots',
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(caught as Error)).toBe(true);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(mockRequest.mock.calls[0]?.[2].rateLimitConfig.maxRetries).toBe(3);
+	});
+
+	it('does not send credentials for public chat requests', async () => {
+		mockRequest.mockResolvedValue([]);
+		await endpoints.search.search({ key: '' } as DocsbotaiContext, {
+			...ids,
+			query: 'hello',
+		});
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			BASE: 'https://api.docsbot.ai',
+			TOKEN: undefined,
+		});
+	});
+
+	it('encodes allowed path segments only after validation', async () => {
+		mockRequest.mockResolvedValue({ id: 'bot' });
+		await endpoints.bots.get(ctx, { teamId: 'team %', botId: 'bot' });
+		expect(mockRequest.mock.calls[0]?.[1].url).toBe(
+			'/teams/team%20%25/bots/bot',
+		);
+	});
+
+	it('requires both statistics date-range fields', async () => {
+		await expect(
+			endpoints.bots.stats(ctx, { ...ids, startDate: '2024-06-01' }),
+		).rejects.toThrow();
+		await expect(
+			endpoints.bots.stats(ctx, { ...ids, endDate: '2024-06-30' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+		mockRequest.mockResolvedValue({});
+		await endpoints.bots.stats(ctx, {
+			...ids,
+			startDate: '2024-06-01',
+			endDate: '2024-06-30',
+		});
+		expect(mockRequest.mock.calls[0]?.[1].query).toEqual({
+			startDate: '2024-06-01',
+			endDate: '2024-06-30',
+		});
+	});
+
+	it('asks for a connection when no API key is stored', async () => {
+		const { keyBuilder } = docsbotai();
+		if (!keyBuilder) throw new Error('docsbotai has no key builder');
+		// The key builder only reads authType and keys.get_api_key.
+		const keyCtx = (key: string | null) =>
+			({
+				authType: 'api_key',
+				keys: { get_api_key: async () => key },
+			}) as unknown as Parameters<typeof keyBuilder>[0];
+		await expect(keyBuilder(keyCtx(null), 'endpoint')).rejects.toThrow(
+			'auth-missing',
+		);
+		await expect(keyBuilder(keyCtx(''), 'endpoint')).rejects.toThrow(
+			'auth-missing',
+		);
+		await expect(keyBuilder(keyCtx('stored'), 'endpoint')).resolves.toBe(
+			'stored',
+		);
+	});
+
+	describe('secure uploads', () => {
+		const url = 'https://storage.googleapis.com/bucket/object?signature=secret';
+		const dns = lookup as jest.Mock;
+		const transport = httpsRequest as jest.Mock;
+		const getUrl = async (value = url) => {
+			mockRequest.mockResolvedValueOnce({ url: value, file: 'file.pdf' });
+			return endpoints.sources.getUploadUrl(ctx, {
+				...ids,
+				fileName: 'file.pdf',
+			});
+		};
+		const upload = (uploadUrl = url, context = ctx) =>
+			endpoints.sources.uploadFile(context, {
+				uploadUrl,
+				data: new Uint8Array([0, 255, 1]),
+			});
+
+		beforeEach(() => {
+			dns.mockReset().mockResolvedValue([{ address: '8.8.8.8', family: 4 }]);
+			transport.mockReset();
+		});
+
+		it('rejects URLs not obtained for the same authenticated account', async () => {
+			await expect(upload(`${url}&modified=1`)).rejects.toThrow();
+			await getUrl();
+			await expect(
+				upload(url, { key: 'different' } as DocsbotaiContext),
+			).rejects.toThrow();
+			expect(dns).not.toHaveBeenCalled();
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it.each([
+			'http://storage.googleapis.com/bucket/file',
+			'https://localhost/file',
+			'https://127.0.0.1/file',
+			'https://[::1]/file',
+			'https://storage.googleapis.com.evil.example/file',
+			'https://user:pass@storage.googleapis.com/file',
+			'https://storage.googleapis.com:444/file',
+		])('rejects a provider response pointing to %s', async (badUrl) => {
+			await getUrl(badUrl);
+			await expect(upload(badUrl)).rejects.toThrow();
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it.each([
+			'127.0.0.1',
+			'10.0.0.1',
+			'169.254.169.254',
+			'::1',
+			'::ffff:127.0.0.1',
+		])('rejects private DNS answer %s', async (address) => {
+			await getUrl();
+			dns.mockResolvedValueOnce([
+				{ address, family: address.includes(':') ? 6 : 4 },
+			]);
+			await expect(upload()).rejects.toThrow();
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it('rejects mixed public and private answers without connecting', async () => {
+			await getUrl();
+			dns.mockResolvedValueOnce([
+				{ address: '8.8.8.8', family: 4 },
+				{ address: '10.0.0.1', family: 4 },
+			]);
+			await expect(upload()).rejects.toThrow('not public');
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it('expires approval and does not leak signed URLs on lookup errors', async () => {
+			await getUrl();
+			dns.mockRejectedValueOnce(new Error(url));
+			await expect(upload()).rejects.toThrow('Storage address lookup failed');
+			const now = jest
+				.spyOn(Date, 'now')
+				.mockReturnValue(Date.now() + 16 * 60 * 1000);
+			try {
+				await expect(upload()).rejects.toThrow('obtained from DocsBot');
+			} finally {
+				now.mockRestore();
+			}
+			expect(transport).not.toHaveBeenCalled();
+		});
+
+		it('pins a public DNS answer, uploads raw bytes, and validates void output', async () => {
+			await getUrl();
+			const output = jest.spyOn(
+				DocsbotaiEndpointOutputSchemas.uploadFile,
+				'parse',
+			);
+			let sent: Buffer | undefined;
+			transport.mockImplementation((_url, options, callback) => {
+				expect(options.lookup).toBeDefined();
+				options.lookup(
+					'storage.googleapis.com',
+					{},
+					(_error: Error | null, address: string, family: number) => {
+						expect(address).toBe('8.8.8.8');
+						expect(family).toBe(4);
+					},
+				);
+				expect(options.method).toBe('PUT');
+				expect(options.headers).toEqual({
+					'Content-Type': 'application/octet-stream',
+				});
+				expect(options.agent).toBe(false);
+				expect(options.family).toBe(4);
+				const req = new PassThrough();
+				req.on('data', (chunk) => {
+					sent = chunk;
+				});
+				req.on('finish', () => {
+					const response = new PassThrough() as PassThrough & {
+						statusCode: number;
+					};
+					response.statusCode = 200;
+					callback(response);
+					response.end();
+				});
+				return req;
+			});
+			try {
+				await expect(upload()).resolves.toBeUndefined();
+				expect(sent && Array.from(sent)).toEqual([0, 255, 1]);
+				expect(output).toHaveBeenCalledWith(undefined);
+			} finally {
+				output.mockRestore();
+			}
+		});
+
+		it('destroys a stalled upload after the idle timeout', async () => {
+			await getUrl();
+			let req: PassThrough | undefined;
+			transport.mockImplementation((_url, options) => {
+				expect(options.timeout).toBe(60_000);
+				req = new PassThrough();
+				// Storage accepts the connection, then never answers.
+				req.on('finish', () => req?.emit('timeout'));
+				return req;
+			});
+			await expect(upload()).rejects.toThrow('Storage upload timed out');
+			expect(req?.destroyed).toBe(true);
+		});
+
+		it.each([302, 403])(
+			'rejects status %s without following redirects or exposing URL',
+			async (status) => {
+				await getUrl();
+				transport.mockImplementation((_url, _options, callback) => {
+					const req = new PassThrough();
+					req.on('finish', () => {
+						const response = new PassThrough() as PassThrough & {
+							statusCode: number;
+						};
+						response.statusCode = status;
+						callback(response);
+						response.end();
+					});
+					return req;
+				});
+				await expect(upload()).rejects.toThrow(
+					`Storage upload failed (${status})`,
+				);
+				expect(transport).toHaveBeenCalledTimes(1);
+			},
+		);
+	});
+});
