@@ -1,0 +1,1605 @@
+{
+  "id": "folk",
+  "displayName": "Folk",
+  "description": "Manage people, companies, groups, interactions, notes, users, and credits with Folk's relationship management API.",
+  "npmPackageName": "@corsair-dev/folk",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 33,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "folk.api.companies.create",
+      "shortPath": "companies.create",
+      "description": "Create a new company in the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingRaised",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "lastFundingDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "foundationYear",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "employeeRange",
+            "optional": true,
+            "type": "1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10000+ | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, fundingRaised?: number | string | null, lastFundingDate?: string | null, industry?: string | null, foundationYear?: number | string | null, employeeRange?: string | null, groups?: { id: string, name?: string }[], addresses?: string[], emails?: string[], phones?: string[], urls?: string[], createdAt?: string | null, createdBy?: { id: string, fullName?: string | null, email?: string | null } | null, customFieldValues?: Record<string, Record<string, any>> }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.companies.delete",
+      "shortPath": "companies.delete",
+      "description": "Delete an existing company in the workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Retrieve an existing company by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, fundingRaised?: number | string | null, lastFundingDate?: string | null, industry?: string | null, foundationYear?: number | string | null, employeeRange?: string | null, groups?: { id: string, name?: string }[], addresses?: string[], emails?: string[], phones?: string[], urls?: string[], createdAt?: string | null, createdBy?: { id: string, fullName?: string | null, email?: string | null } | null, customFieldValues?: Record<string, Record<string, any>> }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "Retrieve a paginated list of companies in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "combinator",
+            "optional": true,
+            "type": "and | or"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, name: string, description?: string | null, fundingRaised?: number | string | null, lastFundingDate?: string | null, industry?: string | null, foundationYear?: number | string | null, employeeRange?: string | null, groups?: { id: string, name?: string }[], addresses?: string[], emails?: string[], phones?: string[], urls?: string[], createdAt?: string | null, createdBy?: { id: string, fullName?: string | null, email?: string | null } | null, customFieldValues?: Record<string, Record<string, any>> }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.companies.update",
+      "shortPath": "companies.update",
+      "description": "Update an existing company in the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingRaised",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "lastFundingDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "foundationYear",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "employeeRange",
+            "optional": true,
+            "type": "1-10 | 11-50 | 51-200 | 201-500 | 501-1000 | 1001-5000 | 5001-10000 | 10000+ | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, fundingRaised?: number | string | null, lastFundingDate?: string | null, industry?: string | null, foundationYear?: number | string | null, employeeRange?: string | null, groups?: { id: string, name?: string }[], addresses?: string[], emails?: string[], phones?: string[], urls?: string[], createdAt?: string | null, createdBy?: { id: string, fullName?: string | null, email?: string | null } | null, customFieldValues?: Record<string, Record<string, any>> }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "Retrieve credit balance for metered workspace features",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { feature: string, scope: string, used: number, limit: number | null, periodStart: string, periodEnd: string }[] }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.groupMembers.add",
+      "shortPath": "groupMembers.add",
+      "description": "Add a workspace member to a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | contributor | reader"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fullName?: string | null, email?: string | null, role: owner | admin | contributor | reader }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.groupMembers.list",
+      "shortPath": "groupMembers.list",
+      "description": "Retrieve members of a specific group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, fullName?: string | null, email?: string | null, role: owner | admin | contributor | reader }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.groupMembers.remove",
+      "shortPath": "groupMembers.remove",
+      "description": "Remove a member from a group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.groupMembers.update",
+      "shortPath": "groupMembers.update",
+      "description": "Update a member role within a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | contributor | reader"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fullName?: string | null, email?: string | null, role: owner | admin | contributor | reader }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a new group in the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": false,
+            "type": "public | private"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, visibility: public | private, createdBy?: string | null, emoji?: string | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "Retrieve a paginated list of groups in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, name: string, visibility: public | private, createdBy?: string | null, emoji?: string | null }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update an existing group in the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, visibility: public | private, createdBy?: string | null, emoji?: string | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.interactions.create",
+      "shortPath": "interactions.create",
+      "description": "Log an interaction connected to a person or company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "dateTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "activityType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, interactionType?: string, from?: { type?: string, value?: string, name?: string, picture?: string, userId?: string }, to?: { type?: string, value?: string, name?: string, picture?: string, userId?: string } | { type?: string, value?: string, name?: string, picture?: string, userId?: string }[], entity?: { id: string, entityType?: string, fullName?: string }, dateTime?: string, url?: string | null, privacyLevel?: string, title?: string, content?: string | Record<string, any>, type?: string, activityType?: string }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.interactions.delete",
+      "shortPath": "interactions.delete",
+      "description": "Delete an existing interaction",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.interactions.get",
+      "shortPath": "interactions.get",
+      "description": "Retrieve a specific past or upcoming interaction by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, interactionType?: string, from?: { type?: string, value?: string, name?: string, picture?: string, userId?: string }, to?: { type?: string, value?: string, name?: string, picture?: string, userId?: string } | { type?: string, value?: string, name?: string, picture?: string, userId?: string }[], entity?: { id: string, entityType?: string, fullName?: string }, dateTime?: string, url?: string | null, privacyLevel?: string, title?: string, content?: string | Record<string, any>, type?: string, activityType?: string }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.interactions.list",
+      "shortPath": "interactions.list",
+      "description": "Retrieve interactions linked to people or companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeframe",
+            "optional": false,
+            "type": "past | upcoming"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, interactionType?: string, from?: { type?: string, value?: string, name?: string, picture?: string, userId?: string }, to?: { type?: string, value?: string, name?: string, picture?: string, userId?: string } | { type?: string, value?: string, name?: string, picture?: string, userId?: string }[], entity?: { id: string, entityType?: string, fullName?: string }, dateTime?: string, url?: string | null, privacyLevel?: string, title?: string, content?: string | Record<string, any>, type?: string, activityType?: string }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.interactions.listPast",
+      "shortPath": "interactions.listPast",
+      "description": "Retrieve past interactions in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, interactionType?: string, from?: { type?: string, value?: string, name?: string, picture?: string, userId?: string }, to?: { type?: string, value?: string, name?: string, picture?: string, userId?: string } | { type?: string, value?: string, name?: string, picture?: string, userId?: string }[], entity?: { id: string, entityType?: string, fullName?: string }, dateTime?: string, url?: string | null, privacyLevel?: string, title?: string, content?: string | Record<string, any>, type?: string, activityType?: string }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.interactions.listUpcoming",
+      "shortPath": "interactions.listUpcoming",
+      "description": "Retrieve upcoming interactions in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, interactionType?: string, from?: { type?: string, value?: string, name?: string, picture?: string, userId?: string }, to?: { type?: string, value?: string, name?: string, picture?: string, userId?: string } | { type?: string, value?: string, name?: string, picture?: string, userId?: string }[], entity?: { id: string, entityType?: string, fullName?: string }, dateTime?: string, url?: string | null, privacyLevel?: string, title?: string, content?: string | Record<string, any>, type?: string, activityType?: string }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.interactions.update",
+      "shortPath": "interactions.update",
+      "description": "Update an existing interaction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "dateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activityType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, interactionType?: string, from?: { type?: string, value?: string, name?: string, picture?: string, userId?: string }, to?: { type?: string, value?: string, name?: string, picture?: string, userId?: string } | { type?: string, value?: string, name?: string, picture?: string, userId?: string }[], entity?: { id: string, entityType?: string, fullName?: string }, dateTime?: string, url?: string | null, privacyLevel?: string, title?: string, content?: string | Record<string, any>, type?: string, activityType?: string }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create a note linked to a person or company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "visibility",
+            "optional": false,
+            "type": "public | private"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentNote",
+            "optional": true,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, entity?: { id: string, entityType?: string, fullName?: string }, content: string, visibility: public | private, author?: { type?: string, id?: string, fullName?: string | null, email?: string | null, deleted?: boolean } | null, createdAt?: string | null, parentNote?: { id: string } | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Delete an existing note",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.notes.get",
+      "shortPath": "notes.get",
+      "description": "Retrieve a specific note by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, entity?: { id: string, entityType?: string, fullName?: string }, content: string, visibility: public | private, author?: { type?: string, id?: string, fullName?: string | null, email?: string | null, deleted?: boolean } | null, createdAt?: string | null, parentNote?: { id: string } | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "Retrieve notes in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, entity?: { id: string, entityType?: string, fullName?: string }, content: string, visibility: public | private, author?: { type?: string, id?: string, fullName?: string | null, email?: string | null, deleted?: boolean } | null, createdAt?: string | null, parentNote?: { id: string } | null }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Update an existing note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, entity?: { id: string, entityType?: string, fullName?: string }, content: string, visibility: public | private, author?: { type?: string, id?: string, fullName?: string | null, email?: string | null, deleted?: boolean } | null, createdAt?: string | null, parentNote?: { id: string } | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.people.create",
+      "shortPath": "people.create",
+      "description": "Create a new person in the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "Male | Female | Unknown | Other | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "companies",
+            "optional": true,
+            "type": "{ id?: string, name?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, firstName?: string | null, lastName?: string | null, fullName?: string | null, description?: string | null, birthday?: string | null, gender?: string | null, jobTitle?: string | null, createdAt?: string | null, createdBy?: { id: string, fullName?: string | null, email?: string | null } | null, groups?: { id: string, name?: string }[], companies?: { id?: string, name?: string }[], addresses?: string[], emails?: string[], phones?: string[], urls?: string[], customFieldValues?: Record<string, Record<string, any>>, interactionMetadata?: { user?: { approximateCount?: number, lastInteractedAt?: string | null }, workspace?: { approximateCount?: number, lastInteractedAt?: string | null, lastInteractedBy?: { id: string, fullName?: string | null, email?: string | null }[] } } | null, strongestConnection?: Record<string, { id: string, fullName?: string | null, email?: string | null }> | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.people.delete",
+      "shortPath": "people.delete",
+      "description": "Delete an existing person in the workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "personId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.people.get",
+      "shortPath": "people.get",
+      "description": "Retrieve an existing person by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "personId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, firstName?: string | null, lastName?: string | null, fullName?: string | null, description?: string | null, birthday?: string | null, gender?: string | null, jobTitle?: string | null, createdAt?: string | null, createdBy?: { id: string, fullName?: string | null, email?: string | null } | null, groups?: { id: string, name?: string }[], companies?: { id?: string, name?: string }[], addresses?: string[], emails?: string[], phones?: string[], urls?: string[], customFieldValues?: Record<string, Record<string, any>>, interactionMetadata?: { user?: { approximateCount?: number, lastInteractedAt?: string | null }, workspace?: { approximateCount?: number, lastInteractedAt?: string | null, lastInteractedBy?: { id: string, fullName?: string | null, email?: string | null }[] } } | null, strongestConnection?: Record<string, { id: string, fullName?: string | null, email?: string | null }> | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.people.list",
+      "shortPath": "people.list",
+      "description": "Retrieve a paginated list of people in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "combinator",
+            "optional": true,
+            "type": "and | or"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, firstName?: string | null, lastName?: string | null, fullName?: string | null, description?: string | null, birthday?: string | null, gender?: string | null, jobTitle?: string | null, createdAt?: string | null, createdBy?: { id: string, fullName?: string | null, email?: string | null } | null, groups?: { id: string, name?: string }[], companies?: { id?: string, name?: string }[], addresses?: string[], emails?: string[], phones?: string[], urls?: string[], customFieldValues?: Record<string, Record<string, any>>, interactionMetadata?: { user?: { approximateCount?: number, lastInteractedAt?: string | null }, workspace?: { approximateCount?: number, lastInteractedAt?: string | null, lastInteractedBy?: { id: string, fullName?: string | null, email?: string | null }[] } } | null, strongestConnection?: Record<string, { id: string, fullName?: string | null, email?: string | null }> | null }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.people.update",
+      "shortPath": "people.update",
+      "description": "Update an existing person in the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "personId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "Male | Female | Unknown | Other | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "companies",
+            "optional": true,
+            "type": "{ id?: string, name?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, firstName?: string | null, lastName?: string | null, fullName?: string | null, description?: string | null, birthday?: string | null, gender?: string | null, jobTitle?: string | null, createdAt?: string | null, createdBy?: { id: string, fullName?: string | null, email?: string | null } | null, groups?: { id: string, name?: string }[], companies?: { id?: string, name?: string }[], addresses?: string[], emails?: string[], phones?: string[], urls?: string[], customFieldValues?: Record<string, Record<string, any>>, interactionMetadata?: { user?: { approximateCount?: number, lastInteractedAt?: string | null }, workspace?: { approximateCount?: number, lastInteractedAt?: string | null, lastInteractedBy?: { id: string, fullName?: string | null, email?: string | null }[] } } | null, strongestConnection?: Record<string, { id: string, fullName?: string | null, email?: string | null }> | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.users.get",
+      "shortPath": "users.get",
+      "description": "Retrieve a specific user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fullName?: string | null, email?: string | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.users.getCurrentUser",
+      "shortPath": "users.getCurrentUser",
+      "description": "Retrieve the current authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, fullName?: string | null, email?: string | null }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "folk.api.users.list",
+      "shortPath": "users.list",
+      "description": "Retrieve users in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ items: { id: string, fullName?: string | null, email?: string | null }[], pagination: { nextLink?: string } }"
+          },
+          {
+            "key": "deprecations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

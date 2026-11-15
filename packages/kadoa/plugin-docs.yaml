@@ -1,0 +1,97 @@
+displayName: Kadoa
+description: Web data extraction with Kadoa - build and manage workflows that scrape a site on a schedule, read the extracted rows and the changes Kadoa detects between runs, and manage the schemas, variables and delivery destinations those workflows use.
+domain: kadoa.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Kadoa under Settings, General, Generate API Key. It starts with `tk-` and belongs to the whole team, so every workflow that team owns is reachable with it.
+
+  Things to know before you call:
+
+  - **A workflow is built, then run.** `workflows.create` builds one from a natural-language prompt, an existing schema, inline fields, or a published template. Kadoa takes a sample and holds it for review, so a new workflow starts in `PREVIEW`. `workflows.resume` approves the preview and makes it `ACTIVE`.
+  - **Sources must share one website.** Several URLs in one workflow have to be the same site, counting subdomains and country domains. Two unrelated sites are rejected with a 422.
+  - **Runs are asynchronous.** `workflows.run` answers at once with a `jobId` and spends credits. Read it back with `workflows.jobStatus({ workflowId, jobId })`: `IN_PROGRESS` is not final, `FINISHED` is, and `FAILED`, `NOT_SUPPORTED` and `FAILED_INSUFFICIENT_FUNDS` ended without data. The plugin declares no job metadata because reading one back needs both IDs.
+  - **Reading the rows.** `workflows.data` returns the rows of the latest published run: `pagination.totalPages` says whether another page exists, and `limit` above 0 pages. `limit: 0` streams every row in one answer and no next page exists. A workflow whose first run has not published data answers 409 `DATA_NOT_PUBLISHED`.
+  - **Paging.** `workflows.list` and `changes.list` page by offset, so they return `nextSkip` while a page comes back full; pass it back as `skip`. `workflows.history` and `workflows.data` page by number and return `nextPage`.
+  - **Deletes cannot be undone.** `workflows.delete`, `schemas.delete` and `variables.delete` are permanent. A workflow delete also removes its run history and stored data.
+  - **Secrets.** A `SECRET` variable created with a value is written once and read back without it. A `CUSTOMER_MANAGED` secret instead names a Google Secret Manager connection and a resource, and takes no value. `variables.delete` answers 409 while a secret is still bound to a connection.
+  - **Rate limits.** Kadoa answers 429 with `reason` `PIPELINE_CROWDED` when too many runs queue on the team, or `USER_RATE_LIMIT` when calls come too fast. Both are retried three times with backoff, and a real `Retry-After` is honoured. Only reads are replayed after a 5xx, because a create that failed mid-way could otherwise run twice.
+  - **Webhooks.** The plugin does not receive deliveries. Notifications are configured in Kadoa itself.
+examples:
+  read:
+    path: workflows.list
+    title: List the workflows tagged pricing
+    args:
+      tags:
+        - pricing
+      limit: 10
+  write:
+    path: workflows.run
+    title: Start a run
+    args:
+      workflowId: 7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13
+apiExamples:
+  workflows.list:
+    call: "{ state: 'ACTIVE', tags: ['pricing'], skip: 0, limit: 25 }"
+  workflows.get:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' }"
+  workflows.create:
+    call: "{ urls: ['https://acme.example/products'], name: 'Product Catalog', userPrompt: 'Collect every product name, price and stock status from the listing.', interval: 'DAILY' }"
+  workflows.updateMetadata:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', name: 'Product Catalog v2', limit: 500 }"
+  workflows.delete:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' }"
+  workflows.run:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', limit: 100 }"
+  workflows.pause:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' }"
+  workflows.resume:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' }"
+  workflows.stop:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' }"
+  workflows.schedule:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', date: '2026-12-01T06:00:00.000Z' }"
+  workflows.history:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', limit: 10 }"
+  workflows.data:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', sortBy: 'price', order: 'asc', limit: 50 }"
+  workflows.jobStatus:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13', jobId: 'a1b2c3d4' }"
+  workflows.connectors:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' }"
+  schemas.list: {}
+  schemas.get:
+    call: "{ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b5c7d9e21' }"
+  schemas.create:
+    call: "{ name: 'Product', entity: 'Product', fields: [{ name: 'title', fieldType: 'SCHEMA', dataType: 'STRING', description: 'The product name', isKey: true }] }"
+  schemas.update:
+    call: "{ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b5c7d9e21', name: 'Product Catalog' }"
+  schemas.delete:
+    call: "{ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b5c7d9e21' }"
+  changes.list:
+    call: "{ startDate: '2026-11-01', endDate: '2026-11-12', exclude: ['differences'], limit: 25 }"
+  changes.get:
+    call: "{ changeId: '9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6b5c4d' }"
+  variables.list:
+    call: "{ includeWorkflows: true }"
+  variables.get:
+    call: "{ variableId: '5d6e7f80-1a2b-4c3d-9e4f-5a6b7c8d9e01' }"
+  variables.create:
+    call: "{ key: 'region', value: 'eu-west', dataType: 'STRING' }"
+  variables.update:
+    call: "{ variableId: '5d6e7f80-1a2b-4c3d-9e4f-5a6b7c8d9e01', value: 'us-east' }"
+  variables.delete:
+    call: "{ variableId: '5d6e7f80-1a2b-4c3d-9e4f-5a6b7c8d9e01' }"
+  triggers.list:
+    call: "{ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' }"
+  locations.list: {}
+apiNotes:
+  workflows.list: 'Pages by offset. Pass `nextSkip` back as `skip`; a page that comes back short is the last one.'
+  workflows.create: 'Exactly one build source: `userPrompt`, `schemaId`, `entity` with `fields`, or `templateId`. Every URL must belong to one website, or Kadoa answers 422.'
+  workflows.run: 'Answers at once with `jobId` and spends credits. Read it back with `workflows.jobStatus`, which needs the workflow ID too.'
+  workflows.data: '`limit: 0` streams every row and returns no next page. A run that has not published data answers 409 `DATA_NOT_PUBLISHED`.'
+  workflows.resume: 'A 202 means the preview was stale, so a fresh preview run started and its `jobId` is on the answer.'
+  workflows.updateMetadata: 'The interval list here is shorter than the one `workflows.create` takes: no `TWO_HOURLY` or `FOUR_HOURLY`.'
+  variables.create: 'A `SECRET` with a value is Kadoa-managed. `CUSTOMER_MANAGED` needs `providerConnectionId` and `resourceReference` and takes no value.'
+  variables.update: 'Kadoa keeps the stored type, so `dataType` cannot change it.'
+  triggers.list: 'Only the read is wrapped: Kadoa publishes a response body for it alone, so the trigger create, update and delete routes are left out rather than guessed at.'
+  changes.list: '`exclude` drops the large arrays; `differencesCounts` still arrives.'

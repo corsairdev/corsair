@@ -479,6 +479,21 @@ Corsair doesn't snapshot data once and forget it. Every write path keeps the sam
 
 You don't build a sync layer or poll for changes. Query `corsair_entities` (or `*.db.*`) and trust that Corsair is maintaining it.
 
+## Encrypt stored data
+
+Credentials are always encrypted with your `kek`. Synced data isn't by default. Set `encryptDataAtRest: true` to encrypt entity documents and event payloads with each account's data key before they're written:
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    plugins: [slack()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+    encryptDataAtRest: true,
+});
+```
+
+With it on, every call stores or logs encrypted data, so every call needs the `kek`. A call made without one throws `CorsairKekMissingError` before anything goes out: no provider request, no approval, nothing billed. The trade-off: the stored document becomes a single encrypted field, so JSON field filters and the Postgres full-text index in your database can't see its contents.
+
 ## How to use it
 
 ### Query through Corsair
