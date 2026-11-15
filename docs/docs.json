@@ -4421,6 +4421,14 @@
                 ]
               },
               {
+                "group": "TaxJar",
+                "pages": [
+                  "plugins/taxjar/overview",
+                  "plugins/taxjar/api",
+                  "plugins/taxjar/database"
+                ]
+              },
+              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",

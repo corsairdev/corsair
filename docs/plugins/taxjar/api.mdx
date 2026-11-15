@@ -1,0 +1,1340 @@
+---
+title: "TaxJar API reference"
+sidebarTitle: "API"
+description: "API reference for the TaxJar plugin in Corsair: every `taxjar.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Addresses
+
+### validate
+
+`addresses.validate`
+
+Validate a US address and get back every match TaxJar finds, with the street and ZIP normalized
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.addresses.validate({ country: 'US', state: 'AZ', zip: '85297', city: 'Gilbert', street: '3301 South Greenfield Rd' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | Two-letter ISO country code. |
+| `state` | `string` | No | Two-letter ISO state code. |
+| `zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `city` | `string` | No | — |
+| `street` | `string` | No | The street address, which is the part validation rewrites. |
+
+Returns every match TaxJar finds, so read the first entry rather than assuming one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  zip?: string | null,
+  street?: string | null,
+  state?: string | null,
+  country?: string | null,
+  city?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### list
+
+`categories.list`
+
+List the product tax categories, whose product_tax_code values a tax calculation or line item takes
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.categories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  name?: string | null,
+  product_tax_code?: string | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create an exempt customer, whose exemption applies to later transactions that cite its customer_id
+
+**Risk:** `write`
+
+```ts
+await corsair.taxjar.api.customers.create({ customer_id: '123', exemption_type: 'wholesale', name: 'Dunder Mifflin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | Yes | The exemption kind. |
+| `exempt_regions` | `object[]` | No | The regions the exemption covers. Omit it to exempt every region. |
+| `name` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `city` | `string` | No | — |
+| `street` | `string` | No | — |
+| `customer_id` | `string` | Yes | The unique customer ID you assigned. |
+
+exemption_type is required; omitting exempt_regions exempts every region.
+
+<AccordionGroup>
+<Accordion title="exempt_regions full type">
+
+```ts
+{
+  country: string,
+  state?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  customer_id: string,
+  exemption_type?: string | null,
+  exempt_regions?: {
+    country?: string | null,
+    state?: string | null
+  }[] | null,
+  name?: string | null,
+  country?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  city?: string | null,
+  street?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Delete a customer, which removes the exemption from future transactions
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.taxjar.api.customers.delete({ customerId: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The unique customer ID you assigned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer with its exemption type and exempt regions
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.customers.get({ customerId: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The unique customer ID you assigned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  customer_id: string,
+  exemption_type?: string | null,
+  exempt_regions?: {
+    country?: string | null,
+    state?: string | null
+  }[] | null,
+  name?: string | null,
+  country?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  city?: string | null,
+  street?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List the customer IDs recorded through the API
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.customers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `string[]` | Yes | — |
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Change a customer's exemption or address
+
+**Risk:** `write`
+
+```ts
+await corsair.taxjar.api.customers.update({ customerId: '123', exemption_type: 'government' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The unique customer ID you assigned. |
+| `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | Yes | The exemption kind. |
+| `exempt_regions` | `object[]` | No | The regions the exemption covers. Omit it to exempt every region. |
+| `name` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `city` | `string` | No | — |
+| `street` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="exempt_regions full type">
+
+```ts
+{
+  country: string,
+  state?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  customer_id: string,
+  exemption_type?: string | null,
+  exempt_regions?: {
+    country?: string | null,
+    state?: string | null
+  }[] | null,
+  name?: string | null,
+  country?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  city?: string | null,
+  street?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Nexus Regions
+
+### list
+
+`nexusRegions.list`
+
+List the regions where the account has sales tax nexus
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.nexusRegions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `regions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="regions full type">
+
+```ts
+{
+  country_code?: string | null,
+  country?: string | null,
+  region_code?: string | null,
+  region?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### create
+
+`orders.create`
+
+Record an order transaction for tax reporting; shipping is required even when it is zero
+
+**Risk:** `write`
+
+```ts
+await corsair.taxjar.api.orders.create({ transaction_id: '123', transaction_date: '2026-11-15', to_country: 'US', to_zip: '90002', amount: 16.5, shipping: 1.5, sales_tax: 0.95 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_country` | `string` | No | — |
+| `from_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `from_state` | `string` | No | — |
+| `from_city` | `string` | No | — |
+| `from_street` | `string` | No | — |
+| `to_country` | `string` | Yes | The destination country. |
+| `to_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `to_state` | `string` | No | — |
+| `to_city` | `string` | No | — |
+| `to_street` | `string` | No | — |
+| `amount` | `number` | No | The order amount, excluding shipping. |
+| `shipping` | `number` | Yes | The shipping charge. TaxJar requires this field, even as 0. |
+| `customer_id` | `string` | No | The unique customer ID you assigned. |
+| `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
+| `line_items` | `object[]` | No | — |
+| `transaction_id` | `string` | Yes | The unique transaction ID you assigned. |
+| `transaction_date` | `string` | Yes | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `provider` | `string` | No | — |
+| `sales_tax` | `number` | No | The sales tax collected. |
+
+shipping is required even when it is 0; amounts in the response come back as decimal strings.
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string,
+  quantity?: number,
+  product_identifier?: string,
+  product_tax_code?: string,
+  description?: string,
+  unit_price?: number,
+  discount?: number,
+  sales_tax?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  transaction_id: string,
+  user_id?: number | null,
+  transaction_date?: string | null,
+  transaction_reference_id?: string | null,
+  provider?: string | null,
+  from_country?: string | null,
+  from_zip?: string | null,
+  from_state?: string | null,
+  from_city?: string | null,
+  from_street?: string | null,
+  to_country?: string | null,
+  to_zip?: string | null,
+  to_state?: string | null,
+  to_city?: string | null,
+  to_street?: string | null,
+  amount?: number | string | null,
+  shipping?: number | string | null,
+  sales_tax?: number | string | null,
+  customer_id?: string | null,
+  exemption_type?: string | null,
+  line_items?: {
+    id?: string | null,
+    quantity?: number | null,
+    product_identifier?: string | null,
+    product_tax_code?: string | null,
+    description?: string | null,
+    unit_price?: number | string | null,
+    discount?: number | string | null,
+    sales_tax?: number | string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`orders.delete`
+
+Delete an order transaction, which removes it from tax reporting and cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.taxjar.api.orders.delete({ transactionId: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`orders.get`
+
+Read one order transaction by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.orders.get({ transactionId: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  transaction_id: string,
+  user_id?: number | null,
+  transaction_date?: string | null,
+  transaction_reference_id?: string | null,
+  provider?: string | null,
+  from_country?: string | null,
+  from_zip?: string | null,
+  from_state?: string | null,
+  from_city?: string | null,
+  from_street?: string | null,
+  to_country?: string | null,
+  to_zip?: string | null,
+  to_state?: string | null,
+  to_city?: string | null,
+  to_street?: string | null,
+  amount?: number | string | null,
+  shipping?: number | string | null,
+  sales_tax?: number | string | null,
+  customer_id?: string | null,
+  exemption_type?: string | null,
+  line_items?: {
+    id?: string | null,
+    quantity?: number | null,
+    product_identifier?: string | null,
+    product_tax_code?: string | null,
+    description?: string | null,
+    unit_price?: number | string | null,
+    discount?: number | string | null,
+    sales_tax?: number | string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+List the order transaction IDs recorded through the API, by date or date range
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.orders.list({ from_transaction_date: '2026-11-01', to_transaction_date: '2026-11-30' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `from_transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `to_transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `provider` | `string` | No | Where the transactions were recorded. Defaults to "api". |
+
+Returns transaction IDs under the orders key, not full transactions.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `string[]` | Yes | — |
+
+
+
+---
+
+### update
+
+`orders.update`
+
+Change an order transaction; a transaction that has been filed may refuse the change
+
+**Risk:** `write`
+
+```ts
+await corsair.taxjar.api.orders.update({ transactionId: '123', amount: 17, shipping: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `from_country` | `string` | No | — |
+| `from_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `from_state` | `string` | No | — |
+| `from_city` | `string` | No | — |
+| `from_street` | `string` | No | — |
+| `to_country` | `string` | No | The destination country. |
+| `to_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `to_state` | `string` | No | — |
+| `to_city` | `string` | No | — |
+| `to_street` | `string` | No | — |
+| `amount` | `number` | No | The order amount, excluding shipping. |
+| `shipping` | `number` | No | The shipping charge. TaxJar requires this field on a create, even as 0. |
+| `customer_id` | `string` | No | The unique customer ID you assigned. |
+| `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string,
+  quantity?: number,
+  product_identifier?: string,
+  product_tax_code?: string,
+  description?: string,
+  unit_price?: number,
+  discount?: number,
+  sales_tax?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  transaction_id: string,
+  user_id?: number | null,
+  transaction_date?: string | null,
+  transaction_reference_id?: string | null,
+  provider?: string | null,
+  from_country?: string | null,
+  from_zip?: string | null,
+  from_state?: string | null,
+  from_city?: string | null,
+  from_street?: string | null,
+  to_country?: string | null,
+  to_zip?: string | null,
+  to_state?: string | null,
+  to_city?: string | null,
+  to_street?: string | null,
+  amount?: number | string | null,
+  shipping?: number | string | null,
+  sales_tax?: number | string | null,
+  customer_id?: string | null,
+  exemption_type?: string | null,
+  line_items?: {
+    id?: string | null,
+    quantity?: number | null,
+    product_identifier?: string | null,
+    product_tax_code?: string | null,
+    description?: string | null,
+    unit_price?: number | string | null,
+    discount?: number | string | null,
+    sales_tax?: number | string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Rates
+
+### get
+
+`rates.get`
+
+Read the combined and per-jurisdiction rates for a postal code, with an optional street address for rooftop accuracy
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.rates.get({ zip: '90404', state: 'CA', city: 'SANTA MONICA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zip` | `string` | Yes | The postal code to read rates for. |
+| `country` | `string` | No | Two-letter ISO country code. |
+| `state` | `string` | No | Two-letter ISO state code. |
+| `city` | `string` | No | — |
+| `street` | `string` | No | A street address, which improves rooftop accuracy. |
+
+The rate values are decimal strings such as "0.0975"; a street address improves rooftop accuracy.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rate full type">
+
+```ts
+{
+  zip?: string | null,
+  country?: string | null,
+  country_rate?: number | string | null,
+  state?: string | null,
+  state_rate?: number | string | null,
+  county?: string | null,
+  county_rate?: number | string | null,
+  city?: string | null,
+  city_rate?: number | string | null,
+  combined_district_rate?: number | string | null,
+  combined_rate?: number | string | null,
+  freight_taxable?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Refunds
+
+### create
+
+`refunds.create`
+
+Record a refund transaction, linked to its original order by transaction_reference_id
+
+**Risk:** `write`
+
+```ts
+await corsair.taxjar.api.refunds.create({ transaction_id: 'r1', transaction_reference_id: '123', transaction_date: '2026-11-16', to_country: 'US', amount: 16.5, shipping: 1.5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_country` | `string` | No | — |
+| `from_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `from_state` | `string` | No | — |
+| `from_city` | `string` | No | — |
+| `from_street` | `string` | No | — |
+| `to_country` | `string` | Yes | The destination country. |
+| `to_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `to_state` | `string` | No | — |
+| `to_city` | `string` | No | — |
+| `to_street` | `string` | No | — |
+| `amount` | `number` | No | The order amount, excluding shipping. |
+| `shipping` | `number` | Yes | The shipping charge. TaxJar requires this field, even as 0. |
+| `customer_id` | `string` | No | The unique customer ID you assigned. |
+| `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
+| `line_items` | `object[]` | No | — |
+| `transaction_id` | `string` | Yes | The unique transaction ID you assigned. |
+| `transaction_reference_id` | `string` | No | The transaction_id of the order this refund applies to. |
+| `transaction_date` | `string` | Yes | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `provider` | `string` | No | — |
+| `sales_tax` | `number` | No | — |
+
+Send transaction_reference_id with the original order transaction_id so the refund nets against it in reporting.
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string,
+  quantity?: number,
+  product_identifier?: string,
+  product_tax_code?: string,
+  description?: string,
+  unit_price?: number,
+  discount?: number,
+  sales_tax?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refund` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="refund full type">
+
+```ts
+{
+  transaction_id: string,
+  transaction_reference_id?: string | null,
+  user_id?: number | null,
+  transaction_date?: string | null,
+  provider?: string | null,
+  from_country?: string | null,
+  from_zip?: string | null,
+  from_state?: string | null,
+  from_city?: string | null,
+  from_street?: string | null,
+  to_country?: string | null,
+  to_zip?: string | null,
+  to_state?: string | null,
+  to_city?: string | null,
+  to_street?: string | null,
+  amount?: number | string | null,
+  shipping?: number | string | null,
+  sales_tax?: number | string | null,
+  line_items?: {
+    id?: string | null,
+    quantity?: number | null,
+    product_identifier?: string | null,
+    product_tax_code?: string | null,
+    description?: string | null,
+    unit_price?: number | string | null,
+    discount?: number | string | null,
+    sales_tax?: number | string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`refunds.delete`
+
+Delete a refund transaction, which removes it from tax reporting and cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.taxjar.api.refunds.delete({ transactionId: 'r1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`refunds.get`
+
+Read one refund transaction by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.refunds.get({ transactionId: 'r1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refund` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="refund full type">
+
+```ts
+{
+  transaction_id: string,
+  transaction_reference_id?: string | null,
+  user_id?: number | null,
+  transaction_date?: string | null,
+  provider?: string | null,
+  from_country?: string | null,
+  from_zip?: string | null,
+  from_state?: string | null,
+  from_city?: string | null,
+  from_street?: string | null,
+  to_country?: string | null,
+  to_zip?: string | null,
+  to_state?: string | null,
+  to_city?: string | null,
+  to_street?: string | null,
+  amount?: number | string | null,
+  shipping?: number | string | null,
+  sales_tax?: number | string | null,
+  line_items?: {
+    id?: string | null,
+    quantity?: number | null,
+    product_identifier?: string | null,
+    product_tax_code?: string | null,
+    description?: string | null,
+    unit_price?: number | string | null,
+    discount?: number | string | null,
+    sales_tax?: number | string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`refunds.list`
+
+List the refund transaction IDs recorded through the API, by date or date range
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.refunds.list({ from_transaction_date: '2026-11-01', to_transaction_date: '2026-11-30' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `from_transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `to_transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `provider` | `string` | No | — |
+
+Returns transaction IDs under the refunds key, not orders.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refunds` | `string[]` | Yes | — |
+
+
+
+---
+
+### update
+
+`refunds.update`
+
+Change a refund transaction
+
+**Risk:** `write`
+
+```ts
+await corsair.taxjar.api.refunds.update({ transactionId: 'r1', amount: 10, shipping: 1.5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionId` | `string` | Yes | The unique transaction ID you assigned. |
+| `transaction_date` | `string` | No | A date as "YYYY/MM/DD" or "YYYY-MM-DD". TaxJar documents both and accepts either. |
+| `transaction_reference_id` | `string` | No | — |
+| `from_country` | `string` | No | — |
+| `from_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `from_state` | `string` | No | — |
+| `from_city` | `string` | No | — |
+| `from_street` | `string` | No | — |
+| `to_country` | `string` | No | The destination country. |
+| `to_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `to_state` | `string` | No | — |
+| `to_city` | `string` | No | — |
+| `to_street` | `string` | No | — |
+| `amount` | `number` | No | The order amount, excluding shipping. |
+| `shipping` | `number` | No | The shipping charge. TaxJar requires this field on a create, even as 0. |
+| `customer_id` | `string` | No | The unique customer ID you assigned. |
+| `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string,
+  quantity?: number,
+  product_identifier?: string,
+  product_tax_code?: string,
+  description?: string,
+  unit_price?: number,
+  discount?: number,
+  sales_tax?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refund` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="refund full type">
+
+```ts
+{
+  transaction_id: string,
+  transaction_reference_id?: string | null,
+  user_id?: number | null,
+  transaction_date?: string | null,
+  provider?: string | null,
+  from_country?: string | null,
+  from_zip?: string | null,
+  from_state?: string | null,
+  from_city?: string | null,
+  from_street?: string | null,
+  to_country?: string | null,
+  to_zip?: string | null,
+  to_state?: string | null,
+  to_city?: string | null,
+  to_street?: string | null,
+  amount?: number | string | null,
+  shipping?: number | string | null,
+  sales_tax?: number | string | null,
+  line_items?: {
+    id?: string | null,
+    quantity?: number | null,
+    product_identifier?: string | null,
+    product_tax_code?: string | null,
+    description?: string | null,
+    unit_price?: number | string | null,
+    discount?: number | string | null,
+    sales_tax?: number | string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Summary Rates
+
+### list
+
+`summaryRates.list`
+
+List the minimum and average tax rate per region, for display rather than calculation
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.summaryRates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary_rates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summary_rates full type">
+
+```ts
+{
+  country_code?: string | null,
+  country?: string | null,
+  region_code?: string | null,
+  region?: string | null,
+  minimum_rate?: {
+    label?: string | null,
+    rate?: number | string | null
+  } | null,
+  average_rate?: {
+    label?: string | null,
+    rate?: number | string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Taxes
+
+### calculate
+
+`taxes.calculate`
+
+Calculate the tax for an order from an origin and destination, optionally per line item, without recording a transaction
+
+**Risk:** `read`
+
+```ts
+await corsair.taxjar.api.taxes.calculate({ from_country: 'US', from_zip: '33018', to_country: 'US', to_zip: '97035', amount: 15, shipping: 1.5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_country` | `string` | No | — |
+| `from_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `from_state` | `string` | No | — |
+| `from_city` | `string` | No | — |
+| `from_street` | `string` | No | — |
+| `to_country` | `string` | Yes | The destination country. |
+| `to_zip` | `string` | No | A postal code, 5 digits or ZIP+4. |
+| `to_state` | `string` | No | — |
+| `to_city` | `string` | No | — |
+| `to_street` | `string` | No | — |
+| `amount` | `number` | No | The order amount, excluding shipping. |
+| `shipping` | `number` | No | The shipping charge. |
+| `customer_id` | `string` | No | The unique customer ID you assigned. |
+| `exemption_type` | `wholesale \| government \| marketplace \| other \| non_exempt` | No | — |
+| `nexus_addresses` | `object[]` | No | — |
+| `line_items` | `object[]` | No | — |
+
+Records nothing; returns numeric amounts, unlike the transaction routes. Send either an amount or line_items.
+
+<AccordionGroup>
+<Accordion title="nexus_addresses full type">
+
+```ts
+{
+  id: string,
+  country: string,
+  zip: string,
+  state?: string,
+  city?: string,
+  street?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string,
+  quantity?: number,
+  product_tax_code?: string,
+  unit_price?: number,
+  discount?: number,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tax` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tax full type">
+
+```ts
+{
+  order_total_amount?: number | string | null,
+  shipping?: number | string | null,
+  taxable_amount?: number | string | null,
+  amount_to_collect?: number | string | null,
+  rate?: number | string | null,
+  has_nexus?: boolean | null,
+  freight_taxable?: boolean | null,
+  tax_source?: string | null,
+  jurisdictions?: {
+    country?: string | null,
+    state?: string | null,
+    county?: string | null,
+    city?: string | null
+  } | null,
+  breakdown?: {
+    taxable_amount?: number | string | null,
+    tax_collectable?: number | string | null,
+    combined_tax_rate?: number | string | null,
+    state_taxable_amount?: number | string | null,
+    state_tax_rate?: number | string | null,
+    state_tax_collectable?: number | string | null,
+    county_taxable_amount?: number | string | null,
+    county_tax_rate?: number | string | null,
+    county_tax_collectable?: number | string | null,
+    city_taxable_amount?: number | string | null,
+    city_tax_rate?: number | string | null,
+    city_tax_collectable?: number | string | null,
+    special_district_taxable_amount?: number | string | null,
+    special_tax_rate?: number | string | null,
+    special_district_tax_collectable?: number | string | null,
+    line_items?: {
+      id?: string | null,
+      taxable_amount?: number | string | null,
+      tax_collectable?: number | string | null,
+      combined_tax_rate?: number | string | null,
+      state_taxable_amount?: number | string | null,
+      state_tax_rate?: number | string | null,
+      state_tax_collectable?: number | string | null,
+      county_taxable_amount?: number | string | null,
+      county_tax_rate?: number | string | null,
+      county_tax_collectable?: number | string | null,
+      city_taxable_amount?: number | string | null,
+      city_tax_rate?: number | string | null,
+      city_tax_collectable?: number | string | null,
+      special_district_taxable_amount?: number | string | null,
+      special_tax_rate?: number | string | null,
+      special_district_tax_collectable?: number | string | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
