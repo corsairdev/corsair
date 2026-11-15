@@ -107,19 +107,31 @@ function fieldNames(): ReadonlySet<string> {
 	return knownFieldNames;
 }
 
-/** The field path when every segment is a known input key or an index. */
+/**
+ * The field path rebuilt from known input keys, or undefined. Index segments
+ * become `[n]`, so a number in the path (an index, or a phone number sent as
+ * `payload.field`) never reaches the message. A path with no named segment is
+ * dropped.
+ */
 export function allowlistedField(field: unknown): string | undefined {
 	if (typeof field !== 'string' || field.length === 0 || field.length > 200) {
 		return undefined;
 	}
 	const segments = field.split(/[.[\]]/).filter((segment) => segment !== '');
-	if (segments.length === 0) return undefined;
 	const names = fieldNames();
-	return segments.every(
-		(segment) => /^\d+$/.test(segment) || names.has(segment),
-	)
-		? field
-		: undefined;
+	let path = '';
+	let named = false;
+	for (const segment of segments) {
+		if (/^\d+$/.test(segment)) {
+			path += '[n]';
+		} else if (names.has(segment)) {
+			path += path ? `.${segment}` : segment;
+			named = true;
+		} else {
+			return undefined;
+		}
+	}
+	return named ? path : undefined;
 }
 
 const JSON_TYPE_NAMES = new Set([

@@ -199,10 +199,19 @@ describe('GetProspect HTTP client', () => {
 					field: 'data.jane_doe_415',
 					received_value: '+1 415 555 0123',
 				}),
+			)
+			.mockResolvedValueOnce(
+				validationError({ code: 'wrong_type', field: '14155550123' }),
+			)
+			.mockResolvedValueOnce(
+				validationError({ code: 'missing_field', field: 'data.14155550123' }),
+			)
+			.mockResolvedValueOnce(
+				validationError({ code: 'invalid_format', field: 'data[4155].email' }),
 			);
 		const messages: string[] = [];
 		const bodies: string[] = [];
-		for (let i = 0; i < 4; i += 1) {
+		for (let i = 0; i < 7; i += 1) {
 			// unknown because the rejection may be any transport/provider value; the predicate narrows it.
 			const caught = await makeGetProspectRequest(
 				'/v2/people/enrich',
@@ -220,6 +229,9 @@ describe('GetProspect HTTP client', () => {
 			`${prefix} (wrong_type): data.email has the wrong type (got number)`,
 			`${prefix} (missing_field): a field is required`,
 			`${prefix} (invalid_format): a field has an invalid format`,
+			`${prefix} (wrong_type): a field has the wrong type`,
+			`${prefix} (missing_field): data[n] is required`,
+			`${prefix} (invalid_format): data[n].email has an invalid format`,
 		]);
 		for (const leaked of [
 			'Jane',
