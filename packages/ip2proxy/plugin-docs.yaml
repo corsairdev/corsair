@@ -1,10 +1,18 @@
 displayName: IP2Proxy
 description: Detect whether an IP address is a proxy, VPN, Tor exit, or data-center address, and return the location fields for the selected package.
-domain: ip2proxy.com
+domain: ip2location.com
+recommendedAuth: api_key
+overviewNote: |
+  Each lookup spends credits. PX1 spends 1 credit and PX11 spends 11. A successful body has `response` set to `OK`. Any other `response` is a failed lookup.
 examples:
-  read:
+  write:
     path: proxy.checkProxy
     title: Check whether an IP is a proxy
     args:
       ip: 8.8.8.8
-      package: PX1
+apiNotes:
+  proxy.checkProxy: |
+    Omit `ip` and the service looks up the caller address. Omit `package` and the service uses PX1. Lower packages leave the later response fields out, so only `response` is required.
+apiExamples:
+  proxy.checkProxy:
+    call: "{ ip: '8.8.8.8', package: 'PX1' }"

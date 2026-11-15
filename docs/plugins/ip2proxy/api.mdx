@@ -1,0 +1,60 @@
+---
+title: "IP2Proxy API reference"
+sidebarTitle: "API"
+description: "API reference for the IP2Proxy plugin in Corsair: every `ip2proxy.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Proxy
+
+### checkProxy
+
+`proxy.checkProxy`
+
+Check whether an IP address is a proxy, VPN, Tor exit, or data-center address.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ip2proxy.api.proxy.checkProxy({ ip: '8.8.8.8', package: 'PX1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | No | IPv4 or IPv6 address. Omit it and the service looks up the caller address. |
+| `package` | `PX1 \| PX2 \| PX3 \| PX4 \| PX5 \| PX6 \| PX7 \| PX8 \| PX9 \| PX10 \| PX11` | No | PX1 through PX11. Omit it and the service uses PX1. PX1 spends 1 credit and PX11 spends 11. |
+
+Omit `ip` and the service looks up the caller address. Omit `package` and the service uses PX1. Lower packages leave the later response fields out, so only `response` is required.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `string` | Yes | — |
+| `countryCode` | `string` | No | — |
+| `countryName` | `string` | No | — |
+| `regionName` | `string` | No | — |
+| `cityName` | `string` | No | — |
+| `isp` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `usageType` | `string` | No | — |
+| `asn` | `string` | No | — |
+| `as` | `string` | No | — |
+| `lastSeen` | `number` | No | — |
+| `proxyType` | `string` | No | — |
+| `isProxy` | `YES \| NO` | No | — |
+| `threat` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `creditsConsumed` | `number` | No | — |
+
+
+
+---
+

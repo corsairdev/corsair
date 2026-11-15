@@ -18,10 +18,16 @@ export const PROXY_PACKAGES = [
 export const ProxyPackageSchema = z.enum(PROXY_PACKAGES);
 
 export const CheckProxyInputSchema = z.object({
-	/** IPv4 or IPv6. Omitted, the service looks up the caller address. */
-	ip: z.string().min(1).optional(),
-	/** Defaults to PX1 on the service when omitted. */
-	package: ProxyPackageSchema.optional(),
+	ip: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'IPv4 or IPv6 address. Omit it and the service looks up the caller address.',
+		),
+	package: ProxyPackageSchema.optional().describe(
+		'PX1 through PX11. Omit it and the service uses PX1. PX1 spends 1 credit and PX11 spends 11.',
+	),
 });
 
 export type CheckProxyInput = z.infer<typeof CheckProxyInputSchema>;
