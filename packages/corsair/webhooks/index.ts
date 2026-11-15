@@ -293,6 +293,17 @@ export async function processWebhook(
 
 		let boundTenantId = explicitTenantId;
 		let boundAccountId = options?.accountId;
+		if (explicitTenantId && boundAccountId) {
+			const internal = tryGetCorsairInternal(corsair);
+			const row = internal?.database
+				? await internal.database.db
+						.selectFrom('corsair_accounts')
+						.select('tenant_id')
+						.where('id', '=', boundAccountId)
+						.executeTakeFirst()
+				: undefined;
+			if (row?.tenant_id !== explicitTenantId) boundAccountId = undefined;
+		}
 		if (!explicitTenantId && corsair.withTenant) {
 			const resolved = await resolveTenantForPlugin(
 				corsair,

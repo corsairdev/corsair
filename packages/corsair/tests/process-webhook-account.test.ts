@@ -11,6 +11,7 @@ import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { setupCorsair } from '../setup';
 import { processCorsair } from '../tunnel/index';
 import { processWebhook } from '../webhooks/index';
+import * as tenantLinks from '../webhooks/tenant-links';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { createTestDatabase } from './setup-db';
 
@@ -194,6 +195,51 @@ describe('webhooks run as the account the delivery matched', () => {
 		// run as t2's account.
 		expect(ack.status).toBe('failed');
 		expect(await entityAccounts()).toEqual([]);
+	});
+
+	it('an accountId from another tenant is ignored by processWebhook', async () => {
+		await addAccount('acct-a', 't1', 'TA');
+		await addAccount('acct-b', 't1', 'TB');
+		await addAccount('acct-other', 't2', 'TO');
+		const result = await processWebhook(
+			corsair,
+			headers,
+			{ team_id: 'TO' },
+			{ tenantId: 't1' },
+			{ accountId: 'acct-other' },
+		);
+		expect(result.response?.success).toBe(false);
+		expect(await entityAccounts()).toEqual([]);
+	});
+
+	it('a failing account lookup leaves an explicit-tenant tunnel delivery as before', async () => {
+		await addAccount('acct-a', 't1');
+		const secret = 'tunnel-signing-secret';
+		const body = JSON.stringify({
+			type: 'webhook',
+			payload: {
+				headers,
+				body: JSON.stringify({ team_id: 'TA' }),
+				plugin: 'slack',
+				linkType: 'team_id',
+				externalId: 'TA',
+				tenantId: 't1',
+			},
+		});
+		const spy = jest
+			.spyOn(tenantLinks, 'resolveAccountFromWebhookLink')
+			.mockRejectedValue(new Error('db down'));
+		try {
+			const ack = await processCorsair(
+				corsair,
+				{ headers: signedHeaders(body, secret), body },
+				{ signingSecret: secret },
+			);
+			expect(ack.status).toBe('ok');
+			expect(await entityAccounts()).toEqual(['acct-a']);
+		} finally {
+			spy.mockRestore();
+		}
 	});
 
 	it('single account, no link: unchanged', async () => {

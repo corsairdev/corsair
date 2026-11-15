@@ -239,13 +239,20 @@ async function resolveWebhookTenantId(
 		return explicitTenantId ? { tenantId: explicitTenantId } : {};
 	}
 
-	const account = await resolveAccountFromWebhookLink({
-		database: internal.database,
-		kek: internal.kek,
-		pluginId: payload.plugin,
-		linkType: payload.linkType,
-		externalId: payload.externalId,
-	});
+	let account: Awaited<ReturnType<typeof resolveAccountFromWebhookLink>>;
+	try {
+		account = await resolveAccountFromWebhookLink({
+			database: internal.database,
+			kek: internal.kek,
+			pluginId: payload.plugin,
+			linkType: payload.linkType,
+			externalId: payload.externalId,
+		});
+	} catch (error) {
+		// An explicit tenant never needed this lookup; its delivery must not fail on it.
+		if (explicitTenantId) return { tenantId: explicitTenantId };
+		throw error;
+	}
 
 	if (explicitTenantId) {
 		return account?.tenant_id === explicitTenantId
