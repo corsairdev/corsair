@@ -49,6 +49,7 @@ export type CertSpotterRequest = {
  * only renders Basic when both username and password are non-empty, so an
  * empty password could not be expressed through USERNAME/PASSWORD.
  */
+// unknown: the response is checked by the calling endpoint's output schema.
 export async function makeCertSpotterRequest(
 	apiKey: string,
 	{ method, path, query }: CertSpotterRequest,
@@ -69,6 +70,8 @@ export async function makeCertSpotterRequest(
 
 	// Core's ApiError goes through unchanged: its status, retryAfter and body
 	// (with the documented `code`) are what the error handlers read.
+	// unknown: the raw provider response; each endpoint parses it with its
+	// output schema in call.ts.
 	return request<unknown>(config, requestOptions, {
 		rateLimitConfig: CERTSPOTTER_RATE_LIMIT_CONFIG,
 	});

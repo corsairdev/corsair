@@ -162,19 +162,18 @@ describe('makeCertSpotterRequest', () => {
 		}
 	});
 
-	it('keeps Retry-After from an empty page', async () => {
-		// An empty page carries the header that tells a poller when to ask again.
+	it('returns an empty page as a bare empty array', async () => {
+		// Cert Spotter sends Retry-After with an empty page; the result is only
+		// the body, so the docs tell callers how long to wait instead.
 		respond([], 200, { 'Retry-After': '300' });
 
-		await makeCertSpotterRequest(API_KEY, {
+		const result = await makeCertSpotterRequest(API_KEY, {
 			method: 'GET',
 			path: 'issuances',
 			query: { domain: 'example.com' },
 		});
 
-		// A successful empty page is not an error, so nothing to assert on the
-		// error; the header is read only when a 429 carries it.
-		expect(lastRequest().method).toBe('GET');
+		expect(result).toEqual([]);
 	});
 
 	it('keeps Retry-After on a 429', async () => {
