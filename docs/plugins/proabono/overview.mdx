@@ -6,16 +6,17 @@ description: "Subscription billing API for managing customers, offers, subscript
 
 Use **ProAbono** through Corsair: one client, typed API calls.
 
-ProAbono bills recurring subscriptions. Every account is served from its own host, `api-<account>.proabono.com`, so the plugin needs your account number as well as the two keys from MY PROFILE, INTEGRATION: the agent key and the API key. They travel as HTTP Basic, with the agent key as the username and the API key as the password.
+ProAbono bills recurring subscriptions. Every account is served from its own host, `api-<account>.proabono.com`, so the plugin needs your account number as well as the two keys from Integration, API in the back office: the agent key and the API key. All three are stored with the connection. They travel as HTTP Basic, with the agent key as the username and the API key as the password.
 
 What to know before you bill:
 
-- **The account number.** Pass `account: '42'` to reach `api-42.proabono.com`. Without it there is no host to call, so the plugin refuses the request rather than guessing.
+- **The account number.** Store `account` as `42` (or paste the endpoint, `https://api-42.proabono.com`) to reach `api-42.proabono.com`; an `account` plugin option overrides it. Without it there is no host to call, so the plugin asks for the connection rather than guessing.
 - **Two steps to a subscription.** A subscription is created from an offer reference and a customer reference, and it only starts billing once the customer is billable. `TryStart: false` creates it without starting, so it can be customised first; `start` then begins it.
 - **Amounts are integer cents.** Every amount, such as `AmountRecurrence` and an invoice's `AmountTotal`, is in the currency's minor unit, so 9900 is 99.00.
-- **Usages accumulate.** `usages.increment` adds to a feature's usage, and a negative increment subtracts, which is how a reversed action is recorded. `usages.update` sends several rows at once.
+- **Usages accumulate.** `usages.increment` adds to a feature's usage, and a negative increment subtracts, which is how a reversed action is recorded. Every usage change needs a `DateStamp`; ProAbono records two changes with the same timestamp once. `usages.update` sends up to 50 rows at once.
+- **Lists are paginated.** List answers carry `Page`, `SizePage`, `Count` and `TotalItems` beside the rows; pass `Page` for the next page.
 - **A 204 is not an error.** ProAbono answers a read that finds nothing with 204 and an empty body. The plugin turns that into an empty result rather than failing the parse.
-- **A 422 lists the bad fields.** It carries one entry per field, which the thrown error keeps on `validationErrors`.
+- **A 422 lists the bad fields.** It carries one entry per field; the thrown `ApiError` keeps that list on `body`.
 - **Nothing to check a subscription with.** The docs warn against using `subscriptions.get` to decide whether a user is a subscriber, and point at their own method instead.
 - **Webhooks.** ProAbono notifies through its portal rather than by webhook deliveries, so this plugin receives none.
 
