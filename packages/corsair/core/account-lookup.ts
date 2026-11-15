@@ -1,4 +1,8 @@
-import type { CorsairDatabase } from '../db/kysely/database';
+import type { Kysely, Selectable } from 'kysely';
+import type {
+	CorsairDatabase,
+	CorsairKyselyDatabase,
+} from '../db/kysely/database';
 
 export type AccountLookupInput = {
 	database: CorsairDatabase;
@@ -19,6 +23,20 @@ export type IntegrationAccountLookupResult = {
 	integration: IntegrationAccountRow;
 	account: IntegrationAccountRow;
 };
+
+export async function findAccountRow(
+	db: Kysely<CorsairKyselyDatabase>,
+	where: { tenantId: string; integrationId: string },
+): Promise<Selectable<CorsairKyselyDatabase['corsair_accounts']> | undefined> {
+	return db
+		.selectFrom('corsair_accounts')
+		.selectAll()
+		.where('tenant_id', '=', where.tenantId)
+		.where('integration_id', '=', where.integrationId)
+		.orderBy('created_at', 'asc')
+		.orderBy('id', 'asc')
+		.executeTakeFirst();
+}
 
 export async function resolveIntegrationAndAccount(
 	input: AccountLookupInput,
@@ -44,12 +62,10 @@ export async function resolveIntegrationAndAccount(
 			);
 		}
 
-		const account = await input.database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', input.tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
+		const account = await findAccountRow(input.database.db, {
+			tenantId: input.tenantId,
+			integrationId: integration.id,
+		});
 
 		if (!account) {
 			if (!provisionAttempted && input.ensureProvisioned) {
