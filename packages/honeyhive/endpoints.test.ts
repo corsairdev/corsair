@@ -128,6 +128,8 @@ describe('2. Events endpoints', () => {
 		const result = await Events.create(ctx, {
 			project_id: 'proj-1',
 			event_name: 'llm_call',
+			event_type: 'model' as const,
+			inputs: { prompt: 'hi' },
 		});
 
 		expect(result).toEqual({ success: true, event_id: 'evt-1' });
@@ -137,7 +139,12 @@ describe('2. Events endpoints', () => {
 			{
 				method: 'POST',
 				baseUrl: DP,
-				body: { project_id: 'proj-1', event_name: 'llm_call' },
+				body: {
+					project_id: 'proj-1',
+					event_name: 'llm_call',
+					event_type: 'model',
+					inputs: { prompt: 'hi' },
+				},
 			},
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
@@ -152,7 +159,10 @@ describe('2. Events endpoints', () => {
 		mockedRequest.mockResolvedValue({ success: true, event_ids: ['e1', 'e2'] });
 
 		const result = await Events.createBatch(ctx, {
-			events: [{ event_name: 'e1' }, { event_name: 'e2' }],
+			events: [
+				{ event_name: 'e1', event_type: 'chain' as const, inputs: { step: 1 } },
+				{ event_name: 'e2', event_type: 'chain' as const, inputs: { step: 2 } },
+			],
 		});
 
 		expect(result).toEqual({ success: true, event_ids: ['e1', 'e2'] });
@@ -162,7 +172,12 @@ describe('2. Events endpoints', () => {
 			{
 				method: 'POST',
 				baseUrl: DP,
-				body: { events: [{ event_name: 'e1' }, { event_name: 'e2' }] },
+				body: {
+					events: [
+						{ event_name: 'e1', event_type: 'chain', inputs: { step: 1 } },
+						{ event_name: 'e2', event_type: 'chain', inputs: { step: 2 } },
+					],
+				},
 			},
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
@@ -652,14 +667,26 @@ describe('5. Metrics endpoints', () => {
 		);
 
 		mockedRequest.mockResolvedValue({ version_id: 'v-1' });
+		const content = {
+			name: 'relevance',
+			type: 'PYTHON',
+			criteria: 'def metric(event): return 1',
+			return_type: 'float',
+			scale: 5,
+		};
 		await Metrics.createVersion(ctx, {
 			metric_id: 'm-1',
 			message: 'test version',
+			content,
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/v1/metrics/m-1/versions',
 			'hh-api-key-test',
-			{ method: 'POST', baseUrl: DP, body: { message: 'test version' } },
+			{
+				method: 'POST',
+				baseUrl: DP,
+				body: { message: 'test version', content },
+			},
 		);
 
 		mockedRequest.mockResolvedValue({ deployed: true });

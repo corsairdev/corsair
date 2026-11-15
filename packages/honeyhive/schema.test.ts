@@ -213,6 +213,7 @@ describe('HoneyHive Zod schemas validation', () => {
 		const validInput = {
 			project_id: 'proj-123',
 			event_name: 'llm_call',
+			event_type: 'model' as const,
 			inputs: { prompt: 'summarize text' },
 		};
 		expect(EventCreateInputSchema.safeParse(validInput).success).toBe(true);
@@ -232,6 +233,8 @@ describe('HoneyHive Zod schemas validation', () => {
 				{
 					project_id: 'proj-123',
 					event_name: 'batch_event_1',
+					event_type: 'chain' as const,
+					inputs: { step: 1 },
 				},
 			],
 			single_session: true,

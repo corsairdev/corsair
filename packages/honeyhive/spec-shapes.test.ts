@@ -3,6 +3,8 @@ import {
 	DatasetsAddDatapointsInputSchema,
 	DatasetsCreateInputSchema,
 	DatasetsUpdateLegacyInputSchema,
+	EventCreateBatchInputSchema,
+	EventCreateInputSchema,
 	EventSearchInputSchema,
 	EventUpdateInputSchema,
 	ExperimentsCompareResponseSchema,
@@ -11,6 +13,7 @@ import {
 	ExperimentsListRunsResponseSchema,
 	ExperimentsUpdateRunInputSchema,
 	MetricsCreateInputSchema,
+	MetricsCreateVersionInputSchema,
 	MetricsRunResponseSchema,
 	MetricsUpdateInputSchema,
 	SessionCreateResponseSchema,
@@ -96,6 +99,38 @@ describe('HoneyHive request shapes match the API', () => {
 				filters: [
 					{ field: 'session_id', operator: 'is', value: 's-1', type: 'string' },
 				],
+			}).success,
+		).toBe(true);
+	});
+
+	it('requires event_type and inputs on event create and batch items', () => {
+		expect(
+			EventCreateInputSchema.safeParse({ event_name: 'llm_call' }).success,
+		).toBe(false);
+		expect(
+			EventCreateBatchInputSchema.safeParse({ events: [{ event_name: 'e1' }] })
+				.success,
+		).toBe(false);
+		expect(
+			EventCreateInputSchema.safeParse({
+				event_type: 'model',
+				inputs: { prompt: 'hi' },
+			}).success,
+		).toBe(true);
+	});
+
+	it('requires content with name, type and criteria on a metric version', () => {
+		expect(
+			MetricsCreateVersionInputSchema.safeParse({
+				metric_id: 'm',
+				message: 'v1',
+			}).success,
+		).toBe(false);
+		expect(
+			MetricsCreateVersionInputSchema.safeParse({
+				metric_id: 'm',
+				message: 'v1',
+				content: { name: 'm', type: 'PYTHON', criteria: 'x', scale: 5 },
 			}).success,
 		).toBe(true);
 	});

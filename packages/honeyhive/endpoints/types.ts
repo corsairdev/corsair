@@ -98,13 +98,14 @@ export const EventCreateInputSchema = z.strictObject({
 	project_id: z.string().optional(),
 	source: z.string().optional(),
 	event_name: z.string().optional(),
-	event_type: z.string().optional(),
+	// Required by POST /v1/events and each /v1/events/batch item (spec v1.17.0).
+	event_type: z.enum(['chain', 'model', 'tool', 'session']),
 	event_id: z.string().optional(),
 	session_id: z.string().optional(),
 	parent_id: z.string().optional(),
 	children_ids: z.array(z.string()).optional(),
 	config: JsonRecordSchema.optional(),
-	inputs: JsonRecordSchema.optional(),
+	inputs: JsonRecordSchema,
 	outputs: JsonRecordSchema.optional(),
 	error: JsonUnknownSchema.optional(),
 	start_time: z.number().optional(),
@@ -668,7 +669,11 @@ export const MetricsListVersionsResponseSchema = z
 export const MetricsCreateVersionInputSchema = z.strictObject({
 	metric_id: z.string(),
 	message: z.string(),
-	content: JsonRecordSchema.optional(),
+	// The spec requires content with at least name, type and criteria; the
+	// live run needed the full metric definition here.
+	content: z
+		.object({ name: z.string(), type: z.string(), criteria: z.string() })
+		.passthrough(),
 	deploy_immediately: z.boolean().optional(),
 });
 
