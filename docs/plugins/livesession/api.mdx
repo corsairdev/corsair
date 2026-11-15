@@ -495,40 +495,6 @@ await corsair.livesession.api.webhooks.update({});
 
 ## Websites
 
-### create
-
-`websites.create`
-
-Create a tracked website
-
-**Risk:** `write`
-
-```ts
-await corsair.livesession.api.websites.create({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `host` | `string` | Yes | — |
-| `description` | `string` | No | — |
-
-In our live run (2026-11-15) LiveSession answered 404 to `POST /websites`, with and without a token, although its API reference lists the route.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `website_id` | `string` | Yes | — |
-| `host` | `string \| null` | No | — |
-
-
-
----
-
 ### list
 
 `websites.list`

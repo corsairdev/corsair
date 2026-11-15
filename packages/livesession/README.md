@@ -21,7 +21,6 @@ pnpm add @corsair-dev/livesession
 | `webhooks.delete` | `livesession.api.webhooks.delete` | `destructive` | Permanently delete an outbound webhook by ID |
 | `webhooks.list` | `livesession.api.webhooks.list` | `read` | List all outbound webhooks for the token scope |
 | `webhooks.update` | `livesession.api.webhooks.update` | `write` | Update an outbound webhook by ID |
-| `websites.create` | `livesession.api.websites.create` | `write` | Create a tracked website |
 | `websites.list` | `livesession.api.websites.list` | `read` | List all websites available to the token |
 
 ## Auth

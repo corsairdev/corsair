@@ -18,7 +18,7 @@ describe('LiveSession endpoint registry', () => {
 		const metaPaths = Object.keys(plugin.endpointMeta ?? {}).sort();
 		const schemaPaths = Object.keys(plugin.endpointSchemas ?? {}).sort();
 
-		expect(metaPaths).toHaveLength(11);
+		expect(metaPaths).toHaveLength(10);
 		expect(schemaPaths).toEqual(metaPaths);
 		for (const path of metaPaths) {
 			const schemas =

@@ -1,5 +1,5 @@
 displayName: LiveSession
-description: Session replay and product analytics API for listing recorded sessions, managing alerts and webhooks, and creating tracked websites.
+description: Session replay and product analytics API for listing recorded sessions, managing alerts and webhooks, and listing tracked websites.
 domain: livesession.io
 overviewNote: |
   A personal access token made in LiveSession (Settings, API, API Tokens) currently offers only the `users.sessions:read` scope, which covers `sessions.list`. Alerts, webhooks and websites need a token that also has the `alerts`, `webhooks` or `websites` scopes; with a sessions-only token LiveSession answers 401 `insufficient_scope`.
@@ -16,4 +16,3 @@ examples:
       version: v1.0
 apiNotes:
   sessions.list: "`date_from` and `date_to` take a relative value such as `TODAY-7DAYS` or an ISO 8601 datetime with a time part (`2026-01-31T00:00:00Z`); LiveSession ignores a date without a time. `tz` only applies together with a date filter. An empty result can come back as `sessions: null`."
-  websites.create: "In our live run (2026-11-15) LiveSession answered 404 to `POST /websites`, with and without a token, although its API reference lists the route."

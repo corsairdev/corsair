@@ -109,13 +109,13 @@ const webhook = {
 const website = { website_id: 'website-1', host: 'example.com' };
 
 describe('LiveSession plugin shape', () => {
-	it('exposes the eleven documented REST operations and no inbound webhook handlers', () => {
+	it('exposes the ten documented REST operations and no inbound webhook handlers', () => {
 		const plugin = livesession();
 		const paths = Object.entries(plugin.endpointMeta ?? {}).map(
 			([path]) => path,
 		);
 
-		expect(paths).toHaveLength(11);
+		expect(paths).toHaveLength(10);
 		expect(paths).toEqual(
 			expect.arrayContaining([
 				'sessions.list',
@@ -128,7 +128,6 @@ describe('LiveSession plugin shape', () => {
 				'webhooks.update',
 				'webhooks.delete',
 				'websites.list',
-				'websites.create',
 			]),
 		);
 		expect(plugin.webhooks).toEqual({});
@@ -389,29 +388,16 @@ describe('LiveSession HTTP client and endpoints', () => {
 		expect(result.deleted).toBe(true);
 	});
 
-	it('lists and creates websites', async () => {
+	it('lists websites', async () => {
 		mockRequest.mockResolvedValueOnce([website]);
-		await livesession({ key: 'test-token' }).endpoints!.websites.list(
-			mockCtx,
-			{},
-		);
-
-		mockRequest.mockResolvedValueOnce(website);
-		await livesession({ key: 'test-token' }).endpoints!.websites.create(
-			mockCtx,
-			{ host: 'example.com', description: 'Marketing site' },
-		);
+		const result = await livesession({
+			key: 'test-token',
+		}).endpoints!.websites.list(mockCtx, {});
 
 		expect(mockRequest.mock.calls[0]?.[1]).toEqual(
 			expect.objectContaining({ method: 'GET', url: '/websites' }),
 		);
-		expect(mockRequest.mock.calls[1]?.[1]).toEqual(
-			expect.objectContaining({
-				method: 'POST',
-				url: '/websites',
-				body: { host: 'example.com', description: 'Marketing site' },
-			}),
-		);
+		expect(result).toEqual([website]);
 	});
 });
 

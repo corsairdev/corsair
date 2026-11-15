@@ -14,19 +14,3 @@ export const list: LiveSessionEndpoints['websitesList'] = (ctx, rawInput) => {
 		).then((response) => parseOutput('websitesList', response)),
 	);
 };
-
-export const create: LiveSessionEndpoints['websitesCreate'] = (
-	ctx,
-	rawInput,
-) => {
-	const parsed = parseInput('websitesCreate', rawInput);
-	return complete(
-		ctx,
-		'livesession.websites.create',
-		makeLiveSessionRequest<LiveSessionEndpointOutputs['websitesCreate']>(
-			'/websites',
-			ctx.key,
-			{ method: 'POST', body: parsed },
-		).then((response) => parseOutput('websitesCreate', response)),
-	);
-};

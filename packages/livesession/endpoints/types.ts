@@ -175,13 +175,6 @@ export const DeleteWebhookInputSchema = z.object({ id: PathIdSchema }).strict();
 
 export const ListWebhooksInputSchema = z.object({}).strict();
 
-export const CreateWebsiteInputSchema = z
-	.object({
-		host: z.string().min(1),
-		description: z.string().optional(),
-	})
-	.strict();
-
 export const ListWebsitesInputSchema = z.object({}).strict();
 
 const SessionVisitorGeolocationSchema = z
@@ -417,10 +410,6 @@ export type LiveSessionListWebsitesInput = z.infer<
 export type LiveSessionListWebsitesResponse = z.infer<
 	typeof ListWebsitesResponseSchema
 >;
-export type LiveSessionCreateWebsiteInput = z.infer<
-	typeof CreateWebsiteInputSchema
->;
-export type LiveSessionCreateWebsiteResponse = z.infer<typeof WebsiteSchema>;
 
 export type LiveSessionEndpointInputs = {
 	sessionsList: LiveSessionListSessionsInput;
@@ -433,7 +422,6 @@ export type LiveSessionEndpointInputs = {
 	webhooksUpdate: LiveSessionUpdateWebhookInput;
 	webhooksDelete: LiveSessionDeleteWebhookInput;
 	websitesList: LiveSessionListWebsitesInput;
-	websitesCreate: LiveSessionCreateWebsiteInput;
 };
 
 export type LiveSessionEndpointOutputs = {
@@ -447,7 +435,6 @@ export type LiveSessionEndpointOutputs = {
 	webhooksUpdate: LiveSessionUpdateWebhookResponse;
 	webhooksDelete: LiveSessionDeleteWebhookResponse;
 	websitesList: LiveSessionListWebsitesResponse;
-	websitesCreate: LiveSessionCreateWebsiteResponse;
 };
 
 export const LiveSessionEndpointInputSchemas = {
@@ -461,7 +448,6 @@ export const LiveSessionEndpointInputSchemas = {
 	webhooksUpdate: UpdateWebhookInputSchema,
 	webhooksDelete: DeleteWebhookInputSchema,
 	websitesList: ListWebsitesInputSchema,
-	websitesCreate: CreateWebsiteInputSchema,
 } as const;
 
 export const LiveSessionEndpointOutputSchemas = {
@@ -475,5 +461,4 @@ export const LiveSessionEndpointOutputSchemas = {
 	webhooksUpdate: WebhookSchema,
 	webhooksDelete: DeleteWebhookResponseSchema,
 	websitesList: ListWebsitesResponseSchema,
-	websitesCreate: WebsiteSchema,
 } as const;

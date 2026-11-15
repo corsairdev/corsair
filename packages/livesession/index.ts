@@ -62,7 +62,6 @@ export type LiveSessionEndpoints = {
 	webhooksUpdate: LiveSessionEndpoint<'webhooksUpdate'>;
 	webhooksDelete: LiveSessionEndpoint<'webhooksDelete'>;
 	websitesList: LiveSessionEndpoint<'websitesList'>;
-	websitesCreate: LiveSessionEndpoint<'websitesCreate'>;
 };
 
 const liveSessionEndpointsNested = {
@@ -79,7 +78,7 @@ const liveSessionEndpointsNested = {
 		update: Webhooks.update,
 		delete: Webhooks.remove,
 	},
-	websites: { list: Websites.list, create: Websites.create },
+	websites: { list: Websites.list },
 } as const;
 
 const liveSessionWebhooksNested = {} as const;
@@ -124,10 +123,6 @@ export const liveSessionEndpointSchemas = {
 	'websites.list': {
 		input: LiveSessionEndpointInputSchemas.websitesList,
 		output: LiveSessionEndpointOutputSchemas.websitesList,
-	},
-	'websites.create': {
-		input: LiveSessionEndpointInputSchemas.websitesCreate,
-		output: LiveSessionEndpointOutputSchemas.websitesCreate,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof liveSessionEndpointsNested
@@ -181,10 +176,6 @@ const liveSessionEndpointMeta = {
 	'websites.list': {
 		riskLevel: 'read',
 		description: 'List all websites available to the token',
-	},
-	'websites.create': {
-		riskLevel: 'write',
-		description: 'Create a tracked website',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof liveSessionEndpointsNested
