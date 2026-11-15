@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -2380,19 +2387,19 @@
                 ]
               },
               {
-                "group": "Genderize",
-                "pages": [
-                  "plugins/genderize/overview",
-                  "plugins/genderize/api",
-                  "plugins/genderize/database"
-                ]
-              },
-              {
                 "group": "GenderAPI.io",
                 "pages": [
                   "plugins/genderapiio/overview",
                   "plugins/genderapiio/api",
                   "plugins/genderapiio/database"
+                ]
+              },
+              {
+                "group": "Genderize",
+                "pages": [
+                  "plugins/genderize/overview",
+                  "plugins/genderize/api",
+                  "plugins/genderize/database"
                 ]
               },
               {
@@ -3256,6 +3263,14 @@
                 ]
               },
               {
+                "group": "Meta Ads",
+                "pages": [
+                  "plugins/metaads/overview",
+                  "plugins/metaads/api",
+                  "plugins/metaads/database"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
@@ -3639,22 +3654,6 @@
                 ]
               },
               {
-                "group": "Postmark",
-                "pages": [
-                  "plugins/postmark/overview",
-                  "plugins/postmark/api",
-                  "plugins/postmark/database"
-                ]
-              },
-              {
-                "group": "Prismic",
-                "pages": [
-                  "plugins/prismic/overview",
-                  "plugins/prismic/api",
-                  "plugins/prismic/database"
-                ]
-              },
-              {
                 "group": "Postalytics",
                 "pages": [
                   "plugins/postalytics/overview",
@@ -3681,6 +3680,14 @@
                 ]
               },
               {
+                "group": "Postmark",
+                "pages": [
+                  "plugins/postmark/overview",
+                  "plugins/postmark/api",
+                  "plugins/postmark/database"
+                ]
+              },
+              {
                 "group": "Prerender",
                 "pages": [
                   "plugins/prerender/overview",
@@ -3694,6 +3701,14 @@
                   "plugins/prisma/overview",
                   "plugins/prisma/api",
                   "plugins/prisma/database"
+                ]
+              },
+              {
+                "group": "Prismic",
+                "pages": [
+                  "plugins/prismic/overview",
+                  "plugins/prismic/api",
+                  "plugins/prismic/database"
                 ]
               },
               {
@@ -5187,7 +5202,9 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": ["changelog"]
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       }

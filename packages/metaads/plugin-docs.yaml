@@ -1,4 +1,86 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Meta Ads"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Meta Ads
+description: Read ad accounts, manage campaigns and delivery objects, work with custom-audience metadata, and retrieve paginated Ads Insights through Meta Marketing API v27.0.
+overviewNote: "Supply an OAuth access token with ads_read for reporting or ads_management for management; the token must also have access to the target ad account."
+apiNotes:
+  accounts.list: "Meta requires access_token as a request parameter. Use a user or system-user access token stored in Corsair's encrypted credential store."
+  campaigns.list: "Pass returned paging.cursors.after to continue; the adapter does not follow Meta's paging.next URL."
+  campaigns.create: "Campaign creation requires special_ad_categories. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units."
+  campaigns.update: "Budget and spend-cap edits are consequential writes and aren't automatically retried."
+  adSets.list: "Pass returned paging.cursors.after to continue; the adapter does not follow Meta's paging.next URL."
+  adSets.create: "This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED."
+  ads.create: "New ads enter review and can deliver after approval. This consequential write is destructive and isn't automatically retried."
+  creatives.create: "Only an existing Page post can be used here; complex creative specs and media uploads are excluded."
+  audiences.create: "Creates an empty custom audience only. Customer-list uploads, membership changes and sharing are excluded."
+  audiences.delete: "Deletion is permanent and ads using the audience stop; they cannot be restarted."
+  insights.list: "Synchronous metrics only. Async reports, breakdowns, filters and custom metric fields are excluded."
+apiExamples:
+  accounts.list: {}
+  accounts.get:
+    accountId: "1234567890"
+  campaigns.list:
+    accountId: "1234567890"
+  campaigns.get:
+    campaignId: "120000000000001"
+  campaigns.create:
+    accountId: "1234567890"
+    name: "Sample campaign"
+  campaigns.update:
+    campaignId: "120000000000001"
+  campaigns.delete:
+    campaignId: "120000000000001"
+  adSets.list:
+    accountId: "1234567890"
+  adSets.get:
+    adSetId: "120000000000002"
+  adSets.create:
+    accountId: "1234567890"
+    campaignId: "120000000000001"
+    name: "Sample ad set"
+    targeting:
+      geo_locations:
+        countries: [US]
+  adSets.update:
+    adSetId: "120000000000002"
+  adSets.delete:
+    adSetId: "120000000000002"
+  ads.list:
+    accountId: "1234567890"
+  ads.get:
+    adId: "120000000000003"
+  ads.create:
+    accountId: "1234567890"
+    adSetId: "120000000000002"
+    name: "Sample ad"
+    creativeId: "120000000000004"
+  ads.update:
+    adId: "120000000000003"
+  ads.delete:
+    adId: "120000000000003"
+  creatives.list:
+    accountId: "1234567890"
+  creatives.get:
+    creativeId: "120000000000004"
+  creatives.create:
+    accountId: "1234567890"
+    name: "Sample creative"
+    objectStoryId: "1234567890_1234567890"
+  creatives.update:
+    creativeId: "120000000000004"
+    name: "Updated creative"
+  creatives.delete:
+    creativeId: "120000000000004"
+  audiences.list:
+    accountId: "1234567890"
+  audiences.get:
+    audienceId: "120000000000005"
+  audiences.create:
+    accountId: "1234567890"
+    name: "Sample audience"
+  audiences.update:
+    audienceId: "120000000000005"
+    name: "Updated audience"
+  audiences.delete:
+    audienceId: "120000000000005"
+  insights.list:
+    accountId: "1234567890"
+    fields: [impressions, spend]
