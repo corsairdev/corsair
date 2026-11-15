@@ -7,7 +7,7 @@ import type {
 	RawWebhookRequest,
 	WebhookResponse,
 } from '../core/webhooks';
-import { resolveTenantFromWebhookLink } from './tenant-links';
+import { resolveAccountFromWebhookLink } from './tenant-links';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -49,7 +49,10 @@ type PluginWithWebhooks = {
  * The corsair instance type - a record of plugin namespaces.
  */
 type CorsairInstance = Record<string, PluginWithWebhooks | undefined> & {
-	withTenant?: (tenantId: string) => CorsairInstance;
+	withTenant?: (
+		tenantId: string,
+		options?: { accounts?: Record<string, string | undefined> },
+	) => CorsairInstance;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -160,20 +163,23 @@ async function resolveTenantForPlugin(
 	corsair: CorsairInstance,
 	pluginId: string,
 	request: RawWebhookRequest,
-): Promise<{ tenantId?: string; failed?: true }> {
+): Promise<{ tenantId?: string; accountId?: string; failed?: true }> {
 	const internal = tryGetCorsairInternal(corsair);
 	if (!internal?.multiTenancy || !internal.database) return {};
 	const plugin = internal.plugins.find((p) => p.id === pluginId);
 	const tenantMatch = plugin?.pluginTenantWebhookMatcher?.(request);
 	if (!tenantMatch) return {};
 	try {
-		const tenantId = await resolveTenantFromWebhookLink({
+		const account = await resolveAccountFromWebhookLink({
 			database: internal.database,
 			kek: internal.kek,
 			pluginId,
-			match: tenantMatch,
+			linkType: tenantMatch.linkType,
+			externalId: tenantMatch.externalId,
 		});
-		return tenantId ? { tenantId } : {};
+		return account
+			? { tenantId: account.tenant_id, accountId: account.id }
+			: {};
 	} catch {
 		return { failed: true };
 	}
@@ -224,6 +230,8 @@ export async function processWebhook(
 		plugin?: string;
 		/** Hub already verified the provider signature; skip app-side re-verify. */
 		hubVerified?: boolean;
+		/** The account row the delivery matched; the handler runs as it. */
+		accountId?: string;
 	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
@@ -283,6 +291,8 @@ export async function processWebhook(
 
 		if (!matched) continue;
 
+		let boundTenantId = explicitTenantId;
+		let boundAccountId = options?.accountId;
 		if (!explicitTenantId && corsair.withTenant) {
 			const resolved = await resolveTenantForPlugin(
 				corsair,
@@ -303,13 +313,24 @@ export async function processWebhook(
 					},
 				};
 			}
-			if (resolved.tenantId) {
-				const scoped = corsair.withTenant(resolved.tenantId)[pluginId];
-				matched =
-					(scoped?.webhooks &&
-						findMatchingWebhook(scoped.webhooks, rawRequest)) ||
-					matched;
-			}
+			boundTenantId = resolved.tenantId;
+			boundAccountId = resolved.accountId;
+		}
+		if (
+			boundTenantId &&
+			corsair.withTenant &&
+			(!explicitTenantId || boundAccountId)
+		) {
+			const scoped = corsair.withTenant(
+				boundTenantId,
+				boundAccountId
+					? { accounts: { [pluginId]: boundAccountId } }
+					: undefined,
+			)[pluginId];
+			matched =
+				(scoped?.webhooks &&
+					findMatchingWebhook(scoped.webhooks, rawRequest)) ||
+				matched;
 		}
 
 		const action = matched.path.join('.');
