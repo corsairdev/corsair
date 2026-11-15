@@ -2443,6 +2443,7 @@ await corsair.ahrefs.api.keywordsExplorer.overview({});
 | `select` | `string` | Yes | — |
 | `volume_monthly_date_to` | `string` | No | — |
 | `volume_monthly_date_from` | `string` | No | — |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | — |
 | `target_mode` | `exact \| prefix \| domain \| subdomains` | No | — |
 | `target` | `string` | No | — |
 | `target_position` | `in_top10 \| in_top100` | No | — |
@@ -2478,7 +2479,7 @@ await corsair.ahrefs.api.keywordsExplorer.overview({});
     branded?: boolean,
     local?: boolean
   } | null,
-  keyword: string,
+  keyword?: string | null,
   parent_topic?: string | null,
   parent_volume?: number | null,
   searches_pct_clicks_organic_and_paid?: number | null,
@@ -4855,6 +4856,8 @@ await corsair.ahrefs.api.serp.overview({});
 | `date` | `string` | No | — |
 | `country` | `string` | Yes | — |
 | `keyword` | `string` | Yes | — |
+| `comparison_countries` | `string` | No | — |
+| `type` | `string` | No | — |
 | `output` | `json` | No | Defaults to "json". |
 
 
@@ -4870,7 +4873,7 @@ await corsair.ahrefs.api.serp.overview({});
 
 ```ts
 {
-  position: number,
+  position?: number | null,
   url?: string | null,
   title?: string | null,
   type?: string[],
@@ -5398,6 +5401,7 @@ await corsair.ahrefs.api.siteExplorer.backlinksStats({});
 | `date` | `string` | Yes | — |
 | `output` | `json` | No | Defaults to "json". |
 | `mode` | `exact \| prefix \| domain \| subdomains` | No | Defaults to "subdomains". |
+| `portfolio_id` | `number` | No | — |
 
 
 
@@ -6186,6 +6190,7 @@ await corsair.ahrefs.api.siteExplorer.organicKeywords({});
 | `date` | `string` | Yes | — |
 | `output` | `json` | No | Defaults to "json". |
 | `timeout` | `number` | No | — |
+| `portfolio_id` | `number` | No | — |
 | `limit` | `number` | No | Defaults to 1000. |
 | `order_by` | `string` | No | — |
 | `where` | `string` | No | — |
@@ -6194,6 +6199,7 @@ await corsair.ahrefs.api.siteExplorer.organicKeywords({});
 | `country` | `string` | Yes | — |
 | `date_compared` | `string` | No | — |
 | `volume_mode` | `monthly \| average` | No | Defaults to "monthly". |
+| `traffic_mode` | `static \| adaptive` | No | — |
 
 
 
@@ -6635,6 +6641,7 @@ await corsair.ahrefs.api.siteExplorer.refdomains({});
 | `date` | `string` | Yes | — |
 | `output` | `json` | No | Defaults to "json". |
 | `timeout` | `number` | No | — |
+| `portfolio_id` | `number` | No | — |
 | `limit` | `number` | No | Defaults to 1000. |
 | `order_by` | `string` | No | — |
 | `where` | `string` | No | — |
@@ -6655,7 +6662,7 @@ await corsair.ahrefs.api.siteExplorer.refdomains({});
 
 ```ts
 {
-  domain: string,
+  domain?: string | null,
   domain_rating?: number | null,
   dofollow_links?: number | null,
   dofollow_refdomains?: number | null,
@@ -6742,6 +6749,7 @@ await corsair.ahrefs.api.siteExplorer.topPages({});
 | `date` | `string` | Yes | — |
 | `output` | `json` | No | Defaults to "json". |
 | `timeout` | `number` | No | — |
+| `portfolio_id` | `number` | No | — |
 | `limit` | `number` | No | Defaults to 1000. |
 | `order_by` | `string` | No | — |
 | `where` | `string` | No | — |
@@ -6750,6 +6758,7 @@ await corsair.ahrefs.api.siteExplorer.topPages({});
 | `country` | `string` | Yes | — |
 | `date_compared` | `string` | No | — |
 | `volume_mode` | `monthly \| average` | No | Defaults to "monthly". |
+| `traffic_mode` | `static \| adaptive` | No | — |
 
 
 
@@ -6764,7 +6773,7 @@ await corsair.ahrefs.api.siteExplorer.topPages({});
 
 ```ts
 {
-  raw_url: string,
+  raw_url?: string | null,
   keywords?: number | null,
   referring_domains?: number | null,
   sum_traffic?: number | null,

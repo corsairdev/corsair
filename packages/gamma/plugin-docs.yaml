@@ -1,0 +1,61 @@
+displayName: Gamma
+description: Generate presentations with Gamma - start a generation from text or a multi-page outline, follow it to completion, read and export the finished gamma, and browse the workspace's themes and folders.
+domain: gamma.app
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Gamma under Account settings, API keys. It is sent in the `X-API-KEY` header.
+
+  Things to know before you call:
+
+  - **Two generation routes, and they are not interchangeable.** `agent.generate` runs Gamma 5 from a single brief and is the one to use for a new presentation, document or social post. `generations.create` is the Classic path: it is the only one that takes a `pages` array for a multi-page gamma or site, and the only one that publishes with `publish: true`. A Classic body carries either `inputText` or `pages`, never both, and the plugin refuses a body with neither.
+  - **A generation is asynchronous.** Both creates return a `generationId` at once, and a poll answers `pending` until it is `completed` or `failed` (which carries an `error`). A completed Classic generation carries `gammaId` and `gammaUrl` at the top level; an agent generation nests them under `gamma`, next to the agent's `result.summary`. Spends credits.
+  - **`exportUrl` is a credential.** The download link works for anyone holding it, for about a week, and Gamma's own docs say to treat it as a secret. The plugin never logs it; `generations.get` and `exports.get` report only whether one arrived.
+  - **`png` exports are archives.** A PNG export is a zip of one image per card, not a single file, and `pptx` and `pdf` match their own formats.
+  - **Archiving is not deleting.** `gammas.archive` is idempotent and reversible from the Gamma app, so it is a write rather than a destructive call. `gammas.delete` is permanent and needs a workspace admin role.
+  - **A 403 has several meanings.** A web app URL slug sent where a file ID belongs, a workspace below Pro on the analytics routes, a key owner without the permission, or, on the agent routes, a workspace out of credits (`code: insufficient_credits`, which the plugin reports as `isQuotaError`; Classic routes answer `402` for that). The `code` says which; `individual_analytics_required` is the analytics case.
+  - **A 429 can be a job cap, not a rate.** Gamma adds `code: workspace_concurrency_limit_exceeded` when a Free workspace already has too many pending jobs started with an API key, and sends `Retry-After`. The plugin retries both, honouring the header.
+  - **Credits are reported per generation.** A completed `generations.get` carries `credits.deducted` and `credits.remaining`, which is how you see what a run cost.
+  - **No webhooks.** Gamma does not push; poll the generation until it is `completed` or `failed`.
+examples:
+  read:
+    path: gammas.search
+    title: Search your gammas
+    args:
+      q: quarterly review
+      limit: 10
+  write:
+    path: agent.generate
+    title: Generate a presentation from a brief
+    args:
+      prompt: A ten-slide deck about renewable energy for a finance audience
+apiExamples:
+  generations.create:
+    call: "{ inputText: 'Create a presentation about renewable energy', textMode: 'generate', format: 'presentation', numCards: 12 }"
+  generations.get:
+    call: "{ generationId: 'gen_abc123' }"
+  agent.generate:
+    call: "{ prompt: 'A deck about solar power for a finance audience', format: 'presentation', quality: 'standard', sourceUrls: ['https://acme.example/report'] }"
+  agent.get:
+    call: "{ generationId: 'gen_agent1' }"
+  gammas.get:
+    call: "{ gammaId: 'gam_xyz789' }"
+  gammas.search:
+    call: "{ q: 'quarterly review', limit: 10, includeArchived: false }"
+  gammas.archive:
+    call: "{ gammaId: 'gam_xyz789' }"
+  gammas.delete:
+    call: "{ gammaId: 'gam_xyz789' }"
+  exports.start:
+    call: "{ gammaId: 'gam_xyz789', format: 'pptx' }"
+  exports.get:
+    call: "{ exportId: 'exp_1' }"
+  themes.list:
+    call: "{ type: 'standard', limit: 10 }"
+  folders.list: {}
+apiNotes:
+  generations.create: 'Takes `inputText` or a `pages` array, never both. `publish` applies only to a multi-page generation.'
+  agent.generate: 'The Gamma 5 route for a new presentation, document or social post. `prompt` is the only required field.'
+  generations.get: 'Poll until `status` is `completed` or `failed`. The `exportUrl` it may carry is a download link that works for anyone holding it, so it is never logged.'
+  exports.get: '`completed` carries a download URL valid about a week. A `png` export is a zip of one image per card.'
+  gammas.archive: 'Idempotent and reversible, so it is a write rather than a destructive call.'
+  gammas.delete: 'Permanent, and needs a workspace admin role.'
