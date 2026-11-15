@@ -1,7 +1,8 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import type { ParsehubContext } from '..';
 import { makeParsehubRequest } from '../client';
+import type { ParsehubContext } from '../context';
+import { ParsehubProjectEntity } from '../schema/database';
 import type { ListProjectsInput, ListProjectsResponse } from './types';
 import { ListProjectsInputSchema, ListProjectsResponseSchema } from './types';
 
@@ -26,6 +27,7 @@ export const listProjects: CorsairEndpoint<
 					: 0,
 	});
 	const result = ListProjectsResponseSchema.parse(body);
+	await storeProjects(ctx, result.projects);
 	await logEventFromContext(
 		ctx,
 		'parsehub.projects.list',
@@ -34,5 +36,31 @@ export const listProjects: CorsairEndpoint<
 	);
 	return result;
 };
+
+function projectRow(item: unknown): ParsehubProjectEntity | undefined {
+	if (!item || typeof item !== 'object') return undefined;
+	const record = item as { token?: unknown; title?: unknown };
+	const parsed = ParsehubProjectEntity.safeParse({
+		token: record.token,
+		title: typeof record.title === 'string' ? record.title : undefined,
+	});
+	return parsed.success ? parsed.data : undefined;
+}
+
+async function storeProjects(
+	ctx: ParsehubContext,
+	projects: unknown[],
+): Promise<void> {
+	if (!ctx.db?.projects) return;
+	for (const item of projects) {
+		const row = projectRow(item);
+		if (!row) continue;
+		try {
+			await ctx.db.projects.upsertByEntityId(row.token, row);
+		} catch {
+			console.warn('Failed to save ParseHub project');
+		}
+	}
+}
 
 export const Projects = { list: listProjects };

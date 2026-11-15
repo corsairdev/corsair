@@ -27,8 +27,11 @@ const SAMPLE = {
 	total_projects: 1,
 };
 
-function context(key: string): ParsehubContext {
-	return { key } as ParsehubContext;
+function context(key: string, upsert?: jest.Mock): ParsehubContext {
+	return {
+		key,
+		db: upsert ? { projects: { upsertByEntityId: upsert } } : undefined,
+	} as unknown as ParsehubContext;
 }
 
 describe('projects.list', () => {
@@ -101,5 +104,50 @@ describe('projects.list', () => {
 		);
 		mockRequest.mockRejectedValue(error);
 		await expect(listProjects(context('test-key'), {})).rejects.toBe(error);
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects a page size outside 1 to 20 before calling the API', async () => {
+		await expect(
+			listProjects(context('test-key'), { limit: 0 }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that has no projects array', async () => {
+		mockRequest.mockResolvedValue({ total_projects: 1 });
+		await expect(listProjects(context('test-key'), {})).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('stores each project that has a token and not the API key', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({
+			projects: [
+				{ token: 'project-1', title: 'Example' },
+				{ title: 'Missing token' },
+			],
+			total_projects: 2,
+		});
+		const result = await listProjects(context('test-key', upsert), {});
+		expect(result.projects).toHaveLength(2);
+		expect(upsert).toHaveBeenCalledTimes(1);
+		expect(upsert).toHaveBeenCalledWith('project-1', {
+			token: 'project-1',
+			title: 'Example',
+		});
+		expect(JSON.stringify(upsert.mock.calls)).not.toContain('test-key');
+	});
+
+	it('returns the list when the database write fails', async () => {
+		const upsert = jest.fn().mockRejectedValue(new Error('disk full'));
+		mockRequest.mockResolvedValue(SAMPLE);
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		await expect(
+			listProjects(context('test-key', upsert), {}),
+		).resolves.toEqual(SAMPLE);
+		warn.mockRestore();
 	});
 });

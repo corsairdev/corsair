@@ -3,7 +3,6 @@ import type {
 	BindEndpoints,
 	CorsairErrorHandler,
 	CorsairPlugin,
-	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -11,6 +10,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import type { ParsehubContext } from './context';
 import { Projects } from './endpoints';
 import {
 	ListProjectsInputSchema,
@@ -19,6 +19,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { ParsehubSchema } from './schema';
 
+export type { ParsehubContext };
+
 export type ParsehubPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
@@ -26,11 +28,6 @@ export type ParsehubPluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof parsehubEndpointsNested>;
 };
-
-export type ParsehubContext = CorsairPluginContext<
-	typeof ParsehubSchema,
-	ParsehubPluginOptions
->;
 
 export type ParsehubKeyBuilderContext =
 	KeyBuilderContext<ParsehubPluginOptions>;
