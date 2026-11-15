@@ -4380,6 +4380,14 @@
                 ]
               },
               {
+                "group": "SurveyMonkey",
+                "pages": [
+                  "plugins/surveymonkey/overview",
+                  "plugins/surveymonkey/api",
+                  "plugins/surveymonkey/database"
+                ]
+              },
+              {
                 "group": "Suzanne",
                 "pages": [
                   "plugins/suzanne/overview",

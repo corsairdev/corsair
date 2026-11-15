@@ -1,0 +1,142 @@
+---
+title: "SurveyMonkey plugin"
+sidebarTitle: "Overview"
+description: "Surveys and responses for building surveys, collecting answers through collectors and contacts, and reading results."
+---
+
+Use **SurveyMonkey** through Corsair: one client, typed API calls.
+
+**SurveyMonkey authenticates with an OAuth 2.0 access token.** Register an app at developer.surveymonkey.com, then either run the flow this plugin declares (`oauth_2`) or paste a private app's access token from its settings page as `surveymonkey({ key })`. A token only reaches the account that authorized it.
+
+Every account starts on `https://api.surveymonkey.com/v3`, but the token exchange returns an `access_url` per account and the vendor says an account may live on another datacenter. Pass `surveymonkey({ apiHost })` or store it as `api_host` when it differs. Only a `surveymonkey.com` host is accepted, so a stored value cannot redirect the token.
+
+Things to know before you call:
+
+- **Every id is a string**, even when it looks numeric, and every list answers `{ data, page, per_page, total, links }`. Read `links.next` to page.
+- **`responses.list` returns ids and links only.** Use `responses.listBulk` for the answers, up to 1000 a page, and `responses.get` or `responses.getDetails` for one.
+- **`responses.create` hangs off a collector**, not a survey, because a collector owns the response link.
+- **A question needs `family` and `subtype`**, which decide the question type, and at least one heading, which is the question text.
+- **`messages.create` only drafts a message.** `messages.send` is the call that mails every recipient on it.
+- **A contact needs both names**, plus an email or a phone number. The list filter takes `active`, `optout` or `bounced`.
+- **SurveyMonkey sends `Sm-Signature`**, a base64 HMAC-SHA1 over the raw body keyed by `clientId&clientSecret`. Set both to verify a delivery; without them the plugin cannot check one.
+- **A draft or private app is limited to 120 requests a minute and 500 a day**, reset at midnight GMT.
+
+**What you get:**
+
+- 63 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/surveymonkey better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/surveymonkey better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/surveymonkey better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/surveymonkey better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { surveymonkey } from '@corsair-dev/surveymonkey';
+
+export const corsair = createCorsair({
+	plugins: [
+		surveymonkey(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your SurveyMonkey OAuth app.
+
+```ts
+surveymonkey()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'surveymonkey',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List surveys**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.surveymonkey.api.surveys.list({ per_page: 50 });
+```
+
+
+**Create a survey**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.surveymonkey.api.surveys.create({ title: 'Customer feedback' });
+```
+
+
+See the full list on the [API](/plugins/surveymonkey/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/surveymonkey/api">
+    Every `surveymonkey.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

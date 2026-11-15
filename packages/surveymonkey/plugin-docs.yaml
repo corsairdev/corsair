@@ -1,0 +1,285 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "SurveyMonkey"
+description: Surveys and responses for building surveys, collecting answers through collectors and contacts, and reading results.
+domain: surveymonkey.com
+recommendedAuth: oauth_2
+overviewNote: |
+  **SurveyMonkey authenticates with an OAuth 2.0 access token.** Register an app at developer.surveymonkey.com, then either run the flow this plugin declares (`oauth_2`) or paste a private app's access token from its settings page as `surveymonkey({ key })`. A token only reaches the account that authorized it.
+
+  Every account starts on `https://api.surveymonkey.com/v3`, but the token exchange returns an `access_url` per account and the vendor says an account may live on another datacenter. Pass `surveymonkey({ apiHost })` or store it as `api_host` when it differs. Only a `surveymonkey.com` host is accepted, so a stored value cannot redirect the token.
+
+  Things to know before you call:
+
+  - **Every id is a string**, even when it looks numeric, and every list answers `{ data, page, per_page, total, links }`. Read `links.next` to page.
+  - **`responses.list` returns ids and links only.** Use `responses.listBulk` for the answers, up to 1000 a page, and `responses.get` or `responses.getDetails` for one.
+  - **`responses.create` hangs off a collector**, not a survey, because a collector owns the response link.
+  - **A question needs `family` and `subtype`**, which decide the question type, and at least one heading, which is the question text.
+  - **`messages.create` only drafts a message.** `messages.send` is the call that mails every recipient on it.
+  - **A contact needs both names**, plus an email or a phone number. The list filter takes `active`, `optout` or `bounced`.
+  - **SurveyMonkey sends `Sm-Signature`**, a base64 HMAC-SHA1 over the raw body keyed by `clientId&clientSecret`. Set both to verify a delivery; without them the plugin cannot check one.
+  - **A draft or private app is limited to 120 requests a minute and 500 a day**, reset at midnight GMT.
+examples:
+  read:
+    path: surveys.list
+    title: List surveys
+    args:
+      per_page: 50
+  write:
+    path: surveys.create
+    title: Create a survey
+    args:
+      title: Customer feedback
+apiExamples:
+  surveys.list:
+    call: "{ per_page: 50, sort_by: 'date_modified', sort_order: 'DESC' }"
+  surveys.create:
+    call: "{ title: 'Customer feedback' }"
+  surveys.get:
+    call: "{ survey_id: '1234' }"
+  surveys.getDetails:
+    call: "{ survey_id: '1234' }"
+  surveys.update:
+    call: "{ survey_id: '1234', title: 'Customer feedback 2026' }"
+  surveys.replace:
+    call: "{ survey_id: '1234', title: 'Customer feedback' }"
+  surveys.delete:
+    call: "{ survey_id: '1234' }"
+  surveys.listCategories:
+    call: "{ language: 'en' }"
+  surveys.listTemplates:
+    call: "{ language: 'en', category: 'business' }"
+  surveys.listLanguages:
+    call: "{ per_page: 100 }"
+  pages.list:
+    call: "{ survey_id: '1234' }"
+  pages.create:
+    call: "{ survey_id: '1234', title: 'Page 1', position: 1 }"
+  pages.get:
+    call: "{ survey_id: '1234', page_id: '5678' }"
+  pages.update:
+    call: "{ survey_id: '1234', page_id: '5678', title: 'About you' }"
+  pages.delete:
+    call: "{ survey_id: '1234', page_id: '5678' }"
+  questions.list:
+    call: "{ survey_id: '1234', page_id: '5678' }"
+  questions.create:
+    call: "{ survey_id: '1234', page_id: '5678', family: 'single_choice', subtype: 'vertical', headings: [{ heading: 'How did you hear about us?' }], answers: { choices: [{ text: 'Search' }, { text: 'A friend' }] } }"
+  questions.get:
+    call: "{ survey_id: '1234', page_id: '5678', question_id: '9012' }"
+  questions.update:
+    call: "{ survey_id: '1234', page_id: '5678', question_id: '9012', headings: [{ heading: 'Where did you hear about us?' }] }"
+  questions.delete:
+    call: "{ survey_id: '1234', page_id: '5678', question_id: '9012' }"
+  responses.list:
+    call: "{ survey_id: '1234', status: 'completed', per_page: 100 }"
+  responses.listBulk:
+    call: "{ survey_id: '1234', per_page: 100, simple: true }"
+  responses.get:
+    call: "{ survey_id: '1234', response_id: '5001' }"
+  responses.getDetails:
+    call: "{ survey_id: '1234', response_id: '5001' }"
+  responses.create:
+    call: "{ collector_id: '1234', response_status: 'completed', pages: [{ id: '5678', questions: [{ id: '9012', answers: [{ choice_id: '111' }] }] }] }"
+  responses.delete:
+    call: "{ survey_id: '1234', response_id: '5001' }"
+  responses.deleteAll:
+    call: "{ collector_id: '1234' }"
+  collectors.list:
+    call: "{ survey_id: '1234' }"
+  collectors.create:
+    call: "{ survey_id: '1234', type: 'weblink', name: 'Website link' }"
+  collectors.get:
+    call: "{ collector_id: '1234' }"
+  collectors.update:
+    call: "{ collector_id: '1234', status: 'closed' }"
+  collectors.delete:
+    call: "{ collector_id: '1234' }"
+  messages.list:
+    call: "{ collector_id: '1234' }"
+  messages.create:
+    call: "{ collector_id: '1234', type: 'invite', subject: 'Please take our survey', body: 'It takes two minutes.' }"
+  messages.get:
+    call: "{ collector_id: '1234', message_id: '2345' }"
+  messages.update:
+    call: "{ collector_id: '1234', message_id: '2345', subject: 'A quick question' }"
+  messages.send:
+    call: "{ collector_id: '1234', message_id: '2345' }"
+  recipients.list:
+    call: "{ collector_id: '1234', message_id: '2345' }"
+  recipients.create:
+    call: "{ collector_id: '1234', message_id: '2345', email: 'bob@example.com', first_name: 'Bob' }"
+  recipients.bulkCreate:
+    call: "{ collector_id: '1234', message_id: '2345', contacts: [{ email: 'bob@example.com' }] }"
+  contactLists.list:
+    call: "{ per_page: 50 }"
+  contactLists.create:
+    call: "{ name: 'Newsletter' }"
+  contactLists.get:
+    call: "{ contact_list_id: '1234' }"
+  contactLists.update:
+    call: "{ contact_list_id: '1234', name: 'Newsletter 2026' }"
+  contactLists.delete:
+    call: "{ contact_list_id: '1234' }"
+  contactLists.copy:
+    call: "{ contact_list_id: '1234', name: 'Newsletter copy' }"
+  contactLists.merge:
+    call: "{ contact_list_id: '1234', list_id: '5678' }"
+  contacts.list:
+    call: "{ status: 'active', search_by: 'email', search: 'bob@example.com' }"
+  contacts.create:
+    call: "{ first_name: 'Bob', last_name: 'Tester', email: 'bob@example.com' }"
+  contacts.bulkCreate:
+    call: "{ contacts: [{ first_name: 'Bob', last_name: 'Tester', email: 'bob@example.com' }] }"
+  contacts.get:
+    call: "{ contact_id: '1234' }"
+  contacts.update:
+    call: "{ contact_id: '1234', last_name: 'Smith' }"
+  contacts.delete:
+    call: "{ contact_id: '1234' }"
+  contacts.listFields:
+    call: "{}"
+  contacts.updateField:
+    call: "{ contact_field_id: '1', label: 'Order id' }"
+  webhooks.list:
+    call: "{}"
+  webhooks.create:
+    call: "{ name: 'Response bot', event_type: 'response_completed', object_type: 'survey', object_ids: ['1234'], subscription_url: 'https://example.com/hooks/surveymonkey' }"
+  webhooks.get:
+    call: "{ webhook_id: '1234' }"
+  webhooks.update:
+    call: "{ webhook_id: '1234', subscription_url: 'https://example.com/hooks/other' }"
+  webhooks.delete:
+    call: "{ webhook_id: '1234' }"
+  users.getMe:
+    call: "{}"
+  folders.list:
+    call: "{}"
+  folders.create:
+    call: "{ title: 'Customer research' }"
+apiNotes:
+  surveys.list: |
+    Answers `{ data, page, per_page, total, links }`. `sort_by` takes `title`, `date_modified` or `date_created`, and `sort_order` is `ASC` or `DESC`. `include` accepts `-response_count` to add the count, and `folder_id`, `title` and the two modification dates narrow the list.
+  surveys.create: |
+    Answers the survey with an empty page list. `from_template_id` copies a template, and `from_survey_id` copies an existing survey; without either the survey is empty and needs a page and a question before it can record a response.
+  surveys.get: |
+    Answers one survey. `response_count` is present only when the list route was asked for it with `include`.
+  surveys.getDetails: |
+    Answers the survey with every page and question, including each choice's id and text. This is the call to make before reading answers, because a response carries choice ids rather than choice text.
+  surveys.update: |
+    Sends PATCH with only the fields you pass, so everything else stays. `buttons_text` sets the four button labels, and `custom_variables` is a map of name to label.
+  surveys.replace: |
+    Sends PUT, which replaces the survey. **A field you leave out resets to its default**, so use `surveys.update` for a single change.
+  surveys.delete: |
+    Answers 200 with an empty body, so the plugin reports `{ survey_id, deleted: true }`. The pages, questions and responses go with it.
+  surveys.listCategories: |
+    Answers `{ data }`, the categories a survey can be filed under for `language`.
+  surveys.listTemplates: |
+    Answers `{ data }` of surveys, each a template. `language` and `category` narrow the list.
+  surveys.listLanguages: |
+    Answers `{ data }`, the languages a survey can be written in.
+  pages.list: |
+    Answers `{ data }` in page order. A survey always has at least one page once it has questions.
+  pages.create: |
+    Answers the created page. `position` is 1-based; omitting it appends the page.
+  pages.get: |
+    Answers one page with its `question_count`.
+  pages.update: |
+    Sends PATCH, so only the fields you pass change. `position` reorders the page within the survey.
+  pages.delete: |
+    Answers 200 with an empty body and reports `{ survey_id, page_id, deleted: true }`. The questions on the page go with it.
+  questions.list: |
+    Answers `{ data }` in question order. Each question carries its `family`, `subtype`, headings and, for a choice question, its choices.
+  questions.create: |
+    Answers the created question. **`family` and `subtype` are required** and decide the question type, for example `single_choice` with `vertical`. At least one heading is required and it is the question text. `answers.choices` carries the options for a choice question.
+  questions.get: |
+    Answers one question with its choices, required rule and validity settings.
+  questions.update: |
+    Sends PATCH, so only the fields you pass change. `visible: false` hides the question without deleting it, and the answers already recorded stay.
+  questions.delete: |
+    Answers 200 with an empty body and reports the three ids. The answers recorded for the question go with it.
+  responses.list: |
+    Answers `{ data }` where each entry is **only an id and a link**. Use `responses.listBulk` for the answers. `status` takes `completed`, `partial`, `overquota` or `disqualified`.
+  responses.listBulk: |
+    Answers `{ data }` with each response's pages, questions and answers. `per_page` goes up to 1000. `simple: true` drops the page and question structure and keeps the answers flat, which is cheaper and easier to walk. `collector_ids`, `page_ids` and `question_ids` narrow what comes back.
+  responses.get: |
+    Answers one response with its pages, questions and answers. Each answer carries a `choice_id`, `row_id`, `col_id` or `other_id`, which you map to text with `surveys.getDetails`.
+  responses.getDetails: |
+    Answers one response with the same structure as `responses.get` plus the question detail. `responses.get` is enough when you already cached the survey details.
+  responses.create: |
+    Posts to `/collectors/{id}/responses`, because a collector owns the response link. `response_status` sets whether it counts as `completed`. `recipient_id` is required for an email collector. Nothing is mailed to a respondent.
+  responses.delete: |
+    Answers 200 with an empty body and reports `{ survey_id, response_id, deleted: true }`. The survey's counts change.
+  responses.deleteAll: |
+    Deletes every response the collector gathered and reports `{ collector_id, deleted: true }`. **There is no undo**, and the collector stays open so it can gather more.
+  collectors.list: |
+    Answers `{ data }` of collectors. `include` adds their messages, `name` filters by name, and `start_date` plus `end_date` filter by creation.
+  collectors.create: |
+    Answers the created collector. `type` is `weblink` or `email`; `sms` exists in the API but cannot be created here. A weblink collector answers a public `url`, and an email collector needs messages and recipients before it sends anything.
+  collectors.get: |
+    Answers one collector with its link, status and settings.
+  collectors.update: |
+    Sends PATCH, so only the fields you pass change. **`status` is the field that opens or closes it**, and `type` cannot be changed.
+  collectors.delete: |
+    Answers 200 with an empty body and reports `{ collector_id, deleted: true }`. Its link stops working; the responses it gathered stay on the survey.
+  messages.list: |
+    Answers `{ data }` of the collector's messages.
+  messages.create: |
+    Answers the drafted message. `type` is `invite` for the first send, `reminder` to chase non-responders, and `thank_you` for the follow-up note. **Nothing is sent**: a message needs recipients and then `messages.send`.
+  messages.get: |
+    Answers one message subject and body.
+  messages.update: |
+    Sends PATCH. A change is only possible before the message is sent.
+  messages.send: |
+    Sends the message to every recipient on it. **This mails real people**, so list the recipients first. `scheduled_date` defers the send instead of sending now.
+  recipients.list: |
+    Answers `{ data }` with each recipient's `mail_status` and `survey_response_status`, which is how you tell who has answered.
+  recipients.create: |
+    Answers the created recipient. The email has to look valid, and the message must not have been sent yet.
+  recipients.bulkCreate: |
+    Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. A recipient already on the message comes back under `existing` rather than failing the call.
+  contactLists.list: |
+    Answers `{ data }` of contact lists on the account, 50 a page by default.
+  contactLists.create: |
+    Answers the created list. A list starts empty; contacts are on the account and adding them is a separate resource.
+  contactLists.get: |
+    Answers one contact list.
+  contactLists.update: |
+    Sends PATCH with `name`, which renames the list.
+  contactLists.delete: |
+    Answers 200 with an empty body and reports `{ contact_list_id, deleted: true }`. The contacts on it stay on the account.
+  contactLists.copy: |
+    Answers the new list. `name` defaults to a copy of the original name.
+  contactLists.merge: |
+    Moves every contact from this list into `list_id` and answers 200 with no body, so the plugin reports `{ source_list_id, target_list_id, merged: true }`. **The source list is left empty**, and nothing moves it back.
+  contacts.list: |
+    Answers `{ data }`. `status` takes `active`, `optout` or `bounced`. `sort_by` and `search_by` take a field name, or a custom field number as `1` through `6`.
+  contacts.create: |
+    Answers the created contact. **Both names are required**, and so is an email or a phone number. This creates the contact on the account; a contact list is a separate resource.
+  contacts.bulkCreate: |
+    Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. `update_existing: true` on an entry updates the contact when its email is already known instead of adding it to `existing`.
+  contacts.get: |
+    Answers one contact with its `custom_fields` and status.
+  contacts.update: |
+    Sends PATCH, so only the fields you pass change. `custom_fields` replaces the whole map.
+  contacts.delete: |
+    Answers 200 with an empty body and reports `{ contact_id, deleted: true }`. The contact leaves every list and stops receiving invites.
+  contacts.listFields: |
+    Answers `{ data }` of the custom contact fields, with the label to show and the id to use as a key in `custom_fields`.
+  contacts.updateField: |
+    Sends PATCH with `label`, which renames the field. The id never changes, so a rename does not break a stored `custom_fields` key.
+  webhooks.list: |
+    Answers `{ data }` of webhooks and what each subscribes to.
+  webhooks.create: |
+    Answers the created webhook. `event_type` is one of the twelve documented events. `object_ids` lists the surveys or collectors to watch, and is omitted for `survey_created`, which fires on a survey that does not exist yet. `authorization` is a value SurveyMonkey sends back as a header on every delivery.
+  webhooks.get: |
+    Answers one webhook subscription.
+  webhooks.update: |
+    Sends PATCH, so only the fields you pass change.
+  webhooks.delete: |
+    Answers 200 with an empty body and reports `{ webhook_id, deleted: true }`. The URL stops receiving events.
+  users.getMe: |
+    Answers the account the token belongs to, with its `account_type`. This is the cheapest way to confirm a connection works. A `premier` account or better is needed for the response detail routes.
+  folders.list: |
+    Answers `{ data }` of survey folders.
+  folders.create: |
+    Sends the title as a capitalised **`Title`**, which is the field the route reads, and answers the folder.

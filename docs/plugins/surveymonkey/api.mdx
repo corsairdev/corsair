@@ -1,0 +1,3835 @@
+---
+title: "SurveyMonkey API reference"
+sidebarTitle: "API"
+description: "API reference for the SurveyMonkey plugin in Corsair: every `surveymonkey.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Collectors
+
+### create
+
+`collectors.create`
+
+Create a weblink or email collector for a survey, which is what gives it a public link
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.collectors.create({ survey_id: '1234', type: 'weblink', name: 'Website link' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `type` | `weblink \| email` | No | — |
+| `name` | `string` | No | — |
+| `thank_you_message` | `string` | No | — |
+| `disqualification_message` | `string` | No | — |
+| `disqualification_url` | `string` | No | — |
+| `close_date` | `string` | No | — |
+| `closed_page_message` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `display_survey_results` | `boolean` | No | — |
+| `edit_response_type` | `until_complete \| never \| always` | No | — |
+| `anonymous_type` | `not_anonymous \| partially_anonymous \| fully_anonymous` | No | — |
+| `allow_multiple_responses` | `boolean` | No | — |
+| `sender_email` | `string` | No | — |
+| `response_limit` | `number` | No | — |
+| `redirect_type` | `url \| close \| loop` | No | — |
+| `password` | `string` | No | — |
+| `from_collector_id` | `string` | No | — |
+
+Answers the created collector. `type` is `weblink` or `email`; `sms` exists in the API but cannot be created here. A weblink collector answers a public `url`, and an email collector needs messages and recipients before it sends anything.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `thank_you_message` | `string \| null` | No | — |
+| `disqualification_message` | `string \| null` | No | — |
+| `disqualification_url` | `string \| null` | No | — |
+| `close_date` | `string \| null` | No | — |
+| `closed_page_message` | `string \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `display_survey_results` | `boolean \| null` | No | — |
+| `edit_response_type` | `string \| null` | No | — |
+| `anonymous_type` | `string \| null` | No | — |
+| `allow_multiple_responses` | `boolean \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `open` | `boolean \| null` | No | — |
+| `password_enabled` | `boolean \| null` | No | — |
+| `sender_email` | `string \| null` | No | — |
+| `response_limit` | `number \| null` | No | — |
+| `redirect_type` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`collectors.delete`
+
+Delete a collector. Its link stops working, and the responses it gathered stay
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.collectors.delete({ collector_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+
+Answers 200 with an empty body and reports `{ collector_id, deleted: true }`. Its link stops working; the responses it gathered stay on the survey.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`collectors.get`
+
+Read one collector with its settings, link and status
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.collectors.get({ collector_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+
+Answers one collector with its link, status and settings.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `thank_you_message` | `string \| null` | No | — |
+| `disqualification_message` | `string \| null` | No | — |
+| `disqualification_url` | `string \| null` | No | — |
+| `close_date` | `string \| null` | No | — |
+| `closed_page_message` | `string \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `display_survey_results` | `boolean \| null` | No | — |
+| `edit_response_type` | `string \| null` | No | — |
+| `anonymous_type` | `string \| null` | No | — |
+| `allow_multiple_responses` | `boolean \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `open` | `boolean \| null` | No | — |
+| `password_enabled` | `boolean \| null` | No | — |
+| `sender_email` | `string \| null` | No | — |
+| `response_limit` | `number \| null` | No | — |
+| `redirect_type` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`collectors.list`
+
+List the collectors of a survey with their links and status
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.collectors.list({ survey_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `name` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `include` | `string` | No | — |
+| `sort_by` | `id \| date_created \| date_modified \| name` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+
+Answers `{ data }` of collectors. `include` adds their messages, `name` filters by name, and `start_date` plus `end_date` filter by creation.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status?: string | null,
+  type?: string | null,
+  name?: string | null,
+  thank_you_message?: string | null,
+  disqualification_message?: string | null,
+  disqualification_url?: string | null,
+  close_date?: string | null,
+  closed_page_message?: string | null,
+  redirect_url?: string | null,
+  display_survey_results?: boolean | null,
+  edit_response_type?: string | null,
+  anonymous_type?: string | null,
+  allow_multiple_responses?: boolean | null,
+  date_modified?: string | null,
+  date_created?: string | null,
+  url?: string | null,
+  open?: boolean | null,
+  password_enabled?: boolean | null,
+  sender_email?: string | null,
+  response_limit?: number | null,
+  redirect_type?: string | null,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`collectors.update`
+
+Change a collector settings, or open and close it by status
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.collectors.update({ collector_id: '1234', status: 'closed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `status` | `open \| closed` | No | — |
+| `name` | `string` | No | — |
+| `thank_you_message` | `string` | No | — |
+| `disqualification_message` | `string` | No | — |
+| `disqualification_url` | `string` | No | — |
+| `close_date` | `string` | No | — |
+| `closed_page_message` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `display_survey_results` | `boolean` | No | — |
+| `edit_response_type` | `until_complete \| never \| always` | No | — |
+| `anonymous_type` | `not_anonymous \| partially_anonymous \| fully_anonymous` | No | — |
+| `allow_multiple_responses` | `boolean` | No | — |
+| `sender_email` | `string` | No | — |
+| `response_limit` | `number` | No | — |
+| `redirect_type` | `url \| close \| loop` | No | — |
+| `password` | `string` | No | — |
+
+Sends PATCH, so only the fields you pass change. **`status` is the field that opens or closes it**, and `type` cannot be changed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `thank_you_message` | `string \| null` | No | — |
+| `disqualification_message` | `string \| null` | No | — |
+| `disqualification_url` | `string \| null` | No | — |
+| `close_date` | `string \| null` | No | — |
+| `closed_page_message` | `string \| null` | No | — |
+| `redirect_url` | `string \| null` | No | — |
+| `display_survey_results` | `boolean \| null` | No | — |
+| `edit_response_type` | `string \| null` | No | — |
+| `anonymous_type` | `string \| null` | No | — |
+| `allow_multiple_responses` | `boolean \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `open` | `boolean \| null` | No | — |
+| `password_enabled` | `boolean \| null` | No | — |
+| `sender_email` | `string \| null` | No | — |
+| `response_limit` | `number \| null` | No | — |
+| `redirect_type` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+## Contact Lists
+
+### copy
+
+`contactLists.copy`
+
+Copy a contact list, optionally under a new name
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.contactLists.copy({ contact_list_id: '1234', name: 'Newsletter copy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_list_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+Answers the new list. `name` defaults to a copy of the original name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`contactLists.create`
+
+Create an empty contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.contactLists.create({ name: 'Newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+Answers the created list. A list starts empty; contacts are on the account and adding them is a separate resource.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`contactLists.delete`
+
+Delete a contact list. The contacts on it stay on the account
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.contactLists.delete({ contact_list_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_list_id` | `string` | Yes | — |
+
+Answers 200 with an empty body and reports `{ contact_list_id, deleted: true }`. The contacts on it stay on the account.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_list_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`contactLists.get`
+
+Read one contact list
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.contactLists.get({ contact_list_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_list_id` | `string` | Yes | — |
+
+Answers one contact list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`contactLists.list`
+
+List the contact lists on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.contactLists.list({ per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }` of contact lists on the account, 50 a page by default.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`contactLists.merge`
+
+Move every contact from this list into another. The source list is left empty, so this effectively undoes it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.contactLists.merge({ contact_list_id: '1234', list_id: '5678' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_list_id` | `string` | Yes | — |
+| `list_id` | `string` | Yes | — |
+
+Moves every contact from this list into `list_id` and answers 200 with no body, so the plugin reports `{ source_list_id, target_list_id, merged: true }`. **The source list is left empty**, and nothing moves it back.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_list_id` | `string` | Yes | — |
+| `target_list_id` | `string` | Yes | — |
+| `merged` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`contactLists.update`
+
+Rename a contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.contactLists.update({ contact_list_id: '1234', name: 'Newsletter 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_list_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+Sends PATCH with `name`, which renames the list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+## Contacts
+
+### bulkCreate
+
+`contacts.bulkCreate`
+
+Create up to a few hundred contacts in one call, optionally updating existing ones
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.contacts.bulkCreate({ contacts: [{ first_name: 'Bob', last_name: 'Tester', email: 'bob@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. `update_existing: true` on an entry updates the contact when its email is already known instead of adding it to `existing`.
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  email?: string,
+  first_name: string,
+  last_name: string,
+  phone_number?: string,
+  custom_fields?: Record<string, string>,
+  update_existing?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `object[] \| null` | No | — |
+| `invalid` | `object[] \| null` | No | — |
+| `existing` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="succeeded full type">
+
+```ts
+{
+  id: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  phone_number?: string | null,
+  status?: string | null,
+  href?: string | null,
+  custom_fields?: Record<string, string> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="invalid full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="existing full type">
+
+```ts
+{
+  id: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  phone_number?: string | null,
+  status?: string | null,
+  href?: string | null,
+  custom_fields?: Record<string, string> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`contacts.create`
+
+Create a contact with a name and an email or a phone number
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.contacts.create({ first_name: 'Bob', last_name: 'Tester', email: 'bob@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `phone_number` | `string` | No | — |
+| `custom_fields` | `Record<string, string>` | No | — |
+
+Answers the created contact. **Both names are required**, and so is an email or a phone number. This creates the contact on the account; a contact list is a separate resource.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact. It stops receiving invites and leaves every contact list
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.contacts.delete({ contact_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+Answers 200 with an empty body and reports `{ contact_id, deleted: true }`. The contact leaves every list and stops receiving invites.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact with its custom fields and status
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.contacts.get({ contact_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+Answers one contact with its `custom_fields` and status.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts on the account, filtered by status or a search field
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.contacts.list({ status: 'active', search_by: 'email', search: 'bob@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `status` | `active \| optout \| bounced` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `search_by` | `string` | No | — |
+| `search` | `string` | No | — |
+
+Answers `{ data }`. `status` takes `active`, `optout` or `bounced`. `sort_by` and `search_by` take a field name, or a custom field number as `1` through `6`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  phone_number?: string | null,
+  status?: string | null,
+  href?: string | null,
+  custom_fields?: Record<string, string> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFields
+
+`contacts.listFields`
+
+List the custom contact fields and their labels
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.contacts.listFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }` of the custom contact fields, with the label to show and the id to use as a key in `custom_fields`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  label?: string | null,
+  type?: string | null,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Change a contact name, email, phone number or custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.contacts.update({ contact_id: '1234', last_name: 'Smith' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `custom_fields` | `Record<string, string>` | No | — |
+
+Sends PATCH, so only the fields you pass change. `custom_fields` replaces the whole map.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+
+
+
+---
+
+### updateField
+
+`contacts.updateField`
+
+Rename a custom contact field
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.contacts.updateField({ contact_field_id: '1', label: 'Order id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_field_id` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+
+Sends PATCH with `label`, which renames the field. The id never changes, so a rename does not break a stored `custom_fields` key.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `label` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a folder to group surveys in
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.folders.create({ title: 'Customer research' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+
+Sends the title as a capitalised **`Title`**, which is the field the route reads, and answers the folder.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List the survey folders on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.folders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }` of survey folders.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### create
+
+`messages.create`
+
+Draft an invite or reminder for an email collector. Nothing is sent until send is called
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.messages.create({ collector_id: '1234', type: 'invite', subject: 'Please take our survey', body: 'It takes two minutes.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `type` | `invite \| reminder \| thank_you` | No | — |
+| `subject` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `from_collector_id` | `string` | No | — |
+| `from_message_id` | `string` | No | — |
+
+Answers the drafted message. `type` is `invite` for the first send, `reminder` to chase non-responders, and `thank_you` for the follow-up note. **Nothing is sent**: a message needs recipients and then `messages.send`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `is_branding_enabled` | `boolean \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Read one message subject and body
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.messages.get({ collector_id: '1234', message_id: '2345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+
+Answers one message subject and body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `is_branding_enabled` | `boolean \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List the invite and reminder messages of a collector
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.messages.list({ collector_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }` of the collector's messages.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status?: string | null,
+  type?: string | null,
+  subject?: string | null,
+  body?: string | null,
+  is_branding_enabled?: boolean | null,
+  date_created?: string | null,
+  date_modified?: string | null,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message to every recipient on it. This mails real people, so check the recipients first
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.messages.send({ collector_id: '1234', message_id: '2345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `scheduled_date` | `string` | No | — |
+
+Sends the message to every recipient on it. **This mails real people**, so list the recipients first. `scheduled_date` defers the send instead of sending now.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `is_branding_enabled` | `boolean \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Change a message subject, body or type before it is sent
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.messages.update({ collector_id: '1234', message_id: '2345', subject: 'A quick question' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `type` | `invite \| reminder \| thank_you` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+
+Sends PATCH. A change is only possible before the message is sent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `is_branding_enabled` | `boolean \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+## Pages
+
+### create
+
+`pages.create`
+
+Add a page to a survey, optionally at a given position
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.pages.create({ survey_id: '1234', title: 'Page 1', position: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `position` | `number` | No | — |
+
+Answers the created page. `position` is 1-based; omitting it appends the page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `position` | `number \| null` | No | — |
+| `question_count` | `number \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `questions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`pages.delete`
+
+Delete a page and the questions on it. There is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.pages.delete({ survey_id: '1234', page_id: '5678' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+
+Answers 200 with an empty body and reports `{ survey_id, page_id, deleted: true }`. The questions on the page go with it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`pages.get`
+
+Read one page of a survey
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.pages.get({ survey_id: '1234', page_id: '5678' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+
+Answers one page with its `question_count`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `position` | `number \| null` | No | — |
+| `question_count` | `number \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `questions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pages.list`
+
+List the pages of a survey in their order
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.pages.list({ survey_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }` in page order. A survey always has at least one page once it has questions.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  description?: string | null,
+  position?: number | null,
+  question_count?: number | null,
+  href?: string | null,
+  questions?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`pages.update`
+
+Change a page title, description or position
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.pages.update({ survey_id: '1234', page_id: '5678', title: 'About you' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `position` | `number` | No | — |
+
+Sends PATCH, so only the fields you pass change. `position` reorders the page within the survey.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `position` | `number \| null` | No | — |
+| `question_count` | `number \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `questions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Questions
+
+### create
+
+`questions.create`
+
+Add a question to a page. The family and subtype decide the question type, and the headings carry the text
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.questions.create({ survey_id: '1234', page_id: '5678', family: 'single_choice', subtype: 'vertical', headings: [{ heading: 'How did you hear about us?' }], answers: { choices: [{ text: 'Search' }, { text: 'A friend' }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `family` | `string` | Yes | — |
+| `subtype` | `string` | Yes | — |
+| `headings` | `object[]` | Yes | — |
+| `position` | `number` | No | — |
+| `required` | `object` | No | — |
+| `sorting` | `object` | No | — |
+| `validation` | `object` | No | — |
+| `forced_ranking` | `boolean` | No | — |
+| `quiz_options` | `object` | No | — |
+| `display_options` | `object` | No | — |
+| `answers` | `object` | No | — |
+
+Answers the created question. **`family` and `subtype` are required** and decide the question type, for example `single_choice` with `vertical`. At least one heading is required and it is the question text. `answers.choices` carries the options for a choice question.
+
+<AccordionGroup>
+<Accordion title="headings full type">
+
+```ts
+{
+  heading: string,
+  description?: string,
+  image?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="required full type">
+
+```ts
+{
+  text?: string,
+  type?: string,
+  amount?: string
+}
+```
+</Accordion>
+
+<Accordion title="sorting full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="validation full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="quiz_options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="display_options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  choices?: {
+    text?: string,
+    position?: number
+  }[],
+  rows?: {
+  }[],
+  cols?: {
+  }[],
+  other?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `headings` | `object[] \| null` | No | — |
+| `family` | `string \| null` | No | — |
+| `subtype` | `string \| null` | No | — |
+| `position` | `number \| null` | No | — |
+| `required` | `object \| null` | No | — |
+| `visible` | `boolean \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `answers` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="headings full type">
+
+```ts
+{
+  heading?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="required full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  choices?: {
+    id?: string | null,
+    position?: number | null,
+    visible?: boolean | null,
+    text?: string | null
+  }[] | null,
+  rows?: {
+  }[] | null,
+  other?: {
+  }[] | null,
+  cols?: {
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`questions.delete`
+
+Delete a question and the answers recorded for it. There is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.questions.delete({ survey_id: '1234', page_id: '5678', question_id: '9012' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `question_id` | `string` | Yes | — |
+
+Answers 200 with an empty body and reports the three ids. The answers recorded for the question go with it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `question_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`questions.get`
+
+Read one question with its choices and settings
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.questions.get({ survey_id: '1234', page_id: '5678', question_id: '9012' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `question_id` | `string` | Yes | — |
+
+Answers one question with its choices, required rule and validity settings.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `headings` | `object[] \| null` | No | — |
+| `family` | `string \| null` | No | — |
+| `subtype` | `string \| null` | No | — |
+| `position` | `number \| null` | No | — |
+| `required` | `object \| null` | No | — |
+| `visible` | `boolean \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `answers` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="headings full type">
+
+```ts
+{
+  heading?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="required full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  choices?: {
+    id?: string | null,
+    position?: number | null,
+    visible?: boolean | null,
+    text?: string | null
+  }[] | null,
+  rows?: {
+  }[] | null,
+  other?: {
+  }[] | null,
+  cols?: {
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`questions.list`
+
+List the questions on one page of a survey
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.questions.list({ survey_id: '1234', page_id: '5678' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }` in question order. Each question carries its `family`, `subtype`, headings and, for a choice question, its choices.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  headings?: {
+    heading?: string | null,
+    description?: string | null
+  }[] | null,
+  family?: string | null,
+  subtype?: string | null,
+  position?: number | null,
+  required?: {
+  } | null,
+  visible?: boolean | null,
+  href?: string | null,
+  answers?: {
+    choices?: {
+      id?: string | null,
+      position?: number | null,
+      visible?: boolean | null,
+      text?: string | null
+    }[] | null,
+    rows?: {
+    }[] | null,
+    other?: {
+    }[] | null,
+    cols?: {
+    }[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`questions.update`
+
+Change a question heading, position, required rule, visibility or choices
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.questions.update({ survey_id: '1234', page_id: '5678', question_id: '9012', headings: [{ heading: 'Where did you hear about us?' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `question_id` | `string` | Yes | — |
+| `headings` | `object[]` | No | — |
+| `position` | `number` | No | — |
+| `required` | `object` | No | — |
+| `visible` | `boolean` | No | — |
+| `answers` | `object` | No | — |
+
+Sends PATCH, so only the fields you pass change. `visible: false` hides the question without deleting it, and the answers already recorded stay.
+
+<AccordionGroup>
+<Accordion title="headings full type">
+
+```ts
+{
+  heading: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="required full type">
+
+```ts
+{
+  text?: string,
+  type?: string,
+  amount?: string
+}
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  choices?: {
+    id?: string,
+    text?: string,
+    position?: number,
+    visible?: boolean
+  }[],
+  rows?: {
+  }[],
+  cols?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `headings` | `object[] \| null` | No | — |
+| `family` | `string \| null` | No | — |
+| `subtype` | `string \| null` | No | — |
+| `position` | `number \| null` | No | — |
+| `required` | `object \| null` | No | — |
+| `visible` | `boolean \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `answers` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="headings full type">
+
+```ts
+{
+  heading?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="required full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  choices?: {
+    id?: string | null,
+    position?: number | null,
+    visible?: boolean | null,
+    text?: string | null
+  }[] | null,
+  rows?: {
+  }[] | null,
+  other?: {
+  }[] | null,
+  cols?: {
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recipients
+
+### bulkCreate
+
+`recipients.bulkCreate`
+
+Add up to a few hundred recipients to a message in one call
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.recipients.bulkCreate({ collector_id: '1234', message_id: '2345', contacts: [{ email: 'bob@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+
+Wraps the list in `contacts` and answers `{ succeeded, invalid, existing }`. A recipient already on the message comes back under `existing` rather than failing the call.
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  email: string,
+  first_name?: string,
+  last_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `object[] \| null` | No | — |
+| `invalid` | `object[] \| null` | No | — |
+| `existing` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="succeeded full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  href?: string | null,
+  survey_response_status?: string | null,
+  mail_status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="invalid full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="existing full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  href?: string | null,
+  survey_response_status?: string | null,
+  mail_status?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`recipients.create`
+
+Add one recipient to a message by email address
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.recipients.create({ collector_id: '1234', message_id: '2345', email: 'bob@example.com', first_name: 'Bob' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+
+Answers the created recipient. The email has to look valid, and the message must not have been sent yet.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `survey_response_status` | `string \| null` | No | — |
+| `mail_status` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`recipients.list`
+
+List the recipients on one message with their delivery status
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.recipients.list({ collector_id: '1234', message_id: '2345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }` with each recipient's `mail_status` and `survey_response_status`, which is how you tell who has answered.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  href?: string | null,
+  survey_response_status?: string | null,
+  mail_status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Responses
+
+### create
+
+`responses.create`
+
+Record a response through a collector, as data entry. Nothing is mailed to a respondent
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.responses.create({ collector_id: '1234', response_status: 'completed', pages: [{ id: '5678', questions: [{ id: '9012', answers: [{ choice_id: '111' }] }] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `response_status` | `completed \| partial \| overquota \| disqualified` | No | — |
+| `custom_value` | `string` | No | — |
+| `custom_variables` | `Record<string, string>` | No | — |
+| `ip_address` | `string` | No | — |
+| `recipient_id` | `string` | No | — |
+| `pages` | `object[]` | No | — |
+
+Posts to `/collectors/{id}/responses`, because a collector owns the response link. `response_status` sets whether it counts as `completed`. `recipient_id` is required for an email collector. Nothing is mailed to a respondent.
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  id: string,
+  questions?: {
+    id: string,
+    variable_id?: string,
+    answers?: {
+      choice_id?: string | null,
+      row_id?: string | null,
+      col_id?: string | null,
+      other_id?: string | null,
+      text?: string | null,
+      download_url?: string | null,
+      human_download_url?: string | null,
+      content_type?: string | null,
+      tag_data?: {
+      } | null
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `href` | `string \| null` | No | — |
+| `survey_id` | `string \| null` | No | — |
+| `collector_id` | `string \| null` | No | — |
+| `recipient_id` | `string \| null` | No | — |
+| `total_time` | `number \| null` | No | — |
+| `custom_value` | `string \| null` | No | — |
+| `edit_url` | `string \| null` | No | — |
+| `analyze_url` | `string \| null` | No | — |
+| `ip_address` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `custom_variables` | `Record<string, string> \| null` | No | — |
+| `collection_mode` | `string \| null` | No | — |
+| `response_status` | `string \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `pages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  id?: string | null,
+  questions?: {
+    id?: string | null,
+    variable_id?: string | null,
+    answers?: {
+      choice_id?: string | null,
+      row_id?: string | null,
+      col_id?: string | null,
+      other_id?: string | null,
+      text?: string | null,
+      download_url?: string | null,
+      human_download_url?: string | null,
+      content_type?: string | null,
+      tag_data?: {
+      } | null
+    }[] | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`responses.delete`
+
+Delete one response and its answers. The counts on the survey change and there is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.responses.delete({ survey_id: '1234', response_id: '5001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `response_id` | `string` | Yes | — |
+
+Answers 200 with an empty body and reports `{ survey_id, response_id, deleted: true }`. The survey's counts change.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `response_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### deleteAll
+
+`responses.deleteAll`
+
+Delete every response a collector gathered. There is no undo, and the collector stays open
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.responses.deleteAll({ collector_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+
+Deletes every response the collector gathered and reports `{ collector_id, deleted: true }`. **There is no undo**, and the collector stays open so it can gather more.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collector_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`responses.get`
+
+Read one response with its answers
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.responses.get({ survey_id: '1234', response_id: '5001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `response_id` | `string` | Yes | — |
+
+Answers one response with its pages, questions and answers. Each answer carries a `choice_id`, `row_id`, `col_id` or `other_id`, which you map to text with `surveys.getDetails`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `href` | `string \| null` | No | — |
+| `survey_id` | `string \| null` | No | — |
+| `collector_id` | `string \| null` | No | — |
+| `recipient_id` | `string \| null` | No | — |
+| `total_time` | `number \| null` | No | — |
+| `custom_value` | `string \| null` | No | — |
+| `edit_url` | `string \| null` | No | — |
+| `analyze_url` | `string \| null` | No | — |
+| `ip_address` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `custom_variables` | `Record<string, string> \| null` | No | — |
+| `collection_mode` | `string \| null` | No | — |
+| `response_status` | `string \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `pages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  id?: string | null,
+  questions?: {
+    id?: string | null,
+    variable_id?: string | null,
+    answers?: {
+      choice_id?: string | null,
+      row_id?: string | null,
+      col_id?: string | null,
+      other_id?: string | null,
+      text?: string | null,
+      download_url?: string | null,
+      human_download_url?: string | null,
+      content_type?: string | null,
+      tag_data?: {
+      } | null
+    }[] | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDetails
+
+`responses.getDetails`
+
+Read one response with its answers and the page and question detail
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.responses.getDetails({ survey_id: '1234', response_id: '5001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `response_id` | `string` | Yes | — |
+
+Answers one response with the same structure as `responses.get` plus the question detail. `responses.get` is enough when you already cached the survey details.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `href` | `string \| null` | No | — |
+| `survey_id` | `string \| null` | No | — |
+| `collector_id` | `string \| null` | No | — |
+| `recipient_id` | `string \| null` | No | — |
+| `total_time` | `number \| null` | No | — |
+| `custom_value` | `string \| null` | No | — |
+| `edit_url` | `string \| null` | No | — |
+| `analyze_url` | `string \| null` | No | — |
+| `ip_address` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `custom_variables` | `Record<string, string> \| null` | No | — |
+| `collection_mode` | `string \| null` | No | — |
+| `response_status` | `string \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `pages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  id?: string | null,
+  questions?: {
+    id?: string | null,
+    variable_id?: string | null,
+    answers?: {
+      choice_id?: string | null,
+      row_id?: string | null,
+      col_id?: string | null,
+      other_id?: string | null,
+      text?: string | null,
+      download_url?: string | null,
+      human_download_url?: string | null,
+      content_type?: string | null,
+      tag_data?: {
+      } | null
+    }[] | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`responses.list`
+
+List a survey response ids, filtered by date or status. Read one to see the answers
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.responses.list({ survey_id: '1234', status: 'completed', per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `start_created_at` | `string` | No | — |
+| `end_created_at` | `string` | No | — |
+| `start_modified_at` | `string` | No | — |
+| `end_modified_at` | `string` | No | — |
+| `status` | `completed \| partial \| overquota \| disqualified` | No | — |
+| `sort_by` | `date_modified \| date_created` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+
+Answers `{ data }` where each entry is **only an id and a link**. Use `responses.listBulk` for the answers. `status` takes `completed`, `partial`, `overquota` or `disqualified`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBulk
+
+`responses.listBulk`
+
+List survey responses with their answers in one call, up to 100 a page
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.responses.listBulk({ survey_id: '1234', per_page: 100, simple: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `start_created_at` | `string` | No | — |
+| `end_created_at` | `string` | No | — |
+| `start_modified_at` | `string` | No | — |
+| `end_modified_at` | `string` | No | — |
+| `status` | `completed \| partial \| overquota \| disqualified` | No | — |
+| `sort_by` | `date_modified \| date_created` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `simple` | `boolean` | No | — |
+| `collector_ids` | `string` | No | — |
+| `page_ids` | `string` | No | — |
+| `question_ids` | `string` | No | — |
+
+Answers `{ data }` with each response's pages, questions and answers. `per_page` goes up to 1000. `simple: true` drops the page and question structure and keeps the answers flat, which is cheaper and easier to walk. `collector_ids`, `page_ids` and `question_ids` narrow what comes back.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  href?: string | null,
+  survey_id?: string | null,
+  collector_id?: string | null,
+  recipient_id?: string | null,
+  total_time?: number | null,
+  custom_value?: string | null,
+  edit_url?: string | null,
+  analyze_url?: string | null,
+  ip_address?: string | null,
+  language?: string | null,
+  custom_variables?: Record<string, string> | null,
+  collection_mode?: string | null,
+  response_status?: string | null,
+  date_created?: string | null,
+  date_modified?: string | null,
+  pages?: {
+    id?: string | null,
+    questions?: {
+      id?: string | null,
+      variable_id?: string | null,
+      answers?: {
+        choice_id?: string | null,
+        row_id?: string | null,
+        col_id?: string | null,
+        other_id?: string | null,
+        text?: string | null,
+        download_url?: string | null,
+        human_download_url?: string | null,
+        content_type?: string | null,
+        tag_data?: {
+        } | null
+      }[] | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Surveys
+
+### create
+
+`surveys.create`
+
+Create an empty survey, or a copy of a template or an existing survey
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.surveys.create({ title: 'Customer feedback' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `from_template_id` | `string` | No | — |
+| `from_survey_id` | `string` | No | — |
+
+Answers the survey with an empty page list. `from_template_id` copies a template, and `from_survey_id` copies an existing survey; without either the survey is empty and needs a page and a question before it can record a response.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `nickname` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `question_count` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `buttons_text` | `object \| null` | No | — |
+| `custom_variables` | `Record<string, string> \| null` | No | — |
+| `footer` | `boolean \| null` | No | — |
+| `folder_id` | `string \| null` | No | — |
+| `preview` | `string \| null` | No | — |
+| `edit_url` | `string \| null` | No | — |
+| `collect_url` | `string \| null` | No | — |
+| `analyze_url` | `string \| null` | No | — |
+| `summary_url` | `string \| null` | No | — |
+| `response_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="buttons_text full type">
+
+```ts
+{
+  next_button?: string | null,
+  prev_button?: string | null,
+  exit_button?: string | null,
+  done_button?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`surveys.delete`
+
+Delete a survey and its responses. There is no undo and the questions go with it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.surveys.delete({ survey_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+
+Answers 200 with an empty body, so the plugin reports `{ survey_id, deleted: true }`. The pages, questions and responses go with it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`surveys.get`
+
+Read one survey with its counts, links and response count
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.surveys.get({ survey_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+
+Answers one survey. `response_count` is present only when the list route was asked for it with `include`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `nickname` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `question_count` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `buttons_text` | `object \| null` | No | — |
+| `custom_variables` | `Record<string, string> \| null` | No | — |
+| `footer` | `boolean \| null` | No | — |
+| `folder_id` | `string \| null` | No | — |
+| `preview` | `string \| null` | No | — |
+| `edit_url` | `string \| null` | No | — |
+| `collect_url` | `string \| null` | No | — |
+| `analyze_url` | `string \| null` | No | — |
+| `summary_url` | `string \| null` | No | — |
+| `response_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="buttons_text full type">
+
+```ts
+{
+  next_button?: string | null,
+  prev_button?: string | null,
+  exit_button?: string | null,
+  done_button?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDetails
+
+`surveys.getDetails`
+
+Read a survey with every page and question, including choice ids and values
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.surveys.getDetails({ survey_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+
+Answers the survey with every page and question, including each choice's id and text. This is the call to make before reading answers, because a response carries choice ids rather than choice text.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `nickname` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `question_count` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `buttons_text` | `object \| null` | No | — |
+| `custom_variables` | `Record<string, string> \| null` | No | — |
+| `footer` | `boolean \| null` | No | — |
+| `folder_id` | `string \| null` | No | — |
+| `preview` | `string \| null` | No | — |
+| `edit_url` | `string \| null` | No | — |
+| `collect_url` | `string \| null` | No | — |
+| `analyze_url` | `string \| null` | No | — |
+| `summary_url` | `string \| null` | No | — |
+| `response_count` | `number \| null` | No | — |
+| `pages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="buttons_text full type">
+
+```ts
+{
+  next_button?: string | null,
+  prev_button?: string | null,
+  exit_button?: string | null,
+  done_button?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  description?: string | null,
+  position?: number | null,
+  question_count?: number | null,
+  href?: string | null,
+  questions?: {
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`surveys.list`
+
+List surveys in last-modified order, filtered by title, folder or modification date
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.surveys.list({ per_page: 50, sort_by: 'date_modified', sort_order: 'DESC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort_by` | `title \| date_modified \| date_created` | No | — |
+| `sort_order` | `ASC \| DESC` | No | — |
+| `include` | `string` | No | — |
+| `title` | `string` | No | — |
+| `folder_id` | `string` | No | — |
+| `start_modified_at` | `string` | No | — |
+| `end_modified_at` | `string` | No | — |
+
+Answers `{ data, page, per_page, total, links }`. `sort_by` takes `title`, `date_modified` or `date_created`, and `sort_order` is `ASC` or `DESC`. `include` accepts `-response_count` to add the count, and `folder_id`, `title` and the two modification dates narrow the list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  nickname?: string | null,
+  category?: string | null,
+  language?: string | null,
+  question_count?: number | null,
+  page_count?: number | null,
+  date_created?: string | null,
+  date_modified?: string | null,
+  href?: string | null,
+  buttons_text?: {
+    next_button?: string | null,
+    prev_button?: string | null,
+    exit_button?: string | null,
+    done_button?: string | null
+  } | null,
+  custom_variables?: Record<string, string> | null,
+  footer?: boolean | null,
+  folder_id?: string | null,
+  preview?: string | null,
+  edit_url?: string | null,
+  collect_url?: string | null,
+  analyze_url?: string | null,
+  summary_url?: string | null,
+  response_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCategories
+
+`surveys.listCategories`
+
+List the survey categories available for the language
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.surveys.listCategories({ language: 'en' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `language` | `string` | No | — |
+
+Answers `{ data }`, the categories a survey can be filed under for `language`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLanguages
+
+`surveys.listLanguages`
+
+List the languages a survey can be written in
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.surveys.listLanguages({ per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }`, the languages a survey can be written in.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTemplates
+
+`surveys.listTemplates`
+
+List the survey templates, optionally filtered by language or category
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.surveys.listTemplates({ language: 'en', category: 'business' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `language` | `string` | No | — |
+| `category` | `string` | No | — |
+
+Answers `{ data }` of surveys, each a template. `language` and `category` narrow the list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  nickname?: string | null,
+  category?: string | null,
+  language?: string | null,
+  question_count?: number | null,
+  page_count?: number | null,
+  date_created?: string | null,
+  date_modified?: string | null,
+  href?: string | null,
+  buttons_text?: {
+    next_button?: string | null,
+    prev_button?: string | null,
+    exit_button?: string | null,
+    done_button?: string | null
+  } | null,
+  custom_variables?: Record<string, string> | null,
+  footer?: boolean | null,
+  folder_id?: string | null,
+  preview?: string | null,
+  edit_url?: string | null,
+  collect_url?: string | null,
+  analyze_url?: string | null,
+  summary_url?: string | null,
+  response_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`surveys.replace`
+
+Replace a survey wholesale. Fields left out reset to their defaults, so prefer update
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.surveys.replace({ survey_id: '1234', title: 'Customer feedback' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `nickname` | `string` | No | — |
+| `language` | `string` | No | — |
+| `buttons_text` | `object` | No | — |
+| `custom_variables` | `Record<string, string>` | No | — |
+| `footer` | `boolean` | No | — |
+| `folder_id` | `string` | No | — |
+
+Sends PUT, which replaces the survey. **A field you leave out resets to its default**, so use `surveys.update` for a single change.
+
+<AccordionGroup>
+<Accordion title="buttons_text full type">
+
+```ts
+{
+  next_button?: string | null,
+  prev_button?: string | null,
+  exit_button?: string | null,
+  done_button?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `nickname` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `question_count` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `buttons_text` | `object \| null` | No | — |
+| `custom_variables` | `Record<string, string> \| null` | No | — |
+| `footer` | `boolean \| null` | No | — |
+| `folder_id` | `string \| null` | No | — |
+| `preview` | `string \| null` | No | — |
+| `edit_url` | `string \| null` | No | — |
+| `collect_url` | `string \| null` | No | — |
+| `analyze_url` | `string \| null` | No | — |
+| `summary_url` | `string \| null` | No | — |
+| `response_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="buttons_text full type">
+
+```ts
+{
+  next_button?: string | null,
+  prev_button?: string | null,
+  exit_button?: string | null,
+  done_button?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`surveys.update`
+
+Change a survey title, nickname, language, button text, variables or folder
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.surveys.update({ survey_id: '1234', title: 'Customer feedback 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `nickname` | `string` | No | — |
+| `language` | `string` | No | — |
+| `buttons_text` | `object` | No | — |
+| `custom_variables` | `Record<string, string>` | No | — |
+| `footer` | `boolean` | No | — |
+| `folder_id` | `string` | No | — |
+
+Sends PATCH with only the fields you pass, so everything else stays. `buttons_text` sets the four button labels, and `custom_variables` is a map of name to label.
+
+<AccordionGroup>
+<Accordion title="buttons_text full type">
+
+```ts
+{
+  next_button?: string | null,
+  prev_button?: string | null,
+  exit_button?: string | null,
+  done_button?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `nickname` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `question_count` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+| `buttons_text` | `object \| null` | No | — |
+| `custom_variables` | `Record<string, string> \| null` | No | — |
+| `footer` | `boolean \| null` | No | — |
+| `folder_id` | `string \| null` | No | — |
+| `preview` | `string \| null` | No | — |
+| `edit_url` | `string \| null` | No | — |
+| `collect_url` | `string \| null` | No | — |
+| `analyze_url` | `string \| null` | No | — |
+| `summary_url` | `string \| null` | No | — |
+| `response_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="buttons_text full type">
+
+```ts
+{
+  next_button?: string | null,
+  prev_button?: string | null,
+  exit_button?: string | null,
+  done_button?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getMe
+
+`users.getMe`
+
+Read the account the token belongs to, which is the cheapest connection check
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.users.getMe({});
+```
+
+**Input:** _empty object_
+
+Answers the account the token belongs to, with its `account_type`. This is the cheapest way to confirm a connection works. A `premier` account or better is needed for the response detail routes.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `username` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `account_type` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Subscribe a URL to an event on a survey or collector. SurveyMonkey then POSTs to it
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.webhooks.create({ name: 'Response bot', event_type: 'response_completed', object_type: 'survey', object_ids: ['1234'], subscription_url: 'https://example.com/hooks/surveymonkey' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `event_type` | `response_completed \| response_updated \| response_created \| response_deleted \| response_disqualified \| response_overquota \| collector_created \| collector_updated \| collector_deleted \| survey_created \| survey_updated \| survey_deleted` | Yes | — |
+| `object_type` | `survey \| collector` | No | — |
+| `object_ids` | `string[]` | No | — |
+| `subscription_url` | `string` | Yes | — |
+| `authorization` | `string` | No | — |
+
+Answers the created webhook. `event_type` is one of the twelve documented events. `object_ids` lists the surveys or collectors to watch, and is omitted for `survey_created`, which fires on a survey that does not exist yet. `authorization` is a value SurveyMonkey sends back as a header on every delivery.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `object_type` | `string \| null` | No | — |
+| `object_ids` | `string[] \| null` | No | — |
+| `subscription_url` | `string \| null` | No | — |
+| `authorization` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription. The URL stops receiving events
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.surveymonkey.api.webhooks.delete({ webhook_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+Answers 200 with an empty body and reports `{ webhook_id, deleted: true }`. The URL stops receiving events.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.webhooks.get({ webhook_id: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+Answers one webhook subscription.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `object_type` | `string \| null` | No | — |
+| `object_ids` | `string[] \| null` | No | — |
+| `subscription_url` | `string \| null` | No | — |
+| `authorization` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhooks on the account and what they subscribe to
+
+**Risk:** `read`
+
+```ts
+await corsair.surveymonkey.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+Answers `{ data }` of webhooks and what each subscribes to.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null,
+  prev?: string | null,
+  first?: string | null,
+  last?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  event_type?: string | null,
+  object_type?: string | null,
+  object_ids?: string[] | null,
+  subscription_url?: string | null,
+  authorization?: string | null,
+  href?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook event, target objects or subscription URL
+
+**Risk:** `write`
+
+```ts
+await corsair.surveymonkey.api.webhooks.update({ webhook_id: '1234', subscription_url: 'https://example.com/hooks/other' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `event_type` | `response_completed \| response_updated \| response_created \| response_deleted \| response_disqualified \| response_overquota \| collector_created \| collector_updated \| collector_deleted \| survey_created \| survey_updated \| survey_deleted` | No | — |
+| `object_type` | `survey \| collector` | No | — |
+| `object_ids` | `string[]` | No | — |
+| `subscription_url` | `string` | No | — |
+| `authorization` | `string` | No | — |
+
+Sends PATCH, so only the fields you pass change.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `object_type` | `string \| null` | No | — |
+| `object_ids` | `string[] \| null` | No | — |
+| `subscription_url` | `string \| null` | No | — |
+| `authorization` | `string \| null` | No | — |
+| `href` | `string \| null` | No | — |
+
+
+
+---
+
