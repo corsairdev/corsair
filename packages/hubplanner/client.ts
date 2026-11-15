@@ -39,6 +39,7 @@ const BURST_RETRIES = 3;
 const MAX_BURST_DELAY_MS = 60_000;
 
 /** A burst-limit 429: Hub Planner adds `Retry-After` only to these, never to a daily-quota 429. */
+// `unknown` because a caught value can be anything; it is narrowed to ApiError before any field is read.
 function burstRetryDelay(error: unknown): number | undefined {
 	if (!(error instanceof ApiError) || error.status !== 429) return undefined;
 	if (error.retryAfter === undefined) return undefined;
