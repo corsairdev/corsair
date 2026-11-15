@@ -1388,6 +1388,7 @@ await corsair.erpnext.api.system.getAllLanguages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fields` | `string` | No | JSON array string of field names to return, for example ["language_code","language_name"], passed verbatim to Frappe |
+| `limit_start` | `number` | No | Row offset for the next page |
 | `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every language |
 
 
