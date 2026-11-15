@@ -1,0 +1,14 @@
+displayName: "Supersaas"
+description: Appointment scheduling API for managing users, bookings, slots, and schedules.
+examples:
+  read:
+    path: schedules.changes
+    title: List recent schedule changes
+  write:
+    path: bookings.create
+    title: Create a booking
+    args:
+      schedule_id: 12345
+      email: jane@example.com
+      start: "2026-12-01 09:00:00"
+      finish: "2026-12-01 09:30:00"
