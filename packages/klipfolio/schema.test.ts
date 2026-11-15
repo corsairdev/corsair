@@ -129,7 +129,8 @@ describe('Klipfolio schema', () => {
 			(schema as { safeParse: (v: unknown) => { success: boolean } }).safeParse(
 				value,
 			);
-		// List-shaped operation: data must be an array of provider records.
+		// List operation: Klipfolio wraps the records under a resource key
+		// (documented GET /clients reply), so a bare array is rejected.
 		const listOutput = KlipfolioEndpointOutputSchemas.listClients;
 		expect(parse(listOutput, {}).success).toBe(false);
 		expect(
@@ -139,6 +140,33 @@ describe('Klipfolio schema', () => {
 			parse(listOutput, {
 				data: [{ id: 'rec-1' }],
 				meta: { status: 200, success: true },
+			}).success,
+		).toBe(false);
+		expect(
+			parse(listOutput, {
+				data: { clients: [{ id: 'rec-1', name: 'Company A' }] },
+				meta: { status: 200, success: true, count: 1, total: 1 },
+			}).success,
+		).toBe(true);
+		for (const [operation, key] of [
+			['listUsers', 'users'],
+			['listRoles', 'roles'],
+			['listGroups', 'groups'],
+			['listKlips', 'klips'],
+			['retrieveGroupUsers', 'users'],
+			['retrieveTabKlipInstances', 'klip_instances'],
+		] as const) {
+			expect(
+				parse(KlipfolioEndpointOutputSchemas[operation], {
+					data: { [key]: [{ id: 'rec-1' }] },
+					meta: { status: 200, success: true },
+				}).success,
+			).toBe(true);
+		}
+		// Writes Klipfolio answers with meta only (documented POST /groups).
+		expect(
+			parse(KlipfolioEndpointOutputSchemas.createGroup, {
+				meta: { success: true, status: 201, location: '/groups/abc' },
 			}).success,
 		).toBe(true);
 		// Single-shaped operation: data must be a provider record.
@@ -233,7 +261,7 @@ describe('Klipfolio schema', () => {
 		// unknown: spec-derived mocks, one per operation, keyed by operation path.
 		const fixedOutputs: Record<string, unknown> = {
 			'clients.listClients': {
-				data: [{ id: 'rec-1' }],
+				data: { clients: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'clients.retrieveClient': {
@@ -309,7 +337,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'datasources.listDatasources': {
-				data: [{ id: 'rec-1' }],
+				data: { datasources: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'datasources.retrieveDatasource': {
@@ -369,7 +397,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'datasources.listDatasourceInstances': {
-				data: [{ id: 'rec-1' }],
+				data: { datasources: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'datasources.retrieveDatasourceInstances': {
@@ -413,7 +441,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'groups.listGroups': {
-				data: [{ id: 'rec-1' }],
+				data: { groups: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'groups.retrieveGroup': {
@@ -433,7 +461,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'groups.retrieveGroupDefaultTabs': {
-				data: [{ id: 'rec-1' }],
+				data: { tabs: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'groups.retrieveGroupDefaultTab': {
@@ -453,7 +481,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'groups.retrieveGroupUsers': {
-				data: [{ id: 'rec-1' }],
+				data: { users: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'groups.updateGroupUser': {
@@ -465,7 +493,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'klips.listKlips': {
-				data: [{ id: 'rec-1' }],
+				data: { klips: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'klips.retrieveKlip': {
@@ -545,7 +573,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'misc.listDashboardPublishedLinks': {
-				data: [{ id: 'rec-1' }],
+				data: { id: 'rec-1' },
 				meta: { status: 200, success: true },
 			},
 			'misc.updateDashboardPublishedLinks': {
@@ -557,7 +585,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'roles.listRoles': {
-				data: [{ id: 'rec-1' }],
+				data: { roles: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'roles.retrieveRole': {
@@ -601,7 +629,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'tabs.listTabs': {
-				data: [{ id: 'rec-1' }],
+				data: { tabs: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'tabs.retrieveTab': {
@@ -621,7 +649,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'tabs.retrieveTabKlipInstances': {
-				data: [{ id: 'rec-1' }],
+				data: { klip_instances: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'tabs.updateTabKlipInstances': {
@@ -657,7 +685,7 @@ describe('Klipfolio schema', () => {
 				meta: { status: 200, success: true },
 			},
 			'users.listUsers': {
-				data: [{ id: 'rec-1' }],
+				data: { users: [{ id: 'rec-1' }] },
 				meta: { status: 200, success: true },
 			},
 			'users.retrieveUser': {
