@@ -1080,7 +1080,8 @@ const UpdateUserRoleInputSchema = z
 		roleId: z.string().min(1),
 		client_id: z.string().optional(),
 		// unknown: role id(s); example verbatim: -d {'id': ['f70a1cd9817b85ffa252a7b4280f0223']} (input key renamed: the wire body key "id" is taken by the path identifier)
-		wire_id: z.array(z.unknown()),
+		// Optional: the documented client-account example sends no body.
+		wire_id: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
 
