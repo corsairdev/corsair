@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Resend: every `resend.api.*` operation with input and output types."
+title: "Resend API reference"
+sidebarTitle: "API"
+description: "API reference for the Resend plugin in Corsair: every `resend.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `resend.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -31,19 +30,11 @@ await corsair.resend.api.contacts.create({});
 | `first_name` | `string` | No | — |
 | `last_name` | `string` | No | — |
 | `unsubscribed` | `boolean` | No | — |
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
 | `segments` | `object[]` | No | — |
 | `topics` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="segments full type">
 
 ```ts
@@ -137,9 +128,9 @@ await corsair.resend.api.contacts.get({});
 | `object` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `created_at` | `Date` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `created_at` | `Date \| null` | No | — |
 | `unsubscribed` | `boolean` | No | — |
 
 
@@ -216,17 +207,7 @@ await corsair.resend.api.contacts.update({});
 | `first_name` | `string` | No | — |
 | `last_name` | `string` | No | — |
 | `unsubscribed` | `boolean` | No | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, string>` | No | — |
 
 
 
@@ -271,7 +252,7 @@ await corsair.resend.api.domains.create({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed \| partially_verified \| partially_failed` | Yes | — |
-| `created_at` | `Date` | No | — |
+| `created_at` | `Date \| null` | No | — |
 | `region` | `string` | No | — |
 
 
@@ -337,7 +318,7 @@ await corsair.resend.api.domains.get({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed \| partially_verified \| partially_failed` | Yes | — |
-| `created_at` | `Date` | No | — |
+| `created_at` | `Date \| null` | No | — |
 | `region` | `string` | No | — |
 
 
@@ -420,7 +401,7 @@ await corsair.resend.api.domains.verify({});
 | `id` | `string` | No | — |
 | `records` | `object[]` | No | — |
 | `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending` | No | — |
-| `created_at` | `Date` | No | — |
+| `created_at` | `Date \| null` | No | — |
 | `region` | `string` | No | — |
 
 <AccordionGroup>
@@ -482,8 +463,7 @@ await corsair.resend.api.emails.batch({});
     name: string,
     value: string
   }[],
-  headers?: {
-  }
+  headers?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -571,7 +551,7 @@ await corsair.resend.api.emails.get({});
 | `id` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `to` | `string[]` | Yes | — |
-| `created_at` | `Date` | No | — |
+| `created_at` | `Date \| null` | No | — |
 | `subject` | `string` | No | — |
 
 
@@ -653,7 +633,7 @@ await corsair.resend.api.emails.send({});
 | `scheduled_at` | `string` | No | — |
 | `attachments` | `object[]` | No | — |
 | `tags` | `object[]` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="attachments full type">
@@ -674,14 +654,6 @@ await corsair.resend.api.emails.send({});
   name: string,
   value: string
 }[]
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

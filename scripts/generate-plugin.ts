@@ -2,6 +2,10 @@ import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import {
+	PLUGIN_DOCS_FILE,
+	starterPluginDocsYaml,
+} from './plugin-docs-requirements.ts';
+import {
 	buildAuthConfigTs,
 	buildOAuthTenantLinkTs,
 	buildTenantMatcherTs,
@@ -108,6 +112,11 @@ function generatePlugin(pluginName: string) {
 	writeFileSync(
 		join(pluginDir, 'package.json'),
 		JSON.stringify(packageJson, null, 2) + '\n',
+	);
+	// Fails validate:plugins until its TODO description is replaced.
+	writeFileSync(
+		join(pluginDir, PLUGIN_DOCS_FILE),
+		starterPluginDocsYaml(pascalName),
 	);
 
 	// ── tsconfig.json ─────────────────────────────────────────────────────────
@@ -372,7 +381,7 @@ export type {
 		join(pluginDir, 'client.ts'),
 		`import type { ApiRequestOptions } from 'corsair/http';
 import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ${pascalName}APIError extends Error {
 \tconstructor(
@@ -425,6 +434,10 @@ export async function make${pascalName}Request<T>(
 \ttry {
 \t\treturn await request<T>(config, requestOptions);
 \t} catch (error) {
+\t\t// Rethrow core's ApiError as is: its status and retryAfter are what the
+\t\t// error handlers match (429 retries) and what core reads to refresh an
+\t\t// OAuth token after a 401. Wrapping it in a new error loses both.
+\t\tif (error instanceof ApiError) throw error;
 \t\tif (error instanceof Error) {
 \t\t\tthrow new ${pascalName}APIError(error.message);
 \t\t}
@@ -447,13 +460,10 @@ export const errorHandlers = {
 \t\t\tconst msg = error.message.toLowerCase();
 \t\t\treturn msg.includes('rate_limited') || msg.includes('429');
 \t\t},
-\t\thandler: async (error: Error) => {
-\t\t\tlet retryAfterMs: number | undefined;
-\t\t\tif (error instanceof ApiError && error.retryAfter !== undefined) {
-\t\t\t\tretryAfterMs = error.retryAfter;
-\t\t\t}
-\t\t\treturn { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-\t\t},
+\t\t// Core's request() has already retried this 429 (three times, honouring
+\t\t// Retry-After) before it reaches a handler. Retrying the endpoint again
+\t\t// here would multiply the attempts and the wait.
+\t\thandler: async () => ({ maxRetries: 0 }),
 \t},
 \tAUTH_ERROR: {
 \t\tmatch: (error: Error) => {

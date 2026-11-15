@@ -1,6 +1,6 @@
 ---
 name: corsair
-description: Use when adding Corsair to a TypeScript app to integrate the app with external services (GitHub, Slack, Linear, Stripe, Gmail, and hundreds more, via OAuth or API keys). Can be used with agents, UIs, webhooks, knowledge bases, etc.
+description: Use when adding Corsair to a TypeScript app to integrate the app with external services (GitHub, Slack, Linear, Stripe, Gmail, and hundreds more, via OAuth or API keys). Can be used with agents, UIs, webhooks, knowledge bases, etc. Not for using apps already connected to Corsair through the Corsair MCP server.
 ---
 
 # Corsair setup
@@ -46,7 +46,7 @@ Already wired?    ── reconcile corsair.ts → add the new plugins/features �
 npm install corsair @corsair-dev/github
 ```
 
-Several services at once: `npm install corsair @corsair-dev/slack @corsair-dev/linear`. Plugin packages are scoped `@corsair-dev/<service>`, and their ids are in the [catalog](https://api.corsair.dev/md/integrations). Ask which integration if unclear, don't assume one from the repo name.
+Several services at once: `npm install corsair @corsair-dev/slack @corsair-dev/linear`. Plugin packages are scoped `@corsair-dev/<service>`, and their ids are the slugs in the [integrations catalog](https://corsair.dev/integrations), e.g. `corsair.dev/integrations/slack` is `slack`. Ask which integration if unclear, don't assume one from the repo name.
 
 Generate a KEK and store it somewhere safe. Lose it and every stored credential is unrecoverable.
 
@@ -159,11 +159,11 @@ If you need to see what API and DB operations are available, install the Corsair
 ```bash
 npm install @corsair-dev/cli
 
-npm corsair list # for api operations
+npx corsair list # for api operations
 
-npm corsair list --type=db # for db operations
+npx corsair list --type=db # for db operations
 
-npm corsair schema <endpoint> # to get input / output schema of any operation
+npx corsair schema <endpoint> # to get input / output schema of any operation
 ```
 
 ## Providers: managed vs bring-your-own
@@ -252,6 +252,6 @@ The job isn't done when the server runs. Confirm all three:
 - Route handlers (all stacks): https://docs.corsair.dev/adapters/handlers.md
 - Connect and OAuth: https://docs.corsair.dev/management/connect.md
 - Environments (dev vs prod): https://docs.corsair.dev/hub/environments.md
-- Integrations catalog: https://api.corsair.dev/md/integrations
+- Integrations catalog: https://corsair.dev/integrations
 - Hub REST API (non-JS backends): https://docs.corsair.dev/hub/rest-api.md
 - Dashboard and keys: https://hub.corsair.dev/dashboard

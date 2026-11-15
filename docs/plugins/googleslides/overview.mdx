@@ -1,0 +1,157 @@
+---
+title: "Google Slides plugin"
+sidebarTitle: "Overview"
+description: "Presentation editor for building and sharing slide decks, with slides, text, shapes, images, tables and speaker notes."
+---
+
+Use **Google Slides** through Corsair: one client, typed API calls, local DB sync.
+
+Google Slides exposes presentation creation, slide creation and ordering, text editing and styling, bullet lists, speaker notes, shapes, images, tables, element transforms and grouping, plus PDF or PPTX export.
+
+Scopes. The plugin requests `presentations` for slide content and `drive` for listing, copying, exporting and deleting a file, which are Drive calls.
+
+Ids. `presentations.list` returns `presentationId` per file. `slides.list` returns each slide's `objectId`, and `slides.get` returns its `pageElements`. Text and element writes take the `objectId` of a shape or table, not a slide.
+
+Placeholders. A slide created from a layout has placeholder shapes whose ids Google generates. Read the slide back to get them, or pass `placeholderIdMappings` through `batch.update` to choose ids up front.
+
+Speaker notes. `slides.setNotes` reads the slide first to find the notes shape, deletes the existing text, then inserts the new text. A slide whose notes shape has never been created has no id for Google to write to, so the call explains that instead of guessing.
+
+Text ranges. A range takes `type: 'ALL'`, `FROM_START_INDEX` with `startIndex`, or `FIXED_RANGE` with both indexes. Indexes are Unicode code units counted from the start of the shape's text, and Google appends a newline the caller did not type.
+
+Destructive operations. `presentations.delete`, `slides.remove`, `text.delete` and `batch.update` are marked destructive for Corsair permissions. In `text.updateStyle`, a property named in `fields` but absent from `style` is reset to its default.
+
+Rate limits. Google answers a quota burst with 429, or with a 403 whose body says `rateLimitExceeded`. Both are retried up to four times, waiting for `Retry-After` when present and sixty seconds otherwise, so a call can wait several minutes before it gives up. An exhausted daily quota is not retried, because no wait inside the request can clear it.
+
+Raw requests. `batch.update` takes the `batchUpdate` request types without a typed endpoint, such as `mergeTableCells` or `updateParagraphStyle`. Deletions are refused there; use the typed operation.
+
+Webhooks. Google Slides sends no push notifications, so the plugin has none.
+
+**What you get:**
+
+- 31 typed API operations
+- 1 synced entity (`presentations`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googleslides better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/googleslides better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googleslides better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/googleslides better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googleslides } from '@corsair-dev/googleslides';
+
+export const corsair = createCorsair({
+	plugins: [
+		googleslides(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Slides OAuth app.
+
+```ts
+googleslides()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googleslides',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the slides in a presentation**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleslides.api.slides.list({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz' });
+```
+
+
+**Fill a shape with text**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleslides.api.text.insert({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'title_box', text: 'Quarterly review' });
+```
+
+
+See the full list on the [API](/plugins/googleslides/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.googleslides.db.<entity>.search()` and `.list()`: `presentations`.
+
+See [Database](/plugins/googleslides/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googleslides/api">
+    Every `googleslides.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/googleslides/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

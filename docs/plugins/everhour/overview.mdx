@@ -1,6 +1,7 @@
 ---
-title: Overview
-description: "Everhour plugin for Corsair"
+title: "Everhour plugin"
+sidebarTitle: "Overview"
+description: "Time tracking tool for managing projects, tasks, sections, clients, timers, time records, timecards, expenses, and invoices."
 ---
 
 Use **Everhour** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -18,16 +19,20 @@ Use **Everhour** through Corsair: one client, typed API calls, local DB sync, an
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/everhour
+npm install corsair @corsair-dev/everhour better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/everhour
+yarn add corsair @corsair-dev/everhour better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/everhour
+pnpm install corsair @corsair-dev/everhour better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/everhour
+bun add corsair @corsair-dev/everhour better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
@@ -45,6 +50,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -52,7 +58,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -60,7 +66,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Everhour API key before the first call: `pnpm corsair setup --plugin=everhour --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 everhour()
@@ -103,19 +109,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`clients.getClient`**
+**List projects**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.everhour.api.clients.getClient({});
+await tenant.everhour.api.projects.listProjects({});
 ```
 
 
-**`clients.createClient`**
+**Create a task**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.everhour.api.clients.createClient({});
+await tenant.everhour.api.tasks.createTask({ projectId: 'ev:1234567890', name: 'Write the release notes' });
 ```
 
 
@@ -123,15 +129,37 @@ See the full list on the [API](/plugins/everhour/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.everhour.db.<entity>.search()` and `.list()`: `clients`, `expenseCategories`, `expenses`, `invoices`, `platforms`, `projects`, `sections`, `tags`, `tasks`, `timecards`, `timeEntries`, `users`, `webhooks`.
+These tables exist, but Everhour calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/everhour/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.everhour.db.projects.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `clients`, `expenseCategories`, `expenses`, `invoices`, `platforms`, `projects`, `sections`, `tags`, `tasks`, `timecards`, `timeEntries`, `users`, `webhooks`. See [Database](/plugins/everhour/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **20** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a task is created.
 
-See [Webhooks](/plugins/everhour/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+everhour({
+    webhookHooks: {
+        task: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Everhour task created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/everhour/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

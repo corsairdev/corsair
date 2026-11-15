@@ -1,0 +1,3301 @@
+{
+  "id": "lemonsqueezy",
+  "displayName": "Lemon Squeezy",
+  "description": "Sell software and digital products as a merchant of record. Read stores, products, orders and subscriptions, issue refunds, record metered usage, create checkout links and discount codes, and manage webhook registrations. Inbound webhook deliveries are not handled by this plugin.",
+  "npmPackageName": "@corsair-dev/lemonsqueezy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 57,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "lemonsqueezy.api.affiliates.get",
+      "shortPath": "affiliates.get",
+      "description": "Read one affiliate, with their status and earnings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, user_id?: number | null, user_name?: string | null, user_email?: string | null, share_domain?: string | null, status?: string | null, products?: Record<string, JsonValue> | null, total_earnings?: number | null, unpaid_earnings?: number | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.affiliates.list",
+      "shortPath": "affiliates.list",
+      "description": "List affiliates, filtered by store or email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only affiliates of this store."
+          },
+          {
+            "key": "userEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Only the affiliate with this email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, user_id?: number | null, user_name?: string | null, user_email?: string | null, share_domain?: string | null, status?: string | null, products?: Record<string, JsonValue> | null, total_earnings?: number | null, unpaid_earnings?: number | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.checkouts.create",
+      "shortPath": "checkouts.create",
+      "description": "Create a checkout link for a variant and return its URL, with optional prefilled data, custom pricing and appearance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "number",
+            "description": "The store the checkout belongs to."
+          },
+          {
+            "key": "variantId",
+            "optional": false,
+            "type": "number",
+            "description": "The variant to sell. Other variants of its product appear alongside it."
+          },
+          {
+            "key": "customPrice",
+            "optional": true,
+            "type": "number",
+            "description": "Override the variant price, in cents. Only valid for a pay-what-you-want product."
+          },
+          {
+            "key": "productOptions",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Overrides such as `name`, `description`, `redirect_url`, `receipt_button_text`, `receipt_link_url`, `receipt_thank_you_note` and `enabled_variants`."
+          },
+          {
+            "key": "checkoutOptions",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Appearance and behaviour such as `embed`, `media`, `logo`, `desc`, `discount`, `subscription_preview`, the `*_color` values and `locale`."
+          },
+          {
+            "key": "checkoutData",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Prefill and custom data such as `email`, `name`, `billing_address`, `tax_number`, `discount_code`, `custom` and `variant_quantities`."
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string",
+            "description": "When the checkout link stops working, as an ISO 8601 date."
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a preview checkout that cannot take a payment."
+          },
+          {
+            "key": "testMode",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create a test-mode checkout. Defaults to the store mode."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, variant_id?: number | null, custom_price?: number | null, product_options?: Record<string, JsonValue> | null, checkout_options?: Record<string, JsonValue> | null, checkout_data?: Record<string, JsonValue> | null, expires_at?: string | null, url?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.checkouts.get",
+      "shortPath": "checkouts.get",
+      "description": "Read one checkout, with its options and prefilled data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkoutId",
+            "optional": false,
+            "type": "string",
+            "description": "The checkout id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, variant_id?: number | null, custom_price?: number | null, product_options?: Record<string, JsonValue> | null, checkout_options?: Record<string, JsonValue> | null, checkout_data?: Record<string, JsonValue> | null, expires_at?: string | null, url?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.checkouts.list",
+      "shortPath": "checkouts.list",
+      "description": "List checkouts, filtered by store or variant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only checkouts in this store."
+          },
+          {
+            "key": "variantId",
+            "optional": true,
+            "type": "number",
+            "description": "Only checkouts for this variant."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, variant_id?: number | null, custom_price?: number | null, product_options?: Record<string, JsonValue> | null, checkout_options?: Record<string, JsonValue> | null, checkout_data?: Record<string, JsonValue> | null, expires_at?: string | null, url?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a customer record. This does not send an invitation to the customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "number",
+            "description": "The store the customer belongs to."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The customer name."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The customer email address."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, email?: string | null, status?: string | null, status_formatted?: string | null, city?: string | null, region?: string | null, country?: string | null, country_formatted?: string | null, total_revenue_currency?: number | null, total_revenue_currency_formatted?: string | null, mrr?: number | null, mrr_formatted?: string | null, urls?: { customer_portal?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer, with their status, country and revenue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The customer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, email?: string | null, status?: string | null, status_formatted?: string | null, city?: string | null, region?: string | null, country?: string | null, country_formatted?: string | null, total_revenue_currency?: number | null, total_revenue_currency_formatted?: string | null, mrr?: number | null, mrr_formatted?: string | null, urls?: { customer_portal?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers, filtered by store or email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only customers in this store."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Only the customer with this email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, email?: string | null, status?: string | null, status_formatted?: string | null, city?: string | null, region?: string | null, country?: string | null, country_formatted?: string | null, total_revenue_currency?: number | null, total_revenue_currency_formatted?: string | null, mrr?: number | null, mrr_formatted?: string | null, urls?: { customer_portal?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Change a customer's name or email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The customer to update."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The new name."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "The new email address."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, email?: string | null, status?: string | null, status_formatted?: string | null, city?: string | null, region?: string | null, country?: string | null, country_formatted?: string | null, total_revenue_currency?: number | null, total_revenue_currency_formatted?: string | null, mrr?: number | null, mrr_formatted?: string | null, urls?: { customer_portal?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.discountRedemptions.get",
+      "shortPath": "discountRedemptions.get",
+      "description": "Read one discount redemption, with the amount it took off",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discountRedemptionId",
+            "optional": false,
+            "type": "string",
+            "description": "The discount redemption id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { discount_id?: number | null, order_id?: number | null, discount_name?: string | null, discount_code?: string | null, discount_amount?: number | null, discount_amount_type?: string | null, amount?: number | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.discountRedemptions.list",
+      "shortPath": "discountRedemptions.list",
+      "description": "List discount redemptions, filtered by discount or order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "discountId",
+            "optional": true,
+            "type": "number",
+            "description": "Only redemptions of this discount."
+          },
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "number",
+            "description": "Only redemptions on this order."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { discount_id?: number | null, order_id?: number | null, discount_name?: string | null, discount_code?: string | null, discount_amount?: number | null, discount_amount_type?: string | null, amount?: number | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.discounts.create",
+      "shortPath": "discounts.create",
+      "description": "Create a discount code, either a percentage or a fixed amount in cents, lasting once, a number of months or forever",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "number",
+            "description": "The store the discount belongs to."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A name for the discount, shown in the dashboard."
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "The code a customer enters. Lemon Squeezy rejects one already in use."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "The discount: a percentage when `amountType` is percent, cents when fixed."
+          },
+          {
+            "key": "amountType",
+            "optional": false,
+            "type": "percent | fixed",
+            "description": "Whether `amount` is a percentage or an amount in cents."
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "once | repeating | forever",
+            "description": "`once` applies to the first payment, `repeating` to a number of months, `forever` to every payment."
+          },
+          {
+            "key": "durationInMonths",
+            "optional": true,
+            "type": "number",
+            "description": "How many months a `repeating` discount lasts."
+          },
+          {
+            "key": "isLimitedRedemptions",
+            "optional": true,
+            "type": "boolean",
+            "description": "Cap how many times the code can be redeemed."
+          },
+          {
+            "key": "maxRedemptions",
+            "optional": true,
+            "type": "number",
+            "description": "The redemption cap, when `isLimitedRedemptions` is true."
+          },
+          {
+            "key": "startsAt",
+            "optional": true,
+            "type": "string",
+            "description": "When the discount starts, as an ISO 8601 date. Defaults to now."
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string",
+            "description": "When the discount expires, as an ISO 8601 date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, code?: string | null, amount?: number | null, amount_type?: string | null, is_limited_to_products?: boolean | null, is_limited_redemptions?: boolean | null, max_redemptions?: number | null, starts_at?: string | null, expires_at?: string | null, duration?: string | null, duration_in_months?: number | null, status?: string | null, status_formatted?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.discounts.delete",
+      "shortPath": "discounts.delete",
+      "description": "Delete a discount code. A deleted code cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discountId",
+            "optional": false,
+            "type": "string",
+            "description": "The discount to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "discountId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.discounts.get",
+      "shortPath": "discounts.get",
+      "description": "Read one discount code, with its amount, duration and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discountId",
+            "optional": false,
+            "type": "string",
+            "description": "The discount id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, code?: string | null, amount?: number | null, amount_type?: string | null, is_limited_to_products?: boolean | null, is_limited_redemptions?: boolean | null, max_redemptions?: number | null, starts_at?: string | null, expires_at?: string | null, duration?: string | null, duration_in_months?: number | null, status?: string | null, status_formatted?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.discounts.list",
+      "shortPath": "discounts.list",
+      "description": "List discount codes, optionally for one store",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only discounts in this store."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, code?: string | null, amount?: number | null, amount_type?: string | null, is_limited_to_products?: boolean | null, is_limited_redemptions?: boolean | null, max_redemptions?: number | null, starts_at?: string | null, expires_at?: string | null, duration?: string | null, duration_in_months?: number | null, status?: string | null, status_formatted?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.files.get",
+      "shortPath": "files.get",
+      "description": "Read one file and its download URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "The file id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { variant_id?: number | null, identifier?: string | null, name?: string | null, extension?: string | null, download_url?: string | null, size?: number | null, size_formatted?: string | null, version?: string | null, sort?: number | null, status?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.files.list",
+      "shortPath": "files.list",
+      "description": "List downloadable files, optionally for one variant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "variantId",
+            "optional": true,
+            "type": "number",
+            "description": "Only files of this variant."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { variant_id?: number | null, identifier?: string | null, name?: string | null, extension?: string | null, download_url?: string | null, size?: number | null, size_formatted?: string | null, version?: string | null, sort?: number | null, status?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.licenseKeyInstances.get",
+      "shortPath": "licenseKeyInstances.get",
+      "description": "Read one license key instance, with its identifier and name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseKeyInstanceId",
+            "optional": false,
+            "type": "string",
+            "description": "The license key instance id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { license_key_id?: number | null, identifier?: string | null, name?: string | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.licenseKeyInstances.list",
+      "shortPath": "licenseKeyInstances.list",
+      "description": "List the instances a license key has been activated on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "licenseKeyId",
+            "optional": true,
+            "type": "number",
+            "description": "Only instances of this license key."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { license_key_id?: number | null, identifier?: string | null, name?: string | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.licenseKeys.get",
+      "shortPath": "licenseKeys.get",
+      "description": "Read one license key, including the full key string",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseKeyId",
+            "optional": false,
+            "type": "string",
+            "description": "The license key id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, order_id?: number | null, order_item_id?: number | null, product_id?: number | null, user_name?: string | null, user_email?: string | null, key?: string | null, key_short?: string | null, activation_limit?: number | null, instances_count?: number | null, disabled?: boolean | null, status?: string | null, status_formatted?: string | null, expires_at?: string | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.licenseKeys.list",
+      "shortPath": "licenseKeys.list",
+      "description": "List license keys, filtered by store, order, product or status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only license keys in this store."
+          },
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "number",
+            "description": "Only license keys from this order."
+          },
+          {
+            "key": "orderItemId",
+            "optional": true,
+            "type": "number",
+            "description": "Only license keys from this order item."
+          },
+          {
+            "key": "productId",
+            "optional": true,
+            "type": "number",
+            "description": "Only license keys for this product."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "inactive | active | expired | disabled",
+            "description": "Only license keys in this status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, order_id?: number | null, order_item_id?: number | null, product_id?: number | null, user_name?: string | null, user_email?: string | null, key?: string | null, key_short?: string | null, activation_limit?: number | null, instances_count?: number | null, disabled?: boolean | null, status?: string | null, status_formatted?: string | null, expires_at?: string | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.licenseKeys.update",
+      "shortPath": "licenseKeys.update",
+      "description": "Change a license key's activation limit, expiry or disabled state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "licenseKeyId",
+            "optional": false,
+            "type": "string",
+            "description": "The license key to update."
+          },
+          {
+            "key": "activationLimit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of instances that can use this key."
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string",
+            "description": "When the key expires, as an ISO 8601 date."
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Disable or re-enable the key."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, order_id?: number | null, order_item_id?: number | null, product_id?: number | null, user_name?: string | null, user_email?: string | null, key?: string | null, key_short?: string | null, activation_limit?: number | null, instances_count?: number | null, disabled?: boolean | null, status?: string | null, status_formatted?: string | null, expires_at?: string | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.orderItems.get",
+      "shortPath": "orderItems.get",
+      "description": "Read one order line item, with its price and quantity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderItemId",
+            "optional": false,
+            "type": "string",
+            "description": "The order item id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { order_id?: number | null, product_id?: number | null, variant_id?: number | null, product_name?: string | null, variant_name?: string | null, price?: number | null, quantity?: number | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.orderItems.list",
+      "shortPath": "orderItems.list",
+      "description": "List order line items, filtered by order, product or variant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "number",
+            "description": "Only items of this order."
+          },
+          {
+            "key": "productId",
+            "optional": true,
+            "type": "number",
+            "description": "Only items for this product."
+          },
+          {
+            "key": "variantId",
+            "optional": true,
+            "type": "number",
+            "description": "Only items for this variant."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { order_id?: number | null, product_id?: number | null, variant_id?: number | null, product_name?: string | null, variant_name?: string | null, price?: number | null, quantity?: number | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.orders.generateInvoice",
+      "shortPath": "orders.generateInvoice",
+      "description": "Generate the PDF invoice for an order and return its URL. No money moves",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string",
+            "description": "The order to generate an invoice for."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The full name shown on the invoice."
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "The street address."
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string",
+            "description": "The city."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "The state or province. Required for the US and Canada."
+          },
+          {
+            "key": "zipCode",
+            "optional": false,
+            "type": "string",
+            "description": "The ZIP or postal code."
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "The country, as an ISO 3166-1 alpha-2 code such as US."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string",
+            "description": "Extra notes printed on the invoice."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code for the invoice, such as en."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ urls: { download_invoice: string } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Read one order, with its totals, tax and refund state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string",
+            "description": "The order id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, affiliate_id?: number | null, identifier?: string | null, order_number?: number | null, user_name?: string | null, user_email?: string | null, currency?: string | null, currency_rate?: string | null, subtotal?: number | null, setup_fee?: number | null, discount_total?: number | null, tax?: number | null, total?: number | null, refunded_amount?: number | null, subtotal_usd?: number | null, setup_fee_usd?: number | null, discount_total_usd?: number | null, tax_usd?: number | null, total_usd?: number | null, refunded_amount_usd?: number | null, tax_name?: string | null, tax_rate?: string | null, refunded?: boolean | null, refunded_at?: string | null, status?: string | null, status_formatted?: string | null, subtotal_formatted?: string | null, setup_fee_formatted?: string | null, discount_total_formatted?: string | null, tax_formatted?: string | null, total_formatted?: string | null, refunded_amount_formatted?: string | null, first_order_item?: Record<string, JsonValue> | null, urls?: { receipt?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List orders, filtered by store, email or order number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only orders in this store."
+          },
+          {
+            "key": "userEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Only orders for this email address."
+          },
+          {
+            "key": "orderNumber",
+            "optional": true,
+            "type": "number",
+            "description": "Only the order with this number."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, affiliate_id?: number | null, identifier?: string | null, order_number?: number | null, user_name?: string | null, user_email?: string | null, currency?: string | null, currency_rate?: string | null, subtotal?: number | null, setup_fee?: number | null, discount_total?: number | null, tax?: number | null, total?: number | null, refunded_amount?: number | null, subtotal_usd?: number | null, setup_fee_usd?: number | null, discount_total_usd?: number | null, tax_usd?: number | null, total_usd?: number | null, refunded_amount_usd?: number | null, tax_name?: string | null, tax_rate?: string | null, refunded?: boolean | null, refunded_at?: string | null, status?: string | null, status_formatted?: string | null, subtotal_formatted?: string | null, setup_fee_formatted?: string | null, discount_total_formatted?: string | null, tax_formatted?: string | null, total_formatted?: string | null, refunded_amount_formatted?: string | null, first_order_item?: Record<string, JsonValue> | null, urls?: { receipt?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.orders.refund",
+      "shortPath": "orders.refund",
+      "description": "Refund an order in full, or partially by amount in cents. A refund cannot be undone through the API",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string",
+            "description": "The order to refund."
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The amount to refund, in cents. Omit it for a full refund. A partial refund cannot be undone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, affiliate_id?: number | null, identifier?: string | null, order_number?: number | null, user_name?: string | null, user_email?: string | null, currency?: string | null, currency_rate?: string | null, subtotal?: number | null, setup_fee?: number | null, discount_total?: number | null, tax?: number | null, total?: number | null, refunded_amount?: number | null, subtotal_usd?: number | null, setup_fee_usd?: number | null, discount_total_usd?: number | null, tax_usd?: number | null, total_usd?: number | null, refunded_amount_usd?: number | null, tax_name?: string | null, tax_rate?: string | null, refunded?: boolean | null, refunded_at?: string | null, status?: string | null, status_formatted?: string | null, subtotal_formatted?: string | null, setup_fee_formatted?: string | null, discount_total_formatted?: string | null, tax_formatted?: string | null, total_formatted?: string | null, refunded_amount_formatted?: string | null, first_order_item?: Record<string, JsonValue> | null, urls?: { receipt?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.prices.get",
+      "shortPath": "prices.get",
+      "description": "Read one price, with its scheme, tiers and renewal interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "priceId",
+            "optional": false,
+            "type": "string",
+            "description": "The price id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { variant_id?: number | null, category?: string | null, scheme?: string | null, usage_aggregation?: string | null, unit_price?: number | null, unit_price_decimal?: number | string | null, setup_fee_enabled?: boolean | null, setup_fee?: number | null, package_size?: number | null, renewal_interval_unit?: string | null, renewal_interval_quantity?: number | null, trial_interval_unit?: string | null, trial_interval_quantity?: number | null, min_price?: number | null, suggested_price?: number | null, tax_code?: string | null, tiers?: Record<string, JsonValue>[] | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.prices.list",
+      "shortPath": "prices.list",
+      "description": "List prices, optionally for one variant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "variantId",
+            "optional": true,
+            "type": "number",
+            "description": "Only prices of this variant."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { variant_id?: number | null, category?: string | null, scheme?: string | null, usage_aggregation?: string | null, unit_price?: number | null, unit_price_decimal?: number | string | null, setup_fee_enabled?: boolean | null, setup_fee?: number | null, package_size?: number | null, renewal_interval_unit?: string | null, renewal_interval_quantity?: number | null, trial_interval_unit?: string | null, trial_interval_quantity?: number | null, min_price?: number | null, suggested_price?: number | null, tax_code?: string | null, tiers?: Record<string, JsonValue>[] | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.products.get",
+      "shortPath": "products.get",
+      "description": "Read one product, with its price range and buy-now URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "string",
+            "description": "The product id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, slug?: string | null, description?: string | null, status?: string | null, status_formatted?: string | null, thumb_url?: string | null, large_thumb_url?: string | null, price?: number | null, price_formatted?: string | null, from_price?: number | null, from_price_formatted?: string | null, to_price?: number | null, to_price_formatted?: string | null, pay_what_you_want?: boolean | null, buy_now_url?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.products.list",
+      "shortPath": "products.list",
+      "description": "List products, optionally for one store",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only products in this store."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, name?: string | null, slug?: string | null, description?: string | null, status?: string | null, status_formatted?: string | null, thumb_url?: string | null, large_thumb_url?: string | null, price?: number | null, price_formatted?: string | null, from_price?: number | null, from_price_formatted?: string | null, to_price?: number | null, to_price_formatted?: string | null, pay_what_you_want?: boolean | null, buy_now_url?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.stores.get",
+      "shortPath": "stores.get",
+      "description": "Read one store, with its plan, currency and sales totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string",
+            "description": "The store id, as `data.id` reports it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { name?: string | null, slug?: string | null, domain?: string | null, url?: string | null, avatar_url?: string | null, plan?: string | null, country?: string | null, country_nicename?: string | null, currency?: string | null, total_sales?: number | null, total_revenue?: number | null, thirty_day_sales?: number | null, thirty_day_revenue?: number | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.stores.list",
+      "shortPath": "stores.list",
+      "description": "List the stores the key can reach, with their plan and sales totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { name?: string | null, slug?: string | null, domain?: string | null, url?: string | null, avatar_url?: string | null, plan?: string | null, country?: string | null, country_nicename?: string | null, currency?: string | null, total_sales?: number | null, total_revenue?: number | null, thirty_day_sales?: number | null, thirty_day_revenue?: number | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptionInvoices.generate",
+      "shortPath": "subscriptionInvoices.generate",
+      "description": "Generate the PDF invoice for a subscription invoice and return its URL. No money moves",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionInvoiceId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription invoice to generate a PDF invoice for."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The full name shown on the invoice."
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "The street address."
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string",
+            "description": "The city."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "The state or province. Required for the US and Canada."
+          },
+          {
+            "key": "zipCode",
+            "optional": false,
+            "type": "string",
+            "description": "The ZIP or postal code."
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "The country, as an ISO 3166-1 alpha-2 code such as US."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string",
+            "description": "Extra notes printed on the invoice."
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code for the invoice, such as en."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ urls: { download_invoice: string } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptionInvoices.get",
+      "shortPath": "subscriptionInvoices.get",
+      "description": "Read one subscription invoice, with its totals and refund state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionInvoiceId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription invoice id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, subscription_id?: number | null, customer_id?: number | null, user_name?: string | null, user_email?: string | null, billing_reason?: string | null, card_brand?: string | null, card_last_four?: string | null, currency?: string | null, currency_rate?: string | null, status?: string | null, status_formatted?: string | null, refunded?: boolean | null, refunded_at?: string | null, subtotal?: number | null, discount_total?: number | null, tax?: number | null, total?: number | null, refunded_amount?: number | null, subtotal_usd?: number | null, discount_total_usd?: number | null, tax_usd?: number | null, total_usd?: number | null, refunded_amount_usd?: number | null, subtotal_formatted?: string | null, discount_total_formatted?: string | null, tax_formatted?: string | null, total_formatted?: string | null, refunded_amount_formatted?: string | null, urls?: { invoice_url?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptionInvoices.list",
+      "shortPath": "subscriptionInvoices.list",
+      "description": "List subscription invoices, filtered by store, status, refund state or subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only invoices in this store."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | paid | void | refunded | partial_refund",
+            "description": "Only invoices in this status."
+          },
+          {
+            "key": "refunded",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only refunded or only unrefunded invoices."
+          },
+          {
+            "key": "subscriptionId",
+            "optional": true,
+            "type": "number",
+            "description": "Only invoices of this subscription."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, subscription_id?: number | null, customer_id?: number | null, user_name?: string | null, user_email?: string | null, billing_reason?: string | null, card_brand?: string | null, card_last_four?: string | null, currency?: string | null, currency_rate?: string | null, status?: string | null, status_formatted?: string | null, refunded?: boolean | null, refunded_at?: string | null, subtotal?: number | null, discount_total?: number | null, tax?: number | null, total?: number | null, refunded_amount?: number | null, subtotal_usd?: number | null, discount_total_usd?: number | null, tax_usd?: number | null, total_usd?: number | null, refunded_amount_usd?: number | null, subtotal_formatted?: string | null, discount_total_formatted?: string | null, tax_formatted?: string | null, total_formatted?: string | null, refunded_amount_formatted?: string | null, urls?: { invoice_url?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptionInvoices.refund",
+      "shortPath": "subscriptionInvoices.refund",
+      "description": "Refund a subscription invoice in full, or partially by amount in cents. A refund cannot be undone through the API",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionInvoiceId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription invoice to refund."
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The amount to refund, in cents. Omit it for a full refund. A partial refund cannot be undone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, subscription_id?: number | null, customer_id?: number | null, user_name?: string | null, user_email?: string | null, billing_reason?: string | null, card_brand?: string | null, card_last_four?: string | null, currency?: string | null, currency_rate?: string | null, status?: string | null, status_formatted?: string | null, refunded?: boolean | null, refunded_at?: string | null, subtotal?: number | null, discount_total?: number | null, tax?: number | null, total?: number | null, refunded_amount?: number | null, subtotal_usd?: number | null, discount_total_usd?: number | null, tax_usd?: number | null, total_usd?: number | null, refunded_amount_usd?: number | null, subtotal_formatted?: string | null, discount_total_formatted?: string | null, tax_formatted?: string | null, total_formatted?: string | null, refunded_amount_formatted?: string | null, urls?: { invoice_url?: string | null } | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptionItems.get",
+      "shortPath": "subscriptionItems.get",
+      "description": "Read one subscription item, with its price, quantity and usage flag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionItemId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription item id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { subscription_id?: number | null, price_id?: number | null, quantity?: number | null, is_usage_based?: boolean | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptionItems.list",
+      "shortPath": "subscriptionItems.list",
+      "description": "List a subscription's items, filtered by subscription or price",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "subscriptionId",
+            "optional": true,
+            "type": "number",
+            "description": "Only items of this subscription."
+          },
+          {
+            "key": "priceId",
+            "optional": true,
+            "type": "number",
+            "description": "Only items on this price."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { subscription_id?: number | null, price_id?: number | null, quantity?: number | null, is_usage_based?: boolean | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptionItems.update",
+      "shortPath": "subscriptionItems.update",
+      "description": "Change a subscription item's quantity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionItemId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription item to update."
+          },
+          {
+            "key": "quantity",
+            "optional": false,
+            "type": "number",
+            "description": "The new quantity. Use `usageRecords.create` for metered increases."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { subscription_id?: number | null, price_id?: number | null, quantity?: number | null, is_usage_based?: boolean | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptionItems.usage",
+      "shortPath": "subscriptionItems.usage",
+      "description": "Read a usage-based item's metered usage for the current period",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionItemId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription item id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ period_start?: string | null, period_end?: string | null, quantity?: number | null, interval_unit?: string | null, interval_quantity?: number | null }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptions.cancel",
+      "shortPath": "subscriptions.cancel",
+      "description": "Cancel an active subscription. It stays readable but stops renewing",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription to cancel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, order_id?: number | null, order_item_id?: number | null, product_id?: number | null, variant_id?: number | null, product_name?: string | null, variant_name?: string | null, user_name?: string | null, user_email?: string | null, status?: string | null, status_formatted?: string | null, card_brand?: string | null, card_last_four?: string | null, payment_processor?: string | null, pause?: { mode?: string | null, resumes_at?: string | null } | null, cancelled?: boolean | null, trial_ends_at?: string | null, billing_anchor?: number | null, first_subscription_item?: { id?: number | null, subscription_id?: number | null, price_id?: number | null, quantity?: number | null, is_usage_based?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, urls?: { update_payment_method?: string | null, customer_portal?: string | null, customer_portal_update_subscription?: string | null } | null, renews_at?: string | null, ends_at?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptions.get",
+      "shortPath": "subscriptions.get",
+      "description": "Read one subscription, with its status, renewal date and pause state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, order_id?: number | null, order_item_id?: number | null, product_id?: number | null, variant_id?: number | null, product_name?: string | null, variant_name?: string | null, user_name?: string | null, user_email?: string | null, status?: string | null, status_formatted?: string | null, card_brand?: string | null, card_last_four?: string | null, payment_processor?: string | null, pause?: { mode?: string | null, resumes_at?: string | null } | null, cancelled?: boolean | null, trial_ends_at?: string | null, billing_anchor?: number | null, first_subscription_item?: { id?: number | null, subscription_id?: number | null, price_id?: number | null, quantity?: number | null, is_usage_based?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, urls?: { update_payment_method?: string | null, customer_portal?: string | null, customer_portal_update_subscription?: string | null } | null, renews_at?: string | null, ends_at?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List subscriptions, filtered by store, order, product, variant, email or status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only subscriptions in this store."
+          },
+          {
+            "key": "orderId",
+            "optional": true,
+            "type": "number",
+            "description": "Only subscriptions from this order."
+          },
+          {
+            "key": "orderItemId",
+            "optional": true,
+            "type": "number",
+            "description": "Only subscriptions from this order item."
+          },
+          {
+            "key": "productId",
+            "optional": true,
+            "type": "number",
+            "description": "Only subscriptions for this product."
+          },
+          {
+            "key": "variantId",
+            "optional": true,
+            "type": "number",
+            "description": "Only subscriptions for this variant."
+          },
+          {
+            "key": "userEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Only subscriptions for this email address."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "on_trial | active | paused | past_due | unpaid | cancelled | expired",
+            "description": "Only subscriptions in this status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, order_id?: number | null, order_item_id?: number | null, product_id?: number | null, variant_id?: number | null, product_name?: string | null, variant_name?: string | null, user_name?: string | null, user_email?: string | null, status?: string | null, status_formatted?: string | null, card_brand?: string | null, card_last_four?: string | null, payment_processor?: string | null, pause?: { mode?: string | null, resumes_at?: string | null } | null, cancelled?: boolean | null, trial_ends_at?: string | null, billing_anchor?: number | null, first_subscription_item?: { id?: number | null, subscription_id?: number | null, price_id?: number | null, quantity?: number | null, is_usage_based?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, urls?: { update_payment_method?: string | null, customer_portal?: string | null, customer_portal_update_subscription?: string | null } | null, renews_at?: string | null, ends_at?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.subscriptions.update",
+      "shortPath": "subscriptions.update",
+      "description": "Move a subscription to another variant, pause or resume it, or change its billing date. A plan change prorates the next charge",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription to update."
+          },
+          {
+            "key": "variantId",
+            "optional": true,
+            "type": "number",
+            "description": "Move the subscription to this variant. Lemon Squeezy prorates the next charge unless `invoiceImmediately` is set."
+          },
+          {
+            "key": "invoiceImmediately",
+            "optional": true,
+            "type": "boolean",
+            "description": "Charge the prorated difference now instead of at the next billing date."
+          },
+          {
+            "key": "disableProrations",
+            "optional": true,
+            "type": "boolean",
+            "description": "Do not prorate the charge when the plan changes."
+          },
+          {
+            "key": "pause",
+            "optional": true,
+            "type": "{ mode: void | free, resumesAt?: string }",
+            "description": "Pause collection. Only valid on an active subscription."
+          },
+          {
+            "key": "unpause",
+            "optional": true,
+            "type": "boolean",
+            "description": "Resume collection on a paused subscription. Sent as `pause: null`, which is how the API unpauses."
+          },
+          {
+            "key": "billingAnchor",
+            "optional": true,
+            "type": "number",
+            "description": "Move the billing date to this day of the month, 1 to 31. A day past the month's end uses its last day."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, customer_id?: number | null, order_id?: number | null, order_item_id?: number | null, product_id?: number | null, variant_id?: number | null, product_name?: string | null, variant_name?: string | null, user_name?: string | null, user_email?: string | null, status?: string | null, status_formatted?: string | null, card_brand?: string | null, card_last_four?: string | null, payment_processor?: string | null, pause?: { mode?: string | null, resumes_at?: string | null } | null, cancelled?: boolean | null, trial_ends_at?: string | null, billing_anchor?: number | null, first_subscription_item?: { id?: number | null, subscription_id?: number | null, price_id?: number | null, quantity?: number | null, is_usage_based?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, urls?: { update_payment_method?: string | null, customer_portal?: string | null, customer_portal_update_subscription?: string | null } | null, renews_at?: string | null, ends_at?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.usageRecords.create",
+      "shortPath": "usageRecords.create",
+      "description": "Record metered usage against a subscription item: add to the period total, or replace it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionItemId",
+            "optional": false,
+            "type": "number",
+            "description": "The usage-based subscription item to record usage against."
+          },
+          {
+            "key": "quantity",
+            "optional": false,
+            "type": "number",
+            "description": "The usage to report: added to the period total with `increment`, or the new total with `set`."
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "increment | set",
+            "description": "`increment` (the default) adds the quantity to the period total and is for a price with \"sum of usage\" aggregation. `set` makes the quantity the period total and only works with \"most recent usage\" aggregation; under \"sum of usage\" a `set` record is added like an increment."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { subscription_item_id?: number | null, quantity?: number | null, action?: string | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.usageRecords.get",
+      "shortPath": "usageRecords.get",
+      "description": "Read one usage record, with its quantity and action",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usageRecordId",
+            "optional": false,
+            "type": "string",
+            "description": "The usage record id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { subscription_item_id?: number | null, quantity?: number | null, action?: string | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.usageRecords.list",
+      "shortPath": "usageRecords.list",
+      "description": "List metered usage records, optionally for one subscription item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "subscriptionItemId",
+            "optional": true,
+            "type": "number",
+            "description": "Only usage records of this subscription item."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { subscription_item_id?: number | null, quantity?: number | null, action?: string | null, created_at?: string | null, updated_at?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read the account that owns the API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { name?: string | null, email?: string | null, color?: string | null, avatar_url?: string | null, has_custom_avatar?: boolean | null, createdAt?: string | null, updatedAt?: string | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.variants.get",
+      "shortPath": "variants.get",
+      "description": "Read one variant, with its license settings and checkout links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variantId",
+            "optional": false,
+            "type": "string",
+            "description": "The variant id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { product_id?: number | null, name?: string | null, slug?: string | null, description?: string | null, has_license_keys?: boolean | null, license_activation_limit?: number | null, is_license_limit_unlimited?: boolean | null, license_length_value?: number | null, license_length_unit?: string | null, is_license_length_unlimited?: boolean | null, sort?: number | null, status?: string | null, status_formatted?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.variants.list",
+      "shortPath": "variants.list",
+      "description": "List variants, optionally for one product or status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "productId",
+            "optional": true,
+            "type": "number",
+            "description": "Only variants of this product."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | draft | published",
+            "description": "Only variants in this status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { product_id?: number | null, name?: string | null, slug?: string | null, description?: string | null, has_license_keys?: boolean | null, license_activation_limit?: number | null, is_license_limit_unlimited?: boolean | null, license_length_value?: number | null, license_length_unit?: string | null, is_license_length_unlimited?: boolean | null, sort?: number | null, status?: string | null, status_formatted?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a webhook URL with its signing secret and the events to send",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "number",
+            "description": "The store the webhook listens to."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The https URL Lemon Squeezy posts events to."
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "(order_created | order_refunded | customer_updated | subscription_created | subscription_updated | subscription_cancelled | subscription_resumed | subscription_expired | subscription_paused | subscription_unpaused | subscription_payment_success | subscription_payment_failed | subscription_payment_recovered | subscription_payment_refunded | license_key_created | license_key_updated | affiliate_activated)[]",
+            "description": "The events to send. At least one is required."
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string",
+            "description": "The signing secret. Lemon Squeezy signs each delivery with it, so store the same value to verify the `X-Signature` header."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, url?: string | null, events?: string[] | null, last_sent_at?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook. Deliveries to it stop immediately",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook, with its URL, events and last delivery time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, url?: string | null, events?: string[] | null, last_sent_at?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhooks, optionally for one store",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Lemon Squeezy caps this at 100."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by, prefixed with `-` for descending, such as `-createdAt`. The allowed fields differ per resource; an unsupported one answers 400."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]",
+            "description": "Related resources to embed, such as [\"subscription-items\"]. They arrive in the answer's `included` array."
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Only webhooks in this store."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, url?: string | null, events?: string[] | null, last_sent_at?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page: { currentPage: number, from?: number | null, lastPage: number, perPage: number, to?: number | null, total?: number | null } }"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lemonsqueezy.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook's URL, event list or signing secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook to update."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The new https URL."
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "(order_created | order_refunded | customer_updated | subscription_created | subscription_updated | subscription_cancelled | subscription_resumed | subscription_expired | subscription_paused | subscription_unpaused | subscription_payment_success | subscription_payment_failed | subscription_payment_recovered | subscription_payment_refunded | license_key_created | license_key_updated | affiliate_activated)[]",
+            "description": "The new event list, which replaces the old one."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string",
+            "description": "A new signing secret. Deliveries start using it immediately."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, id: string, attributes: { store_id?: number | null, url?: string | null, events?: string[] | null, last_sent_at?: string | null, created_at?: string | null, updated_at?: string | null, test_mode?: boolean | null }, relationships?: Record<string, { links?: { related?: string | null, self?: string | null } | null }>, links?: { self?: string | null } }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "jsonapi",
+            "optional": true,
+            "type": "{ version: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

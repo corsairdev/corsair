@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { getAllPosts } from '@/lib/blog';
 import { getComboCanonicalUrls } from '@/lib/combined-integrations';
+import { USE_CASES } from '@/lib/use-cases';
 import { getCatalogIntegrationIds } from '@/server/catalog-integration-cache';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -27,6 +28,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			priority: 0.3,
 		},
 		{
+			url: 'https://corsair.dev/security',
+			changeFrequency: 'monthly',
+			priority: 0.5,
+		},
+		{
 			url: 'https://corsair.dev/compare/nango',
 			changeFrequency: 'monthly',
 			priority: 0.7,
@@ -36,6 +42,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'weekly',
 			priority: 0.9,
 		},
+		{
+			url: 'https://corsair.dev/use-cases',
+			changeFrequency: 'weekly',
+			priority: 0.8,
+		},
+		...USE_CASES.map((useCase) => ({
+			url: `https://corsair.dev/use-cases/${useCase.slug}`,
+			changeFrequency: 'monthly' as const,
+			priority: 0.7,
+		})),
 		...integrationIds.map((id) => ({
 			url: `https://corsair.dev/integrations/${id}`,
 			changeFrequency: 'weekly' as const,

@@ -29,7 +29,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -201,7 +201,7 @@
           {
             "key": "constraints",
             "optional": true,
-            "type": "{ key: string, constraint_type: string, value?: string | number | boolean | lazy }[]"
+            "type": "{ key: string, constraint_type: string, value?: string | number | boolean | JsonValue }[]"
           },
           {
             "key": "sortField",
@@ -312,7 +312,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -322,7 +322,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -343,7 +343,7 @@
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean>"
           }
         ]
       },
@@ -353,7 +353,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

@@ -1,0 +1,117 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Taggun"
+description: "Scan receipts and invoices into structured data with Taggun's OCR API, and validate them against campaign rules or rules sent with the request."
+domain: "taggun.io"
+recommendedAuth: "api_key"
+
+overviewNote: >-
+  Taggun is synchronous: every scan returns its result in the same HTTP call, with
+  no webhooks, callbacks or job polling, so this plugin declares no webhooks.
+
+  Every extraction call is one billable scan on the account, and it stores the
+  receipt on Taggun's side unless `incognito` is true. Scans are therefore
+  reported as writes, and a 5xx is never replayed.
+
+  Three input methods exist for both depths: `url` for a document already hosted
+  at an HTTPS address, `encoded` for a base64 payload in JSON, and `file` for a
+  multipart upload under 20 MB. The `simple` form returns the four core fields
+  with confidence levels; the `verbose` form adds product line items, the OCR
+  text, helper arrays and any feature envelopes the account enables. A `language`
+  hint helps most for `ar`, `kh`, `th` and `he`, and Taggun ignores a code it does
+  not act on.
+
+  Campaign Validation needs the feature enabled on the account (Advanced plan and
+  above) and answers a 400 naming the feature when it is absent. `campaigns.update`
+  replaces the stored rules wholesale, so read them with `campaigns.get` first and
+  send back every section that should stay. `receiptValidation` needs no stored
+  campaign: pass the rules inline, and nothing is persisted.
+
+  A receipt that fails a validation rule is a successful call reporting
+  `successful: false` with `failedValidations`; it is not an error.
+
+examples:
+  read:
+    path: campaigns.list
+    title: List campaign IDs
+  write:
+    path: verbose.url
+    title: Scan a receipt and return line items
+    args:
+      url: "https://files.readme.io/01cb130cf982ea1e0aec6ae8c39eab9f736cc3ecbbd1ef885c278ace6d364b26-example-file.png"
+      incognito: true
+
+apiExamples:
+  verbose.url:
+    args:
+      url: "https://files.readme.io/01cb130cf982ea1e0aec6ae8c39eab9f736cc3ecbbd1ef885c278ace6d364b26-example-file.png"
+      extractLineItems: true
+      incognito: true
+  verbose.file:
+    call: "{ file: new File([bytes], 'receipt.jpg', { type: 'image/jpeg' }) }"
+  verbose.encoded:
+    args:
+      image: "<base64 of the document>"
+      filename: "receipt.jpg"
+      contentType: "image/jpeg"
+  simple.url:
+    args:
+      url: "https://files.readme.io/01cb130cf982ea1e0aec6ae8c39eab9f736cc3ecbbd1ef885c278ace6d364b26-example-file.png"
+      incognito: true
+  simple.file:
+    call: "{ file: new File([bytes], 'receipt.jpg', { type: 'image/jpeg' }) }"
+  simple.encoded:
+    args:
+      image: "<base64 of the document>"
+      filename: "receipt.jpg"
+      contentType: "image/jpeg"
+  campaigns.list:
+    args: {}
+  campaigns.get:
+    args:
+      campaignId: "coffee-june-2026"
+  campaigns.create:
+    args:
+      campaignId: "coffee-june-2026"
+      settings:
+        merchantNames:
+          allowList: ["Fresh Market"]
+        balanceOwing:
+          max: 0.01
+  campaigns.update:
+    args:
+      campaignId: "coffee-june-2026"
+      settings:
+        merchantNames:
+          allowList: ["Fresh Market", "Corner Store"]
+  campaigns.delete:
+    args:
+      campaignId: "coffee-june-2026"
+  campaigns.validateFile:
+    call: "{ campaignId: 'coffee-june-2026', file: new File([bytes], 'receipt.jpg') }"
+  campaigns.validateUrl:
+    args:
+      campaignId: "coffee-june-2026"
+      url: "https://example.com/receipts/receipt-123.jpg"
+  receiptValidation.file:
+    call: "{ file: new File([bytes], 'receipt.jpg'), validation: { merchantName: { allowed: ['H-E-B'] } } }"
+  receiptValidation.url:
+    args:
+      url: "https://example.com/receipts/receipt-123.png"
+      validation:
+        merchantName:
+          allowed: ["H-E-B"]
+
+apiNotes:
+  "simple.url": 'Only https URLs are accepted, and localhost, loopback, link-local and private-network hosts are rejected before the request is sent. `incognito` keeps the receipt out of Taggun storage.'
+  "simple.file": 'The file must be under 20 MB. The request-size limit counts multipart framing, so a file at the limit plus its boundaries is a 413.'
+  "verbose.url": '`extractLineItems` defaults to true; set it to false to skip product line items, which is faster and omits `entities.productLineItems`.'
+  "verbose.file": 'The verbose form is the one to evaluate Taggun with: it returns line items, the OCR text and per-field metadata.'
+  "campaigns.list": 'Returns a bare array of campaign IDs. An account without Campaign Validation enabled gets a 400 naming the feature rather than an empty list.'
+  "campaigns.get": 'Sections with no rules are omitted from the response, so a campaign with only a date window returns just `date`.'
+  "campaigns.create": 'The campaign ID is yours to choose, up to 50 characters. At least one rule section is needed, or the campaign validates nothing. `balanceOwing.max` must be above zero: Taggun skips the comparison when it is 0.'
+  "campaigns.update": 'Replaces the stored rules wholesale: every section left out is removed. Read the current rules with `campaigns.get` and re-send them with your changes.'
+  "campaigns.delete": 'Permanently removes the campaign rules. Submit nothing against that campaign afterwards, since the removed rules cannot be evaluated.'
+  "campaigns.validateFile": 'A failed rule is a successful call reporting `successful: false` with `failedValidations`, not an error. Each call is one billable scan.'
+  "campaigns.validateUrl": 'Validates against the rules stored under `campaignId`. A failed rule is a successful call reporting `successful: false`.'
+  "receiptValidation.file": 'The inline `validation` rules travel as a JSON string inside the multipart body, because a form field cannot carry an object. Set `required: false` on a rule to report its output without letting it affect `successful`.'
+  "receiptValidation.url": 'Nothing is stored: the rules in `validation` apply to this request only. Set `required: false` on a rule to report its output without letting it affect `successful`.'

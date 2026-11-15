@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Anonyflow: every `anonyflow.api.*` operation with input and output types."
+title: "Anonyflow API reference"
+sidebarTitle: "API"
+description: "API reference for the Anonyflow plugin in Corsair: every `anonyflow.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `anonyflow.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -57,18 +56,8 @@ await corsair.anonyflow.api.core.anonymizePacket({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | The data packet to anonymize |
+| `data` | `Record<string, any>` | Yes | The data packet to anonymize |
 | `keys` | `string[]` | Yes | The keys within the data packet to anonymize |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -77,17 +66,7 @@ await corsair.anonyflow.api.core.anonymizePacket({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `true` | Yes | — |
-| `value` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `value` | `Record<string, any>` | Yes | — |
 
 
 
@@ -139,18 +118,8 @@ await corsair.anonyflow.api.core.deanonymizePacket({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | The data packet to deanonymize |
+| `data` | `Record<string, any>` | Yes | The data packet to deanonymize |
 | `keys` | `string[]` | Yes | The keys within the data packet to deanonymize |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -159,17 +128,7 @@ await corsair.anonyflow.api.core.deanonymizePacket({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `true` | Yes | — |
-| `value` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `value` | `Record<string, any>` | Yes | — |
 
 
 

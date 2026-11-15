@@ -1,0 +1,16 @@
+displayName: Brevo
+description: Marketing and email platform. Manage contacts and email campaigns, and read account details.
+domain: brevo.com
+examples:
+  read:
+    path: contacts.list
+    title: List contacts
+  write:
+    path: contacts.create
+    title: Create a contact
+    args:
+      email: you@example.com
+dbExample:
+  entity: contacts
+  note: Search synced contacts without hitting Brevo.
+  limit: 50

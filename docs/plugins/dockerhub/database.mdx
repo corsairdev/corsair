@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Docker Hub local sync: searchable entities, `.search()` filters, and operators."
+title: "Docker Hub database"
+sidebarTitle: "Database"
+description: "Docker Hub local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Docker Hub plugin syncs data locally. Use `corsair.dockerhub.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -158,6 +159,7 @@ const rows = await corsair.dockerhub.db.orgMembers.search({
 | `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `location` | `string` | equals, contains, startsWith, endsWith, in |
 | `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `role` | `string` | equals, contains, startsWith, endsWith, in |
 | `is_guest` | `boolean` | equals |
@@ -274,6 +276,7 @@ const rows = await corsair.dockerhub.db.teamMembers.search({
 | `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `location` | `string` | equals, contains, startsWith, endsWith, in |
 | `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -333,6 +336,7 @@ const rows = await corsair.dockerhub.db.users.search({
 | `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `location` | `string` | equals, contains, startsWith, endsWith, in |
 | `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Pinecone local sync: searchable entities, `.search()` filters, and operators."
+title: "Pinecone database"
+sidebarTitle: "Database"
+description: "Pinecone local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Pinecone plugin syncs data locally. Use `corsair.pinecone.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -59,6 +60,7 @@ const rows = await corsair.pinecone.db.assistants.search({
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `host` | `string` | equals, contains, startsWith, endsWith, in |
 | `instructions` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 
@@ -151,6 +153,8 @@ const rows = await corsair.pinecone.db.indexes.search({
 | `host` | `string` | equals, contains, startsWith, endsWith, in |
 | `dimension` | `number` | equals, gt, gte, lt, lte, in |
 | `metric` | `string` | equals, contains, startsWith, endsWith, in |
+| `vector_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `deletion_protection` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -175,6 +179,8 @@ const rows = await corsair.pinecone.db.models.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `model` | `string` | equals, contains, startsWith, endsWith, in |
 | `short_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `vector_type` | `string` | equals, contains, startsWith, endsWith, in |
 | `dimension` | `number` | equals, gt, gte, lt, lte, in |
 | `max_sequence_length` | `number` | equals, gt, gte, lt, lte, in |
 

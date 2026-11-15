@@ -1,0 +1,16 @@
+displayName: Benzinga
+description: Financial news and market data API for reading news and channels, and calendar data for earnings, dividends, splits, IPOs, analyst ratings, guidance, and economics.
+domain: benzinga.com
+examples:
+  read:
+    path: news.get
+    title: List news
+  write:
+    path: calendar.listEarnings
+    title: List earnings
+    args:
+      tickers: AAPL
+dbExample:
+  entity: newsArticles
+  note: Search synced news articles without hitting Benzinga.
+  limit: 50

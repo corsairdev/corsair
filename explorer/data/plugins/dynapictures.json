@@ -82,7 +82,7 @@
           {
             "key": "animated",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "url",
@@ -215,7 +215,7 @@
           {
             "key": "memberRole",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -266,7 +266,7 @@
           {
             "key": "memberRole",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -337,7 +337,7 @@
           {
             "key": "memberRole",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

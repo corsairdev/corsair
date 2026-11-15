@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Spotify: every `spotify.api.*` operation with input and output types."
+title: "Spotify API reference"
+sidebarTitle: "API"
+description: "API reference for the Spotify plugin in Corsair: every `spotify.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `spotify.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -189,9 +188,9 @@ await corsair.spotify.api.albums.getTracks({});
 |------|------|----------|-------------|
 | `href` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | No | — |
 | `offset` | `number` | No | — |
-| `previous` | `string` | No | — |
+| `previous` | `string \| null` | No | — |
 | `total` | `number` | No | — |
 | `items` | `object[]` | No | — |
 
@@ -425,9 +424,9 @@ await corsair.spotify.api.artists.getAlbums({});
 |------|------|----------|-------------|
 | `href` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | No | — |
 | `offset` | `number` | No | — |
-| `previous` | `string` | No | — |
+| `previous` | `string \| null` | No | — |
 | `total` | `number` | No | — |
 | `items` | `object[]` | No | — |
 
@@ -704,9 +703,9 @@ await corsair.spotify.api.library.getLikedTracks({});
 |------|------|----------|-------------|
 | `href` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | No | — |
 | `offset` | `number` | No | — |
-| `previous` | `string` | No | — |
+| `previous` | `string \| null` | No | — |
 | `total` | `number` | No | — |
 | `items` | `object[]` | No | — |
 
@@ -1005,7 +1004,7 @@ await corsair.spotify.api.player.getRecentlyPlayed({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | No | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | No | — |
 | `cursors` | `object` | No | — |
 | `limit` | `number` | No | — |
 
@@ -1316,7 +1315,7 @@ await corsair.spotify.api.playlists.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `public` | `boolean` | No | — |
 | `collaborative` | `boolean` | No | — |
 | `owner` | `object` | No | — |
@@ -1413,7 +1412,7 @@ await corsair.spotify.api.playlists.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `public` | `boolean` | No | — |
 | `collaborative` | `boolean` | No | — |
 | `owner` | `object` | No | — |
@@ -1512,9 +1511,9 @@ await corsair.spotify.api.playlists.getTracks({});
 |------|------|----------|-------------|
 | `href` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | No | — |
 | `offset` | `number` | No | — |
-| `previous` | `string` | No | — |
+| `previous` | `string \| null` | No | — |
 | `total` | `number` | No | — |
 | `items` | `object[]` | No | — |
 
@@ -1608,9 +1607,9 @@ await corsair.spotify.api.playlists.getUserPlaylists({});
 |------|------|----------|-------------|
 | `href` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | No | — |
 | `offset` | `number` | No | — |
-| `previous` | `string` | No | — |
+| `previous` | `string \| null` | No | — |
 | `total` | `number` | No | — |
 | `items` | `object[]` | No | — |
 
@@ -1618,36 +1617,38 @@ await corsair.spotify.api.playlists.getUserPlaylists({});
 <Accordion title="items full type">
 
 ```ts
-{
-  id: string,
-  name: string,
-  description?: string | null,
-  public?: boolean,
-  collaborative?: boolean,
-  owner?: {
+(
+  {
     id: string,
-    display_name?: string,
+    name: string,
+    description?: string | null,
+    public?: boolean,
+    collaborative?: boolean,
+    owner?: {
+      id: string,
+      display_name?: string,
+      external_urls?: {
+        spotify?: string
+      }
+    },
+    followers?: {
+      total?: number
+    },
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    tracks?: {
+      href?: string,
+      total?: number
+    },
     external_urls?: {
       spotify?: string
-    }
-  },
-  followers?: {
-    total?: number
-  },
-  images?: {
-    url: string,
-    height?: number | null,
-    width?: number | null
-  }[],
-  tracks?: {
-    href?: string,
-    total?: number
-  },
-  external_urls?: {
-    spotify?: string
-  },
-  href?: string
-} | null[]
+    },
+    href?: string
+  } | null
+)[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1740,36 +1741,38 @@ await corsair.spotify.api.playlists.search({});
   offset?: number,
   previous?: string | null,
   total?: number,
-  items?: {
-    id: string,
-    name: string,
-    description?: string | null,
-    public?: boolean,
-    collaborative?: boolean,
-    owner?: {
+  items?: (
+    {
       id: string,
-      display_name?: string,
+      name: string,
+      description?: string | null,
+      public?: boolean,
+      collaborative?: boolean,
+      owner?: {
+        id: string,
+        display_name?: string,
+        external_urls?: {
+          spotify?: string
+        }
+      },
+      followers?: {
+        total?: number
+      },
+      images?: {
+        url: string,
+        height?: number | null,
+        width?: number | null
+      }[],
+      tracks?: {
+        href?: string,
+        total?: number
+      },
       external_urls?: {
         spotify?: string
-      }
-    },
-    followers?: {
-      total?: number
-    },
-    images?: {
-      url: string,
-      height?: number | null,
-      width?: number | null
-    }[],
-    tracks?: {
-      href?: string,
-      total?: number
-    },
-    external_urls?: {
-      spotify?: string
-    },
-    href?: string
-  } | null[]
+      },
+      href?: string
+    } | null
+  )[]
 }
 ```
 </Accordion>
@@ -1816,7 +1819,7 @@ await corsair.spotify.api.tracks.get({});
 | `href` | `string` | No | — |
 | `is_local` | `boolean` | No | — |
 | `popularity` | `number` | No | — |
-| `preview_url` | `string` | No | — |
+| `preview_url` | `string \| null` | No | — |
 | `track_number` | `number` | No | — |
 
 <AccordionGroup>

@@ -1,0 +1,461 @@
+---
+title: "Coda webhooks"
+sidebarTitle: "Webhooks"
+description: "Coda incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Coda plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/coda/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `docs`
+  - `created` (`docs.created`)
+  - `deleted` (`docs.deleted`)
+- `pages`
+  - `created` (`pages.created`)
+  - `updated` (`pages.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Docs
+
+### Created
+
+`docs.created`
+
+A doc was created or copied in the organization
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  eventId: string,
+  timestamp: number,
+  action: string,
+  result: string,
+  organizationId: string,
+  user: {
+    type: user,
+    id: number,
+    email: string
+  },
+  userContext: {
+    source: string
+  },
+  eventDetails?: Record<string, JsonValue>,
+  entity: {
+    type: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  events: {
+    eventId: string,
+    timestamp: number,
+    action: string,
+    result: string,
+    organizationId: string,
+    user: {
+      type: user,
+      id: number,
+      email: string
+    },
+    userContext: {
+      source: string
+    },
+    eventDetails?: Record<string, JsonValue>,
+    entity: {
+      type: doc,
+      doc: {
+        id: string,
+        type: doc,
+        docType: string,
+        name: string,
+        href: string,
+        browserLink: string,
+        folderId: string,
+        workspaceId: string,
+        owner?: string,
+        ownerName?: string,
+        createdAt?: string,
+        updatedAt?: string,
+        isDeleted?: boolean
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+coda({
+    webhookHooks: {
+        docs: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`docs.deleted`
+
+A doc was deleted in the organization
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  eventId: string,
+  timestamp: number,
+  action: string,
+  result: string,
+  organizationId: string,
+  user: {
+    type: user,
+    id: number,
+    email: string
+  },
+  userContext: {
+    source: string
+  },
+  eventDetails?: Record<string, JsonValue>,
+  entity: {
+    type: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  events: {
+    eventId: string,
+    timestamp: number,
+    action: string,
+    result: string,
+    organizationId: string,
+    user: {
+      type: user,
+      id: number,
+      email: string
+    },
+    userContext: {
+      source: string
+    },
+    eventDetails?: Record<string, JsonValue>,
+    entity: {
+      type: doc,
+      doc: {
+        id: string,
+        type: doc,
+        docType: string,
+        name: string,
+        href: string,
+        browserLink: string,
+        folderId: string,
+        workspaceId: string,
+        owner?: string,
+        ownerName?: string,
+        createdAt?: string,
+        updatedAt?: string,
+        isDeleted?: boolean
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+coda({
+    webhookHooks: {
+        docs: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Pages
+
+### Created
+
+`pages.created`
+
+A page was added to a doc
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  eventId: string,
+  timestamp: number,
+  action: string,
+  result: string,
+  organizationId: string,
+  user: {
+    type: user,
+    id: number,
+    email: string
+  },
+  userContext: {
+    source: string
+  },
+  eventDetails?: Record<string, JsonValue>,
+  entity: {
+    type: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  events: {
+    eventId: string,
+    timestamp: number,
+    action: string,
+    result: string,
+    organizationId: string,
+    user: {
+      type: user,
+      id: number,
+      email: string
+    },
+    userContext: {
+      source: string
+    },
+    eventDetails?: Record<string, JsonValue>,
+    entity: {
+      type: page,
+      page: {
+        id: string,
+        type: page,
+        name: string,
+        href: string,
+        browserLink: string,
+        subtitle?: string
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+coda({
+    webhookHooks: {
+        pages: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`pages.updated`
+
+A page in a doc was edited, renamed or moved
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  eventId: string,
+  timestamp: number,
+  action: string,
+  result: string,
+  organizationId: string,
+  user: {
+    type: user,
+    id: number,
+    email: string
+  },
+  userContext: {
+    source: string
+  },
+  eventDetails?: Record<string, JsonValue>,
+  entity: {
+    type: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  events: {
+    eventId: string,
+    timestamp: number,
+    action: string,
+    result: string,
+    organizationId: string,
+    user: {
+      type: user,
+      id: number,
+      email: string
+    },
+    userContext: {
+      source: string
+    },
+    eventDetails?: Record<string, JsonValue>,
+    entity: {
+      type: page,
+      page: {
+        id: string,
+        type: page,
+        name: string,
+        href: string,
+        browserLink: string,
+        subtitle?: string
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+coda({
+    webhookHooks: {
+        pages: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,7 +1,7 @@
 {
   "id": "boldsign",
-  "displayName": "Boldsign",
-  "description": "Boldsign plugin for Corsair",
+  "displayName": "BoldSign",
+  "description": "Electronic signature platform. Send and list documents, extend expiry, manage brands and custom fields, create embedded request links, and check API credits.",
   "npmPackageName": "@corsair-dev/boldsign",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -334,12 +334,12 @@
           {
             "key": "cc",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "enableSigningOrder",
@@ -775,7 +775,7 @@
           {
             "key": "reminderSettings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "disableEmails",

@@ -1,0 +1,18 @@
+displayName: Humanitix
+description: Event ticketing platform, with endpoints for listing and fetching events and listing tags.
+domain: humanitix.com
+examples:
+  read:
+    path: events.list
+    title: List events
+    args:
+      page: 1
+  write:
+    path: events.get
+    title: Get an event
+    args:
+      eventId: 64f0c0ffee0000000000abcd
+dbExample:
+  entity: events
+  note: These tables exist, but Humanitix calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

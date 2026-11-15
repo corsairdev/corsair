@@ -1,7 +1,7 @@
 {
   "id": "cdrplatform",
   "displayName": "CDR Platform",
-  "description": "CDR Platform plugin for Corsair",
+  "description": "Carbon dioxide removal API. Price and purchase CO2 removal portfolios, retrieve removal certificates, and check service health.",
   "npmPackageName": "@corsair-dev/cdrplatform",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -166,7 +166,7 @@
           {
             "key": "db_up",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, boolean>"
           }
         ]
       }
@@ -213,6 +213,16 @@
           "field": "entity_id",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "weight_unit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }
       ]
     },
@@ -227,6 +237,16 @@
         },
         {
           "field": "transaction_uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "weight_unit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

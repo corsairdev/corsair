@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "CustomGPT local sync: searchable entities, `.search()` filters, and operators."
+title: "CustomGPT database"
+sidebarTitle: "Database"
+description: "CustomGPT local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The CustomGPT plugin syncs data locally. Use `corsair.customgpt.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -150,6 +151,8 @@ const rows = await corsair.customgpt.db.pages.search({
 | `page_url_hash` | `string` | equals, contains, startsWith, endsWith, in |
 | `project_id` | `number` | equals, gt, gte, lt, lte, in |
 | `s3_path` | `string` | equals, contains, startsWith, endsWith, in |
+| `crawl_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `index_status` | `string` | equals, contains, startsWith, endsWith, in |
 | `is_file` | `boolean` | equals |
 | `is_refreshable` | `boolean` | equals |
 | `is_file_kept` | `boolean` | equals |
@@ -191,6 +194,7 @@ const rows = await corsair.customgpt.db.projects.search({
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `is_shared` | `boolean` | equals |
 | `shareable_slug` | `string` | equals, contains, startsWith, endsWith, in |
 | `shareable_link` | `string` | equals, contains, startsWith, endsWith, in |
@@ -225,6 +229,7 @@ const rows = await corsair.customgpt.db.sources.search({
 | `project_id` | `number` | equals, gt, gte, lt, lte, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `syncedAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

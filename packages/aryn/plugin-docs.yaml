@@ -1,0 +1,12 @@
+displayName: Aryn
+description: Document intelligence API for partitioning documents with DocParse, managing DocSets and documents, tracking async tasks, and generating query plans.
+domain: aryn.ai
+examples:
+  read:
+    path: asyncTasks.list
+    title: List async tasks
+  write:
+    path: docset.create
+    title: Create a DocSet
+    args:
+      name: Quarterly reports

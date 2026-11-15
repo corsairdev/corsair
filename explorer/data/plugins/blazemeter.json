@@ -44,12 +44,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -84,7 +84,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -130,12 +130,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -181,12 +181,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -232,12 +232,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -313,12 +313,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -365,12 +365,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -437,12 +437,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -493,12 +493,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -534,7 +534,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "name",
@@ -554,7 +554,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "packageId",
@@ -569,12 +569,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -594,7 +594,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: Record<string, any> | null }"
           }
         ]
       }
@@ -620,12 +620,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -681,12 +681,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -706,7 +706,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: Record<string, any> | null }"
           }
         ]
       }
@@ -767,12 +767,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -792,7 +792,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }[]"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: Record<string, any> | null }[]"
           }
         ]
       }
@@ -819,12 +819,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -860,7 +860,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "name",
@@ -880,7 +880,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "packageId",
@@ -900,17 +900,17 @@
           {
             "key": "dependencies",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -930,7 +930,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: Record<string, any> | null }"
           }
         ]
       }
@@ -946,7 +946,7 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "wsId",
@@ -961,17 +961,17 @@
           {
             "key": "fileContent",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -991,7 +991,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: Record<string, any> | null }"
           }
         ]
       }
@@ -1007,12 +1007,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1047,7 +1047,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -1073,12 +1073,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1113,7 +1113,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -1139,12 +1139,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1179,7 +1179,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -1205,12 +1205,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1246,12 +1246,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1292,12 +1292,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1332,7 +1332,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -1363,12 +1363,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1403,12 +1403,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ summary?: { avg?: number | null, bytes?: number | null, concurrency?: number | null, duration?: number | null, durationIsNotConfigured?: boolean | null, failed?: number | null, first?: number | null, hits?: number | null, id?: string | null, last?: number | null, lb?: string | null, tp90?: number | null, min?: number | null, max?: number | null, histogram?: {} | null }[] | null, jmeterLogSummary?: any[] | null, jmeterLogTypeSummary?: any[] | null, maxUsers?: number | null }"
+            "type": "{ summary?: { avg?: number | null, bytes?: number | null, concurrency?: number | null, duration?: number | null, durationIsNotConfigured?: boolean | null, failed?: number | null, first?: number | null, hits?: number | null, id?: string | null, last?: number | null, lb?: string | null, tp90?: number | null, min?: number | null, max?: number | null, histogram?: Record<string, any> | null }[] | null, jmeterLogSummary?: any[] | null, jmeterLogTypeSummary?: any[] | null, maxUsers?: number | null }"
           },
           {
             "key": "request_id",
@@ -1444,12 +1444,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1484,7 +1484,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -1520,12 +1520,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1560,7 +1560,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -1611,12 +1611,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1651,7 +1651,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -1697,17 +1697,17 @@
           {
             "key": "dependencies",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1727,7 +1727,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null }"
           }
         ]
       }
@@ -1753,12 +1753,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1804,12 +1804,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1855,12 +1855,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1911,12 +1911,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1936,7 +1936,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null }"
           }
         ]
       }
@@ -1952,7 +1952,7 @@
           {
             "key": "file",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "wsId",
@@ -1972,12 +1972,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1997,7 +1997,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null }"
           }
         ]
       }
@@ -2043,12 +2043,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2068,7 +2068,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }[]"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null }[]"
           }
         ]
       }
@@ -2095,12 +2095,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2161,17 +2161,17 @@
           {
             "key": "dependencies",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2191,7 +2191,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }"
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null }"
           }
         ]
       }
@@ -2222,12 +2222,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2328,12 +2328,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2368,7 +2368,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -2409,12 +2409,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2449,7 +2449,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -2500,12 +2500,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2540,7 +2540,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -2577,12 +2577,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2617,7 +2617,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -2658,12 +2658,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2698,7 +2698,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -2729,12 +2729,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2769,7 +2769,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -2825,12 +2825,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2865,7 +2865,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -2902,12 +2902,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2942,7 +2942,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -2988,12 +2988,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3028,7 +3028,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -3054,12 +3054,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3094,7 +3094,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -3135,12 +3135,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3175,7 +3175,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -3206,12 +3206,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3246,7 +3246,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -3312,12 +3312,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3352,7 +3352,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -3384,12 +3384,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3424,7 +3424,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -3460,12 +3460,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3500,7 +3500,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -3546,7 +3546,7 @@
           {
             "key": "filters",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "ordering",
@@ -3566,12 +3566,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3606,7 +3606,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -3632,12 +3632,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3672,12 +3672,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ entities?: any[] | null, fields?: {} | null, relationships?: {} | null, operators?: any[] | null }"
+            "type": "{ entities?: any[] | null, fields?: Record<string, any> | null, relationships?: Record<string, any> | null, operators?: any[] | null }"
           },
           {
             "key": "request_id",
@@ -3708,12 +3708,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3728,7 +3728,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "limit",
@@ -3779,12 +3779,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3799,7 +3799,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "limit",
@@ -3890,12 +3890,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3910,7 +3910,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "limit",
@@ -3961,12 +3961,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4001,7 +4001,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -4037,12 +4037,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4077,7 +4077,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -4118,12 +4118,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4138,7 +4138,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "limit",
@@ -4184,7 +4184,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "entityName",
@@ -4199,12 +4199,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4239,12 +4239,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "request_id",
@@ -4280,12 +4280,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4320,12 +4320,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "request_id",
@@ -4356,12 +4356,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4396,12 +4396,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ id?: string | null, title?: string | null, description?: string | null, type?: string | null, kind?: string | null, repeat?: number | null, properties?: {} | null, requirements?: {} | null }"
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, type?: string | null, kind?: string | null, repeat?: number | null, properties?: Record<string, any> | null, requirements?: Record<string, any> | null }"
           },
           {
             "key": "request_id",
@@ -4427,17 +4427,17 @@
           {
             "key": "attributes",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4472,12 +4472,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ type?: string | null, data?: {} | null, attributes?: {} | null }"
+            "type": "{ type?: string | null, data?: Record<string, any> | null, attributes?: Record<string, any> | null }"
           },
           {
             "key": "request_id",
@@ -4508,12 +4508,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4548,12 +4548,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ isValid?: boolean | null, entities?: {} | null }"
+            "type": "{ isValid?: boolean | null, entities?: Record<string, any> | null }"
           },
           {
             "key": "request_id",
@@ -4584,17 +4584,17 @@
           {
             "key": "configuration",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4629,12 +4629,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }"
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: Record<string, any> | null }"
           },
           {
             "key": "request_id",
@@ -4660,12 +4660,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4700,12 +4700,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }"
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: Record<string, any> | null }"
           },
           {
             "key": "request_id",
@@ -4736,12 +4736,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4776,7 +4776,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -4807,12 +4807,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4847,12 +4847,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null } | { id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }[]"
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: Record<string, any> | null } | { id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: Record<string, any> | null }[]"
           },
           {
             "key": "request_id",
@@ -4918,12 +4918,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4958,12 +4958,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }[]"
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: Record<string, any> | null }[]"
           },
           {
             "key": "request_id",
@@ -4990,12 +4990,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5030,7 +5030,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -5067,12 +5067,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5107,7 +5107,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -5148,12 +5148,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5188,7 +5188,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -5219,12 +5219,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5259,7 +5259,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -5295,17 +5295,17 @@
           {
             "key": "configuration",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5340,12 +5340,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }"
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: Record<string, any> | null }"
           },
           {
             "key": "request_id",
@@ -5366,7 +5366,7 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "testId",
@@ -5376,17 +5376,17 @@
           {
             "key": "fileContent",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5421,7 +5421,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -5452,12 +5452,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5492,12 +5492,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ success?: boolean | null, files?: {} | null }"
+            "type": "{ success?: boolean | null, files?: Record<string, boolean> | null }"
           },
           {
             "key": "request_id",
@@ -5523,12 +5523,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5563,7 +5563,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -5589,7 +5589,7 @@
           {
             "key": "file",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "verbose",
@@ -5599,17 +5599,17 @@
           {
             "key": "fileContent",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5624,7 +5624,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "limit",
@@ -5685,12 +5685,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5705,7 +5705,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "limit",
@@ -5725,7 +5725,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: {} | null } | { id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: {} | null }[]"
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: Record<string, any> | null } | { id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: Record<string, any> | null }[]"
           },
           {
             "key": "skip",
@@ -5756,12 +5756,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5776,7 +5776,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "limit",
@@ -5796,7 +5796,7 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: {} | null }[]"
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: Record<string, any> | null }[]"
           },
           {
             "key": "skip",
@@ -5822,12 +5822,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5862,7 +5862,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -5888,12 +5888,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5928,7 +5928,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -5954,12 +5954,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5994,7 +5994,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -6020,12 +6020,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6060,7 +6060,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -6106,12 +6106,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6146,7 +6146,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -6177,12 +6177,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6217,7 +6217,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -6248,12 +6248,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6288,12 +6288,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: number, name?: string | null, userId?: number | null, created?: number | null, updated?: number | null, enabled?: boolean | null, dedicatedIpsEnabled?: boolean | null, privateLocationsEnabled?: boolean | null, owner?: { id?: number | null, email?: string | null, displayName?: string | null } | null, membersCount?: number | null, allowance?: { amount?: number | null, type?: string | null } | null, accountId?: number | null, locations?: { id?: string | null, title?: string | null, name?: string | null, provider?: string | null, limits?: { threadsPerEngine?: number | null, concurrency?: number | null, engines?: number | null, duration?: number | null } | null, capabilities?: { dedicatedIps?: boolean | null } | null, sandbox?: boolean | null, purposes?: { load?: boolean | null, functional?: boolean | null, grid?: boolean | null, serviceMock?: boolean | null } | null }[] | null, activeMember?: { id?: number | null, email?: string | null, displayName?: string | null, roles?: string[] | null, enabled?: boolean | null, access?: number | null } | null, features?: {} | null }"
+            "type": "{ id: number, name?: string | null, userId?: number | null, created?: number | null, updated?: number | null, enabled?: boolean | null, dedicatedIpsEnabled?: boolean | null, privateLocationsEnabled?: boolean | null, owner?: { id?: number | null, email?: string | null, displayName?: string | null } | null, membersCount?: number | null, allowance?: { amount?: number | null, type?: string | null } | null, accountId?: number | null, locations?: { id?: string | null, title?: string | null, name?: string | null, provider?: string | null, limits?: { threadsPerEngine?: number | null, concurrency?: number | null, engines?: number | null, duration?: number | null } | null, capabilities?: { dedicatedIps?: boolean | null } | null, sandbox?: boolean | null, purposes?: { load?: boolean | null, functional?: boolean | null, grid?: boolean | null, serviceMock?: boolean | null } | null }[] | null, activeMember?: { id?: number | null, email?: string | null, displayName?: string | null, roles?: string[] | null, enabled?: boolean | null, access?: number | null } | null, features?: Record<string, any> | null }"
           },
           {
             "key": "request_id",
@@ -6339,12 +6339,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6379,12 +6379,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: number, name?: string | null, userId?: number | null, created?: number | null, updated?: number | null, enabled?: boolean | null, dedicatedIpsEnabled?: boolean | null, privateLocationsEnabled?: boolean | null, owner?: { id?: number | null, email?: string | null, displayName?: string | null } | null, membersCount?: number | null, allowance?: { amount?: number | null, type?: string | null } | null, accountId?: number | null, locations?: { id?: string | null, title?: string | null, name?: string | null, provider?: string | null, limits?: { threadsPerEngine?: number | null, concurrency?: number | null, engines?: number | null, duration?: number | null } | null, capabilities?: { dedicatedIps?: boolean | null } | null, sandbox?: boolean | null, purposes?: { load?: boolean | null, functional?: boolean | null, grid?: boolean | null, serviceMock?: boolean | null } | null }[] | null, activeMember?: { id?: number | null, email?: string | null, displayName?: string | null, roles?: string[] | null, enabled?: boolean | null, access?: number | null } | null, features?: {} | null }[]"
+            "type": "{ id: number, name?: string | null, userId?: number | null, created?: number | null, updated?: number | null, enabled?: boolean | null, dedicatedIpsEnabled?: boolean | null, privateLocationsEnabled?: boolean | null, owner?: { id?: number | null, email?: string | null, displayName?: string | null } | null, membersCount?: number | null, allowance?: { amount?: number | null, type?: string | null } | null, accountId?: number | null, locations?: { id?: string | null, title?: string | null, name?: string | null, provider?: string | null, limits?: { threadsPerEngine?: number | null, concurrency?: number | null, engines?: number | null, duration?: number | null } | null, capabilities?: { dedicatedIps?: boolean | null } | null, sandbox?: boolean | null, purposes?: { load?: boolean | null, functional?: boolean | null, grid?: boolean | null, serviceMock?: boolean | null } | null }[] | null, activeMember?: { id?: number | null, email?: string | null, displayName?: string | null, roles?: string[] | null, enabled?: boolean | null, access?: number | null } | null, features?: Record<string, any> | null }[]"
           },
           {
             "key": "request_id",
@@ -6416,12 +6416,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6456,7 +6456,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -6493,12 +6493,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6533,7 +6533,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -6569,12 +6569,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6609,7 +6609,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -6655,12 +6655,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6695,7 +6695,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",
@@ -6746,12 +6746,12 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6786,7 +6786,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "result",

@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: "PostHog incoming webhooks: event paths, payloads, and response data."
+title: "PostHog webhooks"
+sidebarTitle: "Webhooks"
+description: "PostHog incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
 ---
 
 The PostHog plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/posthog/overview) for setup context and the exact URL shape).
@@ -22,9 +23,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -46,53 +61,20 @@ A PostHog event was captured
 | `distinct_id` | `string` | Yes | — |
 | `timestamp` | `string` | No | — |
 | `uuid` | `string` | No | — |
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, any>` | No | — |
 | `person` | `object` | No | — |
-| `groups` | `object` | No | — |
-| `$set` | `object` | No | — |
-| `$set_once` | `object` | No | — |
+| `groups` | `Record<string, any>` | No | — |
+| `$set` | `Record<string, any>` | No | — |
+| `$set_once` | `Record<string, any>` | No | — |
 | `$unset` | `string[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="person full type">
 
 ```ts
 {
   distinct_id: string,
-  properties?: {
-  }
-}
-```
-</Accordion>
-
-<Accordion title="groups full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="$set full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="$set_once full type">
-
-```ts
-{
+  properties?: Record<string, any>
 }
 ```
 </Accordion>
@@ -109,19 +91,14 @@ A PostHog event was captured
   distinct_id: string,
   timestamp?: string,
   uuid?: string,
-  properties?: {
-  },
+  properties?: Record<string, any>,
   person?: {
     distinct_id: string,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
-  groups?: {
-  },
-  $set?: {
-  },
-  $set_once?: {
-  },
+  groups?: Record<string, any>,
+  $set?: Record<string, any>,
+  $set_once?: Record<string, any>,
   $unset?: string[]
 }
 ```

@@ -1,6 +1,9 @@
+import { AgentRolesSection } from './agent-roles/agent-roles-section';
 import { FaqSection } from './faq/faq-section';
 import { SiteFooter } from './footer/site-footer';
 import { LandingHero } from './hero/landing-hero';
+import { LugIntroSection } from './lug/lug-intro-section';
+import { ManagedToolsSection } from './managed-tools/managed-tools-section';
 import { SiteMenu } from './menu/site-menu';
 import { PricingSection } from './pricing/pricing-section';
 import { ProblemStatementSection } from './problem-statement/problem-statement-section';
@@ -19,11 +22,13 @@ export function LandingPage({ starCount }: { starCount?: number | null }) {
 		>
 			<SiteMenu />
 			<LandingHero starCount={starCount} />
+			<LugIntroSection />
+			<AgentRolesSection />
 			<TerminalTrioSection />
 			<ProblemStatementSection />
 			<SolutionFramingSection />
+			<ManagedToolsSection />
 			<PricingSection />
-			{/* <UseCasesSection /> */}
 			<FaqSection />
 			<SiteFooter />
 		</div>

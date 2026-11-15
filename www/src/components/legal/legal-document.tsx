@@ -9,17 +9,19 @@ export function LegalDocument({
 	lastUpdated,
 	children,
 	relatedLink,
+	eyebrow = 'Legal',
 }: {
 	title: string;
 	lastUpdated: string;
 	children: ReactNode;
 	relatedLink?: { href: string; label: string };
+	eyebrow?: string;
 }) {
 	return (
 		<main className="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
 			<div className="mb-10">
 				<p className="mb-2 font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c66]">
-					Legal
+					{eyebrow}
 				</p>
 				<h1 className="mb-3 text-3xl font-semibold tracking-tight text-[#1c1c1c] md:text-4xl">
 					{title}

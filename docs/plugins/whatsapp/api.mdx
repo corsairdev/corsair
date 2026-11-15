@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for WhatsApp: every `whatsapp.api.*` operation with input and output types."
+title: "WhatsApp API reference"
+sidebarTitle: "API"
+description: "API reference for the WhatsApp plugin in Corsair: every `whatsapp.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `whatsapp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -263,8 +262,7 @@ await corsair.whatsapp.api.messages.send({});
       code: string,
       policy?: deterministic
     },
-    components?: {
-    }[]
+    components?: Record<string, any>[]
   }
 } | {
   phoneNumberId?: string,
@@ -378,17 +376,7 @@ await corsair.whatsapp.api.messageTemplates.create({});
 | `name` | `string` | Yes | — |
 | `language` | `string` | Yes | — |
 | `category` | `string` | Yes | — |
-| `components` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="components full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `components` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -460,17 +448,7 @@ await corsair.whatsapp.api.messageTemplates.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -500,17 +478,7 @@ await corsair.whatsapp.api.messageTemplates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -602,8 +570,7 @@ await corsair.whatsapp.api.phoneNumbers.list({});
   quality_rating?: string,
   code_verification_status?: string,
   platform_type?: string,
-  throughput?: {
-  }
+  throughput?: Record<string, any>
 }[]
 ```
 </Accordion>

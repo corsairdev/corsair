@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getSession } from '@/lib/auth-server';
 import { getCurrentProfile } from '@/lib/current-user-server';
 import { getApi } from '@/server/api/caller';
+import { enabledConnectProviders } from '@/server/oss-connect/linked-account';
 import {
 	getCachedListTags,
 	getCachedOssStats,
@@ -12,6 +13,7 @@ import {
 
 import { ActivityFeed } from './activity-feed';
 import { CategoryOnboarding } from './category-onboarding';
+import { ConnectAccountsCallout } from './connect-accounts-callout';
 import { FramedPanel } from './framed-panel';
 import { GithubUsernameCallout } from './github-username-callout';
 import { HowItWorks } from './how-it-works';
@@ -70,10 +72,28 @@ export async function OssUserSection() {
 
 	try {
 		const profile = await getCurrentProfile();
-		if (profile?.githubUsername) return null;
-		return <GithubUsernameCallout />;
+		const providers = enabledConnectProviders();
+		const accounts = providers.map((provider) => ({
+			provider,
+			connected: profile?.connected[provider] ?? false,
+			username:
+				(provider === 'github'
+					? profile?.githubUsername
+					: profile?.discordUsername) ?? null,
+		}));
+		// Without GitHub to connect, the username is still typed in.
+		const typedGithub =
+			!providers.includes('github') && !profile?.githubUsername;
+		const connect = accounts.some((account) => !account.connected);
+		if (!typedGithub && !connect) return null;
+		return (
+			<>
+				{typedGithub ? <GithubUsernameCallout /> : null}
+				{connect ? <ConnectAccountsCallout accounts={accounts} /> : null}
+			</>
+		);
 	} catch (error) {
-		console.error('[oss] github username callout failed', error);
+		console.error('[oss] account callout failed', error);
 		return null;
 	}
 }

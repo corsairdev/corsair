@@ -51,7 +51,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -167,7 +167,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -484,7 +484,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -756,7 +756,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1172,7 +1172,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1270,7 +1270,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1314,7 +1314,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1358,7 +1358,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1402,7 +1402,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1446,7 +1446,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1490,7 +1490,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1534,7 +1534,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1578,7 +1578,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1622,7 +1622,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1666,7 +1666,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1710,7 +1710,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1754,7 +1754,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1798,7 +1798,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1842,7 +1842,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -1949,7 +1949,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -2065,7 +2065,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -2109,7 +2109,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -2568,7 +2568,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -2964,7 +2964,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -3041,7 +3041,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -3253,7 +3253,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -3483,7 +3483,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -3671,7 +3671,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -3934,7 +3934,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -3999,7 +3999,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -4190,7 +4190,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -4450,7 +4450,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -4641,7 +4641,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -4967,7 +4967,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -5185,7 +5185,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -5450,7 +5450,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }
@@ -5638,7 +5638,7 @@
           {
             "key": "pagination",
             "optional": true,
-            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
           }
         ]
       }

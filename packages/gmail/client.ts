@@ -16,7 +16,9 @@ export const GMAIL_API_BASE = 'https://gmail.googleapis.com/gmail/v1';
 type GmailRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
-	query?: Record<string, string | number | boolean | undefined>;
+	// Arrays are sent as repeated parameters (metadataHeaders=a&metadataHeaders=b),
+	// which is how Gmail reads its list-valued query parameters.
+	query?: Record<string, string | number | boolean | string[] | undefined>;
 };
 
 export async function makeGmailRequest<T>(

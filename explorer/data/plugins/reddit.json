@@ -58,13 +58,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -114,13 +114,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -170,13 +170,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -226,13 +226,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -267,13 +267,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -324,7 +324,7 @@
           {
             "key": "post",
             "optional": false,
-            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }"
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number } | null"
           },
           {
             "key": "comments",
@@ -333,13 +333,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -414,13 +414,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -490,13 +490,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -551,13 +551,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -633,12 +633,12 @@
           {
             "key": "active_user_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "accounts_active",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "over18",
@@ -768,13 +768,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -829,13 +829,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -890,13 +890,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -951,13 +951,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -1017,13 +1017,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -1184,13 +1184,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -1255,13 +1255,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",
@@ -1326,13 +1326,13 @@
           },
           {
             "key": "after",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "before",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "dist",

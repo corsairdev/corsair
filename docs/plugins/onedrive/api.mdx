@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for OneDrive: every `onedrive.api.*` operation with input and output types."
+title: "OneDrive API reference"
+sidebarTitle: "API"
+description: "API reference for the OneDrive plugin in Corsair: every `onedrive.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `onedrive.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -1002,26 +1001,16 @@ await corsair.onedrive.api.drive.listActivities({});
 {
   id?: string,
   action?: {
-    comment?: {
-    },
-    create?: {
-    },
-    delete?: {
-    },
-    edit?: {
-    },
-    mention?: {
-    },
-    move?: {
-    },
-    rename?: {
-    },
-    restore?: {
-    },
-    share?: {
-    },
-    version?: {
-    }
+    comment?: Record<string, any>,
+    create?: Record<string, any>,
+    delete?: Record<string, any>,
+    edit?: Record<string, any>,
+    mention?: Record<string, any>,
+    move?: Record<string, any>,
+    rename?: Record<string, any>,
+    restore?: Record<string, any>,
+    share?: Record<string, any>,
+    version?: Record<string, any>
   },
   actor?: {
     user?: {
@@ -2923,26 +2912,16 @@ await corsair.onedrive.api.items.listActivities({});
 {
   id?: string,
   action?: {
-    comment?: {
-    },
-    create?: {
-    },
-    delete?: {
-    },
-    edit?: {
-    },
-    mention?: {
-    },
-    move?: {
-    },
-    rename?: {
-    },
-    restore?: {
-    },
-    share?: {
-    },
-    version?: {
-    }
+    comment?: Record<string, any>,
+    create?: Record<string, any>,
+    delete?: Record<string, any>,
+    edit?: Record<string, any>,
+    mention?: Record<string, any>,
+    move?: Record<string, any>,
+    rename?: Record<string, any>,
+    restore?: Record<string, any>,
+    share?: Record<string, any>,
+    version?: Record<string, any>
   },
   actor?: {
     user?: {
@@ -3631,7 +3610,7 @@ await corsair.onedrive.api.items.updateMetadata({});
 | `fileSystemInfo` | `object` | No | — |
 | `parent_reference_id` | `string` | No | — |
 | `parent_reference_drive_id` | `string` | No | — |
-| `additional_properties` | `object` | No | — |
+| `additional_properties` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="fileSystemInfo full type">
@@ -3641,14 +3620,6 @@ await corsair.onedrive.api.items.updateMetadata({});
   createdDateTime?: string,
   lastAccessedDateTime?: string,
   lastModifiedDateTime?: string
-}
-```
-</Accordion>
-
-<Accordion title="additional_properties full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3723,10 +3694,8 @@ await corsair.onedrive.api.permissions.createForItem({});
 
 ```ts
 {
-  siteGroup?: {
-  },
-  application?: {
-  }
+  siteGroup?: Record<string, any>,
+  application?: Record<string, any>
 }
 ```
 </Accordion>
@@ -4424,17 +4393,7 @@ await corsair.onedrive.api.permissions.grantSharePermission({});
 |------|------|----------|-------------|
 | `encoded_sharing_url` | `string` | Yes | — |
 | `roles` | `string[]` | Yes | — |
-| `recipients` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="recipients full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `recipients` | `Record<string, string>[]` | Yes | — |
 
 
 
@@ -4549,7 +4508,7 @@ await corsair.onedrive.api.permissions.inviteUser({});
 |------|------|----------|-------------|
 | `item_id` | `string` | Yes | — |
 | `roles` | `string[]` | Yes | — |
-| `recipients` | `object[]` | Yes | — |
+| `recipients` | `Record<string, string>[]` | Yes | — |
 | `drive_id` | `string` | No | — |
 | `site_id` | `string` | No | — |
 | `user_id` | `string` | No | — |
@@ -4560,16 +4519,6 @@ await corsair.onedrive.api.permissions.inviteUser({});
 | `send_invitation` | `boolean` | No | — |
 | `expiration_date_time` | `string` | No | — |
 | `retain_inherited_permissions` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="recipients full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4901,8 +4850,7 @@ await corsair.onedrive.api.sharepoint.getListItems({});
     id?: string,
     name?: string
   },
-  fields?: {
-  },
+  fields?: Record<string, any>,
   createdBy?: {
     user?: {
       id?: string,
@@ -5093,8 +5041,7 @@ await corsair.onedrive.api.sharepoint.listListItemsDelta({});
     id?: string,
     name?: string
   },
-  fields?: {
-  },
+  fields?: Record<string, any>,
   createdBy?: {
     user?: {
       id?: string,

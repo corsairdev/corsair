@@ -1,0 +1,55 @@
+displayName: CoinMarketCap
+description: Crypto market data from CoinMarketCap - ranked market listings, price and volume quotes, ID resolution, asset metadata, global market metrics, price conversion, exchange details, and API key usage.
+domain: coinmarketcap.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key at https://pro.coinmarketcap.com/login and copy it from the dashboard. Every call sends it in the `X-CMC_PRO_API_KEY` header.
+
+  Things that shape the results:
+
+  - **IDs are stable, tickers are not.** Several assets can share a ticker, so a lookup by `symbol` can return more than one. `cryptocurrency.map` resolves a ticker to the CMC IDs the other operations take.
+  - **`quote` changes shape by route.** The `/v3` routes return an array with one entry per requested currency, and each entry names its currency with `id` and `symbol`. The `/v1` and `/v2` routes return an object keyed by currency symbol. This plugin passes each through unchanged.
+  - **`data` changes shape too.** `cryptocurrency.info` and `exchange.info` are keyed by the identifier passed, and a `symbol` or `address` lookup wraps each key's value in an array. Both operations flatten that into one list and keep the provider's key as `lookup_key`.
+  - **Credits.** A listing costs one credit per 250 assets returned and one more per extra `convert` currency. `key.info` reports the plan limits and what is left this minute, today and this month.
+  - **Rate limits.** CoinMarketCap answers 429 with an `error_code` that says which limit was hit. 1008 (per minute) and 1011 (per IP) are retried up to twice, using `Retry-After` when present and the documented 60 second window otherwise. 1009 (daily limit), 1010 (monthly limit) and 1022 (anonymous allowance) are not retried, because waiting out one window cannot clear them.
+  - **Plans.** `exchange.info` needs a paid plan: a Basic key gets 403 `error_code` 1005 for it. Every other operation here works on Basic.
+  - **Empty results.** A filter that matches nothing is a success: the route answers `data: []` with `error_code` `"0"`, and this plugin returns an empty list. A body with a success status and no `data` field at all is malformed, and the call throws instead of reporting an empty page.
+  - **`key.info` costs no credits.** On a paid plan it reports `rate_limit_minute` and `credit_limit_monthly`, plus what is left this minute and this month. The daily object carries `credits_used` only, with no `credits_left`, so this plugin types that field as optional.
+
+  The keyless public API at `/public-api` is not used here: every operation goes through the keyed Pro API, so a key is always required.
+examples:
+  read:
+    path: cryptocurrency.listings
+    title: Top coins by market cap
+    args:
+      limit: 10
+  write:
+    path: tools.priceConversion
+    title: Convert one BTC to USD by its CMC ID
+    args:
+      amount: 1
+      id: 1
+      convert:
+        - USD
+apiExamples:
+  cryptocurrency.listings:
+    call: "{ limit: 10, sort: 'market_cap', sort_dir: 'desc' }"
+  cryptocurrency.map:
+    call: "{ symbol: ['BTC', 'ETH'] }"
+  cryptocurrency.quotes:
+    call: "{ id: ['1', '1027'], convert: ['USD'] }"
+  cryptocurrency.info:
+    call: "{ id: ['1'], aux: 'description,logo,urls' }"
+  globalMetrics.quotes:
+    call: "{ convert: ['USD'] }"
+  tools.priceConversion:
+    call: "{ amount: 10.43, symbol: 'BTC', convert: ['USD'] }"
+  exchange.info:
+    call: "{ slug: ['binance'], aux: 'logo,urls,description' }"
+  key.info: {}
+apiNotes:
+  cryptocurrency.map: 'When `symbol` is set, CoinMarketCap ignores `listing_status`, `start`, `limit` and `sort`, so this operation rejects those combinations rather than sending a request that would silently return the wrong rows. `aux` still applies with `symbol`.'
+  cryptocurrency.quotes: 'Pass exactly one of `id`, `slug` or `symbol`. Two at once is rejected by the API as a conflict between exclusive peers.'
+  cryptocurrency.info: 'Pass exactly one of `id`, `slug`, `symbol` or `address`. A token''s `platform.id` is a string on this route and a number on the others.'
+  exchange.info: 'Pass exactly one of `id` or `slug`.'
+  tools.priceConversion: 'Pass exactly one of `id` or `symbol`, and pass `id` as a single number: the route refuses a comma-separated list here even though the quote routes accept one. A `symbol` lookup returns every asset sharing the ticker, and `price` is null for one CoinMarketCap has no price for.'

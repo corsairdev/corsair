@@ -50,7 +50,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -178,8 +178,9 @@
         "fields": [
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           },
           {
             "key": "pattern",
@@ -220,7 +221,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -246,7 +247,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -267,7 +268,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -280,8 +281,9 @@
         "fields": [
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           },
           {
             "key": "pattern",
@@ -352,7 +354,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -392,7 +394,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "any[] | string | number | boolean | null | {}"
+        "type": "any[] | string | number | boolean | null | Record<string, any>"
       }
     },
     {
@@ -452,7 +454,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -476,7 +478,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "subtopic",
@@ -496,7 +498,7 @@
           {
             "key": "errorMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "messageId",
@@ -548,7 +550,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -588,7 +590,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -609,7 +611,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "number | { deletionTime?: number } | null | undefined | "
+        "type": "number | { deletionTime?: number } | null | undefined | \"\""
       }
     },
     {
@@ -653,12 +655,12 @@
           {
             "key": "updated",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ownerId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user-token",
@@ -720,7 +722,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -740,7 +742,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "null | undefined | "
+        "type": "null | undefined | \"\""
       }
     },
     {
@@ -764,7 +766,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -794,12 +796,12 @@
           {
             "key": "updated",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ownerId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user-token",
@@ -825,7 +827,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -855,12 +857,12 @@
           {
             "key": "updated",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ownerId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user-token",

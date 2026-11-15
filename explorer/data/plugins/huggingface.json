@@ -51,7 +51,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -199,8 +199,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "files",
@@ -274,8 +275,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "startingPoint",
@@ -314,8 +316,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "summary",
@@ -384,8 +387,9 @@
           },
           {
             "key": "repoType",
-            "optional": false,
-            "type": "dataset"
+            "optional": true,
+            "type": "dataset",
+            "description": "Defaults to \"dataset\"."
           },
           {
             "key": "title",
@@ -424,8 +428,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "tag",
@@ -756,13 +761,15 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           }
         ]
       },
@@ -786,8 +793,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
@@ -821,8 +829,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
@@ -866,13 +875,15 @@
           },
           {
             "key": "offset",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 0."
           },
           {
             "key": "length",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100."
           }
         ]
       },
@@ -997,13 +1008,15 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           }
         ]
       },
@@ -1027,8 +1040,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           }
         ]
       },
@@ -1147,8 +1161,9 @@
           },
           {
             "key": "status",
-            "optional": false,
-            "type": "pending | accepted | rejected"
+            "optional": true,
+            "type": "pending | accepted | rejected",
+            "description": "Defaults to \"pending\"."
           }
         ]
       },
@@ -1172,8 +1187,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "limit",
@@ -1237,8 +1253,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "paths",
@@ -1372,8 +1389,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "message",
@@ -1418,7 +1436,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1442,8 +1460,9 @@
           },
           {
             "key": "repoType",
-            "optional": false,
-            "type": "dataset"
+            "optional": true,
+            "type": "dataset",
+            "description": "Defaults to \"dataset\"."
           },
           {
             "key": "embedId",
@@ -1871,7 +1890,7 @@
           {
             "key": "messages",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "temperature",
@@ -1886,7 +1905,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1916,7 +1935,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1954,8 +1973,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "files",
@@ -1999,8 +2019,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "startingPoint",
@@ -2039,8 +2060,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "summary",
@@ -2109,8 +2131,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "tag",
@@ -2280,13 +2303,15 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           }
         ]
       },
@@ -2310,8 +2335,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
@@ -2345,8 +2371,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
@@ -2421,13 +2448,15 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           }
         ]
       },
@@ -2451,8 +2480,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           }
         ]
       },
@@ -2536,8 +2566,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "limit",
@@ -2571,8 +2602,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "paths",
@@ -2647,7 +2679,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2747,7 +2779,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2917,7 +2949,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2946,8 +2978,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
@@ -2986,13 +3019,15 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           },
           {
             "key": "recursive",
@@ -3042,7 +3077,7 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3067,7 +3102,7 @@
           {
             "key": "watched",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "domains",
@@ -3082,7 +3117,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3223,7 +3258,7 @@
           {
             "key": "notifications",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, boolean>"
           }
         ]
       },
@@ -3243,12 +3278,12 @@
           {
             "key": "add",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "remove",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -3278,7 +3313,7 @@
           {
             "key": "watched",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "domains",
@@ -3288,7 +3323,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3337,8 +3372,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "files",
@@ -3382,8 +3418,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "startingPoint",
@@ -3422,8 +3459,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "summary",
@@ -3527,8 +3565,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "tag",
@@ -3825,13 +3864,15 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           }
         ]
       },
@@ -3855,8 +3896,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
@@ -3890,8 +3932,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
@@ -3946,13 +3989,15 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "path",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"\"."
           }
         ]
       },
@@ -3976,8 +4021,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           }
         ]
       },
@@ -4001,8 +4047,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           }
         ]
       },
@@ -4086,8 +4133,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "limit",
@@ -4165,8 +4213,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "paths",
@@ -4225,8 +4274,9 @@
           },
           {
             "key": "revision",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"main\"."
           },
           {
             "key": "message",
@@ -4271,7 +4321,7 @@
           {
             "key": "extra",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4521,6 +4571,11 @@
         },
         {
           "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

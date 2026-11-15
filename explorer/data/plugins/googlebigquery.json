@@ -244,7 +244,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -431,7 +431,7 @@
           {
             "key": "queryTemplates",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "nextPageToken",
@@ -771,7 +771,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "defaultTableExpirationMs",
@@ -841,7 +841,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "access",
@@ -978,7 +978,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "access",
@@ -1059,7 +1059,7 @@
           {
             "key": "datasets",
             "optional": true,
-            "type": "{ kind?: string, id?: string, datasetReference: { datasetId: string, projectId?: string }, labels?: {}, friendlyName?: string, location?: string }[]"
+            "type": "{ kind?: string, id?: string, datasetReference: { datasetId: string, projectId?: string }, labels?: Record<string, string>, friendlyName?: string, location?: string }[]"
           },
           {
             "key": "nextPageToken",
@@ -1090,7 +1090,7 @@
           {
             "key": "dataset",
             "optional": false,
-            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, datasetReference?: { datasetId: string, projectId?: string }, friendlyName?: string, description?: string, defaultTableExpirationMs?: string, defaultPartitionExpirationMs?: string, labels?: {}, access?: { role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[], location?: string, maxTimeTravelHours?: string, creationTime?: string, lastModifiedTime?: string }"
+            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, datasetReference?: { datasetId: string, projectId?: string }, friendlyName?: string, description?: string, defaultTableExpirationMs?: string, defaultPartitionExpirationMs?: string, labels?: Record<string, string>, access?: { role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[], location?: string, maxTimeTravelHours?: string, creationTime?: string, lastModifiedTime?: string }"
           }
         ]
       },
@@ -1145,7 +1145,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "access",
@@ -1251,7 +1251,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "access",
@@ -1302,7 +1302,7 @@
           {
             "key": "dataset",
             "optional": false,
-            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, datasetReference: { datasetId: string, projectId?: string }, friendlyName?: string, description?: string, defaultTableExpirationMs?: string, defaultPartitionExpirationMs?: string, labels?: {}, access?: { role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[], location?: string, maxTimeTravelHours?: string, creationTime?: string, lastModifiedTime?: string }"
+            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, datasetReference: { datasetId: string, projectId?: string }, friendlyName?: string, description?: string, defaultTableExpirationMs?: string, defaultPartitionExpirationMs?: string, labels?: Record<string, string>, access?: { role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[], location?: string, maxTimeTravelHours?: string, creationTime?: string, lastModifiedTime?: string }"
           }
         ]
       },
@@ -1357,7 +1357,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "access",
@@ -1933,7 +1933,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "expirationTime",
@@ -1953,17 +1953,17 @@
           {
             "key": "featureColumns",
             "optional": true,
-            "type": "{ name?: string, type?: {} }[]"
+            "type": "{ name?: string, type?: Record<string, any> }[]"
           },
           {
             "key": "labelColumns",
             "optional": true,
-            "type": "{ name?: string, type?: {} }[]"
+            "type": "{ name?: string, type?: Record<string, any> }[]"
           },
           {
             "key": "trainingRuns",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2050,7 +2050,7 @@
           {
             "key": "models",
             "optional": true,
-            "type": "{ etag?: string, modelReference: { projectId?: string, datasetId: string, modelId: string }, creationTime?: string, lastModifiedTime?: string, description?: string, friendlyName?: string, labels?: {}, expirationTime?: string, location?: string, modelType?: string, featureColumns?: { name?: string, type?: {} }[], labelColumns?: { name?: string, type?: {} }[], trainingRuns?: {}[] }[]"
+            "type": "{ etag?: string, modelReference: { projectId?: string, datasetId: string, modelId: string }, creationTime?: string, lastModifiedTime?: string, description?: string, friendlyName?: string, labels?: Record<string, string>, expirationTime?: string, location?: string, modelType?: string, featureColumns?: { name?: string, type?: Record<string, any> }[], labelColumns?: { name?: string, type?: Record<string, any> }[], trainingRuns?: Record<string, any>[] }[]"
           },
           {
             "key": "nextPageToken",
@@ -2147,7 +2147,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "expirationTime",
@@ -2192,7 +2192,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "expirationTime",
@@ -2212,17 +2212,17 @@
           {
             "key": "featureColumns",
             "optional": true,
-            "type": "{ name?: string, type?: {} }[]"
+            "type": "{ name?: string, type?: Record<string, any> }[]"
           },
           {
             "key": "labelColumns",
             "optional": true,
-            "type": "{ name?: string, type?: {} }[]"
+            "type": "{ name?: string, type?: Record<string, any> }[]"
           },
           {
             "key": "trainingRuns",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2263,7 +2263,7 @@
           {
             "key": "job",
             "optional": true,
-            "type": "{ id?: string, kind?: string, selfLink?: string, etag?: string, jobReference?: { projectId?: string, jobId?: string, location?: string }, configuration?: { jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }, status?: { state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }, statistics?: {}, user_email?: string }"
+            "type": "{ id?: string, kind?: string, selfLink?: string, etag?: string, jobReference?: { projectId?: string, jobId?: string, location?: string }, configuration?: { jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: Record<string, any> } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: Record<string, string> }, status?: { state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }, statistics?: Record<string, any>, user_email?: string }"
           }
         ]
       }
@@ -2354,7 +2354,7 @@
           {
             "key": "configuration",
             "optional": true,
-            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: Record<string, any> } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: Record<string, string> }"
           },
           {
             "key": "status",
@@ -2364,7 +2364,7 @@
           {
             "key": "statistics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user_email",
@@ -2430,7 +2430,7 @@
           {
             "key": "schema",
             "optional": true,
-            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }"
           },
           {
             "key": "jobReference",
@@ -2511,7 +2511,7 @@
           {
             "key": "rows",
             "optional": false,
-            "type": "{ insertId?: string, json: {} }[]"
+            "type": "{ insertId?: string, json: Record<string, any> }[]"
           },
           {
             "key": "skipInvalidRows",
@@ -2567,7 +2567,7 @@
           {
             "key": "configuration",
             "optional": false,
-            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: Record<string, any> } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: Record<string, string> }"
           }
         ]
       },
@@ -2602,7 +2602,7 @@
           {
             "key": "configuration",
             "optional": true,
-            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: Record<string, any> } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: Record<string, string> }"
           },
           {
             "key": "status",
@@ -2612,7 +2612,7 @@
           {
             "key": "statistics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user_email",
@@ -2643,7 +2643,7 @@
           {
             "key": "configuration",
             "optional": false,
-            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: Record<string, any> } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: Record<string, string> }"
           },
           {
             "key": "fileContent",
@@ -2693,7 +2693,7 @@
           {
             "key": "configuration",
             "optional": true,
-            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: Record<string, any> } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: Record<string, string> }"
           },
           {
             "key": "status",
@@ -2703,7 +2703,7 @@
           {
             "key": "statistics",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user_email",
@@ -2759,7 +2759,7 @@
           {
             "key": "stateFilter",
             "optional": true,
-            "type": "done | pending | running[]"
+            "type": "(done | pending | running)[]"
           },
           {
             "key": "parentJobId",
@@ -2784,7 +2784,7 @@
           {
             "key": "jobs",
             "optional": true,
-            "type": "{ id?: string, kind?: string, selfLink?: string, etag?: string, jobReference?: { projectId?: string, jobId?: string, location?: string }, configuration?: { jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }, status?: { state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }, statistics?: {}, user_email?: string }[]"
+            "type": "{ id?: string, kind?: string, selfLink?: string, etag?: string, jobReference?: { projectId?: string, jobId?: string, location?: string }, configuration?: { jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: Record<string, any> } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: Record<string, string> }, status?: { state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }, statistics?: Record<string, any>, user_email?: string }[]"
           },
           {
             "key": "nextPageToken",
@@ -2850,7 +2850,7 @@
           {
             "key": "queryParameters",
             "optional": true,
-            "type": "{ name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[]"
+            "type": "{ name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: Record<string, any> } }[]"
           },
           {
             "key": "location",
@@ -2880,7 +2880,7 @@
           {
             "key": "schema",
             "optional": true,
-            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }"
           },
           {
             "key": "jobReference",
@@ -3444,12 +3444,12 @@
           {
             "key": "arguments",
             "optional": true,
-            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[]"
+            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: Record<string, any> }[]"
           },
           {
             "key": "returnType",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "description",
@@ -3499,12 +3499,12 @@
           {
             "key": "arguments",
             "optional": true,
-            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[]"
+            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: Record<string, any> }[]"
           },
           {
             "key": "returnType",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "importedLibraries",
@@ -3626,12 +3626,12 @@
           {
             "key": "arguments",
             "optional": true,
-            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[]"
+            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: Record<string, any> }[]"
           },
           {
             "key": "returnType",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "importedLibraries",
@@ -3702,7 +3702,7 @@
           {
             "key": "routines",
             "optional": true,
-            "type": "{ etag?: string, routineReference: { projectId?: string, datasetId: string, routineId: string }, routineType?: SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION, creationTime?: string, lastModifiedTime?: string, language?: SQL | JAVASCRIPT | PYTHON | JAVA | SCALA, arguments?: { name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[], returnType?: {}, importedLibraries?: string[], definitionBody?: string, description?: string, determinismLevel?: DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC }[]"
+            "type": "{ etag?: string, routineReference: { projectId?: string, datasetId: string, routineId: string }, routineType?: SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION, creationTime?: string, lastModifiedTime?: string, language?: SQL | JAVASCRIPT | PYTHON | JAVA | SCALA, arguments?: { name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: Record<string, any> }[], returnType?: Record<string, any>, importedLibraries?: string[], definitionBody?: string, description?: string, determinismLevel?: DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC }[]"
           },
           {
             "key": "nextPageToken",
@@ -3738,7 +3738,7 @@
           {
             "key": "routine",
             "optional": false,
-            "type": "{ etag?: string, routineReference: { projectId?: string, datasetId: string, routineId: string }, routineType?: SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION, creationTime?: string, lastModifiedTime?: string, language?: SQL | JAVASCRIPT | PYTHON | JAVA | SCALA, arguments?: { name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[], returnType?: {}, importedLibraries?: string[], definitionBody?: string, description?: string, determinismLevel?: DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC }"
+            "type": "{ etag?: string, routineReference: { projectId?: string, datasetId: string, routineId: string }, routineType?: SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION, creationTime?: string, lastModifiedTime?: string, language?: SQL | JAVASCRIPT | PYTHON | JAVA | SCALA, arguments?: { name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: Record<string, any> }[], returnType?: Record<string, any>, importedLibraries?: string[], definitionBody?: string, description?: string, determinismLevel?: DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC }"
           }
         ]
       },
@@ -3778,12 +3778,12 @@
           {
             "key": "arguments",
             "optional": true,
-            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[]"
+            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: Record<string, any> }[]"
           },
           {
             "key": "returnType",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "importedLibraries",
@@ -3834,7 +3834,7 @@
           {
             "key": "schema",
             "optional": true,
-            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }"
           },
           {
             "key": "friendlyName",
@@ -3849,7 +3849,7 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "timePartitioning",
@@ -3869,7 +3869,7 @@
           {
             "key": "externalDataConfiguration",
             "optional": true,
-            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, autodetect?: boolean }"
           }
         ]
       },
@@ -3914,12 +3914,12 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "schema",
             "optional": true,
-            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }"
           },
           {
             "key": "timePartitioning",
@@ -3939,7 +3939,7 @@
           {
             "key": "externalDataConfiguration",
             "optional": true,
-            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, autodetect?: boolean }"
           },
           {
             "key": "type",
@@ -4086,12 +4086,12 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "schema",
             "optional": true,
-            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }"
           },
           {
             "key": "timePartitioning",
@@ -4111,7 +4111,7 @@
           {
             "key": "externalDataConfiguration",
             "optional": true,
-            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, autodetect?: boolean }"
           },
           {
             "key": "type",
@@ -4197,7 +4197,7 @@
           {
             "key": "tables",
             "optional": true,
-            "type": "{ kind?: string, id?: string, tableReference: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, type?: string, creationTime?: string, expirationTime?: string, labels?: {}, view?: { query?: string, useLegacySql?: boolean } }[]"
+            "type": "{ kind?: string, id?: string, tableReference: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, type?: string, creationTime?: string, expirationTime?: string, labels?: Record<string, string>, view?: { query?: string, useLegacySql?: boolean } }[]"
           },
           {
             "key": "nextPageToken",
@@ -4314,7 +4314,7 @@
           {
             "key": "table",
             "optional": false,
-            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, tableReference?: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, description?: string, labels?: {}, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, timePartitioning?: { type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }, clustering?: { fields?: string[] }, view?: { query?: string, useLegacySql?: boolean }, externalDataConfiguration?: { sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }, type?: string, location?: string, numRows?: string, numBytes?: string, creationTime?: string, lastModifiedTime?: string, expirationTime?: string }"
+            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, tableReference?: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, description?: string, labels?: Record<string, string>, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, timePartitioning?: { type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }, clustering?: { fields?: string[] }, view?: { query?: string, useLegacySql?: boolean }, externalDataConfiguration?: { sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, autodetect?: boolean }, type?: string, location?: string, numRows?: string, numBytes?: string, creationTime?: string, lastModifiedTime?: string, expirationTime?: string }"
           }
         ]
       },
@@ -4359,12 +4359,12 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "schema",
             "optional": true,
-            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }"
           },
           {
             "key": "timePartitioning",
@@ -4384,7 +4384,7 @@
           {
             "key": "externalDataConfiguration",
             "optional": true,
-            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, autodetect?: boolean }"
           },
           {
             "key": "type",
@@ -4450,7 +4450,7 @@
           {
             "key": "table",
             "optional": false,
-            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, tableReference: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, description?: string, labels?: {}, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, timePartitioning?: { type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }, clustering?: { fields?: string[] }, view?: { query?: string, useLegacySql?: boolean }, externalDataConfiguration?: { sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }, type?: string, location?: string, numRows?: string, numBytes?: string, creationTime?: string, lastModifiedTime?: string, expirationTime?: string }"
+            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, tableReference: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, description?: string, labels?: Record<string, string>, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, timePartitioning?: { type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }, clustering?: { fields?: string[] }, view?: { query?: string, useLegacySql?: boolean }, externalDataConfiguration?: { sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, autodetect?: boolean }, type?: string, location?: string, numRows?: string, numBytes?: string, creationTime?: string, lastModifiedTime?: string, expirationTime?: string }"
           }
         ]
       },
@@ -4495,12 +4495,12 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "schema",
             "optional": true,
-            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }"
           },
           {
             "key": "timePartitioning",
@@ -4520,7 +4520,7 @@
           {
             "key": "externalDataConfiguration",
             "optional": true,
-            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: { name: string, type: string, mode?: string, description?: string, fields?: (recursive) }[] }[] }, autodetect?: boolean }"
           },
           {
             "key": "type",

@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Apify: every `apify.api.*` operation with input and output types."
+title: "Apify API reference"
+sidebarTitle: "API"
+description: "API reference for the Apify plugin in Corsair: every `apify.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `apify.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -28,29 +27,11 @@ await corsair.apify.api.actorBuilds.abortActorBuild({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `buildId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -76,29 +57,11 @@ await corsair.apify.api.actorBuilds.deleteActorBuild({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `buildId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -124,30 +87,12 @@ await corsair.apify.api.actorBuilds.getActorBuild({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `buildId` | `string \| number` | Yes | — |
 | `waitForFinish` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -173,31 +118,13 @@ await corsair.apify.api.actorBuilds.getActorBuildLog({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `buildId` | `string \| number` | Yes | — |
 | `stream` | `any` | No | — |
 | `download` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -223,31 +150,13 @@ await corsair.apify.api.actorBuilds.getUserBuildsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -275,30 +184,12 @@ await corsair.apify.api.actorRuns.abortActorRun({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `runId` | `string \| number` | Yes | — |
 | `gracefully` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -324,29 +215,11 @@ await corsair.apify.api.actorRuns.deleteActorRun({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `runId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -372,30 +245,12 @@ await corsair.apify.api.actorRuns.getActorRun({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `runId` | `string \| number` | Yes | — |
 | `waitForFinish` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -421,8 +276,8 @@ await corsair.apify.api.actorRuns.getRunDatasetItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `runId` | `string \| number` | Yes | — |
@@ -451,24 +306,6 @@ await corsair.apify.api.actorRuns.getRunDatasetItems({});
 | `feedDescription` | `any` | No | — |
 | `signature` | `any` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output:** `any`
@@ -493,8 +330,8 @@ await corsair.apify.api.actorRuns.listUserActorRuns({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
@@ -503,24 +340,6 @@ await corsair.apify.api.actorRuns.listUserActorRuns({});
 | `status` | `any` | No | — |
 | `startedAfter` | `any` | No | — |
 | `startedBefore` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -546,8 +365,8 @@ await corsair.apify.api.actorRuns.resurrectRun({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `runId` | `string \| number` | Yes | — |
@@ -557,24 +376,6 @@ await corsair.apify.api.actorRuns.resurrectRun({});
 | `maxItems` | `any` | No | — |
 | `maxTotalChargeUsd` | `any` | No | — |
 | `restartOnError` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -600,29 +401,11 @@ await corsair.apify.api.actorRuns.updateActorRunStatusMessage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `runId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -650,20 +433,10 @@ await corsair.apify.api.actors.callActor({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `actor` | `string` | Yes | Actor ID or full name (username/name) |
-| `input` | `object` | No | Actor input object matching the Actor input schema |
+| `input` | `Record<string, any>` | No | Actor input object matching the Actor input schema |
 | `build` | `string` | No | — |
 | `timeout` | `number` | No | — |
 | `memory` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -786,28 +559,10 @@ await corsair.apify.api.actorTasks.createActorTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -833,29 +588,11 @@ await corsair.apify.api.actorTasks.deleteActorTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -881,29 +618,11 @@ await corsair.apify.api.actorTasks.getActorTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -929,32 +648,14 @@ await corsair.apify.api.actorTasks.getLastActorTaskRun({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
 | `status` | `any` | No | — |
 | `origin` | `any` | No | — |
 | `waitForFinish` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -980,8 +681,8 @@ await corsair.apify.api.actorTasks.getListOfTaskRuns({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
@@ -989,24 +690,6 @@ await corsair.apify.api.actorTasks.getListOfTaskRuns({});
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
 | `status` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1032,31 +715,13 @@ await corsair.apify.api.actorTasks.getListOfTasks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1082,32 +747,14 @@ await corsair.apify.api.actorTasks.getListOfTaskWebhooks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1133,29 +780,11 @@ await corsair.apify.api.actorTasks.getTaskInput({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1181,8 +810,8 @@ await corsair.apify.api.actorTasks.getTaskLastRunDatasetItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
@@ -1213,24 +842,6 @@ await corsair.apify.api.actorTasks.getTaskLastRunDatasetItems({});
 | `feedDescription` | `any` | No | — |
 | `signature` | `any` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output:** `any`
@@ -1255,8 +866,8 @@ await corsair.apify.api.actorTasks.runTaskAsynchronously({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
@@ -1268,24 +879,6 @@ await corsair.apify.api.actorTasks.runTaskAsynchronously({});
 | `build` | `any` | No | — |
 | `waitForFinish` | `any` | No | — |
 | `webhooks` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1311,8 +904,8 @@ await corsair.apify.api.actorTasks.runTaskSyncGet({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
@@ -1322,24 +915,6 @@ await corsair.apify.api.actorTasks.runTaskSyncGet({});
 | `build` | `any` | No | — |
 | `outputRecordKey` | `any` | No | — |
 | `webhooks` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1365,8 +940,8 @@ await corsair.apify.api.actorTasks.runTaskSyncGetDatasetItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
@@ -1398,24 +973,6 @@ await corsair.apify.api.actorTasks.runTaskSyncGetDatasetItems({});
 | `skipFailedPages` | `any` | No | — |
 | `feedTitle` | `any` | No | — |
 | `feedDescription` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1441,8 +998,8 @@ await corsair.apify.api.actorTasks.runTaskSyncPost({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
@@ -1454,24 +1011,6 @@ await corsair.apify.api.actorTasks.runTaskSyncPost({});
 | `build` | `any` | No | — |
 | `outputRecordKey` | `any` | No | — |
 | `webhooks` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1497,8 +1036,8 @@ await corsair.apify.api.actorTasks.runTaskSyncWithInputOverrideGetDatasetItems({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
@@ -1533,24 +1072,6 @@ await corsair.apify.api.actorTasks.runTaskSyncWithInputOverrideGetDatasetItems({
 | `feedTitle` | `any` | No | — |
 | `feedDescription` | `any` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output:** `any`
@@ -1575,29 +1096,11 @@ await corsair.apify.api.actorTasks.updateActorTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1623,29 +1126,11 @@ await corsair.apify.api.actorTasks.updateTaskInput({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorTaskId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1673,8 +1158,8 @@ await corsair.apify.api.acts.buildActor({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
@@ -1683,24 +1168,6 @@ await corsair.apify.api.acts.buildActor({});
 | `betaPackages` | `any` | No | — |
 | `tag` | `any` | No | — |
 | `waitForFinish` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1726,28 +1193,10 @@ await corsair.apify.api.acts.createActor({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1773,29 +1222,11 @@ await corsair.apify.api.acts.createActorVersion({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1821,30 +1252,12 @@ await corsair.apify.api.acts.createActorVersionEnvironmentVariable({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `versionNumber` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1870,29 +1283,11 @@ await corsair.apify.api.acts.deleteActor({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1918,30 +1313,12 @@ await corsair.apify.api.acts.deleteActorVersion({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `versionNumber` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1967,31 +1344,13 @@ await corsair.apify.api.acts.deleteActorVersionEnvironmentVariable({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `versionNumber` | `string \| number` | Yes | — |
 | `envVarName` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2017,29 +1376,11 @@ await corsair.apify.api.acts.getActorDetails({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2065,8 +1406,8 @@ await corsair.apify.api.acts.getActorLastRunDatasetItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
@@ -2097,24 +1438,6 @@ await corsair.apify.api.acts.getActorLastRunDatasetItems({});
 | `feedDescription` | `any` | No | — |
 | `signature` | `any` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output:** `any`
@@ -2139,30 +1462,12 @@ await corsair.apify.api.acts.getActorVersion({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `versionNumber` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2188,31 +1493,13 @@ await corsair.apify.api.acts.getActorVersionEnvironmentVariable({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `versionNumber` | `string \| number` | Yes | — |
 | `envVarName` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2238,30 +1525,12 @@ await corsair.apify.api.acts.getDefaultBuild({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `waitForFinish` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2287,32 +1556,14 @@ await corsair.apify.api.acts.getLastActorRun({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `status` | `any` | No | — |
 | `origin` | `any` | No | — |
 | `waitForFinish` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2338,8 +1589,8 @@ await corsair.apify.api.acts.getListOfActors({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `my` | `any` | No | — |
@@ -2347,24 +1598,6 @@ await corsair.apify.api.acts.getListOfActors({});
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
 | `sortBy` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2390,30 +1623,12 @@ await corsair.apify.api.acts.getListOfActorVersionEnvironmentVariables({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `versionNumber` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2439,29 +1654,11 @@ await corsair.apify.api.acts.getListOfActorVersions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2487,32 +1684,14 @@ await corsair.apify.api.acts.getListOfActorWebhooks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2538,32 +1717,14 @@ await corsair.apify.api.acts.getListOfBuilds({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2589,8 +1750,8 @@ await corsair.apify.api.acts.getListOfRuns({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
@@ -2600,24 +1761,6 @@ await corsair.apify.api.acts.getListOfRuns({});
 | `status` | `any` | No | — |
 | `startedAfter` | `any` | No | — |
 | `startedBefore` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2643,30 +1786,12 @@ await corsair.apify.api.acts.getOpenapiDefinition({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `buildId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2692,8 +1817,8 @@ await corsair.apify.api.acts.runActorAsynchronously({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
@@ -2706,24 +1831,6 @@ await corsair.apify.api.acts.runActorAsynchronously({});
 | `waitForFinish` | `any` | No | — |
 | `webhooks` | `any` | No | — |
 | `forcePermissionLevel` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2749,8 +1856,8 @@ await corsair.apify.api.acts.runActorSync({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
@@ -2762,24 +1869,6 @@ await corsair.apify.api.acts.runActorSync({});
 | `restartOnError` | `any` | No | — |
 | `build` | `any` | No | — |
 | `webhooks` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2805,8 +1894,8 @@ await corsair.apify.api.acts.runActorSyncGetDatasetItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
@@ -2840,24 +1929,6 @@ await corsair.apify.api.acts.runActorSyncGetDatasetItems({});
 | `skipFailedPages` | `any` | No | — |
 | `feedTitle` | `any` | No | — |
 | `feedDescription` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2883,8 +1954,8 @@ await corsair.apify.api.acts.runActorSyncGetDatasetItemsItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
@@ -2919,24 +1990,6 @@ await corsair.apify.api.acts.runActorSyncGetDatasetItemsItems({});
 | `feedTitle` | `any` | No | — |
 | `feedDescription` | `any` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output:** `any`
@@ -2961,8 +2014,8 @@ await corsair.apify.api.acts.runActorSyncWithoutInputGet({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
@@ -2974,24 +2027,6 @@ await corsair.apify.api.acts.runActorSyncWithoutInputGet({});
 | `restartOnError` | `any` | No | — |
 | `build` | `any` | No | — |
 | `webhooks` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3017,29 +2052,11 @@ await corsair.apify.api.acts.updateActor({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3065,30 +2082,12 @@ await corsair.apify.api.acts.updateActorVersion({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `versionNumber` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3114,31 +2113,13 @@ await corsair.apify.api.acts.updateActorVersionEnvironmentVariable({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `actorId` | `string \| number` | Yes | — |
 | `versionNumber` | `string \| number` | Yes | — |
 | `envVarName` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3166,29 +2147,11 @@ await corsair.apify.api.datasets.createDataset({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `name` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3214,29 +2177,11 @@ await corsair.apify.api.datasets.deleteDataset({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `datasetId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3262,29 +2207,11 @@ await corsair.apify.api.datasets.getDataset({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `datasetId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3310,8 +2237,8 @@ await corsair.apify.api.datasets.getDatasetItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `datasetId` | `string \| number` | Yes | — |
@@ -3340,24 +2267,6 @@ await corsair.apify.api.datasets.getDatasetItems({});
 | `feedDescription` | `any` | No | — |
 | `signature` | `any` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output:** `any`
@@ -3382,29 +2291,11 @@ await corsair.apify.api.datasets.getDatasetStatistics({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `datasetId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3430,8 +2321,8 @@ await corsair.apify.api.datasets.getListOfDatasets({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
@@ -3439,24 +2330,6 @@ await corsair.apify.api.datasets.getListOfDatasets({});
 | `desc` | `any` | No | — |
 | `unnamed` | `any` | No | — |
 | `ownership` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3482,29 +2355,11 @@ await corsair.apify.api.datasets.storeDataInDataset({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `datasetId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3530,29 +2385,11 @@ await corsair.apify.api.datasets.updateDataset({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `datasetId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3633,30 +2470,12 @@ await corsair.apify.api.keyValueStores.checkKeyValueStoreRecordExists({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `storeId` | `string \| number` | Yes | — |
 | `recordKey` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3682,29 +2501,11 @@ await corsair.apify.api.keyValueStores.createKeyValueStore({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `name` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3730,29 +2531,11 @@ await corsair.apify.api.keyValueStores.deleteKeyValueStore({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `storeId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3778,30 +2561,12 @@ await corsair.apify.api.keyValueStores.deleteKeyValueStoreRecord({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `storeId` | `string \| number` | Yes | — |
 | `recordKey` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3827,32 +2592,14 @@ await corsair.apify.api.keyValueStores.getKeyValueRecord({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `storeId` | `string \| number` | Yes | — |
 | `recordKey` | `string \| number` | Yes | — |
 | `attachment` | `any` | No | — |
 | `signature` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3878,29 +2625,11 @@ await corsair.apify.api.keyValueStores.getKeyValueStore({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `storeId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3926,8 +2655,8 @@ await corsair.apify.api.keyValueStores.getKeyValueStoreKeys({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `storeId` | `string \| number` | Yes | — |
@@ -3936,24 +2665,6 @@ await corsair.apify.api.keyValueStores.getKeyValueStoreKeys({});
 | `collection` | `any` | No | — |
 | `prefix` | `any` | No | — |
 | `signature` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3979,8 +2690,8 @@ await corsair.apify.api.keyValueStores.getListOfKeyValueStores({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
@@ -3988,24 +2699,6 @@ await corsair.apify.api.keyValueStores.getListOfKeyValueStores({});
 | `desc` | `any` | No | — |
 | `unnamed` | `any` | No | — |
 | `ownership` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4031,30 +2724,12 @@ await corsair.apify.api.keyValueStores.storeDataInKeyValueStore({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `storeId` | `string \| number` | Yes | — |
 | `recordKey` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4080,29 +2755,11 @@ await corsair.apify.api.keyValueStores.updateKeyValueStore({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `storeId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4130,32 +2787,14 @@ await corsair.apify.api.logs.getLog({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `buildOrRunId` | `string \| number` | Yes | — |
 | `stream` | `any` | No | — |
 | `download` | `any` | No | — |
 | `raw` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4183,31 +2822,13 @@ await corsair.apify.api.requestQueues.addRequestToQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `clientKey` | `any` | No | — |
 | `forefront` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4233,31 +2854,13 @@ await corsair.apify.api.requestQueues.batchAddRequestsToQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `clientKey` | `any` | No | — |
 | `forefront` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4283,30 +2886,12 @@ await corsair.apify.api.requestQueues.batchDeleteRequestsFromQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `clientKey` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4332,29 +2917,11 @@ await corsair.apify.api.requestQueues.createRequestQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `name` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4380,31 +2947,13 @@ await corsair.apify.api.requestQueues.deleteRequestFromQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `requestId` | `string \| number` | Yes | — |
 | `clientKey` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4430,32 +2979,14 @@ await corsair.apify.api.requestQueues.deleteRequestLock({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `requestId` | `string \| number` | Yes | — |
 | `clientKey` | `any` | No | — |
 | `forefront` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4481,29 +3012,11 @@ await corsair.apify.api.requestQueues.deleteRequestQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4529,32 +3042,14 @@ await corsair.apify.api.requestQueues.getHeadAndLockQueueRequests({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `lockSecs` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `clientKey` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4580,8 +3075,8 @@ await corsair.apify.api.requestQueues.getListOfRequestQueues({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
@@ -4589,24 +3084,6 @@ await corsair.apify.api.requestQueues.getListOfRequestQueues({});
 | `desc` | `any` | No | — |
 | `unnamed` | `any` | No | — |
 | `ownership` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4632,30 +3109,12 @@ await corsair.apify.api.requestQueues.getRequestFromQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `requestId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4681,29 +3140,11 @@ await corsair.apify.api.requestQueues.getRequestQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4729,31 +3170,13 @@ await corsair.apify.api.requestQueues.getRequestQueueHead({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `limit` | `any` | No | — |
 | `clientKey` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4779,8 +3202,8 @@ await corsair.apify.api.requestQueues.listRequestQueueRequests({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
@@ -4789,24 +3212,6 @@ await corsair.apify.api.requestQueues.listRequestQueueRequests({});
 | `limit` | `any` | No | — |
 | `cursor` | `any` | No | — |
 | `filter` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4832,8 +3237,8 @@ await corsair.apify.api.requestQueues.prolongRequestLock({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
@@ -4841,24 +3246,6 @@ await corsair.apify.api.requestQueues.prolongRequestLock({});
 | `lockSecs` | `any` | No | — |
 | `clientKey` | `any` | No | — |
 | `forefront` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4884,30 +3271,12 @@ await corsair.apify.api.requestQueues.unlockQueueRequests({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `clientKey` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4933,32 +3302,14 @@ await corsair.apify.api.requestQueues.updateRequestInQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
 | `requestId` | `string \| number` | Yes | — |
 | `forefront` | `any` | No | — |
 | `clientKey` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4984,29 +3335,11 @@ await corsair.apify.api.requestQueues.updateRequestQueue({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `queueId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5089,28 +3422,10 @@ await corsair.apify.api.schedules.createSchedule({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5136,29 +3451,11 @@ await corsair.apify.api.schedules.deleteSchedule({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `scheduleId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5184,31 +3481,13 @@ await corsair.apify.api.schedules.getListOfSchedules({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5234,29 +3513,11 @@ await corsair.apify.api.schedules.getSchedule({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `scheduleId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5282,29 +3543,11 @@ await corsair.apify.api.schedules.getScheduleLog({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `scheduleId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5330,29 +3573,11 @@ await corsair.apify.api.schedules.updateSchedule({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `scheduleId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5380,8 +3605,8 @@ await corsair.apify.api.store.getListOfActorsInStore({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `limit` | `any` | No | — |
@@ -5394,24 +3619,6 @@ await corsair.apify.api.store.getListOfActorsInStore({});
 | `allowsAgenticUsers` | `any` | No | — |
 | `responseFormat` | `any` | No | — |
 | `includeUnrunnableActors` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5439,28 +3646,10 @@ await corsair.apify.api.users.getAccountLimits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5486,28 +3675,10 @@ await corsair.apify.api.users.getCurrentUserAccountData({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5533,29 +3704,11 @@ await corsair.apify.api.users.getMonthlyUsage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `date` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5581,29 +3734,11 @@ await corsair.apify.api.users.getPublicUserData({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `userId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5629,28 +3764,10 @@ await corsair.apify.api.users.updateAccountLimits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5678,31 +3795,13 @@ await corsair.apify.api.webhookDispatches.getListOfWebhookDispatches({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5728,29 +3827,11 @@ await corsair.apify.api.webhookDispatches.getWebhookDispatch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `dispatchId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5778,28 +3859,10 @@ await corsair.apify.api.webhooks.createTaskWebhook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5825,29 +3888,11 @@ await corsair.apify.api.webhooks.deleteWebhook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `webhookId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5873,31 +3918,13 @@ await corsair.apify.api.webhooks.getAllWebhooks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5923,29 +3950,11 @@ await corsair.apify.api.webhooks.getWebhook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `webhookId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5971,32 +3980,14 @@ await corsair.apify.api.webhooks.getWebhookDispatches({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `webhookId` | `string \| number` | Yes | — |
 | `offset` | `any` | No | — |
 | `limit` | `any` | No | — |
 | `desc` | `any` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6022,29 +4013,11 @@ await corsair.apify.api.webhooks.testWebhook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `webhookId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6070,29 +4043,11 @@ await corsair.apify.api.webhooks.updateWebhook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, any>` | No | — |
 | `contentType` | `string` | No | — |
 | `mediaType` | `string` | No | — |
 | `webhookId` | `string \| number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

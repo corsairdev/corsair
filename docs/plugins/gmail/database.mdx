@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Gmail local sync: searchable entities, `.search()` filters, and operators."
+title: "Gmail database"
+sidebarTitle: "Database"
+description: "Gmail local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Gmail plugin syncs data locally. Use `corsair.gmail.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -53,6 +54,9 @@ const rows = await corsair.gmail.db.labels.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `messageListVisibility` | `string` | equals, contains, startsWith, endsWith, in |
+| `labelListVisibility` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `messagesTotal` | `number` | equals, gt, gte, lt, lte, in |
 | `messagesUnread` | `number` | equals, gt, gte, lt, lte, in |
 | `threadsTotal` | `number` | equals, gt, gte, lt, lte, in |

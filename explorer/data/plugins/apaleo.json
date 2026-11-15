@@ -72,7 +72,7 @@
           {
             "key": "name",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "companyName",
@@ -82,7 +82,7 @@
           {
             "key": "managingDirectors",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commercialRegisterEntry",
@@ -97,7 +97,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null> | null"
           },
           {
             "key": "location",
@@ -112,7 +112,7 @@
           {
             "key": "paymentTerms",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "timeZone",
@@ -158,7 +158,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "Test | Live[]"
+            "type": "(Test | Live)[]"
           },
           {
             "key": "includeArchived",
@@ -219,7 +219,7 @@
           {
             "key": "name",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "companyName",
@@ -229,7 +229,7 @@
           {
             "key": "managingDirectors",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commercialRegisterEntry",
@@ -244,7 +244,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null> | null"
           },
           {
             "key": "location",
@@ -259,7 +259,7 @@
           {
             "key": "paymentTerms",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "timeZone",
@@ -351,7 +351,7 @@
           {
             "key": "propertyTemplateId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isTemplate",
@@ -361,12 +361,12 @@
           {
             "key": "name",
             "optional": false,
-            "type": "string | {}"
+            "type": "string | Record<string, string | null>"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, string | null> | null"
           },
           {
             "key": "companyName",
@@ -376,7 +376,7 @@
           {
             "key": "managingDirectors",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commercialRegisterEntry",
@@ -396,12 +396,12 @@
           {
             "key": "bankAccount",
             "optional": true,
-            "type": "{ iban?: string | null, bic?: string | null, bank?: string | null }"
+            "type": "{ iban?: string | null, bic?: string | null, bank?: string | null } | null"
           },
           {
             "key": "paymentTerms",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "timeZone",
@@ -431,7 +431,7 @@
           {
             "key": "actions",
             "optional": true,
-            "type": "{ action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[]"
+            "type": "{ action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[] | null"
           }
         ]
       }
@@ -447,7 +447,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "Test | Live[]"
+            "type": "(Test | Live)[]"
           },
           {
             "key": "includeArchived",
@@ -482,7 +482,7 @@
           {
             "key": "properties",
             "optional": false,
-            "type": "{ id: string, code: string, propertyTemplateId?: string | null, isTemplate: boolean, name: string | {}, description?: string | {} | null, companyName: string, managingDirectors?: string | null, commercialRegisterEntry: string, taxId: string, location: { addressLine1?: string | null, addressLine2?: string | null, postalCode?: string | null, city?: string | null, regionCode?: string | null, countryCode?: string | null }, bankAccount?: { iban?: string | null, bic?: string | null, bank?: string | null } | null, paymentTerms: {}, timeZone: string, currencyCode: string, created: string, status: string, isArchived: boolean, actions?: { action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[] | null }[]"
+            "type": "{ id: string, code: string, propertyTemplateId?: string | null, isTemplate: boolean, name: string | Record<string, string | null>, description?: string | Record<string, string | null> | null, companyName: string, managingDirectors?: string | null, commercialRegisterEntry: string, taxId: string, location: { addressLine1?: string | null, addressLine2?: string | null, postalCode?: string | null, city?: string | null, regionCode?: string | null, countryCode?: string | null }, bankAccount?: { iban?: string | null, bic?: string | null, bank?: string | null } | null, paymentTerms: Record<string, string | null>, timeZone: string, currencyCode: string, created: string, status: string, isArchived: boolean, actions?: { action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[] | null }[]"
           },
           {
             "key": "count",
@@ -658,7 +658,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -715,7 +715,7 @@
           {
             "key": "unitGroupTypes",
             "optional": true,
-            "type": "BedRoom | MeetingRoom | EventSpace | ParkingLot | Other[]"
+            "type": "(BedRoom | MeetingRoom | EventSpace | ParkingLot | Other)[]"
           }
         ]
       },
@@ -751,12 +751,12 @@
           {
             "key": "name",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "description",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "maxPersons",
@@ -766,17 +766,17 @@
           {
             "key": "rank",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "BedRoom | MeetingRoom | EventSpace | ParkingLot"
+            "type": "BedRoom | MeetingRoom | EventSpace | ParkingLot | null"
           },
           {
             "key": "connectedUnitGroups",
             "optional": true,
-            "type": "{ unitGroupId: string, memberCount: number }[]"
+            "type": "{ unitGroupId: string, memberCount: number }[] | null"
           }
         ]
       },
@@ -879,7 +879,7 @@
           {
             "key": "name",
             "optional": false,
-            "type": "string | {}"
+            "type": "string | Record<string, string | null>"
           },
           {
             "key": "memberCount",
@@ -889,7 +889,7 @@
           {
             "key": "description",
             "optional": false,
-            "type": "string | {}"
+            "type": "string | Record<string, string | null>"
           },
           {
             "key": "maxPersons",
@@ -899,7 +899,7 @@
           {
             "key": "rank",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "type",
@@ -909,7 +909,7 @@
           {
             "key": "connectedUnitGroups",
             "optional": true,
-            "type": "{ id: string, name: string, description: string, memberCount: number, maxPersons?: number | null }[]"
+            "type": "{ id: string, name: string, description: string, memberCount: number, maxPersons?: number | null }[] | null"
           }
         ]
       }
@@ -930,7 +930,7 @@
           {
             "key": "unitGroupTypes",
             "optional": true,
-            "type": "BedRoom | MeetingRoom | EventSpace | ParkingLot | Other[]"
+            "type": "(BedRoom | MeetingRoom | EventSpace | ParkingLot | Other)[]"
           },
           {
             "key": "expand",
@@ -955,7 +955,7 @@
           {
             "key": "unitGroups",
             "optional": false,
-            "type": "{ id: string, code: string, property: { id?: string | null, code?: string | null, name?: string | null, description?: string | null }, name: string | {}, memberCount: number, description: string | {}, maxPersons: number, rank?: number | null, type: string, connectedUnitGroups?: { id: string, name: string, description: string, memberCount: number, maxPersons?: number | null }[] | null }[]"
+            "type": "{ id: string, code: string, property: { id?: string | null, code?: string | null, name?: string | null, description?: string | null }, name: string | Record<string, string | null>, memberCount: number, description: string | Record<string, string | null>, maxPersons: number, rank?: number | null, type: string, connectedUnitGroups?: { id: string, name: string, description: string, memberCount: number, maxPersons?: number | null }[] | null }[]"
           },
           {
             "key": "count",
@@ -981,12 +981,12 @@
           {
             "key": "name",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "description",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "maxPersons",
@@ -996,12 +996,12 @@
           {
             "key": "rank",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "connectedUnitGroups",
             "optional": true,
-            "type": "{ unitGroupId: string, memberCount: number }[]"
+            "type": "{ unitGroupId: string, memberCount: number }[] | null"
           }
         ]
       },
@@ -1103,12 +1103,12 @@
           {
             "key": "description",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "unitGroupId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "maxPersons",
@@ -1118,17 +1118,17 @@
           {
             "key": "condition",
             "optional": true,
-            "type": "Clean | CleanToBeInspected | Dirty"
+            "type": "Clean | CleanToBeInspected | Dirty | null"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{ id: string }[]"
+            "type": "{ id: string }[] | null"
           },
           {
             "key": "connectedUnits",
             "optional": true,
-            "type": "{ unitId: string }[]"
+            "type": "{ unitId: string }[] | null"
           }
         ]
       },
@@ -1154,7 +1154,7 @@
           {
             "key": "units",
             "optional": false,
-            "type": "{ propertyId: string, name: string, description: {}, unitGroupId?: string | null, maxPersons: number, condition?: Clean | CleanToBeInspected | Dirty | null, attributes?: { id: string }[] | null, connectedUnits?: { unitId: string }[] | null }[]"
+            "type": "{ propertyId: string, name: string, description: Record<string, string | null>, unitGroupId?: string | null, maxPersons: number, condition?: Clean | CleanToBeInspected | Dirty | null, attributes?: { id: string }[] | null, connectedUnits?: { unitId: string }[] | null }[]"
           }
         ]
       },
@@ -1252,7 +1252,7 @@
           {
             "key": "description",
             "optional": false,
-            "type": "string | {}"
+            "type": "string | Record<string, string | null>"
           },
           {
             "key": "property",
@@ -1262,12 +1262,12 @@
           {
             "key": "unitGroup",
             "optional": true,
-            "type": "{ id?: string | null, code?: string | null, name?: string | null, description?: string | null, type?: string | null }"
+            "type": "{ id?: string | null, code?: string | null, name?: string | null, description?: string | null, type?: string | null } | null"
           },
           {
             "key": "connectingUnit",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null }"
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null } | null"
           },
           {
             "key": "status",
@@ -1287,27 +1287,27 @@
           {
             "key": "archived",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isArchived",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, description?: string | null }[]"
+            "type": "{ id?: string | null, name?: string | null, description?: string | null }[] | null"
           },
           {
             "key": "connectedUnits",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null, condition?: string | null, maxPersons?: number | null }[]"
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null, condition?: string | null, maxPersons?: number | null }[] | null"
           },
           {
             "key": "actions",
             "optional": true,
-            "type": "{ action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[]"
+            "type": "{ action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[] | null"
           }
         ]
       }
@@ -1388,7 +1388,7 @@
           {
             "key": "units",
             "optional": false,
-            "type": "{ id: string, name: string, description: string | {}, property: { id?: string | null, code?: string | null, name?: string | null, description?: string | null }, unitGroup?: { id?: string | null, code?: string | null, name?: string | null, description?: string | null, type?: string | null } | null, connectingUnit?: { id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null } | null, status: { isOccupied?: boolean | null, condition?: string | null, maintenance?: { id?: string | null, from?: string | null, to?: string | null, type?: string | null, description?: string | null } | null }, maxPersons: number, created: string, archived?: string | null, isArchived?: boolean | null, attributes?: { id?: string | null, name?: string | null, description?: string | null }[] | null, connectedUnits?: { id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null, condition?: string | null, maxPersons?: number | null }[] | null, actions?: { action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[] | null }[]"
+            "type": "{ id: string, name: string, description: string | Record<string, string | null>, property: { id?: string | null, code?: string | null, name?: string | null, description?: string | null }, unitGroup?: { id?: string | null, code?: string | null, name?: string | null, description?: string | null, type?: string | null } | null, connectingUnit?: { id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null } | null, status: { isOccupied?: boolean | null, condition?: string | null, maintenance?: { id?: string | null, from?: string | null, to?: string | null, type?: string | null, description?: string | null } | null }, maxPersons: number, created: string, archived?: string | null, isArchived?: boolean | null, attributes?: { id?: string | null, name?: string | null, description?: string | null }[] | null, connectedUnits?: { id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null, condition?: string | null, maxPersons?: number | null }[] | null, actions?: { action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[] | null }[]"
           },
           {
             "key": "count",

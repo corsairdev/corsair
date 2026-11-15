@@ -1,0 +1,31 @@
+displayName: CoinMarketCal
+description: Curated calendar of cryptocurrency events with impacted coins, dates, sources, and impact scores.
+
+examples:
+  read:
+    path: events.list
+    title: List upcoming Ethereum events
+    args:
+      coins: ethereum
+      limit: 20
+
+apiExamples:
+  coins.list:
+    args:
+      q: bitcoin
+      tracked: true
+      limit: 50
+  coins.get:
+    args:
+      slug: bitcoin
+  events.list:
+    args:
+      coins: bitcoin,ethereum
+      from: '2026-01-01'
+      to: '2026-03-31'
+      limit: 20
+  events.get:
+    args:
+      id: '12345'
+  categories.list:
+    args: {}

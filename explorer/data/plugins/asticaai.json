@@ -33,18 +33,21 @@
           },
           {
             "key": "modelVersion",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"1.0_full\"."
           },
           {
             "key": "doStream",
-            "optional": false,
-            "type": "0 | 1"
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Defaults to 0."
           },
           {
             "key": "low_priority",
-            "optional": false,
-            "type": "0 | 1"
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Defaults to 0."
           }
         ]
       },
@@ -64,12 +67,12 @@
           {
             "key": "text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resultURI",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -89,8 +92,9 @@
           },
           {
             "key": "modelVersion",
-            "optional": false,
-            "type": "2.5_full | 2.1_full | 2.0_full | 1.0_full"
+            "optional": true,
+            "type": "2.5_full | 2.1_full | 2.0_full | 1.0_full",
+            "description": "Defaults to \"2.5_full\"."
           }
         ]
       },
@@ -115,7 +119,7 @@
           {
             "key": "astica",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -134,6 +138,11 @@
         },
         {
           "field": "inputFingerprint",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inputKind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -175,6 +184,11 @@
         },
         {
           "field": "inputFingerprint",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inputKind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Calls, Messages } from './endpoints';
 import type {
 	TwilioEndpointInputs,
@@ -286,9 +287,12 @@ export function twilio<const T extends TwilioPluginOptions>(
 				}
 				if (ctx.authType === 'api_key') {
 					const apiKey = await ctx.keys.get_api_key();
-					return apiKey ?? '';
+					if (!apiKey) {
+						throw new AuthMissingError('twilio', 'api_key');
+					}
+					return apiKey;
 				}
-				return '';
+				throw new AuthMissingError('twilio', 'api_key');
 			}
 
 			if (source === 'endpoint' && options.key) {
@@ -297,10 +301,13 @@ export function twilio<const T extends TwilioPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('twilio', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('twilio', 'api_key');
 		},
 	} satisfies InternalTwilioPlugin;
 }

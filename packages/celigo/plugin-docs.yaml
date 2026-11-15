@@ -1,0 +1,15 @@
+displayName: Celigo
+description: Integration platform for building, running and monitoring flows, connections, exports and imports.
+examples:
+  read:
+    path: flows.list
+    title: List flows
+  write:
+    path: tags.create
+    title: Create a tag
+    args:
+      tag: production
+dbExample:
+  entity: flows
+  note: Search flows read through the API without hitting Celigo again.
+  limit: 50

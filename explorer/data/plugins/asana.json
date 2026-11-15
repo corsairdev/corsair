@@ -149,7 +149,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -190,7 +190,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -231,7 +231,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -339,7 +339,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -426,12 +426,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -487,12 +487,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }[]"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: Record<string, any>[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -543,12 +543,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }[]"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: Record<string, any>[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -671,7 +671,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -866,7 +866,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -1061,7 +1061,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -1292,12 +1292,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -1348,7 +1348,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -1399,7 +1399,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -1450,7 +1450,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -1717,7 +1717,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ name?: string, notes?: string, html_notes?: string, due_on?: string, due_at?: string, start_on?: string, start_at?: string, assignee?: string, projects?: string[], tags?: string[], followers?: string[], workspace?: string, parent?: string, completed?: boolean, liked?: boolean, resource_subtype?: string, custom_fields?: {}, assignee_section?: string }"
+            "type": "{ name?: string, notes?: string, html_notes?: string, due_on?: string, due_at?: string, start_on?: string, start_at?: string, assignee?: string, projects?: string[], tags?: string[], followers?: string[], workspace?: string, parent?: string, completed?: boolean, liked?: boolean, resource_subtype?: string, custom_fields?: Record<string, any>, assignee_section?: string }"
           },
           {
             "key": "opt_fields",
@@ -1737,7 +1737,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -1778,7 +1778,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -1886,7 +1886,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -1932,7 +1932,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -1978,7 +1978,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2024,12 +2024,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2075,7 +2075,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2156,12 +2156,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2375,12 +2375,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2400,8 +2400,8 @@
           },
           {
             "key": "parent",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "insert_after",
@@ -2426,7 +2426,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -2447,7 +2447,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ name?: string, notes?: string, html_notes?: string, due_on?: string, due_at?: string, start_on?: string, start_at?: string, assignee?: string, completed?: boolean, liked?: boolean, resource_subtype?: string, approval_status?: string, assignee_status?: string, assignee_section?: string, workspace?: string, custom_fields?: {} }"
+            "type": "{ name?: string, notes?: string, html_notes?: string, due_on?: string, due_at?: string, start_on?: string, start_at?: string, assignee?: string, completed?: boolean, liked?: boolean, resource_subtype?: string, approval_status?: string, assignee_status?: string, assignee_section?: string, workspace?: string, custom_fields?: Record<string, any> }"
           },
           {
             "key": "opt_fields",
@@ -2467,7 +2467,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: Record<string, any>[] }"
           }
         ]
       }
@@ -2631,7 +2631,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2682,7 +2682,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2779,7 +2779,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2830,7 +2830,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2886,7 +2886,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -2999,7 +2999,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }"
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: Record<string, string> | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }"
           }
         ]
       }
@@ -3030,7 +3030,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }"
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: Record<string, string> | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }"
           }
         ]
       }
@@ -3204,12 +3204,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: Record<string, string> | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -3250,12 +3250,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: Record<string, string> | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -3301,12 +3301,12 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: Record<string, string> | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
           },
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -3423,7 +3423,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -3546,7 +3546,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -3638,7 +3638,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }
@@ -3689,7 +3689,7 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "{ offset?: string, path?: string, uri?: string }"
+            "type": "{ offset?: string, path?: string, uri?: string } | null"
           }
         ]
       }

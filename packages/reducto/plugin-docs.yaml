@@ -1,0 +1,16 @@
+displayName: Reducto
+description: Document processing API that parses, extracts fields from, classifies, splits, and edits documents, and runs Studio pipelines, with async jobs and file uploads.
+domain: reducto.ai
+examples:
+  read:
+    path: jobs.list
+    title: List jobs
+  write:
+    path: parse.parse
+    title: Parse a document
+    args:
+      input: https://example.com/invoice.pdf
+dbExample:
+  entity: jobs
+  note: Search synced jobs without hitting Reducto.
+  limit: 50

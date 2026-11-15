@@ -1,0 +1,76 @@
+displayName: EmailOctopus
+description: "EmailOctopus lists, contacts, tags, custom fields, campaigns and automations on API v2."
+domain: emailoctopus.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key under EmailOctopus account settings, Developer, API keys. A key created before API v2 (labelled legacy) will not authenticate. The key is sent as `Authorization: Bearer`.
+
+  - **Deletes are permanent.** `lists.delete`, `contacts.delete`, `fields.delete` and `tags.delete` remove the resource.
+  - **Create versus upsert.** `contacts.create` fails when the email is already on the list. `contacts.upsert` updates that contact instead.
+  - **Tag updates on a contact.** `contacts.create` takes `tags` as an array of names. `contacts.upsert` and `contacts.update` take `tags` as `{ tagName: true | false }`.
+  - **Rate limits.** The account has a bucket of 100 requests, refilled at 10 per second. A 429 includes `X-RateLimit-Retry-After`. The plugin retries that up to three times. Writes are not retried on 5xx.
+  - **Paging.** Collection calls return `paging.next.starting_after`. Pass that cursor back as `starting_after`. `limit` is at most 100.
+  - **Webhooks.** This plugin does not receive webhooks.
+examples:
+  read:
+    path: lists.list
+    title: List the first page of lists
+    args:
+      limit: 10
+  write:
+    path: contacts.create
+    title: Add a contact to a list
+    args:
+      list_id: 00000000-0000-0000-0000-000000000000
+      email_address: otto@example.com
+apiExamples:
+  lists.list:
+    call: "{ limit: 10 }"
+  lists.get:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000' }"
+  lists.create:
+    call: "{ name: 'New clients list' }"
+  lists.update:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', name: 'Renamed list' }"
+  lists.delete:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000' }"
+  contacts.list:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', status: 'subscribed', limit: 10 }"
+  contacts.get:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', contact_id: '00000000-0000-0000-0000-000000000001' }"
+  contacts.create:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', email_address: 'otto@example.com', tags: ['vip'], status: 'subscribed' }"
+  contacts.upsert:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', email_address: 'otto@example.com', tags: { vip: true } }"
+  contacts.update:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', contact_id: '00000000-0000-0000-0000-000000000001', status: 'unsubscribed' }"
+  contacts.delete:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', contact_id: '00000000-0000-0000-0000-000000000001' }"
+  contacts.batch:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', contacts: [{ id: '00000000-0000-0000-0000-000000000001', status: 'subscribed' }] }"
+  fields.create:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', label: 'Hometown', tag: 'Hometown', type: 'text', fallback: 'Unknown' }"
+  fields.update:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', label: 'Hometown', tag: 'Hometown', type: 'text' }"
+  fields.delete:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', tag: 'Hometown' }"
+  tags.list:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000' }"
+  tags.create:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip' }"
+  tags.update:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip', name: 'customer' }"
+  tags.delete:
+    call: "{ list_id: '00000000-0000-0000-0000-000000000000', tag: 'vip' }"
+  campaigns.list:
+    call: "{ limit: 10 }"
+  campaigns.get:
+    call: "{ campaign_id: '00000000-0000-0000-0000-000000000000' }"
+  campaigns.reportContacts:
+    call: "{ campaign_id: '00000000-0000-0000-0000-000000000000', status: 'opened' }"
+  campaigns.reportLinks:
+    call: "{ campaign_id: '00000000-0000-0000-0000-000000000000' }"
+  campaigns.reportSummary:
+    call: "{ campaign_id: '00000000-0000-0000-0000-000000000000' }"
+  automations.start:
+    call: "{ automation_id: '00000000-0000-0000-0000-000000000000', contact_id: '631251b876fece73bc9dd647fe596d5f' }"

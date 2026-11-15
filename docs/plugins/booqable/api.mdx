@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Booqable: every `booqable.api.*` operation with input and output types."
+title: "Booqable API reference"
+sidebarTitle: "API"
+description: "API reference for the Booqable plugin in Corsair: every `booqable.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `booqable.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -29,26 +28,8 @@ await corsair.booqable.api.barcodes.listBarcodes({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -58,8 +39,8 @@ await corsair.booqable.api.barcodes.listBarcodes({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -68,10 +49,8 @@ await corsair.booqable.api.barcodes.listBarcodes({});
 {
   id: string,
   type: barcodes,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -82,27 +61,9 @@ await corsair.booqable.api.barcodes.listBarcodes({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -131,26 +92,8 @@ await corsair.booqable.api.bundleItems.listBundleItems({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -160,8 +103,8 @@ await corsair.booqable.api.bundleItems.listBundleItems({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -170,10 +113,8 @@ await corsair.booqable.api.bundleItems.listBundleItems({});
 {
   id: string,
   type: bundle_items,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -184,27 +125,9 @@ await corsair.booqable.api.bundleItems.listBundleItems({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -233,26 +156,8 @@ await corsair.booqable.api.bundles.searchBundles({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -262,8 +167,8 @@ await corsair.booqable.api.bundles.searchBundles({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -272,10 +177,8 @@ await corsair.booqable.api.bundles.searchBundles({});
 {
   id: string,
   type: bundles,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -286,27 +189,9 @@ await corsair.booqable.api.bundles.searchBundles({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -335,26 +220,8 @@ await corsair.booqable.api.clusters.listClusters({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -364,8 +231,8 @@ await corsair.booqable.api.clusters.listClusters({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -374,10 +241,8 @@ await corsair.booqable.api.clusters.listClusters({});
 {
   id: string,
   type: clusters,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -388,27 +253,9 @@ await corsair.booqable.api.clusters.listClusters({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -437,26 +284,8 @@ await corsair.booqable.api.companies.updateCompany({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -466,8 +295,8 @@ await corsair.booqable.api.companies.updateCompany({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -476,10 +305,8 @@ await corsair.booqable.api.companies.updateCompany({});
 {
   id: string,
   type: companies,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -490,27 +317,9 @@ await corsair.booqable.api.companies.updateCompany({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -539,26 +348,8 @@ await corsair.booqable.api.coupons.listCoupons({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -568,8 +359,8 @@ await corsair.booqable.api.coupons.listCoupons({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -578,10 +369,8 @@ await corsair.booqable.api.coupons.listCoupons({});
 {
   id: string,
   type: coupons,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -592,27 +381,9 @@ await corsair.booqable.api.coupons.listCoupons({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -641,26 +412,8 @@ await corsair.booqable.api.customers.createCustomer({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -670,8 +423,8 @@ await corsair.booqable.api.customers.createCustomer({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -680,10 +433,8 @@ await corsair.booqable.api.customers.createCustomer({});
 {
   id: string,
   type: customers,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -694,27 +445,9 @@ await corsair.booqable.api.customers.createCustomer({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -742,26 +475,8 @@ await corsair.booqable.api.customers.deleteCustomer({});
 | `id` | `string` | Yes | — |
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -775,29 +490,21 @@ await corsair.booqable.api.customers.deleteCustomer({});
   data: {
     id: string,
     type: customers,
-    attributes?: {
-    },
-    relationships?: {
-    }
+    attributes?: Record<string, any>,
+    relationships?: Record<string, any>
   },
   included?: {
     id: string,
     type: string,
-    attributes?: {
-    },
-    relationships?: {
-    }
+    attributes?: Record<string, any>,
+    relationships?: Record<string, any>
   }[],
-  links?: {
-  },
-  meta?: {
-  }
+  links?: Record<string, any>,
+  meta?: Record<string, any>
 } | {
   data: null,
-  links?: {
-  },
-  meta?: {
-  }
+  links?: Record<string, any>,
+  meta?: Record<string, any>
 }
 ```
 </Accordion>
@@ -825,26 +532,8 @@ await corsair.booqable.api.customers.getCustomer({});
 | `id` | `string` | Yes | — |
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -854,8 +543,8 @@ await corsair.booqable.api.customers.getCustomer({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -864,10 +553,8 @@ await corsair.booqable.api.customers.getCustomer({});
 {
   id: string,
   type: customers,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -878,27 +565,9 @@ await corsair.booqable.api.customers.getCustomer({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -925,26 +594,8 @@ await corsair.booqable.api.customers.getCustomers({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -954,8 +605,8 @@ await corsair.booqable.api.customers.getCustomers({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -964,10 +615,8 @@ await corsair.booqable.api.customers.getCustomers({});
 {
   id: string,
   type: customers,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -978,27 +627,9 @@ await corsair.booqable.api.customers.getCustomers({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1025,26 +656,8 @@ await corsair.booqable.api.customers.searchCustomers({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1054,8 +667,8 @@ await corsair.booqable.api.customers.searchCustomers({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1064,10 +677,8 @@ await corsair.booqable.api.customers.searchCustomers({});
 {
   id: string,
   type: customers,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1078,27 +689,9 @@ await corsair.booqable.api.customers.searchCustomers({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1127,26 +720,8 @@ await corsair.booqable.api.defaultProperties.listDefaultProperties({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1156,8 +731,8 @@ await corsair.booqable.api.defaultProperties.listDefaultProperties({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1166,10 +741,8 @@ await corsair.booqable.api.defaultProperties.listDefaultProperties({});
 {
   id: string,
   type: default_properties,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1180,27 +753,9 @@ await corsair.booqable.api.defaultProperties.listDefaultProperties({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1229,26 +784,8 @@ await corsair.booqable.api.documents.listDocuments({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1258,8 +795,8 @@ await corsair.booqable.api.documents.listDocuments({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1268,10 +805,8 @@ await corsair.booqable.api.documents.listDocuments({});
 {
   id: string,
   type: documents,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1282,27 +817,9 @@ await corsair.booqable.api.documents.listDocuments({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1329,26 +846,8 @@ await corsair.booqable.api.documents.searchDocuments({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1358,8 +857,8 @@ await corsair.booqable.api.documents.searchDocuments({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1368,10 +867,8 @@ await corsair.booqable.api.documents.searchDocuments({});
 {
   id: string,
   type: documents,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1382,27 +879,9 @@ await corsair.booqable.api.documents.searchDocuments({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1431,26 +910,8 @@ await corsair.booqable.api.emailTemplates.listEmailTemplates({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1460,8 +921,8 @@ await corsair.booqable.api.emailTemplates.listEmailTemplates({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1470,10 +931,8 @@ await corsair.booqable.api.emailTemplates.listEmailTemplates({});
 {
   id: string,
   type: email_templates,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1484,27 +943,9 @@ await corsair.booqable.api.emailTemplates.listEmailTemplates({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1533,26 +974,8 @@ await corsair.booqable.api.employees.listEmployees({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1562,8 +985,8 @@ await corsair.booqable.api.employees.listEmployees({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1572,10 +995,8 @@ await corsair.booqable.api.employees.listEmployees({});
 {
   id: string,
   type: employees,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1586,27 +1007,9 @@ await corsair.booqable.api.employees.listEmployees({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1635,26 +1038,8 @@ await corsair.booqable.api.inventoryBreakdowns.listInventoryBreakdowns({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1664,8 +1049,8 @@ await corsair.booqable.api.inventoryBreakdowns.listInventoryBreakdowns({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1674,10 +1059,8 @@ await corsair.booqable.api.inventoryBreakdowns.listInventoryBreakdowns({});
 {
   id: string,
   type: inventory_breakdowns,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1688,27 +1071,9 @@ await corsair.booqable.api.inventoryBreakdowns.listInventoryBreakdowns({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1737,26 +1102,8 @@ await corsair.booqable.api.inventoryLevels.getInventoryLevels({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1766,8 +1113,8 @@ await corsair.booqable.api.inventoryLevels.getInventoryLevels({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1776,10 +1123,8 @@ await corsair.booqable.api.inventoryLevels.getInventoryLevels({});
 {
   id: string,
   type: inventory_levels,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1790,27 +1135,9 @@ await corsair.booqable.api.inventoryLevels.getInventoryLevels({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1839,26 +1166,8 @@ await corsair.booqable.api.items.listItems({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1868,8 +1177,8 @@ await corsair.booqable.api.items.listItems({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1878,10 +1187,8 @@ await corsair.booqable.api.items.listItems({});
 {
   id: string,
   type: items,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1892,27 +1199,9 @@ await corsair.booqable.api.items.listItems({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1939,26 +1228,8 @@ await corsair.booqable.api.items.searchItems({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1968,8 +1239,8 @@ await corsair.booqable.api.items.searchItems({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1978,10 +1249,8 @@ await corsair.booqable.api.items.searchItems({});
 {
   id: string,
   type: items,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1992,27 +1261,9 @@ await corsair.booqable.api.items.searchItems({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2041,26 +1292,8 @@ await corsair.booqable.api.lines.listLines({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2070,8 +1303,8 @@ await corsair.booqable.api.lines.listLines({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2080,10 +1313,8 @@ await corsair.booqable.api.lines.listLines({});
 {
   id: string,
   type: lines,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2094,27 +1325,9 @@ await corsair.booqable.api.lines.listLines({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2143,26 +1356,8 @@ await corsair.booqable.api.locations.listLocations({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2172,8 +1367,8 @@ await corsair.booqable.api.locations.listLocations({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2182,10 +1377,8 @@ await corsair.booqable.api.locations.listLocations({});
 {
   id: string,
   type: locations,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2196,27 +1389,9 @@ await corsair.booqable.api.locations.listLocations({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2245,26 +1420,8 @@ await corsair.booqable.api.notes.listNotes({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2274,8 +1431,8 @@ await corsair.booqable.api.notes.listNotes({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2284,10 +1441,8 @@ await corsair.booqable.api.notes.listNotes({});
 {
   id: string,
   type: notes,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2298,27 +1453,9 @@ await corsair.booqable.api.notes.listNotes({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2347,26 +1484,8 @@ await corsair.booqable.api.orders.createOrder({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2376,8 +1495,8 @@ await corsair.booqable.api.orders.createOrder({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2386,10 +1505,8 @@ await corsair.booqable.api.orders.createOrder({});
 {
   id: string,
   type: orders,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2400,27 +1517,9 @@ await corsair.booqable.api.orders.createOrder({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2448,26 +1547,8 @@ await corsair.booqable.api.orders.deleteOrder({});
 | `id` | `string` | Yes | — |
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2481,29 +1562,21 @@ await corsair.booqable.api.orders.deleteOrder({});
   data: {
     id: string,
     type: orders,
-    attributes?: {
-    },
-    relationships?: {
-    }
+    attributes?: Record<string, any>,
+    relationships?: Record<string, any>
   },
   included?: {
     id: string,
     type: string,
-    attributes?: {
-    },
-    relationships?: {
-    }
+    attributes?: Record<string, any>,
+    relationships?: Record<string, any>
   }[],
-  links?: {
-  },
-  meta?: {
-  }
+  links?: Record<string, any>,
+  meta?: Record<string, any>
 } | {
   data: null,
-  links?: {
-  },
-  meta?: {
-  }
+  links?: Record<string, any>,
+  meta?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2530,26 +1603,8 @@ await corsair.booqable.api.orders.getNewOrder({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2559,8 +1614,8 @@ await corsair.booqable.api.orders.getNewOrder({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2569,10 +1624,8 @@ await corsair.booqable.api.orders.getNewOrder({});
 {
   id: string,
   type: orders,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2583,27 +1636,9 @@ await corsair.booqable.api.orders.getNewOrder({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2631,26 +1666,8 @@ await corsair.booqable.api.orders.getOrder({});
 | `id` | `string` | Yes | — |
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2660,8 +1677,8 @@ await corsair.booqable.api.orders.getOrder({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2670,10 +1687,8 @@ await corsair.booqable.api.orders.getOrder({});
 {
   id: string,
   type: orders,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2684,27 +1699,9 @@ await corsair.booqable.api.orders.getOrder({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2731,26 +1728,8 @@ await corsair.booqable.api.orders.listOrders({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2760,8 +1739,8 @@ await corsair.booqable.api.orders.listOrders({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2770,10 +1749,8 @@ await corsair.booqable.api.orders.listOrders({});
 {
   id: string,
   type: orders,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2784,27 +1761,9 @@ await corsair.booqable.api.orders.listOrders({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2831,26 +1790,8 @@ await corsair.booqable.api.orders.searchOrders({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2860,8 +1801,8 @@ await corsair.booqable.api.orders.searchOrders({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2870,10 +1811,8 @@ await corsair.booqable.api.orders.searchOrders({});
 {
   id: string,
   type: orders,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2884,27 +1823,9 @@ await corsair.booqable.api.orders.searchOrders({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2933,26 +1854,8 @@ await corsair.booqable.api.paymentMethods.listPaymentMethods({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2962,8 +1865,8 @@ await corsair.booqable.api.paymentMethods.listPaymentMethods({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2972,10 +1875,8 @@ await corsair.booqable.api.paymentMethods.listPaymentMethods({});
 {
   id: string,
   type: payment_methods,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2986,27 +1887,9 @@ await corsair.booqable.api.paymentMethods.listPaymentMethods({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3035,26 +1918,8 @@ await corsair.booqable.api.payments.listPayments({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3064,8 +1929,8 @@ await corsair.booqable.api.payments.listPayments({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3074,10 +1939,8 @@ await corsair.booqable.api.payments.listPayments({});
 {
   id: string,
   type: payments,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3088,27 +1951,9 @@ await corsair.booqable.api.payments.listPayments({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3137,26 +1982,8 @@ await corsair.booqable.api.photos.listPhotos({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3166,8 +1993,8 @@ await corsair.booqable.api.photos.listPhotos({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3176,10 +2003,8 @@ await corsair.booqable.api.photos.listPhotos({});
 {
   id: string,
   type: photos,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3190,27 +2015,9 @@ await corsair.booqable.api.photos.listPhotos({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3239,26 +2046,8 @@ await corsair.booqable.api.plannings.listPlannings({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3268,8 +2057,8 @@ await corsair.booqable.api.plannings.listPlannings({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3278,10 +2067,8 @@ await corsair.booqable.api.plannings.listPlannings({});
 {
   id: string,
   type: plannings,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3292,27 +2079,9 @@ await corsair.booqable.api.plannings.listPlannings({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3339,26 +2108,8 @@ await corsair.booqable.api.plannings.searchPlannings({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3368,8 +2119,8 @@ await corsair.booqable.api.plannings.searchPlannings({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3378,10 +2129,8 @@ await corsair.booqable.api.plannings.searchPlannings({});
 {
   id: string,
   type: plannings,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3392,27 +2141,9 @@ await corsair.booqable.api.plannings.searchPlannings({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3441,26 +2172,8 @@ await corsair.booqable.api.priceRulesets.listPriceRulesets({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3470,8 +2183,8 @@ await corsair.booqable.api.priceRulesets.listPriceRulesets({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3480,10 +2193,8 @@ await corsair.booqable.api.priceRulesets.listPriceRulesets({});
 {
   id: string,
   type: price_rulesets,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3494,27 +2205,9 @@ await corsair.booqable.api.priceRulesets.listPriceRulesets({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3543,26 +2236,8 @@ await corsair.booqable.api.priceStructures.listPriceStructures({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3572,8 +2247,8 @@ await corsair.booqable.api.priceStructures.listPriceStructures({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3582,10 +2257,8 @@ await corsair.booqable.api.priceStructures.listPriceStructures({});
 {
   id: string,
   type: price_structures,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3596,27 +2269,9 @@ await corsair.booqable.api.priceStructures.listPriceStructures({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3645,26 +2300,8 @@ await corsair.booqable.api.productGroups.createProductGroup({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3674,8 +2311,8 @@ await corsair.booqable.api.productGroups.createProductGroup({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3684,10 +2321,8 @@ await corsair.booqable.api.productGroups.createProductGroup({});
 {
   id: string,
   type: product_groups,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3698,27 +2333,9 @@ await corsair.booqable.api.productGroups.createProductGroup({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3746,26 +2363,8 @@ await corsair.booqable.api.productGroups.deleteProductGroup({});
 | `id` | `string` | Yes | — |
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3779,29 +2378,21 @@ await corsair.booqable.api.productGroups.deleteProductGroup({});
   data: {
     id: string,
     type: product_groups,
-    attributes?: {
-    },
-    relationships?: {
-    }
+    attributes?: Record<string, any>,
+    relationships?: Record<string, any>
   },
   included?: {
     id: string,
     type: string,
-    attributes?: {
-    },
-    relationships?: {
-    }
+    attributes?: Record<string, any>,
+    relationships?: Record<string, any>
   }[],
-  links?: {
-  },
-  meta?: {
-  }
+  links?: Record<string, any>,
+  meta?: Record<string, any>
 } | {
   data: null,
-  links?: {
-  },
-  meta?: {
-  }
+  links?: Record<string, any>,
+  meta?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3829,26 +2420,8 @@ await corsair.booqable.api.productGroups.getProductGroup({});
 | `id` | `string` | Yes | — |
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3858,8 +2431,8 @@ await corsair.booqable.api.productGroups.getProductGroup({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3868,10 +2441,8 @@ await corsair.booqable.api.productGroups.getProductGroup({});
 {
   id: string,
   type: product_groups,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -3882,27 +2453,9 @@ await corsair.booqable.api.productGroups.getProductGroup({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3929,26 +2482,8 @@ await corsair.booqable.api.productGroups.listProductGroups({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3958,8 +2493,8 @@ await corsair.booqable.api.productGroups.listProductGroups({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -3968,10 +2503,8 @@ await corsair.booqable.api.productGroups.listProductGroups({});
 {
   id: string,
   type: product_groups,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -3982,27 +2515,9 @@ await corsair.booqable.api.productGroups.listProductGroups({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4032,26 +2547,8 @@ await corsair.booqable.api.products.getProduct({});
 | `id` | `string` | Yes | — |
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4061,8 +2558,8 @@ await corsair.booqable.api.products.getProduct({});
 |------|------|----------|-------------|
 | `data` | `object` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4071,10 +2568,8 @@ await corsair.booqable.api.products.getProduct({});
 {
   id: string,
   type: products,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -4085,27 +2580,9 @@ await corsair.booqable.api.products.getProduct({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4132,26 +2609,8 @@ await corsair.booqable.api.products.listProducts({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4161,8 +2620,8 @@ await corsair.booqable.api.products.listProducts({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4171,10 +2630,8 @@ await corsair.booqable.api.products.listProducts({});
 {
   id: string,
   type: products,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4185,27 +2642,9 @@ await corsair.booqable.api.products.listProducts({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4234,26 +2673,8 @@ await corsair.booqable.api.properties.listProperties({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4263,8 +2684,8 @@ await corsair.booqable.api.properties.listProperties({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4273,10 +2694,8 @@ await corsair.booqable.api.properties.listProperties({});
 {
   id: string,
   type: properties,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4287,27 +2706,9 @@ await corsair.booqable.api.properties.listProperties({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4336,26 +2737,8 @@ await corsair.booqable.api.provinces.listProvinces({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4365,8 +2748,8 @@ await corsair.booqable.api.provinces.listProvinces({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4375,10 +2758,8 @@ await corsair.booqable.api.provinces.listProvinces({});
 {
   id: string,
   type: provinces,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4389,27 +2770,9 @@ await corsair.booqable.api.provinces.listProvinces({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4438,26 +2801,8 @@ await corsair.booqable.api.stockItemPlannings.listStockItemPlannings({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4467,8 +2812,8 @@ await corsair.booqable.api.stockItemPlannings.listStockItemPlannings({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4477,10 +2822,8 @@ await corsair.booqable.api.stockItemPlannings.listStockItemPlannings({});
 {
   id: string,
   type: stock_item_plannings,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4491,27 +2834,9 @@ await corsair.booqable.api.stockItemPlannings.listStockItemPlannings({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4540,26 +2865,8 @@ await corsair.booqable.api.stockItems.listStockItems({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4569,8 +2876,8 @@ await corsair.booqable.api.stockItems.listStockItems({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4579,10 +2886,8 @@ await corsair.booqable.api.stockItems.listStockItems({});
 {
   id: string,
   type: stock_items,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4593,27 +2898,9 @@ await corsair.booqable.api.stockItems.listStockItems({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4642,26 +2929,8 @@ await corsair.booqable.api.taxRates.listTaxRates({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4671,8 +2940,8 @@ await corsair.booqable.api.taxRates.listTaxRates({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4681,10 +2950,8 @@ await corsair.booqable.api.taxRates.listTaxRates({});
 {
   id: string,
   type: tax_rates,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4695,27 +2962,9 @@ await corsair.booqable.api.taxRates.listTaxRates({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4744,26 +2993,8 @@ await corsair.booqable.api.taxValues.listTaxValues({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4773,8 +3004,8 @@ await corsair.booqable.api.taxValues.listTaxValues({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4783,10 +3014,8 @@ await corsair.booqable.api.taxValues.listTaxValues({});
 {
   id: string,
   type: tax_values,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4797,27 +3026,9 @@ await corsair.booqable.api.taxValues.listTaxValues({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4846,26 +3057,8 @@ await corsair.booqable.api.users.listUsers({});
 |------|------|----------|-------------|
 | `companySlug` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4875,8 +3068,8 @@ await corsair.booqable.api.users.listUsers({});
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
 | `included` | `object[]` | No | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -4885,10 +3078,8 @@ await corsair.booqable.api.users.listUsers({});
 {
   id: string,
   type: users,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -4899,27 +3090,9 @@ await corsair.booqable.api.users.listUsers({});
 {
   id: string,
   type: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

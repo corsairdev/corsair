@@ -1,0 +1,97 @@
+displayName: Workable
+description: Recruiting and HR in Workable - jobs, candidates, hiring team members, departments, employees, time off and webhook subscriptions, plus the public job board of any Workable careers page.
+domain: workable.com
+recommendedAuth: api_key
+overviewNote: |
+  Workable needs two things from each tenant: an API access token and the account subdomain (the `acme` in `https://acme.workable.com`). Generate the token in Workable under Settings, Integrations, "Generate new token", and pick the scopes you need. The token is shown once. Corsair asks for both on the first call that needs them. Self-hosted setups can pass them to the factory instead:
+
+  ```ts
+  workable({ key: process.env.WORKABLE_TOKEN, account: 'acme' })
+  ```
+
+  Things to know:
+
+  - **Scopes.** Each endpoint needs its own scope (`r_jobs`, `r_candidates`, `r_account`, `w_departments`, `w_members`, `r_employees`, `w_employees`, `r_timeoff` and so on). A token without it gets a 403. `r_employees` grants access to confidential employee data.
+  - **Public job board.** `publicJobs.list` and `publicLocations.list` call Workable's public careers API and need no token. Pass any `subdomain` to read another company's open roles; without one they use the connected account's.
+  - **Subdomain.** Only letters, digits and hyphens are accepted, so requests always go to `<subdomain>.workable.com`.
+  - **Paging.** `jobs.list`, `candidates.list`, `members.list`, `requisitions.list` and `events.list` take `limit` (up to 100) with `since_id` / `max_id`. `paging.next` in a response is the next page's URL; pass its `since_id` back to fetch it. `employees.list` pages with `limit` (10, 20, 50 or 100 only) and `offset` instead.
+  - **Rate limit.** Workable allows 10 requests per token in a rolling 10 seconds. A read that gets a 429 waits until the reset time Workable sends, then retries.
+  - **Writes are not retried.** Workable has no idempotency keys, so creates, updates, invites and deletes fail fast on a 429 or a network error rather than risk running twice.
+  - **Department deletes and merges.** Workable answers 409 unless you pass `force: true`, sometimes even when nothing else uses the department.
+  - **Time-off balances.** `timeoffBalances.list` needs `employee_id` when the token is an account token.
+examples:
+  read:
+    path: jobs.list
+    title: List jobs
+    args:
+      limit: 50
+  write:
+    path: departments.create
+    title: Create a department
+    args:
+      name: Engineering
+dbExample:
+  entity: candidates
+  note: Candidates fetched by `candidates.list` are kept locally.
+  data:
+    stage: Interview
+  limit: 20
+apiExamples:
+  accounts.list: {}
+  accounts.get:
+    call: "{ subdomain: 'acme' }"
+  departments.list: {}
+  departments.create:
+    call: "{ name: 'Engineering', parent_id: '3ff4d64b' }"
+  departments.update:
+    call: "{ id: '3ff4d641', name: 'Platform Engineering', parent_id: null }"
+  departments.merge:
+    call: "{ id: '3ff4d641', target_department_id: '3ff4d64b', force: true }"
+  departments.delete:
+    call: "{ id: '3ff4d641', force: true }"
+  employees.list:
+    call: "{ query: 'doe', limit: 50, offset: 0 }"
+  employees.get:
+    call: "{ id: '375b' }"
+  employees.create:
+    call: "{ state: 'draft', employee: { firstname: 'Jordan', lastname: 'Lee', work_email: 'jordan@acme.com', start_date: '2026-12-01T00:00:00.000Z' } }"
+  employees.update:
+    call: "{ id: '375b', employee: { job_title: 'Account Manager' } }"
+  employees.uploadDocuments:
+    call: "{ id: '375b', documents: [{ url: 'https://files.acme.com/signed/offer.pdf', name: 'Offer letter' }] }"
+  employeeFields.list: {}
+  members.list:
+    call: "{ status: 'active', limit: 50 }"
+  members.invite:
+    call: "{ email: 'jordan@acme.com', roles: ['ats.simple'] }"
+  members.update:
+    call: "{ id: '3dae63e5', roles: ['ats.admin'] }"
+  members.enable:
+    call: "{ id: '3dae63e5' }"
+  jobs.list:
+    call: "{ state: 'published', limit: 50 }"
+  candidates.list:
+    call: "{ shortcode: 'GROOV003', stage: 'interview', limit: 50 }"
+  stages.list: {}
+  requisitions.list:
+    call: "{ limit: 50 }"
+  recruiters.list: {}
+  legalEntities.list: {}
+  customAttributes.list: {}
+  disqualificationReasons.list: {}
+  permissionSets.list: {}
+  timeoffCategories.list: {}
+  timeoffBalances.list:
+    call: "{ employee_id: '375b' }"
+  workSchedules.list: {}
+  events.list:
+    call: "{ type: 'interview', start_date: '2026-11-01', limit: 50 }"
+  subscriptions.list: {}
+  subscriptions.create:
+    call: "{ target: 'https://example.com/workable/webhooks', event: 'candidate_created' }"
+  subscriptions.delete:
+    call: "{ id: '42' }"
+  publicJobs.list:
+    call: "{ subdomain: 'acme', details: true }"
+  publicLocations.list:
+    call: "{ subdomain: 'acme' }"

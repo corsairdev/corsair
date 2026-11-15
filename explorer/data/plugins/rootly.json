@@ -1,7 +1,7 @@
 {
   "id": "rootly",
   "displayName": "Rootly",
-  "description": "Rootly plugin for Corsair",
+  "description": "Incident management platform where this plugin gets, updates, and deletes incidents and manages incident action items.",
   "npmPackageName": "@corsair-dev/rootly",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -40,7 +40,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           }
         ]
       }
@@ -66,12 +66,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           }
         ]
       }
@@ -112,22 +112,22 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           },
           {
             "key": "links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | null>"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           }
         ]
       }
@@ -154,7 +154,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           }
         ]
       }
@@ -180,12 +180,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           }
         ]
       }
@@ -216,12 +216,12 @@
           {
             "key": "parent_incident_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duplicate_incident_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
@@ -281,22 +281,22 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "slack_channel_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slack_channel_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slack_channel_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "slack_channel_archived",
@@ -306,92 +306,92 @@
           {
             "key": "google_drive_parent_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "google_drive_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jira_issue_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jira_issue_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "jira_issue_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "scheduled_for",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "scheduled_until",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "in_triage_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "started_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "detected_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "acknowledged_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mitigated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resolved_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closed_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancelled_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mitigation_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resolution_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cancellation_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -401,12 +401,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }"
           },
           {
             "key": "included",
             "optional": true,
-            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+            "type": "{ id: string, type?: string, attributes?: Record<string, any>, relationships?: Record<string, any> }[]"
           }
         ]
       }

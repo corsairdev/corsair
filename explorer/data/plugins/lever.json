@@ -1,0 +1,4602 @@
+{
+  "id": "lever",
+  "displayName": "Lever",
+  "description": "Applicant tracking system for sourcing, managing, and hiring candidates with postings, interviews, and pipeline management.",
+  "npmPackageName": "@corsair-dev/lever",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 104,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "lever.api.applications.list",
+      "shortPath": "applications.list",
+      "description": "List applications belonging to a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, opportunityId?: string | null, candidateId?: string | null, createdAt?: number | string | null, type?: string | null, posting?: string | {} | null, postingHiringManager?: string | {} | null, postingOwner?: string | {} | null, user?: string | {} | null, name?: string | null, email?: string | null, phone?: { type?: string | null, value?: string | null } | string | null, company?: string | null, links?: string[] | null, comments?: string | null, customQuestions?: {}[] | null, archived?: {} | null, requisitionForHire?: {} | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.applications.listDeleted",
+      "shortPath": "applications.listDeleted",
+      "description": "List deleted applications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "deleted_at_start",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted_at_end",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, deletedAt?: number | string | null, opportunityId?: string | null, postingId?: string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.applications.retrieve",
+      "shortPath": "applications.retrieve",
+      "description": "Retrieve a single application of a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, opportunityId?: string | null, candidateId?: string | null, createdAt?: number | string | null, type?: string | null, posting?: string | {} | null, postingHiringManager?: string | {} | null, postingOwner?: string | {} | null, user?: string | {} | null, name?: string | null, email?: string | null, phone?: { type?: string | null, value?: string | null } | string | null, company?: string | null, links?: string[] | null, comments?: string | null, customQuestions?: {}[] | null, archived?: {} | null, requisitionForHire?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.archiveReasons.list",
+      "shortPath": "archiveReasons.list",
+      "description": "List archive reasons configured for the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "hired | non-hired"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, status?: string | null, type?: string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.archiveReasons.retrieve",
+      "shortPath": "archiveReasons.retrieve",
+      "description": "Retrieve a single archive reason by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "archiveReasonId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, status?: string | null, type?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.auditEvents.list",
+      "shortPath": "auditEvents.list",
+      "description": "List workspace audit events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at_end",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: number | string | null, type?: string | null, user?: {} | null, target?: {} | null, meta?: {} | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.contacts.retrieve",
+      "shortPath": "contacts.retrieve",
+      "description": "Retrieve a single contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, headline?: string | null, isAnonymized?: boolean | null, location?: string | {} | null, emails?: string[] | null, phones?: { type?: string | null, value?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value: string, type?: mobile | home | work | skype | other }[]"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, headline?: string | null, isAnonymized?: boolean | null, location?: string | {} | null, emails?: string[] | null, phones?: { type?: string | null, value?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.dispositionStages.list",
+      "shortPath": "dispositionStages.list",
+      "description": "List disposition stages configured for the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ stages: { id: string, text?: string | null, pipeline?: string | null, rank?: number | null, hasInterview?: boolean | null }[], archiveReasons?: { id: string, text?: string | null, type?: string | null, status?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.eeo.retrieveAnonymous",
+      "shortPath": "eeo.retrieveAnonymous",
+      "description": "Retrieve anonymized EEO responses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ eeoResponses: { opportunityId?: string | null, contact?: string | {} | null, posting?: string | {} | null, currentStage?: string | {} | null, hiringManager?: string | {} | null, gender?: string | null, race?: string | null, veteran?: string | null, disability?: string | null, disabilitySignatureDate?: string | null, appliedAt?: number | string | null, eeoSurveyRespondedAt?: number | string | null, applicationArchivedAt?: number | string | null, applicationArchivedBy?: string | {} | null, hiredDate?: number | string | null, origin?: string | null, source?: string | null, requisitionCodes?: string[] | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.eeo.retrieveWithPii",
+      "shortPath": "eeo.retrieveWithPii",
+      "description": "Retrieve EEO responses including personally identifiable information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "created_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at_end",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ eeoResponses: { opportunityId?: string | null, contact?: string | {} | null, posting?: string | {} | null, currentStage?: string | {} | null, hiringManager?: string | {} | null, gender?: string | null, race?: string | null, veteran?: string | null, disability?: string | null, disabilitySignatureDate?: string | null, appliedAt?: number | string | null, eeoSurveyRespondedAt?: number | string | null, applicationArchivedAt?: number | string | null, applicationArchivedBy?: string | {} | null, hiredDate?: number | string | null, origin?: string | null, source?: string | null, requisitionCodes?: string[] | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.feedback.create",
+      "shortPath": "feedback.create",
+      "description": "Submit a feedback form for a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "baseTemplateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "panel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldValues",
+            "optional": true,
+            "type": "{ id: string, value: string | number | boolean | null | (string | number | {})[] | {} }[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, panel?: string | {} | null, interview?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null } } | { id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, panel?: string | {} | null, interview?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null }"
+      }
+    },
+    {
+      "path": "lever.api.feedback.delete",
+      "shortPath": "feedback.delete",
+      "description": "Delete a feedback form from a pipeline opportunity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "feedbackId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.feedback.list",
+      "shortPath": "feedback.list",
+      "description": "List feedback forms on a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, panel?: string | {} | null, interview?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.feedback.retrieve",
+      "shortPath": "feedback.retrieve",
+      "description": "Retrieve a single feedback form by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "feedbackId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, panel?: string | {} | null, interview?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.feedback.update",
+      "shortPath": "feedback.update",
+      "description": "Update a feedback form on a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "feedbackId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldValues",
+            "optional": true,
+            "type": "{ id: string, value: string | number | boolean | null | (string | number | {})[] | {} }[]"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, panel?: string | {} | null, interview?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.feedbackTemplates.create",
+      "shortPath": "feedbackTemplates.create",
+      "description": "Create a feedback template for the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ type: string, text: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, group?: string | {} | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, stage?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.feedbackTemplates.delete",
+      "shortPath": "feedbackTemplates.delete",
+      "description": "Delete a feedback template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feedbackTemplateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.feedbackTemplates.list",
+      "shortPath": "feedbackTemplates.list",
+      "description": "List feedback templates configured for the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, group?: string | {} | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, stage?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.feedbackTemplates.retrieve",
+      "shortPath": "feedbackTemplates.retrieve",
+      "description": "Retrieve a single feedback template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feedbackTemplateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, group?: string | {} | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, stage?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.feedbackTemplates.update",
+      "shortPath": "feedbackTemplates.update",
+      "description": "Update a feedback template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ type: string, text: string }[]"
+          },
+          {
+            "key": "feedbackTemplateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, group?: string | {} | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, stage?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a file from a pipeline opportunity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download the raw bytes of an opportunity file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.files.list",
+      "shortPath": "files.list",
+      "description": "List files attached to a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uploaded_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uploaded_at_end",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, downloadUrl?: string | null, ext?: string | null, name?: string | null, uploadedAt?: number | string | null, status?: string | null, size?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.files.retrieve",
+      "shortPath": "files.retrieve",
+      "description": "Retrieve a single file attached to a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, downloadUrl?: string | null, ext?: string | null, name?: string | null, uploadedAt?: number | string | null, status?: string | null, size?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.forms.create",
+      "shortPath": "forms.create",
+      "description": "Submit a form for a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "baseTemplateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ type: string, text: string, value?: string | number | boolean | null | (string | number | {})[] | {} }[]"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, stage?: string | {} | null, secret?: boolean | null, group?: string | {} | null, createdAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null } } | { id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, stage?: string | {} | null, secret?: boolean | null, group?: string | {} | null, createdAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null }"
+      }
+    },
+    {
+      "path": "lever.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List form submissions on a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, stage?: string | {} | null, secret?: boolean | null, group?: string | {} | null, createdAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.forms.retrieve",
+      "shortPath": "forms.retrieve",
+      "description": "Retrieve a single form submission by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, stage?: string | {} | null, secret?: boolean | null, group?: string | {} | null, createdAt?: number | string | null, completedAt?: number | string | null, deletedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.formTemplates.create",
+      "shortPath": "formTemplates.create",
+      "description": "Create a form template for the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secretByDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ type: string, text: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, group?: string | {} | null, secretByDefault?: boolean | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, createdAt?: number | string | null, updatedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.formTemplates.delete",
+      "shortPath": "formTemplates.delete",
+      "description": "Delete a form template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formTemplateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.formTemplates.list",
+      "shortPath": "formTemplates.list",
+      "description": "List form templates configured for the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, group?: string | {} | null, secretByDefault?: boolean | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, createdAt?: number | string | null, updatedAt?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.formTemplates.retrieve",
+      "shortPath": "formTemplates.retrieve",
+      "description": "Retrieve a single form template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formTemplateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, group?: string | {} | null, secretByDefault?: boolean | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, createdAt?: number | string | null, updatedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.formTemplates.update",
+      "shortPath": "formTemplates.update",
+      "description": "Update a form template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secretByDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ type: string, text: string }[]"
+          },
+          {
+            "key": "formTemplateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, group?: string | {} | null, secretByDefault?: boolean | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, createdAt?: number | string | null, updatedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.interviews.create",
+      "shortPath": "interviews.create",
+      "description": "Schedule an interview for a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "panel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interviewers",
+            "optional": false,
+            "type": "{ id: string, feedbackTemplate?: string }[]"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "feedbackTemplate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "feedbackReminder",
+            "optional": true,
+            "type": "once | daily | frequently | none"
+          },
+          {
+            "key": "conferenceData",
+            "optional": true,
+            "type": "{ conferenceUrl: string, conferenceSolution?: string } | null"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ data: { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[], hasNext?: boolean, next?: string } | { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.interviews.delete",
+      "shortPath": "interviews.delete",
+      "description": "Delete a scheduled interview",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interviewId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.interviews.list",
+      "shortPath": "interviews.list",
+      "description": "List interviews scheduled for a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.interviews.retrieve",
+      "shortPath": "interviews.retrieve",
+      "description": "Retrieve a single interview by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interviewId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.interviews.update",
+      "shortPath": "interviews.update",
+      "description": "Update a scheduled interview",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interviewId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "panel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interviewers",
+            "optional": false,
+            "type": "{ id: string, feedbackTemplate?: string }[]"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "feedbackTemplate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "feedbackReminder",
+            "optional": true,
+            "type": "once | daily | frequently | none"
+          },
+          {
+            "key": "conferenceData",
+            "optional": true,
+            "type": "{ conferenceUrl: string, conferenceSolution?: string } | null"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ data: { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[], hasNext?: boolean, next?: string } | { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Add a note to a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notifyFollowers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note_id",
+            "optional": true,
+            "type": "string",
+            "description": "Add this as a threaded comment on an existing note"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ noteId: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Delete a note from a pipeline opportunity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List notes on a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, secret?: boolean | null, completedAt?: number | string | null, createdAt?: number | string | null, deletedAt?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.notes.retrieve",
+      "shortPath": "notes.retrieve",
+      "description": "Retrieve a single note on a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, user?: string | {} | null, secret?: boolean | null, completedAt?: number | string | null, createdAt?: number | string | null, deletedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Update a note on a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "{ value: string, createdAt?: number }[]"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ noteId: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.offers.download",
+      "shortPath": "offers.download",
+      "description": "Download the raw bytes of an offer file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "sent | signed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.offers.list",
+      "shortPath": "offers.list",
+      "description": "List offers for a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: number | string | null, status?: string | null, creator?: string | {} | null, fields?: { text?: string | null, identifier?: string | null, value?: any }[] | null, sentDocument?: { fileName?: string | null, uploadedAt?: number | string | null, downloadUrl?: string | null } | null, signedDocument?: { fileName?: string | null, uploadedAt?: number | string | null, downloadUrl?: string | null } | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.opportunities.addLinks",
+      "shortPath": "opportunities.addLinks",
+      "description": "Add web links (LinkedIn, portfolio) to an opportunity's contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.opportunities.addSources",
+      "shortPath": "opportunities.addSources",
+      "description": "Add sourcing sources to a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.opportunities.addTags",
+      "shortPath": "opportunities.addTags",
+      "description": "Add tags to a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.opportunities.create",
+      "shortPath": "opportunities.create",
+      "description": "Create a pipeline opportunity for a candidate profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          },
+          {
+            "key": "parse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "perform_as_posting_owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value: string, type?: mobile | home | work | skype | other }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "postings",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "agency | applied | internal | referred | sourced | university"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "{ reason: string, archivedAt?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, headline?: string | null, contact?: string | {} | null, emails?: string[] | null, phones?: { type?: string | null, value?: string | null }[] | null, confidentiality?: string | null, location?: string | null, locationDetails?: {} | null, links?: string[] | null, archived?: { archivedAt?: number | string | null, reason?: string | {} | null } | null, tags?: string[] | null, sources?: string[] | null, stageChanges?: {}[] | null, origin?: string | null, sourcedBy?: string | {} | null, owner?: string | {} | null, followers?: (string | {})[] | null, applications?: (string | {})[] | null, stage?: string | {} | null, resume?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, lastInteractionAt?: number | string | null, lastAdvancedAt?: number | string | null, snoozedUntil?: number | string | null, isAnonymized?: boolean | null, dataProtection?: {} | null, urls?: { list?: string | null, show?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.opportunities.list",
+      "shortPath": "opportunities.list",
+      "description": "List pipeline opportunities with filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "confidentiality",
+            "optional": true,
+            "type": "confidential | non-confidential | all"
+          },
+          {
+            "key": "stage_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "posting_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "archived_posting_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "created_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "advanced_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "advanced_at_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived_at_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archive_reason_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "snoozed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, headline?: string | null, contact?: string | {} | null, emails?: string[] | null, phones?: { type?: string | null, value?: string | null }[] | null, confidentiality?: string | null, location?: string | null, locationDetails?: {} | null, links?: string[] | null, archived?: { archivedAt?: number | string | null, reason?: string | {} | null } | null, tags?: string[] | null, sources?: string[] | null, stageChanges?: {}[] | null, origin?: string | null, sourcedBy?: string | {} | null, owner?: string | {} | null, followers?: (string | {})[] | null, applications?: (string | {})[] | null, stage?: string | {} | null, resume?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, lastInteractionAt?: number | string | null, lastAdvancedAt?: number | string | null, snoozedUntil?: number | string | null, isAnonymized?: boolean | null, dataProtection?: {} | null, urls?: { list?: string | null, show?: string | null } | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.opportunities.listDeleted",
+      "shortPath": "opportunities.listDeleted",
+      "description": "List deleted pipeline opportunities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "deleted_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deleted_at_end",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, deletedAt?: number | string | null, opportunityId?: string | null, postingId?: string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.opportunities.listFileActions",
+      "shortPath": "opportunities.listFileActions",
+      "description": "List file actions recorded for a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "occurred_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "occurred_at_end",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, opportunityId?: string | null, type?: string | null, occurredAt?: number | string | null, createdAt?: number | string | null, user?: string | {} | null, meta?: {} | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.opportunities.removeLinks",
+      "shortPath": "opportunities.removeLinks",
+      "description": "Remove web links from an opportunity's contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.opportunities.removeSources",
+      "shortPath": "opportunities.removeSources",
+      "description": "Remove sourcing sources from a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.opportunities.removeTags",
+      "shortPath": "opportunities.removeTags",
+      "description": "Remove tags from a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.opportunities.retrieve",
+      "shortPath": "opportunities.retrieve",
+      "description": "Retrieve a single pipeline opportunity by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, headline?: string | null, contact?: string | {} | null, emails?: string[] | null, phones?: { type?: string | null, value?: string | null }[] | null, confidentiality?: string | null, location?: string | null, locationDetails?: {} | null, links?: string[] | null, archived?: { archivedAt?: number | string | null, reason?: string | {} | null } | null, tags?: string[] | null, sources?: string[] | null, stageChanges?: {}[] | null, origin?: string | null, sourcedBy?: string | {} | null, owner?: string | {} | null, followers?: (string | {})[] | null, applications?: (string | {})[] | null, stage?: string | {} | null, resume?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, lastInteractionAt?: number | string | null, lastAdvancedAt?: number | string | null, snoozedUntil?: number | string | null, isAnonymized?: boolean | null, dataProtection?: {} | null, urls?: { list?: string | null, show?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.opportunities.updateArchivedState",
+      "shortPath": "opportunities.updateArchivedState",
+      "description": "Archive or unarchive a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "cleanInterviews",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requisitionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, headline?: string | null, contact?: string | {} | null, emails?: string[] | null, phones?: { type?: string | null, value?: string | null }[] | null, confidentiality?: string | null, location?: string | null, locationDetails?: {} | null, links?: string[] | null, archived?: { archivedAt?: number | string | null, reason?: string | {} | null } | null, tags?: string[] | null, sources?: string[] | null, stageChanges?: {}[] | null, origin?: string | null, sourcedBy?: string | {} | null, owner?: string | {} | null, followers?: (string | {})[] | null, applications?: (string | {})[] | null, stage?: string | {} | null, resume?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, lastInteractionAt?: number | string | null, lastAdvancedAt?: number | string | null, snoozedUntil?: number | string | null, isAnonymized?: boolean | null, dataProtection?: {} | null, urls?: { list?: string | null, show?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.opportunities.updateStage",
+      "shortPath": "opportunities.updateStage",
+      "description": "Move a pipeline opportunity to a different hiring stage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stage",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "perform_as",
+            "optional": true,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, headline?: string | null, contact?: string | {} | null, emails?: string[] | null, phones?: { type?: string | null, value?: string | null }[] | null, confidentiality?: string | null, location?: string | null, locationDetails?: {} | null, links?: string[] | null, archived?: { archivedAt?: number | string | null, reason?: string | {} | null } | null, tags?: string[] | null, sources?: string[] | null, stageChanges?: {}[] | null, origin?: string | null, sourcedBy?: string | {} | null, owner?: string | {} | null, followers?: (string | {})[] | null, applications?: (string | {})[] | null, stage?: string | {} | null, resume?: string | {} | null, createdAt?: number | string | null, updatedAt?: number | string | null, lastInteractionAt?: number | string | null, lastAdvancedAt?: number | string | null, snoozedUntil?: number | string | null, isAnonymized?: boolean | null, dataProtection?: {} | null, urls?: { list?: string | null, show?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.panels.create",
+      "shortPath": "panels.create",
+      "description": "Create an interview panel for a pipeline opportunity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applications",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "feedbackReminder",
+            "optional": true,
+            "type": "once | daily | frequently | none"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interviews",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ data: { id: string, applications?: (string | {})[] | null, canceledAt?: number | string | null, createdAt?: number | string | null, start?: number | string | null, end?: number | string | null, timezone?: string | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, note?: string | null, externallyManaged?: boolean | null, externalUrl?: string | null, interviews?: { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[] | null }[], hasNext?: boolean, next?: string } | { id: string, applications?: (string | {})[] | null, canceledAt?: number | string | null, createdAt?: number | string | null, start?: number | string | null, end?: number | string | null, timezone?: string | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, note?: string | null, externallyManaged?: boolean | null, externalUrl?: string | null, interviews?: { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.panels.delete",
+      "shortPath": "panels.delete",
+      "description": "Delete an interview panel",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "panelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.panels.list",
+      "shortPath": "panels.list",
+      "description": "List interview panels for a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, applications?: (string | {})[] | null, canceledAt?: number | string | null, createdAt?: number | string | null, start?: number | string | null, end?: number | string | null, timezone?: string | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, note?: string | null, externallyManaged?: boolean | null, externalUrl?: string | null, interviews?: { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[] | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.panels.retrieve",
+      "shortPath": "panels.retrieve",
+      "description": "Retrieve a single interview panel by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "panelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, applications?: (string | {})[] | null, canceledAt?: number | string | null, createdAt?: number | string | null, start?: number | string | null, end?: number | string | null, timezone?: string | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, note?: string | null, externallyManaged?: boolean | null, externalUrl?: string | null, interviews?: { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.panels.update",
+      "shortPath": "panels.update",
+      "description": "Update an interview panel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "panelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "applications",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "feedbackReminder",
+            "optional": true,
+            "type": "once | daily | frequently | none"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interviews",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ data: { id: string, applications?: (string | {})[] | null, canceledAt?: number | string | null, createdAt?: number | string | null, start?: number | string | null, end?: number | string | null, timezone?: string | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, note?: string | null, externallyManaged?: boolean | null, externalUrl?: string | null, interviews?: { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[] | null }[], hasNext?: boolean, next?: string } | { id: string, applications?: (string | {})[] | null, canceledAt?: number | string | null, createdAt?: number | string | null, start?: number | string | null, end?: number | string | null, timezone?: string | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, note?: string | null, externallyManaged?: boolean | null, externalUrl?: string | null, interviews?: { id: string, panel?: string | {} | null, subject?: string | null, note?: string | null, interviewers?: {}[] | null, timezone?: string | null, createdAt?: number | string | null, date?: number | string | null, duration?: number | null, location?: string | null, feedbackTemplate?: string | {} | null, feedbackForms?: (string | {})[] | null, feedbackReminder?: string | null, user?: string | {} | null, stage?: string | {} | null, canceledAt?: number | string | null, postings?: (string | {})[] | null, gcalEventUrl?: string | null, conferences?: {}[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.postings.apply",
+      "shortPath": "postings.apply",
+      "description": "Submit an application to a job posting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "send_confirmation_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "personalInformation",
+            "optional": false,
+            "type": "{ name: string, value: string }[]"
+          },
+          {
+            "key": "customQuestions",
+            "optional": true,
+            "type": "{ id: string, fields: { value: string | number | boolean | null | (string | number | {})[] | {} }[] }[]"
+          },
+          {
+            "key": "eeoResponses",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ name: string, value: string }[]"
+          },
+          {
+            "key": "ipAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "consent",
+            "optional": true,
+            "type": "{ marketing: boolean }"
+          },
+          {
+            "key": "diversitySurvey",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "applied | internal"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ applicationId: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.postings.create",
+      "shortPath": "postings.create",
+      "description": "Create a job posting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "published | internal | closed | draft | pending | rejected"
+          },
+          {
+            "key": "distributionChannels",
+            "optional": true,
+            "type": "(public | internal)[]"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hiringManager",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ team?: string, department?: string, location?: string, commitment?: string, locationDetails?: {} }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ descriptionHtml?: string, lists?: { text: string, content: string }[], closingPostingHtml?: string }"
+          },
+          {
+            "key": "workplaceType",
+            "optional": true,
+            "type": "onsite | remote | hybrid | unspecified"
+          },
+          {
+            "key": "requisitionCodes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "salaryDescriptionHtml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "salaryRange",
+            "optional": true,
+            "type": "{ min?: number, max?: number, currency?: string, interval?: string }"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, createdAt?: number | string | null, updatedAt?: number | string | null, user?: string | {} | null, owner?: string | {} | null, hiringManager?: string | {} | null, confidentiality?: string | null, categories?: { team?: string | null, department?: string | null, location?: string | null, commitment?: string | null, level?: string | null, allLocations?: string[] | null } | null, content?: {} | null, country?: string | null, followers?: (string | {})[] | null, tags?: string[] | null, state?: string | null, distributionChannels?: string[] | null, reqCode?: string | null, requisitionCodes?: string[] | null, salaryDescription?: string | null, salaryDescriptionHtml?: string | null, salaryRange?: {} | null, urls?: {} | null, workplaceType?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.postings.list",
+      "shortPath": "postings.list",
+      "description": "List job postings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "distributionChannel",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "confidentiality",
+            "optional": true,
+            "type": "confidential | non-confidential | all"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "location | team | department | commitment"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "commitment",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "level",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "updated_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at_end",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, createdAt?: number | string | null, updatedAt?: number | string | null, user?: string | {} | null, owner?: string | {} | null, hiringManager?: string | {} | null, confidentiality?: string | null, categories?: { team?: string | null, department?: string | null, location?: string | null, commitment?: string | null, level?: string | null, allLocations?: string[] | null } | null, content?: {} | null, country?: string | null, followers?: (string | {})[] | null, tags?: string[] | null, state?: string | null, distributionChannels?: string[] | null, reqCode?: string | null, requisitionCodes?: string[] | null, salaryDescription?: string | null, salaryDescriptionHtml?: string | null, salaryRange?: {} | null, urls?: {} | null, workplaceType?: string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.postings.listDeleted",
+      "shortPath": "postings.listDeleted",
+      "description": "List deleted job postings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "deleted_at_start",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted_at_end",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, deletedAt?: number | string | null, opportunityId?: string | null, postingId?: string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.postings.listUsers",
+      "shortPath": "postings.listUsers",
+      "description": "List users with access to a job posting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ posting: { id: string, text?: string | null }, users?: { id: string, name?: string | null, email?: string | null, inheritedFromRoleId?: string | null, conditions?: {} | null }[] | null, roles?: { id: string, name?: string | null, isReadOnly?: boolean | null, conditions?: {} | null }[] | null } | { data: { posting: { id: string, text?: string | null }, users?: { id: string, name?: string | null, email?: string | null, inheritedFromRoleId?: string | null, conditions?: {} | null }[] | null, roles?: { id: string, name?: string | null, isReadOnly?: boolean | null, conditions?: {} | null }[] | null } }"
+      }
+    },
+    {
+      "path": "lever.api.postings.retrieve",
+      "shortPath": "postings.retrieve",
+      "description": "Retrieve a single job posting by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, createdAt?: number | string | null, updatedAt?: number | string | null, user?: string | {} | null, owner?: string | {} | null, hiringManager?: string | {} | null, confidentiality?: string | null, categories?: { team?: string | null, department?: string | null, location?: string | null, commitment?: string | null, level?: string | null, allLocations?: string[] | null } | null, content?: {} | null, country?: string | null, followers?: (string | {})[] | null, tags?: string[] | null, state?: string | null, distributionChannels?: string[] | null, reqCode?: string | null, requisitionCodes?: string[] | null, salaryDescription?: string | null, salaryDescriptionHtml?: string | null, salaryRange?: {} | null, urls?: {} | null, workplaceType?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.postings.retrieveApplicationQuestions",
+      "shortPath": "postings.retrieveApplicationQuestions",
+      "description": "Retrieve the application questions configured for a posting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, customQuestions?: {}[] | null, personalInformation?: {}[] | null, urls?: {}[] | null, eeoQuestions?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.postings.update",
+      "shortPath": "postings.update",
+      "description": "Update an existing job posting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "published | internal | closed | draft | pending | rejected"
+          },
+          {
+            "key": "distributionChannels",
+            "optional": true,
+            "type": "(public | internal)[]"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hiringManager",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ team?: string, department?: string, location?: string, commitment?: string, locationDetails?: {} }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ descriptionHtml?: string, lists?: { text: string, content: string }[], closingPostingHtml?: string }"
+          },
+          {
+            "key": "workplaceType",
+            "optional": true,
+            "type": "onsite | remote | hybrid | unspecified"
+          },
+          {
+            "key": "requisitionCodes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "salaryDescriptionHtml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "salaryRange",
+            "optional": true,
+            "type": "{ min?: number, max?: number, currency?: string, interval?: string }"
+          },
+          {
+            "key": "perform_as",
+            "optional": false,
+            "type": "string",
+            "description": "Lever user ID to perform this action as (sent as the perform_as query parameter)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, createdAt?: number | string | null, updatedAt?: number | string | null, user?: string | {} | null, owner?: string | {} | null, hiringManager?: string | {} | null, confidentiality?: string | null, categories?: { team?: string | null, department?: string | null, location?: string | null, commitment?: string | null, level?: string | null, allLocations?: string[] | null } | null, content?: {} | null, country?: string | null, followers?: (string | {})[] | null, tags?: string[] | null, state?: string | null, distributionChannels?: string[] | null, reqCode?: string | null, requisitionCodes?: string[] | null, salaryDescription?: string | null, salaryDescriptionHtml?: string | null, salaryRange?: {} | null, urls?: {} | null, workplaceType?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.referrals.list",
+      "shortPath": "referrals.list",
+      "description": "List referrals on a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, referrer?: string | {} | null, user?: string | {} | null, stage?: string | {} | null, createdAt?: number | string | null, completedAt?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.referrals.retrieve",
+      "shortPath": "referrals.retrieve",
+      "description": "Retrieve a single referral by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "referralId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, text?: string | null, instructions?: string | null, baseTemplateId?: string | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, referrer?: string | {} | null, user?: string | {} | null, stage?: string | {} | null, createdAt?: number | string | null, completedAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitionFields.addOptions",
+      "shortPath": "requisitionFields.addOptions",
+      "description": "Add dropdown options to a requisition field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionFieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "{ text: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, type?: string | null, isRequired?: boolean | null, subfields?: {}[] | null, options?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitionFields.create",
+      "shortPath": "requisitionFields.create",
+      "description": "Create a requisition field for the workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "One of number, text, date, object or dropdown"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subfields",
+            "optional": true,
+            "type": "{ id: string, text: string, type: number | text | date }[]"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ text: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, type?: string | null, isRequired?: boolean | null, subfields?: {}[] | null, options?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitionFields.delete",
+      "shortPath": "requisitionFields.delete",
+      "description": "Delete a requisition field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionFieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.requisitionFields.deleteOptions",
+      "shortPath": "requisitionFields.deleteOptions",
+      "description": "Remove dropdown option values from a requisition field",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionFieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.requisitionFields.list",
+      "shortPath": "requisitionFields.list",
+      "description": "List requisition fields configured for the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number | text | date | object | dropdown"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, type?: string | null, isRequired?: boolean | null, subfields?: {}[] | null, options?: {}[] | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitionFields.replaceOptions",
+      "shortPath": "requisitionFields.replaceOptions",
+      "description": "Replace the dropdown options of a requisition field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionFieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "{ id?: string, text: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, type?: string | null, isRequired?: boolean | null, subfields?: {}[] | null, options?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitionFields.retrieve",
+      "shortPath": "requisitionFields.retrieve",
+      "description": "Retrieve a single requisition field by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionFieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, type?: string | null, isRequired?: boolean | null, subfields?: {}[] | null, options?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitionFields.update",
+      "shortPath": "requisitionFields.update",
+      "description": "Update a requisition field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "One of number, text, date, object or dropdown"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subfields",
+            "optional": true,
+            "type": "{ id: string, text: string, type: number | text | date }[]"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ text: string }[]"
+          },
+          {
+            "key": "requisitionFieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, type?: string | null, isRequired?: boolean | null, subfields?: {}[] | null, options?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitions.create",
+      "shortPath": "requisitions.create",
+      "description": "Create a requisition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionCode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headcountTotal",
+            "optional": false,
+            "type": "number | unlimited"
+          },
+          {
+            "key": "backfill",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "compensationBand",
+            "optional": true,
+            "type": "{ currency?: string, interval?: string, min?: number, max?: number }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "employmentStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hiringManager",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | open | closed | onHold"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postingIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, requisitionCode?: string | null, name?: string | null, backfill?: boolean | null, confidentiality?: string | null, createdAt?: number | string | null, creator?: string | {} | null, headcountHired?: number | null, headcountTotal?: number | string | null, status?: string | null, hiringManager?: string | {} | null, owner?: string | {} | null, compensationBand?: {} | null, employmentStatus?: string | null, location?: string | null, internalNotes?: string | null, postings?: (string | {})[] | null, department?: string | null, team?: string | null, offerIds?: string[] | null, approval?: {} | null, customFields?: {} | null, timeToFillStartAt?: number | string | null, timeToFillEndAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitions.delete",
+      "shortPath": "requisitions.delete",
+      "description": "Delete a requisition",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.requisitions.list",
+      "shortPath": "requisitions.list",
+      "description": "List requisitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "created_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "requisition_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidentiality",
+            "optional": true,
+            "type": "confidential | non-confidential | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, requisitionCode?: string | null, name?: string | null, backfill?: boolean | null, confidentiality?: string | null, createdAt?: number | string | null, creator?: string | {} | null, headcountHired?: number | null, headcountTotal?: number | string | null, status?: string | null, hiringManager?: string | {} | null, owner?: string | {} | null, compensationBand?: {} | null, employmentStatus?: string | null, location?: string | null, internalNotes?: string | null, postings?: (string | {})[] | null, department?: string | null, team?: string | null, offerIds?: string[] | null, approval?: {} | null, customFields?: {} | null, timeToFillStartAt?: number | string | null, timeToFillEndAt?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitions.retrieve",
+      "shortPath": "requisitions.retrieve",
+      "description": "Retrieve a single requisition by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, requisitionCode?: string | null, name?: string | null, backfill?: boolean | null, confidentiality?: string | null, createdAt?: number | string | null, creator?: string | {} | null, headcountHired?: number | null, headcountTotal?: number | string | null, status?: string | null, hiringManager?: string | {} | null, owner?: string | {} | null, compensationBand?: {} | null, employmentStatus?: string | null, location?: string | null, internalNotes?: string | null, postings?: (string | {})[] | null, department?: string | null, team?: string | null, offerIds?: string[] | null, approval?: {} | null, customFields?: {} | null, timeToFillStartAt?: number | string | null, timeToFillEndAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.requisitions.update",
+      "shortPath": "requisitions.update",
+      "description": "Update a requisition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitionCode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headcountTotal",
+            "optional": false,
+            "type": "number | unlimited"
+          },
+          {
+            "key": "backfill",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "compensationBand",
+            "optional": true,
+            "type": "{ currency?: string, interval?: string, min?: number, max?: number }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "employmentStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hiringManager",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | open | closed | onHold"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postingIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "requisitionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, requisitionCode?: string | null, name?: string | null, backfill?: boolean | null, confidentiality?: string | null, createdAt?: number | string | null, creator?: string | {} | null, headcountHired?: number | null, headcountTotal?: number | string | null, status?: string | null, hiringManager?: string | {} | null, owner?: string | {} | null, compensationBand?: {} | null, employmentStatus?: string | null, location?: string | null, internalNotes?: string | null, postings?: (string | {})[] | null, department?: string | null, team?: string | null, offerIds?: string[] | null, approval?: {} | null, customFields?: {} | null, timeToFillStartAt?: number | string | null, timeToFillEndAt?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.resumes.download",
+      "shortPath": "resumes.download",
+      "description": "Download the raw bytes of an opportunity resume",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resumeId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.resumes.list",
+      "shortPath": "resumes.list",
+      "description": "List resumes attached to a pipeline opportunity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uploaded_at_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uploaded_at_end",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: number | string | null, file?: { name?: string | null, ext?: string | null, downloadUrl?: string | null, uploadedAt?: number | string | null, status?: string | null, size?: number | string | null } | null, parsedData?: {} | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.resumes.retrieve",
+      "shortPath": "resumes.retrieve",
+      "description": "Retrieve a single resume by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resumeId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, createdAt?: number | string | null, file?: { name?: string | null, ext?: string | null, downloadUrl?: string | null, uploadedAt?: number | string | null, status?: string | null, size?: number | string | null } | null, parsedData?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.sources.list",
+      "shortPath": "sources.list",
+      "description": "List sourcing sources configured for the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ text: string, count?: number | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.stages.list",
+      "shortPath": "stages.list",
+      "description": "List hiring stages configured for the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.stages.retrieve",
+      "shortPath": "stages.retrieve",
+      "description": "Retrieve a single hiring stage by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.surveys.retrieveDiversity",
+      "shortPath": "surveys.retrieveDiversity",
+      "description": "Retrieve the diversity survey for a job posting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string | null, instructions?: string | null, candidateLocations?: {} | null, fields?: { id?: string | null, type?: string | null, text?: string | null, description?: string | null, required?: boolean | null, value?: any, options?: {}[] | null }[] | null, createdAt?: number | string | null, updatedAt?: number | string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags configured for the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ text: string, count?: number | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a workspace user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accessRole",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalDirectoryId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "managerId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, username?: string | null, email?: string | null, accessRole?: string | null, photo?: string | null, createdAt?: number | string | null, deactivatedAt?: number | string | null, externalDirectoryId?: string | null, linkedContactIds?: string[] | null, jobTitle?: string | null, managerId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.users.deactivate",
+      "shortPath": "users.deactivate",
+      "description": "Deactivate a workspace user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, username?: string | null, email?: string | null, accessRole?: string | null, photo?: string | null, createdAt?: number | string | null, deactivatedAt?: number | string | null, externalDirectoryId?: string | null, linkedContactIds?: string[] | null, jobTitle?: string | null, managerId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.users.list",
+      "shortPath": "users.list",
+      "description": "List workspace users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` token returned by the previous page"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accessRole",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeDeactivated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_directory_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, username?: string | null, email?: string | null, accessRole?: string | null, photo?: string | null, createdAt?: number | string | null, deactivatedAt?: number | string | null, externalDirectoryId?: string | null, linkedContactIds?: string[] | null, jobTitle?: string | null, managerId?: string | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.users.reactivate",
+      "shortPath": "users.reactivate",
+      "description": "Reactivate a workspace user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, username?: string | null, email?: string | null, accessRole?: string | null, photo?: string | null, createdAt?: number | string | null, deactivatedAt?: number | string | null, externalDirectoryId?: string | null, linkedContactIds?: string[] | null, jobTitle?: string | null, managerId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.users.retrieve",
+      "shortPath": "users.retrieve",
+      "description": "Retrieve a single workspace user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, username?: string | null, email?: string | null, accessRole?: string | null, photo?: string | null, createdAt?: number | string | null, deactivatedAt?: number | string | null, externalDirectoryId?: string | null, linkedContactIds?: string[] | null, jobTitle?: string | null, managerId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a workspace user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accessRole",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalDirectoryId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "managerId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, username?: string | null, email?: string | null, accessRole?: string | null, photo?: string | null, createdAt?: number | string | null, deactivatedAt?: number | string | null, externalDirectoryId?: string | null, linkedContactIds?: string[] | null, jobTitle?: string | null, managerId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ data: { id: string, url?: string | null, event?: string | null, createdAt?: number | string | null, updatedAt?: number | string | null, configuration?: {} | null } } | { id: string, url?: string | null, event?: string | null, createdAt?: number | string | null, updatedAt?: number | string | null, configuration?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a registered webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | undefined"
+      }
+    },
+    {
+      "path": "lever.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List registered webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, url?: string | null, event?: string | null, createdAt?: number | string | null, updatedAt?: number | string | null, configuration?: {} | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lever.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a registered webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, url?: string | null, event?: string | null, createdAt?: number | string | null, updatedAt?: number | string | null, configuration?: {} | null }[]"
+          },
+          {
+            "key": "hasNext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

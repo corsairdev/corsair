@@ -175,7 +175,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ open?: number | null, high?: number | null, low?: number | null, close?: number | null, volume?: number | null, adj_high?: number | null, adj_low?: number | null, adj_close?: number | null, adj_open?: number | null, adj_volume?: number | null, split_factor?: number | null, dividend?: number | null, name?: string, exchange_code?: string, asset_type?: string, price_currency?: string, symbol: string, exchange?: string, date: string }[]"
+            "type": "{ open: number | null, high: number | null, low: number | null, close: number | null, volume: number | null, adj_high?: number | null, adj_low?: number | null, adj_close?: number | null, adj_open?: number | null, adj_volume?: number | null, split_factor?: number | null, dividend?: number | null, name?: string, exchange_code?: string, asset_type?: string, price_currency?: string, symbol: string, exchange?: string, date: string }[]"
           }
         ]
       }
@@ -207,7 +207,7 @@
           {
             "key": "acronym",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mic",
@@ -217,22 +217,22 @@
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "operating_mic",
@@ -267,27 +267,27 @@
           {
             "key": "date_creation",
             "optional": true,
-            "type": "string | { date?: string, timezone_type?: number, timezone?: string }"
+            "type": "string | { date?: string, timezone_type?: number, timezone?: string } | null"
           },
           {
             "key": "date_last_update",
             "optional": true,
-            "type": "string | { date?: string, timezone_type?: number, timezone?: string }"
+            "type": "string | { date?: string, timezone_type?: number, timezone?: string } | null"
           },
           {
             "key": "date_last_validation",
             "optional": true,
-            "type": "string | { date?: string, timezone_type?: number, timezone?: string }"
+            "type": "string | { date?: string, timezone_type?: number, timezone?: string } | null"
           },
           {
             "key": "date_expiry",
             "optional": true,
-            "type": "string | { date?: string, timezone_type?: number, timezone?: string }"
+            "type": "string | { date?: string, timezone_type?: number, timezone?: string } | null"
           },
           {
             "key": "comments",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -434,7 +434,7 @@
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cik",
@@ -556,7 +556,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ open?: number | null, high?: number | null, low?: number | null, close?: number | null, volume?: number | null, adj_high?: number | null, adj_low?: number | null, adj_close?: number | null, adj_open?: number | null, adj_volume?: number | null, split_factor?: number | null, dividend?: number | null, name?: string, exchange_code?: string, asset_type?: string, price_currency?: string, symbol: string, exchange?: string, date: string }[]"
+            "type": "{ open: number | null, high: number | null, low: number | null, close: number | null, volume: number | null, adj_high?: number | null, adj_low?: number | null, adj_close?: number | null, adj_open?: number | null, adj_volume?: number | null, split_factor?: number | null, dividend?: number | null, name?: string, exchange_code?: string, asset_type?: string, price_currency?: string, symbol: string, exchange?: string, date: string }[]"
           }
         ]
       }
@@ -582,63 +582,63 @@
         "fields": [
           {
             "key": "open",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "high",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "low",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "close",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "volume",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "adj_high",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "adj_low",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "adj_close",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "adj_open",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "adj_volume",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "split_factor",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "dividend",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",

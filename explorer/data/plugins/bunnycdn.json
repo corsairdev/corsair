@@ -1,7 +1,7 @@
 {
   "id": "bunnycdn",
-  "displayName": "Bunnycdn",
-  "description": "Bunnycdn plugin for Corsair",
+  "displayName": "bunny.net",
+  "description": "Edge platform API for managing pull zones, storage zones, DNS zones, Shield security, and Magic Containers, purging cache, and reading statistics and billing.",
   "npmPackageName": "@corsair-dev/bunnycdn",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -760,12 +760,12 @@
           {
             "key": "Name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "OriginUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Enabled",
@@ -780,7 +780,7 @@
           {
             "key": "Hostnames",
             "optional": true,
-            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[]"
+            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[] | null"
           },
           {
             "key": "StorageZoneId",
@@ -954,12 +954,12 @@
           {
             "key": "Name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "OriginUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Enabled",
@@ -974,7 +974,7 @@
           {
             "key": "Hostnames",
             "optional": true,
-            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[]"
+            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[] | null"
           },
           {
             "key": "StorageZoneId",
@@ -1382,12 +1382,12 @@
           {
             "key": "Name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "OriginUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "Enabled",
@@ -1402,7 +1402,7 @@
           {
             "key": "Hostnames",
             "optional": true,
-            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[]"
+            "type": "{ Id?: number, Value?: string | null, ForceSSL?: boolean, HasCertificate?: boolean }[] | null"
           },
           {
             "key": "StorageZoneId",

@@ -84,18 +84,21 @@
           },
           {
             "key": "zoom",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 14."
           },
           {
             "key": "width",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 800."
           },
           {
             "key": "height",
-            "optional": false,
-            "type": "number"
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 400."
           },
           {
             "key": "format",
@@ -146,7 +149,7 @@
           {
             "key": "regionDefinition",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Defaults to { type: \"world\" }."
           },
           {
@@ -187,7 +190,7 @@
           {
             "key": "matrix",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -223,12 +226,12 @@
           {
             "key": "routes",
             "optional": true,
-            "type": "{ id?: string, sections?: {}[] }[]"
+            "type": "{ id?: string, sections?: Record<string, any>[] }[]"
           },
           {
             "key": "notices",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -297,7 +300,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -318,13 +321,15 @@
           },
           {
             "key": "transportMode",
-            "optional": false,
-            "type": "car | truck | pedestrian | bicycle"
+            "optional": true,
+            "type": "car | truck | pedestrian | bicycle",
+            "description": "Defaults to \"car\"."
           },
           {
             "key": "rangeType",
-            "optional": false,
-            "type": "time | distance | consumption"
+            "optional": true,
+            "type": "time | distance | consumption",
+            "description": "Defaults to \"time\"."
           },
           {
             "key": "rangeValues",
@@ -345,7 +350,7 @@
           {
             "key": "isolines",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -412,7 +417,7 @@
           {
             "key": "matrix",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -439,8 +444,9 @@
           },
           {
             "key": "transportMode",
-            "optional": false,
-            "type": "car | truck | pedestrian | bicycle | scooter | taxi | bus"
+            "optional": true,
+            "type": "car | truck | pedestrian | bicycle | scooter | taxi | bus",
+            "description": "Defaults to \"car\"."
           },
           {
             "key": "via",
@@ -476,12 +482,12 @@
           {
             "key": "routes",
             "optional": true,
-            "type": "{ id?: string, sections?: {}[] }[]"
+            "type": "{ id?: string, sections?: Record<string, any>[] }[]"
           },
           {
             "key": "notices",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -501,7 +507,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -528,8 +534,9 @@
           },
           {
             "key": "transportMode",
-            "optional": false,
-            "type": "car | truck | pedestrian | bicycle | scooter | taxi | bus"
+            "optional": true,
+            "type": "car | truck | pedestrian | bicycle | scooter | taxi | bus",
+            "description": "Defaults to \"car\"."
           },
           {
             "key": "via",
@@ -560,7 +567,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Avoid areas, EV, or other POST-only Routing v8 fields."
           }
         ]
@@ -571,12 +578,12 @@
           {
             "key": "routes",
             "optional": true,
-            "type": "{ id?: string, sections?: {}[] }[]"
+            "type": "{ id?: string, sections?: Record<string, any>[] }[]"
           },
           {
             "key": "notices",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -960,12 +967,12 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1008,7 +1015,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "sourceUpdated",
@@ -1046,7 +1053,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "sourceUpdated",
@@ -1089,7 +1096,7 @@
           {
             "key": "boards",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1126,12 +1133,12 @@
           {
             "key": "stations",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "boards",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }

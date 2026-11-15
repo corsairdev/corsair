@@ -1,0 +1,14 @@
+displayName: BigPicture.io
+description: Company data API for finding company details by domain or IP address and streaming a company lookup until it completes.
+domain: bigpicture.io
+examples:
+  read:
+    path: ip.find
+    title: Find a company by IP
+    args:
+      ip: 8.8.8.8
+  write:
+    path: company.find
+    title: Find a company by domain
+    args:
+      domain: stripe.com

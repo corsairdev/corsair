@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Zoom: every `zoom.api.*` operation with input and output types."
+title: "Zoom API reference"
+sidebarTitle: "API"
+description: "API reference for the Zoom plugin in Corsair: every `zoom.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `zoom.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -60,8 +59,7 @@ await corsair.zoom.api.archiveFiles.list({});
   file_count?: number,
   file_size?: number,
   status?: string,
-  archive_files?: {
-  }[]
+  archive_files?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -369,27 +367,9 @@ await corsair.zoom.api.meetings.getSummary({});
 | `summary_last_modified_time` | `string` | No | — |
 | `summary_title` | `string` | No | — |
 | `summary_overview` | `string` | No | — |
-| `summary_details` | `object[]` | No | — |
+| `summary_details` | `Record<string, any>[]` | No | — |
 | `next_steps` | `string[]` | No | — |
-| `edited_summary` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="summary_details full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="edited_summary full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `edited_summary` | `Record<string, any>` | No | — |
 
 
 

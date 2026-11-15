@@ -11,10 +11,12 @@ import { PostHogEndpointOutputSchemas } from './endpoints/types';
 
 type AssertExactType<T, U> = T extends U ? (U extends T ? true : never) : never;
 
-const TEST_API_KEY = process.env.POSTHOG_API_KEY!;
+// Live capture checks; they need a project token (phc_...) and skip without one.
+const TEST_API_KEY = process.env.POSTHOG_API_KEY ?? '';
+const describeIfApiKey = TEST_API_KEY ? describe : describe.skip;
 const TEST_DISTINCT_ID = `test-${Date.now()}`;
 
-describe('PostHog API Type Tests', () => {
+describeIfApiKey('PostHog API Type Tests', () => {
 	describe('events', () => {
 		it('eventCreate returns correct type', async () => {
 			const response = await makePostHogRequest<CreateEventResponse>(

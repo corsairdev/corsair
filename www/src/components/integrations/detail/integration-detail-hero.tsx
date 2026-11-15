@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
 import { IntegrationStats } from '@/components/integrations/integration-stats';
 import type { IntegrationDetailData } from '@/lib/integration-page.types';
+import { withMcp } from '@/lib/integration-seo';
 
 export function IntegrationDetailHero({
 	integration,
@@ -34,6 +35,9 @@ export function IntegrationDetailHero({
 							<span className="font-[family-name:var(--landing-font-serif)]">
 								{integration.displayName}
 							</span>
+							{integration.displayName === withMcp(integration.displayName)
+								? ' server'
+								: ' MCP server'}
 						</h1>
 						<div className="mt-2">
 							<IntegrationStats counts={integration.counts} />

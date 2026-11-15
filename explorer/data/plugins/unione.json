@@ -168,7 +168,7 @@
           {
             "key": "recipients",
             "optional": false,
-            "type": "{ email: string, substitutions?: {}, metadata?: {} }[]"
+            "type": "{ email: string, substitutions?: Record<string, string>, metadata?: Record<string, string> }[]"
           },
           {
             "key": "from_email",
@@ -218,12 +218,12 @@
           {
             "key": "global_substitutions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "global_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "track_links",
@@ -263,7 +263,7 @@
           {
             "key": "failed_emails",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -279,7 +279,7 @@
           {
             "key": "recipients",
             "optional": false,
-            "type": "{ email: string, substitutions?: {}, metadata?: {} }[]"
+            "type": "{ email: string, substitutions?: Record<string, string>, metadata?: Record<string, string> }[]"
           },
           {
             "key": "from_email",
@@ -329,12 +329,12 @@
           {
             "key": "global_substitutions",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "global_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "track_links",
@@ -369,7 +369,7 @@
           {
             "key": "failed_emails",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -835,7 +835,7 @@
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1014,7 +1014,7 @@
           {
             "key": "template",
             "optional": true,
-            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: {}, global_metadata?: {}, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: {}, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
+            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: Record<string, string>, global_metadata?: Record<string, string>, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: Record<string, string>, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
           }
         ]
       }
@@ -1050,7 +1050,7 @@
           {
             "key": "templates",
             "optional": true,
-            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: {}, global_metadata?: {}, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: {}, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }[]"
+            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: Record<string, string>, global_metadata?: Record<string, string>, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: Record<string, string>, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }[]"
           }
         ]
       }
@@ -1066,7 +1066,7 @@
           {
             "key": "template",
             "optional": false,
-            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: {}, global_metadata?: {}, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: {}, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
+            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: Record<string, string>, global_metadata?: Record<string, string>, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: Record<string, string>, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
           }
         ]
       },
@@ -1081,7 +1081,7 @@
           {
             "key": "template",
             "optional": true,
-            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: {}, global_metadata?: {}, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: {}, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
+            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: Record<string, string>, global_metadata?: Record<string, string>, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: Record<string, string>, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
           }
         ]
       }

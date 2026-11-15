@@ -1,0 +1,38 @@
+displayName: Excel
+description: Read and write Excel workbooks in OneDrive for Business or SharePoint through Microsoft Graph.
+domain: graph.microsoft.com
+recommendedAuth: oauth_2
+examples:
+  read:
+    path: ranges.get
+    title: Read a range
+    args:
+      itemId: item-id
+      worksheet: Sheet1
+      address: A1:C4
+  write:
+    path: ranges.update
+    title: Write cells
+    args:
+      itemId: item-id
+      worksheet: Sheet1
+      address: A1
+      values:
+        - - Hello
+apiExamples:
+  files.create:
+    call: "{ path: 'Reports/Book.xlsx' }"
+  sessions.create:
+    call: "{ itemId: 'item-id', persistChanges: true }"
+  worksheets.list:
+    call: "{ itemId: 'item-id' }"
+  ranges.get:
+    call: "{ itemId: 'item-id', worksheet: 'Sheet1', address: 'A1:C4' }"
+  ranges.update:
+    call: "{ itemId: 'item-id', worksheet: 'Sheet1', address: 'A1', values: [['Hello']] }"
+  tables.add:
+    call: "{ itemId: 'item-id', address: 'Sheet1!A1:C4', hasHeaders: true }"
+  tables.addRows:
+    call: "{ itemId: 'item-id', table: 'Table1', values: [[1, 2, 3]] }"
+  functions.calculate:
+    call: "{ itemId: 'item-id', name: 'SUM', args: { number1: 1, number2: 2 } }"

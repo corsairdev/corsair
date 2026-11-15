@@ -145,12 +145,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ request_id: string, user_id: string, webpage_id: string, website_url: string, user_prompt?: string | null, output_schema?: {} | null, requested_at: string, finished_at?: string | null, status: queued | processing | processinghtml | processedhtml | completed | failed, metadata?: any | null, result?: any | null, total_cost?: number | null, usage_id?: string | null, error?: string | null }[]"
+            "type": "{ request_id: string, user_id: string, webpage_id: string, website_url: string, user_prompt?: string | null, output_schema?: Record<string, any> | null, requested_at: string, finished_at?: string | null, status: queued | processing | processinghtml | processedhtml | completed | failed, metadata?: any | null, result?: any | null, total_cost?: number | null, usage_id?: string | null, error?: string | null }[]"
           },
           {
             "key": "next_key",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -181,7 +181,7 @@
           {
             "key": "suggestions",
             "optional": false,
-            "type": "{ endpoint: string, method?: string, description: string, target_url: string, parameters: { name: string, type: string, location: string, required: boolean, description: string, is_url?: boolean }[], pydantic_schema: {}, extraction_prompt: string, interaction_steps?: string[] | null }[]"
+            "type": "{ endpoint: string, method?: string, description: string, target_url: string, parameters: { name: string, type: string, location: string, required: boolean, description: string, is_url?: boolean }[], pydantic_schema: Record<string, any>, extraction_prompt: string, interaction_steps?: string[] | null }[]"
           },
           {
             "key": "html_with_markdowns",
@@ -202,7 +202,7 @@
           {
             "key": "suggestions",
             "optional": false,
-            "type": "{ endpoint: string, method?: string, description: string, target_url: string, parameters: { name: string, type: string, location: string, required: boolean, description: string, is_url?: boolean }[], pydantic_schema: {}, extraction_prompt: string, interaction_steps?: string[] | null }[]"
+            "type": "{ endpoint: string, method?: string, description: string, target_url: string, parameters: { name: string, type: string, location: string, required: boolean, description: string, is_url?: boolean }[], pydantic_schema: Record<string, any>, extraction_prompt: string, interaction_steps?: string[] | null }[]"
           }
         ]
       },
@@ -232,7 +232,7 @@
           {
             "key": "feedback_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -278,82 +278,82 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "how_discovered",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage_frequency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "use_cases",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "rating",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "liked_most",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "disliked",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "requested_features",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "setup_easy",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "issues",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recommend_score",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "improvement_suggestions",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "can_contact",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "contact_method",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -394,12 +394,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ request_id?: string, user_id?: string | null, webpage_id?: string | null, requested_at?: string, status?: queued | processing | completed | failed, error?: string | null, website_url: string, finished_at?: string | null, metadata?: {} | null, usage_id?: string | null, request_params?: {} | null }[]"
+            "type": "{ request_id?: string, user_id?: string | null, webpage_id?: string | null, requested_at?: string, status?: queued | processing | completed | failed, error?: string | null, website_url: string, finished_at?: string | null, metadata?: Record<string, any> | null, usage_id?: string | null, request_params?: Record<string, any> | null }[]"
           },
           {
             "key": "next_key",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -445,7 +445,7 @@
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "wait_ms",
@@ -455,17 +455,17 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "steps",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "webhook_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -490,7 +490,7 @@
           {
             "key": "result",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
@@ -536,7 +536,7 @@
           {
             "key": "result",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
@@ -597,7 +597,7 @@
           {
             "key": "jobs",
             "optional": false,
-            "type": "{ id: string, user_id: string, job_name: string, service_type: smartscraper | searchscraper | markdownify | smartcrawler | agenticscrapper | site_monitor, cron_expression: string, job_config: {}, is_active: boolean, created_at: string, updated_at: string, last_run_at?: string | null, next_run_at?: string | null }[]"
+            "type": "{ id: string, user_id: string, job_name: string, service_type: smartscraper | searchscraper | markdownify | smartcrawler | agenticscrapper | site_monitor, cron_expression: string, job_config: Record<string, any>, is_active: boolean, created_at: string, updated_at: string, last_run_at?: string | null, next_run_at?: string | null }[]"
           }
         ]
       }
@@ -618,7 +618,7 @@
           {
             "key": "existing_schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       },
@@ -648,12 +648,12 @@
           {
             "key": "generated_schema",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -684,12 +684,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ request_id: string, user_id?: string | null, website_url: string, render_heavy_js?: boolean, result?: string | null, status?: queued | processing | completed | failed, metadata?: {}, error?: string | null, finished_at?: string | null, requested_at?: string, cost?: number, request_params?: {} | null }[]"
+            "type": "{ request_id: string, user_id?: string | null, website_url: string, render_heavy_js?: boolean, result?: string | null, status?: queued | processing | completed | failed, metadata?: Record<string, any>, error?: string | null, finished_at?: string | null, requested_at?: string, cost?: number, request_params?: Record<string, any> | null }[]"
           },
           {
             "key": "next_key",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -720,12 +720,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ request_id: string, user_id?: string | null, user_prompt: string, search_query?: string | null, extraction_query?: string | null, references_urls?: string[] | null, output_schema?: {} | null, result?: any | null, status?: queued | processing | completed | failed, metadata?: {}, error?: string | null, requested_at?: string, finished_at?: string | null }[]"
+            "type": "{ request_id: string, user_id?: string | null, user_prompt: string, search_query?: string | null, extraction_query?: string | null, references_urls?: string[] | null, output_schema?: Record<string, any> | null, result?: any | null, status?: queued | processing | completed | failed, metadata?: Record<string, any>, error?: string | null, requested_at?: string, finished_at?: string | null }[]"
           },
           {
             "key": "next_key",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -751,12 +751,12 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "output_schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "extraction_mode",
@@ -786,17 +786,17 @@
           {
             "key": "webhook_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "location_geo_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "time_range",
             "optional": true,
-            "type": "past_hour | past_24_hours | past_week | past_month | past_year"
+            "type": "past_hour | past_24_hours | past_week | past_month | past_year | null"
           }
         ]
       },
@@ -821,27 +821,27 @@
           {
             "key": "num_results",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "reference_urls",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "markdown_content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -882,27 +882,27 @@
           {
             "key": "num_results",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "reference_urls",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "markdown_content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -933,12 +933,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ request_id: string, website_url: string, api_key_id: string, user_id: string, requested_at: string, status: string, urls_count: number, error_message?: string | null, metadata?: {} | null }[]"
+            "type": "{ request_id: string, website_url: string, api_key_id: string, user_id: string, requested_at: string, status: string, urls_count: number, error_message?: string | null, metadata?: Record<string, any> | null }[]"
           },
           {
             "key": "next_key",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -969,12 +969,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ request_id: string, user_id: string, url: string, prompt?: string | null, max_pages: number, status: queued | processing | completed | failed, error?: string | null, metadata?: {} | null, requested_at: string, finished_at?: string | null, total_cost?: number | null, credits_used?: number | null, pages_processed?: number | null, crawled_urls?: string[] | null, task_id?: string | null, result?: {} | null, result_url?: string | null, request_params?: {} | null }[]"
+            "type": "{ request_id: string, user_id: string, url: string, prompt?: string | null, max_pages: number, status: queued | processing | completed | failed, error?: string | null, metadata?: Record<string, any> | null, requested_at: string, finished_at?: string | null, total_cost?: number | null, credits_used?: number | null, pages_processed?: number | null, crawled_urls?: string[] | null, task_id?: string | null, result?: Record<string, any> | null, result_url?: string | null, request_params?: Record<string, any> | null }[]"
           },
           {
             "key": "next_key",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -1000,27 +1000,27 @@
           {
             "key": "breadth",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "max_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "prompt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "rules",
             "optional": true,
-            "type": "{ exclude?: string[] | null, include_paths?: string[] | null, exclude_paths?: string[] | null, same_domain?: boolean | null }"
+            "type": "{ exclude?: string[] | null, include_paths?: string[] | null, exclude_paths?: string[] | null, same_domain?: boolean | null } | null"
           },
           {
             "key": "sitemap",
@@ -1050,7 +1050,7 @@
           {
             "key": "webhook_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reader_mode",
@@ -1065,7 +1065,7 @@
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -1095,7 +1095,7 @@
           {
             "key": "prompt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_pages",
@@ -1105,12 +1105,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "requested_at",
@@ -1120,37 +1120,37 @@
           {
             "key": "finished_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "credits_used",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "pages_processed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "crawled_urls",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "result_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1196,7 +1196,7 @@
           {
             "key": "prompt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "max_pages",
@@ -1206,12 +1206,12 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "requested_at",
@@ -1221,37 +1221,37 @@
           {
             "key": "finished_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_cost",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "credits_used",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "pages_processed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "crawled_urls",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "result_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1277,7 +1277,7 @@
           {
             "key": "logs",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1308,12 +1308,12 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ request_id: string, user_id?: string | null, webpage_id?: string | null, website_url?: string | null, user_prompt: string, output_schema?: {} | null, result?: {} | string | null, status?: queued | processing | completed | failed, requested_at: string, finished_at?: string | null, error?: string | null, metadata?: {} | null, request_params?: {} | null }[]"
+            "type": "{ request_id: string, user_id?: string | null, webpage_id?: string | null, website_url?: string | null, user_prompt: string, output_schema?: Record<string, any> | null, result?: Record<string, any> | string | null, status?: queued | processing | completed | failed, requested_at: string, finished_at?: string | null, error?: string | null, metadata?: Record<string, any> | null, request_params?: Record<string, any> | null }[]"
           },
           {
             "key": "next_key",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -1334,17 +1334,17 @@
           {
             "key": "website_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "website_markdown",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "render_heavy_js",
@@ -1374,7 +1374,7 @@
           {
             "key": "country_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "wait_ms",
@@ -1384,12 +1384,12 @@
           {
             "key": "output_schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "number_of_scrolls",
@@ -1404,12 +1404,12 @@
           {
             "key": "steps",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "cookies",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "plain_text",
@@ -1419,7 +1419,7 @@
           {
             "key": "webhook_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "offset",
@@ -1449,7 +1449,7 @@
           {
             "key": "website_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_prompt",
@@ -1459,7 +1459,7 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{} | string"
+            "type": "Record<string, any> | string | null"
           },
           {
             "key": "error",
@@ -1500,7 +1500,7 @@
           {
             "key": "website_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_prompt",
@@ -1510,7 +1510,7 @@
           {
             "key": "result",
             "optional": true,
-            "type": "{} | string"
+            "type": "Record<string, any> | string | null"
           },
           {
             "key": "error",
@@ -1531,7 +1531,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1651,6 +1651,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1678,6 +1683,11 @@
         },
         {
           "field": "request_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -1774,6 +1784,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "user_prompt",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1806,6 +1821,11 @@
         },
         {
           "field": "request_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

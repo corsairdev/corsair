@@ -30,6 +30,7 @@ import type {
 } from '../packages/corsair/core/inspect/index.ts';
 import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
+import { escapeMdxText } from './mdx-escape.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
 const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
@@ -109,6 +110,13 @@ type PluginDocsFile = {
 		data?: Record<string, unknown>;
 		limit?: number;
 	};
+	/**
+	 * Per-endpoint notes on the API reference page, keyed by shortPath
+	 * (`brands.get`). Markdown, shown under the operation's input table: use it
+	 * for rules the schema can't express as a field description, like "at
+	 * least one of `id` or `name` is required" from a `.refine()`.
+	 */
+	apiNotes?: Record<string, string>;
 	/**
 	 * Per-endpoint call snippets on the API reference page.
 	 * Keys are shortPaths (e.g. `contacts.list`). Values are arg objects (shorthand)
@@ -390,16 +398,20 @@ function authTypeCredentialInstructions(
 	authType: string,
 	title: string,
 	base: string,
+	pluginId: string,
 ): string {
 	switch (authType) {
 		case 'managed':
 			return `No setup required. Corsair hosts the OAuth app for **${title}** — your tenants connect through Hub when they sign in.`;
 		case 'oauth_2':
 			return `Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your ${title} OAuth app.`;
+		// Corsair does not prompt for a key: a call without one throws
+		// AuthMissingError (with a connect link only when Hub or manual connect
+		// is set up). Say how the key gets stored instead.
 		case 'api_key':
-			return `No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.`;
+			return `Store the ${title} API key before the first call: \`pnpm corsair setup --plugin=${pluginId} --tenant=acme api_key=<your-key>\` (leave out \`--tenant\` without \`multiTenancy\`), or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).`;
 		case 'bot_token':
-			return `No setup required yet. When you make your first request as a tenant, Corsair prompts for the bot token.`;
+			return `Store the ${title} bot token before the first call: \`pnpm corsair setup --plugin=${pluginId} --tenant=acme bot_token=<your-token>\` (leave out \`--tenant\` without \`multiTenancy\`), or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own token on the connect page. See [API key auth](/concepts/api-key).`;
 		default:
 			return `See [Get Credentials](${base}/get-credentials) for provider-specific setup steps.`;
 	}
@@ -413,6 +425,27 @@ function yamlDoubleQuotedScalar(s: string): string {
 		oneLine.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\t/g, ' ') +
 		'"'
 	);
+}
+
+/** Search results cut a description near 160 characters. */
+const META_DESCRIPTION_MAX = 160;
+
+/**
+ * The fuller description when it fits a search result, otherwise the shorter
+ * one. A long plugin name or id can push the fuller text past the limit.
+ */
+function fitDescription(full: string, short: string): string {
+	return full.length <= META_DESCRIPTION_MAX ? full : short;
+}
+
+/**
+ * Frontmatter title lines for a plugin page. Every plugin has the same set of
+ * pages, so a bare "API" or "Overview" gives hundreds of pages the same
+ * browser and search title. The title names the plugin; `sidebarTitle` keeps
+ * the short label in the navigation.
+ */
+function pageTitleFrontmatter(title: string, sidebarTitle: string): string {
+	return `title: ${yamlDoubleQuotedScalar(title)}\nsidebarTitle: ${yamlDoubleQuotedScalar(sidebarTitle)}`;
 }
 
 function sortAuthTypesForTabs(
@@ -539,8 +572,15 @@ function findWebhookByShortPath(
 }
 
 /** Loose check that a yaml example value matches a docs type string (e.g. `string`, `boolean`). */
+// unknown: yaml examples parse to any JSON-like value; the checks below narrow it.
 function valueMatchesDocType(value: unknown, typeStr: string): boolean {
 	const t = typeStr.trim();
+	// Any JSON value, and `any`, accept every example, but only when the whole
+	// type (or one of its top-level members) is that. `JsonValue[]` still needs
+	// an array and `Record<string, JsonValue>` an object.
+	if (topLevelUnionMembers(t).some((m) => m === 'JsonValue' || m === 'any')) {
+		return true;
+	}
 	if (value === null) {
 		return /\bnull\b/.test(t) || t.includes('| null') || t.endsWith('null');
 	}
@@ -678,6 +718,19 @@ function validatePluginDocsConfig(
 
 	validateApiExample(docsConfig.examples?.read, 'examples.read');
 	validateApiExample(docsConfig.examples?.write, 'examples.write');
+
+	if (docsConfig.apiNotes) {
+		for (const [shortPath, note] of Object.entries(docsConfig.apiNotes)) {
+			if (!findEndpointByShortPath(data.api, shortPath)) {
+				errors.push(
+					`${prefix}: apiNotes."${shortPath}" not found on ${pluginId}.api`,
+				);
+			}
+			if (typeof note !== 'string' || note.trim() === '') {
+				errors.push(`${prefix}: apiNotes."${shortPath}" must be markdown text`);
+			}
+		}
+	}
 
 	if (docsConfig.apiExamples) {
 		for (const [shortPath, raw] of Object.entries(docsConfig.apiExamples)) {
@@ -1064,7 +1117,7 @@ function buildMainMdx(opts: {
 ${authOrdered
 	.map((t) => {
 		const label = authTabLabel(t, recommendedAuth);
-		const note = authTypeCredentialInstructions(t, title, base);
+		const note = authTypeCredentialInstructions(t, title, base, pluginId);
 		const callSnippet = pluginFactorySnippet(
 			exportKey,
 			t,
@@ -1223,7 +1276,7 @@ See [Webhooks](${base}/webhooks) for every event path and payload shape, and [We
 	}
 
 	return `---
-title: Overview
+${pageTitleFrontmatter(`${title} plugin`, 'Overview')}
 description: ${yamlDoubleQuotedScalar(frontmatterDescription)}
 ---
 
@@ -1240,16 +1293,20 @@ ${bullets.map((b) => `- ${b}`).join('\n')}
 <Step title="Install">
 <CodeGroup>
 \`\`\`bash npm
-npm install corsair ${npmPackageName}
+npm install corsair ${npmPackageName} better-sqlite3
+npm install --save-dev @types/better-sqlite3
 \`\`\`
 \`\`\`bash yarn
-yarn add corsair ${npmPackageName}
+yarn add corsair ${npmPackageName} better-sqlite3
+yarn add --dev @types/better-sqlite3
 \`\`\`
 \`\`\`bash pnpm
-pnpm install corsair ${npmPackageName}
+pnpm install corsair ${npmPackageName} better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 \`\`\`
 \`\`\`bash bun
-bun add corsair ${npmPackageName}
+bun add corsair ${npmPackageName} better-sqlite3
+bun add --dev @types/better-sqlite3
 \`\`\`
 </CodeGroup>
 
@@ -1267,6 +1324,7 @@ ${setupPluginCall},
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -1274,7 +1332,7 @@ ${setupPluginCall},
 });
 \`\`\`
 
-Multi-tenancy is the default — scope calls with \`corsair.withTenant(id)\`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With \`multiTenancy: true\`, scope calls with \`corsair.withTenant(id)\`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -1331,10 +1389,35 @@ function isObjectLikeType(type: string): boolean {
 	return type.includes('{');
 }
 
-/** Table "Type" column: primitives stay literal; object shapes become `object` / `object[]`. */
+/** Splits a type on its top-level `|` (not inside `{}`, `()`, `[]` or `<>`). */
+function topLevelUnionMembers(type: string): string[] {
+	const members: string[] = [];
+	let depth = 0;
+	let start = 0;
+	for (let i = 0; i < type.length; i++) {
+		const ch = type[i];
+		if (ch === '{' || ch === '(' || ch === '[' || ch === '<') depth++;
+		else if (ch === '}' || ch === ')' || ch === ']' || ch === '>') depth--;
+		else if (ch === '|' && depth === 0) {
+			members.push(type.slice(start, i).trim());
+			start = i + 1;
+		}
+	}
+	members.push(type.slice(start).trim());
+	return members;
+}
+
+/**
+ * Table "Type" column: primitives stay literal; object shapes become `object` /
+ * `object[]`, member by member, so `{ … } | null` reads `object | null`.
+ */
 function tableTypeDisplay(type: string): string {
 	const t = type.trim();
 	if (!isObjectLikeType(t)) return type;
+	const members = topLevelUnionMembers(t);
+	if (members.length > 1) {
+		return [...new Set(members.map(tableTypeDisplay))].join(' | ');
+	}
 	if (/\[\]\s*$/.test(t)) return 'object[]';
 	return 'object';
 }
@@ -1349,9 +1432,21 @@ function prettifyTypeBlock(type: string): string {
 	let depth = 0;
 	let i = 0;
 	const n = type.length;
+	// Open brackets, innermost last. `broke` = the opener started a new line, so
+	// its closer goes on its own line too. `<…>` (Record<K, V>) and `(…)` around a
+	// scalar union (`(a | b)[]`) stay on one line; `(` before an object breaks.
+	const open: { ch: string; broke: boolean }[] = [];
 
 	const appendIndent = () => {
 		out += unit.repeat(depth);
+	};
+	const skipSpace = () => {
+		while (i < n && /\s/.test(type[i]!)) i += 1;
+	};
+	const nextNonSpace = (from: number): string | undefined => {
+		let j = from;
+		while (j < n && /\s/.test(type[j]!)) j += 1;
+		return type[j];
 	};
 
 	while (i < n) {
@@ -1361,37 +1456,58 @@ function prettifyTypeBlock(type: string): string {
 		if (ch === '[' && type[i + 1] === ']') {
 			out += '[]';
 			i += 2;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
+			continue;
+		}
+
+		if (ch === '<' || (ch === '(' && nextNonSpace(i + 1) !== '{')) {
+			out += ch;
+			open.push({ ch, broke: false });
+			i += 1;
+			skipSpace();
 			continue;
 		}
 
 		if (ch === '{' || ch === '[' || ch === '(') {
 			out += ch;
+			open.push({ ch, broke: true });
 			depth += 1;
 			out += '\n';
 			appendIndent();
 			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
 			continue;
 		}
 
-		if (ch === '}' || ch === ']' || ch === ')') {
+		if (ch === '>' || ch === '}' || ch === ']' || ch === ')') {
+			const opener = open.pop();
+			if (opener && !opener.broke) {
+				out = out.replace(/[ \t]+$/g, '');
+				out += ch;
+				i += 1;
+				skipSpace();
+				continue;
+			}
 			depth = Math.max(0, depth - 1);
 			out = out.replace(/[ \t]+$/g, '');
 			if (!out.endsWith('\n')) out += '\n';
 			appendIndent();
 			out += ch;
 			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
 			continue;
 		}
 
 		if (ch === ',') {
 			out += ',';
-			out += '\n';
-			appendIndent();
+			if (open.at(-1)?.broke === false) {
+				out += ' ';
+			} else {
+				out += '\n';
+				appendIndent();
+			}
 			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
 			continue;
 		}
 
@@ -1399,7 +1515,7 @@ function prettifyTypeBlock(type: string): string {
 			out = out.replace(/[ \t]+$/g, '');
 			out += ' | ';
 			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
 			continue;
 		}
 
@@ -1442,22 +1558,24 @@ function resourceTitle(resource: string): string {
 function formatSchemaShape(
 	shape: DocSchemaShape,
 	kind: 'Input' | 'Output' | 'Payload',
+	note?: string,
 ): string {
+	const noteBlock = note ? `${note.trim()}\n\n` : '';
 	if (shape.kind === 'inline') {
 		if (!isObjectLikeType(shape.type)) {
-			return `**${kind}:** \`${escapeCell(shape.type)}\`\n\n`;
+			return `**${kind}:** \`${escapeCell(shape.type)}\`\n\n${noteBlock}`;
 		}
 		const display = tableTypeDisplay(shape.type);
 		return `**${kind}:** \`${escapeCell(display)}\`
 
-<AccordionGroup>
+${noteBlock}<AccordionGroup>
 ${renderTypeAccordionItem(kind, shape.type)}
 </AccordionGroup>
 
 `;
 	}
 	if (shape.fields.length === 0) {
-		return `**${kind}:** _empty object_\n\n`;
+		return `**${kind}:** _empty object_\n\n${noteBlock}`;
 	}
 	const detailBlocks: string[] = [];
 	const rows = shape.fields
@@ -1466,7 +1584,7 @@ ${renderTypeAccordionItem(kind, shape.type)}
 				detailBlocks.push(renderTypeAccordionItem(f.key, f.type));
 			}
 			const cellType = tableTypeDisplay(f.type);
-			return `| \`${escapeCell(f.key)}\` | \`${escapeCell(cellType)}\` | ${f.optional ? 'No' : 'Yes'} | ${escapeCell(f.description) || '—'} |`;
+			return `| \`${escapeCell(f.key)}\` | \`${escapeCell(cellType)}\` | ${f.optional ? 'No' : 'Yes'} | ${escapeCell(escapeMdxText(f.description)) || '—'} |`;
 		})
 		.join('\n');
 	const detailsSection =
@@ -1483,7 +1601,7 @@ ${detailBlocks.join('\n\n')}
 |------|------|----------|-------------|
 ${rows}
 
-${detailsSection}
+${noteBlock}${detailsSection}
 `;
 }
 
@@ -1502,6 +1620,7 @@ function buildApiMdx(
 	title: string,
 	data: PluginDocsIntrospection,
 	apiExamples: PluginDocsFile['apiExamples'],
+	apiNotes?: PluginDocsFile['apiNotes'],
 ): string {
 	const byGroup = new Map<string, typeof data.api>();
 	for (const ep of data.api) {
@@ -1523,7 +1642,7 @@ function buildApiMdx(
 				ep.riskLevel !== undefined
 					? `\n\n**Risk:** \`${ep.riskLevel}\`${ep.irreversible ? ' · **Irreversible**' : ''}`
 					: '';
-			const desc = ep.description ? `\n\n${ep.description}` : '';
+			const desc = ep.description ? `\n\n${escapeMdxText(ep.description)}` : '';
 			sections.push(`### ${method}`);
 			sections.push('');
 			sections.push(`\`${ep.shortPath}\`${desc}${risk}`);
@@ -1535,20 +1654,24 @@ function buildApiMdx(
 			sections.push(`await ${callExpr}(${callArgs});`);
 			sections.push('```');
 			sections.push('');
-			sections.push(formatSchemaShape(ep.input, 'Input'));
+			sections.push(
+				formatSchemaShape(ep.input, 'Input', apiNotes?.[ep.shortPath]),
+			);
 			sections.push(formatSchemaShape(ep.output, 'Output'));
 			sections.push('---');
 			sections.push('');
 		}
 	}
 
-	const apiDescription = `API reference for ${title}: every \`${pluginId}.api.*\` operation with input and output types.`;
+	const apiDescriptionShort = `API reference for ${title}: every \`${pluginId}.api.*\` operation with input and output types.`;
+	const apiDescription = fitDescription(
+		`API reference for the ${title} plugin in Corsair: every \`${pluginId}.api.*\` operation with its input and output types, taken from the plugin's Zod schemas.`,
+		apiDescriptionShort,
+	);
 	return `---
-title: API
+${pageTitleFrontmatter(`${title} API reference`, 'API')}
 description: ${yamlDoubleQuotedScalar(apiDescription)}
 ---
-
-Every \`${pluginId}.api.*\` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -1563,6 +1686,27 @@ function buildDbMdx(
 	title: string,
 	data: PluginDocsIntrospection,
 ): string {
+	// A plugin without schema entities only makes live API calls: say so
+	// instead of pointing readers at `.db.<entity>.search()` paths that do not
+	// exist.
+	if (data.db.length === 0) {
+		const description = fitDescription(
+			`The ${title} plugin in Corsair returns live API data and stores no local entities, so there is nothing to search locally.`,
+			`${title} returns live API data and stores no local entities.`,
+		);
+		return `---
+${pageTitleFrontmatter(`${title} database`, 'Database')}
+description: ${yamlDoubleQuotedScalar(description)}
+---
+
+No local \`.search()\` operations are available for ${title}. To read its data, call the [API operations](/plugins/${pluginId}/api), which return what ${title} has at that moment.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+`;
+	}
+
 	const blocks: string[] = [];
 	for (const ent of data.db) {
 		const filterRows = ent.filters
@@ -1601,9 +1745,12 @@ function buildDbMdx(
 		);
 	}
 
-	const dbDescription = `${title} local sync: searchable entities, \`.search()\` filters, and operators.`;
+	const dbDescription = fitDescription(
+		`${title} local sync in Corsair: the entities stored in your database, the \`.search()\` filters each one accepts, and the filter operators.`,
+		`${title} local sync: searchable entities, \`.search()\` filters, and operators.`,
+	);
 	return `---
-title: Database
+${pageTitleFrontmatter(`${title} database`, 'Database')}
 description: ${yamlDoubleQuotedScalar(dbDescription)}
 ---
 
@@ -1708,9 +1855,12 @@ function buildWebhooksMdx(
 		}
 	}
 
-	const whDescription = `${title} incoming webhooks: event paths, payloads, and response data.`;
+	const whDescription = fitDescription(
+		`${title} incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data.`,
+		`${title} incoming webhooks: event paths, payloads, and response data.`,
+	);
 	return `---
-title: Webhooks
+${pageTitleFrontmatter(`${title} webhooks`, 'Webhooks')}
 description: ${yamlDoubleQuotedScalar(whDescription)}
 ---
 
@@ -1732,9 +1882,23 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 \`\`\`
 
@@ -2028,7 +2192,13 @@ async function generatePluginDocsForEntry(
 
 	writeFileSync(
 		join(outDir, 'api.mdx'),
-		buildApiMdx(pluginId, title, docData, docsConfig.apiExamples),
+		buildApiMdx(
+			pluginId,
+			title,
+			docData,
+			docsConfig.apiExamples,
+			docsConfig.apiNotes,
+		),
 		'utf8',
 	);
 	writeFileSync(

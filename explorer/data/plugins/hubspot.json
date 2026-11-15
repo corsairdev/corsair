@@ -41,7 +41,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "associations",
@@ -61,17 +61,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -81,7 +81,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -158,17 +158,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -178,7 +178,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -234,7 +234,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -280,7 +280,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -326,7 +326,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -367,7 +367,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -393,7 +393,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -408,17 +408,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -428,7 +428,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -546,7 +546,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "associations",
@@ -566,17 +566,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -586,7 +586,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -663,17 +663,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -683,7 +683,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -739,7 +739,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -785,7 +785,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -831,7 +831,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -892,7 +892,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -918,7 +918,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -933,17 +933,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -953,7 +953,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -969,7 +969,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "associations",
@@ -989,17 +989,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -1009,7 +1009,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -1086,17 +1086,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -1106,7 +1106,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -1162,7 +1162,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -1208,7 +1208,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -1254,7 +1254,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -1315,7 +1315,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -1341,7 +1341,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1356,17 +1356,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -1376,7 +1376,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -1402,7 +1402,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1422,12 +1422,12 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1484,12 +1484,12 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1520,7 +1520,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, engagement?: { id?: number, portalId?: number, active?: boolean, createdAt?: number, lastUpdated?: number, createdBy?: number, modifiedBy?: number, ownerId?: number, type?: string, timestamp?: number }, associations?: {}, metadata?: {} }[]"
+            "type": "{ id: string, engagement?: { id?: number, portalId?: number, active?: boolean, createdAt?: number, lastUpdated?: number, createdBy?: number, modifiedBy?: number, ownerId?: number, type?: string, timestamp?: number }, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]>, metadata?: Record<string, any> }[]"
           },
           {
             "key": "paging",
@@ -1541,7 +1541,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "associations",
@@ -1561,17 +1561,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -1581,7 +1581,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -1658,17 +1658,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -1678,7 +1678,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }
@@ -1729,7 +1729,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+            "type": "{ id: string, properties?: Record<string, string>, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: Record<string, { results: { id: string, type?: string }[] } | string[]> }[]"
           },
           {
             "key": "paging",
@@ -1755,7 +1755,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -1770,17 +1770,17 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "Date"
+            "type": "Date | null"
           },
           {
             "key": "archived",
@@ -1790,7 +1790,7 @@
           {
             "key": "associations",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { results: { id: string, type?: string }[] } | string[]>"
           }
         ]
       }

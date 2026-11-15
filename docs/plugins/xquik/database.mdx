@@ -1,6 +1,7 @@
 ---
-title: Database
-description: "Xquik local sync: searchable entities, `.search()` filters, and operators."
+title: "Xquik database"
+sidebarTitle: "Database"
+description: "Xquik local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
 ---
 
 The Xquik plugin syncs data locally. Use `corsair.xquik.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -57,6 +58,7 @@ const rows = await corsair.xquik.db.events.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `deliveryId` | `string` | equals, contains, startsWith, endsWith, in |
+| `eventType` | `string` | equals, contains, startsWith, endsWith, in |
 | `occurredAt` | `string` | equals, contains, startsWith, endsWith, in |
 | `query` | `string` | equals, contains, startsWith, endsWith, in |
 | `schemaVersion` | `string` | equals, contains, startsWith, endsWith, in |

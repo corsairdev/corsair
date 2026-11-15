@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Groq: every `groqcloud.api.*` operation with input and output types."
+title: "Groq API reference"
+sidebarTitle: "API"
+description: "API reference for the Groq plugin in Corsair: every `groqcloud.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `groqcloud.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -187,7 +186,7 @@ await corsair.groqcloud.api.chat.createCompletion({});
     name?: string,
     tool_call_id?: string
   },
-  finish_reason?: string | null
+  finish_reason: string | null
 }[]
 ```
 </Accordion>
@@ -233,8 +232,8 @@ await corsair.groqcloud.api.chat.createResponse({});
 | `output` | `object[]` | Yes | Ordered output items; the reply is the `message` item |
 | `text` | `object` | No | Requested output format, echoed back — not the reply |
 | `usage` | `object` | No | — |
-| `error` | `any` | No | — |
-| `incomplete_details` | `any` | No | — |
+| `error` | `any \| null` | No | — |
+| `incomplete_details` | `any \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -325,8 +324,7 @@ await corsair.groqcloud.api.models.listModels({});
   supported_features?: string[],
   supported_sampling_parameters?: string[],
   public_apps?: any | null,
-  pricing?: {
-  } | null
+  pricing?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -370,23 +368,13 @@ await corsair.groqcloud.api.models.retrieveModel({});
 | `context_length` | `number` | No | — |
 | `max_completion_tokens` | `number` | No | — |
 | `max_output_length` | `number` | No | — |
-| `hugging_face_id` | `string` | No | — |
+| `hugging_face_id` | `string \| null` | No | — |
 | `input_modalities` | `string[]` | No | — |
 | `output_modalities` | `string[]` | No | — |
 | `supported_features` | `string[]` | No | — |
 | `supported_sampling_parameters` | `string[]` | No | — |
-| `public_apps` | `any` | No | — |
-| `pricing` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="pricing full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `public_apps` | `any \| null` | No | — |
+| `pricing` | `Record<string, any> \| null` | No | — |
 
 
 

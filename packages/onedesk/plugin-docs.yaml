@@ -1,0 +1,200 @@
+displayName: OneDesk
+description: Help desk and project management in one platform, with a public API over tickets, tasks, projects, timesheets, invoices, quotes and customer conversations.
+domain: onedesk.com
+recommendedAuth: api_key
+overviewNote: |
+  OneDesk merges help desk and project management, so one account holds
+  tickets, tasks, projects, timesheets and invoices together.
+
+  Two things shape this plugin. First, OneDesk has no single "list" endpoint:
+  each resource is queried through a POST filter body, and the details variant
+  is what returns full records rather than ids. Second, a failure can arrive
+  with **HTTP 200** and a `code` of `ERROR_*`, so the plugin treats that as a
+  failed call rather than returning it as data.
+
+  Item and user writes need names the organization defines. Read them first
+  with `organization.itemTypes`, `organization.userTypes` and
+  `organization.lifecycleStatus`. `items.filter` takes `itemType` as an array;
+  a bare string is rejected.
+
+  A white-label or self-hosted account sets the `host` option; it defaults to
+  https://app.onedesk.com.
+
+  The public API needs a OneDesk **enterprise** account, and each API key
+  consumes one user license.
+examples:
+  read:
+    path: items.filterDetails
+    title: List work items with their details
+    args:
+      itemType:
+        - Problem
+      limit: 10
+  write:
+    path: items.create
+    title: Create a ticket
+    args:
+      name: The blue button does not work
+      type: Ticket
+
+apiExamples:
+  items.filter:
+    call: '{ itemType: [''Problem''], limit: 50 }'
+  items.filterDetails:
+    call: '{ itemType: [''Problem''], limit: 50 }'
+  items.get:
+    call: '{ externalId: ''0abb5fgh-0000-0000-0000-c75df7969bad'' }'
+  items.create:
+    call: '{ name: ''The blue button does not work'', type: ''Problem'' }'
+  items.update:
+    call: '{ externalId: ''0abb5fgh-0000-0000-0000-c75df7969bad'', name: ''Renamed item'' }'
+  users.filter:
+    call: '{ limit: 50 }'
+  users.filterDetails:
+    call: '{ limit: 50 }'
+  users.get:
+    call: '{ externalId: ''67475168-7241-4a76-8bd5-dc4f26a40eb8'' }'
+  users.create:
+    call: '{ email: ''new.user@example.com'', firstName: ''Ada'' }'
+  users.update:
+    call: '{ externalId: ''67475168-7241-4a76-8bd5-dc4f26a40eb8'', title: ''Engineer'' }'
+  projects.filter:
+    call: '{ limit: 50 }'
+  projects.filterDetails:
+    call: '{ limit: 50 }'
+  projects.get:
+    call: '{ externalId: ''e150be49-b53c-4d81-a25d-ab807095ce51'' }'
+  projects.create:
+    call: '{ name: ''Website rebuild'' }'
+  projects.update:
+    call: '{ externalId: ''e150be49-b53c-4d81-a25d-ab807095ce51'', name: ''Renamed project'' }'
+  portfolios.filter:
+    call: '{ limit: 50 }'
+  portfolios.filterDetails:
+    call: '{ limit: 50 }'
+  portfolios.get:
+    call: '{ externalId: ''04969ee3-f2b0-45b2-95a5-04584fe9b497'' }'
+  portfolios.create:
+    call: '{ name: ''2024 portfolio'' }'
+  portfolios.update:
+    call: '{ externalId: ''04969ee3-f2b0-45b2-95a5-04584fe9b497'', name: ''Renamed portfolio'' }'
+  teams.filter:
+    call: '{ limit: 50 }'
+  teams.filterDetails:
+    call: '{ limit: 50 }'
+  teams.get:
+    call: '{ externalId: ''46d4eed9-776f-4a88-aea7-5f8fc741fa22'' }'
+  teams.create:
+    call: '{ name: ''Support'' }'
+  teams.update:
+    call: '{ externalId: ''46d4eed9-776f-4a88-aea7-5f8fc741fa22'', name: ''Support team'' }'
+  customers.filter:
+    call: '{ limit: 50 }'
+  customers.filterDetails:
+    call: '{ limit: 50 }'
+  customers.get:
+    call: '{ externalId: ''35650e86-0000-0000-0000-55a4b869c17a'' }'
+  customers.create:
+    call: '{ email: ''customer@example.com'' }'
+  customers.update:
+    call: '{ externalId: ''35650e86-0000-0000-0000-55a4b869c17a'', title: ''CTO'' }'
+  organizations.filter:
+    call: '{ limit: 50 }'
+  organizations.filterDetails:
+    call: '{ limit: 50 }'
+  organizations.get:
+    call: '{ externalId: ''04969ee3-f2b0-45b2-95a5-04584fe9b497'' }'
+  organizations.create:
+    call: '{ name: ''Analytical Engines'' }'
+  organizations.update:
+    call: '{ externalId: ''04969ee3-f2b0-45b2-95a5-04584fe9b497'', name: ''Renamed organization'' }'
+  timesheets.filter:
+    call: '{ limit: 50 }'
+  timesheets.filterDetails:
+    call: '{ limit: 50 }'
+  timesheets.get:
+    call: '{ externalId: ''ff87a554-0000-0000-0000-a1acabe30d93'' }'
+  timesheets.create:
+    call: '{ userExternalId: ''67475168-7241-4a76-8bd5-dc4f26a40eb8'', taskExternalId: ''0abb5fgh-0000-0000-0000-c75df7969bad'', works: 2.5, percentCompleted: 100, finish: ''2024-05-14T11:30:00Z'' }'
+  timesheets.update:
+    call: '{ externalId: ''ff87a554-0000-0000-0000-a1acabe30d93'', status: ''approved'' }'
+  timers.filter:
+    call: '{ limit: 50 }'
+  timers.filterDetails:
+    call: '{ limit: 50 }'
+  timers.get:
+    call: '{ externalId: ''4t52581b-0000-0000-0000-b0232f2a4453'' }'
+  timers.start:
+    call: '{ timerExternalId: ''4t52581b-0000-0000-0000-b0232f2a4453'', itemExternalId: ''0abb5fgh-0000-0000-0000-c75df7969bad'' }'
+  timers.pause:
+    call: '{ timerExternalId: ''4t52581b-0000-0000-0000-b0232f2a4453'' }'
+  timers.resume:
+    call: '{ timerExternalId: ''4t52581b-0000-0000-0000-b0232f2a4453'' }'
+  timers.cancel:
+    call: '{ timerExternalId: ''4t52581b-0000-0000-0000-b0232f2a4453'' }'
+  invoices.filter:
+    call: '{ limit: 50 }'
+  invoices.filterDetails:
+    call: '{ limit: 50 }'
+  invoices.get:
+    call: '{ externalId: ''35650e86-0000-0000-0000-55a4b869c17a'' }'
+  invoices.update:
+    call: '{ externalId: ''35650e86-0000-0000-0000-55a4b869c17a'', status: ''sent'' }'
+  quotes.filter:
+    call: '{ limit: 50 }'
+  quotes.filterDetails:
+    call: '{ limit: 50 }'
+  quotes.get:
+    call: '{ externalId: ''35650e86-0000-0000-0000-55a4b869c17a'' }'
+  quotes.update:
+    call: '{ externalId: ''35650e86-0000-0000-0000-55a4b869c17a'', status: ''sent'' }'
+  conversations.filter:
+    call: '{ limit: 50 }'
+  conversations.filterDetails:
+    call: '{ limit: 50 }'
+  conversations.get:
+    call: '{ externalId: ''6634596f4-0000-0000-0000-cb0e42b1db19@conference.im.onedesk.com'' }'
+  conversations.create:
+    call: '{ itemExternalId: ''0abb5fgh-0000-0000-0000-c75df7969bad'' }'
+  conversations.update:
+    call: '{ externalId: ''6634596f4-0000-0000-0000-cb0e42b1db19@conference.im.onedesk.com'', open: false }'
+  messages.filter:
+    call: '{ limit: 50 }'
+  messages.filterDetails:
+    call: '{ limit: 50 }'
+  messages.get:
+    call: '{ externalId: ''7e895fe5-0000-0000-0000-06aa3d02e7ef'' }'
+  messages.create:
+    call: '{ conversationExternalId: ''6634596f4-0000-0000-0000-cb0e42b1db19@conference.im.onedesk.com'', content: ''Thanks for the update.'' }'
+  messages.update:
+    call: '{ externalId: ''7e895fe5-0000-0000-0000-06aa3d02e7ef'', content: ''Updated message.'' }'
+  activities.filterDetails:
+    call: '{ limit: 50 }'
+  attachments.filter:
+    call: '{ limit: 50 }'
+  attachments.filterDetails:
+    call: '{ limit: 50 }'
+  attachments.get:
+    call: '{ externalId: ''1234596f4-0000-0000-0000-cb0e42b1db19'' }'
+  attachments.upload:
+    call: '{ fileName: ''invoice.pdf'', contentType: ''application/pdf'', contentBase64: ''<base64 bytes>'' }'
+  attachments.attachToItem:
+    call: '{ externalId: ''0abb5fgh-0000-0000-0000-c75df7969bad'', fileName: ''invoice.pdf'', contentBase64: ''<base64 bytes>'' }'
+  attachments.attachToProject:
+    call: '{ externalId: ''e150be49-b53c-4d81-a25d-ab807095ce51'', fileName: ''invoice.pdf'', contentBase64: ''<base64 bytes>'' }'
+  attachments.attachToPortfolio:
+    call: '{ externalId: ''04969ee3-f2b0-45b2-95a5-04584fe9b497'', fileName: ''invoice.pdf'', contentBase64: ''<base64 bytes>'' }'
+  attachments.attachToOrganization:
+    call: '{ externalId: ''04969ee3-f2b0-45b2-95a5-04584fe9b497'', fileName: ''invoice.pdf'', contentBase64: ''<base64 bytes>'' }'
+apiNotes:
+  items.filter: "`itemType` is an array of names this organization defines; a bare string is rejected with a 400. Read the valid names with `organization.itemTypes`. Returns external ids only. Use `items.filterDetails` for full records, which caps `limit` at 50."
+  items.filterDetails: Returns full item records. OneDesk caps `limit` at 50 on the details variants, against 200 on the id variants.
+  items.update: 'Related and assigned lists take a list update object rather than an array: `{ replace: true, newValue: [ids] }` sets the whole list, and `add` or `remove` change it while keeping the rest.'
+  timers.start: A timer is identified by the external id you choose, so starting the same id again resumes that timer.
+  timers.cancel: Cancels the timer and discards the work recorded in that run; there is no undo.
+  attachments.upload: OneDesk takes multipart uploads, so the file is passed as base64 bytes with a filename. There is no import-from-URL endpoint.
+  users.create: Creating a user sends them an invitation to the account.
+  customers.create: The email is the customer's identity; a second create with the same address fails with ERROR_USER_ALREADY_EXIST.
+  projects.update: A lifecycle status name must be one the organization defines; read them with `organization.lifecycleStatus`, which returns objects whose `name` is the value to pass.
+  organization.itemTypes: Answers `label` and `externalId` per type, not the `name` field the published spec describes.
+  organization.lifecycleStatus: Returns objects with `name`, `externalId` and `state`, not the string array the published spec describes.

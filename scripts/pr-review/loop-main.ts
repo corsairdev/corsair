@@ -2,15 +2,21 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import {
 	ASSERTION_WARN_FLOOR,
+	countTestFilesByPlugin,
 	detectPlugin,
+	PR_FILES_JQ,
+	parsePrFileRows,
 	renderScorecard,
 	runGate,
+	touchedPlugins,
 } from './gate.ts';
 import {
 	buildEscalationComment,
+	buildResolvedComment,
 	buildRoundOneComment,
 	currentRound,
 	decide,
+	reviewSupersededByCleanSummary,
 } from './loop.ts';
 import type { ReviewComment } from './parse-greptile.ts';
 import { parseFindings } from './parse-greptile.ts';
@@ -64,12 +70,23 @@ const pr = event.pull_request.number as number;
 const reviewId = event.review.id as number;
 const author = event.pull_request.user.login as string;
 
-const changedFiles = gh([
+const { changedFiles, addedFiles } = parsePrFileRows(
+	gh([
+		'api',
+		`repos/${repo}/pulls/${pr}/files`,
+		'--paginate',
+		'--jq',
+		PR_FILES_JQ,
+	]),
+);
+// Read live, as in the gate job, so a team multi-plugin PR gets the same
+// verdict here as in the required check.
+const labels = gh([
 	'api',
-	`repos/${repo}/pulls/${pr}/files`,
+	`repos/${repo}/issues/${pr}/labels`,
 	'--paginate',
 	'--jq',
-	'.[].filename',
+	'.[].name',
 ])
 	.trim()
 	.split('\n')
@@ -97,24 +114,27 @@ const plugin = detectPlugin(changedFiles);
 
 // Test existence comes from the head tree (update PRs need not touch
 // tests); assertion depth only inspects changed test files — the gate job
-// (full checkout) is authoritative for depth.
-let testFileCount = 0;
-if (plugin) {
+// (full checkout) is authoritative for depth. One recursive tree call
+// counts tests for every touched plugin (team multi-plugin PRs need all).
+let testFileCounts: Record<string, number> = {};
+const touched = touchedPlugins(changedFiles);
+if (touched.length > 0) {
 	try {
-		// Recursive tree so nested tests (e.g. tests/) count, matching the
-		// gate job's recursive disk scan.
-		testFileCount = Number(
-			gh([
-				'api',
-				`repos/${headRepo}/git/trees/${headSha}?recursive=1`,
-				'--jq',
-				`[.tree[] | select(.path | startswith("packages/${plugin}/") and endswith(".test.ts"))] | length`,
-			]).trim(),
-		);
+		const testPaths = gh([
+			'api',
+			`repos/${headRepo}/git/trees/${headSha}?recursive=1`,
+			'--jq',
+			'.tree[] | select(.path | startswith("packages/") and endswith(".test.ts")) | .path',
+		])
+			.trim()
+			.split('\n')
+			.filter(Boolean);
+		testFileCounts = countTestFilesByPlugin(testPaths, touched);
 	} catch {
-		testFileCount = 0;
+		testFileCounts = {};
 	}
 }
+const testFileCount = plugin ? (testFileCounts[plugin] ?? 0) : 0;
 let assertionCount = testFileCount > 0 ? ASSERTION_WARN_FLOOR : 0;
 for (const f of changedFiles) {
 	if (plugin && f.startsWith(`packages/${plugin}/`) && f.endsWith('.test.ts')) {
@@ -132,6 +152,10 @@ const gate = runGate({
 	isDraft: event.pull_request.draft as boolean,
 	testFileCount,
 	assertionCount,
+	labels,
+	authorAssociation: event.pull_request.author_association as string,
+	addedFiles,
+	testFileCounts,
 });
 if (!gate.isPluginPr) {
 	console.log('Not a plugin PR (or draft) — loop skipped.');
@@ -153,11 +177,39 @@ if (!dryRun) {
 const reviewComments = JSON.parse(
 	gh(['api', `repos/${repo}/pulls/${pr}/comments`, '--paginate']),
 ) as ReviewComment[];
-const findings = parseFindings(reviewComments, reviewId);
 
 const issueComments = JSON.parse(
 	gh(['api', `repos/${repo}/issues/${pr}/comments`, '--paginate']),
-) as { body: string }[];
+) as { body: string; updated_at?: string; user?: { login: string } }[];
+
+// A clean Greptile re-review edits its summary and creates no review object,
+// so the latest review can belong to an older commit whose findings are
+// already fixed. Trust the newer summary when it raises nothing serious.
+const greptileSummary = issueComments
+	.filter(
+		(c) =>
+			c.user?.login === 'greptile-apps[bot]' &&
+			/Last reviewed commit/.test(c.body),
+	)
+	.pop();
+const staleReview = reviewSupersededByCleanSummary(
+	greptileSummary
+		? {
+				body: greptileSummary.body,
+				updatedAt: greptileSummary.updated_at ?? '',
+			}
+		: undefined,
+	{
+		commitId: (event.review.commit_id as string | undefined) ?? '',
+		submittedAt: (event.review.submitted_at as string | undefined) ?? '',
+	},
+);
+if (staleReview) {
+	console.log(
+		`Review ${reviewId} predates Greptile's latest clean summary — its findings are treated as resolved.`,
+	);
+}
+const findings = staleReview ? [] : parseFindings(reviewComments, reviewId);
 const round = currentRound(issueComments);
 let decision = decide(round, findings);
 const seriousCount = findings.filter((f) => f.severity !== 'P2').length;
@@ -252,9 +304,10 @@ switch (decision) {
 			// in place; never post new comments after escalation.
 			upsert(R3_MARKER, buildEscalationComment(findings));
 		} else if (round >= 3 && seriousCount === 0 && gate.failures.length === 0) {
-			// Escalated PR became clean — clear the maintainer flag so the
-			// queue reflects reality.
+			// Escalated PR became clean — clear the maintainer flag and replace
+			// the escalation comment, so neither still asks for a maintainer.
 			unlabel('needs-maintainer');
+			upsert(R3_MARKER, buildResolvedComment());
 		} else {
 			console.log('Nothing to do this round.');
 		}

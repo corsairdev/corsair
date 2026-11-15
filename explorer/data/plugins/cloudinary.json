@@ -23,7 +23,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -49,7 +49,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -63,7 +63,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -94,7 +94,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -108,7 +108,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -139,7 +139,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -153,7 +153,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -189,7 +189,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -203,7 +203,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -254,7 +254,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -311,7 +311,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -358,7 +358,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -404,7 +404,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -499,12 +499,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -535,7 +535,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -630,12 +630,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -666,7 +666,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -696,7 +696,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -706,7 +706,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -722,7 +722,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -752,7 +752,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -762,7 +762,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -778,7 +778,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -873,12 +873,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -909,7 +909,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -955,7 +955,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -981,7 +981,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -995,7 +995,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1090,12 +1090,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -1126,7 +1126,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1192,7 +1192,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1238,7 +1238,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1253,7 +1253,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1305,7 +1305,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1351,7 +1351,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1402,7 +1402,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1462,7 +1462,7 @@
           {
             "key": "datasource",
             "optional": true,
-            "type": "{ values?: {}[] }"
+            "type": "{ values?: Record<string, any>[] }"
           }
         ]
       }
@@ -1478,7 +1478,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1573,12 +1573,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -1609,7 +1609,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1671,7 +1671,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1722,7 +1722,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1767,7 +1767,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -1793,7 +1793,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1859,7 +1859,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1909,7 +1909,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -1935,7 +1935,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -1965,7 +1965,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -1991,7 +1991,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2017,7 +2017,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -2031,7 +2031,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2126,12 +2126,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -2162,7 +2162,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2252,7 +2252,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -2262,7 +2262,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -2278,7 +2278,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2354,7 +2354,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2425,7 +2425,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2502,7 +2502,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2554,7 +2554,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2610,7 +2610,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2686,7 +2686,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2767,7 +2767,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2822,7 +2822,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2872,7 +2872,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -2948,7 +2948,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3024,7 +3024,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3105,7 +3105,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3157,7 +3157,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3208,7 +3208,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3264,7 +3264,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3320,7 +3320,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3360,7 +3360,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -3386,7 +3386,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3441,7 +3441,7 @@
           {
             "key": "datasource",
             "optional": true,
-            "type": "{ values?: {}[] }"
+            "type": "{ values?: Record<string, any>[] }"
           }
         ]
       }
@@ -3457,7 +3457,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3497,12 +3497,12 @@
           {
             "key": "condition",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -3519,7 +3519,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3571,7 +3571,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3622,7 +3622,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3682,7 +3682,7 @@
           {
             "key": "datasource",
             "optional": true,
-            "type": "{ values?: {}[] }"
+            "type": "{ values?: Record<string, any>[] }"
           }
         ]
       }
@@ -3698,7 +3698,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3733,7 +3733,7 @@
           {
             "key": "metadata_fields",
             "optional": true,
-            "type": "{ external_id: string, label?: string, type?: string, mandatory?: boolean, default_value?: any, datasource?: { values?: {}[] } }[]"
+            "type": "{ external_id: string, label?: string, type?: string, mandatory?: boolean, default_value?: any, datasource?: { values?: Record<string, any>[] } }[]"
           }
         ]
       }
@@ -3749,7 +3749,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3779,7 +3779,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{ id: string, name?: string, condition?: {}, result?: {} }[]"
+            "type": "{ id: string, name?: string, condition?: Record<string, any>, result?: Record<string, any> }[]"
           }
         ]
       }
@@ -3795,7 +3795,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3855,7 +3855,7 @@
           {
             "key": "datasource",
             "optional": true,
-            "type": "{ values?: {}[] }"
+            "type": "{ values?: Record<string, any>[] }"
           }
         ]
       }
@@ -3871,7 +3871,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -3931,7 +3931,7 @@
           {
             "key": "datasource",
             "optional": true,
-            "type": "{ values?: {}[] }"
+            "type": "{ values?: Record<string, any>[] }"
           }
         ]
       }
@@ -3947,7 +3947,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4002,7 +4002,7 @@
           {
             "key": "datasource",
             "optional": true,
-            "type": "{ values?: {}[] }"
+            "type": "{ values?: Record<string, any>[] }"
           }
         ]
       }
@@ -4018,7 +4018,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4059,7 +4059,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -4073,7 +4073,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4133,7 +4133,7 @@
           {
             "key": "datasource",
             "optional": true,
-            "type": "{ values?: {}[] }"
+            "type": "{ values?: Record<string, any>[] }"
           }
         ]
       }
@@ -4149,7 +4149,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4209,7 +4209,7 @@
           {
             "key": "datasource",
             "optional": true,
-            "type": "{ values?: {}[] }"
+            "type": "{ values?: Record<string, any>[] }"
           }
         ]
       }
@@ -4225,7 +4225,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4270,12 +4270,12 @@
           {
             "key": "condition",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "result",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -4291,7 +4291,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4386,12 +4386,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -4422,7 +4422,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4462,7 +4462,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -4479,7 +4479,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4530,7 +4530,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4575,7 +4575,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -4591,7 +4591,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4636,7 +4636,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -4652,7 +4652,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4692,7 +4692,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -4702,7 +4702,7 @@
           {
             "key": "presets",
             "optional": true,
-            "type": "{ name: string, unsigned?: boolean, settings?: {} }[]"
+            "type": "{ name: string, unsigned?: boolean, settings?: Record<string, any> }[]"
           }
         ]
       }
@@ -4718,7 +4718,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4808,7 +4808,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -4818,7 +4818,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -4834,7 +4834,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -4929,12 +4929,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -4965,7 +4965,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5060,12 +5060,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -5096,7 +5096,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5221,12 +5221,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -5257,7 +5257,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5387,12 +5387,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -5423,7 +5423,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5469,7 +5469,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5564,12 +5564,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -5600,7 +5600,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5700,12 +5700,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -5736,7 +5736,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5841,12 +5841,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -5877,7 +5877,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5903,7 +5903,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -5918,7 +5918,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -5965,7 +5965,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6017,7 +6017,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6068,7 +6068,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6138,7 +6138,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -6148,7 +6148,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -6164,7 +6164,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6239,7 +6239,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -6249,7 +6249,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -6265,7 +6265,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6340,7 +6340,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -6350,7 +6350,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -6366,7 +6366,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6426,7 +6426,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -6436,7 +6436,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -6452,7 +6452,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6512,7 +6512,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -6522,7 +6522,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -6538,7 +6538,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6603,7 +6603,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -6613,7 +6613,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -6629,7 +6629,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6719,7 +6719,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -6729,7 +6729,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -6745,7 +6745,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6840,12 +6840,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -6876,7 +6876,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -6976,12 +6976,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -7012,7 +7012,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7107,12 +7107,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -7143,7 +7143,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7183,7 +7183,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -7209,7 +7209,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7304,12 +7304,12 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "asset_folder",
@@ -7340,7 +7340,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7366,7 +7366,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -7380,7 +7380,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7406,7 +7406,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -7421,7 +7421,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7472,7 +7472,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7503,7 +7503,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -7517,7 +7517,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7548,7 +7548,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -7562,7 +7562,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7623,7 +7623,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7689,7 +7689,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7756,7 +7756,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7807,7 +7807,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7873,7 +7873,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7918,7 +7918,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -7944,7 +7944,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -7989,7 +7989,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -8015,7 +8015,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -8086,7 +8086,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -8131,17 +8131,17 @@
           {
             "key": "credits",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "storage",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "bandwidth",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "resources",
@@ -8167,7 +8167,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -8218,7 +8218,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -8232,7 +8232,7 @@
           {
             "key": "query",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "body",
@@ -8322,7 +8322,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "total_count",
@@ -8332,7 +8332,7 @@
           {
             "key": "resources",
             "optional": true,
-            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: {}, metadata?: {}, asset_folder?: string, display_name?: string, status?: string }[]"
+            "type": "{ asset_id: string, public_id: string, resource_type?: image | video | raw, type?: string, format?: string, version?: number, url?: string, secure_url?: string, width?: number, height?: number, bytes?: number, created_at?: string, tags?: string[], context?: Record<string, any>, metadata?: Record<string, any>, asset_folder?: string, display_name?: string, status?: string }[]"
           }
         ]
       }
@@ -8401,7 +8401,7 @@
           {
             "key": "eager",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "batch_id",
@@ -8420,7 +8420,7 @@
           }
         ]
       },
-      "responseType": "{ notification_type: eager, request_id?: string, signature_key?: string, eager?: {}[], batch_id?: string, asset_id?: string, public_id?: string }",
+      "responseType": "{ notification_type: eager, request_id?: string, signature_key?: string, eager?: Record<string, any>[], batch_id?: string, asset_id?: string, public_id?: string }",
       "usageExample": "cloudinary({\n    webhookHooks: {\n        eager: {\n            eager: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -8717,11 +8717,11 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ notification_type: resource_context_changed, request_id?: string, signature_key?: string, public_id?: string, asset_id?: string, context?: {} }",
+      "responseType": "{ notification_type: resource_context_changed, request_id?: string, signature_key?: string, public_id?: string, asset_id?: string, context?: Record<string, any> }",
       "usageExample": "cloudinary({\n    webhookHooks: {\n        resource: {\n            resourceContextChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -8759,11 +8759,11 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
-      "responseType": "{ notification_type: resource_metadata_changed, request_id?: string, signature_key?: string, public_id?: string, asset_id?: string, metadata?: {} }",
+      "responseType": "{ notification_type: resource_metadata_changed, request_id?: string, signature_key?: string, public_id?: string, asset_id?: string, metadata?: Record<string, any> }",
       "usageExample": "cloudinary({\n    webhookHooks: {\n        resource: {\n            resourceMetadataChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -9032,6 +9032,11 @@
         },
         {
           "field": "public_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

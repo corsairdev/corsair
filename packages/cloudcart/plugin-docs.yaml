@@ -1,0 +1,26 @@
+displayName: CloudCart
+description: Ecommerce platform. Manage products, variants, categories, properties, customers, orders, carts, discounts, blog posts, subscribers, and webhooks.
+domain: cloudcart.com
+examples:
+  read:
+    path: products.listProducts
+    title: List products
+  write:
+    path: products.createProduct
+    title: Create a product
+    args:
+      data:
+        type: products
+        attributes:
+          name: Blue T-shirt
+dbExample:
+  entity: products
+  note: >-
+    This table exists, but Cloudcart calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50
+exampleWebhook:
+  path: order.created
+  note: Fires when a customer places an order.
+  after: |
+    console.log('Cloudcart order created:', result.data);
