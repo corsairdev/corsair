@@ -1532,6 +1532,18 @@ describe('Klipfolio endpoint request seams', () => {
 			rawContent: 'email,revenue\ncustomer@example.com,10',
 		} as never);
 		expect(lastLogged()).toEqual({ id: 'dsi-1', client_id: undefined });
+		await listUsers(ctx, { email: 'jane@example.com' } as never);
+		expect(JSON.stringify(lastLogged())).not.toContain('jane@example.com');
+		await updateUserProperties(ctx, {
+			id: 'user-1',
+			properties: { City: 'Toronto' },
+		} as never);
+		expect(JSON.stringify(lastLogged())).not.toContain('Toronto');
+		await createKlipAnnotations(ctx, {
+			id: 'klip-1',
+			body: 'Call jane@example.com about June',
+		} as never);
+		expect(JSON.stringify(lastLogged())).not.toContain('jane@example.com');
 		await retrieveUser(ctx, { id: 'user-1' } as never);
 		const readCalls = logMock.mock.calls as Array<
 			[unknown, string, Record<string, unknown>, string]

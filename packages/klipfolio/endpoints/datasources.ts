@@ -2,15 +2,10 @@ import { logEventFromContext } from 'corsair/core';
 import type { KlipfolioEndpoints } from '..';
 import { makeKlipfolioRequest } from '../client';
 import { klipfolioPathParameter } from './path';
+// Data source properties carry connector settings, including credentials (a
+// simple_rest source's `parameters` holds its API key header).
+import { redactFields } from './redact';
 import type { KlipfolioEndpointOutputs } from './types';
-
-// Data source properties carry connector settings, including credentials
-// (a simple_rest source's `parameters` holds its API key header), so they
-// stay out of the event log.
-const redactProperties = <T extends { properties?: unknown }>(input: T) =>
-	input.properties === undefined
-		? input
-		: { ...input, properties: '[redacted]' };
 
 export const listDatasources: KlipfolioEndpoints['listDatasources'] = async (
 	ctx,
@@ -56,7 +51,7 @@ export const createDatasource: KlipfolioEndpoints['createDatasource'] = async (
 	await logEventFromContext(
 		ctx,
 		'klipfolio.datasources.createDatasource',
-		redactProperties(input),
+		redactFields(input, ['properties']),
 		'completed',
 	);
 	return response;
@@ -216,7 +211,7 @@ export const updateDatasourceProperties: KlipfolioEndpoints['updateDatasourcePro
 		await logEventFromContext(
 			ctx,
 			'klipfolio.datasources.updateDatasourceProperties',
-			redactProperties(input),
+			redactFields(input, ['properties']),
 			'completed',
 		);
 		return response;
@@ -349,7 +344,7 @@ export const createDatasourceInstances: KlipfolioEndpoints['createDatasourceInst
 		await logEventFromContext(
 			ctx,
 			'klipfolio.datasources.createDatasourceInstances',
-			redactProperties(input),
+			redactFields(input, ['properties']),
 			'completed',
 		);
 		return response;
@@ -498,7 +493,7 @@ export const updateDatasourceInstancesProperties: KlipfolioEndpoints['updateData
 		await logEventFromContext(
 			ctx,
 			'klipfolio.datasources.updateDatasourceInstancesProperties',
-			redactProperties(input),
+			redactFields(input, ['properties']),
 			'completed',
 		);
 		return response;

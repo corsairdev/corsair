@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { KlipfolioEndpoints } from '..';
 import { makeKlipfolioRequest } from '../client';
 import { klipfolioPathParameter } from './path';
+import { redactFields } from './redact';
 import type { KlipfolioEndpointOutputs } from './types';
 
 export const listKlips: KlipfolioEndpoints['listKlips'] = async (
@@ -172,7 +173,7 @@ export const createKlipAnnotations: KlipfolioEndpoints['createKlipAnnotations'] 
 		await logEventFromContext(
 			ctx,
 			'klipfolio.klips.createKlipAnnotations',
-			input,
+			redactFields(input, ['body']),
 			'completed',
 		);
 		return response;
@@ -199,7 +200,7 @@ export const updateKlipAnnotation: KlipfolioEndpoints['updateKlipAnnotation'] =
 		await logEventFromContext(
 			ctx,
 			'klipfolio.klips.updateKlipAnnotation',
-			input,
+			redactFields(input, ['body']),
 			'completed',
 		);
 		return response;

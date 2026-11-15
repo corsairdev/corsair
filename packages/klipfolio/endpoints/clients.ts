@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { KlipfolioEndpoints } from '..';
 import { makeKlipfolioRequest } from '../client';
 import { klipfolioPathParameter } from './path';
+import { redactFields } from './redact';
 import type { KlipfolioEndpointOutputs } from './types';
 
 export const listClients: KlipfolioEndpoints['listClients'] = async (
@@ -202,7 +203,7 @@ export const updateClientProperties: KlipfolioEndpoints['updateClientProperties'
 		await logEventFromContext(
 			ctx,
 			'klipfolio.clients.updateClientProperties',
-			input,
+			redactFields(input, ['properties']),
 			'completed',
 		);
 		return response;
