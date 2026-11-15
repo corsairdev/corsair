@@ -14,7 +14,7 @@ description: "API reference for the Minerstat plugin in Corsair: every `minersta
 
 `algorithms.get`
 
-Get algorithms
+Get one algorithm with its coins and benchmarked hardware
 
 **Risk:** `read`
 
@@ -62,7 +62,7 @@ await corsair.minerstat.api.algorithms.get({ slug: 'sha-256' });
   hardware: {
     slug: string,
     name: string,
-    type: ASIC | GPU | CPU | FPGA,
+    type: ASIC | GPU | CPU | FPGA | string,
     hashrateHs: number,
     powerWatts: number | null
   }[]
@@ -79,7 +79,7 @@ await corsair.minerstat.api.algorithms.get({ slug: 'sha-256' });
 
 `algorithms.list`
 
-List algorithms
+List mining algorithms with coin counts
 
 **Risk:** `read`
 
@@ -131,7 +131,7 @@ await corsair.minerstat.api.algorithms.list({});
 
 `coins.get`
 
-Get coins
+Get one coin by slug, with identity and supply fields
 
 **Risk:** `read`
 
@@ -177,7 +177,7 @@ await corsair.minerstat.api.coins.get({ slug: 'btc' });
   website: string | null,
   explorerUrl: string | null,
   consensusType: string | null,
-  coinType: coin | pool,
+  coinType: coin | pool | string,
   circulatingSupply: number | null,
   maxSupply: number | null
 }
@@ -193,7 +193,7 @@ await corsair.minerstat.api.coins.get({ slug: 'btc' });
 
 `coins.history`
 
-History coins
+List network snapshots for one coin, newest first
 
 **Risk:** `read`
 
@@ -243,7 +243,7 @@ await corsair.minerstat.api.coins.history({ slug: 'btc' });
 
 `coins.list`
 
-List coins
+List mineable coins with network, price and confidence data
 
 **Risk:** `read`
 
@@ -306,7 +306,7 @@ await corsair.minerstat.api.coins.list({});
 
 `hardware.get`
 
-Get hardware
+Get one hardware device by slug, with its spec sheet
 
 **Risk:** `read`
 
@@ -336,7 +336,7 @@ await corsair.minerstat.api.hardware.get({ slug: 'nvidia-geforce-rtx-4090' });
   slug: string,
   name: string,
   manufacturer: string,
-  type: ASIC | GPU | CPU | FPGA,
+  type: ASIC | GPU | CPU | FPGA | string,
   defaultPowerWatts: number | null,
   releaseDate: string | null,
   specs: string[]
@@ -353,7 +353,7 @@ await corsair.minerstat.api.hardware.get({ slug: 'nvidia-geforce-rtx-4090' });
 
 `hardware.list`
 
-List hardware
+List mining hardware (ASIC, GPU, CPU, FPGA)
 
 **Risk:** `read`
 
@@ -390,7 +390,7 @@ await corsair.minerstat.api.hardware.list({});
   slug: string,
   manufacturer: string,
   model: string,
-  type: ASIC | GPU | CPU | FPGA,
+  type: ASIC | GPU | CPU | FPGA | string,
   powerWatts: number | null,
   releaseDate: string | null
 }[]
@@ -408,7 +408,7 @@ await corsair.minerstat.api.hardware.list({});
 
 `pools.get`
 
-Get pools
+Get one pool with per-coin fees and payout schemes
 
 **Risk:** `read`
 
@@ -461,7 +461,7 @@ await corsair.minerstat.api.pools.get({ slug: 'f2pool' });
 
 `pools.list`
 
-List pools
+List mining pools with fees and liveness
 
 **Risk:** `read`
 
@@ -516,7 +516,7 @@ await corsair.minerstat.api.pools.list({});
 
 `profitability.rank`
 
-Rank profitability
+Rank coins by mining profit for hardware or a hashrate (Enterprise plan)
 
 **Risk:** `read`
 
@@ -588,3 +588,4 @@ Requires the Enterprise plan. Use hardware for preset mode, or hashrate and algo
 
 
 ---
+
