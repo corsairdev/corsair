@@ -1033,9 +1033,19 @@ export const ETerminEndpointInputSchemas = {
 				.string()
 				.optional()
 				.describe('Name of the calendar. This name is used for all languages'),
-			// Per-language descriptions (descriptionde, descriptionen, ...) come in
-			// through withLanguageFields below; the reference's
-			// "descriptionlanguagecode" is a placeholder, not a field.
+			descriptionde: z
+				.string()
+				.optional()
+				.describe(
+					'Description of the calendar in German. Other languages use description plus the two-letter code, e.g. descriptionfr.',
+				),
+			descriptionen: z
+				.string()
+				.optional()
+				.describe('Description of the calendar in English.'),
+			// Other languages (descriptionfr, descriptionit, ...) come in through
+			// withLanguageFields below; the reference's "descriptionlanguagecode"
+			// is a placeholder, not a field.
 			descriptiondisplaytype: z
 				.number()
 				.int()

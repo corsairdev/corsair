@@ -1621,7 +1621,13 @@ export const calendarsUpdate = {
 			type: 'string',
 			required: false,
 			description:
-				'Description of the calendar in German. For other languages use descriptionLANGUAGECODE, e.g. descriptionen.',
+				'Description of the calendar in German. Other languages use description plus the two-letter code, e.g. descriptionfr.',
+		},
+		{
+			name: 'descriptionen',
+			type: 'string',
+			required: false,
+			description: 'Description of the calendar in English.',
 		},
 		{
 			name: 'descriptiondisplaytype',
