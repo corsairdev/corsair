@@ -573,6 +573,7 @@ export const BaseProviders = [
 	'trustpilot',
 	'turbotpipes',
 	'turso',
+	'twelvedata',
 	'twentyonerisk',
 	'twilio',
 	'twitter',
@@ -1200,6 +1201,7 @@ export const ProviderDisplayNames = {
 	trustpilot: 'Trustpilot',
 	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
+	twelvedata: 'Twelve Data',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
@@ -1834,6 +1836,7 @@ export type AllProviders =
 	| 'trustpilot'
 	| 'turbotpipes'
 	| 'turso'
+	| 'twelvedata'
 	| 'twentyonerisk'
 	| 'twilio'
 	| 'twitter'
