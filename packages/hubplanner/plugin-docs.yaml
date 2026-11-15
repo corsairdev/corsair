@@ -11,7 +11,11 @@ apiNotes:
   bookings.create: "Requires `resource`, `project`, `start`, and `end` dates (YYYY-MM-DD). Use `allowOverschedule: true` to bypass schedule warning thresholds."
   bookings.patch: "Used for partial updates or for approving/rejecting booking requests with `type: 'APPROVED'` or `'REJECTED'`."
   timeEntries.create: "Requires `resource`, `project`, `date` (YYYY-MM-DD), and `minutes`."
-  categories.create: "Requires `groupId` and `name`. Setting `type: 'NON_OPTIONAL'` sets the category as default for that group."
+  categories.create: "Requires `groupId`, `name` and `type`. `type: 'NON_OPTIONAL'` sets the category as the group's default; use `'CUSTOM'` otherwise."
+  categories.update: "PUT replaces the category: send `name`, `gridColor` and `type` together."
+  customFields.update: "PUT replaces the template. For SELECT, RADIO and CHECKBOX types send the complete `choices` array (existing choices with their `_id`), or the API answers 400."
+  milestones.list: "Hub Planner has no GET /milestone, so this runs an empty milestone search."
+  bookings.deleteBulk: "Pass exactly one of `ids`, `resourceId` or `projectId`. `resourceId` and `projectId` delete every booking of that resource or project."
   customFields.create: "`entityType` must be either `'project'` or `'resource'`. Requires `type` (e.g., `'TEXT'`, `'select'`) and `label`."
   milestones.create: "Requires `name`, `date` (YYYY-MM-DD), and `project`."
   events.create: "Requires event `name`. Color and metadata custom fields are optional."
@@ -153,9 +157,11 @@ apiExamples:
   categories.create:
     groupId: "66e81d231d512707a7266d32"
     name: "Design Review"
+    type: "CUSTOM"
   categories.update:
     categoryId: "5f057949f338cd432a794a12"
     name: "Design Sprint"
+    type: "CUSTOM"
   categories.search:
     query:
       name: "Design"

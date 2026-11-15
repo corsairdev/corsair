@@ -497,8 +497,9 @@ const hubplannerEndpointMeta = {
 		description: 'Dissociate a client organization from projects',
 	},
 	'projects.setProjectManagers': {
-		riskLevel: 'write',
-		description: 'Set designated project managers for a project',
+		riskLevel: 'destructive',
+		description:
+			'Replace the project manager list of a project (managers not listed are removed)',
 	},
 	'projects.getTags': {
 		riskLevel: 'read',
@@ -586,7 +587,8 @@ const hubplannerEndpointMeta = {
 	},
 	'bookings.deleteBulk': {
 		riskLevel: 'destructive',
-		description: 'Bulk delete bookings by IDs or filter parameters',
+		description:
+			'Bulk delete bookings by IDs, or every booking of one resource or one project',
 	},
 
 	'timeEntries.list': {
@@ -681,8 +683,9 @@ const hubplannerEndpointMeta = {
 		description: 'Create a new custom field template for projects or resources',
 	},
 	'customFields.update': {
-		riskLevel: 'write',
-		description: 'Update a custom field template and its configuration',
+		riskLevel: 'destructive',
+		description:
+			'Replace a custom field template; choices left out of the array are removed from records',
 	},
 	'customFields.delete': {
 		riskLevel: 'destructive',
