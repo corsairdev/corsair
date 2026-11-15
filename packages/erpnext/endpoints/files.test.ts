@@ -293,15 +293,12 @@ describe('ERPNext files endpoint contract', () => {
 
 	// A failed download must keep the response status (and any Retry-After)
 	// on the wrapped error so the endpoint error handlers can classify it.
-	// Asserted at the client seam: a read-rate-limited download goes through
-	// the shared binder's retry replay, which is core behavior, not the
-	// plugin's, and would sleep out the provider delay here.
 	it('preserves the status and Retry-After of a failed binary download', async () => {
 		const mockFetch = jest
 			.spyOn(global, 'fetch')
 			.mockImplementation(async () => {
-				return new Response('Too Many Requests', {
-					status: 429,
+				return new Response('Service Unavailable', {
+					status: 503,
 					headers: { 'content-type': 'text/plain', 'Retry-After': '7' },
 				});
 			});
@@ -312,10 +309,57 @@ describe('ERPNext files endpoint contract', () => {
 				'test-key:test-secret',
 			).catch((caught: unknown) => caught)) as ErpnextAPIError;
 			expect(error).toBeInstanceOf(ErpnextAPIError);
-			expect(error.status).toBe(429);
+			expect(error.status).toBe(503);
 			// The header is in seconds on the wire and milliseconds once
 			// wrapped, matching the shared transport's JSON-path behavior.
 			expect(error.retryAfter).toBe(7000);
+			expect(mockFetch).toHaveBeenCalledTimes(1);
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	// Downloads bypass core's request(), so they repeat its 429 retries.
+	it('retries a rate-limited download after Retry-After and returns the bytes', async () => {
+		const mockFetch = jest
+			.spyOn(global, 'fetch')
+			.mockResolvedValueOnce(
+				new Response('Too Many Requests', {
+					status: 429,
+					headers: { 'Retry-After': '0' },
+				}),
+			)
+			.mockResolvedValueOnce(new Response(new Uint8Array([37, 80, 68, 70])));
+		try {
+			const base64 = await fetchErpnextBinary(
+				'/api/method/frappe.utils.print_format.download_pdf?doctype=Sales%20Invoice&name=ACC-SINV-2026-00001',
+				BASE_URL,
+				'test-key:test-secret',
+			);
+			expect(base64).toBe(Buffer.from('%PDF').toString('base64'));
+			expect(mockFetch).toHaveBeenCalledTimes(2);
+		} finally {
+			mockFetch.mockRestore();
+		}
+	});
+
+	it('gives up on a download after three 429 retries', async () => {
+		const mockFetch = jest.spyOn(global, 'fetch').mockImplementation(
+			async () =>
+				new Response('Too Many Requests', {
+					status: 429,
+					headers: { 'Retry-After': '0' },
+				}),
+		);
+		try {
+			const error = (await fetchErpnextBinary(
+				'/api/method/frappe.utils.file_manager.download_file?file_url=%2Ffiles%2Fa.pdf',
+				BASE_URL,
+				'test-key:test-secret',
+			).catch((caught: unknown) => caught)) as ErpnextAPIError;
+			expect(error).toBeInstanceOf(ErpnextAPIError);
+			expect(error.status).toBe(429);
+			expect(mockFetch).toHaveBeenCalledTimes(4);
 		} finally {
 			mockFetch.mockRestore();
 		}

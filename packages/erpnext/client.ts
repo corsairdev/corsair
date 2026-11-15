@@ -172,32 +172,48 @@ export async function fetchErpnextBinary(
 	key: string,
 ): Promise<string> {
 	const url = `${trimTrailingSlashes(baseUrl)}${endpoint}`;
-	const response = await fetch(url, {
-		headers: { Authorization: erpnextAuthorizationHeader(key) },
-		signal: AbortSignal.timeout(60_000),
-	});
-	if (!response.ok) {
+	// Downloads skip core's request(), so they repeat its 429 handling here:
+	// up to three retries, waiting for Retry-After (capped) or backing off.
+	for (let attempt = 0; ; attempt++) {
+		const response = await fetch(url, {
+			headers: { Authorization: erpnextAuthorizationHeader(key) },
+			signal: AbortSignal.timeout(60_000),
+		});
+		if (response.ok) {
+			const bytes = new Uint8Array(await response.arrayBuffer());
+			return Buffer.from(bytes).toString('base64');
+		}
 		const statusText = response.statusText || 'Request failed';
 		// Mirror the shared transport's Retry-After handling: the header is
 		// in seconds on the wire and milliseconds once wrapped, so the
 		// endpoint error handlers see the same shape as JSON-path errors and
-		// can classify (401/403/429) and retry binary reads correctly.
+		// can classify (401/403/429) binary reads correctly.
 		const retryAfterHeader = response.headers.get('Retry-After');
 		const retryAfterSeconds = retryAfterHeader
 			? Number.parseInt(retryAfterHeader, 10)
 			: Number.NaN;
+		const retryAfter = Number.isNaN(retryAfterSeconds)
+			? undefined
+			: retryAfterSeconds * 1000;
+		if (response.status === 429 && attempt < BINARY_MAX_RETRIES) {
+			const wait = Math.min(
+				retryAfter ?? 1000 * 2 ** attempt,
+				BINARY_MAX_RETRY_WAIT_MS,
+			);
+			await new Promise((resolve) => setTimeout(resolve, wait));
+			continue;
+		}
 		throw new ErpnextAPIError(
 			`ERPNext binary download failed with HTTP ${response.status}: ${statusText}`,
 			{
 				cause: new Error(String(response.status)),
 				status: response.status,
 				statusText,
-				retryAfter: Number.isNaN(retryAfterSeconds)
-					? undefined
-					: retryAfterSeconds * 1000,
+				retryAfter,
 			},
 		);
 	}
-	const bytes = new Uint8Array(await response.arrayBuffer());
-	return Buffer.from(bytes).toString('base64');
 }
+
+const BINARY_MAX_RETRIES = 3;
+const BINARY_MAX_RETRY_WAIT_MS = 60_000;
