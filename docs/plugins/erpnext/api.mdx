@@ -14,9 +14,9 @@ description: "API reference for the ERPNext plugin in Corsair: every `erpnext.ap
 
 `desk.addComment`
 
-Add a comment to any document; the caller supplies the reference, content, and commenter identity
+Add a comment to any document; the caller supplies the reference, content, and commenter identity. Users @mentioned in the content are notified by email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.erpnext.api.desk.addComment({
@@ -168,19 +168,9 @@ await corsair.erpnext.api.doctypes.getMeta({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="message full type">
-
-```ts
-{
-  meta: Record<string, any>,
-  docs: Record<string, any>[]
-}
-```
-</Accordion>
-</AccordionGroup>
+| `docs` | `Record<string, any>[]` | Yes | — |
+| `user_settings` | `any` | No | — |
+| `parent_dt` | `string` | No | — |
 
 
 
@@ -226,7 +216,7 @@ await corsair.erpnext.api.doctypes.list({});
 
 Cancel a submitted document by doctype and name through the frappe.client RPC
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.erpnext.api.documents.cancel({});
@@ -318,7 +308,8 @@ await corsair.erpnext.api.documents.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `message` | `string` | Yes | — |
+| `data` | `string` | No | — |
+| `message` | `string` | No | — |
 
 
 
@@ -682,7 +673,7 @@ await corsair.erpnext.api.documents.renameDoc({});
 
 Save, submit, cancel, or update a document by sending its docstatus and fields through the frappe.client RPC
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.erpnext.api.documents.saveDocs({});
@@ -853,7 +844,7 @@ await corsair.erpnext.api.documents.setValue({});
 
 Submit a submittable document, moving it from draft to submitted through the frappe.client RPC
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.erpnext.api.documents.submit({});
@@ -1145,7 +1136,11 @@ await corsair.erpnext.api.erp.makePurchaseOrder({});
 ```ts
 {
   source_name: string,
-  selected_items?: string | string[],
+  selected_items: string | {
+    name?: string,
+    item_code?: string,
+    supplier: string
+  }[],
   target_doc?: string
 }
 ```
@@ -1212,9 +1207,9 @@ await corsair.erpnext.api.erp.makeSalesInvoice({});
 
 `erp.makeStockEntry`
 
-Create a stock entry for material transfers, receipts, or issues between warehouses
+Create a stock entry for material transfers, receipts, or issues between warehouses; ERPNext saves and submits it unless do_not_save or do_not_submit is set
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.erpnext.api.erp.makeStockEntry({});
@@ -1753,9 +1748,9 @@ await corsair.erpnext.api.webhooks.list({});
 
 `workflow.apply`
 
-Apply a workflow action to a document, transitioning it through its configured workflow states
+Apply a workflow action to a document, transitioning it through its configured workflow states; transitions can submit or cancel the document
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.erpnext.api.workflow.apply({});
