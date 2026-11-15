@@ -825,12 +825,16 @@ await corsair.fly.api.machines.create({});
 
 ```ts
 {
-  image: string,
+  image?: string,
+  containers?: Record<string, any>[],
   guest?: {
     cpu_kind?: shared | performance,
     cpus?: number,
     memory_mb?: number,
-    max_memory_mb?: number
+    max_memory_mb?: number,
+    kernel_args?: string[],
+    host_dedication_id?: string,
+    required_host_features?: string[]
   },
   env?: Record<string, string>,
   metadata?: Record<string, string>,
@@ -1901,9 +1905,9 @@ await corsair.fly.api.machines.signal({});
 
 `machines.start`
 
-Start a stopped or suspended Machine
+Start a stopped or suspended Machine. Fly bills CPU and memory while it runs.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.fly.api.machines.start({});
@@ -2055,12 +2059,16 @@ await corsair.fly.api.machines.update({});
 
 ```ts
 {
-  image: string,
+  image?: string,
+  containers?: Record<string, any>[],
   guest?: {
     cpu_kind?: shared | performance,
     cpus?: number,
     memory_mb?: number,
-    max_memory_mb?: number
+    max_memory_mb?: number,
+    kernel_args?: string[],
+    host_dedication_id?: string,
+    required_host_features?: string[]
   },
   env?: Record<string, string>,
   metadata?: Record<string, string>,
@@ -2634,7 +2642,9 @@ await corsair.fly.api.volumes.create({});
 {
   cpu_kind?: shared | performance,
   cpus?: number,
-  memory_mb?: number
+  memory_mb?: number,
+  host_dedication_id?: string,
+  required_host_features?: string[]
 }
 ```
 </Accordion>
@@ -3054,9 +3064,9 @@ await corsair.fly.api.volumes.listSnapshots({});
 
 `volumes.update`
 
-Change a volume's snapshot settings
+Change a volume's automatic snapshots and their retention. More snapshots kept means more billed snapshot storage.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.fly.api.volumes.update({});
