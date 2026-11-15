@@ -216,7 +216,9 @@ export type DatasetsGetOperationStatusInput = z.infer<
 
 export const DatasetsGetOperationStatusOutputSchema = z.object({
 	// Known values plus any string (including ''), so a new status does not throw.
-	Status: z.union([z.enum(['Working', 'Done', 'Error']), z.string()]).optional(),
+	Status: z
+		.union([z.enum(['Working', 'Done', 'Error']), z.string()])
+		.optional(),
 	Message: z.string().optional(),
 	Owner: z.string().optional(),
 	UpdatedAt: z.string().optional(),
