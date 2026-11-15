@@ -423,6 +423,7 @@ export const BaseProviders = [
 	'razorpay',
 	'realphonevalidation',
 	'reamaze',
+	'route4me',
 	'recallai',
 	'recruitee',
 	'redcircle',
@@ -455,7 +456,6 @@ export const BaseProviders = [
 	'rollbar',
 	'rootly',
 	'rosette',
-	'route4me',
 	'rudderstacktransform',
 	'runpod',
 	'salesflare',
@@ -528,13 +528,13 @@ export const BaseProviders = [
 	'twochat',
 	'typeform',
 	'typesafe',
-	'u301',
 	'unione',
 	'unipile',
 	'unisender',
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
+	'u301',
 	'uptimerobot',
 	'userflow',
 	'userlist',
@@ -995,6 +995,7 @@ export const ProviderDisplayNames = {
 	ragic: 'Ragic',
 	raisely: 'Raisely',
 	ramp: 'Ramp',
+	route4me: 'Route4Me',
 	razorpay: 'Razorpay',
 	realphonevalidation: 'RealPhoneValidation',
 	reamaze: 'Re:amaze',
@@ -1030,7 +1031,6 @@ export const ProviderDisplayNames = {
 	rollbar: 'Rollbar',
 	rootly: 'Rootly',
 	rosette: 'Rosette',
-	route4me: 'Route4Me',
 	rudderstacktransform: 'RudderStack Transformations',
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
@@ -1103,13 +1103,13 @@ export const ProviderDisplayNames = {
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	typesafe: 'TypeSafe',
-	u301: 'U301',
 	unione: 'Unione',
 	unipile: 'Unipile',
 	unisender: 'Unisender',
 	uniswapapi: 'Uniswap',
 	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
+	u301: 'U301',
 	uptimerobot: 'UptimeRobot',
 	userflow: 'Userflow',
 	userlist: 'Userlist',
@@ -1580,6 +1580,7 @@ export type AllProviders =
 	| 'razorpay'
 	| 'realphonevalidation'
 	| 'reamaze'
+	| 'route4me'
 	| 'recallai'
 	| 'recruitee'
 	| 'redcircle'
@@ -1612,7 +1613,6 @@ export type AllProviders =
 	| 'rollbar'
 	| 'rootly'
 	| 'rosette'
-	| 'route4me'
 	| 'rudderstacktransform'
 	| 'runpod'
 	| 'salesflare'
@@ -1685,13 +1685,13 @@ export type AllProviders =
 	| 'twochat'
 	| 'typeform'
 	| 'typesafe'
-	| 'u301'
 	| 'unione'
 	| 'unipile'
 	| 'unisender'
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'
+	| 'u301'
 	| 'uptimerobot'
 	| 'userflow'
 	| 'userlist'
