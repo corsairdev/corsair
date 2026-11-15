@@ -1,0 +1,106 @@
+import { createSevdeskEndpoint } from './operation';
+import {
+	SevdeskEndpointInputSchemas,
+	SevdeskEndpointOutputSchemas,
+} from './types';
+
+export const Export = {
+	updateExportConfig: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.updateExportConfig'],
+		SevdeskEndpointOutputSchemas['export.updateExportConfig'],
+		'export.updateExportConfig',
+		'PUT',
+		'/SevClient/{SevClientId}/updateExportConfig',
+	),
+	exportDatevDepricated: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportDatevDepricated'],
+		SevdeskEndpointOutputSchemas['export.exportDatevDepricated'],
+		'export.exportDatevDepricated',
+		'GET',
+		'/Export/datevCSV',
+	),
+	exportDatevCSV: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportDatevCSV'],
+		SevdeskEndpointOutputSchemas['export.exportDatevCSV'],
+		'export.exportDatevCSV',
+		'GET',
+		'/Export/createDatevCsvZipExportJob',
+	),
+	exportDatevXML: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportDatevXML'],
+		SevdeskEndpointOutputSchemas['export.exportDatevXML'],
+		'export.exportDatevXML',
+		'GET',
+		'/Export/createDatevXmlZipExportJob',
+	),
+	generateDownloadHash: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.generateDownloadHash'],
+		SevdeskEndpointOutputSchemas['export.generateDownloadHash'],
+		'export.generateDownloadHash',
+		'GET',
+		'/Progress/generateDownloadHash',
+	),
+	getProgress: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.getProgress'],
+		SevdeskEndpointOutputSchemas['export.getProgress'],
+		'export.getProgress',
+		'GET',
+		'/Progress/getProgress',
+	),
+	jobDownloadInfo: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.jobDownloadInfo'],
+		SevdeskEndpointOutputSchemas['export.jobDownloadInfo'],
+		'export.jobDownloadInfo',
+		'GET',
+		'/ExportJob/jobDownloadInfo',
+	),
+	exportInvoice: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportInvoice'],
+		SevdeskEndpointOutputSchemas['export.exportInvoice'],
+		'export.exportInvoice',
+		'GET',
+		'/Export/invoiceCsv',
+	),
+	exportInvoiceZip: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportInvoiceZip'],
+		SevdeskEndpointOutputSchemas['export.exportInvoiceZip'],
+		'export.exportInvoiceZip',
+		'GET',
+		'/Export/invoiceZip',
+	),
+	exportCreditNote: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportCreditNote'],
+		SevdeskEndpointOutputSchemas['export.exportCreditNote'],
+		'export.exportCreditNote',
+		'GET',
+		'/Export/creditNoteCsv',
+	),
+	exportVoucher: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportVoucher'],
+		SevdeskEndpointOutputSchemas['export.exportVoucher'],
+		'export.exportVoucher',
+		'GET',
+		'/Export/voucherListCsv',
+	),
+	exportTransactions: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportTransactions'],
+		SevdeskEndpointOutputSchemas['export.exportTransactions'],
+		'export.exportTransactions',
+		'GET',
+		'/Export/transactionsCsv',
+	),
+	exportVoucherZip: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportVoucherZip'],
+		SevdeskEndpointOutputSchemas['export.exportVoucherZip'],
+		'export.exportVoucherZip',
+		'GET',
+		'/Export/voucherZip',
+	),
+	exportContact: createSevdeskEndpoint(
+		SevdeskEndpointInputSchemas['export.exportContact'],
+		SevdeskEndpointOutputSchemas['export.exportContact'],
+		'export.exportContact',
+		'GET',
+		'/Export/contactListCsv',
+	),
+} as const;

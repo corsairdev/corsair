@@ -1,0 +1,1394 @@
+{
+  "id": "pointagram",
+  "displayName": "Pointagram",
+  "description": "Gamification platform for scoring teams and players, running competitions and leaderboards, and running a reward store.",
+  "npmPackageName": "@corsair-dev/pointagram",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_user"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pointagram.api.competitions.get",
+      "shortPath": "competitions.get",
+      "description": "Read one competition by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the competition."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "repeat_end_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "grand_target",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "invindual_player_targets",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "is_stopped",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "access_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "competition_type",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "db_display_order",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "use_target",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "winner_rule",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "groupingmode",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.competitions.list",
+      "shortPath": "competitions.list",
+      "description": "List competitions, optionally narrowed to one player, id or access key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_by",
+            "optional": true,
+            "type": "string",
+            "description": "Which player field the filter is matched against. The docs name Email, Name and External Id."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "Lists only competitions for the given player."
+          },
+          {
+            "key": "competition_id",
+            "optional": true,
+            "type": "string",
+            "description": "Lists only the competition with this id."
+          },
+          {
+            "key": "accesskey",
+            "optional": true,
+            "type": "string",
+            "description": "Lists only the competition with this access id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "competitions",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, start_date?: string | null, end_date?: string | null, repeat_end_date?: string | null, grand_target?: string | number | null, invindual_player_targets?: string | number | null, is_stopped?: string | number | null, access_key?: string | null, competition_type?: string | number | null, db_display_order?: string | null, use_target?: string | number | null, winner_rule?: string | number | null, groupingmode?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.competitions.players",
+      "shortPath": "competitions.players",
+      "description": "List the players in a competition with their score and rank",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the competition."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "players",
+            "optional": false,
+            "type": "{ profile_id?: string | number | null, name?: string | null, invidual_target?: string | number | null, current_score?: string | number | null, rank?: string | number | null, rank_locked?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.players.create",
+      "shortPath": "players.create",
+      "description": "Create a player with a name and an email or external id; an online player is also invited. A player whose external id already exists is reported as a failure, not created twice",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "player_name",
+            "optional": false,
+            "type": "string",
+            "description": "The name shown in Pointagram."
+          },
+          {
+            "key": "player_email",
+            "optional": true,
+            "type": "string",
+            "description": "Where the invitation goes."
+          },
+          {
+            "key": "player_external_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier, kept on the player."
+          },
+          {
+            "key": "offline",
+            "optional": true,
+            "type": "boolean | 0 | 1 | 0 | 1",
+            "description": "1 creates the player without sending an invitation; 0 invites them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.players.delete",
+      "shortPath": "players.delete",
+      "description": "Soft delete a player. Pointagram keeps the record for you to anonymize in the app, and refuses to remove admin users",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The profile id of the player to remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Pointagram's confirmation text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.players.get",
+      "shortPath": "players.get",
+      "description": "Read one player by profile id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The profile id of the player."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "player_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailaddress",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "player_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "player_external_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "is_org_admin",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.players.list",
+      "shortPath": "players.list",
+      "description": "List players, optionally filtered by name, email or external id, with `next_offset` paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_by",
+            "optional": true,
+            "type": "string",
+            "description": "Which player field the filter is matched against. The docs name Email, Name and External Id."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "Search value, matched against `search_by`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50, and the maximum is 1000."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string | number",
+            "description": "The previous page's `pagination.next_offset`, unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "players",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, Name?: string | null, player_name?: string | null, emailaddress?: string | null, player_email?: string | null, external_id?: string | number | null, player_external_id?: string | number | null, is_org_admin?: string | number | null, icon?: string | null, icon_url?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit?: string | number | null, offset?: string | number | null, next_offset?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.players.update",
+      "shortPath": "players.update",
+      "description": "Update a player's name, email, external id or online status; making a player online invites them",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The profile id of the player to update."
+          },
+          {
+            "key": "player_name",
+            "optional": true,
+            "type": "string",
+            "description": "The name shown in Pointagram."
+          },
+          {
+            "key": "player_email",
+            "optional": true,
+            "type": "string",
+            "description": "Where the invitation goes."
+          },
+          {
+            "key": "player_external_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier, kept on the player."
+          },
+          {
+            "key": "offline",
+            "optional": true,
+            "type": "boolean | 0 | 1 | 0 | 1",
+            "description": "1 keeps the player offline; 0 makes them online."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.rewardStore.item",
+      "shortPath": "rewardStore.item",
+      "description": "Read one reward store item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the reward item."
+          },
+          {
+            "key": "profileid",
+            "optional": false,
+            "type": "string",
+            "description": "The profile id the request acts for."
+          },
+          {
+            "key": "storeid",
+            "optional": true,
+            "type": "string",
+            "description": "Which store to read the item from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "stock",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publishphase",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scoreseriesid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "currencyname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currencyicon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currencysingular",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currencyplural",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "coins",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, linkid?: string | number | null }[] | null"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currencyicon_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.rewardStore.items",
+      "shortPath": "rewardStore.items",
+      "description": "List the items in a reward store",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileid",
+            "optional": false,
+            "type": "string",
+            "description": "The profile id the request acts for."
+          },
+          {
+            "key": "storeid",
+            "optional": true,
+            "type": "string",
+            "description": "Which store to read items from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reward_items",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, image?: string | null, currency?: string | number | null, price?: string | number | null, stock?: string | number | null, startDate?: string | null, endDate?: string | null, publishphase?: string | number | null, description?: string | null, scoreseriesid?: string | number | null, currencyname?: string | null, currencyicon?: string | null, currencysingular?: string | null, currencyplural?: string | null, coins?: string | number | null, tags?: { id?: string | number | null, name?: string | null, linkid?: string | number | null }[] | null, image_url?: string | null, currencyicon_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.rewardStore.purchase",
+      "shortPath": "rewardStore.purchase",
+      "description": "Spend a player's currency on a reward store item, which creates an order to fulfil",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileid",
+            "optional": false,
+            "type": "string",
+            "description": "The player the order is for. Without admin access it must be your own profile id."
+          },
+          {
+            "key": "quantity",
+            "optional": false,
+            "type": "number",
+            "description": "How many of the item."
+          },
+          {
+            "key": "itemid",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the reward item to order."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "purchase_id",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.rewardStore.purchases",
+      "shortPath": "rewardStore.purchases",
+      "description": "List the orders in a reward store, for one member or for everyone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileid",
+            "optional": false,
+            "type": "string",
+            "description": "The profile id the request acts for."
+          },
+          {
+            "key": "viewmember",
+            "optional": true,
+            "type": "string",
+            "description": "The group id of a member whose orders to read, or 'all' for every purchase. Defaults to your own."
+          },
+          {
+            "key": "storeid",
+            "optional": true,
+            "type": "string",
+            "description": "Which store to read orders from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "purchases",
+            "optional": false,
+            "type": "{ id?: string | number | null, group_member?: string | number | null, deliverystatus?: string | null, updated?: string | null, delivered_date?: string | null, bought_date?: string | null, reward_item?: string | number | null, quantity?: string | number | null, name?: string | null, description?: string | null, itemicon?: string | null, profile_id?: string | number | null, profileicon?: string | null, profilename?: string | null, itemicon_url?: string | null, profileicon_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.rewardStore.revokePurchase",
+      "shortPath": "rewardStore.revokePurchase",
+      "description": "Revoke an order. The docs do not say whether the spent currency is returned, so treat it as final",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the purchase to revoke."
+          },
+          {
+            "key": "profileid",
+            "optional": false,
+            "type": "string",
+            "description": "The profile id the request acts for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Pointagram's confirmation text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.rewardStore.settings",
+      "shortPath": "rewardStore.settings",
+      "description": "Read the reward store settings and currencies for a profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileid",
+            "optional": false,
+            "type": "string",
+            "description": "The profile id the request acts for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "pggroup",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "canedit",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "currencies",
+            "optional": true,
+            "type": "{ id?: string | number | null, icon?: string | null, name?: string | null, currencyid?: string | number | null, coins?: string | number | null }[] | string | null",
+            "description": "The currencies this store accepts."
+          },
+          {
+            "key": "orders",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.rewardStore.updatePurchase",
+      "shortPath": "rewardStore.updatePurchase",
+      "description": "Move an order along its delivery status: PURCHASED, PROCESSED or DELIVERED. Needs admin rights",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the purchase."
+          },
+          {
+            "key": "profileid",
+            "optional": false,
+            "type": "string",
+            "description": "The profile id the request acts for."
+          },
+          {
+            "key": "deliverystatus",
+            "optional": false,
+            "type": "PURCHASED | PROCESSED | DELIVERED",
+            "description": "The new delivery status. Needs admin rights."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Pointagram's confirmation text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.scoreSeries.addPoints",
+      "shortPath": "scoreSeries.addPoints",
+      "description": "Score points for a player in a score series, optionally with a comment, tags and a transaction reference that makes a repeat call replace the earlier one",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "player_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "player_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "player_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "player_external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scoreseries_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "scoreseries_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "points",
+            "optional": true,
+            "type": "number",
+            "description": "How many points to add. Supply this or pointtype_name."
+          },
+          {
+            "key": "pointtype_name",
+            "optional": true,
+            "type": "string",
+            "description": "A point type scores a fixed number of points; the score series must define it."
+          },
+          {
+            "key": "source_score_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your transaction reference. Sending it again revokes the earlier transaction and adds a new one, so a retried call does not double-score."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "Shown with the point in the news feed."
+          },
+          {
+            "key": "score_time",
+            "optional": true,
+            "type": "string",
+            "description": "When the points were scored, if not now. Sent unchanged, so include the offset."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ name: string }[]",
+            "description": "Tags to display with the scored point."
+          },
+          {
+            "key": "create_player",
+            "optional": true,
+            "type": "boolean | 0 | 1 | 0 | 1",
+            "description": "1 creates the player when no player with that id, name, email or external id exists."
+          },
+          {
+            "key": "create_tags",
+            "optional": true,
+            "type": "boolean | 0 | 1 | 0 | 1",
+            "description": "1 creates tags that do not exist yet."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "insid",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "The id of the transaction."
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.scoreSeries.get",
+      "shortPath": "scoreSeries.get",
+      "description": "Read one score series by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the score series."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "point_name_singular",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "point_name_plural",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.scoreSeries.history",
+      "shortPath": "scoreSeries.history",
+      "description": "Read the points history of a score series, filtered by tag, point type, team, player and time window, with `next_offset` paging. A series with no points yet answers \"Score serie not found\"",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the score series."
+          },
+          {
+            "key": "tags_filter",
+            "optional": true,
+            "type": "{ id: string, type: 1 | 2 }[]",
+            "description": "Only points matching all of these tag or point type filters."
+          },
+          {
+            "key": "tags_or_filter",
+            "optional": true,
+            "type": "{ id: string, type: 1 | 2 }[]",
+            "description": "Only points matching any of these tag or point type filters."
+          },
+          {
+            "key": "teams_filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "Only points scored by players in these teams."
+          },
+          {
+            "key": "player_filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "Only points scored by these players."
+          },
+          {
+            "key": "time_from",
+            "optional": true,
+            "type": "string",
+            "description": "UTC start, such as 2022-12-05 23:00:00."
+          },
+          {
+            "key": "time_to",
+            "optional": true,
+            "type": "string",
+            "description": "UTC end, such as 2022-12-05 23:00:00."
+          },
+          {
+            "key": "show_revoked",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include points that were revoked, which are hidden by default."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. Defaults to 50, and the maximum is 1000."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string | number",
+            "description": "The previous page's `pagination.next_offset`, unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "history",
+            "optional": false,
+            "type": "{ id?: string | number | null, profile_id?: string | number | null, icon?: string | null, name?: string | null, emailaddress?: string | null, score?: string | number | null, comment?: string | null, timestamp?: string | null, Name?: string | null, Score?: string | number | null, Comment?: string | null, player_external_id?: string | number | null, external_id?: string | number | null, point_type?: string | number | null, point_type_name?: string | null, is_revoked?: string | number | null, revoked_id?: string | number | null, created?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit?: string | number | null, offset?: string | number | null, next_offset?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.scoreSeries.list",
+      "shortPath": "scoreSeries.list",
+      "description": "List score series",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, point_name_singular?: string | null, point_name_plural?: string | null, icon?: string | null, icon_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.scoreSeries.pointTypes",
+      "shortPath": "scoreSeries.pointTypes",
+      "description": "List the point types a score series defines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the score series."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pointtypes",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.teams.addPlayer",
+      "shortPath": "teams.addPlayer",
+      "description": "Add a player to a team, identified by player id, external id or email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the team."
+          },
+          {
+            "key": "player_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "player_external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "player_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Pointagram's confirmation text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a team with a name and an icon",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_name",
+            "optional": false,
+            "type": "string",
+            "description": "The name shown in Pointagram."
+          },
+          {
+            "key": "icon",
+            "optional": false,
+            "type": "string",
+            "description": "The icon file name, from the standard set or one you uploaded in Pointagram."
+          },
+          {
+            "key": "filter_ignore",
+            "optional": true,
+            "type": "boolean | 0 | 1 | 0 | 1",
+            "description": "1 exempts this team from the account filter settings."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Read one team by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the team."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, icon?: string | null, icon_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.teams.listPlayers",
+      "shortPath": "teams.listPlayers",
+      "description": "List the players in a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the team."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "players",
+            "optional": false,
+            "type": "{ profile_id?: string | number | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.teams.removePlayer",
+      "shortPath": "teams.removePlayer",
+      "description": "Remove a player from a team. The player keeps their points and stays in Pointagram",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the team."
+          },
+          {
+            "key": "player_id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The profile id of the player to remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Pointagram's confirmation text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update a team's name, icon or filter setting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the team to update."
+          },
+          {
+            "key": "team_name",
+            "optional": false,
+            "type": "string",
+            "description": "The name shown in Pointagram."
+          },
+          {
+            "key": "icon",
+            "optional": false,
+            "type": "string",
+            "description": "The icon file name, from the standard set or one you uploaded in Pointagram."
+          },
+          {
+            "key": "filter_ignore",
+            "optional": true,
+            "type": "boolean | 0 | 1 | 0 | 1",
+            "description": "1 exempts this team from the account filter settings."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pointagram.api.test.credentials",
+      "shortPath": "test.credentials",
+      "description": "Confirm the Api-Key and Api-User pair and read the organization it belongs to; touches no tenant data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null",
+            "description": "The account the key belongs to."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
