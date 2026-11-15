@@ -5535,5 +5535,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/grist",
+    "dir": "packages/grist",
+    "name": "Grist",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/neverbounce",
+    "dir": "packages/neverbounce",
+    "name": "NeverBounce",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/sendbird",
+    "dir": "packages/sendbird",
+    "name": "Sendbird",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
