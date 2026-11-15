@@ -31,7 +31,7 @@ export const trackEvent: GosquaredEndpoints['tracking.trackEvent'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.tracking.trackEvent',
-		{ eventName: parsed.event.name },
+		{ success: true },
 		'completed',
 	);
 

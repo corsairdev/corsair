@@ -60,11 +60,14 @@ export function scrubUrl(rawUrl: string): string {
 				return decoded.includes('@') ? '[REDACTED]' : segment;
 			})
 			.join('/');
-		for (const [key] of parsed.searchParams) {
+		for (const [key, value] of parsed.searchParams) {
 			const normalized = key.toLowerCase().replace(/[-_]/g, '');
+			// Values arrive decoded here, so a People filter holding an email
+			// address is caught even though `filters` itself is not sensitive.
 			if (
 				SENSITIVE_FIELD_NAMES.has(normalized) ||
-				/key|token|secret|email|auth|credential/i.test(key)
+				/key|token|secret|email|auth|credential/i.test(key) ||
+				value.includes('@')
 			) {
 				parsed.searchParams.set(key, '[REDACTED]');
 			}
