@@ -4252,6 +4252,14 @@
                 ]
               },
               {
+                "group": "Similarweb",
+                "pages": [
+                  "plugins/similarweb/overview",
+                  "plugins/similarweb/api",
+                  "plugins/similarweb/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",

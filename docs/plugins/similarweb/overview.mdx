@@ -1,0 +1,142 @@
+---
+title: "Similarweb plugin"
+sidebarTitle: "Overview"
+description: "Digital rank data from Similarweb - a domain's global, country and industry rank, an app's store rank, the top-ranked sites, the category tree, and the account's capabilities and remaining data credits."
+---
+
+Use **Similarweb** through Corsair: one client, typed API calls.
+
+Get an API key from the Similarweb platform under API, then pass it as the plugin's `key` option or store it on the account. Similarweb reads it as the `api_key` query parameter.
+
+Similarweb has no product called the Digital Rank API; rank data comes from the Website Traffic API (per-domain rank routes), the App Rank route and the Top Sites list. These nine operations are those routes.
+
+Things to know before you query:
+
+- **Domains must be bare and lower case.** Send `cnn.com`, not `CNN.COM` and not a URL with a path. Similarweb answers a capitalised domain with `401 invalid API key`, which reads as an auth problem, so the plugin lower-cases the domain and trims it before sending.
+- **Both dates or neither.** `websites.globalRank` and `websites.countryRank` take `start_date` and `end_date` as `YYYY-MM`. Sending only one is accepted but answered with the default 28-day window, so the schema rejects it instead of returning the wrong months.
+- **Global rank covers desktop and mobile together**, one point per month. There is no desktop-only or mobile-only variant of this route.
+- **Industry rank is a single reading.** It returns the domain's industry and its rank in that industry worldwide, with no date range.
+- **App rank needs a matching store and device.** Use `androidphone` with Google, and `iphone` or `ipad` with Apple. The plugin rejects a mismatched pair, because the API answers it with an empty series rather than an error. Call `apps.describe` for the accepted stores, modes and countries.
+- **Errors are plain text, not JSON.** A 401 body is the literal string `invalid API key`. A 403 means either a bad key or an exhausted credit balance, and Similarweb documents no way to tell them apart. A 404 is `Data not found` for a domain it has no data on. Check `capabilities.get` and `usage.get` before concluding the key is wrong.
+- **Rate limit.** Similarweb allows 10 requests per second per account and answers 429 past it. The plugin retries those three times with backoff.
+- **Credits.** Most routes cost data credits per result, and `usage.get` itself is free. `usage.get` returns the allowance and what is left; `used` is derived from the two.
+
+**What you get:**
+
+- 9 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/similarweb better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/similarweb better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/similarweb better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/similarweb better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { similarweb } from '@corsair-dev/similarweb';
+
+export const corsair = createCorsair({
+	plugins: [
+		similarweb(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Similarweb API key before the first call: `pnpm corsair setup --plugin=similarweb --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+similarweb()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'similarweb',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a domain's global rank for three months**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.similarweb.api.websites.globalRank({ domain: 'cnn.com', start_date: '2023-01', end_date: '2023-03' });
+```
+
+
+**List the stores and modes app rank accepts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.similarweb.api.apps.describe({});
+```
+
+
+See the full list on the [API](/plugins/similarweb/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/similarweb/api">
+    Every `similarweb.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
