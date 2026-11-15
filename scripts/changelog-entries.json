@@ -6111,5 +6111,14 @@
     "version": "0.1.197",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.68",
+    "isNew": false,
+    "changes": []
   }
 ]
