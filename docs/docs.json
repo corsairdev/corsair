@@ -1829,6 +1829,14 @@
                 ]
               },
               {
+                "group": "DocsBot AI",
+                "pages": [
+                  "plugins/docsbotai/overview",
+                  "plugins/docsbotai/api",
+                  "plugins/docsbotai/database"
+                ]
+              },
+              {
                 "group": "Docsumo",
                 "pages": [
                   "plugins/docsumo/overview",
