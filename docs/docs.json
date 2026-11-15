@@ -4252,6 +4252,14 @@
                 ]
               },
               {
+                "group": "SignPath",
+                "pages": [
+                  "plugins/signpath/overview",
+                  "plugins/signpath/api",
+                  "plugins/signpath/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",
