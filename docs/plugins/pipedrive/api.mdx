@@ -102,9 +102,6 @@ API-token authentication is sent using Pipedrive's documented x-api-token header
 ```
 </Accordion>
 </AccordionGroup>
-
-
-
 ---
 
 ### delete
@@ -421,6 +418,416 @@ OAuth requires the deals:full scope. The documented API token cost is 5 tokens.
   arr?: number | null,
   mrr?: number | null,
   acv?: number | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### create
+
+`organizations.create`
+
+Create an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.organizations.create({ name: 'Sample organization' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `add_time` | `string` | No | — |
+| `owner_id` | `number` | No | — |
+| `visible_to` | `number` | No | — |
+| `label_ids` | `number[]` | No | — |
+| `address` | `object \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `linkedin` | `string \| null` | No | — |
+| `industry` | `number \| null` | No | — |
+| `annual_revenue` | `number \| null` | No | — |
+| `employee_count` | `number \| null` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+
+OAuth requires contacts:full. Organization custom_fields values are arbitrary JSON; set a custom field to null to clear it, and do not send an empty array to clear a multi-option set field. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  value?: string,
+  country?: string | null,
+  admin_area_level_1?: string | null,
+  admin_area_level_2?: string | null,
+  locality?: string | null,
+  sublocality?: string | null,
+  route?: string | null,
+  street_number?: string | null,
+  subpremise?: string | null,
+  postal_code?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string | null,
+  is_deleted?: boolean,
+  visible_to?: number,
+  address?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  label_ids?: number[],
+  website?: string | null,
+  linkedin?: string | null,
+  industry?: number | null,
+  annual_revenue?: number | null,
+  employee_count?: number | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`organizations.delete`
+
+Delete an organization
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipedrive.api.organizations.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+OAuth requires contacts:full. Deletion marks the organization deleted; Pipedrive permanently removes it after 30 days. The documented API token cost is 3 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`organizations.get`
+
+Get an organization by its numeric ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.organizations.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `include_fields` | `(next_activity_id \| last_activity_id \| open_deals_count \| related_open_deals_count \| closed_deals_count \| related_closed_deals_count \| email_messages_count \| people_count \| activities_count \| done_activities_count \| undone_activities_count \| files_count \| notes_count \| followers_count \| won_deals_count \| related_won_deals_count \| lost_deals_count \| related_lost_deals_count \| smart_bcc_email)[]` | No | — |
+| `custom_fields` | `string[]` | No | — |
+| `include_option_labels` | `boolean` | No | — |
+| `include_labels` | `boolean` | No | — |
+
+OAuth requires contacts:read or contacts:full. The documented API token cost is 1 token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string | null,
+  is_deleted?: boolean,
+  visible_to?: number,
+  address?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  label_ids?: number[],
+  website?: string | null,
+  linkedin?: string | null,
+  industry?: number | null,
+  annual_revenue?: number | null,
+  employee_count?: number | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`organizations.list`
+
+List organizations with cursor pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.pipedrive.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter_id` | `number` | No | — |
+| `ids` | `number[]` | No | — |
+| `owner_id` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+| `updated_until` | `string` | No | — |
+| `sort_by` | `id \| update_time \| add_time` | No | — |
+| `sort_direction` | `asc \| desc` | No | — |
+| `include_fields` | `(next_activity_id \| last_activity_id \| open_deals_count \| related_open_deals_count \| closed_deals_count \| related_closed_deals_count \| email_messages_count \| people_count \| activities_count \| done_activities_count \| undone_activities_count \| files_count \| notes_count \| followers_count \| won_deals_count \| related_won_deals_count \| lost_deals_count \| related_lost_deals_count \| smart_bcc_email)[]` | No | — |
+| `custom_fields` | `string[]` | No | — |
+| `include_option_labels` | `boolean` | No | — |
+| `include_labels` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+OAuth requires contacts:read or contacts:full. List arrays are comma-separated; forward additional_data.next_cursor as cursor. The documented API token cost is 10 tokens.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+| `additional_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string | null,
+  is_deleted?: boolean,
+  visible_to?: number,
+  address?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  label_ids?: number[],
+  website?: string | null,
+  linkedin?: string | null,
+  industry?: number | null,
+  annual_revenue?: number | null,
+  employee_count?: number | null,
+  custom_fields?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="additional_data full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`organizations.update`
+
+Update an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.pipedrive.api.organizations.update({ id: 1, name: 'Updated organization' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `owner_id` | `number` | No | — |
+| `visible_to` | `number` | No | — |
+| `label_ids` | `number[]` | No | — |
+| `address` | `object \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `linkedin` | `string \| null` | No | — |
+| `industry` | `number \| null` | No | — |
+| `annual_revenue` | `number \| null` | No | — |
+| `employee_count` | `number \| null` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+
+OAuth requires contacts:full. Organization custom_fields values are arbitrary JSON; set a custom field to null to clear it, and do not send an empty array to clear a multi-option set field. The documented API token cost is 5 tokens.
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  value?: string,
+  country?: string | null,
+  admin_area_level_1?: string | null,
+  admin_area_level_2?: string | null,
+  locality?: string | null,
+  sublocality?: string | null,
+  route?: string | null,
+  street_number?: string | null,
+  subpremise?: string | null,
+  postal_code?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  owner_id?: number,
+  add_time?: string,
+  update_time?: string | null,
+  is_deleted?: boolean,
+  visible_to?: number,
+  address?: {
+    value?: string,
+    country?: string | null,
+    admin_area_level_1?: string | null,
+    admin_area_level_2?: string | null,
+    locality?: string | null,
+    sublocality?: string | null,
+    route?: string | null,
+    street_number?: string | null,
+    subpremise?: string | null,
+    postal_code?: string | null
+  } | null,
+  label_ids?: number[],
+  website?: string | null,
+  linkedin?: string | null,
+  industry?: number | null,
+  annual_revenue?: number | null,
+  employee_count?: number | null,
   custom_fields?: Record<string, any>
 }
 ```
@@ -981,4 +1388,4 @@ OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_t
 
 
 
----\n
+---

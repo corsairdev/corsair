@@ -40,6 +40,24 @@ const validDeal = {
 	custom_fields: { priority: 'high' },
 };
 
+const validOrganization = {
+	id: 23,
+	name: 'Synthetic organization',
+	owner_id: 7,
+	add_time: '2025-01-01T10:00:00Z',
+	update_time: null,
+	is_deleted: false,
+	visible_to: 3,
+	address: null,
+	label_ids: [],
+	website: null,
+	linkedin: null,
+	industry: null,
+	annual_revenue: null,
+	employee_count: null,
+	custom_fields: { segment: 'enterprise' },
+};
+
 describe('Pipedrive endpoint schemas', () => {
 	it('accepts and bounds documented deal-list filters and pagination', () => {
 		expect(
@@ -122,6 +140,11 @@ describe('Pipedrive endpoint schemas', () => {
 			'deals.get',
 			'deals.list',
 			'deals.update',
+			'organizations.create',
+			'organizations.delete',
+			'organizations.get',
+			'organizations.list',
+			'organizations.update',
 			'persons.create',
 			'persons.delete',
 			'persons.get',
@@ -137,6 +160,10 @@ describe('Pipedrive endpoint schemas', () => {
 			'destructive',
 		);
 		expect(plugin.endpoints?.persons.list).toBeDefined();
+		expect(plugin.endpoints?.organizations.list).toBeDefined();
+		expect(plugin.endpointMeta?.['organizations.delete']?.riskLevel).toBe(
+			'destructive',
+		);
 	});
 
 	it('validates person pagination, enum constraints, strict writes, and nullable response fields', () => {
@@ -192,6 +219,73 @@ describe('Pipedrive endpoint schemas', () => {
 			PipedriveEndpointOutputSchemas.personGet.parse({
 				success: 'yes',
 				data: { id: 1 },
+			}),
+		).toThrow(z.ZodError);
+	});
+
+	it('validates organization filters, cursor bounds, include fields, and strict writes', () => {
+		expect(
+			PipedriveEndpointInputSchemas.organizationList.parse({
+				ids: [23, 24],
+				include_fields: ['people_count'],
+				custom_fields: ['company_size'],
+				limit: 500,
+				cursor: 'opaque',
+			}),
+		).toMatchObject({ limit: 500, cursor: 'opaque' });
+		expect(() =>
+			PipedriveEndpointInputSchemas.organizationList.parse({ limit: 501 }),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.organizationGet.parse({
+				id: 23,
+				include_fields: ['unknown_field'],
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.organizationCreate.parse({}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.organizationCreate.parse({
+				name: 'Synthetic organization',
+				callback: 'url',
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointInputSchemas.organizationUpdate.parse({
+				id: 23,
+				address: { country: 7 },
+			}),
+		).toThrow(z.ZodError);
+	});
+
+	it('parses organization list and nullable response fields and rejects malformed envelopes', () => {
+		expect(
+			PipedriveEndpointOutputSchemas.organizationList.parse({
+				success: true,
+				data: [validOrganization],
+				additional_data: { next_cursor: null },
+			}),
+		).toMatchObject({
+			data: [{ address: null, update_time: null }],
+			additional_data: { next_cursor: null },
+		});
+		expect(
+			PipedriveEndpointOutputSchemas.organizationGet.parse({
+				success: true,
+				data: { ...validOrganization, provider_added_field: 'retained' },
+			}),
+		).toMatchObject({ data: { provider_added_field: 'retained' } });
+		expect(() =>
+			PipedriveEndpointOutputSchemas.organizationUpdate.parse({
+				success: 'yes',
+				data: validOrganization,
+			}),
+		).toThrow(z.ZodError);
+		expect(() =>
+			PipedriveEndpointOutputSchemas.organizationDelete.parse({
+				success: true,
+				data: { id: '23' },
 			}),
 		).toThrow(z.ZodError);
 	});

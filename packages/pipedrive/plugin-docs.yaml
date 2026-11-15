@@ -1,7 +1,7 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "Pipedrive"
-description: "Manage Pipedrive deals and persons through selected v2 API operations with validated reads, writes, deletes, and cursor pagination."
-overviewNote: "This deliberately partial implementation covers v2 deal and person list, get, create, update, and delete operations only. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Deal reads require deals:read or deals:full and deal writes require deals:full. Person reads require contacts:read or contacts:full and person writes require contacts:full. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
+description: "Manage Pipedrive deals, persons, and organizations through selected v2 API operations with validated reads, writes, deletes, and cursor pagination."
+overviewNote: "This deliberately partial implementation covers v2 deal, person, and organization list, get, create, update, and delete operations only. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Deal reads require deals:read or deals:full and deal writes require deals:full. Person and organization reads require contacts:read or contacts:full; writes require contacts:full. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
 examples:
   read:
     path: deals.get
@@ -18,6 +18,11 @@ examples:
     title: Get a person by ID
     args:
       id: 1
+  organization:
+    path: organizations.get
+    title: Get an organization by ID
+    args:
+      id: 1
 apiNotes:
   deals.list: "The list operation forwards Pipedrive's opaque cursor and returns additional_data.next_cursor; pass that value as cursor to request the next page. List array query parameters are serialized as comma-separated values as required by the OpenAPI form/explode=false contract. Its documented API token cost is 10 tokens."
   deals.get: "OAuth requires the deals:read or deals:full scope. The documented API token cost is 1 token."
@@ -29,6 +34,11 @@ apiNotes:
   persons.create: "OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_title fields require company contact sync; marketing_status requires the Campaigns product. The documented API token cost is 5 tokens."
   persons.update: "OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_title fields require company contact sync; marketing_status requires the Campaigns product. The documented API token cost is 5 tokens."
   persons.delete: "OAuth requires contacts:full. The documented API token cost is 3 tokens."
+  organizations.list: "OAuth requires contacts:read or contacts:full. List arrays are comma-separated; forward additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
+  organizations.get: "OAuth requires contacts:read or contacts:full. The documented API token cost is 1 token."
+  organizations.create: "OAuth requires contacts:full. Organization custom_fields values are arbitrary JSON; set a custom field to null to clear it, and do not send an empty array to clear a multi-option set field. The documented API token cost is 5 tokens."
+  organizations.update: "OAuth requires contacts:full. Organization custom_fields values are arbitrary JSON; set a custom field to null to clear it, and do not send an empty array to clear a multi-option set field. The documented API token cost is 5 tokens."
+  organizations.delete: "OAuth requires contacts:full. Deletion marks the organization deleted; Pipedrive permanently removes it after 30 days. The documented API token cost is 3 tokens."
 apiExamples:
   deals.list:
     call: "{}"
@@ -49,4 +59,14 @@ apiExamples:
   persons.update:
     call: "{ id: 1, name: 'Updated contact' }"
   persons.delete:
+    call: "{ id: 1 }"
+  organizations.list:
+    call: "{}"
+  organizations.get:
+    call: "{ id: 1 }"
+  organizations.create:
+    call: "{ name: 'Sample organization' }"
+  organizations.update:
+    call: "{ id: 1, name: 'Updated organization' }"
+  organizations.delete:
     call: "{ id: 1 }"

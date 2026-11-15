@@ -6,6 +6,13 @@ import {
 	updateDeal,
 } from './deals';
 import {
+	createOrganization,
+	deleteOrganization,
+	getOrganization,
+	listOrganizations,
+	updateOrganization,
+} from './organizations';
+import {
 	createPerson,
 	deletePerson,
 	getPerson,
@@ -27,6 +34,14 @@ export const Persons = {
 	create: createPerson,
 	update: updatePerson,
 	delete: deletePerson,
+};
+
+export const Organizations = {
+	list: listOrganizations,
+	get: getOrganization,
+	create: createOrganization,
+	update: updateOrganization,
+	delete: deleteOrganization,
 };
 
 export * from './types';

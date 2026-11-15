@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
-import { Deals, Persons } from './endpoints';
+import { Deals, Organizations, Persons } from './endpoints';
 import type { PipedriveContext } from './index';
 
 jest.mock('corsair/core', () => {
@@ -52,6 +52,12 @@ function context(): EndpointContext {
 const ctx = context();
 const deal = { id: 12, title: 'Synthetic opportunity', status: 'open' };
 const person = { id: 18, name: 'Synthetic person' };
+const organization = {
+	id: 23,
+	name: 'Synthetic organization',
+	address: null,
+	custom_fields: { segment: 'enterprise' },
+};
 
 beforeEach(() => {
 	mockedRequest.mockReset();
@@ -275,6 +281,135 @@ describe('Pipedrive person endpoints', () => {
 		);
 		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
 			'private@example.test',
+		);
+	});
+});
+
+describe('Pipedrive organization endpoints', () => {
+	it('lists organizations with filters, comma-separated arrays, and cursor', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: [organization],
+			additional_data: { next_cursor: 'organization-next' },
+		});
+		const result = await Organizations.list(ctx, {
+			ids: [23, 24],
+			include_fields: ['people_count'],
+			custom_fields: ['field_hash'],
+			limit: 100,
+			cursor: 'organization-cursor',
+		});
+		expect(result.data).toHaveLength(1);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/organizations',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'GET',
+				query: {
+					ids: '23,24',
+					include_fields: 'people_count',
+					custom_fields: 'field_hash',
+					limit: 100,
+					cursor: 'organization-cursor',
+				},
+			},
+		);
+	});
+
+	it('gets an organization with include and custom-field queries', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: organization });
+		await Organizations.get(ctx, {
+			id: 23,
+			include_fields: ['people_count'],
+			custom_fields: ['field_hash'],
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/organizations/23',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'GET',
+				query: {
+					include_fields: 'people_count',
+					custom_fields: 'field_hash',
+				},
+			},
+		);
+	});
+
+	it('creates an organization with documented JSON fields', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: organization });
+		await Organizations.create(ctx, {
+			name: 'Synthetic organization',
+			address: { value: '100 Example Street', country: null },
+			custom_fields: { segment: 'enterprise' },
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/organizations',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'POST',
+				body: {
+					name: 'Synthetic organization',
+					address: { value: '100 Example Street', country: null },
+					custom_fields: { segment: 'enterprise' },
+				},
+			},
+		);
+	});
+
+	it('updates an organization with PATCH and keeps ID out of the body', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: organization });
+		await Organizations.update(ctx, {
+			id: 23,
+			name: 'Renamed organization',
+			website: null,
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/organizations/23',
+			'test-api-token',
+			'api_key',
+			{
+				method: 'PATCH',
+				body: { name: 'Renamed organization', website: null },
+			},
+		);
+	});
+
+	it('deletes an organization and validates the deletion response', async () => {
+		mockedRequest.mockResolvedValue({ success: true, data: { id: 23 } });
+		await Organizations.delete(ctx, { id: 23 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/organizations/23',
+			'test-api-token',
+			'api_key',
+			{ method: 'DELETE' },
+		);
+	});
+
+	it('rejects invalid input before network activity and omits organization data from logs', async () => {
+		await expect(
+			Reflect.apply(Organizations.create, undefined, [
+				ctx,
+				{
+					name: 'Synthetic organization',
+					callback: 'https://synthetic.invalid',
+				},
+			]),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+		mockedRequest.mockResolvedValue({ success: true, data: organization });
+		await Organizations.create(ctx, { name: 'Private customer company' });
+		expect(mockedLog).toHaveBeenCalledWith(
+			ctx,
+			'pipedrive.organizations.create',
+			{},
+			'completed',
+		);
+		expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
+			'Private customer company',
 		);
 	});
 });

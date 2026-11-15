@@ -1,16 +1,16 @@
 ---
 title: "Pipedrive plugin"
 sidebarTitle: "Overview"
-description: "Manage Pipedrive deals and persons through selected v2 API operations with validated reads, writes, deletes, and cursor pagination."
+description: "Manage Pipedrive deals, persons, and organizations through selected v2 API operations with validated reads, writes, deletes, and cursor pagination."
 ---
 
 Use **Pipedrive** through Corsair: one client, typed API calls.
 
-This deliberately partial implementation covers v2 deal and person list, get, create, update, and delete operations only. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Deal reads require deals:read or deals:full and deal writes require deals:full. Person reads require contacts:read or contacts:full and person writes require contacts:full. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled.
+This deliberately partial implementation covers v2 deal, person, and organization list, get, create, update, and delete operations only. Configure an API token or OAuth 2.0 access token before making calls. API tokens use the x-api-token header. Deal reads require deals:read or deals:full and deal writes require deals:full. Person and organization reads require contacts:read or contacts:full; writes require contacts:full. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled.
 
 **What you get:**
 
-- 10 typed API operations
+- 15 typed API operations
 
 ## Setup
 

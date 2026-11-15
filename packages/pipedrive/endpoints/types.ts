@@ -365,6 +365,168 @@ const PersonDeleteResponseSchema = z
 	})
 	.passthrough();
 
+const OrganizationIncludeFieldSchema = z.enum([
+	'next_activity_id',
+	'last_activity_id',
+	'open_deals_count',
+	'related_open_deals_count',
+	'closed_deals_count',
+	'related_closed_deals_count',
+	'email_messages_count',
+	'people_count',
+	'activities_count',
+	'done_activities_count',
+	'undone_activities_count',
+	'files_count',
+	'notes_count',
+	'followers_count',
+	'won_deals_count',
+	'related_won_deals_count',
+	'lost_deals_count',
+	'related_lost_deals_count',
+	'smart_bcc_email',
+]);
+
+const OrganizationListInputSchema = z
+	.object({
+		filter_id: z.number().int().optional(),
+		ids: z.array(z.number().int()).max(100).refine(uniqueValues).optional(),
+		owner_id: z.number().int().optional(),
+		updated_since: z.string().optional(),
+		updated_until: z.string().optional(),
+		sort_by: z.enum(['id', 'update_time', 'add_time']).optional(),
+		sort_direction: z.enum(['asc', 'desc']).optional(),
+		include_fields: z
+			.array(OrganizationIncludeFieldSchema)
+			.refine(uniqueValues)
+			.optional(),
+		custom_fields: z.array(z.string()).max(15).refine(uniqueValues).optional(),
+		include_option_labels: z.boolean().optional(),
+		include_labels: z.boolean().optional(),
+		limit: z.number().int().min(1).max(500).optional(),
+		cursor: z.string().optional(),
+	})
+	.strict();
+
+const OrganizationIdInputSchema = z.object({ id: z.number().int() }).strict();
+const OrganizationGetInputSchema = OrganizationIdInputSchema.extend({
+	include_fields: z
+		.array(OrganizationIncludeFieldSchema)
+		.refine(uniqueValues)
+		.optional(),
+	custom_fields: z.array(z.string()).max(15).refine(uniqueValues).optional(),
+	include_option_labels: z.boolean().optional(),
+	include_labels: z.boolean().optional(),
+}).strict();
+
+const OrganizationAddressInputSchema = z
+	.object({
+		value: z.string().optional(),
+		country: z.string().nullable().optional(),
+		admin_area_level_1: z.string().nullable().optional(),
+		admin_area_level_2: z.string().nullable().optional(),
+		locality: z.string().nullable().optional(),
+		sublocality: z.string().nullable().optional(),
+		route: z.string().nullable().optional(),
+		street_number: z.string().nullable().optional(),
+		subpremise: z.string().nullable().optional(),
+		postal_code: z.string().nullable().optional(),
+	})
+	.strict();
+
+// Organization custom-field values are provider-defined JSON and are runtime-validated as untrusted values.
+// `unknown` is necessary because organization custom-field values are arbitrary JSON defined by each account.
+const OrganizationCustomFieldsSchema = z.record(z.string(), z.unknown());
+
+const OrganizationWriteFields = {
+	owner_id: z.number().int().optional(),
+	visible_to: z.number().int().optional(),
+	label_ids: z.array(z.number().int()).optional(),
+	address: OrganizationAddressInputSchema.nullable().optional(),
+	website: z.string().nullable().optional(),
+	linkedin: z.string().nullable().optional(),
+	industry: z.number().int().nullable().optional(),
+	annual_revenue: z.number().int().nullable().optional(),
+	employee_count: z.number().int().nullable().optional(),
+	custom_fields: OrganizationCustomFieldsSchema.optional(),
+} as const;
+
+const OrganizationCreateInputSchema = z
+	.object({
+		name: z.string(),
+		add_time: z.string().optional(),
+		...OrganizationWriteFields,
+	})
+	.strict();
+const OrganizationUpdateInputSchema = z
+	.object({
+		id: z.number().int(),
+		name: z.string().optional(),
+		...OrganizationWriteFields,
+	})
+	.strict();
+
+const OrganizationAddressResponseSchema = z
+	.object({
+		value: z.string().optional(),
+		country: z.string().nullable().optional(),
+		admin_area_level_1: z.string().nullable().optional(),
+		admin_area_level_2: z.string().nullable().optional(),
+		locality: z.string().nullable().optional(),
+		sublocality: z.string().nullable().optional(),
+		route: z.string().nullable().optional(),
+		street_number: z.string().nullable().optional(),
+		subpremise: z.string().nullable().optional(),
+		postal_code: z.string().nullable().optional(),
+	})
+	.passthrough();
+
+// Organization response objects are open in the specification; retain provider-added fields.
+const OrganizationResponseSchema = z
+	.object({
+		id: z.number().int().optional(),
+		name: z.string().optional(),
+		owner_id: z.number().int().optional(),
+		add_time: z.string().optional(),
+		update_time: z.string().nullable().optional(),
+		is_deleted: z.boolean().optional(),
+		visible_to: z.number().int().optional(),
+		address: OrganizationAddressResponseSchema.nullable().optional(),
+		label_ids: z.array(z.number().int()).optional(),
+		website: z.string().nullable().optional(),
+		linkedin: z.string().nullable().optional(),
+		industry: z.number().int().nullable().optional(),
+		annual_revenue: z.number().int().nullable().optional(),
+		employee_count: z.number().int().nullable().optional(),
+		custom_fields: OrganizationCustomFieldsSchema.optional(),
+	})
+	.passthrough();
+const OrganizationResponseEnvelopeSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: OrganizationResponseSchema.optional(),
+	})
+	.passthrough();
+const OrganizationListResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z.array(OrganizationResponseSchema).optional(),
+		additional_data: z
+			.object({ next_cursor: z.string().nullable().optional() })
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+const OrganizationDeleteResponseSchema = z
+	.object({
+		success: z.boolean().optional(),
+		data: z
+			.object({ id: z.number().int().optional() })
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+
 export type DealListInput = z.infer<typeof DealListInputSchema>;
 export type DealGetInput = z.infer<typeof DealGetInputSchema>;
 export type DealIdInput = z.infer<typeof DealIdInputSchema>;
@@ -381,6 +543,24 @@ export type PersonUpdateInput = z.infer<typeof PersonUpdateInputSchema>;
 export type PersonListResponse = z.infer<typeof PersonListResponseSchema>;
 export type PersonResponse = z.infer<typeof PersonResponseEnvelopeSchema>;
 export type PersonDeleteResponse = z.infer<typeof PersonDeleteResponseSchema>;
+export type OrganizationListInput = z.infer<typeof OrganizationListInputSchema>;
+export type OrganizationGetInput = z.infer<typeof OrganizationGetInputSchema>;
+export type OrganizationIdInput = z.infer<typeof OrganizationIdInputSchema>;
+export type OrganizationCreateInput = z.infer<
+	typeof OrganizationCreateInputSchema
+>;
+export type OrganizationUpdateInput = z.infer<
+	typeof OrganizationUpdateInputSchema
+>;
+export type OrganizationListResponse = z.infer<
+	typeof OrganizationListResponseSchema
+>;
+export type OrganizationResponse = z.infer<
+	typeof OrganizationResponseEnvelopeSchema
+>;
+export type OrganizationDeleteResponse = z.infer<
+	typeof OrganizationDeleteResponseSchema
+>;
 
 export type PipedriveEndpointInputs = {
 	dealList: DealListInput;
@@ -393,6 +573,11 @@ export type PipedriveEndpointInputs = {
 	personCreate: PersonCreateInput;
 	personUpdate: PersonUpdateInput;
 	personDelete: PersonIdInput;
+	organizationList: OrganizationListInput;
+	organizationGet: OrganizationGetInput;
+	organizationCreate: OrganizationCreateInput;
+	organizationUpdate: OrganizationUpdateInput;
+	organizationDelete: OrganizationIdInput;
 };
 
 export type PipedriveEndpointOutputs = {
@@ -406,6 +591,11 @@ export type PipedriveEndpointOutputs = {
 	personCreate: PersonResponse;
 	personUpdate: PersonResponse;
 	personDelete: PersonDeleteResponse;
+	organizationList: OrganizationListResponse;
+	organizationGet: OrganizationResponse;
+	organizationCreate: OrganizationResponse;
+	organizationUpdate: OrganizationResponse;
+	organizationDelete: OrganizationDeleteResponse;
 };
 
 export const PipedriveEndpointInputSchemas = {
@@ -419,6 +609,11 @@ export const PipedriveEndpointInputSchemas = {
 	personCreate: PersonCreateInputSchema,
 	personUpdate: PersonUpdateInputSchema,
 	personDelete: PersonIdInputSchema,
+	organizationList: OrganizationListInputSchema,
+	organizationGet: OrganizationGetInputSchema,
+	organizationCreate: OrganizationCreateInputSchema,
+	organizationUpdate: OrganizationUpdateInputSchema,
+	organizationDelete: OrganizationIdInputSchema,
 } as const;
 
 export const PipedriveEndpointOutputSchemas = {
@@ -432,4 +627,9 @@ export const PipedriveEndpointOutputSchemas = {
 	personCreate: PersonResponseEnvelopeSchema,
 	personUpdate: PersonResponseEnvelopeSchema,
 	personDelete: PersonDeleteResponseSchema,
+	organizationList: OrganizationListResponseSchema,
+	organizationGet: OrganizationResponseEnvelopeSchema,
+	organizationCreate: OrganizationResponseEnvelopeSchema,
+	organizationUpdate: OrganizationResponseEnvelopeSchema,
+	organizationDelete: OrganizationDeleteResponseSchema,
 } as const;

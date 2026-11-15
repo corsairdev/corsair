@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Deals, Persons } from './endpoints';
+import { Deals, Organizations, Persons } from './endpoints';
 import type {
 	PipedriveEndpointInputs,
 	PipedriveEndpointOutputs,
@@ -61,6 +61,11 @@ export type PipedriveEndpoints = {
 	personCreate: PipedriveEndpoint<'personCreate'>;
 	personUpdate: PipedriveEndpoint<'personUpdate'>;
 	personDelete: PipedriveEndpoint<'personDelete'>;
+	organizationList: PipedriveEndpoint<'organizationList'>;
+	organizationGet: PipedriveEndpoint<'organizationGet'>;
+	organizationCreate: PipedriveEndpoint<'organizationCreate'>;
+	organizationUpdate: PipedriveEndpoint<'organizationUpdate'>;
+	organizationDelete: PipedriveEndpoint<'organizationDelete'>;
 };
 
 const pipedriveEndpointsNested = {
@@ -77,6 +82,13 @@ const pipedriveEndpointsNested = {
 		create: Persons.create,
 		update: Persons.update,
 		delete: Persons.delete,
+	},
+	organizations: {
+		list: Organizations.list,
+		get: Organizations.get,
+		create: Organizations.create,
+		update: Organizations.update,
+		delete: Organizations.delete,
 	},
 } as const;
 
@@ -121,6 +133,26 @@ export const pipedriveEndpointSchemas = {
 		input: PipedriveEndpointInputSchemas.personDelete,
 		output: PipedriveEndpointOutputSchemas.personDelete,
 	},
+	'organizations.list': {
+		input: PipedriveEndpointInputSchemas.organizationList,
+		output: PipedriveEndpointOutputSchemas.organizationList,
+	},
+	'organizations.get': {
+		input: PipedriveEndpointInputSchemas.organizationGet,
+		output: PipedriveEndpointOutputSchemas.organizationGet,
+	},
+	'organizations.create': {
+		input: PipedriveEndpointInputSchemas.organizationCreate,
+		output: PipedriveEndpointOutputSchemas.organizationCreate,
+	},
+	'organizations.update': {
+		input: PipedriveEndpointInputSchemas.organizationUpdate,
+		output: PipedriveEndpointOutputSchemas.organizationUpdate,
+	},
+	'organizations.delete': {
+		input: PipedriveEndpointInputSchemas.organizationDelete,
+		output: PipedriveEndpointOutputSchemas.organizationDelete,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof pipedriveEndpointsNested
 >;
@@ -150,6 +182,26 @@ const pipedriveEndpointMeta = {
 	'persons.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a person',
+	},
+	'organizations.list': {
+		riskLevel: 'read',
+		description: 'List organizations with cursor pagination and filters',
+	},
+	'organizations.get': {
+		riskLevel: 'read',
+		description: 'Get an organization by its numeric ID',
+	},
+	'organizations.create': {
+		riskLevel: 'write',
+		description: 'Create an organization',
+	},
+	'organizations.update': {
+		riskLevel: 'write',
+		description: 'Update an organization',
+	},
+	'organizations.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an organization',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof pipedriveEndpointsNested
@@ -225,6 +277,14 @@ export type {
 	DealListResponse,
 	DealResponse,
 	DealUpdateInput,
+	OrganizationCreateInput,
+	OrganizationDeleteResponse,
+	OrganizationGetInput,
+	OrganizationIdInput,
+	OrganizationListInput,
+	OrganizationListResponse,
+	OrganizationResponse,
+	OrganizationUpdateInput,
 	PersonCreateInput,
 	PersonDeleteResponse,
 	PersonGetInput,
