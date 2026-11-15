@@ -242,7 +242,10 @@ describe('Pointagram plugin through createCorsair', () => {
 			});
 
 			await expect(
-				corsair.pointagram.api.players.create({ player_name: 'Axl Rose' }),
+				corsair.pointagram.api.players.create({
+					player_name: 'Axl Rose',
+					player_external_id: '121212',
+				}),
 			).rejects.toThrow('Player already exists.');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {

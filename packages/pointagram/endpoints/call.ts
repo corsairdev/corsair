@@ -97,6 +97,15 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	}
 
 	const data = readData(envelope);
+	// A lookup of an id that does not exist answers `status: "Ok"` with
+	// `data: false` or `data: null` and a message such as "Player not found" or
+	// "Competition not found" (live API).
+	if (data === false || data === null) {
+		throw new PointagramAPIError(
+			mask(readEnvelopeMessage(envelope) ?? 'Pointagram found nothing'),
+			{ method: request.method },
+		);
+	}
 	const result = operation.output.parse(
 		options.shape ? options.shape(data, envelope, parsed) : data,
 	);

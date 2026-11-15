@@ -30,7 +30,16 @@ export const list: PointagramEndpoints['scoreSeriesList'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/scoreseries' }),
-		{ log: (_, result) => ({ count: result.series.length }) },
+		{
+			// The docs print `data.series`; the live API sends `data.scoreseries`.
+			shape: (data) => {
+				if (data === null || typeof data !== 'object') return data;
+				// unknown: untyped envelope data, validated by the output schema.
+				const record = data as Record<string, unknown>;
+				return { series: record.scoreseries ?? record.series };
+			},
+			log: (_, result) => ({ count: result.series.length }),
+		},
 	);
 
 export const get: PointagramEndpoints['scoreSeriesGet'] = (ctx, input) =>

@@ -14,7 +14,10 @@ import { z } from 'zod';
  * both spellings are accepted rather than failing a read that has already
  * happened.
  */
-const IdSchema = z.union([z.string().min(1), z.number()]);
+// No minimum length: Pointagram sends `""` for an unset id (a player's
+// `external_id` without one, seen on a live account), and a read must not fail
+// on it.
+const IdSchema = z.union([z.string(), z.number()]);
 
 /** Path identifiers: the spec types them `integer` while responses show strings. */
 const PathIdSchema = z.union([z.string().min(1), z.number().int().positive()]);
@@ -78,6 +81,8 @@ export const PlayerSchema = z
 		// response documents `player_name`/`player_email`/`player_external_id`
 		// instead, so one loose schema covers both documented shapes.
 		name: z.string().nullish(),
+		// The live API sends `Name`, capitalised, on both list and get.
+		Name: z.string().nullish(),
 		player_name: z.string().nullish(),
 		emailaddress: z.string().nullish(),
 		player_email: z.string().nullish(),
@@ -146,22 +151,39 @@ const PlayersGetInputSchema = z.object({
 
 export type PlayersGetInput = z.infer<typeof PlayersGetInputSchema>;
 
-const PlayersCreateInputSchema = z.object({
-	player_name: z.string().min(1).describe('The name shown in Pointagram.'),
-	player_email: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Where the invitation goes.'),
-	player_external_id: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Your own identifier, kept on the player.'),
-	offline: FlagInputSchema.describe(
-		'1 creates the player without sending an invitation; 0 invites them.',
-	),
-});
+const PlayersCreateInputSchema = z
+	.object({
+		player_name: z.string().min(1).describe('The name shown in Pointagram.'),
+		player_email: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Where the invitation goes.'),
+		player_external_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Your own identifier, kept on the player.'),
+		offline: FlagInputSchema.describe(
+			'1 creates the player without sending an invitation; 0 invites them.',
+		),
+	})
+	// The docs say a name is enough, but the live API answers a name-only create
+	// with 409 "Missing player data. Supply at least player_id, player_email or
+	// player_external_id."
+	.superRefine((value, ctx) => {
+		if (
+			value.player_email === undefined &&
+			value.player_external_id === undefined
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'Supply player_email or player_external_id: Pointagram refuses a player with only a name.',
+				path: ['player_external_id'],
+			});
+		}
+	});
 
 export type PlayersCreateInput = z.infer<typeof PlayersCreateInputSchema>;
 
@@ -539,6 +561,20 @@ export const HistoryEntrySchema = z
 		score: IdSchema.nullish(),
 		comment: z.string().nullish(),
 		timestamp: z.string().nullish(),
+		// The live API capitalises these three and adds the fields below, none of
+		// which the docs list.
+		Name: z.string().nullish(),
+		Score: IdSchema.nullish(),
+		Comment: z.string().nullish(),
+		player_external_id: IdSchema.nullish(),
+		external_id: IdSchema.nullish().describe(
+			'The source_score_id, if one was sent.',
+		),
+		point_type: IdSchema.nullish(),
+		point_type_name: z.string().nullish(),
+		is_revoked: IdSchema.nullish(),
+		revoked_id: IdSchema.nullish(),
+		created: z.string().nullish(),
 	})
 	.loose();
 

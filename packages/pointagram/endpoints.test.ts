@@ -52,10 +52,16 @@ describe('envelope handling', () => {
 		});
 
 		await expect(
-			Players.create(ctx, { player_name: 'Axl Rose' }),
+			Players.create(ctx, {
+				player_name: 'Axl Rose',
+				player_external_id: '121212',
+			}),
 		).rejects.toBeInstanceOf(PointagramAPIError);
 		await expect(
-			Players.create(ctx, { player_name: 'Axl Rose' }),
+			Players.create(ctx, {
+				player_name: 'Axl Rose',
+				player_external_id: '121212',
+			}),
 		).rejects.toThrow('Player already exists.');
 	});
 
@@ -239,6 +245,139 @@ describe('envelope handling', () => {
 			(caught: Error) => caught,
 		);
 		expect(error?.message).toBe('Player [redacted] already exists.');
+	});
+});
+
+describe('live API response shapes (trimmed from a real account, 11-15)', () => {
+	it('reads the score series list from `data.scoreseries`', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'Ok',
+			message: 'Scoreseries retrieved successfully',
+			data: {
+				scoreseries: [
+					{
+						id: '20099',
+						name: 'corsair-plugin-test',
+						icon: 'defscoreseries.png',
+						point_name_singular: 'point',
+						point_name_plural: 'points',
+					},
+				],
+			},
+		});
+
+		const result = await ScoreSeries.list(ctx, {});
+		expect(result.series).toHaveLength(1);
+		expect(result.series[0]?.id).toBe('20099');
+	});
+
+	it('accepts the empty external_id and capitalised Name a player row carries', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'Ok',
+			message: 'Players retrieved successfully',
+			data: {
+				players: [
+					{
+						id: '922456',
+						Name: 'corsair-plugin-test',
+						emailaddress: '',
+						external_id: '',
+						icon: 'Avatar37.png',
+						is_org_admin: '1',
+					},
+				],
+			},
+		});
+
+		const result = await Players.list(ctx, {});
+		expect(result.players[0]?.Name).toBe('corsair-plugin-test');
+		expect(result.players[0]?.external_id).toBe('');
+	});
+
+	it('turns an `Ok` envelope with `data: false` into a not-found error', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'Ok',
+			message: 'Player not found',
+			data: false,
+		});
+
+		const error = await Players.get(ctx, { id: 1 }).then(
+			() => undefined,
+			(caught: Error) => caught,
+		);
+		expect(error).toBeInstanceOf(PointagramAPIError);
+		expect(error?.message).toBe('Player not found');
+	});
+
+	it('parses a history row with its capitalised Score, Name and Comment', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'Ok',
+			message: 'Score serie history retrieved successfully',
+			data: {
+				history: [
+					{
+						profile_id: '922458',
+						Name: 'corsair-plugin-test',
+						emailaddress: '',
+						player_external_id: 'corsair-plugin-test-1',
+						giver_id: null,
+						Score: '5',
+						point_type: null,
+						point_type_name: null,
+						Comment: 'corsair-plugin-test',
+						timestamp: '2026-11-15 02:49:58',
+						id: '16532392',
+						is_revoked: null,
+						external_id: 'corsair-plugin-test-1',
+						created: '2026-11-15 02:49:58',
+						tags: [],
+					},
+				],
+				pagination: { limit: '5' },
+			},
+		});
+
+		const result = await ScoreSeries.history(ctx, { id: 20099, limit: 5 });
+		expect(result.history[0]?.Score).toBe('5');
+		expect(result.history[0]?.Comment).toBe('corsair-plugin-test');
+	});
+
+	it('reads competitions.get from the one-element array the API sends', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'Ok',
+			message: 'Competition retrieved successfully',
+			data: [
+				{
+					id: '25334',
+					name: 'New Leaderboard competition',
+					start_date: '2026-11-15 02:51:00',
+					competition_type: '2',
+					groupingmode: '2',
+				},
+			],
+		});
+
+		const result = await Competitions.get(ctx, { id: 25334 });
+		expect(result.id).toBe('25334');
+	});
+
+	it('turns a `data: null` competition lookup into a not-found error', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'Ok',
+			message: 'Competition not found',
+			data: null,
+		});
+
+		await expect(Competitions.get(ctx, { id: 1 })).rejects.toThrow(
+			'Competition not found',
+		);
+	});
+
+	it('rejects a name-only players.create before sending, as Pointagram does', async () => {
+		await expect(
+			Players.create(ctx, { player_name: 'corsair-plugin-test' }),
+		).rejects.toThrow(/player_email or player_external_id/);
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });
 

@@ -291,7 +291,7 @@ const pointagramEndpointMeta = {
 		// level is per operation, not per input, so the offline path shares it.
 		riskLevel: 'destructive',
 		description:
-			'Create a player; an online player is also invited. A player that already exists is reported as a failure, not created twice',
+			'Create a player with a name and an email or external id; an online player is also invited. A player whose external id already exists is reported as a failure, not created twice',
 	},
 	'players.update': {
 		// Switching a player online (offline 0) sends the Pointagram invitation
@@ -359,7 +359,7 @@ const pointagramEndpointMeta = {
 	'scoreSeries.history': {
 		riskLevel: 'read',
 		description:
-			'Read the points history of a score series, filtered by tag, point type, team, player and time window, with `next_offset` paging',
+			'Read the points history of a score series, filtered by tag, point type, team, player and time window, with `next_offset` paging. A series with no points yet answers "Score serie not found"',
 	},
 	'competitions.list': {
 		riskLevel: 'read',

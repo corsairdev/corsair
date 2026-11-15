@@ -1,5 +1,5 @@
 import type { PointagramEndpoints } from '..';
-import { segment } from '../client';
+import { PointagramAPIError, readEnvelopeMessage, segment } from '../client';
 import { call } from './call';
 import {
 	PointagramEndpointInputSchemas as Inputs,
@@ -36,7 +36,20 @@ export const get: PointagramEndpoints['competitionsGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/competitions/${segment(id)}`,
 		}),
-		{ log: ({ id }) => ({ competitionId: String(id) }) },
+		{
+			// The docs print one object; the live API sends a one-element array.
+			shape: (data, envelope) => {
+				if (!Array.isArray(data)) return data;
+				if (data.length === 0) {
+					throw new PointagramAPIError(
+						readEnvelopeMessage(envelope) ?? 'Competition not found',
+						{ method: 'GET' },
+					);
+				}
+				return data[0];
+			},
+			log: ({ id }) => ({ competitionId: String(id) }),
+		},
 	);
 
 export const players: PointagramEndpoints['competitionsPlayers'] = (
