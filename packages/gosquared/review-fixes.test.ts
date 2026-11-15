@@ -61,6 +61,8 @@ function keyBuilderCtx(
 			get_api_key: () => Promise.resolve(apiKey),
 			get_site_token: () => Promise.resolve(siteToken),
 		},
+		// The keyBuilder reads only these two key getters; the full context also
+		// needs DEK and setter functions it never calls, so the partial stub is cast.
 	} as unknown as GosquaredKeyBuilderContext;
 }
 
