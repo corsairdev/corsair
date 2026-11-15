@@ -145,6 +145,41 @@ describe('withTenant account scope', () => {
 		expect(err.code).toBe('account_required');
 	});
 
+	it('a bound client follows a reconnected account instead of writing under the deleted id', async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		const t = corsair.withTenant('t1', { accounts: { demo: 'a' } });
+		await t.demo.api.note();
+		await env.db.deleteFrom('corsair_entities').execute();
+		await env.db.deleteFrom('corsair_accounts').execute();
+		const integ = await env.db
+			.selectFrom('corsair_integrations')
+			.select('id')
+			.where('name', '=', 'demo')
+			.executeTakeFirstOrThrow();
+		const dek = generateDEK();
+		await env.db
+			.insertInto('corsair_accounts')
+			.values({
+				id: 'acct-a2',
+				created_at: new Date(),
+				updated_at: new Date(),
+				tenant_id: 't1',
+				integration_id: integ.id,
+				config: encryptConfig(
+					{ account_ref: 'a', account_label: 'a@x.com' },
+					dek,
+				),
+				dek: await encryptDEK(dek, KEK),
+			})
+			.execute();
+		await t.demo.api.note();
+		const rows = await env.db
+			.selectFrom('corsair_entities')
+			.select('account_id')
+			.execute();
+		expect(rows.map((r) => r.account_id)).toEqual(['acct-a2']);
+	});
+
 	it('withTenant with an unknown plugin id in accounts throws', () => {
 		expect(() => corsair.withTenant('t1', { accounts: { nope: 'a' } })).toThrow(
 			'withTenant: no plugin "nope"',
@@ -297,6 +332,23 @@ describe('withTenant account scope', () => {
 			const rows = await notes(corsair.withTenant('t1')).list();
 			expect(rows).toHaveLength(1);
 			expect('account' in rows[0]).toBe(false);
+		});
+
+		it('a single-account read does not decrypt the account identity', async () => {
+			await addAccount('a', 'a@x.com', 'tok-a');
+			await notes(bound('a')).upsertByEntityId('a0', { title: 'a0' });
+			const spy = jest.spyOn(
+				// biome-ignore lint/style/noCommonJs: spy on the compiled module
+				require('../core/auth/encryption'),
+				'decryptDEK',
+			);
+			try {
+				const rows = await notes(corsair.withTenant('t1')).list();
+				expect(rows).toHaveLength(1);
+				expect(spy).not.toHaveBeenCalled();
+			} finally {
+				spy.mockRestore();
+			}
 		});
 
 		it('upsertByEntityId with two unbound accounts throws account_required; bound writes to that account', async () => {

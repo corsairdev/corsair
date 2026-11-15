@@ -286,7 +286,7 @@ export type CorsairSingleTenantClient<
 
 /**
  * Creates a cached account ID resolver for a specific tenant and integration.
- * The account ID is lazily fetched on first access and cached for subsequent calls.
+ * A bound account's row id is pinned and re-validated on each call.
  */
 function createAccountIdResolver(
 	database: CorsairDatabase | undefined,
@@ -298,10 +298,20 @@ function createAccountIdResolver(
 	let cachedAccountId: string | null = null;
 
 	return async () => {
-		if (cachedAccountId) return cachedAccountId;
-
 		if (!database) {
 			throw new Error('Database not configured');
+		}
+		// A bound ref is pinned by row id, but the row can be disconnected and
+		// reconnected under a new id, so confirm it still exists each call.
+		if (cachedAccountId) {
+			const live = await database.db
+				.selectFrom('corsair_accounts')
+				.select('id')
+				.where('id', '=', cachedAccountId)
+				.where('tenant_id', '=', tenantId)
+				.executeTakeFirst();
+			if (live) return cachedAccountId;
+			cachedAccountId = null;
 		}
 		if (account?.ref && !account.kek) {
 			throw new Error('Selecting an account requires a kek');
@@ -503,6 +513,14 @@ export function buildCorsairClient<
 							.where('name', '=', plugin.id)
 							.executeTakeFirst();
 						if (!integration) return [];
+						const ids = await database.db
+							.selectFrom('corsair_accounts')
+							.select('id')
+							.where('tenant_id', '=', effectiveTenantId)
+							.where('integration_id', '=', integration.id)
+							.execute();
+						// Labels need a decrypt; a lone account is read without one.
+						if (ids.length < 2) return ids;
 						const list = await listAccounts({
 							db: database.db,
 							kek,
