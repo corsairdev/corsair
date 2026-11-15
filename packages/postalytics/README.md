@@ -25,14 +25,14 @@ pnpm add @corsair-dev/postalytics
 | `campaigns.getCampaignEvents` | `postalytics.api.campaigns.getCampaignEvents` | `read` | get campaign events |
 | `campaigns.getCampaignStats` | `postalytics.api.campaigns.getCampaignStats` | `read` | get campaign stats |
 | `campaigns.getContactEvent` | `postalytics.api.campaigns.getContactEvent` | `read` | get contact event |
-| `campaigns.updateCampaignStatus` | `postalytics.api.campaigns.updateCampaignStatus` | `write` | update campaign status |
+| `campaigns.updateCampaignStatus` | `postalytics.api.campaigns.updateCampaignStatus` | `destructive` | update campaign status |
 | `contacts.createContactOnList` | `postalytics.api.contacts.createContactOnList` | `write` | create contact on list |
 | `contacts.deleteContact` | `postalytics.api.contacts.deleteContact` | `destructive` | delete contact |
 | `contacts.getAllContactLists` | `postalytics.api.contacts.getAllContactLists` | `read` | get all contact lists |
 | `contacts.getContact` | `postalytics.api.contacts.getContact` | `read` | get contact |
 | `contacts.getContactsOnList` | `postalytics.api.contacts.getContactsOnList` | `read` | get contacts on list |
 | `contacts.updateContactOnList` | `postalytics.api.contacts.updateContactOnList` | `write` | update contact on list |
-| `flows.enrollContactToFlow` | `postalytics.api.flows.enrollContactToFlow` | `write` | enroll contact to flow |
+| `flows.enrollContactToFlow` | `postalytics.api.flows.enrollContactToFlow` | `destructive` | enroll contact to flow |
 | `flows.getAllFlows` | `postalytics.api.flows.getAllFlows` | `read` | get all flows |
 | `flows.getFlow` | `postalytics.api.flows.getFlow` | `read` | get flow |
 | `flows.unenrollContactFromFlow` | `postalytics.api.flows.unenrollContactFromFlow` | `write` | unenroll contact from flow |
@@ -61,7 +61,7 @@ pnpm add @corsair-dev/postalytics
 
 Auth: API key. Postalytics uses HTTP Basic with the API key as the username and an empty password. Corsair prompts your tenant for credentials on first use. Set `sandbox: true` when constructing the plugin to use the sandbox host.
 
-Postalytics documents a limit of three requests per second. Rate-limit errors include `Retry-After` when available; requests are not automatically retried.
+Postalytics documents a limit of three requests per second. A 429 is retried up to three times, waiting the `Retry-After` time when Postalytics sends one and backing off exponentially (1 s, 2 s, 4 s) when it doesn't. When `Retry-After` asks for more than 60 seconds, the error goes straight back to the caller.
 
 ## Webhooks
 

@@ -100,6 +100,10 @@
       "account_id": "10142067",
       "api_key": "375EE04C-432E-4d6A-943B-1B97FDD7FED7",
       "created_date": "1999-02-19T12:00:00.00:00"
+    },
+    "expected": {
+      "account_id": "10142067",
+      "created_date": "1999-02-19T12:00:00.00:00"
     }
   },
   {
@@ -269,10 +273,10 @@
     "group": "campaigns",
     "name": "getContactEvent",
     "method": "GET",
-    "path": "/api/v1/campaigns/42/events/42?PageNumber=2&PageSize=2",
+    "path": "/api/v1/campaigns/63188/events/5512?PageNumber=2&PageSize=2",
     "input": {
-      "dataid": 42,
-      "id": 42,
+      "dataid": 5512,
+      "id": 63188,
       "PageNumber": 2,
       "PageSize": 2
     },

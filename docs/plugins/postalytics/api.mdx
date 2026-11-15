@@ -64,7 +64,6 @@ await corsair.postalytics.api.account.createNewAccount({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `account_id` | `string \| null` | No | — |
-| `api_key` | `string \| null` | No | — |
 | `created_date` | `string` | No | — |
 
 
@@ -587,8 +586,8 @@ get contact event
 
 ```ts
 await corsair.postalytics.api.campaigns.getContactEvent({
-	dataid: 42,
-	id: 42,
+	dataid: 5512,
+	id: 63188,
 	PageNumber: 2,
 	PageSize: 2,
 });
@@ -598,8 +597,8 @@ await corsair.postalytics.api.campaigns.getContactEvent({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `dataid` | `number` | Yes | The campaign's drop_id from getAllCampaigns. The /campaigns/&#123;id&#125; routes take drop_id, not campaign_id. |
-| `id` | `number` | Yes | — |
+| `dataid` | `number` | Yes | The contact's dataid, as returned in getCampaignEvents rows. Goes after /events/. |
+| `id` | `number` | Yes | The campaign's drop_id from getAllCampaigns. The /campaigns/&#123;id&#125; routes take drop_id, not campaign_id. |
 | `PageNumber` | `number` | No | — |
 | `PageSize` | `number` | No | — |
 

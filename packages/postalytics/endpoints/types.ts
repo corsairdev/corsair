@@ -103,7 +103,6 @@ export const createNewAccountInputSchema = z.object({
 export const createNewAccountOutputSchema = z
 	.object({
 		account_id: z.string().nullable().optional(),
-		api_key: z.string().nullable().optional(),
 		created_date: z.string().optional(),
 	})
 	.passthrough();
@@ -252,8 +251,15 @@ export const getCampaignEventsOutputSchema = z.array(
 );
 
 export const getContactEventInputSchema = z.object({
-	dataid: campaignDropId,
-	id: z.number().int(),
+	// Postalytics' reference swaps these two descriptions; the route is
+	// /campaigns/{drop_id}/events/{contact dataid}, like every /campaigns/{id} route.
+	dataid: z
+		.number()
+		.int()
+		.describe(
+			"The contact's dataid, as returned in getCampaignEvents rows. Goes after /events/.",
+		),
+	id: campaignDropId,
 	PageNumber: z.number().int().optional(),
 	PageSize: z.number().int().optional(),
 });

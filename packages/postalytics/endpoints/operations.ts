@@ -6,8 +6,9 @@ import {
 	PostalyticsEndpointOutputSchemas as outputs,
 } from './types';
 
-// Account reads return the account's api_key and password. Neither belongs in
-// a tool result, so both are dropped before the response leaves the plugin.
+// Account reads and createNewAccount return an account's api_key (reads also the
+// password). Neither belongs in a tool result, so both are dropped before the
+// response leaves the plugin.
 function withoutCredentials<T extends Record<string, unknown>>(row: T): T {
 	const { api_key: _apiKey, password: _password, ...rest } = row;
 	return rest as T;
@@ -67,7 +68,7 @@ export const createNewAccount: PostalyticsEndpoints['createNewAccount'] =
 			sandbox: ctx.options.sandbox,
 			body: args.body,
 		});
-		return outputs.createNewAccount.parse(response);
+		return withoutCredentials(outputs.createNewAccount.parse(response));
 	};
 
 export const updateAccount: PostalyticsEndpoints['updateAccount'] = async (

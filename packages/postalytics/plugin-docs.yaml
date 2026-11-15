@@ -23,7 +23,7 @@ apiExamples:
   campaigns.getCampaignEvents:
     args: {"id": 42, "PageNumber": 2, "PageSize": 2}
   campaigns.getContactEvent:
-    args: {"dataid": 42, "id": 42, "PageNumber": 2, "PageSize": 2}
+    args: {"dataid": 5512, "id": 63188, "PageNumber": 2, "PageSize": 2}
   campaigns.createNewCampaign:
     args: {"body": {"CreditTypeId": 34, "DirectMailName": "Keymaker", "PostageType": 10142067, "SenderAddress1": "36 Pipers Row", "SenderCity": "New York", "SenderName": "Metacortex", "SenderState": "NY", "SenderZip": "10001", "TemplateFrontId": 10142067}}
   campaigns.updateCampaignStatus:

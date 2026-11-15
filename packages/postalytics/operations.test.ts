@@ -293,6 +293,15 @@ const operations = {
 	(input: object) => Promise<unknown>
 >;
 
+describe('campaigns.getContactEvent inputs', () => {
+	it('describes id as the campaign drop_id and dataid as the contact', () => {
+		const shape =
+			postalyticsEndpointSchemas['campaigns.getContactEvent'].input.shape;
+		expect(shape.id.description).toContain('drop_id');
+		expect(shape.dataid.description).toContain("contact's dataid");
+	});
+});
+
 describe('all documented Postalytics operations', () => {
 	// Response fixtures use documented field examples; is_proofed has no provider
 	// example, so the two template reads use a representative valid boolean.
