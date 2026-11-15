@@ -124,16 +124,17 @@ describe('pick-first sites use the oldest account', () => {
 			})
 			.execute();
 		// newer row inserted first so insertion order cannot mask the bug
-		for (const [id, created] of [
+		const seeds: [string, string][] = [
 			['acct-new', '2026-02-01'],
 			['acct-old', '2026-01-01'],
-		]) {
+		];
+		for (const [id, created] of seeds) {
 			const dek = generateDEK();
-			const when = new Date(created as string);
+			const when = new Date(created);
 			await t.database.db
 				.insertInto('corsair_accounts')
 				.values({
-					id: id as string,
+					id,
 					created_at: when,
 					updated_at: when,
 					tenant_id: 't1',
