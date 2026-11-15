@@ -13,6 +13,10 @@ import { z } from 'zod';
 /** A command, as the command-list route returns it. */
 const CommandSchema = z
 	.object({
+		id: z
+			.union([z.string(), z.number()])
+			.nullish()
+			.describe('Pass as `command_id` to `commands.history`'),
 		name: z
 			.string()
 			.nullish()
