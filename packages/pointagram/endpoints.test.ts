@@ -246,6 +246,26 @@ describe('envelope handling', () => {
 		);
 		expect(error?.message).toBe('Player [redacted] already exists.');
 	});
+
+	it('masks a two-letter player name as a whole word', async () => {
+		mockedRequest.mockResolvedValue({
+			status: 'Error',
+			message: 'Player Li already exists (Limit reached).',
+			data: {},
+		});
+
+		const error = await Players.create(ctx, {
+			player_name: 'Li',
+			player_external_id: 'ext-77',
+			offline: 1,
+		}).then(
+			() => undefined,
+			(caught: Error) => caught,
+		);
+		expect(error?.message).toBe(
+			'Player [redacted] already exists (Limit reached).',
+		);
+	});
 });
 
 describe('live API response shapes (trimmed from a real account, 11-15)', () => {

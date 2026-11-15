@@ -200,14 +200,16 @@ const REDACTED = '[redacted]';
  * The caller's own values on a request: player names and emails in a filter
  * or a body, comments, tags and external ids. Pointagram can echo them in an
  * error message, and core's ApiError keeps the request, query and url they
- * travelled in, so a failed call masks every one of them. Values under three
- * characters are left alone: masking `1` would mangle every number in the text.
+ * travelled in, so a failed call masks every one of them. Short numbers are
+ * left alone (masking `1` would mangle every number in the text); other values
+ * under three characters, such as a two-letter name, are masked as whole words.
  */
 export function requestValues(request: PointagramRequest): string[] {
 	const values = new Set<string>();
 	const add = (value: unknown) => {
 		// unknown: a query or body member, kept only when it is a usable string.
-		if (typeof value !== 'string' || value.length < 3) return;
+		if (typeof value !== 'string' || value.length === 0) return;
+		if (value.length < 3 && /^\d+$/.test(value)) return;
 		values.add(value);
 		values.add(encodeURIComponent(value));
 		values.add(new URLSearchParams({ v: value }).toString().slice(2));
@@ -223,6 +225,22 @@ export function requestValues(request: PointagramRequest): string[] {
 	return [...values].sort((a, b) => b.length - a.length);
 }
 
+const SHORT_VALUE = 3;
+
+/**
+ * Replaces one value in `text`. A value under three characters is matched only
+ * where no letter or digit touches it, so a name like `Li` is masked without
+ * turning `Limit` into `[redacted]mit`.
+ */
+function maskOne(text: string, secret: string): string {
+	if (secret.length >= SHORT_VALUE) return text.split(secret).join(REDACTED);
+	const escaped = secret.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	return text.replace(
+		new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, 'gu'),
+		REDACTED,
+	);
+}
+
 /** Replaces each of `values` in `value`, walking arrays and objects. */
 export function maskValues(
 	value: unknown, // unknown: an error body is arbitrary JSON, walked without narrowing.
@@ -230,10 +248,7 @@ export function maskValues(
 ): unknown {
 	// unknown: returns the same arbitrary shape it was given.
 	if (typeof value === 'string') {
-		return values.reduce(
-			(text, secret) => text.split(secret).join(REDACTED),
-			value,
-		);
+		return values.reduce(maskOne, value);
 	}
 	if (Array.isArray(value))
 		return value.map((item) => maskValues(item, values));
