@@ -12,11 +12,15 @@ import { Glances, Messages, Receipts, Sounds, Users } from './endpoints';
 import { pushover, pushoverAuthConfig } from './index';
 
 const status = { status: 1, request: 'r' };
+// Endpoints read only `key` from the context, so a context with just the
+// joined key stands in for the full plugin context.
 const stored = { key: joinPushoverKey('app-token', 'owner-key') } as never;
 
 beforeEach(() => requestMock.mockReset());
 
 function keyBuilderContext(apiKey: string | null, userKey: string | null) {
+	// The keyBuilder reads only `authType` and these two getters; building the
+	// whole core key context would add nothing to these tests.
 	return {
 		authType: 'api_key',
 		keys: {
@@ -79,6 +83,7 @@ test('the user key never reaches the token parameter', async () => {
 
 test('a send without user and without a stored key asks for one', async () => {
 	await expect(
+		// A context with only the token: no user key was stored.
 		Messages.send({ key: 'app-token' } as never, { message: 'hello' }),
 	).rejects.toBeInstanceOf(AuthMissingError);
 	expect(requestMock).not.toHaveBeenCalled();

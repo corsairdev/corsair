@@ -21,6 +21,8 @@ import {
 import { PushoverEndpointInputSchemas } from './endpoints/types';
 import { pushover, pushoverEndpointSchemas } from './index';
 
+// Endpoints read only `key` from the context; the full plugin context is not
+// needed to check the request each one builds.
 const ctx = { key: 'test-token' } as never;
 const status = { status: 1, request: 'request-id' };
 // Endpoint results differ by operation and are checked against each fixture below;
@@ -273,6 +275,8 @@ test.each(cases)(
 	'$method $url sends the documented request and parses its response',
 	async ({ call, input, method, url, data, output }) => {
 		requestMock.mockResolvedValue(output);
+		// Each case pairs its own endpoint with its own input; the union of every
+		// endpoint's input has no single type that `call` accepts.
 		expect(await call(ctx, input as never)).toEqual(output);
 		const [config, options, retry] = requestMock.mock.calls[0];
 		expect(config.BASE).toBe('https://api.pushover.net/1');
@@ -317,6 +321,7 @@ test('rejects invalid inputs before issuing requests', async () => {
 	expect(requestMock).not.toHaveBeenCalled();
 });
 test('rejects missing credentials and malformed output', async () => {
+	// A context with only an empty key: the endpoint reads nothing else.
 	await expect(Sounds.list({ key: '' } as never, {})).rejects.toThrow();
 	requestMock.mockResolvedValue({ status: 0, request: 'r' });
 	await expect(Sounds.list(ctx, {})).rejects.toThrow();
