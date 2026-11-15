@@ -168,8 +168,9 @@ const textItEndpointMeta = {
 		description: 'List outgoing broadcasts.',
 	},
 	'broadcasts.send': {
-		riskLevel: 'write',
-		description: 'Send a translated broadcast to contacts, groups or URNs.',
+		riskLevel: 'destructive',
+		description:
+			'Send a translated broadcast to contacts, groups or URNs; it messages real people.',
 	},
 	'campaigns.list': { riskLevel: 'read', description: 'List campaigns.' },
 	'campaigns.create': {
@@ -185,12 +186,14 @@ const textItEndpointMeta = {
 		description: 'List campaign events.',
 	},
 	'campaignEvents.create': {
-		riskLevel: 'write',
-		description: 'Create a scheduled campaign event.',
+		riskLevel: 'destructive',
+		description:
+			'Create a campaign event that messages or starts a flow for every contact in the campaign group.',
 	},
 	'campaignEvents.update': {
-		riskLevel: 'write',
-		description: 'Update a scheduled campaign event.',
+		riskLevel: 'destructive',
+		description:
+			'Update a campaign event that messages or starts a flow for every contact in the campaign group.',
 	},
 	'campaignEvents.delete': {
 		riskLevel: 'destructive',
@@ -235,8 +238,9 @@ const textItEndpointMeta = {
 		description: 'List manual flow starts.',
 	},
 	'flowStarts.create': {
-		riskLevel: 'write',
-		description: 'Start contacts, groups or URNs in a flow.',
+		riskLevel: 'destructive',
+		description:
+			'Start contacts, groups or URNs in a flow, which can message them.',
 	},
 	'flows.list': { riskLevel: 'read', description: 'List flows.' },
 	'globals.list': { riskLevel: 'read', description: 'List workspace globals.' },
@@ -283,8 +287,8 @@ const textItEndpointMeta = {
 		description: 'List messages with optional folder and label filters.',
 	},
 	'messages.send': {
-		riskLevel: 'write',
-		description: 'Send a message to a contact.',
+		riskLevel: 'destructive',
+		description: 'Send a message to a contact; it messages a real person.',
 	},
 	'messageActions.apply': {
 		riskLevel: 'destructive',
@@ -371,7 +375,6 @@ export function textit<const T extends TextItPluginOptions>(
 	} satisfies InternalTextItPlugin;
 }
 
-export { TextItAPIError } from './client';
 export type {
 	TextItEndpointInputs,
 	TextItEndpointOutputs,

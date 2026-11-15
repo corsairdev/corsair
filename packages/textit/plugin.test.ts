@@ -39,4 +39,22 @@ describe('TextIt plugin', () => {
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
 	});
+
+	it('marks operations that message people or delete data destructive', () => {
+		const meta = textit().endpointMeta ?? {};
+		for (const op of [
+			'broadcasts.send',
+			'messages.send',
+			'flowStarts.create',
+			'campaignEvents.create',
+			'campaignEvents.update',
+			'contacts.delete',
+			'contactActions.apply',
+			'groups.delete',
+			'labels.delete',
+			'messageActions.apply',
+		] as const) {
+			expect(meta[op]?.riskLevel).toBe('destructive');
+		}
+	});
 });
