@@ -100,9 +100,13 @@ describeLive('Pointagram live API', () => {
 			method: 'GET',
 			path: '/scoreseries',
 		});
-		const output = PointagramEndpointOutputSchemas.scoreSeriesList.parse(
-			dataOf(raw),
-		);
+		// The live API names the list `scoreseries`; the endpoint renames it to
+		// `series` before the output schema sees it, and so does this test.
+		const data = dataOf(raw) as Record<string, unknown>; // unknown: untyped envelope data.
+		expect(Array.isArray(data.scoreseries)).toBe(true);
+		const output = PointagramEndpointOutputSchemas.scoreSeriesList.parse({
+			series: data.scoreseries,
+		});
 		expect(Array.isArray(output.series)).toBe(true);
 
 		const first = output.series[0];
