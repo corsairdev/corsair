@@ -47,6 +47,27 @@ describe('formatRunScriptResult', () => {
 		expect(text).not.toContain('unrelated-secret');
 	});
 
+	it('redacts long error text in linear time', () => {
+		// 'a@' followed by 50k 'a.' pairs: no valid email, worst case for the
+		// email pattern. Unbounded quantifiers took ~10s here; bounded, a few ms.
+		const message = `failed: a@${'a.'.repeat(50_000)}!`;
+		const startedAt = performance.now();
+		const result = formatRunScriptError(new Error(message));
+		const elapsedMs = performance.now() - startedAt;
+
+		expect(result.isError).toBe(true);
+		expect(elapsedMs).toBeLessThan(1000);
+	});
+
+	it('still redacts email addresses in error text', () => {
+		const result = formatRunScriptError(
+			new Error('lookup failed for jane.doe@example.com'),
+		);
+
+		expect(result.content[0].text).not.toContain('jane.doe@example.com');
+		expect(result.content[0].text).toContain('[REDACTED]');
+	});
+
 	it('serializes BigInt values without throwing', () => {
 		const result = formatRunScriptResult({ v: 10n });
 

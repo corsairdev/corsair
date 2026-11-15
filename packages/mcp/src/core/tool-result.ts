@@ -63,18 +63,28 @@ const SENSITIVE_ERROR_FIELDS = new Set([
 ]);
 
 function redactSensitiveText(value: string): string {
-	return value
-		.replace(
-			/(\bauthorization\b\s*[:=]\s*)(?:(?:Bearer|Basic|Token)\s+)?[^\s,;]+/gi,
-			'$1[REDACTED]',
-		)
-		.replace(/(Bearer\s+)[^\s,;]+/gi, '$1[REDACTED]')
-		.replace(/([?&](?:api[_-]?key|key|token|appid)=)[^&#\s]*/gi, '$1[REDACTED]')
-		.replace(
-			/(\b(?:api[_-]?key|client[_-]?secret|cookie|password|secret|token)\b\s*[:=]\s*)[^\s,;]+/gi,
-			'$1[REDACTED]',
-		)
-		.replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, '[REDACTED]');
+	return (
+		value
+			.replace(
+				/(\bauthorization\b\s*[:=]\s*)(?:(?:Bearer|Basic|Token)\s+)?[^\s,;]+/gi,
+				'$1[REDACTED]',
+			)
+			.replace(/(Bearer\s+)[^\s,;]+/gi, '$1[REDACTED]')
+			.replace(
+				/([?&](?:api[_-]?key|key|token|appid)=)[^&#\s]*/gi,
+				'$1[REDACTED]',
+			)
+			.replace(
+				/(\b(?:api[_-]?key|client[_-]?secret|cookie|password|secret|token)\b\s*[:=]\s*)[^\s,;]+/gi,
+				'$1[REDACTED]',
+			)
+			// Length caps (RFC 5321 limits) keep this linear: unbounded `+` here
+			// rescans the rest of the string from every start position.
+			.replace(
+				/\b[A-Z0-9._%+-]{1,64}@[A-Z0-9.-]{1,253}\.[A-Z]{2,63}\b/gi,
+				'[REDACTED]',
+			)
+	);
 }
 
 function redactActionMessage(value: string): string {
