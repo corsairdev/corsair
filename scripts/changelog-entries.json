@@ -5355,5 +5355,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/mondaymcp",
+    "dir": "packages/mondaymcp",
+    "name": "Monday MCP",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-15",
+    "package": "@corsair-dev/prismic",
+    "dir": "packages/prismic",
+    "name": "Prismic",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
