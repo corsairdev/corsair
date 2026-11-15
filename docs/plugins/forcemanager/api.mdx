@@ -5710,7 +5710,7 @@ await corsair.forcemanager.api.branches.listBranches({
 
 Bulk Create Resources (POST /VALUE/bulk)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.forcemanager.api.bulks.bulkCreateResources({
@@ -5727,6 +5727,8 @@ await corsair.forcemanager.api.bulks.bulkCreateResources({
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
 | `body` | `Record<string, JsonValue>[]` | Yes | — |
+
+Creates up to 200 records of the named resource in one call. For users or calendar events the same charges and invitation emails apply as for the single-record calls.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -5869,7 +5871,7 @@ Deletes the selected record permanently or archives it per ForceManager resource
 
 Bulk Update Resources (PUT /VALUE/bulk)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.forcemanager.api.bulks.bulkUpdateResources({
@@ -5886,6 +5888,8 @@ await corsair.forcemanager.api.bulks.bulkUpdateResources({
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
 | `body` | `Record<string, JsonValue>[]` | Yes | — |
+
+Updates up to 200 records of the named resource in one call. For users or calendar events the same charges and invitation emails apply as for the single-record calls.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -12592,7 +12596,7 @@ await corsair.forcemanager.api.eventsTasks.calendarSchema({});
 
 Create Calendar (POST /calendar)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.forcemanager.api.eventsTasks.createCalendar({
@@ -12608,6 +12612,8 @@ await corsair.forcemanager.api.eventsTasks.createCalendar({
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
 | `body` | `object` | Yes | — |
+
+With sendNotification true, ForceManager emails an invitation to the event's contacts. Leave it unset or false unless the contacts should be invited.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -13003,7 +13009,7 @@ await corsair.forcemanager.api.eventsTasks.listCalendar({
 
 Update Calendar (PUT /calendar/&#123;ID&#125;)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.forcemanager.api.eventsTasks.updateCalendar({
@@ -13020,6 +13026,8 @@ await corsair.forcemanager.api.eventsTasks.updateCalendar({
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
 | `body` | `object` | Yes | — |
+
+With sendNotification true, ForceManager emails an invitation to the event's contacts. Leave it unset or false unless the contacts should be invited.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -28691,7 +28699,7 @@ await corsair.forcemanager.api.unitsOfMeasure.updateUnitOfMeasure({
 
 Create User (POST /users)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.forcemanager.api.usersEntity.createUser({
@@ -28707,6 +28715,8 @@ await corsair.forcemanager.api.usersEntity.createUser({
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
 | `body` | `object` | Yes | — |
+
+Creates a user who can sign in. With billable true ForceManager charges a fee for the seat.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -29334,7 +29344,7 @@ await corsair.forcemanager.api.usersEntity.listUsersScores({
 
 Update User (PUT /users/&#123;ID&#125;)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.forcemanager.api.usersEntity.updateUser({
@@ -29351,6 +29361,8 @@ await corsair.forcemanager.api.usersEntity.updateUser({
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
 | `body` | `object` | Yes | — |
+
+Setting billable true makes ForceManager charge a fee for the seat; isActive true lets the user sign in.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -31650,3 +31662,4 @@ await corsair.forcemanager.api.warnings.updateWarningOfAResource({
 
 
 ---
+

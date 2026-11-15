@@ -6,7 +6,7 @@ description: "Manage Sage Sales Management v4 CRM records, sales resources, acti
 
 Use **ForceManager** through Corsair: one client, typed API calls.
 
-Configure the stored API key as the ForceManager session key sent in X-Session-Key. Obtain that session key by calling POST /login with your public and private API credentials outside this plugin. Set environment to sandbox to target the documented sandbox host. The plugin does not manage webhooks or perform the binary upload step returned by document and picture upload-initiation routes.
+ForceManager issues a public and a private API key in ForceAdmin. Store the private key as the account's API key and the public key in its `public_key` field (`pnpm corsair setup --plugin=forcemanager api_key=<private key> public_key=<public key>`, or the two fields on Hub's connect page). The plugin logs in with the pair, sends the session token in X-Session-Key and logs in again when the token expires. Set environment to sandbox to target the documented sandbox host. Calendar create and update (sendNotification emails invitations), user create and update (billable adds a paid seat) and the generic bulk create and update routes are destructive. The plugin does not manage webhooks or perform the binary upload step returned by document and picture upload-initiation routes.
 
 **What you get:**
 
@@ -66,7 +66,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the ForceManager API key before the first call: `pnpm corsair setup --plugin=forcemanager --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 forcemanager()
