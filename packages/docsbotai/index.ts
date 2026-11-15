@@ -219,8 +219,11 @@ export function docsbotai<const T extends DocsbotaiPluginOptions>(
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: DocsbotaiKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
-			if (source === 'endpoint' && ctx.authType === 'api_key')
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const key = await ctx.keys.get_api_key();
+				if (!key) throw new AuthMissingError('docsbotai', 'api_key');
+				return key;
+			}
 			throw new AuthMissingError('docsbotai', 'api_key');
 		},
 	} as BaseDocsbotaiPlugin<T>;

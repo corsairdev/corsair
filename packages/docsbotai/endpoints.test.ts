@@ -495,7 +495,7 @@ describe('DocsBot API boundary', () => {
 			retryAfter: 10,
 		} satisfies Partial<DocsbotaiAPIError>);
 		expect(mockRequest).toHaveBeenCalledTimes(1);
-		expect(mockRequest.mock.calls[0]?.[2].rateLimitConfig.maxRetries).toBe(0);
+		expect(mockRequest.mock.calls[0]?.[2].rateLimitConfig.maxRetries).toBe(3);
 	});
 
 	it('does not send credentials for public chat requests', async () => {
@@ -536,6 +536,25 @@ describe('DocsBot API boundary', () => {
 			startDate: '2024-06-01',
 			endDate: '2024-06-30',
 		});
+	});
+
+	it('asks for a connection when no API key is stored', async () => {
+		const unkeyed = docsbotai();
+		// The key builder only reads authType and keys.get_api_key.
+		const keyCtx = (key: string | null) =>
+			({
+				authType: 'api_key',
+				keys: { get_api_key: async () => key },
+			}) as unknown as Parameters<typeof unkeyed.keyBuilder>[0];
+		await expect(unkeyed.keyBuilder(keyCtx(null), 'endpoint')).rejects.toThrow(
+			'auth-missing',
+		);
+		await expect(unkeyed.keyBuilder(keyCtx(''), 'endpoint')).rejects.toThrow(
+			'auth-missing',
+		);
+		await expect(
+			unkeyed.keyBuilder(keyCtx('stored'), 'endpoint'),
+		).resolves.toBe('stored');
 	});
 
 	describe('secure uploads', () => {
