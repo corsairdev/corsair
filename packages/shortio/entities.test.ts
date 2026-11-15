@@ -1,5 +1,6 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { linksArchive, linksDelete, linksList } from './endpoints';
 import { shortio } from './index';
 
 const link = {
@@ -200,5 +201,87 @@ describe('Short.io without a database', () => {
 			corsair.shortio.api.links.archive({ link_id: 'lnk_1_a' }),
 		).resolves.toEqual({ success: true });
 		await expect(corsair.shortio.api.domains.list({})).resolves.toHaveLength(1);
+	});
+});
+
+describe('Short.io saved-row writes run in order per row', () => {
+	afterEach(() => jest.restoreAllMocks());
+
+	// A fake entity client whose first read takes a snapshot, then waits until
+	// released: an unordered second write would land first and be overwritten.
+	function racingStore(initial: Record<string, unknown> | null) {
+		let row = initial;
+		let readStarted!: () => void;
+		const started = new Promise<void>((resolve) => {
+			readStarted = resolve;
+		});
+		let release!: () => void;
+		const released = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		let reads = 0;
+		const links = {
+			findByEntityId: jest.fn(async () => {
+				reads += 1;
+				const snapshot = row;
+				if (reads === 1) {
+					readStarted();
+					await released;
+				}
+				return snapshot ? { data: snapshot } : null;
+			}),
+			upsertByEntityId: jest.fn(
+				async (_id: string, data: Record<string, unknown>) => {
+					row = data;
+				},
+			),
+			deleteByEntityId: jest.fn(async () => {
+				row = null;
+				return true;
+			}),
+		};
+		// `unknown` cast: the endpoints read only key, database, tenantId and db.links.
+		const ctx = (fresh = true) =>
+			({
+				key: 'test-key',
+				database: sharedDatabase,
+				tenantId: 'acme',
+				// A new entity client object per call, as withTenant() builds.
+				db: { links: fresh ? { ...links } : links },
+			}) as unknown as Parameters<typeof linksArchive>[0];
+		return { ctx, started, release, row: () => row };
+	}
+	const sharedDatabase = {};
+
+	it('keeps a newer list save that lands while an archive is merging', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async (url) =>
+				String(url).includes('/links/archive')
+					? json({ success: true })
+					: json({ count: 1, links: [{ ...link, title: 'New title' }] }),
+			);
+		const store = racingStore({ ...link, title: 'Old title' });
+		const archive = linksArchive(store.ctx(), { link_id: 'lnk_1_a' });
+		await store.started;
+		const list = linksList(store.ctx(), { domain_id: 7 });
+		await new Promise((resolve) => setTimeout(resolve, 10));
+		store.release();
+		await Promise.all([archive, list]);
+		expect(store.row()?.title).toBe('New title');
+	});
+
+	it('does not recreate a link deleted while an archive is merging', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async () => json({ success: true }));
+		const store = racingStore({ ...link });
+		const archive = linksArchive(store.ctx(), { link_id: 'lnk_1_a' });
+		await store.started;
+		const deletion = linksDelete(store.ctx(), { link_id: 'lnk_1_a' });
+		await new Promise((resolve) => setTimeout(resolve, 10));
+		store.release();
+		await Promise.all([archive, deletion]);
+		expect(store.row()).toBeNull();
 	});
 });

@@ -29,35 +29,74 @@ async function writeSaved(
 	}
 }
 
+// Core's entity client can only find, upsert and delete whole rows, so the
+// read-merge-write saves below (archive flag, domain details) could interleave
+// with another save of the same row and put an older copy back, or recreate a
+// row a delete just removed. Every write to one saved row runs in order behind
+// the previous one. Each withTenant() call builds new entity clients over the
+// same database, so the queues hang off the database object and are keyed by
+// tenant, entity type and id.
+const savedRowQueues = new WeakMap<object, Map<string, Promise<void>>>();
+
+async function inOrder(
+	ctx: ShortioContext,
+	entity: 'links' | 'domains',
+	entityId: string,
+	write: () => Promise<void>,
+) {
+	const owner = ctx.database as object;
+	let queues = savedRowQueues.get(owner);
+	if (!queues) {
+		queues = new Map();
+		savedRowQueues.set(owner, queues);
+	}
+	const key = `${ctx.tenantId ?? ''}\u0000${entity}\u0000${entityId}`;
+	const current = (queues.get(key) ?? Promise.resolve())
+		.catch(() => undefined)
+		.then(write);
+	queues.set(key, current);
+	try {
+		await current;
+	} finally {
+		if (queues.get(key) === current) queues.delete(key);
+	}
+}
+
 async function saveLinks(ctx: ShortioContext, links: StoredLink[]) {
 	await writeSaved(ctx, 'links', async () => {
 		for (const link of links)
-			await ctx.db.links.upsertByEntityId(link.idString, link);
+			await inOrder(ctx, 'links', link.idString, () =>
+				ctx.db.links.upsertByEntityId(link.idString, link).then(() => {}),
+			);
 	});
 }
 
 async function removeLinks(ctx: ShortioContext, linkIds: string[]) {
 	await writeSaved(ctx, 'links', async () => {
-		for (const linkId of linkIds) await ctx.db.links.deleteByEntityId(linkId);
+		for (const linkId of linkIds)
+			await inOrder(ctx, 'links', linkId, () =>
+				ctx.db.links.deleteByEntityId(linkId).then(() => {}),
+			);
 	});
 }
 
 // Archive calls return only { success }, so the saved rows get the new flag
-// directly. Links that were never saved stay unsaved.
+// directly. Links that were never saved (or were deleted) stay unsaved.
 async function setArchived(
 	ctx: ShortioContext,
 	linkIds: string[],
 	archived: boolean,
 ) {
 	await writeSaved(ctx, 'links', async () => {
-		for (const linkId of linkIds) {
-			const existing = await ctx.db.links.findByEntityId(linkId);
-			if (existing)
-				await ctx.db.links.upsertByEntityId(linkId, {
-					...existing.data,
-					archived,
-				});
-		}
+		for (const linkId of linkIds)
+			await inOrder(ctx, 'links', linkId, async () => {
+				const existing = await ctx.db.links.findByEntityId(linkId);
+				if (existing)
+					await ctx.db.links.upsertByEntityId(linkId, {
+						...existing.data,
+						archived,
+					});
+			});
 	});
 }
 
@@ -66,10 +105,12 @@ async function setArchived(
 async function saveDomain(ctx: ShortioContext, domain: StoredDomain) {
 	await writeSaved(ctx, 'domain', async () => {
 		const entityId = String(domain.id);
-		const existing = await ctx.db.domains.findByEntityId(entityId);
-		await ctx.db.domains.upsertByEntityId(entityId, {
-			...existing?.data,
-			...domain,
+		await inOrder(ctx, 'domains', entityId, async () => {
+			const existing = await ctx.db.domains.findByEntityId(entityId);
+			await ctx.db.domains.upsertByEntityId(entityId, {
+				...existing?.data,
+				...domain,
+			});
 		});
 	});
 }
