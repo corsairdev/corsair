@@ -2,7 +2,8 @@ import { makeSimlaComRequest } from './client';
 import { SIMLACOM_OPERATION_IDS } from './endpoints/operation-io-types';
 import { createSimlaComOperationEndpoint } from './endpoints/shared';
 import { getSimlaComOperation, SIMLACOM_OPERATIONS } from './endpoints/types';
-import type { SimlaComContext } from './index';
+import type { SimlaComContext, SimlaComPluginOptions } from './index';
+import { simlacom } from './index';
 
 function sampleValue(schema: {
 	type?: string | readonly string[];
@@ -176,5 +177,19 @@ describe('documented operation transport', () => {
 		expect(() => getSimlaComOperation('orders.not-a-route.get')).toThrow(
 			'Unknown Simla.com operation',
 		);
+	});
+
+	it('forwards caller endpoint hooks through the plugin factory', () => {
+		const hooks: SimlaComPluginOptions['hooks'] = {
+			api: {
+				apiVersions: {
+					get: {
+						before: async (ctx, args) => ({ ctx, args }),
+					},
+				},
+			},
+		};
+		const plugin = simlacom({ subdomain: 'demo', hooks });
+		expect(plugin.hooks).toBe(hooks);
 	});
 });

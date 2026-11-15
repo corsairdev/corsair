@@ -25,6 +25,7 @@ export type SimlaComPluginOptions = {
 	key?: string;
 	/** The customer instance subdomain from `https://{subdomain}.simla.com`. */
 	subdomain?: string;
+	hooks?: InternalSimlaComPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof simlaComEndpointsNested>;
 };
@@ -74,6 +75,7 @@ export function simlacom<const T extends SimlaComPluginOptions>(
 		authConfig: simlaComAuthConfig,
 		schema: SimlaComSchema,
 		options,
+		hooks: options.hooks,
 		endpoints: simlaComEndpointsNested,
 		webhooks: {},
 		endpointMeta,

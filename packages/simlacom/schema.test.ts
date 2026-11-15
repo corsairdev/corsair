@@ -1,4 +1,5 @@
 import type {
+	OpenApiCustomerContact,
 	SimlaComEndpointInputs,
 	SimlaComEndpointOutputs,
 } from './endpoints/operation-io-types';
@@ -92,6 +93,8 @@ describe('OpenAPI-derived Zod schemas', () => {
 		};
 		expect(listInput.query?.page).toBe(2);
 		expect(versionOutput.versions?.[0]).toBe('5');
+		const contact: OpenApiCustomerContact = { customer: null };
+		expect(contact.customer).toBeNull();
 	});
 
 	it('registers strict request schemas for all documented operations', () => {

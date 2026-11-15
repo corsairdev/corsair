@@ -1,6 +1,6 @@
 import type { JsonValue } from './operation-types';
 
-// Component types below are derived from the official Simla.com OpenAPI v5 schemas.
+// Component types are derived from the official Simla.com OpenAPI v5 schemas.
 export type OpenApiApiVersionsResponse = {
 	success?: boolean;
 	versions?: Array<string>;
@@ -292,14 +292,14 @@ export type OpenApiCompany = {
 	isMain?: boolean;
 	id?: number;
 	externalId?: string;
-	customer?: OpenApiSerializedEntityCustomer;
+	customer?: OpenApiSerializedEntityCustomer | null;
 	active?: boolean;
 	name?: string;
 	brand?: string;
 	site?: string;
 	createdAt?: string;
-	contragent?: OpenApiCompanyContragent;
-	address?: OpenApiCustomerAddress2;
+	contragent?: OpenApiCompanyContragent | null;
+	address?: OpenApiCustomerAddress2 | null;
 	avgMarginSumm?: number | null;
 	marginSumm?: number;
 	totalSumm?: number;
@@ -335,7 +335,7 @@ export type OpenApiSerializedCompany2 = {
 export type OpenApiCustomerContact = {
 	isMain?: boolean;
 	id?: number;
-	customer?: OpenApiSerializedRelationAbstractCustomer2;
+	customer?: OpenApiSerializedRelationAbstractCustomer2 | null;
 	companies?: Array<OpenApiCustomerContactCompany>;
 };
 export type OpenApiSerializedCustomerContact = {
@@ -740,7 +740,7 @@ export type OpenApiApiUpdateInvoiceRequest = {
 	expiredAt?: string;
 	cancellationDetails?: string;
 	refundable?: boolean;
-	refund?: OpenApiModuleRefund;
+	refund?: OpenApiModuleRefund | null;
 	cancellable?: boolean;
 	discountAmount?: number;
 	invoiceUuid: string;
@@ -870,7 +870,7 @@ export type OpenApiOrderProductStatusEditInput = {
 };
 export type OpenApiOrderProductStatus = {
 	name: string;
-	type?: 'product-status-type-cancel';
+	type?: 'product-status-type-cancel' | null;
 };
 export type OpenApiPushCategoriesResponse = {
 	success?: boolean;
@@ -955,7 +955,8 @@ export type OpenApiTicketStatusGroupInput = {
 		| 'custom-8'
 		| 'custom-9'
 		| 'custom-10'
-		| 'custom-11';
+		| 'custom-11'
+		| null;
 };
 export type OpenApiTicketStatusesListResponse = {
 	success?: boolean;
@@ -1328,10 +1329,10 @@ export type OpenApiSerializedCost = {
 	summ?: number | null;
 	comment?: string;
 	costItem?: string;
-	order?: OpenApiSerializedEntityOrder6;
+	order?: OpenApiSerializedEntityOrder6 | null;
 	userId?: number;
 	sites?: Record<string, JsonValue>;
-	source?: OpenApiSerializedSource4;
+	source?: OpenApiSerializedSource4 | null;
 };
 export type OpenApiPaginationResponse2 = {
 	limit?: number;
@@ -1458,7 +1459,7 @@ export type OpenApiSerializedCustomer = {
 	customFields?: Record<string, JsonValue>;
 	personalDiscount?: number;
 	discountCardNumber?: string | null;
-	address?: OpenApiCustomerAddress5;
+	address?: OpenApiCustomerAddress5 | null;
 	firstName?: string | null;
 	lastName?: string | null;
 	patronymic?: string | null;
@@ -1509,7 +1510,7 @@ export type OpenApiCustomerNote = {
 export type OpenApiSerializedCustomerNote = {
 	managerId?: number;
 	text?: string;
-	customer?: OpenApiSerializedEntityCustomer3;
+	customer?: OpenApiSerializedEntityCustomer3 | null;
 };
 export type OpenApiPushToken = {
 	customer?: OpenApiSerializedRelationAbstractCustomer4;
@@ -1533,7 +1534,7 @@ export type OpenApiSerializedCustomer3 = {
 	customFields?: Record<string, JsonValue>;
 	personalDiscount?: number;
 	discountCardNumber?: string | null;
-	address?: OpenApiCustomerAddress7;
+	address?: OpenApiCustomerAddress7 | null;
 	firstName?: string | null;
 	lastName?: string | null;
 	patronymic?: string | null;
@@ -1563,7 +1564,7 @@ export type OpenApiSerializedCustomer2 = {
 	customFields?: Record<string, JsonValue>;
 	personalDiscount?: number;
 	discountCardNumber?: string | null;
-	address?: OpenApiCustomerAddress6;
+	address?: OpenApiCustomerAddress6 | null;
 	firstName?: string | null;
 	lastName?: string | null;
 	patronymic?: string | null;
@@ -1787,7 +1788,7 @@ export type OpenApiSerializedRelationAbstractCustomer2 = {
 };
 export type OpenApiCustomerContactCompany = {
 	id?: number;
-	company?: OpenApiEntityWithExternalIdNameOutput;
+	company?: OpenApiEntityWithExternalIdNameOutput | null;
 };
 export type OpenApiSerializedRelationAbstractCustomer3 = {
 	id?: number;
@@ -1822,7 +1823,7 @@ export type OpenApiCart = {
 	items?: Array<OpenApiCartItem>;
 };
 export type OpenApiCustomerOffer = {
-	offer?: OpenApiOffer5;
+	offer?: OpenApiOffer5 | null;
 	createdAt?: string;
 };
 export type OpenApiSerializedFavorite = {
@@ -2019,7 +2020,7 @@ export type OpenApiSerializedCreateLoyaltyAccount = {
 	phoneNumber?: string;
 	cardNumber?: string;
 	customFields?: Record<string, JsonValue>;
-	customer: OpenApiSerializedEntityCustomer3;
+	customer: OpenApiSerializedEntityCustomer3 | null;
 };
 export type OpenApiLoyaltyAccount3 = {
 	active?: boolean;
@@ -2457,7 +2458,7 @@ export type OpenApiSerializedPayment = {
 	amount?: number;
 	paidAt?: string | null;
 	comment?: string | null;
-	order: OpenApiSerializedEntityOrder2;
+	order: OpenApiSerializedEntityOrder2 | null;
 	type: string;
 	status?: string;
 };
@@ -2719,7 +2720,7 @@ export type OpenApiOrderProductPackHistory = {
 	newValue?: OpenApiHistoryField;
 	pack?: OpenApiOrderProductPack2;
 	source?: string;
-	user?: OpenApiUser3;
+	user?: OpenApiUser3 | null;
 };
 export type OpenApiPaginationResponse6 = {
 	limit?: number;
@@ -2772,7 +2773,7 @@ export type OpenApiPaymentInvoice = {
 	discountAmount?: string;
 };
 export type OpenApiModuleRefund = {
-	status?: 'succeeded' | 'canceled' | 'pending';
+	status?: 'succeeded' | 'canceled' | 'pending' | null;
 	id: string;
 	comment?: string;
 	amount: number;
@@ -2820,7 +2821,7 @@ export type OpenApiSerializedCostItem = {
 	appliesToOrders?: boolean;
 	appliesToUsers?: boolean;
 	group?: string;
-	source?: OpenApiSerializedSource4;
+	source?: OpenApiSerializedSource4 | null;
 	type?: 'const' | 'var';
 };
 export type OpenApiCourier2 = {
@@ -2915,7 +2916,7 @@ export type OpenApiSerializedDeliveryType = {
 	sites?: Record<string, JsonValue>;
 };
 export type OpenApiLegalEntity = {
-	contragentType?: 'legal-entity' | 'enterpreneur';
+	contragentType?: 'legal-entity' | 'enterpreneur' | null;
 	legalName?: string;
 	legalAddress?: string;
 	INN?: string;
@@ -2935,7 +2936,7 @@ export type OpenApiLegalEntity = {
 	vatRate?: string | null;
 };
 export type OpenApiSerializedLegalEntity = {
-	contragentType?: 'legal-entity' | 'enterpreneur';
+	contragentType?: 'legal-entity' | 'enterpreneur' | null;
 	legalName?: string;
 	legalAddress?: string;
 	INN?: string;
@@ -3171,7 +3172,7 @@ export type OpenApiStore2 = {
 	address?: OpenApiStoreAddress;
 	active?: boolean;
 	ordering?: string | null;
-	phone?: OpenApiStorePhone;
+	phone?: OpenApiStorePhone | null;
 	contact?: string;
 	code?: string;
 	workTime?: OpenApiSerializedStoreWeekOpeningHours;
@@ -3190,7 +3191,7 @@ export type OpenApiSerializedStore = {
 	inventoryType?: 'available' | 'integer';
 	address?: OpenApiStoreAddress2;
 	active?: boolean;
-	phone?: OpenApiStorePhone2;
+	phone?: OpenApiStorePhone2 | null;
 	code?: string;
 	name: string;
 	workTime?: OpenApiSerializedStoreWeekOpeningHours2;
@@ -3446,8 +3447,8 @@ export type OpenApiTask = {
 	creator?: number | null;
 	performer?: number;
 	performerType?: string;
-	customer?: OpenApiAbstractCustomer;
-	order?: OpenApiOrder6;
+	customer?: OpenApiAbstractCustomer | null;
+	order?: OpenApiOrder6 | null;
 	ticket?: OpenApiTicket;
 	phone?: string;
 	phoneSite?: string;
@@ -3460,9 +3461,9 @@ export type OpenApiSerializedTask = {
 	datetime?: string;
 	complete?: boolean;
 	phone?: string;
-	customer?: OpenApiSerializedEntityCustomer4;
+	customer?: OpenApiSerializedEntityCustomer4 | null;
 	performerId?: number;
-	order?: OpenApiSerializedEntityOrder4;
+	order?: OpenApiSerializedEntityOrder4 | null;
 	ticket?: OpenApiSerializedEntityTicket;
 	phoneSite?: string;
 };
@@ -3493,9 +3494,9 @@ export type OpenApiSerializedTask2 = {
 	datetime?: string;
 	complete?: boolean;
 	phone?: string;
-	customer?: OpenApiSerializedEntityCustomer5;
+	customer?: OpenApiSerializedEntityCustomer5 | null;
 	performerId?: number;
-	order?: OpenApiSerializedEntityOrder5;
+	order?: OpenApiSerializedEntityOrder5 | null;
 	ticket?: OpenApiSerializedEntityTicket2;
 	phoneSite?: string;
 };
@@ -3508,7 +3509,7 @@ export type OpenApiCallEvent = {
 	hangupStatus?: 'answered' | 'no answered' | 'busy' | 'cancel' | 'failed';
 	externalPhone?: string | null;
 	callExternalId?: string | null;
-	webAnalyticsData?: OpenApiSerializedWebAnalyticsData;
+	webAnalyticsData?: OpenApiSerializedWebAnalyticsData | null;
 };
 export type OpenApiCallsPagination = { limit?: number; nextCursor?: string };
 export type OpenApiSerializedCalls = {
@@ -3525,7 +3526,7 @@ export type OpenApiSerializedCalls = {
 	aiTags?: Array<OpenApiSerializedTag>;
 	managerCriteriaTags?: Array<OpenApiSerializedTag>;
 	orderNumber?: string;
-	ticket?: OpenApiSerializedTicket;
+	ticket?: OpenApiSerializedTicket | null;
 	customer?: OpenApiSerializedCustomer5;
 	transcriptStructure?: Array<OpenApiSerializedTranscriptSegment>;
 	shortSummary?: string;
@@ -3551,7 +3552,7 @@ export type OpenApiCall = {
 	durationWaiting?: number;
 	externalId: string;
 	recordUrl?: string;
-	source?: OpenApiSerializedSource11;
+	source?: OpenApiSerializedSource11 | null;
 	externalPhone?: string;
 	site?: string | null;
 	clientId?: string;
@@ -3701,15 +3702,15 @@ export type OpenApiSerializedUser = {
 export type OpenApiClientId = {
 	value?: string;
 	createdAt?: string;
-	order?: OpenApiSerializedEntityOrder6;
-	customer?: OpenApiSerializedEntityCustomer3;
+	order?: OpenApiSerializedEntityOrder6 | null;
+	customer?: OpenApiSerializedEntityCustomer3 | null;
 	site?: string;
 };
 export type OpenApiClientId2 = {
 	value?: string;
 	createdAt?: string;
-	order?: OpenApiSerializedEntityOrder7;
-	customer?: OpenApiSerializedEntityCustomer2;
+	order?: OpenApiSerializedEntityOrder7 | null;
+	customer?: OpenApiSerializedEntityCustomer2 | null;
 	site?: string;
 };
 export type OpenApiSource = {
@@ -3719,8 +3720,8 @@ export type OpenApiSource = {
 	keyword?: string;
 	content?: string;
 	clientId?: string;
-	order?: OpenApiSerializedEntityOrder6;
-	customer?: OpenApiSerializedEntityCustomer3;
+	order?: OpenApiSerializedEntityOrder6 | null;
+	customer?: OpenApiSerializedEntityCustomer3 | null;
 	site?: string;
 };
 export type OpenApiSource2 = {
@@ -3730,8 +3731,8 @@ export type OpenApiSource2 = {
 	keyword?: string;
 	content?: string;
 	clientId?: string;
-	order?: OpenApiSerializedEntityOrder7;
-	customer?: OpenApiSerializedEntityCustomer2;
+	order?: OpenApiSerializedEntityOrder7 | null;
+	customer?: OpenApiSerializedEntityCustomer2 | null;
 	site?: string;
 };
 export type OpenApiVisit = {
@@ -3741,8 +3742,8 @@ export type OpenApiVisit = {
 	landingPage?: string | null;
 	pageViews?: number | null;
 	pageDepth?: number | null;
-	customer?: OpenApiSerializedEntityCustomer3;
-	source?: OpenApiSerializedSource4;
+	customer?: OpenApiSerializedEntityCustomer3 | null;
+	source?: OpenApiSerializedSource4 | null;
 	pages?: Array<OpenApiPage>;
 	clientId?: string | null;
 	site?: string;
@@ -3754,8 +3755,8 @@ export type OpenApiVisit2 = {
 	landingPage?: string | null;
 	pageViews?: number | null;
 	pageDepth?: number | null;
-	customer?: OpenApiSerializedEntityCustomer2;
-	source?: OpenApiSerializedSource;
+	customer?: OpenApiSerializedEntityCustomer2 | null;
+	source?: OpenApiSerializedSource | null;
 	pages?: Array<OpenApiPage2>;
 	clientId?: string | null;
 	site?: string;
@@ -4022,7 +4023,7 @@ export type OpenApiEntityWithExternalIdNameOutput2 = {
 };
 export type OpenApiCustomerContact3 = {
 	id?: number;
-	customer?: OpenApiSerializedRelationAbstractCustomer4;
+	customer?: OpenApiSerializedRelationAbstractCustomer4 | null;
 	companies?: Array<OpenApiCustomerContactCompany2>;
 };
 export type OpenApiSerializedRelationAbstractCustomer5 = {
@@ -4145,7 +4146,7 @@ export type OpenApiSerializedCartItem = {
 };
 export type OpenApiCartItem = {
 	id?: number;
-	offer?: OpenApiOffer5;
+	offer?: OpenApiOffer5 | null;
 	quantity?: number;
 	price?: number;
 };
@@ -4218,8 +4219,8 @@ export type OpenApiAttachment = {
 	knowledgeBaseDocument?: OpenApiKnowledgeBaseDocument3;
 };
 export type OpenApiSerializedAttachment = {
-	customer?: OpenApiSerializedRelationAbstractCustomer10;
-	order?: OpenApiSerializedRelationOrder2;
+	customer?: OpenApiSerializedRelationAbstractCustomer10 | null;
+	order?: OpenApiSerializedRelationOrder2 | null;
 	ticket?: OpenApiSerializedRelationTicket;
 	knowledgeBaseDocument?: OpenApiSerializedRelationKnowledgeBaseDocument;
 };
@@ -4341,8 +4342,8 @@ export type OpenApiConfigurationPage = {
 	menu?: string | null;
 	parentMenuItemCode?: string | null;
 	menuItemOrdering?: number | null;
-	menuItemTitle?: OpenApiConfigurationTranslation;
-	pageHelpLink?: OpenApiConfigurationTranslation;
+	menuItemTitle?: OpenApiConfigurationTranslation | null;
+	pageHelpLink?: OpenApiConfigurationTranslation | null;
 	isSettingsMainPage?: boolean;
 };
 export type OpenApiKnowledgeBaseDocumentFile = {
@@ -4434,7 +4435,7 @@ export type OpenApiSerializedOrderProduct5 = {
 	discountManualAmount?: number | null;
 	discountManualPercent?: number | null;
 	quantity?: number | null;
-	offer?: OpenApiSerializedOrderProductOffer4;
+	offer?: OpenApiSerializedOrderProductOffer4 | null;
 	priceType?: OpenApiPriceType10;
 };
 export type OpenApiSerializedOrderDelivery10 = { cost?: number };
@@ -4587,14 +4588,14 @@ export type OpenApiCustomerCorporate4 = {
 export type OpenApiCompany4 = {
 	id?: number;
 	externalId?: string;
-	customer?: OpenApiSerializedEntityCustomer7;
+	customer?: OpenApiSerializedEntityCustomer7 | null;
 	active?: boolean;
 	name?: string;
 	brand?: string;
 	site?: string;
 	createdAt?: string;
-	contragent?: OpenApiCompanyContragent3;
-	address?: OpenApiCustomerAddress10;
+	contragent?: OpenApiCompanyContragent3 | null;
+	address?: OpenApiCustomerAddress10 | null;
 	avgMarginSumm?: number | null;
 	marginSumm?: number;
 	totalSumm?: number;
@@ -4731,7 +4732,7 @@ export type OpenApiSerializedOrderProduct = {
 	properties?: Array<{ code: string; name: string; value: string }>;
 	purchasePrice?: number;
 	ordering?: number;
-	offer?: OpenApiSerializedOrderProductOffer;
+	offer?: OpenApiSerializedOrderProductOffer | null;
 	productName?: string;
 	status?: string;
 	priceType?: OpenApiPriceType2;
@@ -4844,14 +4845,14 @@ export type OpenApiCustomerCorporate3 = {
 export type OpenApiCompany3 = {
 	id?: number;
 	externalId?: string;
-	customer?: OpenApiSerializedEntityCustomer6;
+	customer?: OpenApiSerializedEntityCustomer6 | null;
 	active?: boolean;
 	name?: string;
 	brand?: string;
 	site?: string;
 	createdAt?: string;
-	contragent?: OpenApiCompanyContragent2;
-	address?: OpenApiCustomerAddress9;
+	contragent?: OpenApiCompanyContragent2 | null;
+	address?: OpenApiCustomerAddress9 | null;
 	avgMarginSumm?: number | null;
 	marginSumm?: number;
 	totalSumm?: number;
@@ -5045,7 +5046,7 @@ export type OpenApiSerializedOrderProduct3 = {
 	properties?: Array<{ code: string; name: string; value: string }>;
 	purchasePrice?: number;
 	ordering?: number;
-	offer?: OpenApiSerializedOrderProductOffer3;
+	offer?: OpenApiSerializedOrderProductOffer3 | null;
 	productName?: string;
 	status?: string;
 	priceType?: OpenApiPriceType6;
@@ -5087,14 +5088,14 @@ export type OpenApiLoyaltyEventDiscount3 = { id?: number };
 export type OpenApiCompany5 = {
 	id?: number;
 	externalId?: string;
-	customer?: OpenApiSerializedEntityCustomer2;
+	customer?: OpenApiSerializedEntityCustomer2 | null;
 	active?: boolean;
 	name?: string;
 	brand?: string;
 	site?: string;
 	createdAt?: string;
-	contragent?: OpenApiCompanyContragent4;
-	address?: OpenApiCustomerAddress4;
+	contragent?: OpenApiCompanyContragent4 | null;
+	address?: OpenApiCustomerAddress4 | null;
 	avgMarginSumm?: number | null;
 	marginSumm?: number;
 	totalSumm?: number;
@@ -5223,7 +5224,7 @@ export type OpenApiSerializedOrderProduct2 = {
 	properties?: Array<{ code: string; name: string; value: string }>;
 	purchasePrice?: number;
 	ordering?: number;
-	offer?: OpenApiSerializedOrderProductOffer2;
+	offer?: OpenApiSerializedOrderProductOffer2 | null;
 	productName?: string;
 	status?: string;
 	priceType?: OpenApiPriceType5;
@@ -5266,7 +5267,7 @@ export type OpenApiOrderProductPack2 = {
 	id?: number | null;
 	purchasePrice?: number | null;
 	quantity?: number | null;
-	store?: OpenApiStore5;
+	store?: OpenApiStore5 | null;
 	item?: OpenApiOrderProduct8;
 	shipmentDate?: string | null;
 	invoiceNumber?: string;
@@ -5332,7 +5333,7 @@ export type OpenApiStoreAddress = {
 	metro?: string | null;
 	notes?: string | null;
 	text?: string;
-	coordinates?: OpenApiPoint;
+	coordinates?: OpenApiPoint | null;
 };
 export type OpenApiStorePhone = { number?: string | null };
 export type OpenApiSerializedStoreWeekOpeningHours = {
@@ -5364,7 +5365,7 @@ export type OpenApiStoreAddress2 = {
 	metro?: string | null;
 	notes?: string | null;
 	text?: string;
-	coordinates?: OpenApiPoint2;
+	coordinates?: OpenApiPoint2 | null;
 };
 export type OpenApiStorePhone2 = { number?: string | null };
 export type OpenApiSerializedStoreWeekOpeningHours2 = {
@@ -5657,7 +5658,7 @@ export type OpenApiPage2 = {
 };
 export type OpenApiCustomerContactCompany2 = {
 	id?: number;
-	company?: OpenApiEntityWithExternalIdNameOutput2;
+	company?: OpenApiEntityWithExternalIdNameOutput2 | null;
 };
 export type OpenApiSerializedRelationAbstractCustomer9 = {
 	id?: number;
@@ -5837,8 +5838,8 @@ export type OpenApiConfigurationPage2 = {
 	menu?: string | null;
 	parentMenuItemCode?: string | null;
 	menuItemOrdering?: number | null;
-	menuItemTitle?: OpenApiConfigurationTranslation2;
-	pageHelpLink?: OpenApiConfigurationTranslation2;
+	menuItemTitle?: OpenApiConfigurationTranslation2 | null;
+	pageHelpLink?: OpenApiConfigurationTranslation2 | null;
 	isSettingsMainPage?: boolean;
 };
 export type OpenApiPaymentType5 = {
@@ -5975,7 +5976,7 @@ export type OpenApiEntityWithExternalIdNameOutput4 = {
 };
 export type OpenApiCustomerContact5 = {
 	id?: number;
-	customer?: OpenApiSerializedRelationAbstractCustomer12;
+	customer?: OpenApiSerializedRelationAbstractCustomer12 | null;
 	companies?: Array<OpenApiCustomerContactCompany4>;
 };
 export type OpenApiSerializedEntityCustomer7 = {
@@ -6348,7 +6349,7 @@ export type OpenApiEntityWithExternalIdNameOutput3 = {
 };
 export type OpenApiCustomerContact4 = {
 	id?: number;
-	customer?: OpenApiSerializedRelationAbstractCustomer11;
+	customer?: OpenApiSerializedRelationAbstractCustomer11 | null;
 	companies?: Array<OpenApiCustomerContactCompany3>;
 };
 export type OpenApiSerializedEntityCustomer6 = {
@@ -7101,7 +7102,7 @@ export type OpenApiSerializedRelationAbstractCustomer12 = {
 };
 export type OpenApiCustomerContactCompany4 = {
 	id?: number;
-	company?: OpenApiEntityWithExternalIdNameOutput4;
+	company?: OpenApiEntityWithExternalIdNameOutput4 | null;
 };
 export type OpenApiDeclaredValueItem3 = {
 	orderProduct?: OpenApiPackageItemOrderProduct3;
@@ -7153,7 +7154,7 @@ export type OpenApiSerializedRelationAbstractCustomer11 = {
 };
 export type OpenApiCustomerContactCompany3 = {
 	id?: number;
-	company?: OpenApiEntityWithExternalIdNameOutput3;
+	company?: OpenApiEntityWithExternalIdNameOutput3 | null;
 };
 export type OpenApiDeclaredValueItem2 = {
 	orderProduct?: OpenApiPackageItemOrderProduct2;
