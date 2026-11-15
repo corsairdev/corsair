@@ -1,0 +1,425 @@
+import { createServer } from 'node:http';
+import { gzipSync } from 'node:zlib';
+import { AuthMissingError } from 'corsair/core';
+import type { OpenAPIConfig, RateLimitConfig } from 'corsair/http';
+import { request } from 'corsair/http';
+import {
+	clearStackExchangeBackoff,
+	makeStackExchangeRequest,
+	STACKEXCHANGE_API_BASE,
+} from './client';
+import { StackExchangeResponseSchema } from './endpoints/types';
+
+const wrappedResponse = () =>
+	new Response(
+		JSON.stringify({ items: [], has_more: false, quota_remaining: 9999 }),
+		{
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+		},
+	);
+
+describe('Stack Exchange HTTP client', () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+		clearStackExchangeBackoff();
+	});
+
+	it('uses v2.3 and allows anonymous public reads', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(wrappedResponse());
+		await makeStackExchangeRequest(
+			'networkRead',
+			'sites',
+			undefined,
+			'api_key',
+			{},
+		);
+		const call = fetchMock.mock.calls.at(0);
+		expect(call).toBeDefined();
+		if (!call) throw new Error('Expected the Stack Exchange request');
+		const [input, init] = call;
+		expect(String(input)).toBe(`${STACKEXCHANGE_API_BASE}/sites`);
+		expect(new Headers(init?.headers).get('authorization')).toBeNull();
+		expect(new Headers(init?.headers).get('accept-encoding')).toBe(
+			'gzip, deflate',
+		);
+	});
+
+	it('sends an API key as a bearer credential and encodes path/query values', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(wrappedResponse());
+		await makeStackExchangeRequest(
+			'siteRead',
+			'answers-by-ids',
+			'app-key',
+			'api_key',
+			{
+				site: 'stackoverflow',
+				pathParams: { ids: '12;13' },
+				parameters: { pagesize: 2 },
+			},
+		);
+		const call = fetchMock.mock.calls.at(0);
+		expect(call).toBeDefined();
+		if (!call) throw new Error('Expected the Stack Exchange request');
+		const [input, init] = call;
+		expect(String(input)).toBe(
+			`${STACKEXCHANGE_API_BASE}/answers/12%3B13?pagesize=2&site=stackoverflow`,
+		);
+		expect(new Headers(init?.headers).get('authorization')).toBe(
+			'Bearer app-key',
+		);
+	});
+
+	it('sends OAuth writes as form-urlencoded POST requests', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(wrappedResponse());
+		await makeStackExchangeRequest(
+			'siteWrite',
+			'create-question',
+			'user-token',
+			'oauth_2',
+			{
+				site: 'stackoverflow',
+				parameters: { title: 'A title', body: 'A body', tags: 'api;testing' },
+			},
+		);
+		const call = fetchMock.mock.calls.at(0);
+		expect(call).toBeDefined();
+		if (!call) throw new Error('Expected the Stack Exchange request');
+		const [input, init] = call;
+		expect(String(input)).toBe(`${STACKEXCHANGE_API_BASE}/questions/add`);
+		expect(init?.method).toBe('POST');
+		expect(new Headers(init?.headers).get('content-type')).toContain(
+			'application/x-www-form-urlencoded',
+		);
+		expect(String(init?.body)).toContain('title=A+title');
+		expect(String(init?.body)).toContain('site=stackoverflow');
+		expect(new Headers(init?.headers).get('authorization')).toBe(
+			'Bearer user-token',
+		);
+	});
+
+	it('rejects user-context routes when only an API key is configured', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		await expect(
+			makeStackExchangeRequest('siteRead', 'events', 'app-key', 'api_key', {
+				site: 'stackoverflow',
+			}),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects method overrides not documented for the selected route', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		await expect(
+			makeStackExchangeRequest('networkRead', 'sites', undefined, 'api_key', {
+				method: 'POST',
+			}),
+		).rejects.toThrow('does not accept POST');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('requires all route path tokens and rejects extra values', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		await expect(
+			makeStackExchangeRequest(
+				'siteRead',
+				'answers-by-ids',
+				undefined,
+				'api_key',
+				{
+					site: 'stackoverflow',
+				},
+			),
+		).rejects.toThrow('Path parameters must match');
+		await expect(
+			makeStackExchangeRequest('networkRead', 'sites', undefined, 'api_key', {
+				pathParams: { id: 1 },
+			}),
+		).rejects.toThrow('Path parameters must match');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('enforces anonymous paging and the documented 100-ID vector cap', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		await expect(
+			makeStackExchangeRequest('networkRead', 'sites', undefined, 'api_key', {
+				parameters: { page: 26 },
+			}),
+		).rejects.toThrow('pages above 25');
+		await expect(
+			makeStackExchangeRequest(
+				'siteRead',
+				'answers-by-ids',
+				undefined,
+				'api_key',
+				{
+					site: 'stackoverflow',
+					pathParams: {
+						ids: Array.from({ length: 101 }, (_, index) =>
+							String(index + 1),
+						).join(';'),
+					},
+				},
+			),
+		).rejects.toThrow('cannot exceed 100');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('uses Fetch transparent decompression for gzip responses', async () => {
+		const server = createServer((_request, response) => {
+			response.writeHead(200, {
+				'Content-Type': 'application/json',
+				'Content-Encoding': 'gzip',
+			});
+			response.end(
+				gzipSync(JSON.stringify({ items: [], has_more: false, page: 1 })),
+			);
+		});
+		await new Promise<void>((resolve) =>
+			server.listen(0, '127.0.0.1', resolve),
+		);
+		const address = server.address();
+		if (!address || typeof address === 'string')
+			throw new Error('Expected a local test server');
+		const config: OpenAPIConfig = {
+			BASE: `http://127.0.0.1:${address.port}`,
+			VERSION: '2.3',
+			WITH_CREDENTIALS: false,
+			CREDENTIALS: 'omit',
+			HEADERS: { 'Accept-Encoding': 'gzip, deflate' },
+		};
+		try {
+			// Fetch returns decompressed JSON bytes; the core transport parses them.
+			const response: unknown = await request(config, {
+				method: 'GET',
+				url: '/questions',
+			});
+			expect(StackExchangeResponseSchema.parse(response)).toMatchObject({
+				items: [],
+				has_more: false,
+				page: 1,
+			});
+		} finally {
+			await new Promise<void>((resolve, reject) =>
+				server.close((error) => (error ? reject(error) : resolve())),
+			);
+		}
+	});
+
+	it('extracts Retry-After in milliseconds through the shared transport', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({ error_id: 502, error_name: 'throttle_violation' }),
+				{
+					status: 429,
+					headers: {
+						'Content-Type': 'application/json',
+						'Retry-After': '4',
+					},
+				},
+			),
+		);
+		const rateLimitConfig: RateLimitConfig = {
+			enabled: true,
+			maxRetries: 0,
+			initialRetryDelay: 0,
+			backoffMultiplier: 1,
+			headerNames: { retryAfter: 'retry-after' },
+		};
+		const config: OpenAPIConfig = {
+			BASE: STACKEXCHANGE_API_BASE,
+			VERSION: '2.3',
+			WITH_CREDENTIALS: false,
+			CREDENTIALS: 'omit',
+		};
+		await expect(
+			request(
+				config,
+				{ method: 'GET', url: '/questions' },
+				{ rateLimitConfig },
+			),
+		).rejects.toMatchObject({ status: 429, retryAfter: 4000 });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('keeps app-key requests to page 25, as the live API does', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async () => wrappedResponse());
+		await expect(
+			makeStackExchangeRequest('siteRead', 'questions', 'app-key', 'api_key', {
+				site: 'stackoverflow',
+				parameters: { page: 26 },
+			}),
+		).rejects.toThrow('pages above 25');
+		expect(fetchMock).not.toHaveBeenCalled();
+		await makeStackExchangeRequest(
+			'siteRead',
+			'questions',
+			'oauth-token',
+			'oauth_2',
+			{ site: 'stackoverflow', parameters: { page: 26 } },
+		);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('honours backoff per method and site, counting /me as /users/{ids}', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(
+				async () =>
+					new Response(
+						JSON.stringify({ items: [], has_more: false, backoff: 60 }),
+						{ status: 200, headers: { 'Content-Type': 'application/json' } },
+					),
+			);
+		await makeStackExchangeRequest(
+			'siteRead',
+			'answers-on-users',
+			undefined,
+			'api_key',
+			{ site: 'stackoverflow', pathParams: { ids: 1 } },
+		);
+		await expect(
+			makeStackExchangeRequest(
+				'siteRead',
+				'answers-on-users',
+				undefined,
+				'api_key',
+				{ site: 'stackoverflow', pathParams: { ids: 2 } },
+			),
+		).rejects.toThrow('rate limit');
+		await expect(
+			makeStackExchangeRequest(
+				'siteRead',
+				'me-answers',
+				'oauth-token',
+				'oauth_2',
+				{ site: 'stackoverflow' },
+			),
+		).rejects.toThrow('rate limit');
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		await makeStackExchangeRequest(
+			'siteRead',
+			'answers-on-users',
+			undefined,
+			'api_key',
+			{ site: 'superuser', pathParams: { ids: 1 } },
+		);
+		await makeStackExchangeRequest(
+			'siteRead',
+			'questions',
+			undefined,
+			'api_key',
+			{
+				site: 'stackoverflow',
+			},
+		);
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+	});
+
+	it('counts /users/{id} routes and their /me twins as one method', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(
+				async () =>
+					new Response(
+						JSON.stringify({ items: [], has_more: false, backoff: 60 }),
+						{ status: 200, headers: { 'Content-Type': 'application/json' } },
+					),
+			);
+		await makeStackExchangeRequest(
+			'siteRead',
+			'privileges-on-users',
+			undefined,
+			'api_key',
+			{ site: 'stackoverflow', pathParams: { id: 1 } },
+		);
+		await expect(
+			makeStackExchangeRequest(
+				'siteRead',
+				'me-privileges',
+				'oauth-token',
+				'oauth_2',
+				{ site: 'stackoverflow' },
+			),
+		).rejects.toThrow('rate limit');
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	// Two calls in flight answer with different backoffs; `first` answers right
+	// away and `second` 100 ms later.
+	function mockTwoBackoffs(first: number, second: number) {
+		let calls = 0;
+		return jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+			const call = calls++;
+			const backoff = call === 0 ? first : call === 1 ? second : undefined;
+			if (call === 1) await new Promise((resolve) => setTimeout(resolve, 100));
+			return new Response(
+				JSON.stringify({ items: [], has_more: false, backoff }),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } },
+			);
+		});
+	}
+	const sites = () =>
+		makeStackExchangeRequest('networkRead', 'sites', undefined, 'api_key', {});
+
+	it('keeps the longer backoff when a later response asks for a shorter one', async () => {
+		const fetchMock = mockTwoBackoffs(60, 1);
+		await Promise.all([sites(), sites()]);
+		await expect(sites()).rejects.toThrow('rate limit');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('re-reads the deadline after waiting, in case another response extended it', async () => {
+		const fetchMock = mockTwoBackoffs(1, 60);
+		const first = sites();
+		const second = sites();
+		await first;
+		// Starts waiting on the 1 s backoff; the 60 s one lands while it sleeps.
+		const waiting = sites();
+		await second;
+		await expect(waiting).rejects.toThrow('rate limit');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('waits out a short backoff before calling the method again', async () => {
+		let calls = 0;
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(
+				async () =>
+					new Response(
+						JSON.stringify(
+							calls++ === 0
+								? { items: [], has_more: false, backoff: 1 }
+								: { items: [], has_more: false },
+						),
+						{ status: 200, headers: { 'Content-Type': 'application/json' } },
+					),
+			);
+		await makeStackExchangeRequest(
+			'networkRead',
+			'sites',
+			undefined,
+			'api_key',
+			{},
+		);
+		const started = Date.now();
+		await makeStackExchangeRequest(
+			'networkRead',
+			'sites',
+			undefined,
+			'api_key',
+			{},
+		);
+		expect(Date.now() - started).toBeGreaterThanOrEqual(900);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+});
