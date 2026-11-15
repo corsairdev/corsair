@@ -1,4 +1,5 @@
 ﻿import type { CorsairEndpoint } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { request } from 'corsair/http';
 import type { eTerminEndpoints } from './endpoints';
 import type { ETerminContext } from './index';
@@ -61,10 +62,11 @@ function responseFor(operation: (typeof eTerminOperations)[number]) {
 	return undefined;
 }
 
+// What the keyBuilder resolves: both keys in ctx.key; endpoints read nothing else.
 const context = {
-	key: 'public-key',
-	options: { publicKey: 'public-key', privateKey: 'private-key' },
-	keys: { get_api_secret: async () => 'private-key' },
+	key: JSON.stringify({ publicKey: 'public-key', privateKey: 'private-key' }),
+	options: {},
+	keys: {},
 };
 
 describe('eTermin public endpoint seams', () => {
@@ -232,5 +234,63 @@ describe('eTermin public endpoint seams', () => {
 			}),
 			expect.anything(),
 		);
+	});
+});
+
+describe('eTermin credentials', () => {
+	type KeyBuilder = (
+		ctx: { keys: Record<string, () => Promise<string | null>> },
+		source: string,
+	) => Promise<string>;
+	const keyBuilderOf = (plugin: unknown) =>
+		(plugin as { keyBuilder: KeyBuilder }).keyBuilder; // unknown: the plugin factory's keyBuilder is read structurally
+
+	it('resolves the stored key and secret into ctx.key', async () => {
+		const keyBuilder = keyBuilderOf(etermin());
+		const key = await keyBuilder(
+			{
+				keys: {
+					get_api_key: async () => 'stored-public',
+					get_api_secret: async () => 'stored-private',
+				},
+			},
+			'endpoint',
+		);
+		expect(JSON.parse(key)).toEqual({
+			publicKey: 'stored-public',
+			privateKey: 'stored-private',
+		});
+	});
+
+	it('asks for a connection when the secret is missing', async () => {
+		const keyBuilder = keyBuilderOf(etermin());
+		await expect(
+			keyBuilder(
+				{
+					keys: {
+						get_api_key: async () => 'stored-public',
+						get_api_secret: async () => null,
+					},
+				},
+				'endpoint',
+			),
+		).rejects.toThrow(AuthMissingError);
+	});
+
+	it('signs with the keys in ctx.key, not plugin options', async () => {
+		mockRequest.mockResolvedValue([]);
+		await publicEndpoint('calendars', 'list')(
+			{
+				...context,
+				options: { publicKey: 'option-public', privateKey: 'option-private' },
+			} as unknown as ETerminContext, // unknown: a test context with only the fields endpoints read
+			{},
+		);
+		const config = mockRequest.mock.calls.at(-1)?.[0];
+		const headers =
+			typeof config?.HEADERS === 'function'
+				? await config.HEADERS({ method: 'GET', url: '/' })
+				: config?.HEADERS;
+		expect(headers).toMatchObject({ publickey: 'public-key' });
 	});
 });

@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import { ETerminAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -27,6 +28,21 @@ describe('eTermin error handlers', () => {
 			maxRetries: 0,
 			headersRetryAfterMs: 1_500,
 		});
+	});
+
+	it('matches core ApiError statuses', () => {
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/api/calendar' },
+			{
+				url: 'https://www.etermin.net/api/calendar',
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				body: undefined,
+			},
+			'Unauthorized',
+		);
+		expect(errorHandlers.AUTH_ERROR.match(apiError)).toBe(true);
 	});
 
 	it('classifies server failures separately from the default handler', () => {

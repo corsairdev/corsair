@@ -1,23 +1,20 @@
-﻿import type { AccountKeyManagerFor, CorsairEndpoint } from 'corsair/core';
+﻿import type { CorsairEndpoint } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { makeETerminRequest, makeETerminSyncRequest } from '../client';
-import type { ETerminAuthConfig, ETerminContext } from '../index';
+import {
+	makeETerminRequest,
+	makeETerminSyncRequest,
+	parseETerminCredentials,
+} from '../client';
+import type { ETerminContext } from '../index';
 import type { ETerminOperation } from './operation-types';
 import type { ETerminEndpointInputs, ETerminEndpointOutputs } from './types';
 
-type ETerminAccountKeys = AccountKeyManagerFor<
-	'api_key',
-	typeof ETerminAuthConfig
->;
-
+// The keyBuilder resolves both keys (options first, then the account's stored
+// api_key and api_secret) into ctx.key, so endpoints never read ctx.options.
 async function credentialsForContext(ctx: ETerminContext) {
-	const publicKey = ctx.options.publicKey ?? ctx.key;
-	const privateKey =
-		ctx.options.privateKey ??
-		(await (ctx.keys as ETerminAccountKeys).get_api_secret());
-	if (!publicKey || !privateKey)
-		throw new AuthMissingError('etermin', 'api_key');
-	return { publicKey, privateKey };
+	const credentials = parseETerminCredentials(ctx.key);
+	if (!credentials) throw new AuthMissingError('etermin', 'api_key');
+	return credentials;
 }
 
 export function createETerminSyncEndpoint(): CorsairEndpoint<

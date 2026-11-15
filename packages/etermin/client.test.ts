@@ -1,4 +1,5 @@
 ﻿import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import type { ETerminAPIError } from './client';
 import {
 	createETerminSignature,
@@ -17,11 +18,11 @@ import { request } from 'corsair/http';
 
 const mockRequest = request as jest.MockedFunction<typeof request>;
 
-function headers(config: OpenAPIConfig): Record<string, string> {
-	if (!config.HEADERS || typeof config.HEADERS === 'function') {
-		throw new Error('Expected static request headers');
+async function headers(config: OpenAPIConfig): Promise<Record<string, string>> {
+	if (typeof config.HEADERS !== 'function') {
+		throw new Error('Expected per-attempt signed headers');
 	}
-	return config.HEADERS;
+	return config.HEADERS({ method: 'GET', url: '/' });
 }
 
 function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
@@ -47,7 +48,7 @@ describe('eTermin request authentication', () => {
 		const [config, options] = lastCall();
 		expect(config.BASE).toBe(ETERMIN_API_BASE);
 		expect(config.TOKEN).toBeUndefined();
-		const requestHeaders = headers(config);
+		const requestHeaders = await headers(config);
 		expect(requestHeaders).toMatchObject({ publickey: 'public' });
 		expect(requestHeaders).not.toHaveProperty('Authorization');
 		expect(typeof requestHeaders.salt).toBe('string');
@@ -75,8 +76,47 @@ describe('eTermin request authentication', () => {
 			{ method: 'GET' },
 		);
 		const [second] = lastCall();
-		expect(headers(first).salt).not.toBe(headers(second).salt);
-		expect(headers(first).signature).not.toBe(headers(second).signature);
+		expect((await headers(first)).salt).not.toBe((await headers(second)).salt);
+		expect((await headers(first)).signature).not.toBe(
+			(await headers(second)).signature,
+		);
+	});
+
+	it('signs a fresh salt for every attempt of one request', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeETerminRequest(
+			'/api/calendar',
+			{ publicKey: 'public', privateKey: 'private' },
+			{ method: 'GET' },
+		);
+		const [config] = lastCall();
+		// Core resolves HEADERS once per attempt, so a 429 retry re-signs.
+		expect((await headers(config)).salt).not.toBe((await headers(config)).salt);
+	});
+
+	it('lets core retry 429s and passes its ApiError through unchanged', async () => {
+		const rateLimited = new ApiError(
+			{ method: 'GET', url: '/api/calendar' },
+			{
+				url: 'https://www.etermin.net/api/calendar',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: undefined,
+			},
+			'Too Many Requests',
+			{ retryAfter: 2_000 },
+		);
+		mockRequest.mockRejectedValue(rateLimited);
+		const error = await makeETerminRequest(
+			'/api/calendar',
+			{ publicKey: 'public', privateKey: 'private' },
+			{ method: 'GET' },
+		).catch((caught: unknown) => caught); // unknown: rejection value, compared by identity below
+		expect(error).toBe(rateLimited);
+		expect(mockRequest.mock.calls.at(-1)?.[2]).toMatchObject({
+			rateLimitConfig: { enabled: true, maxRetries: 3 },
+		});
 	});
 });
 

@@ -14,6 +14,7 @@
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import type { z } from 'zod';
+import { serializeETerminCredentials } from './client';
 import type {
 	ETerminEndpointInputs,
 	ETerminEndpointOutputs,
@@ -159,10 +160,14 @@ export function etermin<const T extends ETerminPluginOptions>(
 		keyBuilder: async (ctx: ETerminKeyBuilderContext, source) => {
 			if (source !== 'endpoint')
 				throw new AuthMissingError('etermin', 'api_key');
-			if (options.publicKey) return options.publicKey;
-			const publicKey = await ctx.keys.get_api_key();
-			if (!publicKey) throw new AuthMissingError('etermin', 'api_key');
-			return publicKey;
+			// eTermin signs every request with a public and a private key, so the
+			// resolved key carries both; endpoints read them from ctx.key only.
+			const publicKey = options.publicKey ?? (await ctx.keys.get_api_key());
+			const privateKey =
+				options.privateKey ?? (await ctx.keys.get_api_secret());
+			if (!publicKey || !privateKey)
+				throw new AuthMissingError('etermin', 'api_key');
+			return serializeETerminCredentials({ publicKey, privateKey });
 		},
 	} satisfies InternalETerminPlugin;
 }

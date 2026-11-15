@@ -63,6 +63,38 @@ export type ETerminSyncResponse<T> = {
 
 export type ETerminCredentials = { publicKey: string; privateKey: string };
 
+export function serializeETerminCredentials(
+	credentials: ETerminCredentials,
+): string {
+	return JSON.stringify(credentials);
+}
+
+/** Reads the key pair the keyBuilder put in ctx.key; undefined when it is not one. */
+export function parseETerminCredentials(
+	key: string | undefined,
+): ETerminCredentials | undefined {
+	if (!key) return undefined;
+	try {
+		// unknown: ctx.key is an opaque string; the fields are checked below.
+		const parsed: unknown = JSON.parse(key);
+		if (
+			parsed &&
+			typeof parsed === 'object' &&
+			'publicKey' in parsed &&
+			'privateKey' in parsed &&
+			typeof parsed.publicKey === 'string' &&
+			typeof parsed.privateKey === 'string' &&
+			parsed.publicKey &&
+			parsed.privateKey
+		) {
+			return { publicKey: parsed.publicKey, privateKey: parsed.privateKey };
+		}
+	} catch {
+		// Not a serialized pair: treated as missing credentials.
+	}
+	return undefined;
+}
+
 export function createETerminSignature(
 	salt: string,
 	privateKey: string,
@@ -85,11 +117,13 @@ function signedHeaders(
 	};
 }
 
-const noTransportRetries: RateLimitConfig = {
+// Core retries a 429 up to three times, honouring Retry-After; the plugin's
+// own 429 handler returns maxRetries 0 so the two never stack.
+const transportRateLimit: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
 
@@ -149,22 +183,19 @@ export async function makeETerminRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
-		HEADERS: signedHeaders(credentials),
+		// A resolver, so each attempt (core retries 429s) signs a fresh salt.
+		HEADERS: async () => signedHeaders(credentials),
 	};
 	const requestOptions: ApiRequestOptions = {
 		method: options.method,
 		url: path,
 		query: options.query,
 	};
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: noTransportRetries,
-		});
-	} catch (error) {
-		if (error instanceof Error)
-			throw new ETerminAPIError(error.message, { cause: error });
-		throw new ETerminAPIError('Unknown eTermin request failure');
-	}
+	// Core's ApiError goes through unchanged (R8): its status and retryAfter
+	// are what the error handlers match, and core already redacts the request.
+	return request<T>(config, requestOptions, {
+		rateLimitConfig: transportRateLimit,
+	});
 }
 
 /**
